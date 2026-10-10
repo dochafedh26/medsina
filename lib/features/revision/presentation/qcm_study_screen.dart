@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../ai_assistant/presentation/qcm_tutor_sheet.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
@@ -55,6 +56,13 @@ class QcmStudyScreen extends StatelessWidget {
                 },
               ),
             ],
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            backgroundColor: AppTheme.primaryTeal,
+            foregroundColor: Colors.white,
+            icon: const Icon(Icons.auto_awesome_rounded, size: 20),
+            label: const Text('Tuteur IA', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+            onPressed: () => QcmTutorSheet.show(context, q),
           ),
           body: Column(
             children: [
@@ -344,6 +352,24 @@ class QcmStudyScreen extends StatelessWidget {
           Text(
             q.explanation,
             style: const TextStyle(fontSize: 13, height: 1.45, color: Color(0xFF374151)),
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.primaryTeal,
+                side: const BorderSide(color: AppTheme.primaryTeal, width: 1.2),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+              label: const Text(
+                'Poser une question au Tuteur IA Gemini ✨',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              onPressed: () => QcmTutorSheet.show(context, q),
+            ),
           ),
         ],
       ),

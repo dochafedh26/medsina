@@ -5,6 +5,7 @@
 *.swp
 .DS_Store
 .env*
+lib/core/config/app_secrets.dart
 .atom/
 .build/
 .buildlog/

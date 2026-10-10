@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
 import '../bloc/clinical_bloc.dart';
 import '../bloc/clinical_event.dart';
 import '../bloc/clinical_state.dart';
@@ -32,39 +33,48 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          color: Theme.of(context).cardColor,
-          child: TabBar(
-            controller: _tabController,
-            labelColor: AppTheme.primaryTeal,
-            unselectedLabelColor: Colors.grey.shade600,
-            indicatorColor: AppTheme.primaryTeal,
-            indicatorWeight: 3,
-            labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
-            tabs: const [
-              Tab(
-                icon: Icon(Icons.emergency_rounded),
-                text: 'Conduites à Tenir (CAT) & Protocoles',
-              ),
-              Tab(
-                icon: Icon(Icons.calculate_rounded),
-                text: 'Scores & Calculateurs Cliniques',
-              ),
-            ],
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: const Color(0xFF2563EB),
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.auto_awesome_rounded, size: 20),
+        label: const Text('Copilote Clinique IA', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+        onPressed: () => ClinicalCopilotSheet.show(context),
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: Theme.of(context).cardColor,
+            child: TabBar(
+              controller: _tabController,
+              labelColor: AppTheme.primaryTeal,
+              unselectedLabelColor: Colors.grey.shade600,
+              indicatorColor: AppTheme.primaryTeal,
+              indicatorWeight: 3,
+              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              tabs: const [
+                Tab(
+                  icon: Icon(Icons.emergency_rounded),
+                  text: 'Conduites à Tenir (CAT) & Protocoles',
+                ),
+                Tab(
+                  icon: Icon(Icons.calculate_rounded),
+                  text: 'Scores & Calculateurs Cliniques',
+                ),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: const [
-              _ProtocolsTab(),
-              _CalculatorsTab(),
-            ],
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: const [
+                _ProtocolsTab(),
+                _CalculatorsTab(),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -321,6 +331,20 @@ class _ProtocolCardState extends State<_ProtocolCard> {
               Text(
                 'Source : ${p.references}',
                 style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade500),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF2563EB),
+                    side: const BorderSide(color: Color(0xFF2563EB), width: 1.2),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                  label: const Text('Approfondir avec le Copilote Clinique Gemini ✨', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
+                  onPressed: () => ClinicalCopilotSheet.show(context, initialSituation: '${p.title} (${p.urgencyLevel}) - ${p.definition}'),
+                ),
               ),
             ],
           ],
