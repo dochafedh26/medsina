@@ -43,6 +43,7 @@ dependencies:
   url_launcher: ^6.3.3
   flutter_bloc: ^9.1.1
   equatable: ^3.0.0
+  supabase_flutter: ^2.18.2
 
 dev_dependencies:
   flutter_test:
