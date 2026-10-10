@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseService {
@@ -14,7 +15,81 @@ class SupabaseService {
     );
   }
 
-  // Redeem License Key via PostgreSQL RPC
+  // --- AUTHENTICATION ---
+
+  static User? get currentUser => client.auth.currentUser;
+  static Session? get currentSession => client.auth.currentSession;
+  static bool get isAuthenticated => currentSession != null;
+
+  /// Sign In with Email & Password
+  static Future<AuthResponse> signInWithEmail(String email, String password) async {
+    return await client.auth.signInWithPassword(
+      email: email.trim(),
+      password: password,
+    );
+  }
+
+  /// Sign Up with Email & Password and store metadata in auth + profile trigger
+  static Future<AuthResponse> signUpWithEmail({
+    required String email,
+    required String password,
+    required String fullName,
+    required String medicalRole,
+    required String faculty,
+  }) async {
+    return await client.auth.signUp(
+      email: email.trim(),
+      password: password,
+      data: {
+        'full_name': fullName.trim(),
+        'medical_role': medicalRole.trim(),
+        'faculty': faculty.trim(),
+      },
+    );
+  }
+
+  /// Sign Out
+  static Future<void> signOut() async {
+    try {
+      await client.auth.signOut();
+    } catch (e) {
+      debugPrint('Supabase sign out error: $e');
+    }
+  }
+
+  /// Reset Password
+  static Future<void> resetPassword(String email) async {
+    await client.auth.resetPasswordForEmail(email.trim());
+  }
+
+  /// Fetch User Profile and Subscription
+  static Future<Map<String, dynamic>?> fetchUserProfileAndSubscription(String userId) async {
+    try {
+      final profile = await client
+          .from('profiles')
+          .select()
+          .eq('id', userId)
+          .maybeSingle();
+
+      final subscription = await client
+          .from('subscriptions')
+          .select()
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      return {
+        'profile': profile,
+        'subscription': subscription,
+      };
+    } catch (e) {
+      debugPrint('Error fetching user profile/subscription: $e');
+      return null;
+    }
+  }
+
+  // --- LICENSES & SUBSCRIPTIONS ---
+
+  /// Redeem License Key via PostgreSQL RPC
   static Future<Map<String, dynamic>> redeemLicenseKey(String keyCode) async {
     try {
       final response = await client.rpc(
@@ -27,27 +102,57 @@ class SupabaseService {
     }
   }
 
-  // Fetch Medical Modules from Supabase
+  // --- MEDICAL REVISION & CATALOG ---
+
+  /// Fetch Medical Modules with their nested courses
   static Future<List<Map<String, dynamic>>> fetchModules() async {
-    final response = await client
-        .from('medical_modules')
-        .select('*, courses(*)')
-        .order('display_order', ascending: true);
-    return List<Map<String, dynamic>>.from(response);
+    try {
+      final response = await client
+          .from('medical_modules')
+          .select('*, courses(*)')
+          .order('display_order', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching modules: $e');
+      return [];
+    }
   }
 
-  // Fetch Questions for a course
+  /// Fetch Questions for a specific course
   static Future<List<Map<String, dynamic>>> fetchCourseQuestions(String courseId) async {
-    final response = await client
-        .from('qcm_questions')
-        .select('*, qcm_options(*)')
-        .eq('course_id', courseId);
-    return List<Map<String, dynamic>>.from(response);
+    try {
+      final response = await client
+          .from('qcm_questions')
+          .select('*, qcm_options(*)')
+          .eq('course_id', courseId);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching course questions: $e');
+      return [];
+    }
   }
 
-  // Fetch Clinical Protocols
+  // --- CLINICAL PROTOCOLS & LAB VALUES ---
+
+  /// Fetch Clinical Protocols (CAT Urgence)
   static Future<List<Map<String, dynamic>>> fetchClinicalProtocols() async {
-    final response = await client.from('clinical_protocols').select();
-    return List<Map<String, dynamic>>.from(response);
+    try {
+      final response = await client.from('clinical_protocols').select();
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching clinical protocols: $e');
+      return [];
+    }
+  }
+
+  /// Fetch Lab Reference Values
+  static Future<List<Map<String, dynamic>>> fetchLabReferenceValues() async {
+    try {
+      final response = await client.from('lab_reference_values').select();
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching lab values: $e');
+      return [];
+    }
   }
 }

@@ -39,6 +39,8 @@ class RegisterSubmittedEvent extends AuthEvent {
   List<Object?> get props => [fullName, email, password, medicalRole, faculty];
 }
 
+class DemoLoginEvent extends AuthEvent {}
+
 class UpgradeTierEvent extends AuthEvent {
   final SubscriptionTier newTier;
   final int durationDays;
@@ -59,3 +61,5 @@ class ActivateLicenseKeyEvent extends AuthEvent {
 }
 
 class LogoutEvent extends AuthEvent {}
+
+class ClearAuthMessageEvent extends AuthEvent {}

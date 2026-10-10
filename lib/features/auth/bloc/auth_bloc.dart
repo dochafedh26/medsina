@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/network/supabase_service.dart';
 import '../models/user_model.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
@@ -13,46 +16,92 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AppStartedEvent>(_onAppStarted);
     on<LoginSubmittedEvent>(_onLoginSubmitted);
     on<RegisterSubmittedEvent>(_onRegisterSubmitted);
+    on<DemoLoginEvent>(_onDemoLogin);
     on<UpgradeTierEvent>(_onUpgradeTier);
     on<ActivateLicenseKeyEvent>(_onActivateLicenseKey);
     on<LogoutEvent>(_onLogout);
+    on<ClearAuthMessageEvent>(_onClearAuthMessage);
+  }
+
+  void _onClearAuthMessage(ClearAuthMessageEvent event, Emitter<AuthState> emit) {
+    emit(state.copyWith(clearMessages: true));
+  }
+
+  SubscriptionTier _mapTier(String? tierStr) {
+    switch (tierStr?.toLowerCase()) {
+      case 'clinical_pro':
+        return SubscriptionTier.clinicalPro;
+      case 'resident_elite':
+        return SubscriptionTier.residentElite;
+      case 'all_access':
+        return SubscriptionTier.allAccess;
+      default:
+        return SubscriptionTier.free;
+    }
   }
 
   Future<void> _onAppStarted(AppStartedEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
       final prefs = await SharedPreferences.getInstance();
-      final userJson = prefs.getString(_userPrefsKey);
 
+      // Check active Supabase session
+      final session = SupabaseService.currentSession;
+      if (session != null && session.user.id.isNotEmpty) {
+        final userId = session.user.id;
+        try {
+          final cloudData = await SupabaseService.fetchUserProfileAndSubscription(userId);
+          if (cloudData != null && cloudData['profile'] != null) {
+            final profile = cloudData['profile'] as Map<String, dynamic>;
+            final sub = cloudData['subscription'] as Map<String, dynamic>?;
+
+            final tier = _mapTier(sub?['tier']);
+            final expiry = sub?['expires_at'] != null
+                ? DateTime.tryParse(sub!['expires_at']) ?? DateTime.now().add(const Duration(days: 30))
+                : DateTime.now().add(const Duration(days: 14));
+
+            final user = UserModel(
+              id: userId,
+              fullName: profile['full_name'] ?? session.user.email?.split('@').first ?? 'Dr. Medsina',
+              email: profile['email'] ?? session.user.email ?? '',
+              medicalRole: profile['medical_role'] ?? 'Candidat Résidanat',
+              faculty: profile['faculty'] ?? 'Faculté de Médecine de Blida',
+              tier: tier,
+              subscriptionExpiry: expiry,
+              token: session.accessToken,
+            );
+
+            await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
+            emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+            return;
+          }
+        } catch (e) {
+          debugPrint('Supabase cloud sync failed on startup, fallback to local: $e');
+        }
+      }
+
+      // Check local cache
+      final userJson = prefs.getString(_userPrefsKey);
       if (userJson != null) {
         final Map<String, dynamic> data = jsonDecode(userJson);
         final user = UserModel.fromJson(data);
         emit(state.copyWith(status: AuthStatus.authenticated, user: user));
       } else {
-        // Default initialized session for seamless demonstration
-        final demoUser = UserModel(
-          id: 'user_resident_001',
-          fullName: 'Dr. Hafedh (Résidanat Blida)',
-          email: 'doc.hafedh14@medsina.com',
-          medicalRole: 'Candidat Résidanat 2027',
-          faculty: 'Faculté de Médecine de Blida',
-          tier: SubscriptionTier.allAccess,
-          subscriptionExpiry: DateTime(2027, 10, 31),
-          token: 'medsina_jwt_token_demo_987654',
-        );
-        await prefs.setString(_userPrefsKey, jsonEncode(demoUser.toJson()));
-        emit(state.copyWith(status: AuthStatus.authenticated, user: demoUser));
+        emit(state.copyWith(status: AuthStatus.unauthenticated));
       }
     } catch (e) {
+      debugPrint('Startup auth error: $e');
       emit(state.copyWith(status: AuthStatus.unauthenticated));
     }
   }
 
   Future<void> _onLoginSubmitted(LoginSubmittedEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading, clearMessages: true));
-    await Future.delayed(const Duration(milliseconds: 600));
 
-    if (event.email.trim().isEmpty || event.password.trim().isEmpty) {
+    final email = event.email.trim();
+    final password = event.password;
+
+    if (email.isEmpty || password.isEmpty) {
       emit(state.copyWith(
         status: AuthStatus.unauthenticated,
         errorMessage: 'Veuillez saisir votre email et mot de passe.',
@@ -61,61 +110,178 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final user = UserModel(
-        id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
-        fullName: event.email.split('@').first,
-        email: event.email.trim(),
-        medicalRole: 'Médecin / Résident',
-        faculty: 'Faculté de Médecine de Blida',
-        tier: SubscriptionTier.allAccess,
-        subscriptionExpiry: DateTime.now().add(const Duration(days: 365)),
-        token: 'medsina_token_${DateTime.now().millisecondsSinceEpoch}',
-      );
+      final authResponse = await SupabaseService.signInWithEmail(email, password);
+      final supaUser = authResponse.user;
 
-      await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
-      emit(state.copyWith(
-        status: AuthStatus.authenticated,
-        user: user,
-        successMessage: 'Connexion réussie à Medsina.',
-      ));
-    } catch (e) {
+      if (supaUser != null) {
+        final prefs = await SharedPreferences.getInstance();
+        final cloudData = await SupabaseService.fetchUserProfileAndSubscription(supaUser.id);
+
+        SubscriptionTier tier = SubscriptionTier.free;
+        DateTime expiry = DateTime.now().add(const Duration(days: 14));
+        String fullName = email.split('@').first;
+        String medicalRole = 'Candidat Résidanat';
+        String faculty = 'Faculté de Médecine de Blida';
+
+        if (cloudData != null && cloudData['profile'] != null) {
+          final p = cloudData['profile'] as Map<String, dynamic>;
+          fullName = p['full_name'] ?? fullName;
+          medicalRole = p['medical_role'] ?? medicalRole;
+          faculty = p['faculty'] ?? faculty;
+        }
+
+        if (cloudData != null && cloudData['subscription'] != null) {
+          final s = cloudData['subscription'] as Map<String, dynamic>;
+          tier = _mapTier(s['tier']);
+          if (s['expires_at'] != null) {
+            expiry = DateTime.tryParse(s['expires_at']) ?? expiry;
+          }
+        }
+
+        final user = UserModel(
+          id: supaUser.id,
+          fullName: fullName,
+          email: email,
+          medicalRole: medicalRole,
+          faculty: faculty,
+          tier: tier,
+          subscriptionExpiry: expiry,
+          token: authResponse.session?.accessToken ?? '',
+        );
+
+        await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
+        emit(state.copyWith(
+          status: AuthStatus.authenticated,
+          user: user,
+          successMessage: 'Bienvenue Docteur ! Connexion réussie à Medsina.',
+        ));
+        return;
+      }
+    } on AuthException catch (e) {
+      debugPrint('Supabase AuthException: ${e.message}');
+      String friendlyMessage = e.message;
+      if (e.message.contains('Invalid login credentials')) {
+        friendlyMessage = 'Email ou mot de passe incorrect. Veuillez vérifier vos identifiants.';
+      } else if (e.message.contains('Email not confirmed')) {
+        friendlyMessage = 'Veuillez confirmer votre email avant de vous connecter.';
+      }
       emit(state.copyWith(
         status: AuthStatus.unauthenticated,
-        errorMessage: 'Échec de connexion : $e',
+        errorMessage: friendlyMessage,
       ));
+      return;
+    } catch (e) {
+      debugPrint('General login error: $e');
+      emit(state.copyWith(
+        status: AuthStatus.unauthenticated,
+        errorMessage: 'Échec de connexion réseau. Vérifiez votre connexion internet.',
+      ));
+      return;
     }
   }
 
   Future<void> _onRegisterSubmitted(RegisterSubmittedEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading, clearMessages: true));
-    await Future.delayed(const Duration(milliseconds: 700));
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final user = UserModel(
-        id: 'usr_${DateTime.now().millisecondsSinceEpoch}',
-        fullName: event.fullName.trim(),
-        email: event.email.trim(),
-        medicalRole: event.medicalRole,
-        faculty: event.faculty,
-        tier: SubscriptionTier.free,
-        subscriptionExpiry: DateTime.now().add(const Duration(days: 14)), // 14 jours d'essai
-        token: 'medsina_token_${DateTime.now().millisecondsSinceEpoch}',
-      );
+    final email = event.email.trim();
+    final password = event.password;
+    final fullName = event.fullName.trim();
 
-      await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
-      emit(state.copyWith(
-        status: AuthStatus.authenticated,
-        user: user,
-        successMessage: 'Bienvenue sur Medsina ! Période d\'essai activée.',
-      ));
-    } catch (e) {
+    if (email.isEmpty || password.isEmpty || fullName.isEmpty) {
       emit(state.copyWith(
         status: AuthStatus.unauthenticated,
-        errorMessage: 'Erreur lors de l\'inscription : $e',
+        errorMessage: 'Veuillez remplir tous les champs obligatoires.',
       ));
+      return;
     }
+
+    try {
+      final authResponse = await SupabaseService.signUpWithEmail(
+        email: email,
+        password: password,
+        fullName: fullName,
+        medicalRole: event.medicalRole,
+        faculty: event.faculty,
+      );
+
+      final supaUser = authResponse.user;
+      final session = authResponse.session;
+
+      if (supaUser != null) {
+        final prefs = await SharedPreferences.getInstance();
+        final user = UserModel(
+          id: supaUser.id,
+          fullName: fullName,
+          email: email,
+          medicalRole: event.medicalRole,
+          faculty: event.faculty,
+          tier: SubscriptionTier.free,
+          subscriptionExpiry: DateTime.now().add(const Duration(days: 14)),
+          token: session?.accessToken ?? '',
+        );
+
+        await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
+
+        if (session != null) {
+          emit(state.copyWith(
+            status: AuthStatus.authenticated,
+            user: user,
+            successMessage: 'Bienvenue sur Medsina ! Période d\'essai de 14 jours activée.',
+          ));
+        } else {
+          // Email confirmation is required
+          emit(state.copyWith(
+            status: AuthStatus.unauthenticated,
+            successMessage: 'Compte créé avec succès ! Un e-mail de confirmation vous a été envoyé.',
+          ));
+        }
+        return;
+      }
+    } on AuthException catch (e) {
+      debugPrint('Supabase AuthException on register: ${e.message}');
+      String msg = e.message;
+      if (e.message.contains('already registered')) {
+        msg = 'Un compte existe déjà avec cette adresse email.';
+      } else if (e.message.contains('Password should be')) {
+        msg = 'Le mot de passe doit comporter au moins 6 caractères.';
+      }
+      emit(state.copyWith(
+        status: AuthStatus.unauthenticated,
+        errorMessage: msg,
+      ));
+      return;
+    } catch (e) {
+      debugPrint('General register error: $e');
+      emit(state.copyWith(
+        status: AuthStatus.unauthenticated,
+        errorMessage: 'Erreur lors de la création du compte: $e',
+      ));
+      return;
+    }
+  }
+
+  Future<void> _onDemoLogin(DemoLoginEvent event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(status: AuthStatus.loading, clearMessages: true));
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final prefs = await SharedPreferences.getInstance();
+    final demoUser = UserModel(
+      id: 'usr_demo_blida_2027',
+      fullName: 'Dr. Hafedh (Blida 2027)',
+      email: 'doc.hafedh26@medsina.com',
+      medicalRole: 'Candidat Résidanat 2027',
+      faculty: 'Faculté de Médecine de Blida',
+      tier: SubscriptionTier.allAccess,
+      subscriptionExpiry: DateTime(2027, 10, 31),
+      token: 'medsina_token_demo_resident_blida',
+    );
+
+    await prefs.setString(_userPrefsKey, jsonEncode(demoUser.toJson()));
+    emit(state.copyWith(
+      status: AuthStatus.authenticated,
+      user: demoUser,
+      successMessage: 'Accès démo activé avec succès (All-Access Débloqué) !',
+    ));
   }
 
   Future<void> _onUpgradeTier(UpgradeTierEvent event, Emitter<AuthState> emit) async {
@@ -140,20 +306,56 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onActivateLicenseKey(ActivateLicenseKeyEvent event, Emitter<AuthState> emit) async {
     if (state.user == null) return;
     emit(state.copyWith(status: AuthStatus.loading, clearMessages: true));
-    await Future.delayed(const Duration(milliseconds: 500));
 
     final key = event.licenseKey.trim().toUpperCase();
-    SubscriptionTier targetTier;
+
+    // 1. Try remote Supabase RPC
+    try {
+      final rpcResult = await SupabaseService.redeemLicenseKey(key);
+      if (rpcResult['success'] == true) {
+        final tierStr = rpcResult['tier'] as String?;
+        final durationDays = (rpcResult['duration_days'] as num?)?.toInt() ?? 365;
+        final targetTier = _mapTier(tierStr);
+
+        final updated = state.user!.copyWith(
+          tier: targetTier,
+          subscriptionExpiry: DateTime.now().add(Duration(days: durationDays)),
+        );
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_userPrefsKey, jsonEncode(updated.toJson()));
+
+        emit(state.copyWith(
+          status: AuthStatus.authenticated,
+          user: updated,
+          successMessage: rpcResult['message'] ?? 'Clé de licence validée sur le serveur !',
+        ));
+        return;
+      } else if (rpcResult['message'] != null &&
+          !rpcResult['message'].toString().contains('Erreur lors de')) {
+        // Legitimate rejection from database
+        emit(state.copyWith(
+          status: AuthStatus.authenticated,
+          errorMessage: rpcResult['message'],
+        ));
+        return;
+      }
+    } catch (e) {
+      debugPrint('Remote RPC activation exception, trying offline fallback: $e');
+    }
+
+    // 2. Offline / Demo Fallback
+    SubscriptionTier fallbackTier;
     int days = 365;
 
     if (key.contains('VIP') || key.contains('ALL') || key.contains('2027')) {
-      targetTier = SubscriptionTier.allAccess;
+      fallbackTier = SubscriptionTier.allAccess;
       days = 500;
     } else if (key.contains('RESIDENT') || key.contains('ELITE')) {
-      targetTier = SubscriptionTier.residentElite;
+      fallbackTier = SubscriptionTier.residentElite;
       days = 365;
     } else if (key.contains('CLINIC') || key.contains('PRO')) {
-      targetTier = SubscriptionTier.clinicalPro;
+      fallbackTier = SubscriptionTier.clinicalPro;
       days = 365;
     } else {
       emit(state.copyWith(
@@ -164,7 +366,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     final updated = state.user!.copyWith(
-      tier: targetTier,
+      tier: fallbackTier,
       subscriptionExpiry: DateTime.now().add(Duration(days: days)),
     );
 
@@ -174,11 +376,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(
       status: AuthStatus.authenticated,
       user: updated,
-      successMessage: 'Clé de licence activée avec succès ! ${targetTier.label} débloqué.',
+      successMessage: 'Licence validée avec succès ! ${fallbackTier.label} activé pour $days jours.',
     ));
   }
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
+    await SupabaseService.signOut();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userPrefsKey);
     emit(const AuthState(status: AuthStatus.unauthenticated));
