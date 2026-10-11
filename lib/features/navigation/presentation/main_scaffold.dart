@@ -6,6 +6,7 @@ import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/models/user_model.dart';
+import '../../admin/presentation/admin_dashboard_screen.dart';
 import '../../clinical/presentation/clinical_screen.dart';
 import '../../dashboard/presentation/dashboard_screen.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
@@ -22,12 +23,13 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
-    DashboardScreen(),
-    ClinicalScreen(),
-    RevisionCatalogScreen(),
-    PracticalToolsScreen(),
-  ];
+  List<Widget> _getPages(bool isAdmin) => [
+        const DashboardScreen(),
+        const ClinicalScreen(),
+        const RevisionCatalogScreen(),
+        const PracticalToolsScreen(),
+        if (isAdmin) const AdminDashboardScreen(),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,10 @@ class _MainScaffoldState extends State<MainScaffold> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         final user = authState.user;
+        final isAdmin = user?.isAdmin == true;
         final tier = user?.tier ?? SubscriptionTier.free;
+        final pages = _getPages(isAdmin);
+        final safeIndex = _currentIndex < pages.length ? _currentIndex : 0;
 
         if (isDesktop) {
           return Scaffold(
@@ -49,7 +54,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                 Expanded(
                   child: Scaffold(
                     appBar: _buildDesktopTopBar(context, tier, user),
-                    body: _pages[_currentIndex],
+                    body: pages[safeIndex],
                   ),
                 ),
               ],
@@ -85,33 +90,39 @@ class _MainScaffoldState extends State<MainScaffold> {
             ],
           ),
           body: IndexedStack(
-            index: _currentIndex,
-            children: _pages,
+            index: safeIndex,
+            children: pages,
           ),
           bottomNavigationBar: NavigationBar(
-            selectedIndex: _currentIndex,
+            selectedIndex: safeIndex,
             onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
-            destinations: const [
-              NavigationDestination(
+            destinations: [
+              const NavigationDestination(
                 icon: Icon(Icons.dashboard_outlined),
                 selectedIcon: Icon(Icons.dashboard_rounded, color: AppTheme.primaryTeal),
                 label: 'Accueil',
               ),
-              NavigationDestination(
+              const NavigationDestination(
                 icon: Icon(Icons.medical_services_outlined),
                 selectedIcon: Icon(Icons.medical_services_rounded, color: AppTheme.primaryTeal),
                 label: 'Clinique',
               ),
-              NavigationDestination(
+              const NavigationDestination(
                 icon: Icon(Icons.school_outlined),
                 selectedIcon: Icon(Icons.school_rounded, color: AppTheme.primaryTeal),
                 label: 'Résidanat',
               ),
-              NavigationDestination(
+              const NavigationDestination(
                 icon: Icon(Icons.handyman_outlined),
                 selectedIcon: Icon(Icons.handyman_rounded, color: AppTheme.primaryTeal),
                 label: 'Outils',
               ),
+              if (isAdmin)
+                const NavigationDestination(
+                  icon: Icon(Icons.admin_panel_settings_outlined),
+                  selectedIcon: Icon(Icons.admin_panel_settings_rounded, color: Color(0xFFDC2626)),
+                  label: 'Admin',
+                ),
             ],
           ),
         );
@@ -264,6 +275,8 @@ class _MainScaffoldState extends State<MainScaffold> {
                 _buildNavItem(1, 'Pratique Clinique', Icons.medical_services_rounded),
                 _buildNavItem(2, 'Formation Résidanat', Icons.school_rounded),
                 _buildNavItem(3, 'Outils Pratiques & Garde', Icons.handyman_rounded),
+                if (user?.isAdmin == true)
+                  _buildNavItem(4, 'Administration 🛡️', Icons.admin_panel_settings_rounded, isSpecial: true),
               ],
             ),
           ),
@@ -302,27 +315,28 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
-  Widget _buildNavItem(int index, String title, IconData icon) {
+  Widget _buildNavItem(int index, String title, IconData icon, {bool isSpecial = false}) {
     final isSelected = _currentIndex == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final highlightColor = isSpecial ? const Color(0xFFDC2626) : AppTheme.primaryTeal;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         selected: isSelected,
-        selectedTileColor: AppTheme.primaryTeal.withValues(alpha: isDark ? 0.2 : 0.1),
+        selectedTileColor: highlightColor.withValues(alpha: isDark ? 0.2 : 0.1),
         leading: Icon(
           icon,
-          color: isSelected ? AppTheme.primaryTeal : Colors.grey.shade500,
+          color: isSelected ? highlightColor : (isSpecial ? const Color(0xFFDC2626) : Colors.grey.shade500),
           size: 20,
         ),
         title: Text(
           title,
           style: TextStyle(
             fontSize: 14,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected ? AppTheme.primaryTeal : (isDark ? Colors.white70 : const Color(0xFF334155)),
+            fontWeight: isSelected ? FontWeight.w700 : (isSpecial ? FontWeight.w600 : FontWeight.w500),
+            color: isSelected ? highlightColor : (isSpecial ? const Color(0xFFDC2626) : (isDark ? Colors.white70 : const Color(0xFF334155))),
           ),
         ),
         onTap: () => setState(() => _currentIndex = index),
@@ -406,6 +420,8 @@ class _MainScaffoldState extends State<MainScaffold> {
         return 'Formation & Préparation Résidanat 2027';
       case 3:
         return 'Applications Pratiques & Mémento de Garde';
+      case 4:
+        return 'Console d\'Administration Medsina';
       default:
         return AppConstants.appName;
     }
@@ -602,6 +618,27 @@ class _MainScaffoldState extends State<MainScaffold> {
                   ],
                 ),
               ),
+
+              if (user?.isAdmin == true) ...[
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFDC2626),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 11),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.admin_panel_settings_rounded, size: 18),
+                    label: const Text('Ouvrir la Console Admin 🛡️', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      setState(() => _currentIndex = 4);
+                    },
+                  ),
+                ),
+              ],
 
               const SizedBox(height: 20),
               // License Key Redemption Box

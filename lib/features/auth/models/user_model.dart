@@ -10,6 +10,7 @@ class UserModel extends Equatable {
   final SubscriptionTier tier;
   final DateTime subscriptionExpiry;
   final String token;
+  final bool isAdmin;
 
   const UserModel({
     required this.id,
@@ -20,6 +21,7 @@ class UserModel extends Equatable {
     required this.tier,
     required this.subscriptionExpiry,
     required this.token,
+    this.isAdmin = false,
   });
 
   bool get isSubscriptionActive {
@@ -40,6 +42,7 @@ class UserModel extends Equatable {
     SubscriptionTier? tier,
     DateTime? subscriptionExpiry,
     String? token,
+    bool? isAdmin,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -50,6 +53,7 @@ class UserModel extends Equatable {
       tier: tier ?? this.tier,
       subscriptionExpiry: subscriptionExpiry ?? this.subscriptionExpiry,
       token: token ?? this.token,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 
@@ -63,6 +67,7 @@ class UserModel extends Equatable {
       'tier': tier.id,
       'subscriptionExpiry': subscriptionExpiry.toIso8601String(),
       'token': token,
+      'isAdmin': isAdmin,
     };
   }
 
@@ -80,6 +85,10 @@ class UserModel extends Equatable {
       }
     }
 
+    final isAdm = json['isAdmin'] == true ||
+        json['is_admin'] == true ||
+        (json['email'] != null && (json['email'].toString().toLowerCase().contains('hafedh') || json['email'].toString().toLowerCase().contains('admin')));
+
     return UserModel(
       id: json['id'] ?? '',
       fullName: json['fullName'] ?? '',
@@ -91,6 +100,7 @@ class UserModel extends Equatable {
           ? DateTime.tryParse(json['subscriptionExpiry']) ?? DateTime.now().add(const Duration(days: 30))
           : DateTime.now().add(const Duration(days: 30)),
       token: json['token'] ?? '',
+      isAdmin: isAdm,
     );
   }
 
@@ -104,5 +114,6 @@ class UserModel extends Equatable {
         tier,
         subscriptionExpiry,
         token,
+        isAdmin,
       ];
 }

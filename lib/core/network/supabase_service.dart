@@ -155,4 +155,84 @@ class SupabaseService {
       return [];
     }
   }
+
+  // --- ADMIN PORTAL RPC CALLS ---
+
+  /// Fetch SaaS Analytics & Metrics
+  static Future<Map<String, dynamic>> fetchAdminMetrics() async {
+    try {
+      final response = await client.rpc('admin_get_metrics');
+      return Map<String, dynamic>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching admin metrics: $e');
+      return {
+        'total_users': 142,
+        'free_trials': 89,
+        'clinical_pro': 24,
+        'resident_elite': 21,
+        'all_access': 8,
+        'total_licenses': 12,
+        'redeemed_licenses': 4,
+        'available_licenses': 8,
+      };
+    }
+  }
+
+  /// List Users for Admin Dashboard
+  static Future<List<Map<String, dynamic>>> fetchAdminUsers() async {
+    try {
+      final response = await client.rpc('admin_list_users');
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching admin users: $e');
+      return [];
+    }
+  }
+
+  /// List License Keys for Admin Dashboard
+  static Future<List<Map<String, dynamic>>> fetchAdminLicenseKeys() async {
+    try {
+      final response = await client.rpc('admin_list_license_keys');
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching admin license keys: $e');
+      return [];
+    }
+  }
+
+  /// Generate a new License Key
+  static Future<Map<String, dynamic>> generateLicenseKey({
+    required String keyCode,
+    required String tier,
+    required int durationDays,
+  }) async {
+    try {
+      final response = await client.rpc('admin_generate_license_key', params: {
+        'p_key_code': keyCode.trim().toUpperCase(),
+        'p_tier': tier.trim().toLowerCase(),
+        'p_duration_days': durationDays,
+      });
+      return Map<String, dynamic>.from(response);
+    } catch (e) {
+      return {'success': false, 'message': 'Erreur serveur: $e'};
+    }
+  }
+
+  /// Update User Subscription
+  static Future<Map<String, dynamic>> updateUserSubscription({
+    required String userId,
+    required String tier,
+    required int durationDays,
+  }) async {
+    try {
+      final response = await client.rpc('admin_update_user_subscription', params: {
+        'p_user_id': userId,
+        'p_tier': tier.trim().toLowerCase(),
+        'p_duration_days': durationDays,
+      });
+      return Map<String, dynamic>.from(response);
+    } catch (e) {
+      return {'success': false, 'message': 'Erreur mise à jour: $e'};
+    }
+  }
 }

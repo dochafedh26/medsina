@@ -60,6 +60,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 ? DateTime.tryParse(sub!['expires_at']) ?? DateTime.now().add(const Duration(days: 30))
                 : DateTime.now().add(const Duration(days: 14));
 
+            final isAdm = profile['is_admin'] == true ||
+                (session.user.email?.toLowerCase().contains('hafedh') == true) ||
+                (session.user.email?.toLowerCase().contains('admin') == true);
+
             final user = UserModel(
               id: userId,
               fullName: profile['full_name'] ?? session.user.email?.split('@').first ?? 'Dr. Medsina',
@@ -69,6 +73,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               tier: tier,
               subscriptionExpiry: expiry,
               token: session.accessToken,
+              isAdmin: isAdm,
             );
 
             await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -138,6 +143,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           }
         }
 
+        final isAdm = (cloudData?['profile']?['is_admin'] == true) ||
+            email.toLowerCase().contains('hafedh') ||
+            email.toLowerCase().contains('admin');
+
         final user = UserModel(
           id: supaUser.id,
           fullName: fullName,
@@ -147,6 +156,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           tier: tier,
           subscriptionExpiry: expiry,
           token: authResponse.session?.accessToken ?? '',
+          isAdmin: isAdm,
         );
 
         await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -274,6 +284,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       tier: SubscriptionTier.allAccess,
       subscriptionExpiry: DateTime(2027, 10, 31),
       token: 'medsina_token_demo_resident_blida',
+      isAdmin: true,
     );
 
     await prefs.setString(_userPrefsKey, jsonEncode(demoUser.toJson()));
