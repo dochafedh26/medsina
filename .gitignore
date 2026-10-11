@@ -6,6 +6,8 @@
 .DS_Store
 .env*
 lib/core/config/app_secrets.dart
+credentials.json
+token.json
 .atom/
 .build/
 .buildlog/
