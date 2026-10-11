@@ -203,7 +203,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                           Icon(Icons.cloud_done_rounded, size: 14, color: Colors.grey.shade500),
                           const SizedBox(width: 6),
                           Text(
-                            'Supabase Cloud PostgreSQL • Résidanat Blida 2027 v${AppConstants.appVersion}',
+                            'Cloud Médical Sécurisé • Résidanat Blida 2027 v${AppConstants.appVersion}',
                             style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                           ),
                         ],
@@ -382,7 +382,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Authentification sécurisée avec chiffrement Supabase et synchronisation multi-appareils.',
+                  'Authentification médicale sécurisée avec chiffrement de bout en bout et synchronisation multi-appareils.',
                   style: TextStyle(fontSize: 11, color: Color(0xFF166534)),
                 ),
               ),
@@ -539,7 +539,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Saisissez votre adresse email pour recevoir un lien sécurisé de réinitialisation via Supabase.',
+              'Saisissez votre adresse email pour recevoir un lien sécurisé de réinitialisation de votre mot de passe.',
               style: TextStyle(fontSize: 13),
             ),
             const SizedBox(height: 14),

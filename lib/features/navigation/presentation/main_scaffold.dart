@@ -283,7 +283,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                         style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
                       ),
                       Text(
-                        'v${AppConstants.appVersion} • Supabase Sync',
+                        'v${AppConstants.appVersion} • Cloud Medsina',
                         style: TextStyle(fontSize: 10, color: Colors.grey.shade400),
                       ),
                     ],
@@ -651,7 +651,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Cloud Supabase PostgreSQL synchronisé avec RLS actif.',
+                        'Serveur Medsina Cloud sécurisé et synchronisé.',
                         style: TextStyle(fontSize: 11, color: isDark ? Colors.white70 : Colors.grey.shade700),
                       ),
                     ),
