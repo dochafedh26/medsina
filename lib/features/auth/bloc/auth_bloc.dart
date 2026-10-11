@@ -60,9 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 ? DateTime.tryParse(sub!['expires_at']) ?? DateTime.now().add(const Duration(days: 30))
                 : DateTime.now().add(const Duration(days: 14));
 
-            final isAdm = profile['is_admin'] == true ||
-                (session.user.email?.toLowerCase().contains('hafedh') == true) ||
-                (session.user.email?.toLowerCase().contains('admin') == true);
+            final isAdm = profile['is_admin'] == true;
 
             final user = UserModel(
               id: userId,
@@ -143,9 +141,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           }
         }
 
-        final isAdm = (cloudData?['profile']?['is_admin'] == true) ||
-            email.toLowerCase().contains('hafedh') ||
-            email.toLowerCase().contains('admin');
+        final isAdm = cloudData?['profile']?['is_admin'] == true;
 
         final user = UserModel(
           id: supaUser.id,

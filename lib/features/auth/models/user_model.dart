@@ -85,9 +85,7 @@ class UserModel extends Equatable {
       }
     }
 
-    final isAdm = json['isAdmin'] == true ||
-        json['is_admin'] == true ||
-        (json['email'] != null && (json['email'].toString().toLowerCase().contains('hafedh') || json['email'].toString().toLowerCase().contains('admin')));
+    final isAdm = json['isAdmin'] == true || json['is_admin'] == true;
 
     return UserModel(
       id: json['id'] ?? '',

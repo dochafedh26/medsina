@@ -59,3 +59,4 @@ class AdminState extends Equatable {
         successMessage,
       ];
 }
+

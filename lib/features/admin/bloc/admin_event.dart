@@ -48,3 +48,4 @@ class UpgradeUserSubscriptionEvent extends AdminEvent {
 }
 
 class ClearAdminMessageEvent extends AdminEvent {}
+

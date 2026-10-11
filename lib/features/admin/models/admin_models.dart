@@ -125,3 +125,4 @@ class AdminLicenseItem extends Equatable {
   @override
   List<Object?> get props => [keyCode, tier, durationDays, isRedeemed, redeemedBy, redeemedAt, createdAt];
 }
+
