@@ -45,6 +45,7 @@ dependencies:
   equatable: ^3.0.0
   supabase_flutter: ^2.18.2
   flutter_markdown: ^0.7.7+1
+  syncfusion_flutter_pdfviewer: ^35.1.39
 
 dev_dependencies:
   flutter_test:

@@ -6,6 +6,7 @@ import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
 import '../models/module_model.dart';
+import 'course_pdf_viewer_screen.dart';
 import 'qcm_study_screen.dart';
 
 class RevisionCatalogScreen extends StatefulWidget {
@@ -246,7 +247,7 @@ class _ModuleCardState extends State<_ModuleCard> {
               const SizedBox(height: 12),
               const Divider(),
               const SizedBox(height: 8),
-              ...m.courses.map((course) => _buildCourseRow(context, course)),
+              ...m.courses.map((course) => _buildCourseRow(context, course, m.name)),
             ],
           ],
         ),
@@ -254,7 +255,7 @@ class _ModuleCardState extends State<_ModuleCard> {
     );
   }
 
-  Widget _buildCourseRow(BuildContext context, CourseModel course) {
+  Widget _buildCourseRow(BuildContext context, CourseModel course, String moduleName) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -303,22 +304,25 @@ class _ModuleCardState extends State<_ModuleCard> {
             ),
             icon: const Icon(Icons.picture_as_pdf_rounded, size: 14),
             label: const Text('PDF', style: TextStyle(fontSize: 11)),
-            onPressed: () async {
-              if (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty) {
-                final uri = Uri.parse(course.pdfDownloadUrl!);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  return;
-                }
-              }
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Support PDF pour "${course.name}" (Synchronisation Google Drive en cours).'),
-                    duration: const Duration(seconds: 2),
+            onPressed: () {
+              if (course.hasPdf || (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty)) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CoursePdfViewerScreen(
+                      course: course,
+                      moduleName: moduleName,
+                    ),
                   ),
                 );
+                return;
               }
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Support PDF pour "${course.name}" en cours de préparation.'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
             },
           ),
           const SizedBox(width: 8),
