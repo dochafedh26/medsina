@@ -1,20 +1,55 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import '../../../core/network/supabase_service.dart';
 import '../models/module_model.dart';
 import '../models/qcm_model.dart';
 
 class ResidencyRepository {
+  static List<MedicalModuleModel> _cachedModules = [];
+
+  /// Loads all 47 official modules, either live from Supabase or from local JSON assets
+  static Future<List<MedicalModuleModel>> loadModulesAsync() async {
+    if (_cachedModules.isNotEmpty) return _cachedModules;
+
+    // 1. Try fetching live from Supabase
+    try {
+      final supaData = await SupabaseService.fetchModules();
+      if (supaData.isNotEmpty) {
+        _cachedModules = supaData.map((m) => MedicalModuleModel.fromJson(m)).toList();
+        return _cachedModules;
+      }
+    } catch (_) {}
+
+    // 2. Fallback to bundled local JSON asset (all 47 modules & 1,205 courses)
+    try {
+      final jsonStr = await rootBundle.loadString('assets/data/modules_catalog_47.json');
+      final list = jsonDecode(jsonStr) as List<dynamic>;
+      _cachedModules = list.map((m) => MedicalModuleModel.fromJson(m as Map<String, dynamic>)).toList();
+      return _cachedModules;
+    } catch (_) {}
+
+    return _fallbackMockModules();
+  }
+
+  /// Synchronous getter with instant fallback
   static List<MedicalModuleModel> getModules() {
+    if (_cachedModules.isNotEmpty) return _cachedModules;
+    return _fallbackMockModules();
+  }
+
+  static List<MedicalModuleModel> _fallbackMockModules() {
     return [
       const MedicalModuleModel(
-        id: 'mod_cardio',
+        id: 'Blida_CARDIOLOGIE',
         name: 'Cardiologie',
-        category: 'Médecine',
-        totalQuestions: 1485,
-        totalCourses: 6,
+        category: 'Clinique & Concours Résidanat',
+        totalQuestions: 1677,
+        totalCourses: 38,
         iconName: 'favorite',
         courses: [
           CourseModel(
             id: 'c_cardio_hta',
-            moduleId: 'mod_cardio',
+            moduleId: 'Blida_CARDIOLOGIE',
             name: 'Hypertension Artérielle de l\'Adulte (HTA)',
             questionsCount: 340,
             hasPdf: true,
@@ -22,269 +57,11 @@ class ResidencyRepository {
           ),
           CourseModel(
             id: 'c_cardio_sca',
-            moduleId: 'mod_cardio',
+            moduleId: 'Blida_CARDIOLOGIE',
             name: 'Syndromes Coronariens Aigus (SCA ST+ / ST-)',
             questionsCount: 412,
             hasPdf: true,
             completedQuestions: 50,
-          ),
-          CourseModel(
-            id: 'c_cardio_ic',
-            moduleId: 'mod_cardio',
-            name: 'Insuffisance Cardiaque Aiguë et Chronique',
-            questionsCount: 295,
-            hasPdf: true,
-            completedQuestions: 12,
-          ),
-          CourseModel(
-            id: 'c_cardio_valvulo',
-            moduleId: 'mod_cardio',
-            name: 'Valvulopathies (Rao, IM, RM, IA)',
-            questionsCount: 210,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_cardio_pericardite',
-            moduleId: 'mod_cardio',
-            name: 'Péricardite Aiguë et Tamponnade',
-            questionsCount: 128,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_cardio_endocardite',
-            moduleId: 'mod_cardio',
-            name: 'Endocardite Infectieuse',
-            questionsCount: 100,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-        ],
-      ),
-      const MedicalModuleModel(
-        id: 'mod_pneumo',
-        name: 'Pneumologie',
-        category: 'Médecine',
-        totalQuestions: 1220,
-        totalCourses: 5,
-        iconName: 'air',
-        courses: [
-          CourseModel(
-            id: 'c_pneumo_asthme',
-            moduleId: 'mod_pneumo',
-            name: 'Asthme de l\'Adulte et Crise Aiguë Grave',
-            questionsCount: 310,
-            hasPdf: true,
-            completedQuestions: 45,
-          ),
-          CourseModel(
-            id: 'c_pneumo_bpco',
-            moduleId: 'mod_pneumo',
-            name: 'Bronchopneumopathie Chronique Obstructive (BPCO)',
-            questionsCount: 285,
-            hasPdf: true,
-            completedQuestions: 18,
-          ),
-          CourseModel(
-            id: 'c_pneumo_pac',
-            moduleId: 'mod_pneumo',
-            name: 'Pneumonies Aiguës Communautaires',
-            questionsCount: 260,
-            hasPdf: true,
-            completedQuestions: 30,
-          ),
-          CourseModel(
-            id: 'c_pneumo_ep',
-            moduleId: 'mod_pneumo',
-            name: 'Embolie Pulmonaire',
-            questionsCount: 245,
-            hasPdf: true,
-            completedQuestions: 15,
-          ),
-          CourseModel(
-            id: 'c_pneumo_pleuresie',
-            moduleId: 'mod_pneumo',
-            name: 'Pleurésies Sérofibrineuses et Purulentes',
-            questionsCount: 120,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-        ],
-      ),
-      const MedicalModuleModel(
-        id: 'mod_neuro',
-        name: 'Neurologie',
-        category: 'Médecine',
-        totalQuestions: 1350,
-        totalCourses: 5,
-        iconName: 'psychology',
-        courses: [
-          CourseModel(
-            id: 'c_neuro_avc',
-            moduleId: 'mod_neuro',
-            name: 'Accidents Vasculaires Cérébraux (Ischémique & Hémorragique)',
-            questionsCount: 420,
-            hasPdf: true,
-            completedQuestions: 60,
-          ),
-          CourseModel(
-            id: 'c_neuro_epilepsie',
-            moduleId: 'mod_neuro',
-            name: 'Épilepsies et État de Mal Épileptique',
-            questionsCount: 310,
-            hasPdf: true,
-            completedQuestions: 20,
-          ),
-          CourseModel(
-            id: 'c_neuro_sep',
-            moduleId: 'mod_neuro',
-            name: 'Sclérose en Plaques (SEP)',
-            questionsCount: 240,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_neuro_parkinson',
-            moduleId: 'mod_neuro',
-            name: 'Maladie de Parkinson et Syndromes Parkinsonniens',
-            questionsCount: 190,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_neuro_meningites',
-            moduleId: 'mod_neuro',
-            name: 'Méningites et Encéphalites Aiguës',
-            questionsCount: 190,
-            hasPdf: true,
-            completedQuestions: 10,
-          ),
-        ],
-      ),
-      const MedicalModuleModel(
-        id: 'mod_gastro',
-        name: 'Hépato-Gastro-Entérologie',
-        category: 'Médecine',
-        totalQuestions: 1180,
-        totalCourses: 4,
-        iconName: 'restaurant',
-        courses: [
-          CourseModel(
-            id: 'c_gastro_cirrhose',
-            moduleId: 'mod_gastro',
-            name: 'Cirrhose du Foie et ses Complications',
-            questionsCount: 350,
-            hasPdf: true,
-            completedQuestions: 15,
-          ),
-          CourseModel(
-            id: 'c_gastro_ugd',
-            moduleId: 'mod_gastro',
-            name: 'Ulcère Gastro-Duodénal et Hémorragies Digestives',
-            questionsCount: 310,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_gastro_mici',
-            moduleId: 'mod_gastro',
-            name: 'Maladies Inflammatoires Chroniques de l\'Intestin (MICI)',
-            questionsCount: 280,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_gastro_pancreatite',
-            moduleId: 'mod_gastro',
-            name: 'Pancréatites Aiguës et Chroniques',
-            questionsCount: 240,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-        ],
-      ),
-      const MedicalModuleModel(
-        id: 'mod_pediatrie',
-        name: 'Pédiatrie',
-        category: 'Médecine',
-        totalQuestions: 1420,
-        totalCourses: 4,
-        iconName: 'child_care',
-        courses: [
-          CourseModel(
-            id: 'c_ped_deshydratation',
-            moduleId: 'mod_pediatrie',
-            name: 'Déshydratation Aiguë du Nourrisson',
-            questionsCount: 380,
-            hasPdf: true,
-            completedQuestions: 25,
-          ),
-          CourseModel(
-            id: 'c_ped_bronchiolite',
-            moduleId: 'mod_pediatrie',
-            name: 'Bronchiolite Aiguë du Nourrisson',
-            questionsCount: 310,
-            hasPdf: true,
-            completedQuestions: 10,
-          ),
-          CourseModel(
-            id: 'c_ped_ictere',
-            moduleId: 'mod_pediatrie',
-            name: 'Ictère Néonatal (Physiologique et Pathologique)',
-            questionsCount: 340,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_ped_rachitisme',
-            moduleId: 'mod_pediatrie',
-            name: 'Rachitisme Carentiel et Carence Martiale',
-            questionsCount: 390,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-        ],
-      ),
-      const MedicalModuleModel(
-        id: 'mod_infectieux',
-        name: 'Maladies Infectieuses',
-        category: 'Médecine',
-        totalQuestions: 980,
-        totalCourses: 4,
-        iconName: 'coronavirus',
-        courses: [
-          CourseModel(
-            id: 'c_inf_tuberculose',
-            moduleId: 'mod_infectieux',
-            name: 'Tuberculose Pulmonaire et Extra-pulmonaire',
-            questionsCount: 320,
-            hasPdf: true,
-            completedQuestions: 12,
-          ),
-          CourseModel(
-            id: 'c_inf_typhoide',
-            moduleId: 'mod_infectieux',
-            name: 'Fièvre Typhoïde et Salmonelloses',
-            questionsCount: 240,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_inf_brucellose',
-            moduleId: 'mod_infectieux',
-            name: 'Brucellose Humaine',
-            questionsCount: 220,
-            hasPdf: true,
-            completedQuestions: 0,
-          ),
-          CourseModel(
-            id: 'c_inf_vih',
-            moduleId: 'mod_infectieux',
-            name: 'Infection par le VIH et Infections Opportunistes',
-            questionsCount: 200,
-            hasPdf: true,
-            completedQuestions: 0,
           ),
         ],
       ),
@@ -295,7 +72,7 @@ class ResidencyRepository {
     return [
       const QcmQuestion(
         id: 'q_001',
-        moduleId: 'mod_cardio',
+        moduleId: 'Blida_CARDIOLOGIE',
         courseId: 'c_cardio_hta',
         courseName: 'Hypertension Artérielle de l\'Adulte',
         type: QuestionType.qcm,
@@ -319,7 +96,7 @@ class ResidencyRepository {
       ),
       const QcmQuestion(
         id: 'q_002',
-        moduleId: 'mod_cardio',
+        moduleId: 'Blida_CARDIOLOGIE',
         courseId: 'c_cardio_hta',
         courseName: 'Hypertension Artérielle de l\'Adulte',
         type: QuestionType.qcs,
@@ -346,7 +123,7 @@ class ResidencyRepository {
       ),
       const QcmQuestion(
         id: 'q_003',
-        moduleId: 'mod_cardio',
+        moduleId: 'Blida_CARDIOLOGIE',
         courseId: 'c_cardio_sca',
         courseName: 'Syndromes Coronariens Aigus',
         type: QuestionType.casClinique,

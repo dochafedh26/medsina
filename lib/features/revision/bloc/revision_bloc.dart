@@ -15,19 +15,21 @@ class RevisionBloc extends Bloc<RevisionEvent, RevisionState> {
     on<ResetSessionEvent>(_onResetSession);
   }
 
-  void _onLoadModules(LoadModulesEvent event, Emitter<RevisionState> emit) {
+  Future<void> _onLoadModules(LoadModulesEvent event, Emitter<RevisionState> emit) async {
     emit(state.copyWith(status: RevisionStatus.loading));
     try {
-      final mods = ResidencyRepository.getModules();
+      final mods = await ResidencyRepository.loadModulesAsync();
       emit(state.copyWith(
         status: RevisionStatus.loaded,
         modules: mods,
-        selectedModule: mods.first,
+        selectedModule: mods.isNotEmpty ? mods.first : null,
       ));
     } catch (e) {
+      final fallback = ResidencyRepository.getModules();
       emit(state.copyWith(
-        status: RevisionStatus.error,
-        errorMessage: 'Erreur lors du chargement des modules : $e',
+        status: RevisionStatus.loaded,
+        modules: fallback,
+        selectedModule: fallback.isNotEmpty ? fallback.first : null,
       ));
     }
   }

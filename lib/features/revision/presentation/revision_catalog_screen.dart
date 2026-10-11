@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_theme.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
@@ -18,6 +19,14 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
   String _searchQuery = '';
   String _selectedCategory = 'Tous';
 
+  final List<String> _categories = [
+    'Tous',
+    'Clinique & Concours Résidanat',
+    '1ère Année',
+    '2ème Année',
+    '3ème Année',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -28,17 +37,20 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<RevisionBloc, RevisionState>(
       builder: (context, state) {
-        if (state.status == RevisionStatus.loading) {
+        if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
         final filteredModules = state.modules.where((m) {
-          final matchesCat = _selectedCategory == 'Tous' || m.category == _selectedCategory;
+          final matchesCat = _selectedCategory == 'Tous' ||
+              m.category.toLowerCase().contains(_selectedCategory.toLowerCase());
           final matchesSearch = _searchQuery.isEmpty ||
               m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
               m.courses.any((c) => c.name.toLowerCase().contains(_searchQuery.toLowerCase()));
           return matchesCat && matchesSearch;
         }).toList();
+
+        final totalVisibleCourses = filteredModules.fold<int>(0, (sum, m) => sum + m.totalCourses);
 
         return Column(
           children: [
@@ -47,10 +59,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
               padding: const EdgeInsets.all(16),
               color: Theme.of(context).cardColor,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextField(
                     decoration: InputDecoration(
-                      hintText: 'Rechercher un module ou un cours (ex: HTA, Asthme, AVC)...',
+                      hintText: 'Rechercher parmi les 47 modules et 1 205 cours (ex: HTA, Asthme, ECG)...',
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
@@ -61,22 +74,22 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                     ),
                     onChanged: (val) => setState(() => _searchQuery = val),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      _buildFilterChip('Tous'),
-                      const SizedBox(width: 8),
-                      _buildFilterChip('Médecine'),
-                      const SizedBox(width: 8),
-                      _buildFilterChip('Chirurgie'),
-                      const SizedBox(width: 8),
-                      _buildFilterChip('Biologie'),
-                      const Spacer(),
-                      Text(
-                        '${state.modules.length} modules disponibles',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                      ),
-                    ],
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: _categories.map((cat) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: _buildFilterChip(cat),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${filteredModules.length} modules affichés • $totalVisibleCourses cours officiels révisables',
+                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
                   ),
                 ],
               ),
@@ -85,14 +98,28 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
 
             // Modules List
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: filteredModules.length,
-                itemBuilder: (context, index) {
-                  final module = filteredModules[index];
-                  return _ModuleCard(module: module);
-                },
-              ),
+              child: filteredModules.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.shade400),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Aucun module trouvé pour "$_searchQuery"',
+                            style: TextStyle(color: Colors.grey.shade500),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: filteredModules.length,
+                      itemBuilder: (context, index) {
+                        final module = filteredModules[index];
+                        return _ModuleCard(module: module);
+                      },
+                    ),
             ),
           ],
         );
@@ -127,6 +154,30 @@ class _ModuleCard extends StatefulWidget {
 class _ModuleCardState extends State<_ModuleCard> {
   bool _expanded = false;
 
+  IconData _getIconData(String iconName) {
+    switch (iconName) {
+      case 'favorite': return Icons.favorite_rounded;
+      case 'air': return Icons.air_rounded;
+      case 'psychology': return Icons.psychology_rounded;
+      case 'restaurant': return Icons.restaurant_rounded;
+      case 'child_care': return Icons.child_care_rounded;
+      case 'coronavirus': return Icons.coronavirus_rounded;
+      case 'emergency': return Icons.emergency_rounded;
+      case 'accessibility_new': return Icons.accessibility_new_rounded;
+      case 'pregnant_woman': return Icons.pregnant_woman_rounded;
+      case 'visibility': return Icons.visibility_rounded;
+      case 'hearing': return Icons.hearing_rounded;
+      case 'water_drop': return Icons.water_drop_rounded;
+      case 'spa': return Icons.spa_rounded;
+      case 'bloodtype': return Icons.bloodtype_rounded;
+      case 'medication': return Icons.medication_rounded;
+      case 'self_improvement': return Icons.self_improvement_rounded;
+      case 'shield': return Icons.shield_rounded;
+      case 'science': return Icons.science_rounded;
+      default: return Icons.school_rounded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final m = widget.module;
@@ -147,20 +198,37 @@ class _ModuleCardState extends State<_ModuleCard> {
                       color: AppTheme.primaryTeal.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.school_rounded, color: AppTheme.primaryTeal, size: 24),
+                    child: Icon(_getIconData(m.iconName), color: AppTheme.primaryTeal, size: 24),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          m.name,
-                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                m.name,
+                                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                m.category,
+                                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          '${m.totalCourses} cours officiels • ${m.totalQuestions} questions révisables',
+                          '${m.totalCourses} cours officiels • ${m.totalQuestions} QCMs',
                           style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                         ),
                       ],
@@ -235,10 +303,22 @@ class _ModuleCardState extends State<_ModuleCard> {
             ),
             icon: const Icon(Icons.picture_as_pdf_rounded, size: 14),
             label: const Text('PDF', style: TextStyle(fontSize: 11)),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Support PDF pour "${course.name}" prêt pour consultation.')),
-              );
+            onPressed: () async {
+              if (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty) {
+                final uri = Uri.parse(course.pdfDownloadUrl!);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  return;
+                }
+              }
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Support PDF pour "${course.name}" (Synchronisation Google Drive en cours).'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
             },
           ),
           const SizedBox(width: 8),

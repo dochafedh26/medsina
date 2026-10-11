@@ -51,3 +51,4 @@ class MedicalTextFormatter {
     return text.trim();
   }
 }
+

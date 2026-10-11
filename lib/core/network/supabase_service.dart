@@ -110,6 +110,7 @@ class SupabaseService {
       final response = await client
           .from('medical_modules')
           .select('*, courses(*)')
+          .not('id', 'like', 'mod_%')
           .order('display_order', ascending: true);
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {

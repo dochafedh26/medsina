@@ -42,6 +42,28 @@ class CourseModel extends Equatable {
     );
   }
 
+  factory CourseModel.fromJson(Map<String, dynamic> json) {
+    return CourseModel(
+      id: json['id'] as String,
+      moduleId: (json['module_id'] ?? json['moduleId'] ?? '') as String,
+      name: (json['name'] ?? '') as String,
+      questionsCount: (json['questions_count'] ?? json['questionsCount'] ?? 0) as int,
+      hasPdf: (json['has_pdf'] ?? json['hasPdf'] ?? true) as bool,
+      pdfDownloadUrl: (json['pdf_url'] ?? json['pdfDownloadUrl']) as String?,
+      completedQuestions: (json['completedQuestions'] ?? 0) as int,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'moduleId': moduleId,
+        'name': name,
+        'questionsCount': questionsCount,
+        'hasPdf': hasPdf,
+        'pdfDownloadUrl': pdfDownloadUrl,
+        'completedQuestions': completedQuestions,
+      };
+
   @override
   List<Object?> get props => [
         id,
@@ -57,7 +79,7 @@ class CourseModel extends Equatable {
 class MedicalModuleModel extends Equatable {
   final String id;
   final String name;
-  final String category; // 'Médecine', 'Chirurgie', 'Biologie / Fondamental'
+  final String category; // '1ère Année (Fondamental)', 'Clinique & Concours Résidanat', etc.
   final int totalQuestions;
   final int totalCourses;
   final List<CourseModel> courses;
@@ -72,6 +94,29 @@ class MedicalModuleModel extends Equatable {
     required this.courses,
     this.iconName = 'medical',
   });
+
+  factory MedicalModuleModel.fromJson(Map<String, dynamic> json) {
+    final rawCourses = json['courses'] as List<dynamic>? ?? [];
+    return MedicalModuleModel(
+      id: json['id'] as String,
+      name: (json['name'] ?? '') as String,
+      category: (json['category'] ?? 'Clinique & Concours Résidanat') as String,
+      totalQuestions: (json['total_questions'] ?? json['totalQuestions'] ?? 0) as int,
+      totalCourses: (json['total_courses'] ?? json['totalCourses'] ?? rawCourses.length) as int,
+      iconName: (json['icon_name'] ?? json['iconName'] ?? 'medical') as String,
+      courses: rawCourses.map((c) => CourseModel.fromJson(c as Map<String, dynamic>)).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'category': category,
+        'totalQuestions': totalQuestions,
+        'totalCourses': totalCourses,
+        'iconName': iconName,
+        'courses': courses.map((c) => c.toJson()).toList(),
+      };
 
   int get totalCompletedQuestions =>
       courses.fold(0, (sum, c) => sum + c.completedQuestions);
