@@ -7,6 +7,7 @@ class CourseModel extends Equatable {
   final int questionsCount;
   final bool hasPdf;
   final String? pdfDownloadUrl;
+  final String? pdfDriveId;
   final int completedQuestions;
 
   const CourseModel({
@@ -16,6 +17,7 @@ class CourseModel extends Equatable {
     required this.questionsCount,
     this.hasPdf = true,
     this.pdfDownloadUrl,
+    this.pdfDriveId,
     this.completedQuestions = 0,
   });
 
@@ -29,6 +31,7 @@ class CourseModel extends Equatable {
     int? questionsCount,
     bool? hasPdf,
     String? pdfDownloadUrl,
+    String? pdfDriveId,
     int? completedQuestions,
   }) {
     return CourseModel(
@@ -38,6 +41,7 @@ class CourseModel extends Equatable {
       questionsCount: questionsCount ?? this.questionsCount,
       hasPdf: hasPdf ?? this.hasPdf,
       pdfDownloadUrl: pdfDownloadUrl ?? this.pdfDownloadUrl,
+      pdfDriveId: pdfDriveId ?? this.pdfDriveId,
       completedQuestions: completedQuestions ?? this.completedQuestions,
     );
   }
@@ -50,6 +54,7 @@ class CourseModel extends Equatable {
       questionsCount: (json['questions_count'] ?? json['questionsCount'] ?? 0) as int,
       hasPdf: (json['has_pdf'] ?? json['hasPdf'] ?? true) as bool,
       pdfDownloadUrl: (json['pdf_url'] ?? json['pdfDownloadUrl']) as String?,
+      pdfDriveId: (json['pdf_drive_id'] ?? json['pdfDriveId']) as String?,
       completedQuestions: (json['completedQuestions'] ?? 0) as int,
     );
   }
@@ -61,6 +66,7 @@ class CourseModel extends Equatable {
         'questionsCount': questionsCount,
         'hasPdf': hasPdf,
         'pdfDownloadUrl': pdfDownloadUrl,
+        'pdfDriveId': pdfDriveId,
         'completedQuestions': completedQuestions,
       };
 
@@ -72,6 +78,7 @@ class CourseModel extends Equatable {
         questionsCount,
         hasPdf,
         pdfDownloadUrl,
+        pdfDriveId,
         completedQuestions,
       ];
 }
