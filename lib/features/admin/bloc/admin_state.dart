@@ -9,6 +9,12 @@ class AdminState extends Equatable {
   final List<AdminUserItem> users;
   final List<AdminUserItem> filteredUsers;
   final List<AdminLicenseItem> licenses;
+  final List<SubscriptionPlanItem> plans;
+  final List<PaymentItem> payments;
+  final List<PaymentItem> filteredPayments;
+  final String paymentStatusFilter;
+  final FinancialMetrics? financialMetrics;
+  final List<AnnouncementItem> announcements;
   final String searchQuery;
   final String? errorMessage;
   final String? successMessage;
@@ -19,6 +25,12 @@ class AdminState extends Equatable {
     this.users = const [],
     this.filteredUsers = const [],
     this.licenses = const [],
+    this.plans = const [],
+    this.payments = const [],
+    this.filteredPayments = const [],
+    this.paymentStatusFilter = 'all',
+    this.financialMetrics,
+    this.announcements = const [],
     this.searchQuery = '',
     this.errorMessage,
     this.successMessage,
@@ -30,6 +42,12 @@ class AdminState extends Equatable {
     List<AdminUserItem>? users,
     List<AdminUserItem>? filteredUsers,
     List<AdminLicenseItem>? licenses,
+    List<SubscriptionPlanItem>? plans,
+    List<PaymentItem>? payments,
+    List<PaymentItem>? filteredPayments,
+    String? paymentStatusFilter,
+    FinancialMetrics? financialMetrics,
+    List<AnnouncementItem>? announcements,
     String? searchQuery,
     String? errorMessage,
     String? successMessage,
@@ -41,6 +59,12 @@ class AdminState extends Equatable {
       users: users ?? this.users,
       filteredUsers: filteredUsers ?? this.filteredUsers,
       licenses: licenses ?? this.licenses,
+      plans: plans ?? this.plans,
+      payments: payments ?? this.payments,
+      filteredPayments: filteredPayments ?? this.filteredPayments,
+      paymentStatusFilter: paymentStatusFilter ?? this.paymentStatusFilter,
+      financialMetrics: financialMetrics ?? this.financialMetrics,
+      announcements: announcements ?? this.announcements,
       searchQuery: searchQuery ?? this.searchQuery,
       errorMessage: clearMessages ? null : (errorMessage ?? this.errorMessage),
       successMessage: clearMessages ? null : (successMessage ?? this.successMessage),
@@ -54,6 +78,12 @@ class AdminState extends Equatable {
         users,
         filteredUsers,
         licenses,
+        plans,
+        payments,
+        filteredPayments,
+        paymentStatusFilter,
+        financialMetrics,
+        announcements,
         searchQuery,
         errorMessage,
         successMessage,

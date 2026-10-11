@@ -235,4 +235,313 @@ class SupabaseService {
       return {'success': false, 'message': 'Erreur mise à jour: $e'};
     }
   }
+
+  // --- DYNAMIC PRICING & PLANS ---
+
+  /// Default local plans in case cloud table is not yet created
+  static List<Map<String, dynamic>> get defaultPlans => [
+        {
+          'id': 'free',
+          'name': 'Pass Découverte',
+          'badge': 'GRATUIT',
+          'price_yearly': 0.0,
+          'price_monthly': 0.0,
+          'currency': 'DZD',
+          'discount_percent': 0,
+          'is_active': true,
+          'features': [
+            '2 modules d\'initiation au résidanat (50 QCMs)',
+            'Scores médicaux de base',
+            'Consultation des cours PDF en ligne',
+          ],
+        },
+        {
+          'id': 'clinical_pro',
+          'name': 'Pass Clinique Pro',
+          'badge': 'INTERNES & PRATICIENS',
+          'price_yearly': 10000.0,
+          'price_monthly': 1200.0,
+          'currency': 'DZD',
+          'discount_percent': 15,
+          'is_active': true,
+          'features': [
+            'Toutes les Conduites à Tenir (CAT) par spécialité',
+            'Arbres décisionnels et protocoles d\'urgence vitale',
+            'Tous les scores et calculateurs médicaux',
+            'Mémento de garde hospitalière et fiches réflexes',
+            'Normes de laboratoire complètes avec interprétations',
+          ],
+        },
+        {
+          'id': 'resident_elite',
+          'name': 'Pass Résident Élite',
+          'badge': 'SPÉCIAL CONCOURS',
+          'price_yearly': 15000.0,
+          'price_monthly': 1800.0,
+          'currency': 'DZD',
+          'discount_percent': 20,
+          'is_active': true,
+          'features': [
+            'Les 47 modules officiels de préparation au Résidanat',
+            'Simulateur d\'examens blancs chronométrés',
+            'Téléchargement des supports officiels de cours PDF',
+            'Exports Anki et PDF',
+            'CAT d\'urgences essentielles',
+          ],
+        },
+        {
+          'id': 'all_access',
+          'name': 'Medsina All-Access (VIP)',
+          'badge': 'RECOMMANDÉ • SUITE COMPLÈTE',
+          'price_yearly': 20000.0,
+          'price_monthly': 2500.0,
+          'currency': 'DZD',
+          'discount_percent': 30,
+          'is_active': true,
+          'features': [
+            'Accès illimité aux 47 modules du Résidanat Blida & National',
+            'Banque complète de 6 240+ QCMs avec corrigés détaillés',
+            'Téléchargement de TOUS les cours officiels en PDF',
+            'Accès complet au volet Pratique Clinique & Garde',
+            'Tous les calculateurs médicaux (Glasgow, Wells, Cockcroft)',
+            'Exports illimités vers Anki et PDF imprimable sans watermark',
+            'Mode hors-ligne complet sur PC, Mobile et Web',
+          ],
+        },
+      ];
+
+  /// Fetch subscription plans from Supabase or fallback
+  static Future<List<Map<String, dynamic>>> fetchSubscriptionPlans() async {
+    try {
+      final response = await client
+          .from('subscription_plans')
+          .select()
+          .order('price_yearly', ascending: true);
+      if (response.isNotEmpty) {
+        return List<Map<String, dynamic>>.from(response);
+      }
+    } catch (e) {
+      debugPrint('Error fetching subscription plans from Cloud: $e');
+    }
+    return defaultPlans;
+  }
+
+  /// Update subscription plan price and settings
+  static Future<bool> updateSubscriptionPlan({
+    required String planId,
+    required double priceYearly,
+    required double priceMonthly,
+    required int discountPercent,
+    required String badge,
+    required bool isActive,
+  }) async {
+    try {
+      await client.from('subscription_plans').update({
+        'price_yearly': priceYearly,
+        'price_monthly': priceMonthly,
+        'discount_percent': discountPercent,
+        'badge': badge,
+        'is_active': isActive,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('id', planId);
+      return true;
+    } catch (e) {
+      debugPrint('Error updating plan: $e');
+      return false;
+    }
+  }
+
+  // --- PAYMENTS & TRANSACTIONS ---
+
+  /// Fetch all payments for Admin
+  static Future<List<Map<String, dynamic>>> fetchPayments() async {
+    try {
+      final response = await client
+          .from('payments')
+          .select()
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching payments from Cloud: $e');
+      return [];
+    }
+  }
+
+  /// Submit a payment receipt from user (e.g. BaridiMob or CCP receipt)
+  static Future<bool> submitPaymentRequest({
+    required String userId,
+    required String userEmail,
+    required String userName,
+    required String tier,
+    required int durationDays,
+    required double amount,
+    required String paymentMethod,
+    required String receiptReference,
+  }) async {
+    try {
+      await client.from('payments').insert({
+        'user_id': userId,
+        'user_email': userEmail,
+        'user_name': userName,
+        'tier': tier,
+        'duration_days': durationDays,
+        'amount': amount,
+        'currency': 'DZD',
+        'payment_method': paymentMethod,
+        'receipt_reference': receiptReference,
+        'status': 'pending',
+      });
+      return true;
+    } catch (e) {
+      debugPrint('Error submitting payment: $e');
+      return false;
+    }
+  }
+
+  /// Approve payment and automatically activate/upgrade user subscription
+  static Future<bool> approvePayment({
+    required String paymentId,
+    required String? userId,
+    required String tier,
+    required int durationDays,
+    String? adminNotes,
+  }) async {
+    try {
+      // 1. Update payment status to approved
+      await client.from('payments').update({
+        'status': 'approved',
+        'admin_notes': adminNotes,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('id', paymentId);
+
+      // 2. Automatically upgrade user subscription if userId is present
+      if (userId != null && userId.isNotEmpty) {
+        await updateUserSubscription(
+          userId: userId,
+          tier: tier,
+          durationDays: durationDays,
+        );
+      }
+      return true;
+    } catch (e) {
+      debugPrint('Error approving payment: $e');
+      return false;
+    }
+  }
+
+  /// Reject payment with admin notes
+  static Future<bool> rejectPayment({
+    required String paymentId,
+    required String adminNotes,
+  }) async {
+    try {
+      await client.from('payments').update({
+        'status': 'rejected',
+        'admin_notes': adminNotes,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('id', paymentId);
+      return true;
+    } catch (e) {
+      debugPrint('Error rejecting payment: $e');
+      return false;
+    }
+  }
+
+  /// Record a manual payment (Cash, Direct BaridiMob, External Transfer)
+  static Future<bool> recordManualPayment({
+    required String? userId,
+    required String userEmail,
+    required String userName,
+    required String tier,
+    required int durationDays,
+    required double amount,
+    required String paymentMethod,
+    required String receiptReference,
+    String? adminNotes,
+  }) async {
+    try {
+      await client.from('payments').insert({
+        'user_id': userId,
+        'user_email': userEmail,
+        'user_name': userName,
+        'tier': tier,
+        'duration_days': durationDays,
+        'amount': amount,
+        'currency': 'DZD',
+        'payment_method': paymentMethod,
+        'receipt_reference': receiptReference,
+        'status': 'approved',
+        'admin_notes': adminNotes,
+      });
+
+      if (userId != null && userId.isNotEmpty) {
+        await updateUserSubscription(
+          userId: userId,
+          tier: tier,
+          durationDays: durationDays,
+        );
+      }
+      return true;
+    } catch (e) {
+      debugPrint('Error recording manual payment: $e');
+      return false;
+    }
+  }
+
+  // --- SYSTEM ANNOUNCEMENTS ---
+
+  static Future<List<Map<String, dynamic>>> fetchAnnouncements() async {
+    try {
+      final response = await client
+          .from('system_announcements')
+          .select()
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching announcements: $e');
+      return [];
+    }
+  }
+
+  static Future<bool> createAnnouncement({
+    required String title,
+    required String message,
+    required String type,
+  }) async {
+    try {
+      await client.from('system_announcements').insert({
+        'title': title,
+        'message': message,
+        'type': type,
+        'is_active': true,
+      });
+      return true;
+    } catch (e) {
+      debugPrint('Error creating announcement: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> toggleAnnouncement(String id, bool isActive) async {
+    try {
+      await client
+          .from('system_announcements')
+          .update({'is_active': isActive})
+          .eq('id', id);
+      return true;
+    } catch (e) {
+      debugPrint('Error toggling announcement: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> deleteAnnouncement(String id) async {
+    try {
+      await client.from('system_announcements').delete().eq('id', id);
+      return true;
+    } catch (e) {
+      debugPrint('Error deleting announcement: $e');
+      return false;
+    }
+  }
 }

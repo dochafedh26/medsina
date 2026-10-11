@@ -22,7 +22,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     context.read<AdminBloc>().add(LoadAdminDataEvent());
   }
 
@@ -79,7 +79,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
                     ),
                     Text(
-                      'Supervision SaaS • Utilisateurs & Licences',
+                      'Supervision SaaS • Utilisateurs, Paiements & Tarifs',
                       style: TextStyle(fontSize: 10.5, color: Colors.grey),
                     ),
                   ],
@@ -104,9 +104,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
               tabs: const [
                 Tab(icon: Icon(Icons.analytics_outlined), text: 'Métriques & KPIs'),
-                Tab(icon: Icon(Icons.people_outline_rounded), text: 'Médecins & Abonnements'),
-                Tab(icon: Icon(Icons.vpn_key_outlined), text: 'Générateur de Licences'),
-                Tab(icon: Icon(Icons.library_books_outlined), text: 'Catalogue Médical'),
+                Tab(icon: Icon(Icons.people_outline_rounded), text: 'Médecins & Comptes'),
+                Tab(icon: Icon(Icons.payments_outlined), text: 'Paiements & Facturation 💳'),
+                Tab(icon: Icon(Icons.sell_outlined), text: 'Tarifs & Formules 🏷️'),
+                Tab(icon: Icon(Icons.vpn_key_outlined), text: 'Clés de Licence VIP'),
+                Tab(icon: Icon(Icons.campaign_outlined), text: 'Annonces & Système 📢'),
               ],
             ),
           ),
@@ -117,8 +119,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   children: [
                     _buildOverviewTab(context, state, isDark),
                     _buildUsersTab(context, state, isDark),
+                    _buildPaymentsTab(context, state, isDark),
+                    _buildPricingPlansTab(context, state, isDark),
                     _buildLicensesTab(context, state, isDark),
-                    _buildContentTab(context, isDark),
+                    _buildSystemAndAnnouncementsTab(context, state, isDark),
                   ],
                 ),
         );
@@ -145,6 +149,58 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        // Financial Revenue Banner
+        Card(
+          elevation: isDark ? 0 : 2,
+          color: isDark ? const Color(0xFF064E3B).withValues(alpha: 0.3) : const Color(0xFFF0FDF4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: const Color(0xFF16A34A).withValues(alpha: 0.4)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF16A34A).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.account_balance_wallet_rounded, color: Color(0xFF16A34A), size: 26),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Chiffre d\'Affaires Encaissé',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey),
+                      ),
+                      Text(
+                        '${(state.financialMetrics?.totalRevenue ?? 0).toStringAsFixed(0)} DZD',
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Color(0xFF16A34A)),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text('En attente', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                    Text(
+                      '${(state.financialMetrics?.pendingRevenue ?? 0).toStringAsFixed(0)} DZD',
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFFD97706)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+
         // Top 4 Metric Cards
         Row(
           children: [
@@ -815,11 +871,508 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     );
   }
 
-  // --- TAB 4 : CONTENT & HEALTH ---
-  Widget _buildContentTab(BuildContext context, bool isDark) {
+  // --- TAB 3 : PAYMENTS & TRANSACTIONS ---
+  Widget _buildPaymentsTab(BuildContext context, AdminState state, bool isDark) {
+    final fm = state.financialMetrics ??
+        const FinancialMetrics(
+          totalRevenue: 0,
+          pendingRevenue: 0,
+          totalTransactions: 0,
+          approvedCount: 0,
+          pendingCount: 0,
+          rejectedCount: 0,
+        );
+
+    final payments = state.filteredPayments;
+
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        // Financial Metrics Header
+        Row(
+          children: [
+            Expanded(
+              child: _buildMetricCard(
+                'Revenu Total Encaissé',
+                '${fm.totalRevenue.toStringAsFixed(0)} DZD',
+                Icons.check_circle_rounded,
+                const Color(0xFF16A34A),
+                isDark,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildMetricCard(
+                'En Attente de Validation',
+                '${fm.pendingRevenue.toStringAsFixed(0)} DZD',
+                Icons.pending_actions_rounded,
+                const Color(0xFFD97706),
+                isDark,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildMetricCard(
+                'Transactions',
+                '${fm.totalTransactions}',
+                Icons.receipt_long_rounded,
+                const Color(0xFF2563EB),
+                isDark,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+
+        // Action & Filter Bar
+        Row(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildFilterChip(context, 'Tous (${state.payments.length})', 'all', state.paymentStatusFilter),
+                    const SizedBox(width: 8),
+                    _buildFilterChip(context, 'En attente (${fm.pendingCount})', 'pending', state.paymentStatusFilter),
+                    const SizedBox(width: 8),
+                    _buildFilterChip(context, 'Validés (${fm.approvedCount})', 'approved', state.paymentStatusFilter),
+                    const SizedBox(width: 8),
+                    _buildFilterChip(context, 'Rejetés (${fm.rejectedCount})', 'rejected', state.paymentStatusFilter),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryTeal,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              ),
+              icon: const Icon(Icons.add_rounded, size: 18),
+              label: const Text('Enregistrer Paiement', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
+              onPressed: () => _showManualPaymentDialog(context),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        if (payments.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(32),
+            alignment: Alignment.center,
+            child: Column(
+              children: [
+                Icon(Icons.payment_outlined, size: 48, color: Colors.grey.shade400),
+                const SizedBox(height: 12),
+                Text(
+                  state.payments.isEmpty
+                      ? 'Aucun paiement enregistré pour l\'instant.'
+                      : 'Aucun paiement dans cette catégorie.',
+                  style: TextStyle(color: Colors.grey.shade500),
+                ),
+              ],
+            ),
+          )
+        else
+          ...payments.map((p) => _buildPaymentCard(context, p, isDark)),
+      ],
+    );
+  }
+
+  Widget _buildFilterChip(BuildContext context, String label, String statusKey, String currentFilter) {
+    final isSelected = currentFilter == statusKey;
+    return ChoiceChip(
+      label: Text(label, style: TextStyle(fontSize: 12, fontWeight: isSelected ? FontWeight.bold : FontWeight.w500)),
+      selected: isSelected,
+      selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
+      onSelected: (_) => context.read<AdminBloc>().add(FilterPaymentsEvent(statusKey)),
+    );
+  }
+
+  Widget _buildPaymentCard(BuildContext context, PaymentItem payment, bool isDark) {
+    Color statusColor;
+    String statusLabel;
+    IconData statusIcon;
+
+    switch (payment.status) {
+      case 'approved':
+        statusColor = const Color(0xFF16A34A);
+        statusLabel = 'Validé & Actif';
+        statusIcon = Icons.check_circle_rounded;
+        break;
+      case 'rejected':
+        statusColor = const Color(0xFFDC2626);
+        statusLabel = 'Rejeté';
+        statusIcon = Icons.cancel_rounded;
+        break;
+      default:
+        statusColor = const Color(0xFFD97706);
+        statusLabel = 'En attente de vérification';
+        statusIcon = Icons.hourglass_top_rounded;
+    }
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: payment.status == 'pending' ? const Color(0xFFD97706).withValues(alpha: 0.5) : (isDark ? AppTheme.darkBorder : AppTheme.lightBorder),
+          width: payment.status == 'pending' ? 1.5 : 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // Method badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2563EB).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.account_balance_rounded, size: 14, color: Color(0xFF2563EB)),
+                      const SizedBox(width: 4),
+                      Text(
+                        payment.paymentMethod.toUpperCase(),
+                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: Color(0xFF2563EB)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${payment.amount.toStringAsFixed(0)} ${payment.currency}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: statusColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(statusIcon, size: 13, color: statusColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        statusLabel,
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '${payment.userName} • ${payment.userEmail}',
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  'Formule : ${payment.tier.toUpperCase()} (${payment.durationDays} jours)',
+                  style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600),
+                ),
+                if (payment.receiptReference != null && payment.receiptReference!.isNotEmpty) ...[
+                  const SizedBox(width: 8),
+                  Text('• Réf: ${payment.receiptReference}', style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                ],
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Date : ${payment.createdAt.day}/${payment.createdAt.month}/${payment.createdAt.year} à ${payment.createdAt.hour}h${payment.createdAt.minute.toString().padLeft(2, '0')}',
+              style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
+            ),
+            if (payment.status == 'pending') ...[
+              const SizedBox(height: 12),
+              const Divider(height: 1),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFDC2626),
+                      side: const BorderSide(color: Color(0xFFDC2626)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    icon: const Icon(Icons.close_rounded, size: 16),
+                    label: const Text('Rejeter', style: TextStyle(fontSize: 12)),
+                    onPressed: () => _showRejectPaymentDialog(context, payment),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF16A34A),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    ),
+                    icon: const Icon(Icons.check_rounded, size: 16),
+                    label: const Text('Valider & Activer l\'Abonnement', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    onPressed: () {
+                      context.read<AdminBloc>().add(
+                            ApprovePaymentEvent(
+                              paymentId: payment.id,
+                              userId: payment.userId,
+                              tier: payment.tier,
+                              durationDays: payment.durationDays,
+                              adminNotes: 'Validé par Admin via console',
+                            ),
+                          );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- TAB 4 : PRICING PLANS & OFFERS ---
+  Widget _buildPricingPlansTab(BuildContext context, AdminState state, bool isDark) {
+    final plans = state.plans.isNotEmpty
+        ? state.plans
+        : [
+            const SubscriptionPlanItem(id: 'free', name: 'Pass Découverte', badge: 'GRATUIT', priceYearly: 0, priceMonthly: 0),
+            const SubscriptionPlanItem(id: 'clinical_pro', name: 'Pass Clinique Pro', badge: 'INTERNES & PRATICIENS', priceYearly: 10000, priceMonthly: 1200, discountPercent: 15),
+            const SubscriptionPlanItem(id: 'resident_elite', name: 'Pass Résident Élite', badge: 'SPÉCIAL CONCOURS', priceYearly: 15000, priceMonthly: 1800, discountPercent: 20),
+            const SubscriptionPlanItem(id: 'all_access', name: 'Medsina All-Access (VIP)', badge: 'RECOMMANDÉ • SUITE COMPLÈTE', priceYearly: 20000, priceMonthly: 2500, discountPercent: 30),
+          ];
+
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        Card(
+          elevation: isDark ? 0 : 2,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.price_change_rounded, color: AppTheme.primaryTeal, size: 28),
+                ),
+                const SizedBox(width: 14),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Gestionnaire Dynamique des Tarifs & Offres',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Modifiez les prix annuels/mensuels, remises et badges en temps réel sans mise à jour de l\'application.',
+                        style: TextStyle(fontSize: 11.5, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 18),
+
+        ...plans.map((plan) => _buildPlanEditorCard(context, plan, isDark)),
+      ],
+    );
+  }
+
+  Widget _buildPlanEditorCard(BuildContext context, SubscriptionPlanItem plan, bool isDark) {
+    Color planColor;
+    switch (plan.id) {
+      case 'all_access':
+        planColor = const Color(0xFF8B5CF6);
+        break;
+      case 'resident_elite':
+        planColor = AppTheme.primaryTeal;
+        break;
+      case 'clinical_pro':
+        planColor = AppTheme.accentCyan;
+        break;
+      default:
+        planColor = Colors.grey.shade600;
+    }
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: planColor.withValues(alpha: 0.3)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: planColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(plan.badge, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: planColor)),
+                ),
+                if (plan.discountPercent > 0) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDC2626).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text('-${plan.discountPercent}%', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFFDC2626))),
+                  ),
+                ],
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: plan.isActive ? Colors.green.withValues(alpha: 0.15) : Colors.grey.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    plan.isActive ? 'Actif' : 'Masqué',
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: plan.isActive ? Colors.green : Colors.grey),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(plan.name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Tarif Annuel', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                    Text(
+                      '${plan.priceYearly.toStringAsFixed(0)} ${plan.currency} / an',
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: planColor),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Tarif Mensuel', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                    Text(
+                      '${plan.priceMonthly.toStringAsFixed(0)} ${plan.currency} / mois',
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: planColor),
+                  foregroundColor: planColor,
+                ),
+                icon: const Icon(Icons.edit_note_rounded, size: 18),
+                label: const Text('Modifier les tarifs de cette formule'),
+                onPressed: () => _showEditPlanDialog(context, plan),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- TAB 6 : ANNOUNCEMENTS & SYSTEM ---
+  Widget _buildSystemAndAnnouncementsTab(BuildContext context, AdminState state, bool isDark) {
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        // Announcements Section
+        Card(
+          elevation: isDark ? 0 : 2,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.campaign_rounded, color: AppTheme.primaryTeal),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Diffusion d\'Annonces & Messages Généraux',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal, foregroundColor: Colors.white),
+                      icon: const Icon(Icons.add, size: 16),
+                      label: const Text('Publier', style: TextStyle(fontSize: 12)),
+                      onPressed: () => _showCreateAnnouncementDialog(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                if (state.announcements.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Aucune annonce active diffusée pour l\'instant.', style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                  )
+                else
+                  ...state.announcements.map((a) => ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(a.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5)),
+                        subtitle: Text(a.message, style: const TextStyle(fontSize: 12)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Switch(
+                              value: a.isActive,
+                              activeThumbColor: AppTheme.primaryTeal,
+                              onChanged: (val) => context.read<AdminBloc>().add(ToggleAnnouncementEvent(id: a.id, isActive: val)),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFDC2626), size: 18),
+                              onPressed: () => context.read<AdminBloc>().add(DeleteAnnouncementEvent(a.id)),
+                            ),
+                          ],
+                        ),
+                      )),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Medical Content Index Card
         Card(
           elevation: isDark ? 0 : 2,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -894,6 +1447,284 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.primaryTeal),
         ),
       ],
+    );
+  }
+
+  // --- DIALOGS FOR EDITING PLANS, PAYMENTS & ANNOUNCEMENTS ---
+
+  void _showEditPlanDialog(BuildContext context, SubscriptionPlanItem plan) {
+    final yearlyCtrl = TextEditingController(text: plan.priceYearly.toStringAsFixed(0));
+    final monthlyCtrl = TextEditingController(text: plan.priceMonthly.toStringAsFixed(0));
+    final badgeCtrl = TextEditingController(text: plan.badge);
+    final discountCtrl = TextEditingController(text: plan.discountPercent.toString());
+    bool isActive = plan.isActive;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) => AlertDialog(
+          title: Text('Modifier les Tarifs • ${plan.name}'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: yearlyCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Prix Annuel (DZD)', suffixText: 'DZD'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: monthlyCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Prix Mensuel (DZD)', suffixText: 'DZD'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: discountCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Remise Promotionnelle (%)', suffixText: '%'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: badgeCtrl,
+                  decoration: const InputDecoration(labelText: 'Badge Marketing', hintText: 'Ex: PROMO 2027'),
+                ),
+                const SizedBox(height: 12),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Formule visible & active', style: TextStyle(fontSize: 13)),
+                  value: isActive,
+                  onChanged: (val) => setDlgState(() => isActive = val),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+            ElevatedButton(
+              onPressed: () {
+                final yearly = double.tryParse(yearlyCtrl.text.trim()) ?? plan.priceYearly;
+                final monthly = double.tryParse(monthlyCtrl.text.trim()) ?? plan.priceMonthly;
+                final discount = int.tryParse(discountCtrl.text.trim()) ?? plan.discountPercent;
+                final badge = badgeCtrl.text.trim();
+
+                Navigator.pop(ctx);
+                context.read<AdminBloc>().add(
+                      UpdatePlanPriceEvent(
+                        planId: plan.id,
+                        priceYearly: yearly,
+                        priceMonthly: monthly,
+                        discountPercent: discount,
+                        badge: badge.isNotEmpty ? badge : plan.badge,
+                        isActive: isActive,
+                      ),
+                    );
+              },
+              child: const Text('Enregistrer les Nouveaux Tarifs'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showManualPaymentDialog(BuildContext context) {
+    final emailCtrl = TextEditingController();
+    final nameCtrl = TextEditingController();
+    final amountCtrl = TextEditingController(text: '20000');
+    final refCtrl = TextEditingController();
+    String tier = 'all_access';
+    int duration = 365;
+    String method = 'baridimob';
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) => AlertDialog(
+          title: const Text('Enregistrer un Paiement Manuel'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: emailCtrl,
+                  decoration: const InputDecoration(labelText: 'Email du Médecin', hintText: 'docteur@exemple.com'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: nameCtrl,
+                  decoration: const InputDecoration(labelText: 'Nom Complet', hintText: 'Dr. Karim Benali'),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  initialValue: tier,
+                  decoration: const InputDecoration(labelText: 'Formule Choisie'),
+                  items: const [
+                    DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP')),
+                    DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite')),
+                    DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro')),
+                  ],
+                  onChanged: (val) => setDlgState(() => tier = val ?? tier),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  initialValue: method,
+                  decoration: const InputDecoration(labelText: 'Mode de Paiement'),
+                  items: const [
+                    DropdownMenuItem(value: 'baridimob', child: Text('BaridiMob (RIP / Virement)')),
+                    DropdownMenuItem(value: 'ccp', child: Text('Versement CCP (Bordereau)')),
+                    DropdownMenuItem(value: 'cash', child: Text('Espèces / En main propre')),
+                    DropdownMenuItem(value: 'virement', child: Text('Virement Bancaire')),
+                  ],
+                  onChanged: (val) => setDlgState(() => method = val ?? method),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: amountCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Montant (DZD)', suffixText: 'DZD'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: refCtrl,
+                  decoration: const InputDecoration(labelText: 'N° Reçu / Réf. Transaction', hintText: 'Ex: TRX-98421'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+            ElevatedButton(
+              onPressed: () {
+                final email = emailCtrl.text.trim();
+                final name = nameCtrl.text.trim();
+                final amount = double.tryParse(amountCtrl.text.trim()) ?? 0;
+                final ref = refCtrl.text.trim();
+
+                if (email.isNotEmpty && amount > 0) {
+                  Navigator.pop(ctx);
+                  context.read<AdminBloc>().add(
+                        RecordManualPaymentEvent(
+                          userEmail: email,
+                          userName: name.isNotEmpty ? name : email.split('@').first,
+                          tier: tier,
+                          durationDays: duration,
+                          amount: amount,
+                          paymentMethod: method,
+                          receiptReference: ref.isNotEmpty ? ref : 'MANUAL-${DateTime.now().millisecondsSinceEpoch}',
+                        ),
+                      );
+                }
+              },
+              child: const Text('Valider & Enregistrer'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showRejectPaymentDialog(BuildContext context, PaymentItem payment) {
+    final noteCtrl = TextEditingController(text: 'Reçu non conforme ou illisible');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Rejeter la Preuve de Paiement'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Médecin : ${payment.userName} (${payment.userEmail})'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: noteCtrl,
+              decoration: const InputDecoration(labelText: 'Motif du rejet (visible par l\'admin)'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626)),
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AdminBloc>().add(
+                    RejectPaymentEvent(
+                      paymentId: payment.id,
+                      adminNotes: noteCtrl.text.trim(),
+                    ),
+                  );
+            },
+            child: const Text('Confirmer le Rejet'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCreateAnnouncementDialog(BuildContext context) {
+    final titleCtrl = TextEditingController();
+    final messageCtrl = TextEditingController();
+    String type = 'info';
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) => AlertDialog(
+          title: const Text('Diffuser une Annonce Médicale'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleCtrl,
+                decoration: const InputDecoration(labelText: 'Titre de l\'annonce', hintText: 'Ex: Concours Blanc Medsina'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: messageCtrl,
+                maxLines: 3,
+                decoration: const InputDecoration(labelText: 'Message complet', hintText: 'Détails de l\'annonce...'),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                initialValue: type,
+                decoration: const InputDecoration(labelText: 'Niveau d\'importance'),
+                items: const [
+                  DropdownMenuItem(value: 'info', child: Text('Information standard')),
+                  DropdownMenuItem(value: 'success', child: Text('Bonne nouvelle / Succès')),
+                  DropdownMenuItem(value: 'warning', child: Text('Avertissement / Rappel')),
+                  DropdownMenuItem(value: 'urgent', child: Text('Urgent / Critique')),
+                ],
+                onChanged: (val) => setDlgState(() => type = val ?? type),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+            ElevatedButton(
+              onPressed: () {
+                final title = titleCtrl.text.trim();
+                final msg = messageCtrl.text.trim();
+                if (title.isNotEmpty && msg.isNotEmpty) {
+                  Navigator.pop(ctx);
+                  context.read<AdminBloc>().add(
+                        CreateAnnouncementEvent(
+                          title: title,
+                          message: msg,
+                          type: type,
+                        ),
+                      );
+                }
+              },
+              child: const Text('Publier l\'Annonce'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
