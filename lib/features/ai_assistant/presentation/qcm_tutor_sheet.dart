@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../revision/models/qcm_model.dart';
@@ -76,6 +78,17 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
           _response = answer;
           _isLoading = false;
         });
+
+        // Gently scroll down to reveal the explanation
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              80.0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -91,12 +104,20 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
+    final isDesktop = size.width > 800;
 
-    return Container(
-      height: size.height * 0.85,
+    final sheetContent = Container(
+      height: size.height * 0.90,
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -147,7 +168,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Text(
-                              'Gemini 3.5 Flash',
+                              'Gemini IA',
                               style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
                             ),
                           ),
@@ -162,6 +183,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close_rounded),
+                  tooltip: 'Fermer',
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -173,7 +195,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
           Expanded(
             child: ListView(
               controller: _scrollController,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
               children: [
                 // Question summary card
                 Container(
@@ -271,7 +293,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                   )
                 else if (_response != null)
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF0FDF4),
                       borderRadius: BorderRadius.circular(14),
@@ -286,24 +308,72 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                           children: [
                             const Icon(Icons.verified_rounded, size: 18, color: Color(0xFF16A34A)),
                             const SizedBox(width: 8),
-                            const Text(
-                              'Analyse Médicale de MedsinaPilot :',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF166534)),
+                            const Expanded(
+                              child: Text(
+                                'Analyse Médicale de MedsinaPilot :',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF166534)),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.copy_rounded, size: 16),
+                              tooltip: 'Copier l\'explication',
+                              color: const Color(0xFF16A34A),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(text: _response!));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Explication copiée dans le presse-papiers !'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        SelectableText(
-                          _response!,
-                          style: TextStyle(
-                            fontSize: 13.5,
-                            height: 1.5,
-                            color: isDark ? Colors.white70 : const Color(0xFF1F2937),
+                        const Divider(height: 16),
+                        MarkdownBody(
+                          data: _response!,
+                          selectable: true,
+                          styleSheet: MarkdownStyleSheet(
+                            p: TextStyle(
+                              fontSize: 13.5,
+                              height: 1.6,
+                              color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
+                            ),
+                            h1: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              color: isDark ? const Color(0xFF86EFAC) : const Color(0xFF15803D),
+                            ),
+                            h2: TextStyle(
+                              fontSize: 15.5,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534),
+                            ),
+                            h3: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+                            ),
+                            strong: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : const Color(0xFF0F172A),
+                            ),
+                            listBullet: TextStyle(
+                              color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            blockquoteDecoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF0FDF4),
+                              borderRadius: BorderRadius.circular(8),
+                              border: const Border(left: BorderSide(color: Color(0xFF16A34A), width: 4)),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
@@ -357,5 +427,17 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
         ],
       ),
     );
+
+    if (isDesktop) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 880),
+          child: sheetContent,
+        ),
+      );
+    }
+
+    return sheetContent;
   }
 }
+

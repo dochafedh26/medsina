@@ -7,15 +7,18 @@ class GeminiService {
   // Configured Gemini API Key from git-ignored secrets
   static String get apiKey => AppSecrets.geminiApiKey;
 
-  // Primary model tested and active
-  static const String primaryModel = 'gemini-3.5-flash';
-  static const String fallbackModel = 'gemini-flash-latest';
+  // Active models with fallback cascade
+  static const List<String> _modelCascade = [
+    'gemini-3.5-flash',
+    'gemini-3.8-flash',
+    'gemini-flash-latest',
+  ];
 
   static const String _baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
 
   static final Dio _dio = Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 15),
-    receiveTimeout: const Duration(seconds: 30),
+    connectTimeout: const Duration(seconds: 20),
+    receiveTimeout: const Duration(seconds: 45),
   ));
 
   /// Medical Persona System Instruction
@@ -23,8 +26,9 @@ class GeminiService {
 Tu es MedsinaPilot, l'assistant IA médical officiel de Medsina, la plateforme médicale de référence pour les médecins et candidats au concours de résidanat de médecine (Facultés de Blida, Alger, Constantine, Oran).
 Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision:
 1. Réponds toujours avec rigueur scientifique selon les recommandations et consensus actuels (HAS, ESC, GINA, GOLD, consensus algériens).
-2. Explique clairement pourquoi une proposition de QCM est vraie ou fausse, en identifiant les pièges classiques d'examen.
-3. Sois structuré, concis, bienveillant et utilise des puces claires et du formatage markdown si nécessaire.
+2. Fournis des explications complètes, exhaustives et structurées du début jusqu'à la fin de la conduite à tenir sans couper la réponse.
+3. Explique clairement pourquoi une proposition de QCM est vraie ou fausse, en identifiant les pièges classiques d'examen.
+4. Utilise un formatage Markdown élégant (titres, listes à puces, gras) pour faciliter la lecture rapide en situation d'urgence ou de révision.
 ''';
 
   /// Send prompt to Gemini API
@@ -46,12 +50,12 @@ Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision
       ],
       'generationConfig': {
         'temperature': 0.3,
-        'maxOutputTokens': 1024,
+        'maxOutputTokens': 8192,
       }
     };
 
-    // Try primary model first, fallback if unavailable
-    for (final model in [primaryModel, fallbackModel]) {
+    // Try model cascade until successful
+    for (final model in _modelCascade) {
       try {
         final url = '$_baseUrl/$model:generateContent?key=$apiKey';
         final response = await _dio.post(
