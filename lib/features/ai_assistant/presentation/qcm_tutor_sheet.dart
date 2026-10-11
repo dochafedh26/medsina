@@ -3,25 +3,27 @@ import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../revision/models/qcm_model.dart';
 
-class QcmTutorSheet extends StatefulWidget {
+class MedsinaPilotSheet extends StatefulWidget {
   final QcmQuestion question;
 
-  const QcmTutorSheet({super.key, required this.question});
+  const MedsinaPilotSheet({super.key, required this.question});
 
   static void show(BuildContext context, QcmQuestion question) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => QcmTutorSheet(question: question),
+      builder: (_) => MedsinaPilotSheet(question: question),
     );
   }
 
   @override
-  State<QcmTutorSheet> createState() => _QcmTutorSheetState();
+  State<MedsinaPilotSheet> createState() => _MedsinaPilotSheetState();
 }
 
-class _QcmTutorSheetState extends State<QcmTutorSheet> {
+typedef QcmTutorSheet = MedsinaPilotSheet;
+
+class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
   final TextEditingController _queryController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -40,7 +42,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
   void initState() {
     super.initState();
     // Automatically trigger the first explanation on open
-    _askTutor('Explique-moi en détail la justification médicale de cette question et pourquoi la réponse ${widget.question.correctAnswers.join(", ")} est la bonne.');
+    _askPilot('Explique-moi en détail la justification médicale de cette question et pourquoi la réponse ${widget.question.correctAnswers.join(", ")} est la bonne.');
   }
 
   @override
@@ -50,7 +52,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
     super.dispose();
   }
 
-  Future<void> _askTutor(String query) async {
+  Future<void> _askPilot(String query) async {
     if (query.trim().isEmpty) return;
 
     setState(() {
@@ -78,7 +80,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _response = 'Erreur lors de la communication avec le Tuteur IA: $e';
+          _response = 'Erreur lors de la communication avec MedsinaPilot: $e';
           _isLoading = false;
         });
       }
@@ -134,7 +136,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
                       Row(
                         children: [
                           const Text(
-                            'Tuteur IA Medsina',
+                            'MedsinaPilot 🩺',
                             style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
                           ),
                           const SizedBox(width: 8),
@@ -225,7 +227,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
                       final prompt = _suggestedPrompts[i];
                       return ActionChip(
                         label: Text(prompt, style: const TextStyle(fontSize: 11.5)),
-                        onPressed: _isLoading ? null : () => _askTutor(prompt),
+                        onPressed: _isLoading ? null : () => _askPilot(prompt),
                         backgroundColor: isDark ? AppTheme.darkSurfaceElevated : Colors.grey.shade100,
                         side: BorderSide(color: isDark ? AppTheme.darkBorder : Colors.grey.shade300),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -260,7 +262,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
                           ),
                           const SizedBox(height: 14),
                           Text(
-                            'Gemini analyse le cas et les consensus médicaux...',
+                            'MedsinaPilot analyse le cas et les consensus médicaux...',
                             style: TextStyle(fontSize: 12.5, color: Colors.grey.shade500),
                           ),
                         ],
@@ -285,7 +287,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
                             const Icon(Icons.verified_rounded, size: 18, color: Color(0xFF16A34A)),
                             const SizedBox(width: 8),
                             const Text(
-                              'Analyse Pédagogique du Tuteur :',
+                              'Analyse Médicale de MedsinaPilot :',
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF166534)),
                             ),
                           ],
@@ -316,7 +318,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
                     controller: _queryController,
                     enabled: !_isLoading,
                     decoration: InputDecoration(
-                      hintText: 'Posez une question personnalisée au tuteur...',
+                      hintText: 'Posez une question à MedsinaPilot...',
                       hintStyle: const TextStyle(fontSize: 13),
                       filled: true,
                       fillColor: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF1F5F9),
@@ -329,7 +331,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
                     ),
                     onSubmitted: (val) {
                       if (val.trim().isNotEmpty) {
-                        _askTutor(val.trim());
+                        _askPilot(val.trim());
                         _queryController.clear();
                       }
                     },
@@ -344,7 +346,7 @@ class _QcmTutorSheetState extends State<QcmTutorSheet> {
                       : () {
                           final text = _queryController.text.trim();
                           if (text.isNotEmpty) {
-                            _askTutor(text);
+                            _askPilot(text);
                             _queryController.clear();
                           }
                         },

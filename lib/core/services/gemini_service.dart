@@ -20,7 +20,7 @@ class GeminiService {
 
   /// Medical Persona System Instruction
   static const String _medicalSystemPrompt = '''
-Tu es le Tuteur IA Officiel de Medsina, la plateforme médicale de référence pour les médecins et candidats au concours de résidanat de médecine (Facultés de Blida, Alger, Constantine, Oran).
+Tu es MedsinaPilot, l'assistant IA médical officiel de Medsina, la plateforme médicale de référence pour les médecins et candidats au concours de résidanat de médecine (Facultés de Blida, Alger, Constantine, Oran).
 Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision:
 1. Réponds toujours avec rigueur scientifique selon les recommandations et consensus actuels (HAS, ESC, GINA, GOLD, consensus algériens).
 2. Explique clairement pourquoi une proposition de QCM est vraie ou fausse, en identifiant les pièges classiques d'examen.
@@ -75,7 +75,7 @@ Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision
       }
     }
 
-    return 'Désolé, le service Tuteur IA est momentanément indisponible. Veuillez réessayer dans quelques instants.';
+    return 'Désolé, MedsinaPilot est momentanément indisponible. Veuillez réessayer dans quelques instants.';
   }
 
   /// QCM Explanation Helper

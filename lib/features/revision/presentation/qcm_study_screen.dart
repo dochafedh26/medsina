@@ -61,8 +61,8 @@ class QcmStudyScreen extends StatelessWidget {
             backgroundColor: AppTheme.primaryTeal,
             foregroundColor: Colors.white,
             icon: const Icon(Icons.auto_awesome_rounded, size: 20),
-            label: const Text('Tuteur IA', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-            onPressed: () => QcmTutorSheet.show(context, q),
+            label: const Text('MedsinaPilot 🩺', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+            onPressed: () => MedsinaPilotSheet.show(context, q),
           ),
           body: Column(
             children: [
@@ -365,10 +365,10 @@ class QcmStudyScreen extends StatelessWidget {
               ),
               icon: const Icon(Icons.auto_awesome_rounded, size: 18),
               label: const Text(
-                'Poser une question au Tuteur IA Gemini ✨',
+                'Consulter MedsinaPilot (IA Médicale) ✨',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               ),
-              onPressed: () => QcmTutorSheet.show(context, q),
+              onPressed: () => MedsinaPilotSheet.show(context, q),
             ),
           ),
         ],

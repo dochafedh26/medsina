@@ -116,3 +116,4 @@ USING (
     WHERE profiles.id = auth.uid() AND profiles.is_admin = true
   )
 );
+

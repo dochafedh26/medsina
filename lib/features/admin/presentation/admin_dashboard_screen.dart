@@ -1400,7 +1400,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 const Divider(height: 20),
                 _buildContentRow('Calculateurs Cliniques Validés (Wells, Glasgow...)', '4 Calculateurs', Icons.calculate_rounded),
                 const Divider(height: 20),
-                _buildContentRow('Tuteur Médical IA (Consensus Algériens)', 'Google Gemini 3.5 Flash', Icons.auto_awesome_rounded),
+                _buildContentRow('MedsinaPilot (Copilote Médical IA)', 'Google Gemini 3.5 Flash', Icons.auto_awesome_rounded),
               ],
             ),
           ),
