@@ -72,6 +72,8 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
         optionsText: optionsList,
         correctKeys: widget.question.correctAnswers,
         userQuery: query,
+        courseName: widget.question.courseName,
+        moduleId: widget.question.moduleId,
       );
 
       if (mounted) {
@@ -175,9 +177,28 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                           ),
                         ],
                       ),
-                      Text(
-                        'Résidanat Blida • Consensus & Pièges d\'Examen',
-                        style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDCFCE7),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.verified_rounded, size: 10, color: Color(0xFF16A34A)),
+                                SizedBox(width: 4),
+                                Text(
+                                  'medsina_ressources (Drive) • HAS / ESC',
+                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFF16A34A)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

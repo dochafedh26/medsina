@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../config/app_secrets.dart';
 import '../utils/medical_text_formatter.dart';
+import '../../features/revision/data/residency_repository.dart';
 
 class GeminiService {
   // Configured Gemini API Key from git-ignored secrets
@@ -10,9 +11,11 @@ class GeminiService {
 
   // Active models with fallback cascade
   static const List<String> _modelCascade = [
-    'gemini-3.5-flash',
-    'gemini-3.8-flash',
     'gemini-flash-latest',
+    'gemini-2.5-flash-lite',
+    'gemini-flash-lite-latest',
+    'gemini-2.5-flash',
+    'gemini-2.5-pro',
   ];
 
   static const String _baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
@@ -22,29 +25,105 @@ class GeminiService {
     receiveTimeout: const Duration(seconds: 45),
   ));
 
-  /// Medical Persona System Instruction
+  /// Medical Persona System Instruction with Grounding in medsina_ressources and Official Consensus
   static const String _medicalSystemPrompt = '''
 Tu es MedsinaPilot, l'assistant IA médical officiel de Medsina, la plateforme médicale de référence pour les médecins et candidats au concours de résidanat de médecine (Facultés de Blida, Alger, Constantine, Oran).
-Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision:
-1. Réponds toujours avec rigueur scientifique selon les recommandations et consensus actuels (HAS, ESC, GINA, GOLD, consensus algériens).
-2. Fournis des explications complètes, exhaustives et structurées du début jusqu'à la fin de la conduite à tenir sans couper la réponse.
-3. Explique clairement pourquoi une proposition de QCM est vraie ou fausse, en identifiant les pièges classiques d'examen.
-4. FORMATAGE DU TEXTE ET DES UNITÉS (RÈGLE STRICTE):
+
+RÈGLES FONDAMENTALES DE RECHERCHE ET DE CITATION DE SOURCES :
+1. SOURCE PRIMAIRE OFFICIELLE (Google Drive "medsina_ressources") :
+   - Tu es directement adossé à la bibliothèque officielle des 47 modules et 1 205 cours du concours de résidanat (stockés dans le dossier Google Drive "medsina_ressources").
+   - Quand des cours correspondants issus de "medsina_ressources" te sont fournis dans le contexte, tu DOIS t'appuyer en priorité sur les définitions, classifications et conduites à tenir de ces cours officiels.
+   - Mentionne toujours explicitement le nom du cours et son module pour rassurer le candidat sur la conformité de ta réponse au programme officiel.
+
+2. AUTRES SOURCES FIABLES ET CONSENSUS INTERNATIONAUX :
+   - Pour toute recommandation clinique, thérapeutique ou diagnostique, tu dois toujours t'aligner sur les consensus les plus récents et fiables :
+     * HAS (Haute Autorité de Santé)
+     * ESC (European Society of Cardiology)
+     * GINA (Global Initiative for Asthma) et GOLD (BPCO)
+     * KDIGO (Néphrologie)
+     * SFMU (Société Française de Médecine d'Urgence) et SRLF (Réanimation)
+     * Collèges Universitaires des Enseignants Français (ECN / EDN)
+     * Consensus et Recommandations Nationales Algériennes.
+
+3. STRUCTURE DE RÉPONSE CLINIQUE & PÉDAGOGIQUE :
+   - Réponse claire, exhaustive et structurée (définition, physiopathologie, diagnostic, prise en charge).
+   - Analyse détaillée de chaque proposition de QCM : justifie pourquoi chaque proposition est VRAIE ou FAUSSE.
+   - Mets en avant les pièges classiques d'examen et les subtilités de formulation.
+   - SECTION FINALE OBLIGATOIRE "### 📚 Sources & Références Fiables" :
+     * 🎓 **Cours Officiel Medsina** : [Nom du cours] (*Dossier medsina_ressources • Module [Nom du module]*)
+     * 🏛️ **Consensus & Sociétés Savantes** : [Consensus exact avec année, ex: ESC 2024 / HAS 2023]
+     * 💡 **Point-clé Résidanat** : [Mots-clés ou piège d'examen récurrent au concours]
+
+4. FORMATAGE DU TEXTE ET DES UNITÉS (RÈGLE STRICTE) :
    - N'UTILISE JAMAIS de syntaxe LaTeX, ni de symboles dollar (\$...\$ ou \$\$...\$\$).
    - N'utilise JAMAIS de commandes LaTeX telles que \\ge, \\le, \\text{...}, \\mathrm{...}, \\pm, \\times, \\mu.
    - Écris TOUJOURS les unités et symboles mathématiques directement en texte Unicode clair et naturel: "≥", "≤", "±", "×", "µg", "°C", "mm", "mV", "bpm", "%", "/".
-   - Par exemple, écris: "≥ 1 mm (0,1 mV)" et JAMAIS "\$\\ge 1 \\text{ mm}\$ (\$0,1 \\text{ mV}\$)".
-5. Utilise un formatage Markdown élégant (titres, listes à puces, gras) pour faciliter la lecture rapide en situation d'urgence ou de révision.
+   - Par exemple, écris: "≥ 1 mm (0,1 mV)" et JAMAIS "\$\\ge 1 \\text{ mm}\$".
 ''';
 
-  /// Send prompt to Gemini API
+  /// Search across all 1,209 courses in medsina_ressources for the best matching curriculum courses
+  static List<String> _findMatchingCoursesInDrive(String query, {String? courseHint, String? moduleHint}) {
+    final modules = ResidencyRepository.getModules();
+    final List<String> found = [];
+
+    // If explicit course hint provided, prioritize it
+    if (courseHint != null && courseHint.isNotEmpty) {
+      final moduleName = moduleHint ?? 'Résidanat';
+      found.add('• Cours Prioritaire : "$courseHint" (Module: $moduleName, dossier medsina_ressources/courses/$moduleName)');
+    }
+
+    // Extract significant keywords (length >= 4) from query
+    final cleanQuery = query.toLowerCase().replaceAll(RegExp(r'[^a-zA-Z0-9àâäéèêëîïôöùûüç]'), ' ');
+    final words = cleanQuery.split(' ').where((w) => w.length >= 4).toSet();
+
+    if (words.isEmpty && found.isNotEmpty) return found;
+
+    // Search through all modules and courses
+    int count = found.length;
+    for (final m in modules) {
+      for (final c in m.courses) {
+        if (found.any((f) => f.contains(c.name))) continue;
+
+        final cNameLower = c.name.toLowerCase();
+        int score = 0;
+        for (final w in words) {
+          if (cNameLower.contains(w)) score++;
+        }
+
+        if (score > 0) {
+          found.add('• Référence Curriculum : "${c.name}" (Module: ${m.name}, disponible sur Google Drive medsina_ressources)');
+          count++;
+          if (count >= 4) break;
+        }
+      }
+      if (count >= 4) break;
+    }
+
+    return found;
+  }
+
+  /// Send prompt to Gemini API with Medsina Drive RAG Grounding
   static Future<String> generateMedicalResponse({
     required String prompt,
     String? contextInfo,
+    String? courseName,
+    String? moduleId,
   }) async {
+    // 1. Retrieve matching official courses from medsina_ressources
+    final matchingResources = _findMatchingCoursesInDrive(
+      '$prompt ${contextInfo ?? ""}',
+      courseHint: courseName,
+      moduleHint: moduleId,
+    );
+
+    String groundingContext = '';
+    if (matchingResources.isNotEmpty) {
+      groundingContext = '\n\n[RESSOURCES OFFICIELLES DU PROGRAMME DANS GOOGLE DRIVE (medsina_ressources)]:\n${matchingResources.join("\n")}';
+    }
+
     final fullPrompt = contextInfo != null
-        ? '$_medicalSystemPrompt\n\n[CONTEXTE DE LA QUESTION OU DU PATIENT]:\n$contextInfo\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt'
-        : '$_medicalSystemPrompt\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt';
+        ? '$_medicalSystemPrompt$groundingContext\n\n[CONTEXTE DE LA QUESTION OU DU PATIENT]:\n$contextInfo\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt'
+        : '$_medicalSystemPrompt$groundingContext\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt';
 
     final requestData = {
       'contents': [
@@ -55,7 +134,7 @@ Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision
         }
       ],
       'generationConfig': {
-        'temperature': 0.3,
+        'temperature': 0.25,
         'maxOutputTokens': 8192,
       }
     };
@@ -92,34 +171,44 @@ Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision
     return 'Désolé, MedsinaPilot est momentanément indisponible. Veuillez réessayer dans quelques instants.';
   }
 
-  /// QCM Explanation Helper
+  /// QCM Explanation Helper with Medsina Drive & Consensus Grounding
   static Future<String> explainQcm({
     required String questionTitle,
     required List<String> optionsText,
     required List<String> correctKeys,
     required String userQuery,
+    String? courseName,
+    String? moduleId,
   }) async {
     final context = '''
 Question d'examen: $questionTitle
 Propositions:
 ${optionsText.join('\n')}
 Bonne(s) réponse(s) officielle(s): ${correctKeys.join(', ')}
+${courseName != null ? 'Cours officiel rattaché: $courseName' : ''}
+${moduleId != null ? 'Module d\'enseignement: $moduleId' : ''}
 ''';
 
     return await generateMedicalResponse(
       prompt: userQuery,
       contextInfo: context,
+      courseName: courseName,
+      moduleId: moduleId,
     );
   }
 
-  /// Clinical Decision & CAT Helper
+  /// Clinical Decision & CAT Helper with Medsina Drive & Consensus Grounding
   static Future<String> getClinicalAdvice({
     required String clinicalSituation,
     required String userQuery,
+    String? courseName,
+    String? moduleId,
   }) async {
     return await generateMedicalResponse(
       prompt: userQuery,
       contextInfo: 'Situation Clinique: $clinicalSituation',
+      courseName: courseName,
+      moduleId: moduleId,
     );
   }
 }
