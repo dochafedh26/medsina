@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/medical_text_formatter.dart';
 import '../../revision/models/qcm_model.dart';
 
 class MedsinaPilotSheet extends StatefulWidget {
@@ -332,11 +333,11 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                         ),
                         const Divider(height: 16),
                         MarkdownBody(
-                          data: _response!,
+                          data: MedicalTextFormatter.clean(_response!),
                           selectable: true,
                           styleSheet: MarkdownStyleSheet(
                             p: TextStyle(
-                              fontSize: 13.5,
+                              fontSize: 14,
                               height: 1.6,
                               color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
                             ),
@@ -362,7 +363,11 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                             listBullet: TextStyle(
                               color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
                               fontWeight: FontWeight.bold,
+                              fontSize: 13,
                             ),
+                            listIndent: 22.0,
+                            blockSpacing: 10.0,
+                            blockquotePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                             blockquoteDecoration: BoxDecoration(
                               color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF0FDF4),
                               borderRadius: BorderRadius.circular(8),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/medical_text_formatter.dart';
 
 class ClinicalCopilotSheet extends StatefulWidget {
   final String? initialSituation;
@@ -314,11 +315,11 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
                         ),
                         const Divider(height: 16),
                         MarkdownBody(
-                          data: _response!,
+                          data: MedicalTextFormatter.clean(_response!),
                           selectable: true,
                           styleSheet: MarkdownStyleSheet(
                             p: TextStyle(
-                              fontSize: 13.5,
+                              fontSize: 14,
                               height: 1.6,
                               color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
                             ),
@@ -344,7 +345,11 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
                             listBullet: TextStyle(
                               color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
                               fontWeight: FontWeight.bold,
+                              fontSize: 13,
                             ),
+                            listIndent: 22.0,
+                            blockSpacing: 10.0,
+                            blockquotePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                             blockquoteDecoration: BoxDecoration(
                               color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
                               borderRadius: BorderRadius.circular(8),

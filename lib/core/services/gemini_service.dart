@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../config/app_secrets.dart';
+import '../utils/medical_text_formatter.dart';
 
 class GeminiService {
   // Configured Gemini API Key from git-ignored secrets
@@ -28,7 +29,12 @@ Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision
 1. Réponds toujours avec rigueur scientifique selon les recommandations et consensus actuels (HAS, ESC, GINA, GOLD, consensus algériens).
 2. Fournis des explications complètes, exhaustives et structurées du début jusqu'à la fin de la conduite à tenir sans couper la réponse.
 3. Explique clairement pourquoi une proposition de QCM est vraie ou fausse, en identifiant les pièges classiques d'examen.
-4. Utilise un formatage Markdown élégant (titres, listes à puces, gras) pour faciliter la lecture rapide en situation d'urgence ou de révision.
+4. FORMATAGE DU TEXTE ET DES UNITÉS (RÈGLE STRICTE):
+   - N'UTILISE JAMAIS de syntaxe LaTeX, ni de symboles dollar (\$...\$ ou \$\$...\$\$).
+   - N'utilise JAMAIS de commandes LaTeX telles que \\ge, \\le, \\text{...}, \\mathrm{...}, \\pm, \\times, \\mu.
+   - Écris TOUJOURS les unités et symboles mathématiques directement en texte Unicode clair et naturel: "≥", "≤", "±", "×", "µg", "°C", "mm", "mV", "bpm", "%", "/".
+   - Par exemple, écris: "≥ 1 mm (0,1 mV)" et JAMAIS "\$\\ge 1 \\text{ mm}\$ (\$0,1 \\text{ mV}\$)".
+5. Utilise un formatage Markdown élégant (titres, listes à puces, gras) pour faciliter la lecture rapide en situation d'urgence ou de révision.
 ''';
 
   /// Send prompt to Gemini API
@@ -70,7 +76,11 @@ Ton rôle est d'apporter un soutien pédagogique et clinique de haute précision
           if (candidates != null && candidates.isNotEmpty) {
             final parts = candidates[0]['content']?['parts'] as List?;
             if (parts != null && parts.isNotEmpty) {
-              return parts[0]['text'] ?? 'Aucune réponse générée.';
+              final raw = parts[0]['text'] as String?;
+              if (raw != null) {
+                return MedicalTextFormatter.clean(raw);
+              }
+              return 'Aucune réponse générée.';
             }
           }
         }
