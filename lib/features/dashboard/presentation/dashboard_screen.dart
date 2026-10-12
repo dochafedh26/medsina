@@ -38,7 +38,7 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 28),
 
               // Clinical Tip of the Day
-              _buildClinicalTipCard(context),
+              _buildClinicalTipCard(context, tier, user?.isSubscriptionActive ?? true),
               const SizedBox(height: 28),
 
               // Quick Actions / Modules En Cours
@@ -307,7 +307,11 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildClinicalTipCard(BuildContext context) {
+  Widget _buildClinicalTipCard(BuildContext context, SubscriptionTier tier, bool isSubscriptionActive) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasResidentAccess =
+        (tier == SubscriptionTier.residentElite || tier == SubscriptionTier.allAccess) && isSubscriptionActive;
+
     return FutureBuilder<Map<String, dynamic>?>(
       future: SupabaseService.fetchLatestDailyPearl(),
       builder: (context, snapshot) {
@@ -396,26 +400,67 @@ class DashboardScreen extends StatelessWidget {
                       ],
                       if (examTrap != null && examTrap.isNotEmpty) ...[
                         const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFEF4444).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.25)),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.school_rounded, size: 16, color: Color(0xFFDC2626)),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  examTrap,
-                                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Color(0xFFB91C1C)),
+                        if (hasResidentAccess)
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.25)),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.school_rounded, size: 16, color: Color(0xFFDC2626)),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    examTrap,
+                                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Color(0xFFB91C1C)),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          )
+                        else
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFF9333EA).withValues(alpha: 0.3)),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.lock_rounded, size: 16, color: Color(0xFF9333EA)),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    '🎯 Piège de Concours Résidanat masqué • Réservé aux Pass Résident Élite & All-Access',
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? Colors.white70 : const Color(0xFF4B5563),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                                    );
+                                  },
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    foregroundColor: const Color(0xFF9333EA),
+                                  ),
+                                  child: const Text('Débloquer', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11.5)),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
                       ],
                     ],
                   ),
