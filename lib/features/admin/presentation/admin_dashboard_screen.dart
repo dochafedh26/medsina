@@ -264,9 +264,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   children: [
                     Icon(Icons.pie_chart_outline_rounded, color: AppTheme.primaryTeal),
                     SizedBox(width: 8),
-                    Text(
-                      'Répartition par Formule d\'Abonnement',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    Expanded(
+                      child: Text(
+                        'Répartition par Formule d\'Abonnement',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
@@ -334,10 +337,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(width: 6),
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(

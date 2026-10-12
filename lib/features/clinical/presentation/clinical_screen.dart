@@ -268,49 +268,56 @@ class _ProtocolCardState extends State<_ProtocolCard> {
             children: [
               // Badge row
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: urgColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      p.urgencyLevel.toUpperCase(),
-                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: urgColor),
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: urgColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            p.urgencyLevel.toUpperCase(),
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: urgColor),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            p.specialty,
+                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                          ),
+                        ),
+                        if (isLocked)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFEF3C7),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.lock_rounded, size: 11, color: Color(0xFFD97706)),
+                                SizedBox(width: 4),
+                                Text('Verrouillé', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFFD97706))),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      p.specialty,
-                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
-                    ),
-                  ),
-                  if (isLocked) ...[
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFEF3C7),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.lock_rounded, size: 11, color: Color(0xFFD97706)),
-                          SizedBox(width: 4),
-                          Text('Verrouillé', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFFD97706))),
-                        ],
-                      ),
-                    ),
-                  ],
-                  const Spacer(),
                   Icon(
                     isLocked
                         ? Icons.lock_outline_rounded
@@ -1281,11 +1288,15 @@ class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
                         child: const Icon(Icons.local_hospital_rounded, color: Color(0xFF2563EB), size: 18),
                       ),
                       const SizedBox(width: 10),
-                      const Text(
-                        'Triage National des Urgences (MSPRH Algérie)',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+                      const Expanded(
+                        child: Text(
+                          'Triage National des Urgences (MSPRH Algérie)',
+                          style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Text(
                         _triageExpanded ? 'Masquer' : 'Afficher',
                         style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
