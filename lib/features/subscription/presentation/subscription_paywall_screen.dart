@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/medsina_logo.dart';
 import '../../admin/bloc/admin_bloc.dart';
 import '../../admin/models/admin_models.dart';
 import '../../auth/bloc/auth_bloc.dart';
@@ -74,12 +75,19 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                 child: Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                        color: Colors.white,
                         shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryTeal.withValues(alpha: 0.2),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.workspace_premium_rounded, size: 36, color: AppTheme.primaryTeal),
+                      child: const MedsinaLogo.icon(size: 46),
                     ),
                     const SizedBox(height: 12),
                     const Text(

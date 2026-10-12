@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/medsina_logo.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
 import '../../auth/bloc/auth_state.dart';
@@ -66,23 +67,7 @@ class _MainScaffoldState extends State<MainScaffold> {
         // Mobile Layout (Android APK & small screens)
         return Scaffold(
           appBar: AppBar(
-            title: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryTeal.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.local_hospital_rounded, color: AppTheme.primaryTeal, size: 20),
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  AppConstants.appName,
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 19),
-                ),
-              ],
-            ),
+            title: const MedsinaLogo(height: 28),
             actions: [
               IconButton(
                 icon: const Icon(Icons.switch_account_rounded, size: 20),
@@ -148,38 +133,22 @@ class _MainScaffoldState extends State<MainScaffold> {
           // Header Logo
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppTheme.primaryTeal, AppTheme.accentCyan],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                const MedsinaLogo(height: 32),
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(left: 2),
+                  child: Text(
+                    'SaaS Médical & Résidanat Blida 2027',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.2,
                     ),
-                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.local_hospital_rounded, color: Colors.white, size: 22),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppConstants.appName,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w900,
-                        color: isDark ? Colors.white : const Color(0xFF0F172A),
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    Text(
-                      'SaaS Médical & Résidanat',
-                      style: TextStyle(fontSize: 10, color: Colors.grey.shade500, fontWeight: FontWeight.w500),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -734,7 +703,9 @@ class _MainScaffoldState extends State<MainScaffold> {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+              const Center(child: MedsinaLogo(height: 20)),
+              const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: TextButton.icon(

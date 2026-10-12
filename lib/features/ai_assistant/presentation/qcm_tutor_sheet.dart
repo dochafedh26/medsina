@@ -4,6 +4,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/medical_text_formatter.dart';
+import '../../../core/widgets/medsina_logo.dart';
 import '../../revision/models/qcm_model.dart';
 
 class MedsinaPilotSheet extends StatefulWidget {
@@ -142,16 +143,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
             padding: const EdgeInsets.fromLTRB(20, 8, 16, 12),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppTheme.primaryTeal, AppTheme.accentCyan],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 20),
-                ),
+                const MedsinaLogo.icon(size: 36),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

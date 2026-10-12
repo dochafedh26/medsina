@@ -5,6 +5,9 @@ class AppConstants {
   static const String appSubtitle = 'Plateforme Médicale Globale';
   static const String appTagline = 'Pratique Clinique • Formation Résidanat • Applications Pratiques';
   static const String appVersion = '1.0.0';
+  static const String logoAsset = 'assets/medsina-logo.png';
+  static const String logoDarkAsset = 'assets/medsina-logo-dark.png';
+  static const String iconAsset = 'assets/medsina-icon.png';
 
   // Subscription Tiers
   static const String tierFree = 'free';

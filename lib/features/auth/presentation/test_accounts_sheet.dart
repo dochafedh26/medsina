@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/medsina_logo.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../models/demo_accounts.dart';
@@ -31,14 +32,7 @@ class TestAccountsSheet {
                 padding: const EdgeInsets.fromLTRB(20, 18, 16, 12),
                 child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryTeal.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(Icons.switch_account_rounded, color: AppTheme.primaryTeal, size: 24),
-                    ),
+                    const MedsinaLogo.icon(size: 32),
                     const SizedBox(width: 12),
                     const Expanded(
                       child: Column(

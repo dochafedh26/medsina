@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'core/constants/app_constants.dart';
 import 'core/network/supabase_service.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/medsina_logo.dart';
 import 'features/admin/bloc/admin_bloc.dart';
 import 'features/auth/bloc/auth_bloc.dart';
 import 'features/auth/bloc/auth_event.dart';
@@ -92,38 +92,22 @@ class MedicalSplashScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.primaryTeal, AppTheme.accentCyan],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryTeal.withValues(alpha: 0.35),
-                    blurRadius: 30,
-                    offset: const Offset(0, 10),
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.25),
+                    blurRadius: 32,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.local_hospital_rounded,
-                color: Colors.white,
-                size: 52,
-              ),
+              child: const MedsinaLogo.icon(size: 68),
             ),
             const SizedBox(height: 24),
-            Text(
-              AppConstants.appName,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -0.5,
-                color: isDark ? Colors.white : const Color(0xFF0F172A),
-              ),
-            ),
+            const MedsinaLogo(height: 38),
             const SizedBox(height: 8),
             Text(
               'Plateforme Médicale & Résidanat Blida 2027',
