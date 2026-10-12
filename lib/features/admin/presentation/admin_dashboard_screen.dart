@@ -71,18 +71,22 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   child: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFFDC2626), size: 20),
                 ),
                 const SizedBox(width: 10),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Console d\'Administration Medsina',
-                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
-                    ),
-                    Text(
-                      'Supervision SaaS • Utilisateurs, Paiements & Tarifs',
-                      style: TextStyle(fontSize: 10.5, color: Colors.grey),
-                    ),
-                  ],
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Console d\'Administration Medsina',
+                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        'Supervision SaaS • Utilisateurs & Tarifs',
+                        style: TextStyle(fontSize: 10.5, color: Colors.grey),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -814,7 +818,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             children: [
               Icon(Icons.add_circle_outline_rounded, color: AppTheme.primaryTeal),
               SizedBox(width: 10),
-              Text('Générer une Clé de Licence'),
+              Expanded(
+                child: Text(
+                  'Générer une Clé de Licence',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
             ],
           ),
           content: Column(
