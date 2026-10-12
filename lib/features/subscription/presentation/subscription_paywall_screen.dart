@@ -421,11 +421,12 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
                   initialValue: selectedTier,
+                  isExpanded: true,
                   decoration: const InputDecoration(isDense: true),
                   items: const [
-                    DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP (20 000 DZD)')),
-                    DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite (15 000 DZD)')),
-                    DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro (10 000 DZD)')),
+                    DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP (20 000 DZD)', overflow: TextOverflow.ellipsis)),
+                    DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite (15 000 DZD)', overflow: TextOverflow.ellipsis)),
+                    DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro (10 000 DZD)', overflow: TextOverflow.ellipsis)),
                   ],
                   onChanged: (val) {
                     if (val != null) {
@@ -444,11 +445,12 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
                   initialValue: paymentMethod,
+                  isExpanded: true,
                   decoration: const InputDecoration(isDense: true),
                   items: const [
-                    DropdownMenuItem(value: 'baridimob', child: Text('Virement BaridiMob')),
-                    DropdownMenuItem(value: 'ccp', child: Text('Versement CCP au Bureau de Poste')),
-                    DropdownMenuItem(value: 'virement', child: Text('Virement Bancaire')),
+                    DropdownMenuItem(value: 'baridimob', child: Text('Virement BaridiMob', overflow: TextOverflow.ellipsis)),
+                    DropdownMenuItem(value: 'ccp', child: Text('Versement CCP au Bureau de Poste', overflow: TextOverflow.ellipsis)),
+                    DropdownMenuItem(value: 'virement', child: Text('Virement Bancaire', overflow: TextOverflow.ellipsis)),
                   ],
                   onChanged: (val) => setDlgState(() => paymentMethod = val ?? paymentMethod),
                 ),
