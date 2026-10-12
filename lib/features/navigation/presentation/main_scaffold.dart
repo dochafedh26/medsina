@@ -15,6 +15,24 @@ import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../auth/presentation/test_accounts_sheet.dart';
 
+class NavItemConfig {
+  final String label;
+  final String title;
+  final IconData icon;
+  final IconData selectedIcon;
+  final Widget page;
+  final bool isSpecial;
+
+  const NavItemConfig({
+    required this.label,
+    required this.title,
+    required this.icon,
+    required this.selectedIcon,
+    required this.page,
+    this.isSpecial = false,
+  });
+}
+
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
 
@@ -25,13 +43,120 @@ class MainScaffold extends StatefulWidget {
 class _MainScaffoldState extends State<MainScaffold> {
   int _currentIndex = 0;
 
-  List<Widget> _getPages(bool isAdmin) => [
-        const DashboardScreen(),
-        const ClinicalScreen(),
-        const RevisionCatalogScreen(),
-        const PracticalToolsScreen(),
-        if (isAdmin) const AdminDashboardScreen(),
-      ];
+  List<NavItemConfig> _getNavItems(SubscriptionTier tier, bool isExpired, bool isAdmin) {
+    final items = <NavItemConfig>[];
+
+    // 1. Dashboard: Accueil adapté pour tout le monde
+    items.add(const NavItemConfig(
+      label: 'Accueil',
+      title: 'Tableau de bord Medsina',
+      icon: Icons.dashboard_outlined,
+      selectedIcon: Icons.dashboard_rounded,
+      page: DashboardScreen(),
+    ));
+
+    if (isExpired) {
+      // Pour compte expiré: garde la structure globale pour inciter au renouvellement
+      items.add(const NavItemConfig(
+        label: 'Clinique',
+        title: 'Pratique Clinique & Protocoles d\'Urgence',
+        icon: Icons.medical_services_outlined,
+        selectedIcon: Icons.medical_services_rounded,
+        page: ClinicalScreen(),
+      ));
+      items.add(const NavItemConfig(
+        label: 'Résidanat',
+        title: 'Formation & Préparation Résidanat 2027',
+        icon: Icons.school_outlined,
+        selectedIcon: Icons.school_rounded,
+        page: RevisionCatalogScreen(),
+      ));
+      items.add(const NavItemConfig(
+        label: 'Outils',
+        title: 'Applications Pratiques & Mémento de Garde',
+        icon: Icons.handyman_outlined,
+        selectedIcon: Icons.handyman_rounded,
+        page: PracticalToolsScreen(),
+      ));
+    } else {
+      switch (tier) {
+        case SubscriptionTier.residentElite:
+          // Dr. Amine: Uniquement Résidanat et ses outils de révision
+          items.add(const NavItemConfig(
+            label: 'Résidanat',
+            title: 'Formation & Préparation Résidanat 2027',
+            icon: Icons.school_outlined,
+            selectedIcon: Icons.school_rounded,
+            page: RevisionCatalogScreen(),
+          ));
+          items.add(const NavItemConfig(
+            label: 'Outils',
+            title: 'Outils de Révision & Calculs Médicaux',
+            icon: Icons.handyman_outlined,
+            selectedIcon: Icons.handyman_rounded,
+            page: PracticalToolsScreen(),
+          ));
+          break;
+
+        case SubscriptionTier.clinicalPro:
+          // Dr. Yasmine: Uniquement Pratique Clinique et Outils de garde
+          items.add(const NavItemConfig(
+            label: 'Clinique',
+            title: 'Pratique Clinique & Protocoles d\'Urgence',
+            icon: Icons.medical_services_outlined,
+            selectedIcon: Icons.medical_services_rounded,
+            page: ClinicalScreen(),
+          ));
+          items.add(const NavItemConfig(
+            label: 'Outils Garde',
+            title: 'Mémento de Garde & Scores Cliniques',
+            icon: Icons.handyman_outlined,
+            selectedIcon: Icons.handyman_rounded,
+            page: PracticalToolsScreen(),
+          ));
+          break;
+
+        case SubscriptionTier.allAccess:
+        case SubscriptionTier.free:
+          // VIP Dr. Hafedh & Découverte Dr. Sarah: Vue complète
+          items.add(const NavItemConfig(
+            label: 'Clinique',
+            title: 'Pratique Clinique & Protocoles d\'Urgence',
+            icon: Icons.medical_services_outlined,
+            selectedIcon: Icons.medical_services_rounded,
+            page: ClinicalScreen(),
+          ));
+          items.add(const NavItemConfig(
+            label: 'Résidanat',
+            title: 'Formation & Préparation Résidanat 2027',
+            icon: Icons.school_outlined,
+            selectedIcon: Icons.school_rounded,
+            page: RevisionCatalogScreen(),
+          ));
+          items.add(const NavItemConfig(
+            label: 'Outils',
+            title: 'Applications Pratiques & Mémento de Garde',
+            icon: Icons.handyman_outlined,
+            selectedIcon: Icons.handyman_rounded,
+            page: PracticalToolsScreen(),
+          ));
+          break;
+      }
+    }
+
+    if (isAdmin) {
+      items.add(const NavItemConfig(
+        label: 'Admin',
+        title: 'Console d\'Administration Medsina',
+        icon: Icons.admin_panel_settings_outlined,
+        selectedIcon: Icons.admin_panel_settings_rounded,
+        page: AdminDashboardScreen(),
+        isSpecial: true,
+      ));
+    }
+
+    return items;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,22 +166,24 @@ class _MainScaffoldState extends State<MainScaffold> {
       builder: (context, authState) {
         final user = authState.user;
         final isAdmin = user?.isAdmin == true;
+        final isExpired = user != null && !user.isSubscriptionActive;
         final tier = user?.tier ?? SubscriptionTier.free;
-        final pages = _getPages(isAdmin);
-        final safeIndex = _currentIndex < pages.length ? _currentIndex : 0;
+        final navItems = _getNavItems(tier, isExpired, isAdmin);
+        final safeIndex = _currentIndex < navItems.length ? _currentIndex : 0;
+        final currentItem = navItems[safeIndex];
 
         if (isDesktop) {
           return Scaffold(
             body: Row(
               children: [
                 // Desktop Navigation Sidebar
-                _buildSidebar(context, tier, user),
+                _buildSidebar(context, tier, user, navItems, safeIndex),
                 const VerticalDivider(width: 1, thickness: 1),
                 // Main Content
                 Expanded(
                   child: Scaffold(
-                    appBar: _buildDesktopTopBar(context, tier, user),
-                    body: pages[safeIndex],
+                    appBar: _buildDesktopTopBar(context, tier, user, currentItem.title),
+                    body: currentItem.page,
                   ),
                 ),
               ],
@@ -82,46 +209,34 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
           body: IndexedStack(
             index: safeIndex,
-            children: pages,
+            children: navItems.map((item) => item.page).toList(),
           ),
           bottomNavigationBar: NavigationBar(
             selectedIndex: safeIndex,
             onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
-            destinations: [
-              const NavigationDestination(
-                icon: Icon(Icons.dashboard_outlined),
-                selectedIcon: Icon(Icons.dashboard_rounded, color: AppTheme.primaryTeal),
-                label: 'Accueil',
-              ),
-              const NavigationDestination(
-                icon: Icon(Icons.medical_services_outlined),
-                selectedIcon: Icon(Icons.medical_services_rounded, color: AppTheme.primaryTeal),
-                label: 'Clinique',
-              ),
-              const NavigationDestination(
-                icon: Icon(Icons.school_outlined),
-                selectedIcon: Icon(Icons.school_rounded, color: AppTheme.primaryTeal),
-                label: 'Résidanat',
-              ),
-              const NavigationDestination(
-                icon: Icon(Icons.handyman_outlined),
-                selectedIcon: Icon(Icons.handyman_rounded, color: AppTheme.primaryTeal),
-                label: 'Outils',
-              ),
-              if (isAdmin)
-                const NavigationDestination(
-                  icon: Icon(Icons.admin_panel_settings_outlined),
-                  selectedIcon: Icon(Icons.admin_panel_settings_rounded, color: Color(0xFFDC2626)),
-                  label: 'Admin',
+            destinations: navItems.map((item) {
+              return NavigationDestination(
+                icon: Icon(item.icon),
+                selectedIcon: Icon(
+                  item.selectedIcon,
+                  color: item.isSpecial ? const Color(0xFFDC2626) : AppTheme.primaryTeal,
                 ),
-            ],
+                label: item.label,
+              );
+            }).toList(),
           ),
         );
       },
     );
   }
 
-  Widget _buildSidebar(BuildContext context, SubscriptionTier tier, UserModel? user) {
+  Widget _buildSidebar(
+    BuildContext context,
+    SubscriptionTier tier,
+    UserModel? user,
+    List<NavItemConfig> navItems,
+    int selectedIndex,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final userName = user?.fullName ?? 'Médecin';
 
@@ -241,18 +356,21 @@ class _MainScaffoldState extends State<MainScaffold> {
           const SizedBox(height: 12),
           const Divider(height: 1),
 
-          // Nav Items
+          // Nav Items dynamiques par rôle
           Expanded(
-            child: ListView(
+            child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              children: [
-                _buildNavItem(0, 'Tableau de bord', Icons.dashboard_rounded),
-                _buildNavItem(1, 'Pratique Clinique', Icons.medical_services_rounded),
-                _buildNavItem(2, 'Formation Résidanat', Icons.school_rounded),
-                _buildNavItem(3, 'Outils Pratiques & Garde', Icons.handyman_rounded),
-                if (user?.isAdmin == true)
-                  _buildNavItem(4, 'Administration 🛡️', Icons.admin_panel_settings_rounded, isSpecial: true),
-              ],
+              itemCount: navItems.length,
+              itemBuilder: (context, index) {
+                final item = navItems[index];
+                return _buildNavItem(
+                  index: index,
+                  selectedIndex: selectedIndex,
+                  title: item.title,
+                  icon: item.selectedIcon,
+                  isSpecial: item.isSpecial,
+                );
+              },
             ),
           ),
 
@@ -290,8 +408,14 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
-  Widget _buildNavItem(int index, String title, IconData icon, {bool isSpecial = false}) {
-    final isSelected = _currentIndex == index;
+  Widget _buildNavItem({
+    required int index,
+    required int selectedIndex,
+    required String title,
+    required IconData icon,
+    bool isSpecial = false,
+  }) {
+    final isSelected = selectedIndex == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final highlightColor = isSpecial ? const Color(0xFFDC2626) : AppTheme.primaryTeal;
 
@@ -319,9 +443,14 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
-  PreferredSizeWidget _buildDesktopTopBar(BuildContext context, SubscriptionTier tier, UserModel? user) {
+  PreferredSizeWidget _buildDesktopTopBar(
+    BuildContext context,
+    SubscriptionTier tier,
+    UserModel? user,
+    String pageTitle,
+  ) {
     return AppBar(
-      title: Text(_getPageTitle(_currentIndex)),
+      title: Text(pageTitle),
       actions: [
         OutlinedButton.icon(
           style: OutlinedButton.styleFrom(
@@ -396,23 +525,6 @@ class _MainScaffoldState extends State<MainScaffold> {
         ),
       ),
     );
-  }
-
-  String _getPageTitle(int index) {
-    switch (index) {
-      case 0:
-        return 'Tableau de bord Medsina';
-      case 1:
-        return 'Pratique Clinique & Protocoles d\'Urgence';
-      case 2:
-        return 'Formation & Préparation Résidanat 2027';
-      case 3:
-        return 'Applications Pratiques & Mémento de Garde';
-      case 4:
-        return 'Console d\'Administration Medsina';
-      default:
-        return AppConstants.appName;
-    }
   }
 
   void _confirmLogout(BuildContext context) {

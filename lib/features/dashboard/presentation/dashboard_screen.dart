@@ -34,7 +34,7 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               // Overview Stats Grid
-              _buildStatsGrid(context),
+              _buildStatsGrid(context, tier, user?.isSubscriptionActive == false),
               const SizedBox(height: 28),
 
               // Clinical Tip of the Day
@@ -42,12 +42,16 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 28),
 
               // Quick Actions / Modules En Cours
-              const Text(
-                'Accès Rapide & Continuité de Révision',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              Text(
+                tier == SubscriptionTier.clinicalPro
+                    ? 'Actions Rapides Urgences & Clinique'
+                    : (tier == SubscriptionTier.residentElite
+                        ? 'Continuité de Révision & Entraînement Résidanat'
+                        : 'Accès Rapide & Continuité de Révision'),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 14),
-              _buildQuickAccessCards(context),
+              _buildQuickAccessCards(context, tier, user?.isSubscriptionActive == false),
             ],
           ),
         );
@@ -202,72 +206,120 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsGrid(BuildContext context) {
+  Widget _buildStatsGrid(BuildContext context, SubscriptionTier tier, bool isExpired) {
+    // Tailored stats according to user tier & access
+    final List<Widget> cards = [];
+
+    if (tier == SubscriptionTier.residentElite && !isExpired) {
+      // Resident Elite: 100% focused on residency exam preparation
+      cards.add(
+        _buildStatCard(
+          'Formation Résidanat',
+          '47 Modules • 6 240 QCMs',
+          'Banque complète Blida & Facultés Nationales',
+          Icons.school_rounded,
+          const Color(0xFF0D9488),
+        ),
+      );
+      cards.add(
+        _buildStatCard(
+          'Examens & Entraînement',
+          'Séries & Examens Blancs',
+          'Chronométrés avec correction détaillée',
+          Icons.quiz_rounded,
+          AppTheme.accentCyan,
+        ),
+      );
+      cards.add(
+        _buildStatCard(
+          'Cours PDF & Fiches',
+          '1 205 Cours Officiels',
+          'Lecture sécurisée & exports Anki',
+          Icons.menu_book_rounded,
+          const Color(0xFF2563EB),
+        ),
+      );
+    } else if (tier == SubscriptionTier.clinicalPro && !isExpired) {
+      // Clinique Pro: 100% focused on clinical & emergency practice
+      cards.add(
+        _buildStatCard(
+          'Pratique Clinique',
+          'Conduites à Tenir (CAT)',
+          'Arbres décisionnels & consensus MSPRH',
+          Icons.emergency_rounded,
+          const Color(0xFF0284C7),
+        ),
+      );
+      cards.add(
+        _buildStatCard(
+          'Urgences & DCI Algérie',
+          'Pharmacopée Saidal / IPA',
+          'Posologies d\'urgence & débits PSE',
+          Icons.medication_liquid_rounded,
+          const Color(0xFF10B981),
+        ),
+      );
+      cards.add(
+        _buildStatCard(
+          'Scores Cliniques & Tri',
+          'Glasgow, Wells, qSOFA',
+          'Calculateurs au lit du malade',
+          Icons.calculate_rounded,
+          const Color(0xFFF59E0B),
+        ),
+      );
+    } else {
+      // All-Access VIP or Free Trial or Expired: comprehensive medical suite
+      cards.add(
+        _buildStatCard(
+          'Formation Résidanat',
+          '47 Modules • 6 240 QCMs',
+          isExpired ? 'Accès suspendu • Renouveler' : 'Banque complète Blida & National',
+          Icons.school_rounded,
+          isExpired ? Colors.grey : AppTheme.primaryTeal,
+        ),
+      );
+      cards.add(
+        _buildStatCard(
+          'Pratique Clinique',
+          '18+ CAT & Protocoles',
+          isExpired ? 'Accès suspendu • Renouveler' : 'Arbres décisionnels d\'urgence',
+          Icons.emergency_rounded,
+          isExpired ? Colors.grey : const Color(0xFFEF4444),
+        ),
+      );
+      cards.add(
+        _buildStatCard(
+          'Calculateurs & Outils',
+          'Scores, Labs & Normes',
+          'Calcul instantané au lit du malade',
+          Icons.calculate_rounded,
+          isExpired ? Colors.grey : AppTheme.accentCyan,
+        ),
+      );
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossAxisCount = constraints.maxWidth > 700 ? 3 : 1;
+        final isMobile = constraints.maxWidth < 700;
 
-        if (crossAxisCount == 1) {
+        if (isMobile) {
           return Column(
             children: [
-              _buildStatCard(
-                'Formation Résidanat',
-                '47 Modules • 6 240 QCMs',
-                'Banque complète Blida & National',
-                Icons.school_rounded,
-                AppTheme.primaryTeal,
-              ),
-              const SizedBox(height: 12),
-              _buildStatCard(
-                'Pratique Clinique',
-                '18 CAT & Protocoles',
-                'Arbres décisionnels d\'urgence',
-                Icons.emergency_rounded,
-                const Color(0xFFEF4444),
-              ),
-              const SizedBox(height: 12),
-              _buildStatCard(
-                'Calculateurs & Scores',
-                'Glasgow, Wells, Cockcroft',
-                'Calcul instantané au lit du malade',
-                Icons.calculate_rounded,
-                AppTheme.accentCyan,
-              ),
+              for (int i = 0; i < cards.length; i++) ...[
+                if (i > 0) const SizedBox(height: 12),
+                cards[i],
+              ],
             ],
           );
         }
 
         return Row(
           children: [
-            Expanded(
-              child: _buildStatCard(
-                'Formation Résidanat',
-                '47 Modules • 6 240 QCMs',
-                'Banque complète Blida & National',
-                Icons.school_rounded,
-                AppTheme.primaryTeal,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _buildStatCard(
-                'Pratique Clinique',
-                '18 CAT & Protocoles',
-                'Arbres décisionnels d\'urgence',
-                Icons.emergency_rounded,
-                const Color(0xFFEF4444),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _buildStatCard(
-                'Calculateurs & Scores',
-                'Glasgow, Wells, Cockcroft',
-                'Calcul instantané au lit du malade',
-                Icons.calculate_rounded,
-                AppTheme.accentCyan,
-              ),
-            ),
+            for (int i = 0; i < cards.length; i++) ...[
+              if (i > 0) const SizedBox(width: 14),
+              Expanded(child: cards[i]),
+            ],
           ],
         );
       },
@@ -473,7 +525,100 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickAccessCards(BuildContext context) {
+  Widget _buildQuickAccessCards(BuildContext context, SubscriptionTier tier, bool isExpired) {
+    if (tier == SubscriptionTier.residentElite && !isExpired) {
+      // Resident Elite: 100% residency exam cards
+      return Column(
+        children: [
+          ListTile(
+            tileColor: Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Theme.of(context).dividerColor),
+            ),
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFFCCFBF1),
+              child: Icon(Icons.school_rounded, color: Color(0xFF0D9488)),
+            ),
+            title: const Text('Entraînement QCM : Cardiologie & HTA', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            subtitle: const Text('Reprendre la session : 340 questions classées • Annales Blida 2024'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Accédez à l\'onglet Résidanat pour lancer la session !')),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          ListTile(
+            tileColor: Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Theme.of(context).dividerColor),
+            ),
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFFEDE9FE),
+              child: Icon(Icons.timer_rounded, color: Color(0xFF8B5CF6)),
+            ),
+            title: const Text('Examen Blanc Chronométré : Concours National', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            subtitle: const Text('Épreuve type 100 questions multi-spécialités • Calcul de note en temps réel'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Accédez à l\'onglet Résidanat pour lancer un examen blanc.')),
+              );
+            },
+          ),
+        ],
+      );
+    } else if (tier == SubscriptionTier.clinicalPro && !isExpired) {
+      // Clinique Pro: 100% clinical and emergency hospital cards
+      return Column(
+        children: [
+          ListTile(
+            tileColor: Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Theme.of(context).dividerColor),
+            ),
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFFFEE2E2),
+              child: Icon(Icons.emergency_rounded, color: Color(0xFFEF4444)),
+            ),
+            title: const Text('CAT Urgence : Prise en charge SCA ST+ (IDM)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            subtitle: const Text('Arbre décisionnel reperfusion < 120 min • Posologies antithrombotiques'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Accédez à l\'onglet Pratique Clinique pour consulter le protocole.')),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          ListTile(
+            tileColor: Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Theme.of(context).dividerColor),
+            ),
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFFE0F2FE),
+              child: Icon(Icons.medication_rounded, color: Color(0xFF0284C7)),
+            ),
+            title: const Text('Mémento DCI Algérie : Adrénaline & Sérums IPA', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            subtitle: const Text('Recherche instantanée • Posologies d\'urgence et protocoles Saidal / IPA'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Consultez l\'onglet Urgences & DCI dans Pratique Clinique.')),
+              );
+            },
+          ),
+        ],
+      );
+    }
+
+    // All-Access VIP or Free Trial or Expired: General access cards
     return Column(
       children: [
         ListTile(
