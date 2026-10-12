@@ -1,6 +1,13 @@
 name: Medsina Autonomous Medical Agent
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/medsina_automation.yml'
+      - 'scripts/automation/**'
+
   schedule:
     # 1. Perle du Jour (Daily Pearl) : Every day at 05:00 UTC (06:00 Algérie)
     - cron: '0 5 * * *'
