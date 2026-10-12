@@ -252,6 +252,236 @@ class ClinicalRepository {
         ],
         references: 'Consensus ADA / SFD - Décompensations acido-cétosiques du diabète.',
       ),
+      const ClinicalProtocol(
+        id: 'cat_envenimation_scorpionique',
+        title: 'Envenimation Scorpionique (Protocole National Algérie)',
+        specialty: 'Toxicologie & Urgences Algérie',
+        urgencyLevel: 'Urgence Vitale',
+        definition: 'Piqûre de scorpion avec envenimation potentiellement mortelle (Androctonus australis). Priorité absolue de santé publique en Algérie.',
+        redFlags: [
+          'Stade 1 : Signes locaux isolés (douleur vive, œdème minime)',
+          'Stade 2 : Signes généraux/systémiques (sueurs profuses, priapisme, myosis/mydriase, vomissements, HTA, tachycardie)',
+          'Stade 3 : Détresse vitale (OAP cardiogénique, choc cardiogénique, collapsus, détresse respiratoire, convulsions, coma)',
+          'Facteur de haut risque : Enfant de moins de 15 ans et sujet âgé',
+        ],
+        steps: [
+          ClinicalStep(
+            title: '1. Conduite Immédiate & Triage',
+            content: 'Tout piqué de scorpion doit être gardé sous surveillance médicale minimale de 4 heures.',
+            bulletPoints: [
+              'Repos strict au lit, rassurer le patient et la famille (le stress aggrave la décharge catécholaminergique)',
+              'NE PAS inciser, NE PAS poser de garrot, NE PAS cautériser, NE PAS aspirer',
+              'Désinfection locale de la piqûre, vérifier la vaccination antitétanique (VAT)',
+              'Prise des constantes vitales (FC, TA, SpO2, FR, Température) toutes les 30 minutes',
+            ],
+          ),
+          ClinicalStep(
+            title: '2. Immunothérapie Antiscorpionique (Sérum SAS de l\'Institut Pasteur d\'Algérie)',
+            content: 'Indication formelle dès le Stade 2 ou 3.',
+            bulletPoints: [
+              'Sérum Antiscorpionique (SAS) polyvalent de l\'IPA : 1 à 2 ampoules en IV directe lente (ou perfusion dans 50 mL de NaCl 0,9% sur 15 min)',
+              'Efficacité maximale si administré précocement (< 2 heures après la piqûre)',
+              'Peut être répété après 2 heures si persistance ou aggravation des signes généraux',
+            ],
+          ),
+          ClinicalStep(
+            title: '3. Prise en charge en Réanimation (Stade 3 / Défaillance myocardique)',
+            content: 'Le venin provoque une sidération myocardique par toxine inotrope négative et décharge catécholaminergique massive.',
+            bulletPoints: [
+              'Si OAP / Choc cardiogénique : Transfert immédiat en Réanimation UMC',
+              'Oxygénothérapie fort débit ou ventilation non invasive (VNI)',
+              'Inotrope positif de choix : Dobutamine IVSE (5 à 15 µg/kg/min)',
+              'Contre-indication formelle aux bêtabloquants et aux digitaliques en phase aiguë',
+            ],
+          ),
+        ],
+        treatments: [
+          'Sérum Antiscorpionique (SAS) IPA IV',
+          'Dobutamine IVSE si choc cardiogénique',
+          'Paracétamol injectable si douleur (éviter morphiniques qui majorent la dépression respiratoire)',
+          'Vaccin Antitétanique (VAT)',
+        ],
+        references: 'Guide National de Prise en Charge de l\'Envenimation Scorpionique - Ministère de la Santé (MSPRH) & Institut Pasteur d\'Algérie (IPA).',
+      ),
+      const ClinicalProtocol(
+        id: 'cat_rage_prophylaxie',
+        title: 'Prophylaxie Post-Exposition de la Rage (Protocole Algérie - IPA/OMS)',
+        specialty: 'Infectiologie & Santé Publique',
+        urgencyLevel: 'Urgence Vitale',
+        definition: 'Conduite à tenir obligatoire après toute morsure, griffure ou léchage par un animal suspect (chien, chat, renard, chacal). La rage déclarée est mortelle à 100%.',
+        redFlags: [
+          'Catégorie I : Contact ou léchage sur peau intacte -> Pas de risque.',
+          'Catégorie II : Morsure superficielle, griffure sans saignement -> Vaccin antirabique seul.',
+          'Catégorie III : Morsure transdermique avec saignement, léchage sur peau lésée ou muqueuse, griffure tête/cou/mains -> Vaccin + Sérothérapie antirabique immédiate !',
+          'Animal disparu, abattu ou mort -> Traiter d\'emblée comme animal enragé.',
+        ],
+        steps: [
+          ClinicalStep(
+            title: '1. Soins Locaux Immédiats (Étape salvatrice)',
+            content: 'Élimine mécaniquement plus de 90% du virus présent dans la plaie.',
+            bulletPoints: [
+              'Lavage abondant et vigoureux à l\'eau et au savon (ou détergent) pendant au moins 15 minutes',
+              'Rinçage à grande eau puis application d\'un antiseptique iodé (Bétadine) ou alcoolique',
+              'NE PAS SUTURER la plaie d\'emblée (favorise l\'inoculation virale profonde) sauf impératif hémostatique majeur',
+            ],
+          ),
+          ClinicalStep(
+            title: '2. Vaccination Antirabique (Protocole Zagreb officiel)',
+            content: 'Vaccin antirabique sur cellules Vero (fourni par l\'Institut Pasteur d\'Algérie).',
+            bulletPoints: [
+              'Schéma 2-1-1 (Zagreb) par voie intramusculaire dans le deltoïde (JAMAIS dans le fessier) :',
+              '• J0 : 2 doses (1 injection deltoïde droit + 1 injection deltoïde gauche)',
+              '• J7 : 1 dose',
+              '• J21 : 1 dose',
+            ],
+          ),
+          ClinicalStep(
+            title: '3. Sérothérapie Antirabique (Catégorie III)',
+            content: 'Immunoglobulines antirabiques humaines ou sérum équin.',
+            bulletPoints: [
+              'Dose : Sérum équin 40 UI/kg ou Immunoglobulines humaines 20 UI/kg',
+              'Infiltrer la totalité de la dose autour et dans la plaie, le reste en IM à distance du site vaccinal',
+              'Vérifier et mettre à jour la vaccination antitétanique (VAT + Sérum SAT)',
+            ],
+          ),
+        ],
+        treatments: [
+          'Lavage à grande eau et savon (15 min)',
+          'Vaccin antirabique IPA (J0, J0, J7, J21)',
+          'Sérothérapie antirabique (plaie de cat. III)',
+          'Vaccin Antitétanique (VAT) + Antibiothérapie préventive (Amoxicilline-Ac. Clavulanique)',
+        ],
+        references: 'Protocole National de Lutte contre la Rage - Ministère de la Santé Algérien & OMS.',
+      ),
+      const ClinicalProtocol(
+        id: 'cat_acr_adulte',
+        title: 'Arrêt Cardio-Respiratoire (ACR) Adulte (ERC / SFMU 2025)',
+        specialty: 'Réanimation & UMC',
+        urgencyLevel: 'Urgence Vitale Extrême',
+        definition: 'Absence de conscience, de pouls carotidien et de respiration normale (ou gasps). Chaque minute perdue diminue la survie de 10%.',
+        redFlags: [
+          'Inconscient + Pas de respiration efficace (gasping)',
+          'Reconnaissance immédiate en < 10 secondes',
+          'Rythmes Choquables : Fibrillation Ventriculaire (FV), Tachycardie Ventriculaire sans pouls (TV)',
+          'Rythmes Non Choquables : Asystolie, Activité Électrique Sans Pouls (AESP)',
+        ],
+        steps: [
+          ClinicalStep(
+            title: '1. Chaîne de survie & MCE immédiat',
+            content: 'Alerter l\'équipe de déchocage / réa et débuter le massage cardiaque externe sans délai.',
+            bulletPoints: [
+              'MCE continu : fréquence 100-120/min, profondeur 5-6 cm, dépression complète du thorax',
+              'Ratio compressions/ventilations 30:2 (ou compressions continues dès intubation)',
+              'Poser le défibrillateur / scope sans interrompre le massage plus de 5 secondes',
+            ],
+          ),
+          ClinicalStep(
+            title: '2. Si Rythme Choquable (FV / TV)',
+            content: 'Défibrillation précoce.',
+            bulletPoints: [
+              'Choc électrique externe (150-200 J biphasique) -> Reprise IMMÉDIATE du MCE pendant 2 min',
+              'Après 3ème choc : Adrénaline 1 mg IV + Amiodarone 300 mg IV (ou Lidocaïne)',
+              'Après 5ème choc : Adrénaline 1 mg IV + Amiodarone 150 mg IV',
+              'Renouveler Adrénaline 1 mg tous les 2 cycles (3-5 min)',
+            ],
+          ),
+          ClinicalStep(
+            title: '3. Si Rythme Non Choquable (Asystolie / AESP)',
+            content: 'MCE continu + Adrénaline immédiate + Recherche des causes réversibles (4H & 4T).',
+            bulletPoints: [
+              'Adrénaline 1 mg IV directe d\'emblée, répétée toutes les 3 à 5 minutes',
+              'Rechercher et traiter les 4H : Hypoxie, Hypovolémie, Hypo/Hyperkaliémie, Hypothermie',
+              'Rechercher et traiter les 4T : Pneumothorax sous Tension, Tamponnade, Toxiques, Thrombose (EP ou coronaire)',
+            ],
+          ),
+        ],
+        treatments: [
+          'Adrénaline 1 mg IV toutes les 3-5 min',
+          'Amiodarone 300 mg IV (après 3e choc), puis 150 mg',
+          'Oxygénothérapie 100% avec ballon auto-remplisseur (BAVU)',
+        ],
+        references: 'Recommandations ERC / SFMU 2025/2026 - Réanimation Cardiorespiratoire Adulte.',
+      ),
+      const ClinicalProtocol(
+        id: 'cat_choc_septique',
+        title: 'Sepsis & Choc Septique (Surviving Sepsis Campaign / SFMU)',
+        specialty: 'Réanimation & Infectiologie',
+        urgencyLevel: 'Urgence Vitale',
+        definition: 'Dysfonction d\'organe menaçant le pronostic vital causée par une réponse dérégulée de l\'hôte à une infection. Le choc septique associe hypotension persistante nécessitant des vasopresseurs et hyperlactatémie > 2 mmol/L.',
+        redFlags: [
+          'Score qSOFA >= 2 (PAS <= 100 mmHg, FR >= 22/min, Glasgow < 15)',
+          'Hypotension réfractaire au remplissage (PAM < 65 mmHg)',
+          'Marbrures cutanées des genoux, temps de recoloration cutanée > 3 sec, oligurie < 0,5 mL/kg/h',
+          'Lactates sanguins élevés > 2 mmol/L (> 4 mmol/L = défaillance sévère)',
+        ],
+        steps: [
+          ClinicalStep(
+            title: '1. "Bundle" de la première heure (Hour-1 Bundle)',
+            content: '5 actions salvatrices à exécuter impérativement dans les 60 premières minutes.',
+            bulletPoints: [
+              '1. Doser les lactates sanguins (répéter si > 2 mmol/L)',
+              '2. Hémocultures (au moins 2 paires) AVANT de débuter les antibiotiques',
+              '3. Antibiothérapie IV à large spectre immédiate adaptée à la porte d\'entrée suspectée',
+              '4. Remplissage vasculaire rapide par cristalloïdes (NaCl 0,9% ou Ringer) : 30 mL/kg en perfusion en < 3 heures',
+              '5. Noradrénaline précoce si PAM < 65 mmHg pendant ou après le remplissage',
+            ],
+          ),
+          ClinicalStep(
+            title: '2. Antibiothérapies de première intention selon la porte d\'entrée',
+            content: 'Traiter fort et ciblé.',
+            bulletPoints: [
+              'Pulmonaire : Céfotaxime ou Ceftriaxone 2 g/j IV + Lévofloxacine ou Macrolide',
+              'Urinaire : Céfotaxime/Ceftriaxone + Amikacine 25-30 mg/kg en dose unique journalière',
+              'Digestive : Ceftriaxone + Métronidazole (Flagyl) 500 mg x 3/j + Gentamicine',
+              'Inconnue : Pipéracilline-Tazobactam (Tazocilline) ou Céfépime + Amikacine',
+            ],
+          ),
+        ],
+        treatments: [
+          'Cristalloïdes 30 mL/kg en perfusion rapide',
+          'Noradrénaline IVSE titrée pour PAM >= 65 mmHg',
+          'Ceftriaxone 2 g IV + Amikacine 25-30 mg/kg IV',
+          'Hydrocortisone 200 mg/j IV si vasopresseurs à forte dose réfractaires',
+        ],
+        references: 'Surviving Sepsis Campaign (SSC) 2021 & Recommandations SFMU / SRLF.',
+      ),
+      const ClinicalProtocol(
+        id: 'cat_triage_umc_algerie',
+        title: 'Triage & Régulation des Urgences (Référentiel National Algérien)',
+        specialty: 'Urgences Médico-Chirurgicales (UMC)',
+        urgencyLevel: 'Organisationnel & Clinique',
+        definition: 'Cadre réglementaire officiel du Ministère de la Santé (MSPRH) pour le tri et l\'accueil des urgences en milieu hospitalier et polyclinique.',
+        redFlags: [
+          'U1 (Code ROUGE) : Urgence Vitale Immédiate - Prise en charge sans délai (< 5 minutes en salle de déchoquage)',
+          'U2 (Code ORANGE) : Urgence Grave Différée - Risque de décompensation rapide, soins < 30 minutes',
+          'U3 (Code VERT) : Urgence Relative - Fonctions vitales stables, consultation et orientation ambulatoire / polyclinique',
+        ],
+        steps: [
+          ClinicalStep(
+            title: '1. Évaluation Initiale de l\'Infirmier d\'Accueil et d\'Orientation (IAO)',
+            content: 'Détermination du code de gravité en < 3 minutes à l\'admission.',
+            bulletPoints: [
+              'Mesure systématique des constantes : TA, FC, SpO2, Température, Glycémie capillaire, Conscience (Glasgow)',
+              'Recherche des signes d\'alarme vitale : cyanose, sueurs, tirage, marbrures, douleur thoracique aiguë',
+              'Orientation immédiate : Déchoquage (U1), Box d\'examen prioritaire (U2), Salle d\'attente surveillée (U3)',
+            ],
+          ),
+          ClinicalStep(
+            title: '2. Gradation et Transferts inter-établissements',
+            content: 'Désengorgement des CHU et utilisation optimale du plateau technique.',
+            bulletPoints: [
+              'Les polycliniques de proximité gèrent les cas U3 (sutures simples, asthme léger, angines, coliques néphrétiques simples)',
+              'Les CHU et EPH concentrent les plateaux de réanimation, imagerie en coupe (TDM) et blocs opératoires d\'urgence',
+            ],
+          ),
+        ],
+        treatments: [
+          'Scope de déchoquage U1',
+          'Conditionnement immédiat : VVP, O2, monitoring',
+          'Fiche de liaison d\'urgence standardisée MSPRH',
+        ],
+        references: 'Référentiel National des Urgences Médico-Chirurgicales - Ministère de la Santé (MSPRH Algérie).',
+      ),
     ];
   }
 }

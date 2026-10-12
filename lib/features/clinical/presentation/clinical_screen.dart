@@ -21,7 +21,7 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     context.read<ClinicalBloc>().add(LoadClinicalDataEvent());
   }
 
@@ -51,15 +51,19 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
               unselectedLabelColor: Colors.grey.shade600,
               indicatorColor: AppTheme.primaryTeal,
               indicatorWeight: 3,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
               tabs: const [
                 Tab(
                   icon: Icon(Icons.emergency_rounded),
-                  text: 'Conduites à Tenir (CAT) & Protocoles',
+                  text: 'Protocoles & CAT',
                 ),
                 Tab(
                   icon: Icon(Icons.calculate_rounded),
-                  text: 'Scores & Calculateurs Cliniques',
+                  text: 'Scores Cliniques',
+                ),
+                Tab(
+                  icon: Icon(Icons.medication_liquid_rounded),
+                  text: 'Urgences & DCI Algérie',
                 ),
               ],
             ),
@@ -70,6 +74,7 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
               children: const [
                 _ProtocolsTab(),
                 _CalculatorsTab(),
+                _EmergencyDrugsTab(),
               ],
             ),
           ),
@@ -100,7 +105,7 @@ class _ProtocolsTab extends StatelessWidget {
                 children: [
                   TextField(
                     decoration: InputDecoration(
-                      hintText: 'Rechercher une urgence, symptôme, maladie...',
+                      hintText: 'Rechercher une urgence, protocole, scorpion, rage...',
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: state.searchQuery.isNotEmpty
                           ? IconButton(
@@ -124,13 +129,13 @@ class _ProtocolsTab extends StatelessWidget {
                         return ChoiceChip(
                           label: Text(spec),
                           selected: isSelected,
-                          selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
+                          onSelected: (_) => context.read<ClinicalBloc>().add(FilterSpecialtyEvent(spec)),
+                          selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.18),
                           labelStyle: TextStyle(
-                            color: isSelected ? AppTheme.primaryTeal : null,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected ? AppTheme.primaryDarkTeal : null,
+                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                             fontSize: 12,
                           ),
-                          onSelected: (_) => context.read<ClinicalBloc>().add(FilterSpecialtyEvent(spec)),
                         );
                       },
                     ),
@@ -145,11 +150,11 @@ class _ProtocolsTab extends StatelessWidget {
               child: state.filteredProtocols.isEmpty
                   ? Center(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.search_off_rounded, size: 54, color: Colors.grey.shade400),
+                          Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.shade400),
                           const SizedBox(height: 12),
-                          const Text('Aucun protocole ne correspond à votre recherche.'),
+                          Text('Aucun protocole pour "${state.searchQuery}"', style: TextStyle(color: Colors.grey.shade600)),
                         ],
                       ),
                     )
@@ -157,8 +162,8 @@ class _ProtocolsTab extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       itemCount: state.filteredProtocols.length,
                       itemBuilder: (context, index) {
-                        final proto = state.filteredProtocols[index];
-                        return _ProtocolCard(protocol: proto);
+                        final protocol = state.filteredProtocols[index];
+                        return _ProtocolCard(protocol: protocol);
                       },
                     ),
             ),
@@ -180,174 +185,191 @@ class _ProtocolCard extends StatefulWidget {
 class _ProtocolCardState extends State<_ProtocolCard> {
   bool _expanded = false;
 
+  Color _getUrgencyColor(String urgency) {
+    if (urgency.contains('Vitale')) return const Color(0xFFDC2626);
+    if (urgency.contains('Relative')) return const Color(0xFFD97706);
+    return const Color(0xFF2563EB);
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = widget.protocol;
-    final isVital = p.urgencyLevel == 'Urgence Vitale';
+    final urgColor = _getUrgencyColor(p.urgencyLevel);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 14),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: urgColor.withValues(alpha: 0.35), width: 1.2),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => setState(() => _expanded = !_expanded),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Badge row
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: urgColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      p.urgencyLevel.toUpperCase(),
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: urgColor),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      p.specialty,
+                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(_expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Title
+              Text(
+                p.title,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 6),
+
+              // Definition
+              Text(
+                p.definition,
+                style: TextStyle(fontSize: 12.5, color: isDark ? Colors.grey.shade400 : Colors.grey.shade700, height: 1.3),
+              ),
+
+              // Red Flags Preview
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: p.redFlags.take(2).map((rf) => Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.warning_amber_rounded, size: 13, color: Color(0xFFDC2626)),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        rf,
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFFDC2626)),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                )).toList(),
+              ),
+
+              // Expanded Details
+              if (_expanded) ...[
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 10),
+
+                // All Red Flags
+                const Text('🚩 Signes d\'Alarme & Critères de Gravité :', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFFDC2626))),
+                const SizedBox(height: 6),
+                ...p.redFlags.map((rf) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('• ', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFDC2626))),
+                      Expanded(child: Text(rf, style: const TextStyle(fontSize: 12, height: 1.3))),
+                    ],
+                  ),
+                )),
+                const SizedBox(height: 14),
+
+                // Clinical Steps
+                const Text('📋 Étapes de la Prise en Charge :', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppTheme.primaryDarkTeal)),
+                const SizedBox(height: 8),
+                ...p.steps.map((step) => Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: isVital ? const Color(0xFFFEE2E2) : const Color(0xFFFEF3C7),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          p.urgencyLevel.toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            color: isVital ? const Color(0xFFDC2626) : const Color(0xFFD97706),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        p.title,
-                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
-                      ),
-                      Text(
-                        p.specialty,
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                  onPressed: () => setState(() => _expanded = !_expanded),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              p.definition,
-              style: TextStyle(fontSize: 13, height: 1.4, color: Colors.grey.shade700),
-            ),
-
-            if (_expanded) ...[
-              const SizedBox(height: 14),
-              const Divider(),
-              const SizedBox(height: 8),
-
-              // Red flags
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFEF2F2),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFFECACA)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(Icons.warning_amber_rounded, color: Color(0xFFDC2626), size: 18),
-                        SizedBox(width: 8),
-                        Text(
-                          'Signes de Gravité / Red Flags',
-                          style: TextStyle(fontWeight: FontWeight.w800, color: Color(0xFFDC2626), fontSize: 13),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    ...p.redFlags.map((rf) => Padding(
-                          padding: const EdgeInsets.only(top: 3),
+                      Text(step.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5, color: Color(0xFF2563EB))),
+                      const SizedBox(height: 4),
+                      Text(step.content, style: const TextStyle(fontSize: 12, height: 1.35)),
+                      if (step.bulletPoints.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        ...step.bulletPoints.map((bp) => Padding(
+                          padding: const EdgeInsets.only(left: 6, bottom: 2),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('• ', style: TextStyle(color: Color(0xFFDC2626), fontWeight: FontWeight.bold)),
-                              Expanded(child: Text(rf, style: const TextStyle(fontSize: 12, color: Color(0xFF7F1D1D)))),
+                              const Text('› ', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryTeal)),
+                              Expanded(child: Text(bp, style: TextStyle(fontSize: 11.5, color: isDark ? Colors.grey.shade300 : Colors.grey.shade800, height: 1.3))),
                             ],
                           ),
                         )),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-              const Text('Étapes de la Prise en Charge :', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
-              const SizedBox(height: 8),
-
-              ...p.steps.map((st) => Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? AppTheme.darkSurfaceElevated
-                          : const Color(0xFFF8FAFC),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(st.title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppTheme.primaryTeal)),
-                        const SizedBox(height: 4),
-                        Text(st.content, style: const TextStyle(fontSize: 12)),
-                        if (st.bulletPoints.isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          ...st.bulletPoints.map((bp) => Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: Text('  ✓ $bp', style: const TextStyle(fontSize: 12, color: Color(0xFF0F766E))),
-                              )),
-                        ],
                       ],
-                    ),
-                  )),
-
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryTeal.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('💊 Traitements Immédiats :', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-                    const SizedBox(height: 4),
-                    ...p.treatments.map((t) => Text('• $t', style: const TextStyle(fontSize: 12))),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 10),
-              Text(
-                'Source : ${p.references}',
-                style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade500),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF2563EB),
-                    side: const BorderSide(color: Color(0xFF2563EB), width: 1.2),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ],
                   ),
-                  icon: const Icon(Icons.auto_awesome_rounded, size: 16),
-                  label: const Text('Approfondir avec le Copilote Clinique Gemini ✨', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
-                  onPressed: () => ClinicalCopilotSheet.show(context, initialSituation: '${p.title} (${p.urgencyLevel}) - ${p.definition}'),
+                )),
+
+                // Essential Treatments
+                const Text('💊 Traitements Immédiats :', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF16A34A))),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: p.treatments.map((t) => Chip(
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    backgroundColor: const Color(0xFFDCFCE7),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    label: Text(t, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF16A34A))),
+                  )).toList(),
                 ),
-              ),
+
+                const SizedBox(height: 12),
+                Text(
+                  '📚 Source / Consensus : ${p.references}',
+                  style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade600),
+                ),
+
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF2563EB),
+                      side: const BorderSide(color: Color(0xFF2563EB), width: 1.2),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                    label: const Text('Approfondir avec le Copilote Clinique Gemini ✨', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
+                    onPressed: () => ClinicalCopilotSheet.show(context, initialSituation: '${p.title} (${p.urgencyLevel}) - ${p.definition}'),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -382,17 +404,93 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
   double _creatinine = 90;
   bool _isFemale = false;
 
+  // qSOFA State
+  bool _qsofaRr = true;
+  bool _qsofaGcs = false;
+  bool _qsofaBp = true;
+
+  // CHA2DS2-VASc State
+  bool _chaChf = false;
+  bool _chaHta = true;
+  int _chaAge = 68;
+  bool _chaDiab = false;
+  bool _chaStroke = false;
+  bool _chaVasc = false;
+  bool _chaFemale = false;
+
+  // Apgar State
+  int _apgarHr = 2;
+  int _apgarResp = 2;
+  int _apgarTone = 2;
+  int _apgarReflex = 2;
+  int _apgarColor = 1;
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        _buildQsofaCard(),
+        const SizedBox(height: 16),
         _buildGlasgowCard(),
         const SizedBox(height: 16),
         _buildWellsPeCard(),
         const SizedBox(height: 16),
+        _buildCha2ds2VascCard(),
+        const SizedBox(height: 16),
         _buildCockcroftCard(),
+        const SizedBox(height: 16),
+        _buildApgarCard(),
       ],
+    );
+  }
+
+  Widget _buildQsofaCard() {
+    final res = ClinicalCalculators.calculateQsofa(
+      respRate22OrMore: _qsofaRr,
+      alteredMentation: _qsofaGcs,
+      sysBp100OrLess: _qsofaBp,
+    );
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.warning_rounded, color: Color(0xFFDC2626)),
+                const SizedBox(width: 10),
+                const Text('Score qSOFA — Alerte Sepsis UMC', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                const Spacer(),
+                _buildScorePill('${res.value} / 3', res.severityColor),
+              ],
+            ),
+            const SizedBox(height: 14),
+            CheckboxListTile(
+              dense: true,
+              value: _qsofaRr,
+              title: const Text('Fréquence respiratoire ≥ 22 /min (+1 pt)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _qsofaRr = v ?? false),
+            ),
+            CheckboxListTile(
+              dense: true,
+              value: _qsofaGcs,
+              title: const Text('Confusion ou altération de conscience / Glasgow < 15 (+1 pt)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _qsofaGcs = v ?? false),
+            ),
+            CheckboxListTile(
+              dense: true,
+              value: _qsofaBp,
+              title: const Text('Pression Artérielle Systolique ≤ 100 mmHg (+1 pt)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _qsofaBp = v ?? false),
+            ),
+            const SizedBox(height: 12),
+            _buildResultBox(res),
+          ],
+        ),
+      ),
     );
   }
 
@@ -523,6 +621,83 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
     );
   }
 
+  Widget _buildCha2ds2VascCard() {
+    final res = ClinicalCalculators.calculateCha2ds2Vasc(
+      congestiveHeartFailure: _chaChf,
+      hypertension: _chaHta,
+      age: _chaAge,
+      diabetes: _chaDiab,
+      strokeTiaThromboembolism: _chaStroke,
+      vascularDisease: _chaVasc,
+      isFemale: _chaFemale,
+    );
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.favorite_rounded, color: Color(0xFFE11D48)),
+                const SizedBox(width: 10),
+                const Text('CHA₂DS₂-VASc — Risque Thrombo-Embolique FA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                const Spacer(),
+                _buildScorePill('${res.value} pts', res.severityColor),
+              ],
+            ),
+            const SizedBox(height: 14),
+            _buildDropdownRow('Tranche d\'âge :', _chaAge, {
+              60: '< 65 ans (0 pt)',
+              68: '65 – 74 ans (+1 pt)',
+              78: '≥ 75 ans (+2 pts)',
+            }, (v) => setState(() => _chaAge = v!)),
+            const SizedBox(height: 8),
+            CheckboxListTile(
+              dense: true,
+              value: _chaHta,
+              title: const Text('Hypertension Artérielle (+1 pt)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _chaHta = v ?? false),
+            ),
+            CheckboxListTile(
+              dense: true,
+              value: _chaChf,
+              title: const Text('Insuffisance Cardiaque congestive (+1 pt)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _chaChf = v ?? false),
+            ),
+            CheckboxListTile(
+              dense: true,
+              value: _chaDiab,
+              title: const Text('Diabète (+1 pt)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _chaDiab = v ?? false),
+            ),
+            CheckboxListTile(
+              dense: true,
+              value: _chaStroke,
+              title: const Text('Antécédent d\'AVC / AIT / Thrombo-embolie (+2 pts)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _chaStroke = v ?? false),
+            ),
+            CheckboxListTile(
+              dense: true,
+              value: _chaVasc,
+              title: const Text('Maladie Vasculaire (IDM, artériopathie périphérique) (+1 pt)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _chaVasc = v ?? false),
+            ),
+            CheckboxListTile(
+              dense: true,
+              value: _chaFemale,
+              title: const Text('Sexe Féminin (+1 pt)', style: TextStyle(fontSize: 13)),
+              onChanged: (v) => setState(() => _chaFemale = v ?? false),
+            ),
+            const SizedBox(height: 12),
+            _buildResultBox(res),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCockcroftCard() {
     final res = ClinicalCalculators.calculateCockcroft(
       age: _age,
@@ -539,11 +714,11 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
           children: [
             Row(
               children: [
-                const Icon(Icons.water_drop_rounded, color: AppTheme.medicalPurple),
+                const Icon(Icons.water_drop_rounded, color: Colors.blueAccent),
                 const SizedBox(width: 10),
                 const Text('Clairance Cockcroft & Gault', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                 const Spacer(),
-                _buildScorePill('${res.value} ${res.unit}', res.severityColor),
+                _buildScorePill('${res.value} mL/min', res.severityColor),
               ],
             ),
             const SizedBox(height: 14),
@@ -552,8 +727,8 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
                 Expanded(
                   child: TextFormField(
                     initialValue: _age.toString(),
-                    decoration: const InputDecoration(labelText: 'Âge (années)'),
                     keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Âge (ans)'),
                     onChanged: (v) => setState(() => _age = int.tryParse(v) ?? _age),
                   ),
                 ),
@@ -561,21 +736,21 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
                 Expanded(
                   child: TextFormField(
                     initialValue: _weight.toString(),
-                    decoration: const InputDecoration(labelText: 'Poids (kg)'),
                     keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Poids (kg)'),
                     onChanged: (v) => setState(() => _weight = double.tryParse(v) ?? _weight),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     initialValue: _creatinine.toString(),
-                    decoration: const InputDecoration(labelText: 'Créatininémie (µmol/L)'),
                     keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: 'Créatinine (µmol/L)'),
                     onChanged: (v) => setState(() => _creatinine = double.tryParse(v) ?? _creatinine),
                   ),
                 ),
@@ -601,10 +776,72 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
     );
   }
 
+  Widget _buildApgarCard() {
+    final res = ClinicalCalculators.calculateApgar(
+      heartRate: _apgarHr,
+      breathing: _apgarResp,
+      muscleTone: _apgarTone,
+      reflex: _apgarReflex,
+      skinColor: _apgarColor,
+    );
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.child_care_rounded, color: Color(0xFFEC4899)),
+                const SizedBox(width: 10),
+                const Text('Score d\'Apgar (Nouveau-né)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                const Spacer(),
+                _buildScorePill('${res.value} / 10', res.severityColor),
+              ],
+            ),
+            const SizedBox(height: 14),
+            _buildDropdownRow('Fréquence cardiaque :', _apgarHr, {
+              2: '2 - > 100 bpm',
+              1: '1 - < 100 bpm',
+              0: '0 - Absente',
+            }, (v) => setState(() => _apgarHr = v!)),
+            const SizedBox(height: 8),
+            _buildDropdownRow('Respiration / Cri :', _apgarResp, {
+              2: '2 - Vigoureuse, cri franc',
+              1: '1 - Lente, irrégulière',
+              0: '0 - Absente (apnée)',
+            }, (v) => setState(() => _apgarResp = v!)),
+            const SizedBox(height: 8),
+            _buildDropdownRow('Tonus musculaire :', _apgarTone, {
+              2: '2 - Mouvements actifs, quadri-flexion',
+              1: '1 - Légère flexion des extrémités',
+              0: '0 - Flasque',
+            }, (v) => setState(() => _apgarTone = v!)),
+            const SizedBox(height: 8),
+            _buildDropdownRow('Réactivité aux stimuli :', _apgarReflex, {
+              2: '2 - Vive (cris, toux, éternuement)',
+              1: '1 - Faible (grimace)',
+              0: '0 - Nulle',
+            }, (v) => setState(() => _apgarReflex = v!)),
+            const SizedBox(height: 8),
+            _buildDropdownRow('Coloration cutanée :', _apgarColor, {
+              2: '2 - Totalement rose',
+              1: '1 - Corps rose, extrémités bleues',
+              0: '0 - Cyanose ou pâleur globale',
+            }, (v) => setState(() => _apgarColor = v!)),
+            const SizedBox(height: 14),
+            _buildResultBox(res),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDropdownRow(String label, int value, Map<int, String> options, ValueChanged<int?> onChanged) {
     return Row(
       children: [
-        SizedBox(width: 180, child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
+        SizedBox(width: 160, child: Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
         Expanded(
           child: DropdownButton<int>(
             value: value,
@@ -657,6 +894,197 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
           const SizedBox(height: 4),
           Text(res.recommendation, style: const TextStyle(fontSize: 12, height: 1.35)),
         ],
+      ),
+    );
+  }
+}
+
+class _EmergencyDrugsTab extends StatelessWidget {
+  const _EmergencyDrugsTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // National Triage Banner
+        Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.local_hospital_rounded, color: Color(0xFF2563EB)),
+                    SizedBox(width: 8),
+                    Text(
+                      'Triage National des Urgences (MSPRH Algérie)',
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildTriageLevel(
+                  code: 'U1 - CODE ROUGE',
+                  delay: '< 5 min',
+                  title: 'Urgence Vitale Immédiate',
+                  desc: 'Arrêt cardiorespiratoire, état de choc, détresse respiratoire aiguë, coma, polytraumatisé. Prise en charge immédiate en salle de déchoquage.',
+                  color: const Color(0xFFDC2626),
+                ),
+                const SizedBox(height: 8),
+                _buildTriageLevel(
+                  code: 'U2 - CODE ORANGE',
+                  delay: '< 30 min',
+                  title: 'Urgence Grave Différée',
+                  desc: 'Douleur thoracique aiguë, déficit neurologique récent (AVC), fracture ouverte, colique néphrétique hyperalgique, plaie hémorragique contrôlée.',
+                  color: const Color(0xFFD97706),
+                ),
+                const SizedBox(height: 8),
+                _buildTriageLevel(
+                  code: 'U3 - CODE VERT',
+                  delay: '> 60 min',
+                  title: 'Urgence Relative / Ambulatoire',
+                  desc: 'Fonctions vitales strictement normales. Traumatismes mineurs, angines, sutures simples. Orientation prioritaire vers les polycliniques de proximité.',
+                  color: const Color(0xFF16A34A),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 18),
+        const Text(
+          '💊 Pharmacopée & Posologies d\'Urgence (DCI / Algérie)',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 10),
+
+        _buildDrugCard(
+          dci: 'Adrénaline',
+          brand: 'Adrénaline Aguettant / Saidal',
+          indication: 'Choc anaphylactique & Arrêt Cardiorespiratoire (ACR)',
+          dose: '• Choc Anaphylactique : 0,5 mg IM (face antérolatérale cuisse)\n• Arrêt Cardiaque : 1 mg IVD toutes les 3-5 min\n• Enfant : 0,01 mg/kg IM (max 0,3 mg)',
+          alert: 'Ne jamais injecter 1 mg IV directe en dehors de l\'arrêt cardiaque.',
+        ),
+        _buildDrugCard(
+          dci: 'Sérum Antiscorpionique (SAS)',
+          brand: 'Institut Pasteur d\'Algérie (IPA)',
+          indication: 'Envenimation scorpionique Stades 2 et 3',
+          dose: '• 1 à 2 ampoules en IV directe lente (ou perfusion dans 50 mL NaCl 0,9% en 15 min)\n• Répéter après 2 heures si signes systémiques persistants',
+          alert: 'Efficacité maximale si administré dans les 2 premières heures après la piqûre.',
+        ),
+        _buildDrugCard(
+          dci: 'Amiodarone',
+          brand: 'Cordarone / Saidal',
+          indication: 'Fibrillation / Tachycardie ventriculaire sans pouls (ACR)',
+          dose: '• ACR : 300 mg dans 20-30 mL G5% IVD après le 3e choc électrique\n• 2e bolus : 150 mg IVD après le 5e choc',
+          alert: 'Toujours diluer dans du Sérum Glucosé 5% (G5%), jamais dans du NaCl 0,9%.',
+        ),
+        _buildDrugCard(
+          dci: 'Méthylprednisolone',
+          brand: 'Solumédrol',
+          indication: 'Crise d\'asthme sévère, anaphylaxie, laryngite aiguë',
+          dose: '• Adulte : 1 à 2 mg/kg IV (soit 80 à 120 mg IV)\n• Enfant : 1 à 2 mg/kg IV ou IM',
+          alert: 'Délai d\'action anti-inflammatoire de 4 à 6 heures.',
+        ),
+        _buildDrugCard(
+          dci: 'Furosémide',
+          brand: 'Lasilix / Saidal',
+          indication: 'Œdème Aigu du Poumon (OAP cardiogénique)',
+          dose: '• 40 à 80 mg IV directe lente (1 à 2 ampoules de 20 mg ou 1 ampoule de 40 mg)',
+          alert: 'Contre-indiqué si PAS < 90 mmHg (hypovolémie/choc).',
+        ),
+        _buildDrugCard(
+          dci: 'Ceftriaxone',
+          brand: 'Rocéphine / Saftriaxone Saidal',
+          indication: 'Infections sévères, méningites, choc septique',
+          dose: '• Général : 1 à 2 g/j en perfusion IV\n• Suspicion de méningite purulente : 100 mg/kg/j IV (max 4 g/j)',
+          alert: 'Céphalosporine de 3e génération de référence dans les UMC.',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTriageLevel({
+    required String code,
+    required String delay,
+    required String title,
+    required String desc,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+                child: Text(code, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
+              ),
+              const SizedBox(width: 8),
+              Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: color)),
+              const Spacer(),
+              Text('Délai : $delay', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: color)),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(desc, style: const TextStyle(fontSize: 12, height: 1.3)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrugCard({
+    required String dci,
+    required String brand,
+    required String indication,
+    required String dose,
+    required String alert,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(dci, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF2563EB))),
+                const SizedBox(width: 8),
+                Text('($brand)', style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontStyle: FontStyle.italic)),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text('🎯 Indication : $indication', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(6)),
+              child: Text(dose, style: const TextStyle(fontSize: 11.5, height: 1.35, color: Colors.black87)),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFFD97706)),
+                const SizedBox(width: 4),
+                Expanded(child: Text(alert, style: const TextStyle(fontSize: 11, color: Color(0xFFD97706), fontWeight: FontWeight.w600))),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

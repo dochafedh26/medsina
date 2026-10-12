@@ -194,4 +194,130 @@ class ClinicalCalculators {
       severityColor: color,
     );
   }
+
+  // 5. Score qSOFA (Quick SOFA - Dépistage du Sepsis aux Urgences)
+  static CalculatorResult calculateQsofa({
+    required bool respRate22OrMore,
+    required bool alteredMentation,
+    required bool sysBp100OrLess,
+  }) {
+    int score = 0;
+    if (respRate22OrMore) score++;
+    if (alteredMentation) score++;
+    if (sysBp100OrLess) score++;
+
+    String interp;
+    String reco;
+    String color;
+
+    if (score >= 2) {
+      interp = 'Haut Risque de Sepsis / Mortalité Hospitalière Élevée (qSOFA: $score/3)';
+      reco = 'ALERTE SEPSIS : Recherche immédiate de défaillance d\'organe, dosage des lactates, hémocultures, antibiothérapie précoce et transfert en surveillance continue / Réanimation.';
+      color = 'red';
+    } else if (score == 1) {
+      interp = 'Risque Intermédiaire (qSOFA: 1/3)';
+      reco = 'Surveillance rapprochée des constantes, réévaluation fréquente et recherche active du foyer infectieux.';
+      color = 'amber';
+    } else {
+      interp = 'Faible Risque de décompensation septique aiguë (qSOFA: 0/3)';
+      reco = 'Poursuivre la prise en charge clinique standard et surveiller l\'évolution.';
+      color = 'green';
+    }
+
+    return CalculatorResult(
+      value: score,
+      unit: '/3',
+      interpretation: interp,
+      recommendation: reco,
+      severityColor: color,
+    );
+  }
+
+  // 6. Score CHA2DS2-VASc (Fibrillation Atriale - Risque Thrombo-Embolique)
+  static CalculatorResult calculateCha2ds2Vasc({
+    required bool congestiveHeartFailure,
+    required bool hypertension,
+    required int age,
+    required bool diabetes,
+    required bool strokeTiaThromboembolism,
+    required bool vascularDisease,
+    required bool isFemale,
+  }) {
+    int score = 0;
+    if (congestiveHeartFailure) score += 1;
+    if (hypertension) score += 1;
+    if (age >= 75) {
+      score += 2;
+    } else if (age >= 65) {
+      score += 1;
+    }
+    if (diabetes) score += 1;
+    if (strokeTiaThromboembolism) score += 2;
+    if (vascularDisease) score += 1;
+    if (isFemale) score += 1;
+
+    String interp;
+    String reco;
+    String color;
+
+    // Recommendations ESC 2024
+    if (score == 0 || (isFemale && score == 1)) {
+      interp = 'Risque Thrombo-Embolique FAIBLE (CHA2DS2-VASc: $score)';
+      reco = 'Aucun traitement antithrombotique (ni AOD, ni AVK, ni Aspirine).';
+      color = 'green';
+    } else if ((!isFemale && score == 1) || (isFemale && score == 2)) {
+      interp = 'Risque Thrombo-Embolique MODÉRÉ (CHA2DS2-VASc: $score)';
+      reco = 'Anticoagulation orale à discuter au cas par cas (AOD recommandés en première intention par rapport aux AVK).';
+      color = 'amber';
+    } else {
+      interp = 'Risque Thrombo-Embolique ÉLEVÉ (CHA2DS2-VASc: $score)';
+      reco = 'ANTICOAGULATION ORALE CURATIVE INDISPENSABLE : AOD (Apixaban, Rivaroxaban, Dabigatran) ou AVK (AVK si valve mécanique ou rétrécissement mitral serré). Calculer le score HAS-BLED.';
+      color = 'red';
+    }
+
+    return CalculatorResult(
+      value: score,
+      unit: 'pts',
+      interpretation: interp,
+      recommendation: reco,
+      severityColor: color,
+    );
+  }
+
+  // 7. Score d'Apgar (Néonatalogie)
+  static CalculatorResult calculateApgar({
+    required int heartRate, // 0, 1, 2
+    required int breathing, // 0, 1, 2
+    required int muscleTone, // 0, 1, 2
+    required int reflex, // 0, 1, 2
+    required int skinColor, // 0, 1, 2
+  }) {
+    final score = heartRate + breathing + muscleTone + reflex + skinColor;
+
+    String interp;
+    String reco;
+    String color;
+
+    if (score >= 8) {
+      interp = 'Excellente adaptation à la vie extra-utérine (Apgar: $score/10)';
+      reco = 'Soins de routine en salle de naissance : peau à peau avec la mère, mise au sein précoce.';
+      color = 'green';
+    } else if (score >= 4) {
+      interp = 'Difficulté d\'adaptation modérée / Dépression néonatale (Apgar: $score/10)';
+      reco = 'Mesures de réanimation néonatale : désobstruction des voies aériennes, stimulation tactile, oxygénation au masque.';
+      color = 'amber';
+    } else {
+      interp = 'Asphyxie périnatale sévère / Détresse vitale (Apgar: $score/10)';
+      reco = 'URGENCE NÉONATALE VITALE : Ventilation au ballon en pression positive, massage cardiaque externe si FC < 60 bpm, appel pédiatre-réanimateur immédiat.';
+      color = 'red';
+    }
+
+    return CalculatorResult(
+      value: score,
+      unit: '/10',
+      interpretation: interp,
+      recommendation: reco,
+      severityColor: color,
+    );
+  }
 }
