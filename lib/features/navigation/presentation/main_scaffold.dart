@@ -240,12 +240,13 @@ class _MainScaffoldState extends State<MainScaffold> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final userName = user?.fullName ?? 'Médecin';
 
-    return Container(
-      width: 270,
+    return Material(
       color: isDark ? AppTheme.darkSurface : Colors.white,
-      child: Column(
-        children: [
-          // Header Logo
+      child: SizedBox(
+        width: 270,
+        child: Column(
+          children: [
+            // Header Logo
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
             child: Column(
@@ -405,8 +406,9 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildNavItem({
     required int index,

@@ -558,7 +558,7 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
                       children: [
                         Text(
                           title,
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                          style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -570,9 +570,9 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   _buildScorePill('${result.value} ${result.unit}'.trim(), result.severityColor),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
                   Icon(
                     isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
                     color: Colors.grey.shade600,
