@@ -12,6 +12,7 @@ import '../../dashboard/presentation/dashboard_screen.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
+import '../../auth/presentation/test_accounts_sheet.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -83,6 +84,11 @@ class _MainScaffoldState extends State<MainScaffold> {
               ],
             ),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.switch_account_rounded, size: 20),
+                tooltip: 'Tester un autre profil',
+                onPressed: () => TestAccountsSheet.show(context),
+              ),
               _buildTierBadge(context, tier),
               const SizedBox(width: 8),
               _buildUserAvatarAction(context, user),
@@ -348,6 +354,19 @@ class _MainScaffoldState extends State<MainScaffold> {
     return AppBar(
       title: Text(_getPageTitle(_currentIndex)),
       actions: [
+        OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppTheme.accentCyan,
+            side: BorderSide(color: AppTheme.accentCyan.withValues(alpha: 0.5)),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            minimumSize: const Size(0, 32),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+          icon: const Icon(Icons.switch_account_rounded, size: 15),
+          label: const Text('Tester un profil', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+          onPressed: () => TestAccountsSheet.show(context),
+        ),
+        const SizedBox(width: 10),
         _buildTierBadge(context, tier),
         const SizedBox(width: 8),
         _buildUserAvatarAction(context, user),
@@ -616,6 +635,25 @@ class _MainScaffoldState extends State<MainScaffold> {
                       ),
                     ),
                   ],
+                ),
+              ),
+
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.accentCyan,
+                    side: BorderSide(color: AppTheme.accentCyan.withValues(alpha: 0.6)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.switch_account_rounded, size: 18),
+                  label: const Text('🧪 Tester un autre profil d\'abonnement', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    TestAccountsSheet.show(context);
+                  },
                 ),
               ),
 

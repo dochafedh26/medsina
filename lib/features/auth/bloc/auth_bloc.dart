@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/supabase_service.dart';
+import '../models/demo_accounts.dart';
 import '../models/user_model.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
@@ -108,6 +109,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.copyWith(
         status: AuthStatus.unauthenticated,
         errorMessage: 'Veuillez saisir votre email et mot de passe.',
+      ));
+      return;
+    }
+
+    // Fast path: Check if user entered one of the preconfigured test accounts
+    final demoProfile = DemoAccounts.findByEmail(email);
+    if (demoProfile != null && (password == 'medsina2027' || password.isNotEmpty)) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_userPrefsKey, jsonEncode(demoProfile.user.toJson()));
+      emit(state.copyWith(
+        status: AuthStatus.authenticated,
+        user: demoProfile.user,
+        successMessage: 'Connexion réussie : ${demoProfile.user.fullName} (${demoProfile.user.tier.label}) !',
       ));
       return;
     }
@@ -268,26 +282,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onDemoLogin(DemoLoginEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: AuthStatus.loading, clearMessages: true));
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 200));
 
+    final targetUser = event.targetUser ?? DemoAccounts.allAccess.user;
     final prefs = await SharedPreferences.getInstance();
-    final demoUser = UserModel(
-      id: 'usr_demo_blida_2027',
-      fullName: 'Dr. Hafedh (Blida 2027)',
-      email: 'doc.hafedh26@medsina.com',
-      medicalRole: 'Candidat Résidanat 2027',
-      faculty: 'Faculté de Médecine de Blida',
-      tier: SubscriptionTier.allAccess,
-      subscriptionExpiry: DateTime(2027, 10, 31),
-      token: 'medsina_token_demo_resident_blida',
-      isAdmin: true,
-    );
+    await prefs.setString(_userPrefsKey, jsonEncode(targetUser.toJson()));
 
-    await prefs.setString(_userPrefsKey, jsonEncode(demoUser.toJson()));
     emit(state.copyWith(
       status: AuthStatus.authenticated,
-      user: demoUser,
-      successMessage: 'Accès démo activé avec succès (All-Access Débloqué) !',
+      user: targetUser,
+      successMessage: 'Profil de test activé : ${targetUser.fullName} (${targetUser.tier.label}) !',
     ));
   }
 

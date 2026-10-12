@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../bloc/clinical_bloc.dart';
 import '../bloc/clinical_event.dart';
 import '../bloc/clinical_state.dart';
@@ -191,11 +194,54 @@ class _ProtocolCardState extends State<_ProtocolCard> {
     return const Color(0xFF2563EB);
   }
 
+  void _showPaywallPrompt(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.workspace_premium_rounded, color: Color(0xFFF59E0B)),
+            SizedBox(width: 8),
+            Text('Contenu Clinique Réservé', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          ],
+        ),
+        content: Text(message, style: const TextStyle(fontSize: 13, height: 1.4)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Plus tard'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryTeal,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+              );
+            },
+            child: const Text('Voir les Formules ➔'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = widget.protocol;
     final urgColor = _getUrgencyColor(p.urgencyLevel);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final authState = context.watch<AuthBloc>().state;
+    final user = authState.user;
+    final isExpired = user?.isSubscriptionActive == false;
+    final isFree = user?.tier == SubscriptionTier.free;
+    final isPreviewCAT = p.id.contains('scorpion') || p.id.contains('acr');
+    final isLocked = isExpired || (isFree && !isPreviewCAT);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -205,7 +251,16 @@ class _ProtocolCardState extends State<_ProtocolCard> {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => setState(() => _expanded = !_expanded),
+        onTap: () {
+          if (isLocked) {
+            final reason = isExpired
+                ? 'Votre abonnement a expiré. Veuillez renouveler votre formule pour accéder aux Conduites à Tenir cliniques et protocoles d\'urgence.'
+                : 'La CAT "${p.title}" fait partie du Pass Clinique Pro ou Medsina All-Access. Votre Pass Découverte donne accès aux 2 premières CAT d\'urgence (Envenimation scorpionique et ACR).';
+            _showPaywallPrompt(context, reason);
+            return;
+          }
+          setState(() => _expanded = !_expanded);
+        },
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -237,8 +292,31 @@ class _ProtocolCardState extends State<_ProtocolCard> {
                       style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
                     ),
                   ),
+                  if (isLocked) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF3C7),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.lock_rounded, size: 11, color: Color(0xFFD97706)),
+                          SizedBox(width: 4),
+                          Text('Verrouillé', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFFD97706))),
+                        ],
+                      ),
+                    ),
+                  ],
                   const Spacer(),
-                  Icon(_expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded),
+                  Icon(
+                    isLocked
+                        ? Icons.lock_outline_rounded
+                        : (_expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded),
+                    color: isLocked ? const Color(0xFFD97706) : null,
+                  ),
                 ],
               ),
               const SizedBox(height: 10),

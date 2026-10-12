@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
@@ -254,7 +257,61 @@ class _ModuleCardState extends State<_ModuleCard> {
     );
   }
 
+  void _showPaywallPrompt(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.workspace_premium_rounded, color: Color(0xFFF59E0B)),
+            SizedBox(width: 8),
+            Text('Contenu Réservé', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          ],
+        ),
+        content: Text(message, style: const TextStyle(fontSize: 13, height: 1.4)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Plus tard'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryTeal,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+              );
+            },
+            child: const Text('Voir les Formules ➔'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCourseRow(BuildContext context, CourseModel course, String moduleName) {
+    final authState = context.watch<AuthBloc>().state;
+    final user = authState.user;
+    final isExpired = user?.isSubscriptionActive == false;
+    final isFree = user?.tier == SubscriptionTier.free;
+    final isClinicalOnly = user?.tier == SubscriptionTier.clinicalPro;
+    final isCardioPreview = moduleName.toLowerCase().contains('cardio');
+
+    final bool isLocked = isExpired || (isFree && !isCardioPreview) || (isClinicalOnly && !isCardioPreview);
+
+    String lockReason = '';
+    if (isExpired) {
+      lockReason = 'Votre abonnement a expiré. Veuillez renouveler votre formule pour accéder aux 47 modules et 6 240+ QCMs.';
+    } else if (isClinicalOnly) {
+      lockReason = 'Les 47 modules complets de préparation au Résidanat sont inclus dans le Pass Résident Élite ou All-Access. Votre Pass Clinique Pro est optimisé pour les urgences et la pratique hospitalière (avec accès au module Cardiologie en aperçu).';
+    } else if (isFree) {
+      lockReason = 'Le module "$moduleName" est réservé aux abonnés. Votre Pass Découverte inclut le module Cardiologie en accès gratuit. Choisissez le Pass Résident Élite ou All-Access pour débloquer tous les modules.';
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -270,9 +327,23 @@ class _ModuleCardState extends State<_ModuleCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  course.name,
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                Row(
+                  children: [
+                    if (isLocked) ...[
+                      const Icon(Icons.lock_rounded, size: 14, color: Color(0xFFF59E0B)),
+                      const SizedBox(width: 6),
+                    ],
+                    Expanded(
+                      child: Text(
+                        course.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          color: isLocked ? Colors.grey.shade600 : null,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 3),
                 Row(
@@ -291,6 +362,17 @@ class _ModuleCardState extends State<_ModuleCard> {
                         ),
                         child: const Text('PDF Officiel', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFF16A34A))),
                       ),
+                    if (isLocked) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFEF3C7),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text('Verrouillé', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFFD97706))),
+                      ),
+                    ],
                   ],
                 ),
               ],
@@ -301,9 +383,13 @@ class _ModuleCardState extends State<_ModuleCard> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               minimumSize: const Size(0, 32),
             ),
-            icon: const Icon(Icons.picture_as_pdf_rounded, size: 14),
+            icon: Icon(isLocked ? Icons.lock_outline_rounded : Icons.picture_as_pdf_rounded, size: 14),
             label: const Text('PDF', style: TextStyle(fontSize: 11)),
             onPressed: () {
+              if (isLocked) {
+                _showPaywallPrompt(context, lockReason);
+                return;
+              }
               if (course.hasPdf || (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty)) {
                 Navigator.push(
                   context,
@@ -327,12 +413,17 @@ class _ModuleCardState extends State<_ModuleCard> {
           const SizedBox(width: 8),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
+              backgroundColor: isLocked ? Colors.grey.shade400 : AppTheme.primaryTeal,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               minimumSize: const Size(0, 32),
             ),
-            icon: const Icon(Icons.play_arrow_rounded, size: 16),
-            label: const Text('Réviser', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            icon: Icon(isLocked ? Icons.lock_rounded : Icons.play_arrow_rounded, size: 16),
+            label: Text(isLocked ? 'Débloquer' : 'Réviser', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
             onPressed: () {
+              if (isLocked) {
+                _showPaywallPrompt(context, lockReason);
+                return;
+              }
               context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course));
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const QcmStudyScreen()),

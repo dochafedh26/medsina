@@ -4,6 +4,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
+import '../../auth/presentation/test_accounts_sheet.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -22,7 +23,13 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Welcome & Subscription Banner
-              _buildWelcomeBanner(context, user?.fullName ?? 'Docteur', tier, user?.daysRemaining ?? 0),
+              _buildWelcomeBanner(
+                context,
+                user?.fullName ?? 'Docteur',
+                tier,
+                user?.daysRemaining ?? 0,
+                user?.isSubscriptionActive == false,
+              ),
               const SizedBox(height: 24),
 
               // Overview Stats Grid
@@ -47,20 +54,59 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWelcomeBanner(BuildContext context, String name, SubscriptionTier tier, int daysRemaining) {
+  Widget _buildWelcomeBanner(
+    BuildContext context,
+    String name,
+    SubscriptionTier tier,
+    int daysRemaining,
+    bool isExpired,
+  ) {
+    List<Color> gradientColors;
+    String badgeText;
+    String subtitleText;
+
+    if (isExpired) {
+      gradientColors = const [Color(0xFF991B1B), Color(0xFFDC2626), Color(0xFFB91C1C)];
+      badgeText = '⚠️ ABONNEMENT EXPIRÉ • ACCÈS SUSPENDU';
+      subtitleText = 'Votre licence a expiré. Renouvelez votre offre pour débloquer l\'accès complet.';
+    } else {
+      switch (tier) {
+        case SubscriptionTier.allAccess:
+          gradientColors = const [Color(0xFF4C1D95), Color(0xFF6D28D9), Color(0xFF8B5CF6)];
+          badgeText = '🌟 MEDSINA ALL-ACCESS VIP • ACCÈS INTÉGRAL';
+          subtitleText = 'Formule complète illimitée : 47 modules, QCMs, CATs & IA ($daysRemaining jours restants)';
+          break;
+        case SubscriptionTier.residentElite:
+          gradientColors = const [Color(0xFF0F766E), Color(0xFF0D9488), Color(0xFF14B8A6)];
+          badgeText = '🎯 PASS RÉSIDENT ÉLITE • SPÉCIAL CONCOURS 2027';
+          subtitleText = 'Accès concours complet : 47 modules & 6 240+ QCMs ($daysRemaining jours restants)';
+          break;
+        case SubscriptionTier.clinicalPro:
+          gradientColors = const [Color(0xFF0369A1), Color(0xFF0284C7), Color(0xFF38BDF8)];
+          badgeText = '🩺 PASS CLINIQUE PRO • PRATIQUE HOSPITALIÈRE & UMC';
+          subtitleText = 'Accès clinique complet : CAT urgences, scores & pharmacopée ($daysRemaining jours restants)';
+          break;
+        case SubscriptionTier.free:
+          gradientColors = const [Color(0xFF334155), Color(0xFF475569), Color(0xFF64748B)];
+          badgeText = '⚡ PASS DÉCOUVERTE • PÉRIODE D\'ESSAI (14J)';
+          subtitleText = 'Accès d\'évaluation : $daysRemaining jours restants (1er module & calculateurs)';
+          break;
+      }
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF0F766E), Color(0xFF0D9488), Color(0xFF0284C7)],
+        gradient: LinearGradient(
+          colors: gradientColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryTeal.withValues(alpha: 0.25),
+            color: gradientColors.first.withValues(alpha: 0.35),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -83,7 +129,7 @@ class DashboardScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        'RÉSIDANAT BLIDA 2027 • SUITE MÉDICALE PRO',
+                        badgeText,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -103,31 +149,50 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Accès actif : ${tier.label} ($daysRemaining jours restants)',
+                      subtitleText,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.95),
+                        fontSize: 12.5,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
               ),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: AppTheme.primaryDarkTeal,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
-                  );
-                },
-                icon: const Icon(Icons.star_rounded, size: 18, color: Color(0xFFF59E0B)),
-                label: const Text('Gérer Offre', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: gradientColors.first,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                      );
+                    },
+                    icon: const Icon(Icons.star_rounded, size: 18, color: Color(0xFFF59E0B)),
+                    label: const Text('Gérer Offre', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5)),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white70),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      minimumSize: const Size(0, 30),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.switch_account_rounded, size: 14),
+                    label: const Text('Tester un profil', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    onPressed: () => TestAccountsSheet.show(context),
+                  ),
+                ],
               ),
             ],
           ),
