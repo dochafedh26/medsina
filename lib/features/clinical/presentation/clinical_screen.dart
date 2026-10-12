@@ -503,21 +503,149 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
   int _apgarReflex = 2;
   int _apgarColor = 1;
 
+  final Set<String> _expandedCalculators = {'qsofa'};
+
+  void _toggleCalculator(String id) {
+    setState(() {
+      if (_expandedCalculators.contains(id)) {
+        _expandedCalculators.remove(id);
+      } else {
+        _expandedCalculators.add(id);
+      }
+    });
+  }
+
+  Widget _buildCalculatorCard({
+    required String id,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required CalculatorResult result,
+    required Widget child,
+  }) {
+    final isExpanded = _expandedCalculators.contains(id);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: isExpanded ? iconColor.withValues(alpha: 0.4) : Colors.grey.withValues(alpha: 0.2),
+          width: isExpanded ? 1.5 : 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () => _toggleCalculator(id),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: iconColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: iconColor, size: 22),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          result.interpretation,
+                          style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  _buildScorePill('${result.value} ${result.unit}'.trim(), result.severityColor),
+                  const SizedBox(width: 8),
+                  Icon(
+                    isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                    color: Colors.grey.shade600,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (isExpanded) ...[
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  child,
+                  const SizedBox(height: 14),
+                  _buildResultBox(result),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            children: [
+              Text(
+                '6 Calculateurs & Scores Validés',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.grey.shade600),
+              ),
+              const Spacer(),
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  minimumSize: const Size(0, 28),
+                ),
+                icon: Icon(
+                  _expandedCalculators.isEmpty ? Icons.unfold_more_rounded : Icons.unfold_less_rounded,
+                  size: 16,
+                  color: AppTheme.primaryTeal,
+                ),
+                label: Text(
+                  _expandedCalculators.isEmpty ? 'Déplier tout' : 'Replier tout',
+                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+                ),
+                onPressed: () {
+                  setState(() {
+                    if (_expandedCalculators.isEmpty) {
+                      _expandedCalculators.addAll(['qsofa', 'glasgow', 'wells', 'cha2ds2', 'cockcroft', 'apgar']);
+                    } else {
+                      _expandedCalculators.clear();
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
         _buildQsofaCard(),
-        const SizedBox(height: 16),
         _buildGlasgowCard(),
-        const SizedBox(height: 16),
         _buildWellsPeCard(),
-        const SizedBox(height: 16),
         _buildCha2ds2VascCard(),
-        const SizedBox(height: 16),
         _buildCockcroftCard(),
-        const SizedBox(height: 16),
         _buildApgarCard(),
       ],
     );
@@ -530,44 +658,33 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
       sysBp100OrLess: _qsofaBp,
     );
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.warning_rounded, color: Color(0xFFDC2626)),
-                const SizedBox(width: 10),
-                const Text('Score qSOFA — Alerte Sepsis UMC', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-                const Spacer(),
-                _buildScorePill('${res.value} / 3', res.severityColor),
-              ],
-            ),
-            const SizedBox(height: 14),
-            CheckboxListTile(
-              dense: true,
-              value: _qsofaRr,
-              title: const Text('Fréquence respiratoire ≥ 22 /min (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _qsofaRr = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _qsofaGcs,
-              title: const Text('Confusion ou altération de conscience / Glasgow < 15 (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _qsofaGcs = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _qsofaBp,
-              title: const Text('Pression Artérielle Systolique ≤ 100 mmHg (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _qsofaBp = v ?? false),
-            ),
-            const SizedBox(height: 12),
-            _buildResultBox(res),
-          ],
-        ),
+    return _buildCalculatorCard(
+      id: 'qsofa',
+      icon: Icons.warning_rounded,
+      iconColor: const Color(0xFFDC2626),
+      title: 'Score qSOFA — Alerte Sepsis UMC',
+      result: res,
+      child: Column(
+        children: [
+          CheckboxListTile(
+            dense: true,
+            value: _qsofaRr,
+            title: const Text('Fréquence respiratoire ≥ 22 /min (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _qsofaRr = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _qsofaGcs,
+            title: const Text('Confusion ou altération de conscience / Glasgow < 15 (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _qsofaGcs = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _qsofaBp,
+            title: const Text('Pression Artérielle Systolique ≤ 100 mmHg (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _qsofaBp = v ?? false),
+          ),
+        ],
       ),
     );
   }
@@ -575,49 +692,38 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
   Widget _buildGlasgowCard() {
     final res = ClinicalCalculators.calculateGlasgow(eye: _gcsEye, verbal: _gcsVerbal, motor: _gcsMotor);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.psychology_rounded, color: AppTheme.primaryTeal),
-                const SizedBox(width: 10),
-                const Text('Score de Glasgow (GCS)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-                const Spacer(),
-                _buildScorePill(res.value.toString() + res.unit, res.severityColor),
-              ],
-            ),
-            const SizedBox(height: 14),
-            _buildDropdownRow('Ouverture des yeux (Y) :', _gcsEye, {
-              4: '4 - Spontanée',
-              3: '3 - Au bruit / ordre',
-              2: '2 - À la douleur',
-              1: '1 - Nulle',
-            }, (val) => setState(() => _gcsEye = val!)),
-            const SizedBox(height: 8),
-            _buildDropdownRow('Réponse verbale (V) :', _gcsVerbal, {
-              5: '5 - Orientée',
-              4: '4 - Confuse',
-              3: '3 - Inappropriée',
-              2: '2 - Incompréhensible',
-              1: '1 - Nulle',
-            }, (val) => setState(() => _gcsVerbal = val!)),
-            const SizedBox(height: 8),
-            _buildDropdownRow('Réponse motrice (M) :', _gcsMotor, {
-              6: '6 - Aux ordres',
-              5: '5 - Orientée à la douleur',
-              4: '4 - Retrait / Évitement',
-              3: '3 - Décortication (Flexion)',
-              2: '2 - Décérébration (Extension)',
-              1: '1 - Nulle',
-            }, (val) => setState(() => _gcsMotor = val!)),
-            const SizedBox(height: 14),
-            _buildResultBox(res),
-          ],
-        ),
+    return _buildCalculatorCard(
+      id: 'glasgow',
+      icon: Icons.psychology_rounded,
+      iconColor: AppTheme.primaryTeal,
+      title: 'Score de Glasgow (GCS) — Conscience & Coma',
+      result: res,
+      child: Column(
+        children: [
+          _buildDropdownRow('Ouverture des yeux (Y) :', _gcsEye, {
+            4: '4 - Spontanée',
+            3: '3 - Au bruit / ordre',
+            2: '2 - À la douleur',
+            1: '1 - Nulle',
+          }, (val) => setState(() => _gcsEye = val!)),
+          const SizedBox(height: 8),
+          _buildDropdownRow('Réponse verbale (V) :', _gcsVerbal, {
+            5: '5 - Orientée',
+            4: '4 - Confuse',
+            3: '3 - Inappropriée',
+            2: '2 - Incompréhensible',
+            1: '1 - Nulle',
+          }, (val) => setState(() => _gcsVerbal = val!)),
+          const SizedBox(height: 8),
+          _buildDropdownRow('Réponse motrice (M) :', _gcsMotor, {
+            6: '6 - Aux ordres',
+            5: '5 - Orientée à la douleur',
+            4: '4 - Retrait / Évitement',
+            3: '3 - Décortication (Flexion)',
+            2: '2 - Décérébration (Extension)',
+            1: '1 - Nulle',
+          }, (val) => setState(() => _gcsMotor = val!)),
+        ],
       ),
     );
   }
@@ -633,68 +739,57 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
       activeCancer: _wellsCancer,
     );
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.air_rounded, color: AppTheme.accentCyan),
-                const SizedBox(width: 10),
-                const Text('Score de Wells — Embolie Pulmonaire', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-                const Spacer(),
-                _buildScorePill('${res.value} pts', res.severityColor),
-              ],
-            ),
-            const SizedBox(height: 14),
-            CheckboxListTile(
-              dense: true,
-              value: _wellsDvt,
-              title: const Text('Signes cliniques de TVP (+3 pts)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _wellsDvt = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _wellsAltDiagnosis,
-              title: const Text('Diagnostic alternatif moins probable qu\'une EP (+3 pts)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _wellsAltDiagnosis = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _wellsHr,
-              title: const Text('Fréquence cardiaque > 100 bpm (+1.5 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _wellsHr = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _wellsImmob,
-              title: const Text('Immobilisation >= 3j ou chirurgie < 4 semaines (+1.5 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _wellsImmob = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _wellsHistory,
-              title: const Text('Antécédent personnel de TVP ou EP (+1.5 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _wellsHistory = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _wellsHemo,
-              title: const Text('Hémoptysie (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _wellsHemo = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _wellsCancer,
-              title: const Text('Cancer actif ou sous traitement < 6 mois (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _wellsCancer = v ?? false),
-            ),
-            const SizedBox(height: 12),
-            _buildResultBox(res),
-          ],
-        ),
+    return _buildCalculatorCard(
+      id: 'wells',
+      icon: Icons.air_rounded,
+      iconColor: AppTheme.accentCyan,
+      title: 'Score de Wells — Embolie Pulmonaire',
+      result: res,
+      child: Column(
+        children: [
+          CheckboxListTile(
+            dense: true,
+            value: _wellsDvt,
+            title: const Text('Signes cliniques de TVP (+3 pts)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _wellsDvt = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _wellsAltDiagnosis,
+            title: const Text('Diagnostic alternatif moins probable qu\'une EP (+3 pts)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _wellsAltDiagnosis = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _wellsHr,
+            title: const Text('Fréquence cardiaque > 100 bpm (+1.5 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _wellsHr = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _wellsImmob,
+            title: const Text('Immobilisation >= 3j ou chirurgie < 4 semaines (+1.5 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _wellsImmob = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _wellsHistory,
+            title: const Text('Antécédent personnel de TVP ou EP (+1.5 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _wellsHistory = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _wellsHemo,
+            title: const Text('Hémoptysie (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _wellsHemo = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _wellsCancer,
+            title: const Text('Cancer actif ou sous traitement < 6 mois (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _wellsCancer = v ?? false),
+          ),
+        ],
       ),
     );
   }
@@ -710,68 +805,57 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
       isFemale: _chaFemale,
     );
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.favorite_rounded, color: Color(0xFFE11D48)),
-                const SizedBox(width: 10),
-                const Text('CHA₂DS₂-VASc — Risque Thrombo-Embolique FA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-                const Spacer(),
-                _buildScorePill('${res.value} pts', res.severityColor),
-              ],
-            ),
-            const SizedBox(height: 14),
-            _buildDropdownRow('Tranche d\'âge :', _chaAge, {
-              60: '< 65 ans (0 pt)',
-              68: '65 – 74 ans (+1 pt)',
-              78: '≥ 75 ans (+2 pts)',
-            }, (v) => setState(() => _chaAge = v!)),
-            const SizedBox(height: 8),
-            CheckboxListTile(
-              dense: true,
-              value: _chaHta,
-              title: const Text('Hypertension Artérielle (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _chaHta = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _chaChf,
-              title: const Text('Insuffisance Cardiaque congestive (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _chaChf = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _chaDiab,
-              title: const Text('Diabète (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _chaDiab = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _chaStroke,
-              title: const Text('Antécédent d\'AVC / AIT / Thrombo-embolie (+2 pts)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _chaStroke = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _chaVasc,
-              title: const Text('Maladie Vasculaire (IDM, artériopathie périphérique) (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _chaVasc = v ?? false),
-            ),
-            CheckboxListTile(
-              dense: true,
-              value: _chaFemale,
-              title: const Text('Sexe Féminin (+1 pt)', style: TextStyle(fontSize: 13)),
-              onChanged: (v) => setState(() => _chaFemale = v ?? false),
-            ),
-            const SizedBox(height: 12),
-            _buildResultBox(res),
-          ],
-        ),
+    return _buildCalculatorCard(
+      id: 'cha2ds2',
+      icon: Icons.favorite_rounded,
+      iconColor: const Color(0xFFE11D48),
+      title: 'CHA₂DS₂-VASc — Risque AVC / Fibrillation Atriale',
+      result: res,
+      child: Column(
+        children: [
+          _buildDropdownRow('Tranche d\'âge :', _chaAge, {
+            60: '< 65 ans (0 pt)',
+            68: '65 – 74 ans (+1 pt)',
+            78: '≥ 75 ans (+2 pts)',
+          }, (v) => setState(() => _chaAge = v!)),
+          const SizedBox(height: 8),
+          CheckboxListTile(
+            dense: true,
+            value: _chaHta,
+            title: const Text('Hypertension Artérielle (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _chaHta = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _chaChf,
+            title: const Text('Insuffisance Cardiaque congestive (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _chaChf = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _chaDiab,
+            title: const Text('Diabète (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _chaDiab = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _chaStroke,
+            title: const Text('Antécédent d\'AVC / AIT / Thrombo-embolie (+2 pts)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _chaStroke = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _chaVasc,
+            title: const Text('Maladie Vasculaire (IDM, artériopathie périphérique) (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _chaVasc = v ?? false),
+          ),
+          CheckboxListTile(
+            dense: true,
+            value: _chaFemale,
+            title: const Text('Sexe Féminin (+1 pt)', style: TextStyle(fontSize: 13)),
+            onChanged: (v) => setState(() => _chaFemale = v ?? false),
+          ),
+        ],
       ),
     );
   }
@@ -784,72 +868,61 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
       isFemale: _isFemale,
     );
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.water_drop_rounded, color: Colors.blueAccent),
-                const SizedBox(width: 10),
-                const Text('Clairance Cockcroft & Gault', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-                const Spacer(),
-                _buildScorePill('${res.value} mL/min', res.severityColor),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    initialValue: _age.toString(),
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Âge (ans)'),
-                    onChanged: (v) => setState(() => _age = int.tryParse(v) ?? _age),
-                  ),
+    return _buildCalculatorCard(
+      id: 'cockcroft',
+      icon: Icons.water_drop_rounded,
+      iconColor: Colors.blueAccent,
+      title: 'Clairance Cockcroft & Gault — Fonction Rénale',
+      result: res,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: _age.toString(),
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Âge (ans)'),
+                  onChanged: (v) => setState(() => _age = int.tryParse(v) ?? _age),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    initialValue: _weight.toString(),
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Poids (kg)'),
-                    onChanged: (v) => setState(() => _weight = double.tryParse(v) ?? _weight),
-                  ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: TextFormField(
+                  initialValue: _weight.toString(),
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Poids (kg)'),
+                  onChanged: (v) => setState(() => _weight = double.tryParse(v) ?? _weight),
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    initialValue: _creatinine.toString(),
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Créatinine (µmol/L)'),
-                    onChanged: (v) => setState(() => _creatinine = double.tryParse(v) ?? _creatinine),
-                  ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: _creatinine.toString(),
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Créatinine (µmol/L)'),
+                  onChanged: (v) => setState(() => _creatinine = double.tryParse(v) ?? _creatinine),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: DropdownButtonFormField<bool>(
-                    initialValue: _isFemale,
-                    decoration: const InputDecoration(labelText: 'Sexe'),
-                    items: const [
-                      DropdownMenuItem(value: false, child: Text('Homme')),
-                      DropdownMenuItem(value: true, child: Text('Femme')),
-                    ],
-                    onChanged: (v) => setState(() => _isFemale = v ?? false),
-                  ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DropdownButtonFormField<bool>(
+                  initialValue: _isFemale,
+                  decoration: const InputDecoration(labelText: 'Sexe'),
+                  items: const [
+                    DropdownMenuItem(value: false, child: Text('Homme')),
+                    DropdownMenuItem(value: true, child: Text('Femme')),
+                  ],
+                  onChanged: (v) => setState(() => _isFemale = v ?? false),
                 ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            _buildResultBox(res),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -863,55 +936,44 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
       skinColor: _apgarColor,
     );
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.child_care_rounded, color: Color(0xFFEC4899)),
-                const SizedBox(width: 10),
-                const Text('Score d\'Apgar (Nouveau-né)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-                const Spacer(),
-                _buildScorePill('${res.value} / 10', res.severityColor),
-              ],
-            ),
-            const SizedBox(height: 14),
-            _buildDropdownRow('Fréquence cardiaque :', _apgarHr, {
-              2: '2 - > 100 bpm',
-              1: '1 - < 100 bpm',
-              0: '0 - Absente',
-            }, (v) => setState(() => _apgarHr = v!)),
-            const SizedBox(height: 8),
-            _buildDropdownRow('Respiration / Cri :', _apgarResp, {
-              2: '2 - Vigoureuse, cri franc',
-              1: '1 - Lente, irrégulière',
-              0: '0 - Absente (apnée)',
-            }, (v) => setState(() => _apgarResp = v!)),
-            const SizedBox(height: 8),
-            _buildDropdownRow('Tonus musculaire :', _apgarTone, {
-              2: '2 - Mouvements actifs, quadri-flexion',
-              1: '1 - Légère flexion des extrémités',
-              0: '0 - Flasque',
-            }, (v) => setState(() => _apgarTone = v!)),
-            const SizedBox(height: 8),
-            _buildDropdownRow('Réactivité aux stimuli :', _apgarReflex, {
-              2: '2 - Vive (cris, toux, éternuement)',
-              1: '1 - Faible (grimace)',
-              0: '0 - Nulle',
-            }, (v) => setState(() => _apgarReflex = v!)),
-            const SizedBox(height: 8),
-            _buildDropdownRow('Coloration cutanée :', _apgarColor, {
-              2: '2 - Totalement rose',
-              1: '1 - Corps rose, extrémités bleues',
-              0: '0 - Cyanose ou pâleur globale',
-            }, (v) => setState(() => _apgarColor = v!)),
-            const SizedBox(height: 14),
-            _buildResultBox(res),
-          ],
-        ),
+    return _buildCalculatorCard(
+      id: 'apgar',
+      icon: Icons.child_care_rounded,
+      iconColor: const Color(0xFFEC4899),
+      title: 'Score d\'Apgar (Nouveau-né)',
+      result: res,
+      child: Column(
+        children: [
+          _buildDropdownRow('Fréquence cardiaque :', _apgarHr, {
+            2: '2 - > 100 bpm',
+            1: '1 - < 100 bpm',
+            0: '0 - Absente',
+          }, (v) => setState(() => _apgarHr = v!)),
+          const SizedBox(height: 8),
+          _buildDropdownRow('Respiration / Cri :', _apgarResp, {
+            2: '2 - Vigoureuse, cri franc',
+            1: '1 - Lente, irrégulière',
+            0: '0 - Absente (apnée)',
+          }, (v) => setState(() => _apgarResp = v!)),
+          const SizedBox(height: 8),
+          _buildDropdownRow('Tonus musculaire :', _apgarTone, {
+            2: '2 - Mouvements actifs, quadri-flexion',
+            1: '1 - Légère flexion des extrémités',
+            0: '0 - Flasque',
+          }, (v) => setState(() => _apgarTone = v!)),
+          const SizedBox(height: 8),
+          _buildDropdownRow('Réactivité aux stimuli :', _apgarReflex, {
+            2: '2 - Vive (cris, toux, éternuement)',
+            1: '1 - Faible (grimace)',
+            0: '0 - Nulle',
+          }, (v) => setState(() => _apgarReflex = v!)),
+          const SizedBox(height: 8),
+          _buildDropdownRow('Coloration cutanée :', _apgarColor, {
+            2: '2 - Totalement rose',
+            1: '1 - Corps rose, extrémités bleues',
+            0: '0 - Cyanose ou pâleur globale',
+          }, (v) => setState(() => _apgarColor = v!)),
+        ],
       ),
     );
   }
