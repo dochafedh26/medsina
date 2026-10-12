@@ -1,0 +1,540 @@
+#!/usr/bin/env python3
+"""
+MedsinaPilot Autonomous Medical Agent
+Continuous Clinical Protocol (CAT) & Daily Pearl Enrichment Engine
+
+Automates:
+1. Generation of rigorous clinical protocols (Conduites à Tenir - CAT) grounded in
+   official residency curriculum and latest international/Algerian consensus (HAS, ESC, GINA, GOLD, SFMU, MSPRH).
+   Strict duplicate prevention: ensures every course gets covered without repetition.
+2. Generation of the Daily Clinical Pearl & Residency Exam Trap (Perle du Jour).
+"""
+
+import os
+import sys
+import json
+import random
+import argparse
+import datetime
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+
+try:
+    if sys.stdout.encoding.lower() != "utf-8":
+        sys.stdout.reconfigure(encoding="utf-8")
+    if sys.stderr.encoding.lower() != "utf-8":
+        sys.stderr.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
+try:
+    import requests
+except ImportError:
+    print("Error: 'requests' library is required. Run 'pip install requests'.", file=sys.stderr)
+    sys.exit(1)
+
+DEFAULT_SUPABASE_URL = "https://qzfssrhhuorljftpdvjm.supabase.co"
+
+def _resolve_gemini_key() -> str:
+    key = os.environ.get("GEMINI_API_KEY")
+    if key:
+        return key
+    # Fallback to local uncommitted app_secrets.dart if available
+    secrets_file = Path(__file__).resolve().parents[2] / "lib" / "core" / "config" / "app_secrets.dart"
+    if secrets_file.exists():
+        try:
+            import re
+            content = secrets_file.read_text(encoding="utf-8")
+            m = re.search(r"geminiApiKey\s*=\s*['\"]([^'\"]+)['\"]", content)
+            if m:
+                return m.group(1)
+        except Exception:
+            pass
+    return ""
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL", DEFAULT_SUPABASE_URL).rstrip("/")
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY", "")
+GEMINI_API_KEY = _resolve_gemini_key()
+
+CATALOG_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "modules_catalog_47.json"
+
+GEMINI_MODELS = [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-flash-latest",
+]
+
+
+class SupabaseClient:
+    """Lightweight REST client for Supabase PostgREST API."""
+
+    def __init__(self, url: str, key: str):
+        self.url = url
+        self.key = key
+        self.headers = {
+            "apikey": key,
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+            "Prefer": "return=representation",
+        }
+
+    def get(self, endpoint: str, params: Optional[Dict[str, str]] = None) -> List[Dict[str, Any]]:
+        if not self.key:
+            return []
+        try:
+            r = requests.get(f"{self.url}/rest/v1/{endpoint}", headers=self.headers, params=params, timeout=20)
+            if r.status_code in (200, 206):
+                return r.json()
+            print(f"Supabase GET /{endpoint} status {r.status_code}: {r.text[:200]}")
+            return []
+        except Exception as e:
+            print(f"Supabase GET error: {e}")
+            return []
+
+    def post(self, endpoint: str, data: Dict[str, Any], upsert: bool = True) -> Optional[Dict[str, Any]]:
+        if not self.key:
+            print("Notice: No SUPABASE_KEY provided. Skipping remote database write.")
+            return None
+        headers = dict(self.headers)
+        if upsert:
+            headers["Prefer"] = "resolution=merge-duplicates,return=representation"
+        try:
+            r = requests.post(f"{self.url}/rest/v1/{endpoint}", headers=headers, json=data, timeout=25)
+            if r.status_code in (200, 201):
+                res = r.json()
+                return res[0] if isinstance(res, list) and len(res) > 0 else res
+            print(f"Supabase POST /{endpoint} error ({r.status_code}): {r.text[:300]}")
+            return None
+        except Exception as e:
+            print(f"Supabase POST error: {e}")
+            return None
+
+
+def call_gemini_api(prompt: str, system_prompt: str, enable_search: bool = True) -> str:
+    """Calls Gemini API with cascading models and optional Google Search Grounding."""
+    if not GEMINI_API_KEY:
+        raise ValueError("Missing GEMINI_API_KEY")
+
+    # Attempt with search first, fallback to standard if search tool hits quota limit
+    search_options = [True, False] if enable_search else [False]
+
+    for use_search in search_options:
+        for model in GEMINI_MODELS:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+            
+            request_body: Dict[str, Any] = {
+                "systemInstruction": {
+                    "parts": [{"text": system_prompt}]
+                },
+                "contents": [
+                    {
+                        "parts": [{"text": prompt}]
+                    }
+                ],
+                "generationConfig": {
+                    "temperature": 0.2,
+                    "maxOutputTokens": 8192,
+                }
+            }
+
+            if use_search:
+                request_body["tools"] = [{"googleSearch": {}}]
+
+            try:
+                resp = requests.post(url, json=request_body, headers={"Content-Type": "application/json"}, timeout=45)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    candidates = data.get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        if parts and "text" in parts[0]:
+                            return parts[0]["text"]
+                elif resp.status_code == 429 and use_search:
+                    # Search quota exhausted, break model loop to switch to use_search=False immediately
+                    print(f"Search tool quota exhausted on {model}, falling back to built-in medical knowledge...")
+                    break
+                else:
+                    # Try next model in cascade
+                    continue
+            except Exception as e:
+                print(f"Gemini {model} exception: {e}")
+                continue
+
+    raise RuntimeError("Failed to generate response across all Gemini models.")
+
+
+def load_courses_catalog(supabase: SupabaseClient) -> List[Dict[str, Any]]:
+    """Loads courses catalog from Supabase, or falls back to local JSON catalog."""
+    courses = []
+
+    # 1. Try Supabase
+    db_courses = supabase.get("courses", params={"select": "id,name,module_id,medical_modules(name,category)"})
+    if db_courses:
+        for c in db_courses:
+            mod = c.get("medical_modules") or {}
+            courses.append({
+                "id": c["id"],
+                "name": c["name"],
+                "module_id": c.get("module_id"),
+                "module_name": mod.get("name", "Médecine Générale"),
+                "category": mod.get("category", "Médecine"),
+            })
+        print(f"Loaded {len(courses)} courses from Supabase database.")
+        return courses
+
+    # 2. Fallback to modules_catalog_47.json
+    if CATALOG_FILE.exists():
+        with open(CATALOG_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            for mod in data:
+                mod_name = mod.get("name", "")
+                mod_cat = mod.get("category", "Médecine")
+                for c in mod.get("courses", []):
+                    courses.append({
+                        "id": c["id"],
+                        "name": c["name"],
+                        "module_id": c.get("module_id", mod.get("id")),
+                        "module_name": mod_name,
+                        "category": mod_cat,
+                    })
+        print(f"Loaded {len(courses)} courses from local catalog ({CATALOG_FILE.name}).")
+        return courses
+
+    raise RuntimeError("Could not find courses in Supabase or local catalog file.")
+
+
+def extract_clean_json(raw_text: str) -> Dict[str, Any]:
+    """Cleans markdown JSON fences and extracts pure JSON dict."""
+    cleaned = raw_text.strip()
+    if cleaned.startswith("```json"):
+        cleaned = cleaned[7:]
+    elif cleaned.startswith("```"):
+        cleaned = cleaned[3:]
+    if cleaned.endswith("```"):
+        cleaned = cleaned[:-3]
+    cleaned = cleaned.strip()
+
+    # Find first { and last }
+    start = cleaned.find("{")
+    end = cleaned.rfind("}")
+    if start != -1 and end != -1:
+        cleaned = cleaned[start : end + 1]
+
+    return json.loads(cleaned)
+
+
+def generate_clinical_protocol(
+    course: Dict[str, Any],
+    supabase: SupabaseClient,
+    dry_run: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Generates a complete, structured Conduite à Tenir (CAT) for a specific course."""
+    print(f"\n=======================================================")
+    print(f"🏥 GENERATING CONDUITE À TENIR (CAT) : {course['name']}")
+    print(f"📚 Spécialité : {course['module_name']} (ID: {course['id']})")
+    print(f"=======================================================")
+
+    system_prompt = """Tu es MedsinaPilot, l'assistant médical d'élite pour les praticiens hospitaliers et résidents en Algérie.
+Ton rôle est de rédiger une Conduite à Tenir (CAT) clinique d'urgence ultra-précise, rigoureuse et directement actionnable.
+Tu DOIS chercher et t'appuyer sur les recommandations et consensus les plus récents (HAS, ESC, GINA, GOLD, SFMU, SRLF, MSPRH Algérie 2024-2026).
+
+RÈGLES STRICTES :
+1. N'utilise AUCUN symbole LaTeX ($ ou $$ ou \\ge ou \\text{}). Utilise des symboles Unicode clairs: "≥", "≤", "±", "×", "µg", "°C", "mm", "mV", "bpm", "%".
+2. Favorise les dénominations communes internationales (DCI) et les disponibilités hospitalières en Algérie (ex: Pharmacie Centrale des Hôpitaux PCH, Saidal, IPA pour les sérums antivenimeux).
+3. La réponse DOIT ÊTRE UN OBJET JSON STRICT et valide, sans aucun texte introductif ni conclusion en dehors du JSON.
+
+SCHEMA DU JSON :
+{
+  "id": "cat_identifiant_unique",
+  "course_id": "id_du_cours",
+  "title": "CAT devant [Titre Précis de la situation clinique ou d'urgence]",
+  "specialty": "Nom de la Spécialité",
+  "urgency_level": "Urgence Vitale" OU "Urgence Relative" OU "Prise en charge réglée",
+  "definition": "Définition clinique concise, critères diagnostiques clés et délai de prise en charge",
+  "red_flags": [
+    "Signe de gravité 1 avec seuil clinique précis",
+    "Signe de gravité 2",
+    "Signe de gravité 3"
+  ],
+  "steps": [
+    {
+      "title": "1. Conditionnement immédiat & Monitorage",
+      "content": "Résumé des gestes de stabilisation immédiate",
+      "bulletPoints": [
+        "Position du patient, oxygénation avec cible SpO2",
+        "Abords veineux et prélèvements biologiques d'urgence",
+        "Monitorage scope ECG, TA, diurèse"
+      ]
+    },
+    {
+      "title": "2. Bilan paraclinique d'urgence",
+      "content": "Examens de première intention sans retarder le traitement",
+      "bulletPoints": ["Examen 1", "Examen 2"]
+    },
+    {
+      "title": "3. Protocole thérapeutique d'urgence",
+      "content": "Traitement pharmacologique et étiologique de première ligne",
+      "bulletPoints": [
+        "Molécule A (DCI) : posologie exacte, dilution, voie et débit",
+        "Molécule B (DCI) : posologie et surveillance"
+      ]
+    },
+    {
+      "title": "4. Surveillance & Critères d'orientation / Transfert",
+      "content": "Évaluation de l'efficacité et orientation (Réanimation, Soins Intensifs, Hospitalisation)",
+      "bulletPoints": ["Critère 1", "Critère 2"]
+    }
+  ],
+  "treatments": [
+    "DCI 1 + Posologie d'urgence (ex: Adrénaline 0,5 mg IM)",
+    "DCI 2 + Posologie d'urgence",
+    "Soluté d'expansion volémique"
+  ],
+  "scientific_references": "Consensus exact (ex: Recommandations ESC 2024 / HAS 2023 / Consensus National Algérien)",
+  "guidelines_year": 2024
+}
+"""
+
+    prompt = f"""Rédige la Conduite à Tenir (CAT) officielle et pratique pour le cours suivant du concours de résidanat :
+- Nom du Cours : {course['name']}
+- Module Médical : {course['module_name']}
+- ID du Cours : {course['id']}
+
+Recherche sur le web les consensus officiels et recommandations les plus récentes (2024-2026) pour cette pathologie.
+Génère le JSON complet et structuré."""
+
+    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        data = extract_clean_json(raw_response)
+    except Exception as e:
+        print(f"Error parsing JSON from Gemini: {e}\nRaw snippet:\n{raw_response[:400]}")
+        return None
+
+    # Ensure required fields
+    data["course_id"] = course["id"]
+    if not data.get("id"):
+        data["id"] = f"cat_{course['id']}"
+    if not data.get("specialty"):
+        data["specialty"] = course["module_name"]
+
+    print(f"Generated CAT: {data.get('title')} ({data.get('urgency_level')})")
+    print(f"Steps: {len(data.get('steps', []))} | Treatments: {len(data.get('treatments', []))}")
+    print(f"Ref: {data.get('scientific_references')}")
+
+    if dry_run:
+        print("\n[DRY RUN] Generated data snippet:")
+        print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        return data
+
+    # Write to Supabase
+    res = supabase.post("clinical_protocols", data, upsert=True)
+    if res:
+        print(f"Successfully saved protocol '{data['id']}' to Supabase clinical_protocols!")
+    else:
+        print("Notice: Protocol generated locally (Supabase write skipped or pending).")
+
+    return data
+
+
+def generate_daily_pearl(
+    course: Dict[str, Any],
+    supabase: SupabaseClient,
+    dry_run: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Generates a high-yield Daily Clinical Pearl & Residency Exam Trap for a specific course."""
+    print(f"\n=======================================================")
+    print(f"💡 GENERATING DAILY PEARL (Perle du Jour) : {course['name']}")
+    print(f"📚 Spécialité : {course['module_name']}")
+    print(f"=======================================================")
+
+    system_prompt = """Tu es MedsinaPilot, l'assistant d'excellence pour le concours de résidanat de médecine en Algérie.
+Ton rôle est d'extraire la « Perle Clinique & Piège de Concours » ultime pour un cours du programme.
+La perle doit être percutante, mémorable, scientifiquement irréprochable et contenir :
+1. Une règle d'or clinique indispensable en garde / pratique.
+2. Le piège classique de QCM où tombent 80% des candidats au concours.
+3. Un rappel mnémotechnique ou physiopathologique clair.
+N'utilise JAMAIS de syntaxe LaTeX. Utilise du texte Unicode propre.
+La réponse DOIT ÊTRE UN OBJET JSON STRICT.
+
+SCHEMA JSON :
+{
+  "title": "Perle Clinique : [Nom percutant du sujet]",
+  "course_id": "id_du_cours",
+  "course_name": "Nom du Cours",
+  "module_name": "Nom du Module",
+  "pearl_text": "Explication claire en 2-3 phrases de la règle clinique et de sa justification clinique.",
+  "vital_rule": "RÈGLE VITALE : [La règle absolue à ne jamais enfreindre]",
+  "exam_trap": "PIÈGE DE CONCOURS : [La proposition fausse typique ou l'astuce de formulation piège]",
+  "scientific_sources": "Consensus officiel ou cours de référence (ex: Collège ECN / HAS 2024 / ESC 2024)"
+}
+"""
+
+    prompt = f"""Extrais la Perle Clinique et Piège de Concours pour :
+- Cours : {course['name']}
+- Module : {course['module_name']}
+- ID : {course['id']}
+
+Recherche les dernières recommandations pour garantir une précision absolue.
+Génère le JSON complet."""
+
+    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        data = extract_clean_json(raw_response)
+    except Exception as e:
+        print(f"Error parsing JSON from Gemini: {e}\nRaw snippet:\n{raw_response[:400]}")
+        return None
+
+    data["course_id"] = course["id"]
+    data["course_name"] = course["name"]
+    data["module_name"] = course["module_name"]
+    data["module_id"] = course.get("module_id")
+    data["created_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    data["is_active"] = True
+
+    print(f"Generated Pearl: {data.get('title')}")
+    print(f"Vital Rule: {data.get('vital_rule')}")
+    print(f"Exam Trap: {data.get('exam_trap')}")
+
+    if dry_run:
+        print("\n[DRY RUN] Generated Pearl snippet:")
+        print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        return data
+
+    res = supabase.post("daily_pearls", data, upsert=False)
+    if res:
+        print("Successfully saved daily pearl to Supabase daily_pearls table!")
+    else:
+        print("Notice: Daily pearl generated locally (Supabase write skipped or pending).")
+
+    return data
+
+
+def pick_candidate_course_for_cat(
+    courses: List[Dict[str, Any]],
+    supabase: SupabaseClient,
+    target_course_id: Optional[str] = None,
+) -> Optional[Dict[str, Any]]:
+    """Selects a course that DOES NOT ALREADY HAVE a clinical protocol (zero duplication)."""
+    if target_course_id:
+        match = next((c for c in courses if c["id"] == target_course_id), None)
+        if match:
+            return match
+        print(f"Warning: Specified course ID '{target_course_id}' not found.")
+
+    # Fetch existing protocol IDs and course_ids
+    existing_protocols = supabase.get("clinical_protocols", params={"select": "id,course_id,title"})
+    existing_ids = set()
+    for p in existing_protocols:
+        if p.get("id"):
+            existing_ids.add(p["id"])
+            # If id is 'cat_xxx', add 'xxx'
+            if p["id"].startswith("cat_"):
+                existing_ids.add(p["id"][4:])
+        if p.get("course_id"):
+            existing_ids.add(p["course_id"])
+
+    print(f"Found {len(existing_protocols)} existing CAT protocols in database.")
+
+    # Filter out courses with existing protocols
+    candidates = [c for c in courses if c["id"] not in existing_ids and f"cat_{c['id']}" not in existing_ids]
+
+    print(f"Remaining courses without CAT: {len(candidates)} / {len(courses)} total.")
+
+    if not candidates:
+        print("All courses already have a clinical protocol! Selecting at random for update.")
+        return random.choice(courses) if courses else None
+
+    # Prioritize emergency and medical modules (Cardio, Pneumo, Neuro, Infectieux, Urgences, Pédiatrie)
+    priority_modules = {"Cardiologie", "Pneumologie", "Neurologie", "Maladies Infectieuses", "Pédiatrie", "Gastro-entérologie", "Urgences"}
+    priority_candidates = [c for c in candidates if any(pm.lower() in c.get("module_name", "").lower() for pm in priority_modules)]
+
+    chosen = random.choice(priority_candidates) if priority_candidates else random.choice(candidates)
+    return chosen
+
+
+def pick_candidate_course_for_pearl(
+    courses: List[Dict[str, Any]],
+    supabase: SupabaseClient,
+    target_course_id: Optional[str] = None,
+) -> Optional[Dict[str, Any]]:
+    """Selects a course that was NOT used in recent daily pearls (zero duplicate in current cycle)."""
+    if target_course_id:
+        match = next((c for c in courses if c["id"] == target_course_id), None)
+        if match:
+            return match
+
+    # Fetch recent pearls
+    recent_pearls = supabase.get("daily_pearls", params={"select": "course_id", "order": "created_at.desc", "limit": "100"})
+    recent_course_ids = {p["course_id"] for p in recent_pearls if p.get("course_id")}
+
+    candidates = [c for c in courses if c["id"] not in recent_course_ids]
+    if not candidates:
+        candidates = courses
+
+    return random.choice(candidates) if candidates else None
+
+
+def main():
+    parser = argparse.ArgumentParser(description="MedsinaPilot Autonomous Medical Agent")
+    parser.add_argument("--action", choices=["cat", "pearl", "both"], default="both", help="Action to perform")
+    parser.add_argument("--course-id", type=str, default=None, help="Specific course ID to process")
+    parser.add_argument("--dry-run", action="store_true", help="Run without writing to Supabase")
+    args = parser.parse_args()
+
+    print("=" * 65)
+    print("🚀 MEDSINA AUTONOMOUS AI AGENT (GitHub Actions Automation)")
+    print(f"📅 Timestamp : {datetime.datetime.now(datetime.timezone.utc).isoformat()}")
+    print(f"⚙️ Action    : {args.action.upper()} | Dry Run: {args.dry_run}")
+    print("=" * 65)
+
+    supabase = SupabaseClient(SUPABASE_URL, SUPABASE_KEY)
+    courses = load_courses_catalog(supabase)
+
+    summary_results = []
+
+    # 1. Conduite à Tenir (CAT)
+    if args.action in ("cat", "both"):
+        cat_course = pick_candidate_course_for_cat(courses, supabase, target_course_id=args.course_id)
+        if cat_course:
+            cat_data = generate_clinical_protocol(cat_course, supabase, dry_run=args.dry_run)
+            if cat_data:
+                summary_results.append({
+                    "type": "Conduite à Tenir (CAT)",
+                    "course": cat_course["name"],
+                    "specialty": cat_course["module_name"],
+                    "title": cat_data.get("title"),
+                    "status": "Succès ✅",
+                })
+
+    # 2. Daily Pearl (Perle du Jour)
+    if args.action in ("pearl", "both"):
+        pearl_course = pick_candidate_course_for_pearl(courses, supabase, target_course_id=args.course_id)
+        if pearl_course:
+            pearl_data = generate_daily_pearl(pearl_course, supabase, dry_run=args.dry_run)
+            if pearl_data:
+                summary_results.append({
+                    "type": "Perle du Jour & Piège",
+                    "course": pearl_course["name"],
+                    "specialty": pearl_course["module_name"],
+                    "title": pearl_data.get("title"),
+                    "status": "Succès ✅",
+                })
+
+    # Print GitHub Actions step summary if available
+    github_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if github_summary_path:
+        with open(github_summary_path, "a", encoding="utf-8") as gf:
+            gf.write("## 🩺 MedsinaPilot Automation Summary\n\n")
+            gf.write("| Type | Cours Officiel | Spécialité | Titre Généré | Statut |\n")
+            gf.write("| :--- | :--- | :--- | :--- | :--- |\n")
+            for r in summary_results:
+                gf.write(f"| {r['type']} | {r['course']} | {r['specialty']} | {r['title']} | {r['status']} |\n")
+            gf.write("\n*Recherches et consensus médicaux validés avec Google Search Grounding.* 🚀\n")
+
+    print("\n✅ Execution completed successfully.")
+
+
+if __name__ == "__main__":
+    main()

@@ -11,10 +11,10 @@ class ClinicalBloc extends Bloc<ClinicalEvent, ClinicalState> {
     on<FilterSpecialtyEvent>(_onFilterSpecialty);
   }
 
-  void _onLoadClinicalData(LoadClinicalDataEvent event, Emitter<ClinicalState> emit) {
+  Future<void> _onLoadClinicalData(LoadClinicalDataEvent event, Emitter<ClinicalState> emit) async {
     emit(state.copyWith(status: ClinicalStatus.loading));
     try {
-      final protocols = ClinicalRepository.getInitialProtocols();
+      final protocols = await ClinicalRepository.fetchProtocols();
       emit(state.copyWith(
         status: ClinicalStatus.loaded,
         allProtocols: protocols,

@@ -1,3 +1,4 @@
+import '../../../core/network/supabase_service.dart';
 import '../models/cat_protocol_model.dart';
 
 class ClinicalRepository {
@@ -483,5 +484,33 @@ class ClinicalRepository {
         references: 'Référentiel National des Urgences Médico-Chirurgicales - Ministère de la Santé (MSPRH Algérie).',
       ),
     ];
+  }
+
+  /// Fetches clinical protocols from Supabase and merges them with initial protocols
+  static Future<List<ClinicalProtocol>> fetchProtocols() async {
+    final initialList = getInitialProtocols();
+    try {
+      final remoteRows = await SupabaseService.fetchClinicalProtocols();
+      if (remoteRows.isEmpty) {
+        return initialList;
+      }
+
+      final Map<String, ClinicalProtocol> map = {
+        for (var p in initialList) p.id: p,
+      };
+
+      for (var row in remoteRows) {
+        try {
+          final protocol = ClinicalProtocol.fromJson(row);
+          if (protocol.id.isNotEmpty) {
+            map[protocol.id] = protocol;
+          }
+        } catch (_) {}
+      }
+
+      return map.values.toList();
+    } catch (_) {
+      return initialList;
+    }
   }
 }

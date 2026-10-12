@@ -146,6 +146,22 @@ class SupabaseService {
     }
   }
 
+  /// Fetch the latest Daily Clinical Pearl & Exam Trap
+  static Future<Map<String, dynamic>?> fetchLatestDailyPearl() async {
+    try {
+      final response = await client
+          .from('daily_pearls')
+          .select()
+          .order('created_at', ascending: false)
+          .limit(1)
+          .maybeSingle();
+      return response;
+    } catch (e) {
+      debugPrint('Error fetching daily pearl: $e');
+      return null;
+    }
+  }
+
   /// Fetch Lab Reference Values
   static Future<List<Map<String, dynamic>>> fetchLabReferenceValues() async {
     try {

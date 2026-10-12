@@ -13,6 +13,16 @@ class ClinicalStep extends Equatable {
 
   @override
   List<Object?> get props => [title, content, bulletPoints];
+
+  factory ClinicalStep.fromJson(Map<String, dynamic> json) {
+    return ClinicalStep(
+      title: json['title'] as String? ?? '',
+      content: json['content'] as String? ?? '',
+      bulletPoints: (json['bulletPoints'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+          (json['bullet_points'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+          [],
+    );
+  }
 }
 
 class ClinicalProtocol extends Equatable {
@@ -37,6 +47,25 @@ class ClinicalProtocol extends Equatable {
     required this.treatments,
     required this.references,
   });
+
+  factory ClinicalProtocol.fromJson(Map<String, dynamic> json) {
+    return ClinicalProtocol(
+      id: json['id'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      specialty: json['specialty'] as String? ?? '',
+      urgencyLevel: json['urgency_level'] as String? ?? 'Urgence Vitale',
+      definition: json['definition'] as String? ?? '',
+      redFlags: (json['red_flags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      steps: (json['steps'] as List<dynamic>?)?.map((s) {
+        if (s is Map<String, dynamic>) {
+          return ClinicalStep.fromJson(s);
+        }
+        return ClinicalStep(title: '', content: s.toString());
+      }).toList() ?? [],
+      treatments: (json['treatments'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      references: (json['scientific_references'] as String?) ?? (json['references'] as String?) ?? '',
+    );
+  }
 
   @override
   List<Object?> get props => [
