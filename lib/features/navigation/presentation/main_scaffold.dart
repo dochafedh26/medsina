@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
@@ -14,6 +15,9 @@ import '../../practical_tools/presentation/practical_tools_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../auth/presentation/test_accounts_sheet.dart';
+import '../../notifications/models/medical_notification.dart';
+import '../../notifications/presentation/notifications_modal_sheet.dart';
+import '../../notifications/services/realtime_notification_service.dart';
 
 class NavItemConfig {
   final String label;
@@ -42,6 +46,60 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   int _currentIndex = 0;
+  late final StreamSubscription<MedicalNotification> _notificationSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationSub = RealtimeNotificationService.instance.onNewNotification.listen((notif) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: notif.type.color,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            content: Row(
+              children: [
+                Icon(notif.type.icon, color: Colors.white, size: 22),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        notif.title,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                      ),
+                      Text(
+                        notif.message,
+                        style: const TextStyle(fontSize: 11.5, color: Colors.white),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            action: SnackBarAction(
+              label: 'Voir',
+              textColor: Colors.white,
+              onPressed: () => NotificationsModalSheet.show(context),
+            ),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _notificationSub.cancel();
+    super.dispose();
+  }
 
   List<NavItemConfig> _getNavItems(SubscriptionTier tier, bool isExpired, bool isAdmin) {
     final items = <NavItemConfig>[];
@@ -201,6 +259,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                 tooltip: 'Tester un autre profil',
                 onPressed: () => TestAccountsSheet.show(context),
               ),
+              _buildNotificationBellAction(context),
               _buildTierBadge(context, tier),
               const SizedBox(width: 8),
               _buildUserAvatarAction(context, user),
@@ -467,11 +526,59 @@ class _MainScaffoldState extends State<MainScaffold> {
           onPressed: () => TestAccountsSheet.show(context),
         ),
         const SizedBox(width: 10),
+        _buildNotificationBellAction(context),
+        const SizedBox(width: 8),
         _buildTierBadge(context, tier),
         const SizedBox(width: 8),
         _buildUserAvatarAction(context, user),
         const SizedBox(width: 16),
       ],
+    );
+  }
+
+  Widget _buildNotificationBellAction(BuildContext context) {
+    return ValueListenableBuilder<int>(
+      valueListenable: RealtimeNotificationService.instance.unreadCountNotifier,
+      builder: (context, unreadCount, _) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            IconButton(
+              icon: Icon(
+                unreadCount > 0 ? Icons.notifications_active_rounded : Icons.notifications_outlined,
+                color: unreadCount > 0 ? AppTheme.primaryTeal : Colors.grey.shade600,
+                size: 22,
+              ),
+              tooltip: 'Notifications & Mises à jour en direct',
+              onPressed: () => NotificationsModalSheet.show(context),
+            ),
+            if (unreadCount > 0)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFEF4444),
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: Center(
+                    child: Text(
+                      '$unreadCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w900,
+                        height: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 

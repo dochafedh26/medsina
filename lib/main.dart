@@ -10,6 +10,7 @@ import 'features/auth/bloc/auth_state.dart';
 import 'features/auth/presentation/auth_screen.dart';
 import 'features/clinical/bloc/clinical_bloc.dart';
 import 'features/navigation/presentation/main_scaffold.dart';
+import 'features/notifications/services/realtime_notification_service.dart';
 import 'features/revision/bloc/revision_bloc.dart';
 
 void main() async {
@@ -19,6 +20,14 @@ void main() async {
   } catch (e) {
     debugPrint('Supabase initialization fallback: $e');
   }
+
+  // Initialize Realtime Medical Notifications (CAT, Courses, QCM, Pearl)
+  try {
+    await RealtimeNotificationService.instance.initialize();
+  } catch (e) {
+    debugPrint('Realtime Notification initialization notice: $e');
+  }
+
   runApp(const MedsinaApp());
 }
 
