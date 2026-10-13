@@ -9,10 +9,11 @@ on:
       - 'scripts/automation/**'
 
   schedule:
-    # 1. Perle du Jour (Daily Pearl) : Every day at 05:00 UTC (06:00 Algérie)
-    - cron: '0 5 * * *'
-    # 2. Conduite à Tenir (CAT Protocol) : Monday, Wednesday, Friday at 02:00 UTC (03:00 Algérie)
-    - cron: '0 2 * * 1,3,5'
+    # 1. Perle du Jour (Daily Pearl) : Every day at 05:15 UTC (~06:15 Algérie)
+    # Using minute 15 instead of 00 to avoid GitHub Actions peak queue drops
+    - cron: '15 5 * * *'
+    # 2. Conduite à Tenir (CAT Protocol) : Monday, Wednesday, Friday at 02:15 UTC (~03:15 Algérie)
+    - cron: '15 2 * * 1,3,5'
 
   workflow_dispatch:
     inputs:
@@ -71,11 +72,11 @@ jobs:
           ACTION="${{ inputs.action }}"
           
           # If triggered by cron schedule:
-          # At 02:00 -> generate CAT protocol
-          # At 05:00 -> generate Daily Pearl
+          # In the morning window (between 01:00 and 03:59 UTC) -> CAT protocol
+          # Otherwise (at 05:00+ UTC) -> Daily Pearl
           if [ "${{ github.event_name }}" = "schedule" ]; then
             CRON_HOUR=$(date -u +"%H")
-            if [ "$CRON_HOUR" = "02" ]; then
+            if [ "$CRON_HOUR" -ge 1 ] && [ "$CRON_HOUR" -le 3 ]; then
               ACTION="cat"
             else
               ACTION="pearl"
