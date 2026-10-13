@@ -97,6 +97,21 @@ class QcmStudyScreen extends StatelessWidget {
               style: const TextStyle(fontSize: 16),
             ),
             actions: [
+              FilledButton.tonalIcon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                  foregroundColor: AppTheme.primaryTeal,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  minimumSize: const Size(0, 32),
+                ),
+                icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                label: const Text(
+                  'MedsinaPilot 🩺',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                ),
+                onPressed: () => MedsinaPilotSheet.show(context, q),
+              ),
+              const SizedBox(width: 6),
               IconButton(
                 icon: const Icon(Icons.close_rounded),
                 tooltip: 'Quitter la session',
@@ -105,14 +120,8 @@ class QcmStudyScreen extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
               ),
+              const SizedBox(width: 8),
             ],
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            backgroundColor: AppTheme.primaryTeal,
-            foregroundColor: Colors.white,
-            icon: const Icon(Icons.auto_awesome_rounded, size: 20),
-            label: const Text('MedsinaPilot 🩺', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-            onPressed: () => MedsinaPilotSheet.show(context, q),
           ),
           body: Column(
             children: [
@@ -220,7 +229,7 @@ class QcmStudyScreen extends StatelessWidget {
               ),
 
               // Bottom Navigation Controls
-              _buildBottomControls(context, state),
+              _buildBottomControls(context, state, q),
             ],
           ),
         );
@@ -426,38 +435,67 @@ class QcmStudyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomControls(BuildContext context, RevisionState state) {
+  Widget _buildBottomControls(BuildContext context, RevisionState state, QcmQuestion q) {
     final hasPrev = state.currentQuestionIndex > 0;
     final hasNext = state.currentQuestionIndex < state.currentQuestions.length - 1;
+    final isCompact = MediaQuery.of(context).size.width < 500;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          OutlinedButton.icon(
-            onPressed: hasPrev ? () => context.read<RevisionBloc>().add(PreviousQuestionEvent()) : null,
-            icon: const Icon(Icons.arrow_back_rounded, size: 18),
-            label: const Text('Précédente'),
-          ),
-          ElevatedButton.icon(
-            onPressed: hasNext
-                ? () => context.read<RevisionBloc>().add(NextQuestionEvent())
-                : () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Félicitations ! Vous avez terminé cette série de QCMs.')),
-                    );
-                    context.read<RevisionBloc>().add(ResetSessionEvent());
-                    Navigator.of(context).pop();
-                  },
-            icon: Icon(hasNext ? Icons.arrow_forward_rounded : Icons.check_circle_rounded, size: 18),
-            label: Text(hasNext ? 'Suivante' : 'Terminer'),
-          ),
-        ],
+      child: SafeArea(
+        top: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            OutlinedButton.icon(
+              onPressed: hasPrev ? () => context.read<RevisionBloc>().add(PreviousQuestionEvent()) : null,
+              icon: const Icon(Icons.arrow_back_rounded, size: 18),
+              label: const Text('Précédente'),
+            ),
+            if (isCompact)
+              IconButton.filledTonal(
+                style: IconButton.styleFrom(
+                  backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                  foregroundColor: AppTheme.primaryTeal,
+                ),
+                tooltip: 'MedsinaPilot IA (Tuteur Médical)',
+                icon: const Icon(Icons.auto_awesome_rounded, size: 20),
+                onPressed: () => MedsinaPilotSheet.show(context, q),
+              )
+            else
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppTheme.primaryTeal,
+                  side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.4)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                label: const Text('MedsinaPilot 🩺', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
+                onPressed: () => MedsinaPilotSheet.show(context, q),
+              ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryTeal,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: hasNext
+                  ? () => context.read<RevisionBloc>().add(NextQuestionEvent())
+                  : () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Félicitations ! Vous avez terminé cette série de QCMs.')),
+                      );
+                      context.read<RevisionBloc>().add(ResetSessionEvent());
+                      Navigator.of(context).pop();
+                    },
+              icon: Icon(hasNext ? Icons.arrow_forward_rounded : Icons.check_circle_rounded, size: 18),
+              label: Text(hasNext ? 'Suivante' : 'Terminer'),
+            ),
+          ],
+        ),
       ),
     );
   }
