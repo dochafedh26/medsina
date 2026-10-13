@@ -1,0 +1,2556 @@
+[
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "Les substances qui peuvent traverser les membranes cellulaires doivent-être :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hydrosolubles et ionisées"
+      },
+      {
+        "key": "B",
+        "text": "Liposolubles et non ionisées"
+      },
+      {
+        "key": "C",
+        "text": "Liposolubles"
+      },
+      {
+        "key": "D",
+        "text": "Ionisées"
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces propositions sont fausses"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Principe général\nPour **traverser spontanément la bicouche lipidique** d’une membrane cellulaire, une substance doit surtout être **liposoluble** et **non ionisée**.\n\n### Pourquoi ?\nLa membrane est constituée d’un **cœur hydrophobe** formé par les queues lipidiques. Ce milieu laisse passer plus facilement les molécules :\n- **petites**,\n- **apolaires / lipophiles**,\n- **non chargées**.\n\nÀ l’inverse, les molécules **hydrosolubles** ou **ionisées** sont gênées par ce cœur hydrophobe et traversent mal sans **transporteur**, **canal** ou **pompe**.\n\n### Importance clinique\nC’est un point central pour comprendre :\n- l’**absorption** des médicaments,\n- leur **diffusion tissulaire**,\n- l’effet du **pH** sur l’ionisation des acides et bases faibles.\n\n| Propriété | Passage passif à travers la membrane |\n|---|---|\n| **Liposoluble + non ionisée** | **Facile** |\n| Hydrosoluble | Difficile |\n| Ionisée | Très difficile |\n| Nécessite transporteur/canal | Souvent si hydrosoluble ou chargée |",
+    "source": "Résidanat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "Parmi les propositions suivantes, laquelle décrit correctement la diffusion ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Phénomène macroscopique dépendant de la pression"
+      },
+      {
+        "key": "B",
+        "text": "Mouvement dirigé imposé par une force externe"
+      },
+      {
+        "key": "C",
+        "text": "Transport spontané lié à un gradient de concentration"
+      },
+      {
+        "key": "D",
+        "text": "Déplacement uniquement à travers une membrane"
+      },
+      {
+        "key": "E",
+        "text": "Processus nécessitant une pompe biologique"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définition\nLa **diffusion** est le **mouvement net spontané** de particules (souvent neutres ici) d’une zone de **forte concentration** vers une zone de **faible concentration**, sous l’effet de l’**agitation thermique** (mouvement brownien).\n\n### Mécanisme (idée clé)\n- À l’échelle microscopique, les molécules bougent **dans tous les sens**.\n- S’il existe un **gradient de concentration**, il y a statistiquement **plus** de particules qui quittent la zone la plus concentrée qu’il n’en revient → **flux net** <span style=\"color:#1f77b4\"><b>dans le sens du gradient</b></span>.\n- Le processus est <span style=\"color:#2ca02c\"><b>passif</b></span> : **pas d’ATP**, **pas de pompe**, pas de force externe imposant une direction.\n\n### Diffusion et membrane\n- La diffusion peut se faire **en solution** (diffusion libre) ou **à travers une membrane** (diffusion simple à travers la bicouche, ou diffusion facilitée via canaux/transporteurs), mais elle n’est **pas limitée** au passage membranaire.\n\n### À ne pas confondre\n- <span style=\"color:#d62728\"><b>Convection / flux de masse</b></span> : phénomène plutôt « macroscopique », souvent lié à des **gradients de pression**.\n- <span style=\"color:#d62728\"><b>Transport actif</b></span> : nécessite une **pompe** et de l’**énergie**.\n\n| Processus | Force motrice | Besoin d’ATP | Sens du flux net |\n|---|---|---:|---|\n| <span style=\"color:#1f77b4\"><b>Diffusion</b></span> | <b>Gradient de concentration</b> | Non | <b>Fort → faible</b> |\n| <span style=\"color:#d62728\"><b>Convection</b></span> | Gradient de <b>pression</b> | Non | Selon pression |\n| <span style=\"color:#d62728\"><b>Transport actif</b></span> | <b>Pompe</b> (énergie) | Oui | Peut aller contre le gradient |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_3",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "L'expression correcte du flux diffusif est :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Φ = D·S·(∂C/∂x)"
+      },
+      {
+        "key": "B",
+        "text": "Φ = -D·S·(∂C/∂x)"
+      },
+      {
+        "key": "C",
+        "text": "Φ = -S·(∂D/∂x)"
+      },
+      {
+        "key": "D",
+        "text": "Φ = D/(∂C/∂x)"
+      },
+      {
+        "key": "E",
+        "text": "Φ = -(∂C/∂t)"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Loi de Fick (diffusion de particules neutres)\n- Le **flux diffusif** traduit un transport dû à un **gradient de concentration** : les particules diffusent spontanément de la zone la plus concentrée vers la moins concentrée.\n- La relation fondamentale (1ère loi de Fick) s’écrit pour la **densité de flux** (par unité de surface) :\n  - **J = -D · (∂C/∂x)**\n  - Le signe **-** indique que le flux est orienté **dans le sens opposé** au gradient de concentration.\n- Si on veut le **débit total** à travers une surface S :\n  - **Φ = J · S = -D · S · (∂C/∂x)**\n\n| Grandeur | Expression | Sens physique |\n|---|---|---|\n| Densité de flux | <span style=\"color:#d14\"><b>J = -D·(∂C/∂x)</b></span> | Va de <span style=\"color:#1a7\"><b>C élevée → C faible</b></span> |\n| Flux total à travers S | <span style=\"color:#d14\"><b>Φ = -D·S·(∂C/∂x)</b></span> | Flux total = densité de flux × surface |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_4",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "Quelle affirmation décrit correctement le transport passif à travers une membrane ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Nécessite de l'énergie externe pour se produire"
+      },
+      {
+        "key": "B",
+        "text": "Se produit contre le gradient de concentration"
+      },
+      {
+        "key": "C",
+        "text": "Se produit selon le gradient de concentration"
+      },
+      {
+        "key": "D",
+        "text": "Nécessite une pompe membranaire"
+      },
+      {
+        "key": "E",
+        "text": "Est indépendant de la température"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définition\nLe **transport passif** correspond au passage de particules à travers une membrane **sans dépense d’ATP**, grâce à l’**énergie thermique** intrinsèque et à une **différence de potentiel chimique**.\n\n### Mécanisme clé\n- Le flux net se fait spontanément **du plus concentré vers le moins concentré** (gradient de concentration) ou, plus généralement, selon le **gradient électrochimique**.\n- Il peut être :\n  - **diffusion simple** (à travers la bicouche lipidique : petites molécules non polaires, certains gaz)\n  - **diffusion facilitée** (via **canaux** ou **transporteurs**), mais toujours **sans ATP** et **sans “pompe”**.\n\n### Points pièges\n- <span style=\"color:#c0392b\"><b>Contre</b> le gradient</span> et/ou avec une <span style=\"color:#c0392b\"><b>pompe</b></span> → c’est du **transport actif**.\n- Le transport passif est <span style=\"color:#2980b9\"><b>température-dépendant</b></span> (diffusion plus rapide quand la température augmente).\n\n| Type | Énergie (ATP) | Sens du flux net | Protéine requise ? | Exemple |\n|---|---:|---|---|---|\n| Diffusion simple | Non | <span style=\"color:#27ae60\"><b>Selon gradient</b></span> | Non | O₂, CO₂ |\n| Diffusion facilitée | Non | <span style=\"color:#27ae60\"><b>Selon gradient</b></span> | Oui (canal/transporteur) | GLUT, canaux ioniques |\n| Transport actif | Oui (direct/indirect) | <span style=\"color:#c0392b\"><b>Contre gradient</b></span> | Oui (pompe/cotransport) | Na⁺/K⁺-ATPase |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_5",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "Quelle affirmation concernant la perméabilité des membranes est correcte ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Toutes les membranes sont identiques en termes de perméabilité."
+      },
+      {
+        "key": "B",
+        "text": "La perméabilité d'une membrane dépend des caractéristiques des molécules, comme leur taille et leur charge."
+      },
+      {
+        "key": "C",
+        "text": "Les membranes permettent toujours le passage de toutes les molécules"
+      },
+      {
+        "key": "D",
+        "text": "La perméabilité ne joue aucun rôle dans le transport."
+      },
+      {
+        "key": "E",
+        "text": "La perméabilité est constante pour tous les types de solutés"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Perméabilité membranaire : idée clé\nLa **perméabilité** d’une membrane correspond à sa capacité à laisser **diffuser** un soluté à travers la bicouche lipidique (transport passif, sans énergie).\n\n### De quoi dépend la perméabilité ?\nElle dépend à la fois :\n- du **soluté** :\n  - **taille** (plus c’est gros → moins ça passe),\n  - **charge/polarité** (les **ions** et molécules **polaires** traversent très mal le cœur hydrophobe),\n  - **liposolubilité** (plus c’est lipophile → plus ça passe) ;\n- de la **membrane** : composition lipidique (ex. cholestérol), épaisseur, présence de **protéines** (canaux/transporteurs) qui peuvent augmenter la perméabilité « apparente ».\n\n### Conséquence physiologique\nLa perméabilité est donc **sélective** : une membrane n’est ni « universellement perméable », ni identique pour tous les solutés.\n\n| Soluté (exemples) | Passage direct à travers la bicouche | Perméabilité (tendance) |\n|---|---:|---|\n| Petites molécules **non polaires** (O₂, CO₂) | Oui | <span style=\"color:#0b6b0b\"><b>Élevée</b></span> |\n| Petites molécules **polaires non chargées** (H₂O, urée) | Partiel (souvent via aquaporines pour H₂O) | <span style=\"color:#b36b00\"><b>Intermédiaire</b></span> |\n| Grosses molécules polaires (glucose) | Non (besoin transporteur) | <span style=\"color:#b00020\"><b>Faible</b></span> |\n| **Ions** (Na⁺, K⁺, Cl⁻) | Non (besoin canaux) | <span style=\"color:#b00020\"><b>Très faible</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_6",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcm",
+    "questionText": "Une membrane de dialyse:",
+    "options": [
+      {
+        "key": "A",
+        "text": "elle ne laisse passer que le solvant"
+      },
+      {
+        "key": "B",
+        "text": "elle est imperméable à l'urée"
+      },
+      {
+        "key": "C",
+        "text": "elle est imperméable aux ions"
+      },
+      {
+        "key": "D",
+        "text": "elle est imperméable aux macromolécules"
+      },
+      {
+        "key": "E",
+        "text": "elle est dite semi-perméable"
+      }
+    ],
+    "correctAnswers": [
+      "D",
+      "+",
+      "E"
+    ],
+    "explanation": "### Définition\nUne **membrane de dialyse** est une membrane **semi‑perméable** utilisée pour séparer deux compartiments : elle laisse diffuser l’**eau** et les **petites molécules** (solutés de faible masse molaire), mais **retient** les molécules trop volumineuses.\n\n### Mécanisme (dialyse)\n- Le passage se fait surtout par **diffusion** selon le **gradient de concentration**.\n- La propriété clé est la **sélectivité par taille** (et parfois par charge), définie par un **seuil de coupure** (MWCO) :\n  - <span style=\"color:#1b5e20\"><b>petits solutés</b></span> (ex. urée, ions) → peuvent traverser\n  - <span style=\"color:#b71c1c\"><b>macromolécules</b></span> (ex. protéines) → ne traversent pas\n\n### Importance clinique\nEn hémodialyse, on veut éliminer des <span style=\"color:#1b5e20\"><b>toxines urémiques</b></span> et corriger des <span style=\"color:#1b5e20\"><b>désordres ioniques</b></span> tout en conservant les <span style=\"color:#b71c1c\"><b>protéines</b></span> et éléments figurés.\n\n| Élément | Passe une membrane de dialyse ? | Idée clé |\n|---|---:|---|\n| Solvant (eau) | Oui | **perméable** |\n| Urée | Oui | **petite molécule** |\n| Ions (Na⁺, K⁺, Cl⁻…) | Oui (en général) | **petits solutés** |\n| Macromolécules (protéines) | Non | **barrière de taille** |\n| Terme correct | **Semi‑perméable** | sélective, pas « uniquement solvant » |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_7",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "Which of the following statements correctly describes diffusion?",
+    "options": [
+      {
+        "key": "A",
+        "text": "A macroscopic phenomenon dependent on pressure"
+      },
+      {
+        "key": "B",
+        "text": "Directed movement imposed by an external force"
+      },
+      {
+        "key": "C",
+        "text": "Spontaneous transport driven by a concentration gradient"
+      },
+      {
+        "key": "D",
+        "text": "Movement occurring only across a membrane"
+      },
+      {
+        "key": "E",
+        "text": "A process requiring a biological pump"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### What diffusion is\n**Diffusion** is the **net movement of particles from high concentration to low concentration** due to their **random thermal (Brownian) motion**. No “guidance” is needed: the concentration gradient provides the **driving force** (a difference in **chemical potential**).\n\n### What diffusion is *not*\n- Not primarily a **pressure-dependent macroscopic flow** (that’s closer to **bulk flow/convection**).\n- Not **directed** by an external force (random motion is unbiased; only the **net flux** is down-gradient).\n- Not restricted to **membranes**: it occurs in **gases, liquids, and solids**; across membranes is just one important case.\n- Not requiring **ATP** or a **pump** (pumps are for **active transport**).\n\n| Process | Energy (ATP) | Driver | Typical example |\n|---|---:|---|---|\n| <span style=\"color:#1f77b4\"><b>Diffusion</b></span> | No | <b>Concentration gradient</b> (Δchemical potential) | O₂/CO₂ moving in tissue |\n| <span style=\"color:#d62728\"><b>Active transport</b></span> | Yes | <b>Pump + ATP</b> | Na⁺/K⁺-ATPase |\n| <span style=\"color:#2ca02c\"><b>Bulk flow</b></span> | No | <b>Pressure gradient</b> | Filtration in capillaries |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_8",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "The correct expression of the diffusive flux is:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Φ = D·S·(∂C/∂x)"
+      },
+      {
+        "key": "B",
+        "text": "Φ = -D·S·(∂C/∂x)"
+      },
+      {
+        "key": "C",
+        "text": "Φ = -S·(∂D/∂x)"
+      },
+      {
+        "key": "D",
+        "text": "Φ = D/(∂C/∂x)"
+      },
+      {
+        "key": "E",
+        "text": "Φ = -(∂C/∂t)"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Diffusive flux (neutral particles): Fick’s 1st law\nFor **passive diffusion** of neutral solute in 1D, the **flux density** (per unit area) is\n\\(J = -D\\,\\frac{\\partial C}{\\partial x}\\).\n\n- **D** (diffusion coefficient) has units **m²/s**.\n- \\(\\partial C/\\partial x\\) is the **concentration gradient** (units **mol·m⁻⁴**).\n- The **minus sign** encodes that diffusion goes **from high C to low C** (down the gradient).\n\nIf the question’s \\(\\Phi\\) denotes the **total molar flow rate** through a membrane area **S** (sometimes also written A), then:\n\\(\\Phi = J\\,S = -D\\,S\\,\\frac{\\partial C}{\\partial x}\\).\n\n| Quantity | Meaning | Correct expression | Key point |\n|---|---|---|---|\n| \\(J\\) | flux density | <span style=\"color:#1a73e8\">\\(J=-D\\,\\partial C/\\partial x\\)</span> | minus sign → down gradient |\n| \\(\\Phi\\) | total flux (through area S) | <span style=\"color:#188038\">\\(\\Phi=-D\\,S\\,\\partial C/\\partial x\\)</span> | multiply by area S |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_9",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "Which statement correctly describes passive transport across a membrane?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Requires external energy to occur"
+      },
+      {
+        "key": "B",
+        "text": "Occurs against the concentration gradient"
+      },
+      {
+        "key": "C",
+        "text": "Occurs along the concentration gradient"
+      },
+      {
+        "key": "D",
+        "text": "Requires a membrane pump"
+      },
+      {
+        "key": "E",
+        "text": "Is independent of temperature"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Passive transport: what it is\n**Passive transport** is the movement of substances across a membrane **without cellular energy (ATP)**, driven by an existing **electrochemical/concentration gradient**.\n\n### Driving force (the key idea)\nTransport occurs **from higher → lower concentration** (downhill), because this increases entropy and lowers free energy. This includes:\n- **Simple diffusion** (directly through the lipid bilayer; e.g., O₂, CO₂)\n- **Facilitated diffusion** (via **channels** or **carriers**, still downhill; e.g., glucose via GLUT)\n- **Osmosis** (water down its water potential gradient, often via aquaporins)\n\n### What passive transport is NOT\n- Not **ATP-dependent**\n- Not **against** the gradient\n- Not requiring a **pump** (pumps are for **active transport**)\n\n### Temperature dependence\nDiffusion is **temperature-dependent**: higher temperature generally increases molecular kinetic energy and **increases diffusion rate**.\n\n| Feature | Passive transport | Active transport |\n|---|---|---|\n| Energy (ATP) | <span style=\"color:#0B6E0B\"><b>No</b></span> | <span style=\"color:#B00020\"><b>Yes</b></span> (primary) or indirect (secondary) |\n| Direction vs gradient | <span style=\"color:#0B6E0B\"><b>Downhill</b></span> (high → low) | <span style=\"color:#B00020\"><b>Uphill</b></span> possible |\n| Proteins required | Sometimes (channels/carriers) | Often (pumps/cotransporters) |\n| Temperature effect | <span style=\"color:#B36B00\"><b>Rate increases</b></span> with temperature | Also temperature-dependent (enzyme-like kinetics) |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_10",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "Which statement regarding membrane permeability is correct?",
+    "options": [
+      {
+        "key": "A",
+        "text": "All membranes are identical in terms of permeability."
+      },
+      {
+        "key": "B",
+        "text": "The permeability of a membrane depends on the characteristics of the molecules, such as their size and charge."
+      },
+      {
+        "key": "C",
+        "text": "Membranes always allow the passage of all molecules"
+      },
+      {
+        "key": "D",
+        "text": "Permeability plays no role in transport."
+      },
+      {
+        "key": "E",
+        "text": "Permeability is constant for all types of solutes"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### What is membrane permeability?\n**Membrane permeability** is the ease with which a given **solute** crosses a membrane (typically a **lipid bilayer**).\n\n### What determines permeability?\nPermeability depends on both:\n- **Solute properties**: **size** (smaller diffuses faster), **polarity/charge** (uncharged nonpolar crosses best), and **lipid solubility**.\n- **Membrane properties**: lipid composition (e.g., **cholesterol**), thickness, temperature, and presence of **channels/transporters** (which can greatly increase effective permeability for specific solutes).\n\n### Key rule of thumb (lipid bilayer, no transporter)\n- <span style=\"color:green\"><b>High permeability</b></span>: small **nonpolar** (O₂, CO₂, steroids)\n- <span style=\"color:orange\"><b>Low/moderate</b></span>: small **uncharged polar** (H₂O, urea; water often needs aquaporins for high flux)\n- <span style=\"color:red\"><b>Very low</b></span>: **ions** (Na⁺, K⁺, Cl⁻) and large polar molecules (glucose) without transport proteins\n\n| Solute type | Examples | Intrinsic lipid-bilayer permeability |\n|---|---|---|\n| Small nonpolar | O₂, CO₂ | <span style=\"color:green\"><b>High</b></span> |\n| Small uncharged polar | H₂O, urea | <span style=\"color:orange\"><b>Low–moderate</b></span> |\n| Large uncharged polar | Glucose | <span style=\"color:red\"><b>Very low</b></span> |\n| Ions (charged) | Na⁺, K⁺, Cl⁻ | <span style=\"color:red\"><b>Extremely low</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_11",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcm",
+    "questionText": "A dialysis membrane:",
+    "options": [
+      {
+        "key": "A",
+        "text": "it only lets the solvent pass"
+      },
+      {
+        "key": "B",
+        "text": "It is impermeable to urea"
+      },
+      {
+        "key": "C",
+        "text": "it is impermeable to ions"
+      },
+      {
+        "key": "D",
+        "text": "It is impermeable to macromolecules"
+      },
+      {
+        "key": "E",
+        "text": "It is considered semi-permeable"
+      }
+    ],
+    "correctAnswers": [
+      "D",
+      "+",
+      "E"
+    ],
+    "explanation": "### What is a dialysis membrane?\nA **dialysis membrane** is a **selectively permeable (semi‑permeable)** barrier with pores that allow **water and small solutes** to cross (by **diffusion** and, clinically, also **ultrafiltration** when a pressure gradient is applied), while restricting **large molecules**.\n\n### What crosses vs. what is retained?\n- **Crosses easily (small):** <span style=\"color:#1e7f2d\"><b>water</b></span>, <span style=\"color:#1e7f2d\"><b>urea</b></span>, <span style=\"color:#1e7f2d\"><b>electrolytes/ions</b></span> (Na⁺, K⁺, Cl⁻, HCO₃⁻), many small toxins.\n- **Retained (large):** <span style=\"color:#b00020\"><b>macromolecules</b></span> (e.g., **proteins** like albumin; cells are also retained in physiologic contexts).\n\n### Key idea for neutral-particle transport\nEven for **neutral solutes**, whether they cross depends mainly on:\n- **Size (pore/steric restriction)**\n- **Diffusivity** and **concentration gradient**\n- (Secondarily) membrane material interactions\n\n| Option | Verdict | Core permeability rule |\n|---|---|---|\n| Water/solvent only | <span style=\"color:#b00020\"><b>False</b></span> | Dialysis membranes pass <span style=\"color:#1e7f2d\"><b>water + small solutes</b></span> |\n| Urea | <span style=\"color:#1e7f2d\"><b>Passes</b></span> | <span style=\"color:#1e7f2d\"><b>Small</b></span> → diffuses across |\n| Ions | <span style=\"color:#1e7f2d\"><b>Pass</b></span> | <span style=\"color:#1e7f2d\"><b>Small</b></span> → diffuse across |\n| Macromolecules | <span style=\"color:#b00020\"><b>Blocked</b></span> | <span style=\"color:#b00020\"><b>Large</b></span> → retained |\n| “Semi‑permeable” | <span style=\"color:#1e7f2d\"><b>True</b></span> | Selectively permeable barrier |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_12",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "On applique une tension électrique (U) entre deux plaques horizontales parallèles de même surfaces (S) et séparées d'une distance (d). Une particule de masse négligeable neutre est placée entre ces deux plaques.",
+    "options": [
+      {
+        "key": "A",
+        "text": "La particule subit une force électrostatique."
+      },
+      {
+        "key": "B",
+        "text": "La particule se déplace vers la plaque chargée négativement."
+      },
+      {
+        "key": "C",
+        "text": "La particule se déplace vers la plaque chargée positivement."
+      },
+      {
+        "key": "D",
+        "text": "La particule reste immobile."
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Idée clé\nUne particule **neutre** a une **charge électrique nulle** : elle ne subit donc pas la force électrostatique usuelle **F = qE**. Ici, comme **q = 0**, on obtient **F = 0**.\n\n### Conséquence entre deux plaques\nDeux plaques parallèles soumises à une tension créent un **champ électrique** dirigé de la plaque **positive** vers la plaque **négative**. Ce champ agit sur les **charges électriques**, mais pas sur une particule strictement neutre dans ce modèle.\n\n### Point important\nLa mention de **masse négligeable** ne change rien ici : même si la masse est très petite, une particule sans charge ne sera pas accélérée par le champ électrique, car la **force est nulle**.\n\n| Situation | Résultat |\n|---|---|\n| Particule chargée positivement | déplacement vers la plaque **négative** |\n| Particule chargée négativement | déplacement vers la plaque **positive** |\n| Particule **neutre** | **immobile** |",
+    "source": "Externat Blida 2023",
+    "year": 2023
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE_13",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_NEUTRAL_PARTICLES_A_CROSS_A_MEMBRANE",
+    "courseName": "Transport of neutral particles a cross a membrane",
+    "type": "qcs",
+    "questionText": "Le phénomène de filtration d’une substance est :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Lié à la différence de concentration entre deux milieux."
+      },
+      {
+        "key": "B",
+        "text": "Un phénomène d’électrophysiologie."
+      },
+      {
+        "key": "C",
+        "text": "Un phénomène électrique."
+      },
+      {
+        "key": "D",
+        "text": "Lié à la différence de pression entre deux milieux."
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Définition\nLa **filtration** est le passage d’un **solvant** et/ou de petites molécules à travers une membrane sous l’effet d’un **gradient de pression**. Elle ne dépend pas du gradient de concentration, qui correspond plutôt à la **diffusion**.\n\n### Mécanisme clé\nQuand la pression est plus élevée d’un côté de la membrane, elle **pousse** le liquide et les particules neutres dissoutes vers le compartiment où la pression est plus faible. C’est donc un transport **mécanique** lié à la **pression hydrostatique**.\n\n### Importance clinique\nC’est le principe observé dans la **filtration capillaire** et dans la **formation de l’ultrafiltrat glomérulaire** au niveau rénal. <span style=\"color:#c62828\"><b>Filtration ≠ diffusion</b></span> :\n\n| Phénomène | Force motrice principale | Exemple |\n|---|---|---|\n| **Diffusion** | **Gradient de concentration** | O<sub>2</sub>, CO<sub>2</sub> |\n| **Filtration** | **Gradient de pression** | Capillaires, glomérule |\n| **Migration électrique** | **Gradient électrique** | Ions uniquement |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Les lois de Raoult:",
+    "options": [
+      {
+        "key": "A",
+        "text": "S'appliquent à toutes les solutions"
+      },
+      {
+        "key": "B",
+        "text": "la présence d'un soluté non volatile dans un solvant augmente la pression de vapeur."
+      },
+      {
+        "key": "C",
+        "text": "toute solution idéale vérifie ses lois."
+      },
+      {
+        "key": "D",
+        "text": "la température de congélation d'un solvant pur et plus basse que celle d'une solution"
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sont justes."
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Lois de Raoult : idée centrale\nPour une **solution idéale**, la **pression partielle** de chaque constituant volatil vérifie :\n- **pᵢ = xᵢ · pᵢ°**\n- donc la **pression totale** : **P = Σ pᵢ**.\n\n### Quand s’applique-t-elle ?\n- **Exactement** pour les solutions **idéales** (interactions soluté–solvant ≈ soluté–soluté ≈ solvant–solvant).\n- **Approximativement** pour des solutions **diluées** (notamment pour expliquer les **propriétés colligatives**).\n\n### Lien avec les propriétés colligatives\nAjouter un **soluté non volatil** diminue la fraction molaire du solvant (**x_solvant↓**) ⇒ **p_solvant = x_solvant·p°** diminue ⇒ <span style=\"color:#b00020\"><b>abaissement de la pression de vapeur</b></span>.\nCette baisse de pression de vapeur entraîne notamment :\n- <span style=\"color:#b00020\"><b>abaissement cryoscopique</b></span> : **T_f(solution) < T_f(solvent pur)**.\n\n| Concept | Solvant pur | Solution (soluté non volatil) |\n|---|---:|---:|\n| Pression de vapeur du solvant | élevée | <span style=\"color:#b00020\"><b>diminue</b></span> |\n| Température de congélation | élevée | <span style=\"color:#b00020\"><b>diminue</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Quelle est la relation entre la pression de vapeur saturante et la fraction molaire du soluté dans une solution ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "La pression de vapeur saturante reste constante avec la fraction molaire du soluté"
+      },
+      {
+        "key": "B",
+        "text": "La pression de vapeur saturante augmente avec la fraction molaire du soluté"
+      },
+      {
+        "key": "C",
+        "text": "La pression de vapeur saturante n'est pas influencée par la fraction molaire du soluté"
+      },
+      {
+        "key": "D",
+        "text": "La pression de vapeur saturante diminue avec la fraction molaire du soluté"
+      },
+      {
+        "key": "E",
+        "text": "Toutes réponses sont fausses."
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Idée clé (propriété colligative)\nDans une solution idéale contenant un **soluté non volatil**, la **pression de vapeur saturante** au-dessus de la solution est due essentiellement au **solvant**. Ajouter du soluté **dilue** le solvant (diminue sa fraction molaire), donc **moins de molécules de solvant** peuvent s’échapper vers la phase vapeur → la pression de vapeur **baisse**.\n\n### Loi de Raoult (solution idéale)\nPour le solvant (1) :\n- **P₁ = x₁ · P₁°**\n- où **P₁°** est la pression de vapeur du solvant pur, et **x₁** sa **fraction molaire dans la solution**.\n\nComme **x₁ = 1 − x_soluté**, quand la fraction molaire du **soluté** augmente, **x₁ diminue** → **P₁ diminue**.\n\n### Conséquence clinique/physico-chimique\nLa baisse de pression de vapeur est une propriété **colligative** : elle dépend surtout du **nombre de particules** dissoutes (et non de leur nature), sous l’hypothèse de solution idéale et soluté non volatil.\n\n| Grandeur qui augmente | Effet sur la fraction molaire du solvant (**x₁**) | Effet sur la pression de vapeur (**P₁**) |\n|---|---|---|\n| <span style=\"color:#6A1B9A\"><b>x(soluté)</b></span> ↑ | <span style=\"color:#C62828\"><b>x₁</b></span> ↓ | <span style=\"color:#C62828\"><b>P₁</b></span> ↓ (Raoult) |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_3",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "L'osmolarité d'une solution dépend:",
+    "options": [
+      {
+        "key": "A",
+        "text": "De la concentration des particules dissoutes"
+      },
+      {
+        "key": "B",
+        "text": "De la masse du solvant"
+      },
+      {
+        "key": "C",
+        "text": "Du volume du soluté"
+      },
+      {
+        "key": "D",
+        "text": "De la pression externe"
+      },
+      {
+        "key": "E",
+        "text": "De l'activité chimique"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Définition\nL’**osmolarité** est la **concentration osmotiquement active** d’une solution, exprimée en **osmoles par litre de solution** (Osm/L).\n\n### Principe (propriété colligative)\nElle dépend uniquement du **nombre de particules dissoutes** présentes dans un **volume final de solution** (et, pour un calcul simple, de leur **dissociation** via le facteur de Van’t Hoff *i*).\n\n- Non-électrolyte : osmolarité ≈ **C**\n- Électrolyte : osmolarité ≈ **i × C** (ex. NaCl : *i* ≈ 2 en approximation)\n\n### À ne pas confondre\n- **Osmolarité** : par **L de solution**\n- **Osmolalité** : par **kg de solvant** (dépend de la masse de solvant)\n\n| Grandeur | Dépend de… | Unité |\n|---|---|---|\n| <span style=\"color:#1f77b4\"><b>Osmolarité</b></span> | <span style=\"color:#1f77b4\"><b>nombre de particules</b></span> / <span style=\"color:#1f77b4\"><b>volume de solution</b></span> | Osm/L |\n| <span style=\"color:#d62728\"><b>Osmolalité</b></span> | <span style=\"color:#d62728\"><b>nombre de particules</b></span> / <span style=\"color:#d62728\"><b>masse de solvant</b></span> | Osm/kg |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_4",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Une solution contient 0,2 mol de KCl dans 2 L. Quelle est son osmolarité ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "0,2 osmol/L"
+      },
+      {
+        "key": "B",
+        "text": "0,4 osmol/L"
+      },
+      {
+        "key": "C",
+        "text": "0,1 osmol/L"
+      },
+      {
+        "key": "D",
+        "text": "0,5 osmol/L"
+      },
+      {
+        "key": "E",
+        "text": "1 osmol/L"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Définition\nL’**osmolarité** (osmol/L) correspond au **nombre total de particules osmotiquement actives** présentes dans 1 litre de solution.\n\n### Méthode (propriété colligative)\n1) **Molarité** de KCl :\n- n = 0,2 mol ; V = 2 L → C = n/V = 0,2/2 = **0,1 mol/L**\n\n2) **Dissociation** du KCl (électrolyte fort, idéalement) :\n- KCl → **K⁺ + Cl⁻** → facteur de Van’t Hoff **i ≈ 2**\n\n3) Osmolarité :\n- Osmolarité = **i × C** = 2 × 0,1 = **0,2 osmol/L**\n\n| Soluté | Concentration (mol/L) | Dissociation | i | Osmolarité (osmol/L) |\n|---|---:|---|---:|---:|\n| KCl | 0,1 | K⁺ + Cl⁻ | 2 | 0,2 |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_5",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Quelle affirmation est correcte concernant la relation entre pression osmotique et pression hydrostatique ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "La pression osmotique est toujours supérieure à la pression hydrostatique"
+      },
+      {
+        "key": "B",
+        "text": "La pression hydrostatique influence le mouvement de l'eau vers les zones de haute concentration"
+      },
+      {
+        "key": "C",
+        "text": "Lorsque les deux pressions sont égales, il n'y a pas de mouvement net d'eau"
+      },
+      {
+        "key": "D",
+        "text": "La pression osmotique ne joue aucun rôle dans le transport des molécules"
+      },
+      {
+        "key": "E",
+        "text": "Les deux pressions sont indépendantes l'une de l'autre"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définitions\n- **Pression osmotique (π)** : pression « théorique » nécessaire pour **empêcher** l’entrée d’eau à travers une membrane semi-perméable, due à un **gradient de solutés non diffusibles**.\n- **Pression hydrostatique (P)** : pression « mécanique » exercée par un fluide sur la membrane (ex. pression dans un capillaire), qui **pousse** l’eau.\n\n### Relation fonctionnelle (qui décide du sens de l’eau)\nLe mouvement d’eau dépend de la **différence de pressions effectives** de part et d’autre de la membrane :\n- l’**osmose** attire l’eau vers le compartiment au **π le plus élevé**,\n- la **pression hydrostatique** pousse l’eau vers le compartiment au **P le plus faible**.\n\nQuand ces forces s’**équilibrent**, les flux opposés se compensent.\n\n### Point clé\nÀ l’**équilibre** : **π est contrebalancée par P** → **pas de flux net** (mais des échanges microscopiques peuvent persister dans les deux sens).\n\n| Situation | Conséquence sur l’eau |\n|---|---|\n| π > P (force osmotique dominante) | Entrée nette d’eau vers le compartiment le plus concentré en solutés non diffusibles |\n| P > π (force hydrostatique dominante) | Sortie nette d’eau vers le compartiment opposé |\n| <span style=\"color:#1a7f37\"><b>π = P</b></span> | <span style=\"color:#1a7f37\"><b>Pas de mouvement net d’eau</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_6",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Raoult's Laws:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Apply to all solutions."
+      },
+      {
+        "key": "B",
+        "text": "The presence of a non-volatile solute in a solvent increases the vapor pressure."
+      },
+      {
+        "key": "C",
+        "text": "Every ideal solution obeys these laws."
+      },
+      {
+        "key": "D",
+        "text": "The freezing point of a pure solvent is lower than that of a solution."
+      },
+      {
+        "key": "E",
+        "text": "All statements are correct"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Raoult’s law (what it really says)\nFor an **ideal solution**, each volatile component obeys:\n- **Partial vapor pressure:** \\(P_i = x_i\\,P_i^\\circ\\)\n- **Total vapor pressure:** \\(P_{tot} = \\sum P_i\\)\n\n### When it applies (key condition)\nRaoult’s law is **exact** for **ideal solutions** (A–B interactions ≈ A–A ≈ B–B) and is often a **good approximation** for **dilute** solutions.\n\n### Non‑volatile solute and colligative effects\nAdding a **non‑volatile solute** lowers the solvent’s mole fraction \\(x_{solvent}\\) → **lowers vapor pressure** (vapor‑pressure lowering). This also causes:\n- **Boiling point elevation**\n- **Freezing point depression** (solution freezes at a **lower** temperature than the pure solvent)\n\n| Concept | Pure solvent | Solution (non‑volatile solute) |\n|---|---|---|\n| Vapor pressure | higher | <span style=\"color:#c00000\"><b>lower</b></span> |\n| Freezing point | <span style=\"color:#006400\"><b>higher</b></span> | lower (<span style=\"color:#c00000\"><b>depressed</b></span>) |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_7",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "What is the relationship between the saturated vapor pressure and the mole fraction of the solute in a solution?",
+    "options": [
+      {
+        "key": "A",
+        "text": "The saturated vapor pressure remains constant with the mole fraction of the solute."
+      },
+      {
+        "key": "B",
+        "text": "The saturated vapor pressure increases with the mole fraction of the solute."
+      },
+      {
+        "key": "C",
+        "text": "The saturated vapor pressure is not influenced by the mole fraction of the solute."
+      },
+      {
+        "key": "D",
+        "text": "The saturated vapor pressure decreases with the mole fraction of the solute."
+      },
+      {
+        "key": "E",
+        "text": "None of the answers is correct"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Key idea (colligative property)\nAdding a **nonvolatile solute** lowers the solvent’s tendency to escape into the vapor phase, so the **saturated vapor pressure of the solvent decreases**.\n\n### Raoult’s law (ideal solution)\nFor a nonvolatile solute:\n- **P_solution = X_solvent · P°_solvent**\n- Since **X_solvent = 1 − X_solute**, then **P_solution = (1 − X_solute) · P°_solvent**\nSo as **mole fraction of solute (X_solute) increases**, **vapor pressure decreases linearly**.\n\n### Clinical/biomed tie-in (why it matters)\nThis vapor-pressure lowering underlies other colligative effects (e.g., **boiling point elevation** and **freezing point depression**) used in physiology/lab contexts via **osmolarity/osmolality** concepts.\n\n| Increase in solute mole fraction (X<sub>solute</sub>) | X<sub>solvent</sub> | Saturated vapor pressure (P) |\n|---|---|---|\n| ↑ | ↓ | <span style=\"color:#c62828\"><b>↓</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_8",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "The osmolarity of a solution depends on:",
+    "options": [
+      {
+        "key": "A",
+        "text": "The concentration of dissolved particles"
+      },
+      {
+        "key": "B",
+        "text": "The mass of the solvent"
+      },
+      {
+        "key": "C",
+        "text": "The volume of the solute"
+      },
+      {
+        "key": "D",
+        "text": "External pressure"
+      },
+      {
+        "key": "E",
+        "text": "Chemical activity"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### What *osmolarity* means\n**Osmolarity** is the concentration of **osmotically active particles** expressed as:\n- **osmoles of solute particles per liter of solution** (Osm/L)\n\nIt depends on **how many particles** are present in a given **final solution volume**.\n- Electrolytes increase particle count via **dissociation** (e.g., NaCl → ~2 particles).\n- Nonelectrolytes do not dissociate (e.g., glucose → 1 particle).\n\n### What it does *not* depend on\n- **Mass of solvent** defines **osmolality** (Osm/kg), not osmolarity.\n- **External pressure** can change measured osmotic pressure in practice, but it does not define osmolarity.\n- **Chemical activity** affects **effective osmotic pressure** via non-ideality (osmotic coefficient), but osmolarity as a concentration measure is based on **particle count per liter**.\n\n| Quantity | Definition | Depends on | Unit |\n|---|---|---|---|\n| <span style=\"color:#0B6E4F\"><b>Osmolarity</b></span> | osmoles / <b>liter of solution</b> | <b># dissolved particles</b> (and solution volume) | Osm/L |\n| <span style=\"color:#6A1B9A\"><b>Osmolality</b></span> | osmoles / <b>kg of solvent</b> | <b># dissolved particles</b> (and solvent mass) | Osm/kg |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_9",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "A solution contains 0.2 mol of KCl in 2 L. What is its osmolarity?",
+    "options": [
+      {
+        "key": "A",
+        "text": "0.2 osmol/L"
+      },
+      {
+        "key": "B",
+        "text": "0.4 osmol/L"
+      },
+      {
+        "key": "C",
+        "text": "0.1 osmol/L"
+      },
+      {
+        "key": "D",
+        "text": "0.5 osmol/L"
+      },
+      {
+        "key": "E",
+        "text": "1 osmol/L"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Osmolarity: what you’re counting\n**Osmolarity** = number of **osmoles of solute particles** per **liter of solution** (osmol/L).\n\n### Step 1 — Compute molarity\n0.2 mol KCl in 2 L → **0.2 / 2 = 0.1 mol/L** (0.1 M).\n\n### Step 2 — Convert molarity to osmolarity (van ’t Hoff factor, *i*)\nKCl (strong electrolyte) dissociates ideally:\n**KCl → K⁺ + Cl⁻** so **i ≈ 2**.\n\nOsmolarity = **M × i = 0.1 × 2 = 0.2 osmol/L**.\n\n| Quantity | Value |\n|---|---:|\n| Molarity of KCl | 0.1 mol/L |\n| Dissociation (*i*) | 2 |\n| **Osmolarity** | **0.2 osmol/L** |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_10",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Which statement is correct regarding the relationship between osmotic pressure and hydrostatic pressure?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Osmotic pressure is always greater than hydrostatic pressure"
+      },
+      {
+        "key": "B",
+        "text": "Hydrostatic pressure influences the movement of water toward areas of high concentration"
+      },
+      {
+        "key": "C",
+        "text": "When the two pressures are equal, there is no net movement of water"
+      },
+      {
+        "key": "D",
+        "text": "Osmotic pressure plays no role in the transport of molecules"
+      },
+      {
+        "key": "E",
+        "text": "The two pressures are independent of each other"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Core idea\n**Osmotic pressure (π)** is the *effective pulling force* generated by a **solute concentration difference** across a **semipermeable membrane**; it represents the **hydrostatic pressure that would be required to stop osmosis**.\n\n### How water movement is determined\nWater flux depends on the **net driving pressure** (conceptually):\n- **Osmotic driving force**: pushes water toward the side with **higher osmolality** (higher effective solute concentration).\n- **Hydrostatic pressure difference (ΔP)**: pushes water toward the side with **lower hydrostatic pressure**.\n\nAt equilibrium:\n- **ΔP balances Δπ** → **no net water movement**.\n\n### High-yield recap\n| Situation | Net water movement? | Why? |\n|---|---|---|\n| <span style=\"color:#0B6E4F\"><b>Δπ &gt; ΔP</b></span> | Toward <b>higher solute</b> side | Osmotic force dominates |\n| <span style=\"color:#B00020\"><b>ΔP &gt; Δπ</b></span> | Toward <b>lower pressure</b> side | Hydrostatic force dominates |\n| <span style=\"color:#1A73E8\"><b>ΔP = Δπ</b></span> | <b>No net</b> movement | Forces balance |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_11",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Suite à la question précédente, l'expression du coefficient de Van 'T Hoff est:",
+    "options": [
+      {
+        "key": "A",
+        "text": "i=1+ax(v-1)"
+      },
+      {
+        "key": "B",
+        "text": "i=1+vx (a-1)"
+      },
+      {
+        "key": "C",
+        "text": "a=1+ix (v-1)"
+      },
+      {
+        "key": "D",
+        "text": "i=1+ax (v+1)"
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Définition\nLe **coefficient de Van ’t Hoff** \\(i\\) mesure le **nombre effectif de particules** en solution par rapport au nombre de particules attendu si le soluté ne se transformait pas.\n\n### Idée clé\nPour un soluté qui se **dissocie** partiellement :\n- une fraction **x** (ou **α** selon les notations) se dissocie,\n- chaque entité dissociée donne **v** particules au total.\n\nOn obtient alors la relation générale :\n\n**i = 1 + x(v - 1)**\n\nSi l’énoncé utilise un facteur **a** pour pondérer cette dissociation, la forme proposée compatible est :\n\n**i = 1 + ax(v - 1)**\n\n### Importance clinique / physicochimique\nLes propriétés colligatives dépendent du **nombre de particules** :\n- **pression osmotique**,\n- **abaissement cryoscopique**,\n- **élévation ébullioscopique**.\n\nDonc plus la dissociation est importante, plus **i augmente**.\n\n| Situation | Expression de **i** |\n|---|---|\n| Pas de dissociation | **i = 1** |\n| Dissociation partielle en **v** particules | **i = 1 + x(v-1)** |\n| Dissociation totale | **i = v** |",
+    "source": "Externat Blida 2023",
+    "year": 2023
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_12",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Suite à la question précédente, l'osmolarité (Cosm) de la solution vaut :",
+    "options": [
+      {
+        "key": "A",
+        "text": "COSM= 0,68 osmol/l"
+      },
+      {
+        "key": "B",
+        "text": "COSM = 1,42 osmol/l"
+      },
+      {
+        "key": "C",
+        "text": "Cosm = 0,34 osmol/l"
+      },
+      {
+        "key": "D",
+        "text": "Cosm=0osmol/l"
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Définition\nL’**osmolarité** (**C<sub>osm</sub>**) correspond au **nombre total de particules osmotiques par litre de solution**. On la calcule par :\n\n**C<sub>osm</sub> = i × C**\n\n- **C** = concentration molaire\n- **i** = coefficient de dissociation de **van ’t Hoff**\n\n### Idée clé\nPour un **non-électrolyte**, **i = 1**.  \nPour un électrolyte comme **NaCl**, on prend classiquement **i ≈ 2** car il donne **Na⁺ + Cl⁻**.\n\n### Application ici\nLes propositions montrent clairement le couple **0,34 ↔ 0,68**, ce qui correspond au cas classique :\n\n- concentration molaire = **0,34 mol/L**\n- dissociation en **2 particules**\n- donc **C<sub>osm</sub> = 2 × 0,34 = 0,68 osmol/L**\n\n### Importance clinique\nL’osmolarité permet d’anticiper les mouvements d’eau à travers les membranes :  \n**↑ osmolarité extracellulaire → sortie d’eau des cellules** ⚠️\n\n| Donnée | Valeur |\n|---|---:|\n| Concentration molaire | 0,34 mol/L |\n| Facteur de dissociation | 2 |\n| Osmolarité | **0,68 osmol/L** |",
+    "source": "Externat Blida 2023",
+    "year": 2023
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS_13",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_COLLIGATIVE_PROPERTIES_OF_SOLUTIONS",
+    "courseName": "Colligative properties of solutions",
+    "type": "qcs",
+    "questionText": "Pression osmotique : La pression osmotique dans le cadre d'une membrane hémiperméable correspond:",
+    "options": [
+      {
+        "key": "A",
+        "text": "À un mouvement du solvant de la solution la plus concentrée vers la solution la moins concentrée."
+      },
+      {
+        "key": "B",
+        "text": "À un mouvement du solvant de la solution la moins concentrée vers la solution la plus concentrée."
+      },
+      {
+        "key": "C",
+        "text": "À un mouvement du soluté de la solution la plus concentrée vers la solution la moins concentrée."
+      },
+      {
+        "key": "D",
+        "text": "À un mouvement du soluté de la solution la moins concentrée vers la solution la plus concentrée."
+      },
+      {
+        "key": "E",
+        "text": "Pression osmotique = R XTX COSM"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Définition\nLa **pression osmotique** est la pression qu’il faut appliquer à une solution pour **empêcher le passage net du solvant** à travers une **membrane hémiperméable**. Cette membrane laisse passer le **solvant** mais pas le **soluté**.\n\n### Sens du déplacement\nEn **osmose**, le solvant se déplace spontanément de la solution **la moins concentrée en soluté** vers la solution **la plus concentrée en soluté**. Le but est de tendre vers un **équilibre des potentiels chimiques** de part et d’autre de la membrane.\n\n### Formule utile\nPour les solutions diluées : **π = C osmotique × R × T**.\n\n| Notion | Sens / relation |\n|---|---|\n| Membrane hémiperméable | laisse passer le **solvant**, pas le **soluté** |\n| Osmose | **moins concentrée** → **plus concentrée** |\n| Pression osmotique | pression qui **s’oppose** à ce flux |\n| Relation | **π = R × T × C\\_osm** |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE",
+    "courseName": "Optique géométrique",
+    "type": "qcm",
+    "questionText": "Prisme :\nSoit un prisme d'angle au sommet (A = 60°) et d'indice de réfraction (n = 1, qui baigne dans l'air. Si l'angle d'incidence sur la face AB (i = 90°), l'angle d'émergence (i') par la face (AC) vaut :",
+    "options": [
+      {
+        "key": "A",
+        "text": "New suggestion text here."
+      },
+      {
+        "key": "B",
+        "text": "New suggestion text here."
+      },
+      {
+        "key": "C",
+        "text": "New suggestion text here."
+      },
+      {
+        "key": "D",
+        "text": "New suggestion text here."
+      },
+      {
+        "key": "E",
+        "text": "New suggestion text here."
+      }
+    ],
+    "correctAnswers": [],
+    "explanation": "### Réfraction dans un prisme d’indice égal à celui du milieu extérieur\n\nLe prisme a ici un indice **n = 1**, identique à celui de l’air. Aux deux dioptres, la loi de Snell-Descartes devient :\n\n\\[\n1\\,\\sin i = 1\\,\\sin r \\Rightarrow r=i\n\\]\n\nIl n’existe donc **aucune réfraction** : un rayon qui pourrait traverser le prisme ne subirait aucune déviation globale. Dans la limite demandée, l’incidence sur AB est rasante : \\(i=90°\\). L’angle d’émergence correspondant est donc également \\(i'=90°\\).\n\n⚠️ Strictement, un rayon incident exactement rasant est tangent à la face AB et ne pénètre pas réellement dans le prisme : il s’agit d’une **situation limite**. La réponse attendue par continuité est néanmoins : \\(\\boxed{i'=90°}\\).",
+    "source": "Externat Blida 2024",
+    "year": 2024
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE",
+    "courseName": "Optique géométrique",
+    "type": "qcs",
+    "questionText": "L'œil :\nUn individu caractérisé par un (PR) réel, situé à (20 cm) de l'œil. Son amplitude d'accommodation maximale vaut (A = 88):",
+    "options": [
+      {
+        "key": "A",
+        "text": "L'objet que peut voir ce sujet sans accommodation est situé à (7,7 cm)."
+      },
+      {
+        "key": "B",
+        "text": "Cet individu est hypermétrope."
+      },
+      {
+        "key": "C",
+        "text": "Cet individu peut voir les objets rejetés à l'infini sans ses lentilles correctrices."
+      },
+      {
+        "key": "D",
+        "text": "La vergence de la lentille de contact qui lui permet de corriger son amétropie vaut (C = 88),"
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces réponses sont fausses."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Raisonnement optique\nUn **punctum remotum (PR) réel** situé à 20 cm devant l’œil caractérise une **myopie** : au repos accommodatif, l’œil voit net les objets placés au PR, mais pas les objets plus éloignés.\n\nLa vergence du PR est :\n\n\\[\nV_{PR}=\\frac{1}{0{,}20}=5\\ \\text{D}\n\\]\n\nAvec une amplitude accommodative maximale de **8 D**, la vergence maximale supportée est \\(5+8=13\\) D, soit un punctum proximum :\n\n\\[\nPP=\\frac{1}{13}\\approx 7{,}7\\ \\text{cm}\n\\]\n\nCette distance de 7,7 cm correspond donc à la vision nette **avec accommodation maximale**, et non sans accommodation. La correction de loin par lentille de contact doit annuler les 5 D de myopie : elle est **divergente**, de vergence \\(-5\\) D.\n\n🧬 **PR réel à 20 cm → myopie ; PP ≈ 7,7 cm ; lentille de contact = −5 D.**",
+    "source": "Externat Blida 2024",
+    "year": 2024
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE_3",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE",
+    "courseName": "Optique géométrique",
+    "type": "qcs",
+    "questionText": "L'optique géométrique :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Permet d'étudier la quantité de matière et d'énergie emportée par la lumière."
+      },
+      {
+        "key": "B",
+        "text": "Permet de donner la trajectoire des rayons lumineux lorsqu'ils changent de milieux transparents et homogènes."
+      },
+      {
+        "key": "C",
+        "text": "Permet de dire que la propagation de la lumière dans un milieu transparent et homogène est courbe."
+      },
+      {
+        "key": "D",
+        "text": "L'optique physique dit que la lumière est une onde corpusculaire."
+      },
+      {
+        "key": "E",
+        "text": "Toutes ses réponses sont justes."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Définition\nL’**optique géométrique** modélise la lumière par des **rayons lumineux**. Elle est valable quand on s’intéresse surtout au **trajet** de la lumière, sans décrire ses propriétés ondulatoires fines.\n\n### Idée clé\nDans un milieu **transparent et homogène**, la lumière se propage en ligne **rectiligne**. Lorsqu’elle rencontre une interface entre deux milieux transparents, l’optique géométrique permet de prévoir la **réflexion** et la **réfraction** des rayons.\n\n### Importance\nC’est le cadre utilisé pour comprendre les **lentilles**, **miroirs**, **prismes** et la formation des **images** en première approche.\n\n| Domaine | Ce qu’il décrit |\n|---|---|\n| **Optique géométrique** | **Trajet des rayons** : propagation rectiligne, réflexion, réfraction |\n| **Optique physique** | **Nature ondulatoire** : interférences, diffraction, polarisation |\n| **Optique quantique / corpusculaire** | Photons, échanges d’**énergie** avec la matière |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE_4",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE",
+    "courseName": "Optique géométrique",
+    "type": "qcs",
+    "questionText": "Stigmatisme:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Un système optique stigmatique forme des images réelles."
+      },
+      {
+        "key": "B",
+        "text": "À chaque point objet correspond un seul point image."
+      },
+      {
+        "key": "C",
+        "text": "L'image formée par un système stigmatique est rejetée à l'infini."
+      },
+      {
+        "key": "D",
+        "text": "Le faisceau lumineux émergent devient monochromatique."
+      },
+      {
+        "key": "E",
+        "text": "Le miroir plan est un système optique stigmatique."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Définition du **stigmatisme**\nUn système optique est dit **stigmatique** pour un point objet si **tous les rayons issus de ce point**, après traversée ou réflexion par le système, **se recoupent en un unique point image** (ou semblent en provenir). L’idée clé est donc : **point objet → point image**.\n\n### Ce que cela signifie concrètement\nLe stigmatisme concerne la **qualité géométrique** de la formation d’image, pas la nature de l’image.\n- l’image peut être **réelle** ou **virtuelle** ;\n- elle peut être à distance finie ou à l’**infini** ;\n- cela n’a **aucun lien** avec la **couleur** ou la **monochromaticité**.\n\n### Importance clinique et physique\nEn optique géométrique, le stigmatisme est un modèle idéal utile pour comprendre la formation des images. En pratique, beaucoup de systèmes ne sont que **approximativement stigmatiques**, car il existe des **aberrations**.\n\n| Proposition | Idée clé | Verdict |\n|---|---|---|\n| A | Stigmatique ≠ forcément image réelle | Faux |\n| B | **Un point objet donne un point image** | Vrai |\n| C | Stigmatique ≠ forcément image à l’infini | Faux |\n| D | Aucun rapport avec la monochromaticité | Faux |\n| E | Le **miroir plan** est un exemple de système stigmatique | Vrai |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE_5",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE",
+    "courseName": "Optique géométrique",
+    "type": "qcs",
+    "questionText": "Dioptre plan: Un rayon lumineux issu d'un objet se trouvant dans un milieu d'indice (n) subit une réflexion totale sur un dioptre plan formé de deux milieux d'indice de réfraction (n) et (n2) si:",
+    "options": [
+      {
+        "key": "A",
+        "text": "n1> n2; et l'angle d'incidence (i) est inférieur à l'angle limite."
+      },
+      {
+        "key": "B",
+        "text": "n1 <n2; et l'angle d'incidence (i) est inférieur à l'angle limite."
+      },
+      {
+        "key": "C",
+        "text": "L'image formée par cette réflexion est symétrique de l'objet par rapport au plan du miroir."
+      },
+      {
+        "key": "D",
+        "text": "L'angle de déviation du rayon réfléchi est nul."
+      },
+      {
+        "key": "E",
+        "text": "n1>n2; et l'angle d'incidence (i) supérieur à l'angle limite."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Définition\nUn **dioptre plan** est la surface séparant deux milieux transparents d’indices **n1** et **n2**. La **réflexion totale interne** se produit quand un rayon passe d’un milieu **plus réfringent** vers un milieu **moins réfringent**.\n\n### Conditions indispensables\nIl faut **deux conditions simultanées** :\n1. **n1 > n2**\n2. l’angle d’incidence **i** doit être **strictement supérieur** à l’**angle limite** (*ou angle critique*) tel que :  \n   **sin iL = n2 / n1**\n\nSi **i < iL**, il existe encore un rayon réfracté.  \nSi **i = iL**, le rayon réfracté rase la surface.  \nSi **i > iL**, il n’y a plus de réfraction : toute l’énergie repart par **réflexion totale**.\n\n### Importance pratique\nC’est le principe utilisé dans les **fibres optiques**, les **prismes** et certains systèmes d’imagerie. Le dioptre se comporte alors comme un **miroir parfait**, mais seulement dans ces conditions.\n\n| Situation | Réflexion totale ? |\n|---|---:|\n| **n1 < n2** | Non |\n| **n1 > n2** et **i < iL** | Non |\n| **n1 > n2** et **i = iL** | Non (rayon réfracté tangent) |\n| **n1 > n2** et **i > iL** | Oui ✅ |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE_6",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_GEOMETRIQUE",
+    "courseName": "Optique géométrique",
+    "type": "qcs",
+    "questionText": "L’œil: Un sujet présente une myopie de puissance (P = -58) et une amplitude d'accommodation maximale (A = 48), on rappelle que (P = 1). OPR getAns",
+    "options": [
+      {
+        "key": "A",
+        "text": "On corrige ce myope avec des lentilles de contact convergentes de vergence (C = P)."
+      },
+      {
+        "key": "B",
+        "text": "On corrige ce myope avec des lentilles de contact divergentes de vergence (C = P)."
+      },
+      {
+        "key": "C",
+        "text": "Les lentilles correctrices lui permettent de voir dans l'intervalle ]-∞;-25 cm]."
+      },
+      {
+        "key": "D",
+        "text": "Avec ses lentilles correctrices ce sujet peut voir les objets éloignés avec une accommodation maximale."
+      },
+      {
+        "key": "E",
+        "text": "Ce myope doit mettre ses lentilles pour voir les objets situés à (15 cm) de son œil."
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### 1) Myopie de puissance\nLa **myopie** signifie que le **punctum remotum** est situé à distance finie devant l’œil : l’œil voit net de près, mais pas de loin.  \nIci, la puissance de myopie est très probablement **P = -5 δ** (lecture OCR de **-58**), donc : **PR = 1/P = -0,20 m = -20 cm**.\n\n### 2) Amplitude d’accommodation\nL’**amplitude d’accommodation** correspond au « bonus » de vergence que le cristallin peut ajouter pour voir plus près.  \nSi **A = 4 δ**, alors après correction de la vision de loin, le punctum proximum corrigé vérifie : **PP = 1/A = 0,25 m = 25 cm**.\n\n### 3) Correction\nUn œil myope se corrige par une lentille **divergente** de vergence égale à la myopie à neutraliser : **C = P = -5 δ**. Avec une **lentille de contact**, on ramène le punctum remotum à l’**infini**.\n\n### 4) Conséquences pratiques\n- **Avec correction** : vision nette de **l’infini** jusqu’à **25 cm**.\n- **Sans correction** : vision nette entre **20 cm** et **11 cm** environ.\n- Donc pour un objet à **15 cm**, ce myope peut déjà voir net **sans** lentilles.\n\n| Situation | Intervalle de vision nette |\n|---|---|\n| Œil myope non corrigé | de **20 cm** à **≈ 11 cm** |\n| Œil corrigé par lentille de contact divergente | de **∞** à **25 cm** |\n\n**Synopse :** myopie **-5 δ** → correction par lentille **divergente -5 δ** → **loin net sans accommodation** ; avec **A = 4 δ** → **près net jusqu’à 25 cm**.",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_LES_LENTILE_MINCE_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_LES_LENTILE_MINCE",
+    "courseName": "Les lentile mince",
+    "type": "qcs",
+    "questionText": "Lentilles : Soit une lentille de forme biconvexe symétrique en verre d'indice de réfraction (n = 1,5) et de vergence (C = 28). On veut former une image sur un écran deux fois plus petite, dans l'air.",
+    "options": [
+      {
+        "key": "A",
+        "text": "Le rayon de courbure de ses faces vaut : (R= 50 cm)."
+      },
+      {
+        "key": "B",
+        "text": "L'objet se trouve à (150 cm) en avant de la lentille."
+      },
+      {
+        "key": "C",
+        "text": "Si la position de l'objet reste inchangée, et que le système (objet + lentille) baigne dans un milieu d'indice de réfraction (n = 2), la vergence de la lentille devient (C' = -18)."
+      },
+      {
+        "key": "D",
+        "text": "La nature de l'image formée reste réelle."
+      },
+      {
+        "key": "E",
+        "text": "La taille de l'image reste plus petite que celle de l'objet."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Données utiles\n- **Vergence** : \\(C=28\\,\\delta\\Rightarrow f'=1/C=1/28\\,\\text{m}=3{,}57\\,\\text{cm}\\)\n- Lentille **biconvexe symétrique** dans l’air : \\(R_1=+R\\), \\(R_2=-R\\)\n- Image **2 fois plus petite** sur un **écran** ⟹ image **réelle**, **renversée**, avec grandissement \\(\\gamma=-1/2\\)\n\n### 1) Rayon de courbure\nFormule du fabricant dans l’air :\n\\[\nC=(n-1)\\left(\\frac1{R_1}-\\frac1{R_2}\\right)\n=(1{,}5-1)\\left(\\frac1R-\\left(-\\frac1R\\right)\\right)=\\frac1R\n\\]\nDonc :\n\\[\nR=\\frac1{28}\\,\\text{m}=0{,}0357\\,\\text{m}=3{,}57\\,\\text{cm}\n\\]\nPas **50 cm**.\n\n### 2) Position de l’objet pour une image 2 fois plus petite\nComme \\(|\\gamma|=|OA'/OA|=1/2\\), on a :\n\\[\nOA'=\\frac{OA}{2}\n\\]\nAvec la relation de conjugaison, on obtient :\n\\[\nOA=3f'=3\\times 3{,}57\\approx 10{,}7\\,\\text{cm}\n\\]\nL’objet n’est donc pas à **150 cm**.\n\n### 3) Si tout le système est plongé dans un milieu d’indice 2\nLa vergence devient :\n\\[\nC' = \\left(\\frac{n_{verre}}{n_{milieu}}-1\\right)\\left(\\frac1{R_1}-\\frac1{R_2}\\right)\n=\\left(\\frac{1{,}5}{2}-1\\right)\\times 56\n=-0{,}25\\times 56=-14\\,\\delta\n\\]\nDonc la lentille devient <span style=\"color:#c62828\"><b>divergente</b></span>, pas à **-18 δ**.\n\n### 4) Nature et taille de la nouvelle image\nAvec l’objet laissé à la même position, une lentille devenue **divergente** donne une image **virtuelle**, **droite** et **réduite**.\nDonc :\n- la nature **ne reste pas réelle** ;\n- la taille **reste plus petite** que celle de l’objet.\n\n| Proposition | Idée clé | Verdict |\n|---|---|---|\n| A | \\(R=3{,}57\\,cm\\), pas 50 cm | Faux |\n| B | objet à \\(10{,}7\\,cm\\), pas 150 cm | Faux |\n| C | en milieu d’indice 2 : \\(C'=-14\\,\\delta\\) | Faux |\n| D | l’image devient <span style=\"color:#c62828\"><b>virtuelle</b></span> | Faux |\n| E | elle reste <span style=\"color:#2e7d32\"><b>plus petite</b></span> | Vrai |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_LES_LENTILE_MINCE_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_LES_LENTILE_MINCE",
+    "courseName": "Les lentile mince",
+    "type": "qcs",
+    "questionText": "Lentille + l’œil: hi Un dermatologue utilise une lentille convergente de vergence (C = 20 8) pour voir les détails d'une dermatose (irritation cutanée). Il place la lentille à une distance de (4 cm) de la peau du patient.",
+    "options": [
+      {
+        "key": "A",
+        "text": "La distance focale de cette lentille vaut (OF' = 50 cm)."
+      },
+      {
+        "key": "B",
+        "text": "L'image observée à travers cette lentille est réelle de taille plus grande que celle de l'objet."
+      },
+      {
+        "key": "C",
+        "text": "Cet observateur peut voir les détails de l'objet si l'image est rejetée à l'infini."
+      },
+      {
+        "key": "D",
+        "text": "La lumière qui émerge de la lentille et qui arrive sur l'œil de l'observateur est convergente."
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces réponses sont fausses."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Idée clé : la lentille agit ici comme une **loupe**\nUne lentille **convergente** de vergence **20 δ** a une distance focale image :\n\n**f' = 1/C = 1/20 m = 0,05 m = 5 cm**.\n\nComme la peau est placée à **4 cm** de la lentille, l'objet est situé **à l'intérieur de la distance focale** (**4 cm < 5 cm**). Dans cette configuration, une lentille convergente donne une **image virtuelle**, **droite** et **agrandie**, située du même côté que l'objet.\n\n### Conséquence sur les rayons lumineux\nQuand l'objet est placé **avant le foyer**, les rayons qui sortent de la lentille sont **divergents**. L'œil les prolonge en arrière et perçoit une image virtuelle. Ils ne sont donc ni convergents, ni nécessairement rejetés à l'infini dans la situation décrite.\n\n### Point important pour l'œil\nUne image « rejetée à l'infini » correspond au réglage de la loupe pour une vision **sans accommodation** : l'œil est alors au repos. Mais ce n'est **pas** le cas ici, puisque pour obtenir une image à l'infini il faudrait placer l'objet **au foyer** (à **5 cm**), et non à **4 cm**.\n\n| Donnée / conséquence | Valeur / nature |\n|---|---|\n| Vergence | **20 δ** |\n| Distance focale | **5 cm** |\n| Position de l'objet | **4 cm** |\n| Comparaison à f' | **4 cm < 5 cm** |\n| Type d'image | **virtuelle** |\n| Sens | **droite** |\n| Taille | **agrandie** |\n| Rayons émergents | **divergents** |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_STATES_OF_MATTER_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_STATES_OF_MATTER",
+    "courseName": "States of matter",
+    "type": "qcs",
+    "questionText": "Quel est le changement de l'état solide à l'état gazeux ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Condensation"
+      },
+      {
+        "key": "B",
+        "text": "Fusion"
+      },
+      {
+        "key": "C",
+        "text": "Sublimation"
+      },
+      {
+        "key": "D",
+        "text": "Vaporisation"
+      },
+      {
+        "key": "E",
+        "text": "Deposition"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Changement d’état : solide → gaz\nLe passage direct de l’**état solide** à l’**état gazeux** (sans passer par l’état liquide) s’appelle la **sublimation**.\n\n- Il survient quand les particules quittent la structure solide pour devenir un gaz.\n- Exemple classique : **glace carbonique (CO₂ solide)** qui devient directement du CO₂ gazeux.\n\n| Passage | Nom du changement |\n|---|---|\n| <span style=\"color:#2563eb\"><b>Solide → Gaz</b></span> | <span style=\"color:#16a34a\"><b>Sublimation</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_STATES_OF_MATTER_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_STATES_OF_MATTER",
+    "courseName": "States of matter",
+    "type": "qcs",
+    "questionText": "What is the change from a solid to a gaseous state?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Condensation"
+      },
+      {
+        "key": "B",
+        "text": "Fusion"
+      },
+      {
+        "key": "C",
+        "text": "Sublimation"
+      },
+      {
+        "key": "D",
+        "text": "Vaporization"
+      },
+      {
+        "key": "E",
+        "text": "Deposition"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Key idea: phase change names\nA **solid → gas** change is called **sublimation**.\n\n### Why it’s called sublimation\n- The substance goes directly from an **ordered solid lattice** to **widely separated gas particles**.\n- It **skips the liquid phase** (this happens when conditions favor the gas phase—often at certain pressures/temperatures).\n\n### Common contrasts (easy to confuse)\n- **Condensation:** gas → liquid\n- **Fusion (melting):** solid → liquid\n- **Vaporization:** liquid → gas\n- **Deposition:** gas → solid\n\n| Change | Name |\n|---|---|\n| Solid → Gas | **Sublimation** |\n| Gas → Solid | Deposition |\n| Solid → Liquid | Fusion (melting) |\n| Liquid → Gas | Vaporization |\n| Gas → Liquid | Condensation |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_LA_REFRACION_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_LA_REFRACION",
+    "courseName": "La refracion",
+    "type": "qcs",
+    "questionText": "Rayonnements électromagnétique: Une onde électromagnétique sinusoïdale de fréquence (f= 3 1014 Hz) se propage dans un milieu d'indice de réfraction (n = 1,5).",
+    "options": [
+      {
+        "key": "A",
+        "text": "La vitesse de cette radiation augmente dans ce milieu."
+      },
+      {
+        "key": "B",
+        "text": "Sa longueur d'onde dans ce milieu vaut (2= 0,66 10-6 m)"
+      },
+      {
+        "key": "C",
+        "text": "Sa fréquence est proportionnelle à l'indice (n)."
+      },
+      {
+        "key": "D",
+        "text": "L'énergie de cette radiation est inversement proportionnelle à l'indice de réfraction (n)."
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces réponses sont justes."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Définition\nUne **onde électromagnétique** est caractérisée par sa **fréquence** \\(f\\), sa **longueur d’onde** \\(\\lambda\\) et sa **vitesse de propagation** \\(v\\). Dans un milieu matériel d’indice **n**, la relation clé est :\n\n\\[\nv = \\frac{c}{n}\n\\]\n\navec **c** la vitesse de la lumière dans le vide.\n\n### Ce qui change en entrant dans un milieu\nQuand la lumière passe du vide vers un milieu transparent :\n- la **vitesse diminue** si **n > 1** ;\n- la **fréquence ne change pas** (elle est imposée par la source) ;\n- la **longueur d’onde diminue** car \\(\\lambda = v/f\\).\n\nIci :\n\\[\nf = 3\\times10^{14}\\,Hz,\\quad n=1{,}5\n\\]\n\nDonc :\n\\[\nv = \\frac{3\\times10^8}{1{,}5}=2\\times10^8\\,m/s\n\\]\n\nPuis :\n\\[\n\\lambda = \\frac{v}{f} = \\frac{2\\times10^8}{3\\times10^{14}} = 0{,}66\\times10^{-6}\\,m\n\\]\n\n### Énergie de l’onde\nL’énergie d’un photon vaut :\n\\[\nE = h f\n\\]\nElle dépend donc de la **fréquence** et **pas de l’indice de réfraction**. Comme la fréquence ne change pas lors du passage dans le milieu, l’énergie ne change pas non plus.\n\n| Grandeur | Dans le milieu d’indice n | Ici |\n|---|---|---|\n| **Vitesse** | <span style=\"color:#c62828\"><strong>v = c/n</strong></span> | <span style=\"color:#c62828\"><strong>2×10^8 m/s</strong></span> |\n| **Fréquence** | <span style=\"color:#1565c0\"><strong>inchangée</strong></span> | <span style=\"color:#1565c0\"><strong>3×10^14 Hz</strong></span> |\n| **Longueur d’onde** | <span style=\"color:#2e7d32\"><strong>λ = c/(nf)</strong></span> | <span style=\"color:#2e7d32\"><strong>0,66×10^-6 m</strong></span> |\n| **Énergie** | <span style=\"color:#6a1b9a\"><strong>E = hf</strong></span> | <span style=\"color:#6a1b9a\"><strong>indépendante de n</strong></span> |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_INTERACT_R_I_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_INTERACT_R_I",
+    "courseName": "Interact. R.I",
+    "type": "qcs",
+    "questionText": "En IRM cérébrale, quelle est la séquence la plus sensible dans la détection des hémorragies intra-crâniennes :",
+    "options": [
+      {
+        "key": "A",
+        "text": "A. La séquence T2*"
+      },
+      {
+        "key": "B",
+        "text": "B. La séquence de diffusion"
+      },
+      {
+        "key": "C",
+        "text": "C. La séquence en pondération T2 FLAIR"
+      },
+      {
+        "key": "D",
+        "text": "D. La séquence T1 avec saturation de la graisse"
+      },
+      {
+        "key": "E",
+        "text": "E. La séquence T1 avec injection de gadolinium."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Définition\nEn IRM cérébrale, la détection d’une **hémorragie intra-crânienne** repose surtout sur les effets de **susceptibilité magnétique** induits par les produits de dégradation de l’hémoglobine.\n\n### Pourquoi la séquence T2* est la plus sensible ?\nLa séquence **T2\\*** (et, en pratique moderne, encore plus la **SWI**) est très sensible aux variations locales de champ magnétique créées par la **désoxyhémoglobine**, l’**hémosidérine** et d’autres dérivés sanguins. Cela provoque un **hyposignal franc** avec effet de \"blooming\", ce qui facilite la détection même de petites hémorragies, en particulier des **microbleeds**.\n\n### Intérêt clinique\nElle est essentielle pour repérer :\n- les **hémorragies aiguës ou anciennes** ;\n- les **microhémorragies** ;\n- les lésions traumatiques de type **lésions axonales diffuses hémorragiques**.\n\n### Pourquoi les autres séquences sont moins adaptées ?\nLa **diffusion** explore surtout la restriction de mobilité de l’eau, utile pour l’**ischémie aiguë**. Le **FLAIR T2** aide pour certains saignements dans des contextes particuliers, mais n’est pas la plus sensible en général. Les séquences **T1**, avec ou sans gadolinium, ne sont pas les meilleures pour dépister une hémorragie.\n\n| Séquence | Utilité principale | Sensibilité pour l’hémorragie |\n|---|---|---|\n| <span style=\"color:#b00020\"><b>T2*</b></span> | Susceptibilité magnétique | <span style=\"color:#b00020\"><b>La plus sensible</b></span> |\n| Diffusion | Ischémie aiguë | Faible à modérée |\n| T2 FLAIR | Œdème, LCR, certains saignements selon contexte | Inférieure à T2* |\n| T1 fat sat | Graisse, certaines caractérisations | Non adaptée |\n| T1 + gadolinium | Rehaussement tumoral/inflammatoire/vasculaire | Non adaptée |",
+    "source": "Résidanat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_INTERACT_R_I_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_INTERACT_R_I",
+    "courseName": "Interact. R.I",
+    "type": "qcs",
+    "questionText": "Propriétés optiques: La quantité de lumière absorbée :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Dépend uniquement de la concentration molale de la solution."
+      },
+      {
+        "key": "B",
+        "text": "Dépend uniquement de la longueur d'onde de la lumière."
+      },
+      {
+        "key": "C",
+        "text": "Ne dépend pas de la concentration pondérale de la solution macromoléculaire."
+      },
+      {
+        "key": "D",
+        "text": "Ne dépend pas de l'intensité du faisceau incident."
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces réponses sont fausses."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Définition utile\nLa **quantité de lumière absorbée** correspond à la différence entre la lumière incidente et la lumière transmise : **I absorbée = I₀ − I**. Il ne faut pas la confondre avec l’**absorbance** (**A = log(I₀/I)**), qui est une grandeur logarithmique.\n\n### De quoi dépend l’absorption ?\nSelon la loi de **Beer-Lambert**, l’absorbance dépend de la **concentration**, de la **longueur du trajet optique** et du **coefficient d’extinction molaire**, lui-même dépendant de la **longueur d’onde**. \n\nMais si on parle de **quantité de lumière absorbée** au sens physique, elle dépend aussi de l’**intensité incidente** : si on envoie plus de photons sur le même échantillon, la quantité totale absorbée augmente.\n\n### Point clé du piège\n- **Absorbance** → indépendante de l’intensité incidente.\n- **Quantité de lumière absorbée** → <span style=\"color:#c62828\"><b>dépend</b></span> de l’intensité incidente.\n\n| Grandeur | Dépend de la concentration ? | Dépend de la longueur d’onde ? | Dépend de l’intensité incidente ? |\n|---|---:|---:|---:|\n| **Absorbance A** | Oui | Oui | Non |\n| **Quantité de lumière absorbée** | Oui | Oui | Oui |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE",
+    "courseName": "Optique",
+    "type": "qcm",
+    "questionText": "Prisme :\nSoit un prisme d'angle au sommet (A = 60°) et d'indice de réfraction (n = 1, qui baigne dans l'air. Si l'angle d'incidence sur la face AB (i = 90°), l'angle d'émergence (i') par la face (AC) vaut :",
+    "options": [
+      {
+        "key": "A",
+        "text": "New suggestion text here."
+      },
+      {
+        "key": "B",
+        "text": "New suggestion text here."
+      },
+      {
+        "key": "C",
+        "text": "New suggestion text here."
+      },
+      {
+        "key": "D",
+        "text": "New suggestion text here."
+      },
+      {
+        "key": "E",
+        "text": "New suggestion text here."
+      }
+    ],
+    "correctAnswers": [],
+    "explanation": "### Réfraction dans un prisme d’indice égal à celui du milieu extérieur\n\nLe prisme a ici un indice **n = 1**, identique à celui de l’air. Aux deux dioptres, la loi de Snell-Descartes devient :\n\n\\[\n1\\,\\sin i = 1\\,\\sin r \\Rightarrow r=i\n\\]\n\nIl n’existe donc **aucune réfraction** : un rayon qui pourrait traverser le prisme ne subirait aucune déviation globale. Dans la limite demandée, l’incidence sur AB est rasante : \\(i=90°\\). L’angle d’émergence correspondant est donc également \\(i'=90°\\).\n\n⚠️ Strictement, un rayon incident exactement rasant est tangent à la face AB et ne pénètre pas réellement dans le prisme : il s’agit d’une **situation limite**. La réponse attendue par continuité est néanmoins : \\(\\boxed{i'=90°}\\).",
+    "source": "Externat Blida 2024",
+    "year": 2024
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE",
+    "courseName": "Optique",
+    "type": "qcs",
+    "questionText": "L'œil :\nUn individu caractérisé par un (PR) réel, situé à (20 cm) de l'œil. Son amplitude d'accommodation maximale vaut (A = 88):",
+    "options": [
+      {
+        "key": "A",
+        "text": "L'objet que peut voir ce sujet sans accommodation est situé à (7,7 cm)."
+      },
+      {
+        "key": "B",
+        "text": "Cet individu est hypermétrope."
+      },
+      {
+        "key": "C",
+        "text": "Cet individu peut voir les objets rejetés à l'infini sans ses lentilles correctrices."
+      },
+      {
+        "key": "D",
+        "text": "La vergence de la lentille de contact qui lui permet de corriger son amétropie vaut (C = 88),"
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces réponses sont fausses."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Raisonnement optique\nUn **punctum remotum (PR) réel** situé à 20 cm devant l’œil caractérise une **myopie** : au repos accommodatif, l’œil voit net les objets placés au PR, mais pas les objets plus éloignés.\n\nLa vergence du PR est :\n\n\\[\nV_{PR}=\\frac{1}{0{,}20}=5\\ \\text{D}\n\\]\n\nAvec une amplitude accommodative maximale de **8 D**, la vergence maximale supportée est \\(5+8=13\\) D, soit un punctum proximum :\n\n\\[\nPP=\\frac{1}{13}\\approx 7{,}7\\ \\text{cm}\n\\]\n\nCette distance de 7,7 cm correspond donc à la vision nette **avec accommodation maximale**, et non sans accommodation. La correction de loin par lentille de contact doit annuler les 5 D de myopie : elle est **divergente**, de vergence \\(-5\\) D.\n\n🧬 **PR réel à 20 cm → myopie ; PP ≈ 7,7 cm ; lentille de contact = −5 D.**",
+    "source": "Externat Blida 2024",
+    "year": 2024
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_3",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE",
+    "courseName": "Optique",
+    "type": "qcs",
+    "questionText": "L'optique géométrique :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Permet d'étudier la quantité de matière et d'énergie emportée par la lumière."
+      },
+      {
+        "key": "B",
+        "text": "Permet de donner la trajectoire des rayons lumineux lorsqu'ils changent de milieux transparents et homogènes."
+      },
+      {
+        "key": "C",
+        "text": "Permet de dire que la propagation de la lumière dans un milieu transparent et homogène est courbe."
+      },
+      {
+        "key": "D",
+        "text": "L'optique physique dit que la lumière est une onde corpusculaire."
+      },
+      {
+        "key": "E",
+        "text": "Toutes ses réponses sont justes."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Définition\nL’**optique géométrique** modélise la lumière par des **rayons lumineux**. Elle est valable quand on s’intéresse surtout au **trajet** de la lumière, sans décrire ses propriétés ondulatoires fines.\n\n### Idée clé\nDans un milieu **transparent et homogène**, la lumière se propage en ligne **rectiligne**. Lorsqu’elle rencontre une interface entre deux milieux transparents, l’optique géométrique permet de prévoir la **réflexion** et la **réfraction** des rayons.\n\n### Importance\nC’est le cadre utilisé pour comprendre les **lentilles**, **miroirs**, **prismes** et la formation des **images** en première approche.\n\n| Domaine | Ce qu’il décrit |\n|---|---|\n| **Optique géométrique** | **Trajet des rayons** : propagation rectiligne, réflexion, réfraction |\n| **Optique physique** | **Nature ondulatoire** : interférences, diffraction, polarisation |\n| **Optique quantique / corpusculaire** | Photons, échanges d’**énergie** avec la matière |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_4",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE",
+    "courseName": "Optique",
+    "type": "qcs",
+    "questionText": "Stigmatisme:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Un système optique stigmatique forme des images réelles."
+      },
+      {
+        "key": "B",
+        "text": "À chaque point objet correspond un seul point image."
+      },
+      {
+        "key": "C",
+        "text": "L'image formée par un système stigmatique est rejetée à l'infini."
+      },
+      {
+        "key": "D",
+        "text": "Le faisceau lumineux émergent devient monochromatique."
+      },
+      {
+        "key": "E",
+        "text": "Le miroir plan est un système optique stigmatique."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Définition du **stigmatisme**\nUn système optique est dit **stigmatique** pour un point objet si **tous les rayons issus de ce point**, après traversée ou réflexion par le système, **se recoupent en un unique point image** (ou semblent en provenir). L’idée clé est donc : **point objet → point image**.\n\n### Ce que cela signifie concrètement\nLe stigmatisme concerne la **qualité géométrique** de la formation d’image, pas la nature de l’image.\n- l’image peut être **réelle** ou **virtuelle** ;\n- elle peut être à distance finie ou à l’**infini** ;\n- cela n’a **aucun lien** avec la **couleur** ou la **monochromaticité**.\n\n### Importance clinique et physique\nEn optique géométrique, le stigmatisme est un modèle idéal utile pour comprendre la formation des images. En pratique, beaucoup de systèmes ne sont que **approximativement stigmatiques**, car il existe des **aberrations**.\n\n| Proposition | Idée clé | Verdict |\n|---|---|---|\n| A | Stigmatique ≠ forcément image réelle | Faux |\n| B | **Un point objet donne un point image** | Vrai |\n| C | Stigmatique ≠ forcément image à l’infini | Faux |\n| D | Aucun rapport avec la monochromaticité | Faux |\n| E | Le **miroir plan** est un exemple de système stigmatique | Vrai |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_5",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE",
+    "courseName": "Optique",
+    "type": "qcs",
+    "questionText": "Dioptre plan: Un rayon lumineux issu d'un objet se trouvant dans un milieu d'indice (n) subit une réflexion totale sur un dioptre plan formé de deux milieux d'indice de réfraction (n) et (n2) si:",
+    "options": [
+      {
+        "key": "A",
+        "text": "n1> n2; et l'angle d'incidence (i) est inférieur à l'angle limite."
+      },
+      {
+        "key": "B",
+        "text": "n1 <n2; et l'angle d'incidence (i) est inférieur à l'angle limite."
+      },
+      {
+        "key": "C",
+        "text": "L'image formée par cette réflexion est symétrique de l'objet par rapport au plan du miroir."
+      },
+      {
+        "key": "D",
+        "text": "L'angle de déviation du rayon réfléchi est nul."
+      },
+      {
+        "key": "E",
+        "text": "n1>n2; et l'angle d'incidence (i) supérieur à l'angle limite."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Définition\nUn **dioptre plan** est la surface séparant deux milieux transparents d’indices **n1** et **n2**. La **réflexion totale interne** se produit quand un rayon passe d’un milieu **plus réfringent** vers un milieu **moins réfringent**.\n\n### Conditions indispensables\nIl faut **deux conditions simultanées** :\n1. **n1 > n2**\n2. l’angle d’incidence **i** doit être **strictement supérieur** à l’**angle limite** (*ou angle critique*) tel que :  \n   **sin iL = n2 / n1**\n\nSi **i < iL**, il existe encore un rayon réfracté.  \nSi **i = iL**, le rayon réfracté rase la surface.  \nSi **i > iL**, il n’y a plus de réfraction : toute l’énergie repart par **réflexion totale**.\n\n### Importance pratique\nC’est le principe utilisé dans les **fibres optiques**, les **prismes** et certains systèmes d’imagerie. Le dioptre se comporte alors comme un **miroir parfait**, mais seulement dans ces conditions.\n\n| Situation | Réflexion totale ? |\n|---|---:|\n| **n1 < n2** | Non |\n| **n1 > n2** et **i < iL** | Non |\n| **n1 > n2** et **i = iL** | Non (rayon réfracté tangent) |\n| **n1 > n2** et **i > iL** | Oui ✅ |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE_6",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_OPTIQUE",
+    "courseName": "Optique",
+    "type": "qcs",
+    "questionText": "L’œil: Un sujet présente une myopie de puissance (P = -58) et une amplitude d'accommodation maximale (A = 48), on rappelle que (P = 1). OPR getAns",
+    "options": [
+      {
+        "key": "A",
+        "text": "On corrige ce myope avec des lentilles de contact convergentes de vergence (C = P)."
+      },
+      {
+        "key": "B",
+        "text": "On corrige ce myope avec des lentilles de contact divergentes de vergence (C = P)."
+      },
+      {
+        "key": "C",
+        "text": "Les lentilles correctrices lui permettent de voir dans l'intervalle ]-∞;-25 cm]."
+      },
+      {
+        "key": "D",
+        "text": "Avec ses lentilles correctrices ce sujet peut voir les objets éloignés avec une accommodation maximale."
+      },
+      {
+        "key": "E",
+        "text": "Ce myope doit mettre ses lentilles pour voir les objets situés à (15 cm) de son œil."
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### 1) Myopie de puissance\nLa **myopie** signifie que le **punctum remotum** est situé à distance finie devant l’œil : l’œil voit net de près, mais pas de loin.  \nIci, la puissance de myopie est très probablement **P = -5 δ** (lecture OCR de **-58**), donc : **PR = 1/P = -0,20 m = -20 cm**.\n\n### 2) Amplitude d’accommodation\nL’**amplitude d’accommodation** correspond au « bonus » de vergence que le cristallin peut ajouter pour voir plus près.  \nSi **A = 4 δ**, alors après correction de la vision de loin, le punctum proximum corrigé vérifie : **PP = 1/A = 0,25 m = 25 cm**.\n\n### 3) Correction\nUn œil myope se corrige par une lentille **divergente** de vergence égale à la myopie à neutraliser : **C = P = -5 δ**. Avec une **lentille de contact**, on ramène le punctum remotum à l’**infini**.\n\n### 4) Conséquences pratiques\n- **Avec correction** : vision nette de **l’infini** jusqu’à **25 cm**.\n- **Sans correction** : vision nette entre **20 cm** et **11 cm** environ.\n- Donc pour un objet à **15 cm**, ce myope peut déjà voir net **sans** lentilles.\n\n| Situation | Intervalle de vision nette |\n|---|---|\n| Œil myope non corrigé | de **20 cm** à **≈ 11 cm** |\n| Œil corrigé par lentille de contact divergente | de **∞** à **25 cm** |\n\n**Synopse :** myopie **-5 δ** → correction par lentille **divergente -5 δ** → **loin net sans accommodation** ; avec **A = 4 δ** → **près net jusqu’à 25 cm**.",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_ECG_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_ECG",
+    "courseName": "ECG",
+    "type": "qcs",
+    "questionText": "Que représente l'intervalle PR sur un électrocardiogramme ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "le temps de contraction ventriculaire"
+      },
+      {
+        "key": "B",
+        "text": "le temps de repolarisation auriculaire"
+      },
+      {
+        "key": "C",
+        "text": "le temps de conduction auriculoventriculaire"
+      },
+      {
+        "key": "D",
+        "text": "le temps de repolarisation ventriculaire"
+      },
+      {
+        "key": "E",
+        "text": "la durée du cycle cardiaque"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définition de l’intervalle PR\nL’**intervalle PR** (ou **PQ**) est le temps entre le **début de l’onde P** et le **début du QRS**.\n\n### Ce qu’il mesure (physiologie)\nIl correspond au **temps de conduction auriculoventriculaire** :\n- **dépolarisation des oreillettes** (onde P)\n- passage de l’influx à travers le **nœud AV** (principal site de **ralentissement physiologique**)\n- conduction dans le **faisceau de His** et les **branches** jusqu’au déclenchement de la dépolarisation ventriculaire (début du QRS)\n\n### Importance clinique\n- **PR prolongé** → retard de conduction AV (ex. **BAV 1er degré**)\n- **PR court** → conduction AV accélérée / pré-excitation (ex. **WPW**) ou rythme jonctionnel\n\n| Mesure ECG | Début → fin | Reflète surtout | Valeur usuelle |\n|---|---|---|---|\n| **Intervalle PR** | **début P → début QRS** | **conduction AV (nœud AV + His-Purkinje proximal)** | **120–200 ms** |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_ECG_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_ECG",
+    "courseName": "ECG",
+    "type": "qcs",
+    "questionText": "La disposition des électrodes du triangle d'Einthoven est:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Bras gauche négatif et bras droit négatif"
+      },
+      {
+        "key": "B",
+        "text": "Bras droit négatif et jambe gauche positive"
+      },
+      {
+        "key": "C",
+        "text": "Bras gauche positif et Jambe gauche négative"
+      },
+      {
+        "key": "D",
+        "text": "Bras droit positif et jambe gauche négative"
+      },
+      {
+        "key": "E",
+        "text": "Aucune réponse n'est juste"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Triangle d’Einthoven : principe\nLe **triangle d’Einthoven** correspond aux **3 dérivations bipolaires des membres** (I, II, III) qui comparent une électrode **négative (−)** à une électrode **positive (+)** : on enregistre une **différence de potentiel** entre deux membres.\n\n### Disposition (polarités) des 3 dérivations\n- **DI** : <span style=\"color:#1a73e8\"><b>bras droit (RA) −</b></span> → <span style=\"color:#188038\"><b>bras gauche (LA) +</b></span>\n- **DII** : <span style=\"color:#1a73e8\"><b>bras droit (RA) −</b></span> → <span style=\"color:#188038\"><b>jambe gauche (LL) +</b></span>\n- **DIII** : <span style=\"color:#1a73e8\"><b>bras gauche (LA) −</b></span> → <span style=\"color:#188038\"><b>jambe gauche (LL) +</b></span>\n\n### Mémo\nLa **jambe gauche est positive** en **DII** et **DIII** ; le **bras droit est négatif** en **DI** et **DII**.\n\n| Dérivation | Électrode (−) | Électrode (+) |\n|---|---|---|\n| DI | <span style=\"color:#1a73e8\"><b>Bras droit</b></span> | <span style=\"color:#188038\"><b>Bras gauche</b></span> |\n| DII | <span style=\"color:#1a73e8\"><b>Bras droit</b></span> | <span style=\"color:#188038\"><b>Jambe gauche</b></span> |\n| DIII | <span style=\"color:#1a73e8\"><b>Bras gauche</b></span> | <span style=\"color:#188038\"><b>Jambe gauche</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_ECG_3",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_ECG",
+    "courseName": "ECG",
+    "type": "qcs",
+    "questionText": "Que surveillent principalement les dérivations V5 et V6 sur un ECG ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "L'activité du ventricule droit"
+      },
+      {
+        "key": "B",
+        "text": "L'activité du ventricule gauche latéral"
+      },
+      {
+        "key": "C",
+        "text": "L'activité de la paroi septale"
+      },
+      {
+        "key": "D",
+        "text": "L'activité auriculaire"
+      },
+      {
+        "key": "E",
+        "text": "Aucune réponse n'est juste"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Où regardent V5–V6 ?\nLes dérivations **précordiales latérales** (surtout **V5 et V6**) explorent principalement la **paroi latérale du ventricule gauche**.\n\n### Pourquoi ? (orientation des vecteurs)\n- **V5** (ligne axillaire antérieure, 5e espace intercostal) et **V6** (ligne axillaire moyenne, 5e espace intercostal) « voient » les vecteurs de dépolarisation dirigés vers la **gauche**.\n- Elles sont donc particulièrement utiles pour dépister des anomalies de la **paroi latérale** : ischémie/infarctus latéral, hypertrophie ventriculaire gauche (selon critères), troubles de repolarisation latéraux.\n\n### Repères rapides des territoires précordiaux\n| Dérivations | Territoire principal |\n|---|---|\n| <span style=\"color:#d97706\"><b>V1–V2</b></span> | <span style=\"color:#d97706\"><b>Septal</b></span> |\n| <span style=\"color:#dc2626\"><b>V3–V4</b></span> | <span style=\"color:#dc2626\"><b>Antérieur</b></span> |\n| <span style=\"color:#2563eb\"><b>V5–V6</b></span> | <span style=\"color:#2563eb\"><b>Latéral (VG)</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_ECG_4",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_ECG",
+    "courseName": "ECG",
+    "type": "qcs",
+    "questionText": "What does the PR interval represent on an electrocardiogram?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Ventricular contraction time"
+      },
+      {
+        "key": "B",
+        "text": "Atrial repolarization time"
+      },
+      {
+        "key": "C",
+        "text": "Atrioventricular conduction time"
+      },
+      {
+        "key": "D",
+        "text": "Ventricular repolarization time"
+      },
+      {
+        "key": "E",
+        "text": "The duration of the cardiac cycle"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### What the **PR interval** represents\n- The **PR interval** is measured from the **start of the P wave** to the **start of the QRS complex**.\n- It reflects the time for an impulse to travel from the **SA node through atrial myocardium**, then through the **AV node (physiologic delay)**, and down the **His–Purkinje system** to the onset of **ventricular depolarization**.\n\n### Why it matters clinically\n- It is the ECG’s key marker of **atrioventricular (AV) conduction**.\n- **Prolonged PR** (e.g., ≥200 ms) suggests **1st-degree AV block** (often AV nodal delay).\n- **Short PR** can suggest **pre-excitation** (e.g., Wolff–Parkinson–White) or junctional rhythms.\n\n| ECG element | Start → End | Represents |\n|---|---|---|\n| **PR interval** | **P onset → QRS onset** | **AV conduction time** (atria + AV node delay + His–Purkinje to ventricular depolarization) |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_ECG_5",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_ECG",
+    "courseName": "ECG",
+    "type": "qcs",
+    "questionText": "The placement of the electrodes in Einthoven's triangle is:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Negative Left Arm and Negative Right Arm"
+      },
+      {
+        "key": "B",
+        "text": "Negative Right Arm and positive Left Leg"
+      },
+      {
+        "key": "C",
+        "text": "Positive Left Arm and negative Left Leg"
+      },
+      {
+        "key": "D",
+        "text": "Positive Right Arm and Negative Left Leg"
+      },
+      {
+        "key": "E",
+        "text": "none of answers is correct"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Einthoven’s triangle (standard bipolar limb leads)\nThree **limb electrodes** (RA, LA, LL) form an approximate triangle around the heart (right shoulder–left shoulder–left lower torso). The ECG records **voltage differences** between two limbs; by convention each bipolar lead has a **negative pole (−)** and a **positive pole (+)**:\n\n- **Lead I**: RA (−) → LA (+)\n- **Lead II**: RA (−) → LL (+)\n- **Lead III**: LA (−) → LL (+)\n\nA depolarization wave moving **toward the + electrode** produces a predominantly **positive deflection** in that lead.\n\n| Lead | Negative (−) | Positive (+) |\n|---|---|---|\n| I | RA | LA |\n| II | RA | LL |\n| III | LA | LL |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_ECG_6",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_ECG",
+    "courseName": "ECG",
+    "type": "qcs",
+    "questionText": "What do leads V5 and V6 primarily monitor on an ECG?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Right ventricular activity"
+      },
+      {
+        "key": "B",
+        "text": "Left lateral ventricular activity"
+      },
+      {
+        "key": "C",
+        "text": "Septal wall activity"
+      },
+      {
+        "key": "D",
+        "text": "Atrial activity"
+      },
+      {
+        "key": "E",
+        "text": "none of answers is correct"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### What V5–V6 “look at”\nThe precordial (chest) leads view the heart in the **horizontal plane**.\n\n- **V1–V2**: mainly **right ventricle / septum** (anterior-septal)\n- **V3–V4**: mainly **anterior left ventricle**\n- **V5–V6**: mainly the **left lateral wall of the left ventricle**\n\n### Why this matters clinically\nChanges in V5–V6 (e.g., **ST elevation/depression**, **T-wave inversion**) often reflect ischemia/infarction or repolarization abnormalities in the **lateral LV territory** (commonly linked to **LCx** or **diagonal branches of LAD**, depending on anatomy).\n\n| Lead group | Primary region monitored |\n|---|---|\n| V1–V2 | Septum / right ventricular predominance |\n| V3–V4 | Anterior LV |\n| <span style=\"color:#1f77b4\"><b>V5–V6</b></span> | <span style=\"color:#1f77b4\"><b>Left lateral LV wall</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_ECG_7",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_ECG",
+    "courseName": "ECG",
+    "type": "qcs",
+    "questionText": "Afin d'enregistrer l'activité électrique du cœur de manière globale un certain nombre d'électrodes est nécessaire. On distingue ainsi les électrodes unipolaires et les bipolaires, par des mesures bipolaires :",
+    "options": [
+      {
+        "key": "A",
+        "text": "on enregistre les variations de potentiel entre deux électrodes placées à la surface du corps."
+      },
+      {
+        "key": "B",
+        "text": "on étudie l'activité électrique du cœur selon un plan quasi horizontal."
+      },
+      {
+        "key": "C",
+        "text": "on enregistre l'activité électrique cardiaque de l'électrode par rapport à un point central."
+      },
+      {
+        "key": "D",
+        "text": "on enregistre en même temps les déviations des membres et les précordiales."
+      },
+      {
+        "key": "E",
+        "text": "aucune des réponses n'est vraie."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Définition\nEn ECG, une **dérivation bipolaire** mesure une **différence de potentiel entre 2 électrodes actives** placées à la surface du corps. Ce sont les **dérivations des membres d’Einthoven** : **DI, DII, DIII**.\n\n### Mécanisme\nLe principe est simple : on compare le signal électrique capté par une électrode à celui capté par une autre. On n’utilise donc pas de **point central de référence**. À l’inverse, une dérivation **unipolaire** enregistre le potentiel d’une électrode **par rapport à une référence centrale virtuelle**.\n\n### Importance clinique\nLes dérivations bipolaires explorent surtout le cœur dans le **plan frontal**. Elles participent à l’analyse de l’**axe électrique**, des **troubles du rythme** et des anomalies de **dépolarisation/repolarisation**.\n\n| Type de dérivation | Principe | Exemples | Plan exploré |\n|---|---|---|---|\n| **Bipolaire** | Différence de potentiel entre **2 électrodes** | **DI, DII, DIII** | **Frontal** |\n| **Unipolaire** | Potentiel d’**1 électrode** vs **point central** | **aVR, aVL, aVF, V1–V6** | Frontal (augmentées) + **horizontal** (précordiales) |",
+    "source": "Externat Blida 2025",
+    "year": 2025
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE",
+    "courseName": "Transport of Charged Particles Across a Membrane",
+    "type": "qcs",
+    "questionText": "Lors de l'équilibre de Donnan, il existe une différence de part et d'autre de la membrane en termes de:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Masse molaire"
+      },
+      {
+        "key": "B",
+        "text": "Volume molaire"
+      },
+      {
+        "key": "C",
+        "text": "Potentiel électrique"
+      },
+      {
+        "key": "D",
+        "text": "Température"
+      },
+      {
+        "key": "E",
+        "text": "Pression hydrostatique"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Équilibre de Donnan (Gibbs–Donnan) : idée clé\nQuand une membrane est **perméable à certains ions** mais **imperméable** à au moins un soluté chargé (souvent une **protéine anionique**), les ions diffusibles se répartissent **de façon inégale** pour satisfaire :\n- l’**électroneutralité** dans chaque compartiment,\n- et l’égalité des **potentiels électrochimiques** des ions diffusibles.\n\n### Conséquence incontournable : un <span style=\"color:#b00020\"><b>potentiel électrique transmembranaire</b></span>\nCette dissymétrie de répartition ionique crée une **différence de potentiel** appelée **potentiel de Donnan**.\n\n### Ce qui ne change pas (dans l’énoncé standard)\n- **Température** : identique des deux côtés à l’équilibre.\n- **Masse molaire / volume molaire** : pas des variables pertinentes de l’équilibre de Donnan.\n- **Pression hydrostatique** : n’est pas une caractéristique définissante de Donnan (la différence classique attendue est surtout **électrique** ; l’effet osmotique associé n’est pas proposé ici).\n\n| Paramètre | Donnan : différence attendue ? | Commentaire |\n|---|---:|---|\n| Potentiel électrique | <span style=\"color:#b00020\"><b>Oui</b></span> | **Potentiel de Donnan** |\n| Température | Non | Équilibre thermique |\n| Pression hydrostatique | Non (classique) | Pas la variable caractéristique de Donnan |\n| Masse/volume molaire | Non | Hors mécanisme Donnan |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE",
+    "courseName": "Transport of Charged Particles Across a Membrane",
+    "type": "qcs",
+    "questionText": "Le potentiel d'équilibre d'un ion correspond:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Au potentiel membranaire total de la cellule"
+      },
+      {
+        "key": "B",
+        "text": "Au potentiel créé uniquement par la pompe Na+/K+"
+      },
+      {
+        "key": "C",
+        "text": "Au potentiel pour lequel le flux net de cet ion est nul"
+      },
+      {
+        "key": "D",
+        "text": "À la différence de concentration entre deux compartiments"
+      },
+      {
+        "key": "E",
+        "text": "À un potentiel indépendant des gradients ioniques"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définition (potentiel d’équilibre = potentiel de Nernst)\nLe **potentiel d’équilibre** d’un ion est la valeur du **potentiel de membrane (V\\_m)** pour laquelle les deux forces qui s’exercent sur cet ion se compensent :\n- le **gradient chimique** (différence de concentration)\n- le **gradient électrique** (différence de charges)\n\nÀ ce V\\_m, l’ion est en **équilibre électrochimique** : il peut y avoir des mouvements microscopiques dans les deux sens, mais le **flux net** est **nul**.\n\n### Mécanisme clé\n- Si V\\_m ≠ E\\_ion → l’ion subit une **force motrice** (driving force) et il existe un **flux net**.\n- Si V\\_m = E\\_ion → **driving force = 0** → **flux net = 0**.\n\n### Importance clinique/physiologique\nLes potentiels d’équilibre (E\\_K, E\\_Na, E\\_Cl…) déterminent le **sens** et l’**intensité** du flux ionique via les canaux et expliquent une grande partie du **potentiel de repos** et des **potentiels d’action**.\n\n| Concept | Formulation (idée) | Conséquence |\n|---|---|---|\n| Potentiel d’équilibre d’un ion (E\\_ion) | <span style=\"color:#1f77b4\"><b>V\\_m = E\\_ion</b></span> | <span style=\"color:#2ca02c\"><b>flux net = 0</b></span> |\n| Driving force | <span style=\"color:#d62728\"><b>V\\_m − E\\_ion</b></span> | Plus c’est grand (en valeur absolue) → plus le flux net est important |\n| Dépendance | Dépend des <span style=\"color:#9467bd\"><b>gradients de concentration</b></span> et de la charge | Ce n’est pas une constante universelle |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE_3",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE",
+    "courseName": "Transport of Charged Particles Across a Membrane",
+    "type": "qcm",
+    "questionText": "During Donnan equilibrium, there is a difference across the membrane in terms of:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Molar mass"
+      },
+      {
+        "key": "B",
+        "text": "Molar volume"
+      },
+      {
+        "key": "C",
+        "text": "Electrical potential"
+      },
+      {
+        "key": "D",
+        "text": "Temperature"
+      },
+      {
+        "key": "E",
+        "text": "Hydrostatic pressure"
+      }
+    ],
+    "correctAnswers": [
+      "C",
+      "+",
+      "E"
+    ],
+    "explanation": "### What “Donnan (Gibbs–Donnan) equilibrium” means\nA **semipermeable membrane** separates two compartments. At least one side contains **impermeant charged macromolecules** (e.g., intracellular proteins, plasma proteins).\n\nBecause those fixed charges **cannot cross**, the **permeant ions** redistribute to satisfy:\n- **Electroneutrality** in each compartment\n- **Equal electrochemical potential** for each permeant ion across the membrane\n\n### What differs across the membrane at Donnan equilibrium\n1) **Electrical potential (Donnan potential)**\n- Unequal ion distribution creates a **voltage difference** across the membrane.\n\n2) **Osmotic pressure → hydrostatic pressure (if water can move)**\n- The side with impermeant solute ends up with a higher **total particle concentration**, tending to draw **water**.\n- At true equilibrium in a deformable/closed system, this is opposed by a balancing **hydrostatic pressure difference**.\n\n| Quantity across membrane | In Donnan equilibrium? | Why |\n|---|---:|---|\n| Electrical potential | <span style=\"color:#1a7f37\"><b>Yes</b></span> | Unequal permeant ion distribution → **Donnan potential** |\n| Hydrostatic pressure | <span style=\"color:#1a7f37\"><b>Often yes</b></span> | Develops to oppose **Donnan osmotic drive** when water can move |\n| Temperature | <span style=\"color:#b42318\"><b>No</b></span> | Not part of Donnan conditions |\n| Molar mass / molar volume | <span style=\"color:#b42318\"><b>No</b></span> | Not variables defining Donnan equilibrium |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE_4",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE",
+    "courseName": "Transport of Charged Particles Across a Membrane",
+    "type": "qcs",
+    "questionText": "The equilibrium potential of an ion corresponds to:",
+    "options": [
+      {
+        "key": "A",
+        "text": "The total membrane potential of the cell"
+      },
+      {
+        "key": "B",
+        "text": "The potential generated solely by the Na+/K+ pump"
+      },
+      {
+        "key": "C",
+        "text": "The potential at which the net flux of that ion is zero"
+      },
+      {
+        "key": "D",
+        "text": "The concentration difference between two compartments"
+      },
+      {
+        "key": "E",
+        "text": "A potential independent of ionic gradients"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Definition (Equilibrium / Nernst potential)\nThe **equilibrium potential** of an ion (also called the **Nernst potential, Eion**) is the membrane voltage at which the ion’s **electrical driving force** exactly balances its **chemical (concentration) driving force**.\n\n### Key mechanism: balance of forces\n- **Chemical gradient** pushes the ion from **high → low concentration**.\n- **Electrical gradient** pushes the ion toward the **opposite charge** side.\n- At **Eion**, these forces are equal and opposite → **no net movement** (even though ions still move both ways).\n\n### Clinical/physiology importance\n- If Vm equals **Eion**, that ion does **not** contribute to a net current.\n- If Vm differs from **Eion**, the ion will have a **net flux** (direction depends on Vm − Eion) through open channels.\n\n| Concept | What it means |\n|---|---|\n| **Eion** | Vm where **net flux/current of that ion = 0** |\n| Not the same as Vm | Vm depends on **multiple ions’ permeabilities** (GHK), not one ion alone |\n| Depends on gradients | Requires an **ionic concentration gradient** across the membrane |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE_5",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE",
+    "courseName": "Transport of Charged Particles Across a Membrane",
+    "type": "qcs",
+    "questionText": "Dans l'équilibre de Donnan :",
+    "options": [
+      {
+        "key": "A",
+        "text": "les concentrations sont égales."
+      },
+      {
+        "key": "B",
+        "text": "les lois de l'électroneutralité ne sont pas respectées."
+      },
+      {
+        "key": "C",
+        "text": "la différence de potentiel (DDP) membranaire est nulle."
+      },
+      {
+        "key": "D",
+        "text": "la membrane qui sépare les deux compartiments n'est pas dialysante."
+      },
+      {
+        "key": "E",
+        "text": "toutes les réponses sont fausses.."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Équilibre de Donnan\nL’**équilibre de Donnan** apparaît lorsqu’une membrane est **perméable à certains ions** mais **imperméable à au moins un soluté chargé** (protéine, macromolécule anionique). Cette contrainte oblige les ions diffusibles à se redistribuer de façon **inégale** entre les deux compartiments.\n\n### Ce qu’il faut retenir\n- Chaque compartiment respecte toujours l’**électroneutralité** : la somme des charges positives y égale la somme des charges négatives.\n- En revanche, les **concentrations ioniques ne sont pas égales** de part et d’autre de la membrane.\n- Cette répartition asymétrique crée une **différence de potentiel membranaire non nulle**.\n- La membrane est dite **dialysante sélective** : elle laisse passer certains petits ions, mais pas tous les solutés.\n\n### Importance clinique et physiologique\nL’effet Donnan aide à comprendre la répartition des ions près des **protéines intracellulaires**, certaines conséquences osmotiques et la contribution des anions non diffusibles à la **polarisation membranaire**.\n\n| Point clé | Équilibre de Donnan |\n|---|---|\n| Membrane | **Semi-perméable / dialysante sélective** |\n| Soluté non diffusible | **Présent** |\n| Électroneutralité | **Respectée dans chaque compartiment** |\n| Concentrations de part et d’autre | **Inégales** |\n| DDP membranaire | **Non nulle** |",
+    "source": "Externat Blida 2025",
+    "year": 2025
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE_6",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_TRANSPORT_OF_CHARGED_PARTICLES_ACROSS_A_MEMBRANE",
+    "courseName": "Transport of Charged Particles Across a Membrane",
+    "type": "qcs",
+    "questionText": "La force de gravitation et la force électrostatique :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Sont inversement proportionnelles au carré de la distance."
+      },
+      {
+        "key": "B",
+        "text": "Peuvent être attractives ou répulsives."
+      },
+      {
+        "key": "C",
+        "text": "Sont toujours attractives."
+      },
+      {
+        "key": "D",
+        "text": "Sont toujours répulsives."
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Définition\nLa **force de gravitation** et la **force électrostatique** sont deux forces à distance dont l’intensité suit une loi en **1/r²** : quand la distance double, la force est divisée par **4**.\n\n### Différence essentielle\n- **Gravitation** : elle agit entre les masses et est **toujours attractive**.\n- **Force électrostatique** : elle agit entre les charges électriques et peut être **attractive** (charges opposées) ou **répulsive** (charges de même signe).\n\n### Importance en physiologie membranaire\nDans le transport des particules chargées à travers une membrane, c’est la **force électrostatique** qui compte, car les ions répondent au **gradient électrique**. La gravitation est négligeable à cette échelle.\n\n| Force | Dépend de | Sens possible | Loi de distance |\n|---|---|---|---|\n| Gravitation | **masses** | **attractive seulement** | **1/r²** |\n| Électrostatique | **charges** | **attractive ou répulsive** | **1/r²** |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "Une interaction intermoléculaire est décrite par une énergie potentielle proportionnelle au moment bipolaire dans le cas d'une interaction:",
+    "options": [
+      {
+        "key": "A",
+        "text": "ion-dipôle"
+      },
+      {
+        "key": "B",
+        "text": "ion-ion"
+      },
+      {
+        "key": "C",
+        "text": "dipôle-dipôle"
+      },
+      {
+        "key": "D",
+        "text": "système-ion"
+      },
+      {
+        "key": "E",
+        "text": "aucune réponse n'est juste"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Idée clé\nUne énergie potentielle « proportionnelle au moment dipolaire **μ** » correspond typiquement à une interaction où **un champ électrique externe** agit sur **un dipôle**.\n\n### Interaction ion–dipôle (charge–dipôle)\nUn **ion** (charge **q**) crée un champ électrique **E** qui interagit avec un dipôle permanent **μ**.\n- Énergie potentielle d’un dipôle dans un champ : **U = − μ·E**.\n- Pour une charge ponctuelle : **E ∝ q / r²** ⇒ donc **U ∝ μ** (et aussi ∝ q, et dépend de l’orientation via cosθ).\n\n### Pourquoi pas les autres ?\n- **Ion–ion** : dépend de **q1 q2**, pas de μ.\n- **Dipôle–dipôle** : dépend du **produit μ1 μ2** (pas d’un seul μ).\n- **Ion–dipôle induit** (si “système-ion” le suggère) : dépend surtout de la **polarisabilité α** et de **q²**, pas d’un μ permanent.\n\n| Interaction | Dépendance principale de U | Proportionnelle à μ ? |\n|---|---|---|\n| Ion–dipôle | q·μ / r² (orientation) | <span style=\"color:#1b5e20\"><b>Oui</b></span> |\n| Ion–ion | q1·q2 / r | <span style=\"color:#b71c1c\"><b>Non</b></span> |\n| Dipôle–dipôle | μ1·μ2 / r³ (orientation) | <span style=\"color:#b71c1c\"><b>Non</b></span> |\n| Ion–dipôle induit | α·q² / r⁴ | <span style=\"color:#b71c1c\"><b>Non</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_2",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "An intermolecular interaction is described by a potential energy proportional to the dipolar moment in the case of an interaction:",
+    "options": [
+      {
+        "key": "A",
+        "text": "ion-dipole"
+      },
+      {
+        "key": "B",
+        "text": "ion-ion"
+      },
+      {
+        "key": "C",
+        "text": "dipole-dipole"
+      },
+      {
+        "key": "D",
+        "text": "system-ion"
+      },
+      {
+        "key": "E",
+        "text": "none of the answers is correct"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### What “proportional to the dipole moment” means\nA **dipole moment** **p** measures charge separation (units: C·m). If an interaction energy is said to be **proportional to the dipole moment**, it implies the potential energy contains **p to the first power** (linear dependence), i.e., \\(U \\propto p\\).\n\n### Key intermolecular electrostatic interactions\n- **Ion–dipole**: an ion (charge \\(q\\)) interacts with a dipole (moment \\(p\\)). The energy scales like\n  - <span style=\"color:#0B6\">\\(U \\sim -\\dfrac{q\\,p\\,\\cos\\theta}{4\\pi\\varepsilon\\,r^2}\\)</span> → **linear in p**.\n- **Dipole–dipole**: two dipoles interact; energy scales like\n  - <span style=\"color:#B50\">\\(U \\sim \\dfrac{p_1 p_2}{4\\pi\\varepsilon\\,r^3}\\)</span> → proportional to the **product** \\(p_1 p_2\\), not to a single dipole moment.\n- **Ion–ion**: depends on charges only (Coulomb), not on dipole moments.\n\n| Interaction | Typical scaling (magnitude) | Dependence on dipole moment |\n|---|---|---|\n| <span style=\"color:#0B6\"><b>Ion–dipole</b></span> | \\(\\propto \\dfrac{1}{r^2}\\) | <span style=\"color:#0B6\"><b>Linear</b></span>: \\(U\\propto p\\) |\n| Dipole–dipole | \\(\\propto \\dfrac{1}{r^3}\\) | Quadratic/product: \\(U\\propto p_1 p_2\\) |\n| Ion–ion | \\(\\propto \\dfrac{1}{r}\\) | None |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_3",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "Concernant la loi de Beer Lambert:",
+    "options": [
+      {
+        "key": "A",
+        "text": "L'absorbance d'une solution colorée dépend de la hauteur de la cuve."
+      },
+      {
+        "key": "B",
+        "text": "1-lo ex"
+      },
+      {
+        "key": "C",
+        "text": "la loi est vérifiée quand la concentration est supérieure à 0,1 mol/l"
+      },
+      {
+        "key": "D",
+        "text": "A=&c"
+      },
+      {
+        "key": "E",
+        "text": "Aucune réponse n'est juste."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Loi de Beer-Lambert\nLa loi de **Beer-Lambert** relie l’**absorbance** d’une solution à trois grandeurs : la **concentration** de l’espèce absorbante, la **longueur du trajet optique** et le **coefficient d’extinction molaire**.\n\n### Formule à connaître\n**A = ε · l · c**\n- **A** : absorbance, sans unité\n- **ε** : coefficient d’extinction molaire\n- **l** : hauteur traversée dans la cuve (souvent 1 cm)\n- **c** : concentration\n\nDonc si on change la **hauteur de cuve** (ou plus exactement la **longueur de trajet optique**), l’absorbance change aussi.\n\n### Quand la loi est-elle valable ?\nElle est surtout valable pour les **solutions diluées**. Quand la concentration devient trop élevée, il existe des interactions entre molécules et des écarts à la linéarité apparaissent ⚠️.\n\n### Importance pratique\nCette loi permet de **doser** une substance colorée ou absorbante en mesurant son absorbance au spectrophotomètre.\n\n| Grandeur | Effet sur A |\n|---|---|\n| **c** augmente | **A** augmente |\n| **l** augmente | **A** augmente |\n| solution trop concentrée | loi moins bien vérifiée |",
+    "source": "Externat Blida 2025",
+    "year": 2025
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_4",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "Une solution est un mélange:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hétérogène d'au moins deux substances."
+      },
+      {
+        "key": "B",
+        "text": "Homogène en une seule phase d'au moins deux substances."
+      },
+      {
+        "key": "C",
+        "text": "Qui peut être solide, liquide ou gazeux."
+      },
+      {
+        "key": "D",
+        "text": "Uniquement d'une substance solide ou liquide avec une autre substance liquide."
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Définition\nUne **solution** est un **mélange homogène** constitué d’**au moins deux substances** : un ou plusieurs **solutés** dispersés dans un **solvant**. Le caractère homogène signifie qu’on n’observe **qu’une seule phase** à l’échelle macroscopique.\n\n### Point clé en biophysique\nUne solution n’est pas limitée au liquide : elle peut exister à l’état **solide** (ex. alliages), **liquide** (ex. sel dans l’eau) ou **gazeux** (ex. air). Ce qui définit une solution, ce n’est donc pas l’état physique, mais surtout l’**homogénéité monophasique**.\n\n### À ne pas confondre\n- **Mélange hétérogène** → plusieurs phases visibles ou détectables.\n- **Solution** → une seule phase, composition uniforme.\n\n| Notion | Solution ? |\n|---|---|\n| **Mélange homogène** | ✅ |\n| **Une seule phase** | ✅ |\n| **Au moins deux substances** | ✅ |\n| **Peut être solide, liquide ou gazeux** | ✅ |\n| **Forcément liquide** | ❌ |",
+    "source": "Externat Blida 2023",
+    "year": 2023
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_5",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "Soit un volume (V= 500 cm3) d'une solution aqueuse contenant (10 gr) de chlorure de sodium (NaCl). On donne (MNaci= 58,5 gr/mole), (MH,o= 18 gr/mole), on suppose que la solution est diluée, (a = 1). La fraction molaire du soluté (f) vaut :",
+    "options": [
+      {
+        "key": "A",
+        "text": "f1 = 0,61 %."
+      },
+      {
+        "key": "B",
+        "text": "f1 = 0,05%"
+      },
+      {
+        "key": "C",
+        "text": "f1 = 61%"
+      },
+      {
+        "key": "D",
+        "text": "f1 = 99,38 %"
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Définition\nLa **fraction molaire** d’un soluté est le rapport :\n\n\\[\n f = \\frac{n_{\\text{soluté}}}{n_{\\text{soluté}} + n_{\\text{solvant}}}\n\\]\n\nIci, le soluté est **NaCl** et le solvant est **H₂O**.\n\n### Étape 1 — Calculer les quantités de matière\nPour le **chlorure de sodium** :\n\n\\[\n n_{NaCl} = \\frac{m}{M} = \\frac{10}{58{,}5} \\approx 0{,}171\\;mol\n\\]\n\nLa solution est supposée **diluée** : on assimile donc **500 cm³** à environ **500 g** de solution aqueuse.\n\nDonc la masse d’eau vaut :\n\n\\[\n m_{H_2O} = 500 - 10 = 490\\;g\n\\]\n\nPuis :\n\n\\[\n n_{H_2O} = \\frac{490}{18} \\approx 27{,}22\\;mol\n\\]\n\n### Étape 2 — Calculer la fraction molaire\n\n\\[\n f = \\frac{0{,}171}{0{,}171 + 27{,}22} \\approx 0{,}00624\n\\]\n\nEn pourcentage :\n\n\\[\n f \\approx 0{,}624\\% \n\\]\n\nDonc la valeur proposée la plus juste est **0,61 %**.\n\n| Grandeur | Valeur |\n|---|---:|\n| Masse de solution | 500 g |\n| Masse de NaCl | 10 g |\n| Masse de H₂O | 490 g |\n| $n_{NaCl}$ | 0,171 mol |\n| $n_{H_2O}$ | 27,22 mol |\n| Fraction molaire du NaCl | 0,00624 |\n| En % | **0,62 % ≈ 0,61 %** |",
+    "source": "Externat Blida 2023",
+    "year": 2023
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_6",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "Suite à la question précédente, la fraction molaire du solvant (f2) vaut:",
+    "options": [
+      {
+        "key": "A",
+        "text": "f2=0,61%"
+      },
+      {
+        "key": "B",
+        "text": "f2 = 0,05%"
+      },
+      {
+        "key": "C",
+        "text": "f2 = 61%"
+      },
+      {
+        "key": "D",
+        "text": "f2 = 99,38%"
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Définition\nLa **fraction molaire** d’un constituant est le rapport entre son **nombre de moles** et le **nombre total de moles** du mélange.\n\n### Ici : fraction molaire du solvant\nDans une solution, si le **soluté** a une fraction molaire faible, le **solvant** a une fraction molaire très proche de **1**. On utilise la relation :\n\n**f₁ + f₂ = 1**\n\navec **f₁ = fraction molaire du soluté** et **f₂ = fraction molaire du solvant**.\n\n### Point-clé à retenir\nSi la question précédente donnait une fraction molaire du soluté voisine de **0,62 %**, alors celle du solvant vaut :\n\n**f₂ = 100 % - 0,62 % = 99,38 %**\n\n### Importance pratique\nEn biophysique des solutions, le **solvant** (souvent l’eau) reste majoritaire dans les solutions diluées : sa fraction molaire est donc généralement **très élevée**.\n\n| Grandeur | Relation | Idée rapide |\n|---|---|---|\n| Fraction molaire du soluté | **f₁ = n₁ / (n₁+n₂)** | faible en solution diluée |\n| Fraction molaire du solvant | **f₂ = n₂ / (n₁+n₂)** | proche de **1** |\n| Lien fondamental | **f₁ + f₂ = 1** | si l’un est connu, l’autre se déduit |",
+    "source": "Externat Blida 2023",
+    "year": 2023
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_7",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "Suite à la question précédente, la molarité (CM) de cette solution vaut :",
+    "options": [
+      {
+        "key": "A",
+        "text": "CM 1,34 mole/l"
+      },
+      {
+        "key": "B",
+        "text": "CM=0,34 mole/l"
+      },
+      {
+        "key": "C",
+        "text": "CM = 2,34 mole/l"
+      },
+      {
+        "key": "D",
+        "text": "CM-34 mole/l"
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Molarité : idée clé\nLa **molarité** correspond au nombre de **moles de soluté par litre de solution** : **CM = n / V** (en mol·L⁻¹). Pour répondre avec certitude, il faut donc connaître les données de la **question précédente** : masse molaire, quantité de matière ou concentration massique.\n\n### Point d’attention ici\nL’énoncé est **incomplet isolément** (« suite à la question précédente »), donc la valeur numérique ne peut pas être redémontrée à partir de ce seul extrait. En revanche, l’option **D** est manifestement mal écrite, et l’option **E** est fausse car toutes les réponses ne sont pas « sans fautes ».\n\n| Formule utile | Signification |\n|---|---|\n| **CM = n / V** | molarité à partir des moles |\n| **n = m / M** | quantité de matière |\n| **CM = Cm / M** | si on connaît la concentration massique |",
+    "source": "Externat Blida 2023",
+    "year": 2023
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_8",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "Suite à la question précédente, la ionarité (Cion) de la solution vaut :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Cion 0,68 longr/l"
+      },
+      {
+        "key": "B",
+        "text": "Cion = 2 longr/l"
+      },
+      {
+        "key": "C",
+        "text": "Cion = 0 longr/l"
+      },
+      {
+        "key": "D",
+        "text": "Cion=1 longr/"
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sans fautes"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définition\nLa **ionarité** (**Cion**) correspond à la **concentration totale en ions** présents dans la solution. Elle ne dépend donc que des espèces **ionisées** : un **non-électrolyte** (comme le glucose) donne **Cion = 0**, alors qu’un électrolyte dissocié donne une Cion proportionnelle au **nombre d’ions libérés**.\n\n### Idée clé\n- **Glucose, urée** → pas de dissociation ionique → **0 ion/L**\n- **NaCl** → Na⁺ + Cl⁻ → **2 ions** par mole dissoute\n- **CaCl₂** → Ca²⁺ + 2 Cl⁻ → **3 ions** par mole dissoute\n\n### Importance clinique\nLa ionarité aide à distinguer une solution simplement **osmotiquement active** d’une solution réellement **ionique**, ce qui compte pour les phénomènes de **conductivité**, de **répartition membranaire** et d’**effets électrolytiques**.\n\n| Soluté | Dissociation | Cion |\n|---|---|---|\n| Non-électrolyte | aucune | **0** |\n| NaCl | Na⁺ + Cl⁻ | **2 × C** |\n| CaCl₂ | Ca²⁺ + 2Cl⁻ | **3 × C** |",
+    "source": "Externat Blida 2023",
+    "year": 2023
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_9",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "On mélange (10 cm3) d'une solution glucosée de molarité (CM = 0,55 mol/l), avec (60 cm3) d'une deuxième solution glucosée de concentration massique (C = 250 gr/l). On donne la masse molaire du glucose (Mgtu = 180 gr/mol).",
+    "options": [
+      {
+        "key": "A",
+        "text": "La concentration molaire de la seconde solution vaut : (CM = 1,39 mol/l)."
+      },
+      {
+        "key": "B",
+        "text": "La concentration pondérale de la première solution vaut : (Cp = 99 gr/l)."
+      },
+      {
+        "key": "C",
+        "text": "La molarité du mélange est la somme des deux concentrations molaires."
+      },
+      {
+        "key": "D",
+        "text": "Le mélange est un électrolyte."
+      },
+      {
+        "key": "E",
+        "text": "L'osmolarité du mélange vaut la molarité du mélange."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Idée clé\nOn mélange **deux solutions de glucose**, donc un **soluté non électrolytique** : il ne se dissocie pas en ions dans l’eau. Cela change tout pour l’**osmolarité**.\n\n### 1) Convertir les concentrations\n- **Solution 1** : on connaît la **molarité** \n  \n  \u001d **0,55 mol/L**\n- **Solution 2** : on donne une **concentration massique** de **250 g/L**. Pour obtenir la molarité :\n\n\\[\nC_M = \\frac{C_p}{M} = \\frac{250}{180} \\approx 1{,}39\\ \\text{mol/L}\n\\]\n\n### 2) Attention au mélange\nLa concentration molaire finale d’un mélange ne se calcule **jamais** en additionnant directement les molarités. Il faut :\n- calculer les **quantités de matière** de chaque solution,\n- les additionner,\n- puis diviser par le **volume total**.\n\n\\[\nn_1 = 0{,}55 \\times 0{,}010 = 0{,}0055\\ \\text{mol}\n\\]\n\\[\nn_2 = 1{,}39 \\times 0{,}060 \\approx 0{,}0833\\ \\text{mol}\n\\]\n\\[\nV_{total} = 0{,}070\\ \\text{L}\n\\]\n\\[\nC_{mélange} = \\frac{0{,}0055 + 0{,}0833}{0{,}070} \\approx 1{,}27\\ \\text{mol/L}\n\\]\n\n### 3) Osmolarité du glucose\nLe **glucose** est un **non-électrolyte** :\n- il ne se dissocie pas,\n- donc **1 mole de glucose = 1 osmole**.\n\nAinsi, pour une solution de glucose :\n\n<span style=\"color:#0b6; font-weight:600;\">osmolarité = molarité</span>\n\n### Tableau récapitulatif\n| Élément | Résultat | Idée clé |\n|---|---:|---|\n| Solution 2 : molarité | **1,39 mol/L** | \\(250/180\\) |\n| Solution 1 : concentration pondérale | **99 g/L** | \\(0,55 \\times 180\\) |\n| Molarité du mélange | **≈ 1,27 mol/L** | on additionne les **moles**, pas les molarités |\n| Nature du glucose | **Non-électrolyte** | pas de dissociation ionique |\n| Osmolarité du mélange | **≈ 1,27 Osm/L** | pour le glucose : **osmolarité = molarité** |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS_10",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_BIOPHYSICS_OF_SOLUTIONS_GENERAL_CONCEPTS",
+    "courseName": "Biophysics of Solutions (General Concepts)",
+    "type": "qcs",
+    "questionText": "Le coefficient de diffusion (D):",
+    "options": [
+      {
+        "key": "A",
+        "text": "Est fonction de la température (T) en kelvin, et du coefficient de friction uniquement."
+      },
+      {
+        "key": "B",
+        "text": "Est fonction de la température (T) en Kelvin, du coefficient ce friction (f), et de la constante de Boltzmann (K)."
+      },
+      {
+        "key": "C",
+        "text": "A pour expression: D = KXT"
+      },
+      {
+        "key": "D",
+        "text": "Le coefficient de friction (f) est indépendant de la forme de la particule en mouvement."
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces réponses sont fausses."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Relation fondamentale d’Einstein\nLe **coefficient de diffusion** traduit la vitesse d’étalement aléatoire d’une particule sous l’effet de l’**agitation thermique**. Pour une particule en solution, la relation de référence est :\n\n**D = kT / f**\n\n- **k** = constante de **Boltzmann**\n- **T** = température absolue en **kelvin**\n- **f** = **coefficient de friction**\n\n### Ce qu’il faut comprendre\n- Quand **T augmente**, l’agitation thermique augmente ⟶ **D augmente**.\n- Quand le **frottement f augmente**, le déplacement est plus freiné ⟶ **D diminue**.\n- **k** n’est pas une variable expérimentale, mais une **constante physique indispensable** dans l’expression.\n\n### Rôle de la forme de la particule\nLe coefficient de friction **dépend de la taille, du rayon hydrodynamique et de la forme** de la particule, ainsi que de la viscosité du milieu. Une particule allongée ou irrégulière ne diffuse pas comme une sphère.\n\n| Grandeur | Effet sur D |\n|---|---|\n| **T** augmente | **D augmente** |\n| **f** augmente | **D diminue** |\n| Forme non sphérique / taille plus grande | **f augmente** donc **D diminue** |\n| Formule à retenir | **D = kT/f** |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_REFLEXION_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_REFLEXION",
+    "courseName": "Reflexion",
+    "type": "qcs",
+    "questionText": "Miroir plan:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Le miroir plan forme une image réelle si l'objet est virtuel."
+      },
+      {
+        "key": "B",
+        "text": "L'image formée se trouve du même côté que l'objet."
+      },
+      {
+        "key": "C",
+        "text": "L'objet et l'observateur sont séparé par le miroir plan."
+      },
+      {
+        "key": "D",
+        "text": "L'image et l'observateur sont séparés par le miroir plan."
+      },
+      {
+        "key": "E",
+        "text": "La lumière réfléchie devient monochromatique."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Miroir plan : ce qu’il faut absolument voir\nUn **miroir plan** donne, pour un **objet réel** placé devant lui, une **image virtuelle**, **droite**, de **même taille**, située **derrière le miroir** à la **même distance** que l’objet est devant.\n\n### Cas particulier important : objet virtuel\nSi l’« objet » pour le miroir est en réalité un **objet virtuel** (les rayons incidents arrivent en convergeant vers un point situé derrière le miroir), alors le miroir plan peut former une **image réelle**. C’est le point un peu piégeux ici : un miroir plan ne donne pas *toujours* une image virtuelle, cela dépend de la nature de l’objet.\n\n### Position relative objet / image / observateur\n- Pour un usage habituel, **l’objet réel** et **l’observateur** sont du **même côté** du miroir.\n- L’**image virtuelle** est, elle, de l’**autre côté** : elle est donc **séparée de l’observateur par le miroir**.\n- Le miroir **réfléchit** la lumière mais ne la rend pas **monochromatique** : il conserve globalement le spectre incident (hors absorption sélective éventuelle du matériau).\n\n| Élément | Miroir plan |\n|---|---|\n| Objet réel | Image **virtuelle** |\n| Objet virtuel | Image **réelle** possible |\n| Taille de l’image | **Identique** à l’objet |\n| Orientation | **Droite** |\n| Position | Symétrique par rapport au miroir |\n| Spectre lumineux | <span style=\"color:#c62828\"><b>Non monochromatisé</b></span> |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_R_E_M_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_R_E_M",
+    "courseName": "R.E.M",
+    "type": "qcs",
+    "questionText": "Rayonnements électromagnétique: Une onde électromagnétique monochromatique :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Correspond à la propagation d'une perturbation d'un champ électrique et d'un champ magnétique."
+      },
+      {
+        "key": "B",
+        "text": "Correspond à la propagation de photons dont l'énergie est proportionnelle à sa longueur d'onde,"
+      },
+      {
+        "key": "C",
+        "text": "Est caractérisée par une pulsation constante."
+      },
+      {
+        "key": "D",
+        "text": "N'est jamais un rayonnement ionisant."
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces réponses sont fausses."
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définition\nUne **onde électromagnétique monochromatique** est une onde de **fréquence unique** (donc de **longueur d’onde unique** dans un milieu donné). Elle correspond à la propagation couplée d’un **champ électrique** et d’un **champ magnétique** oscillants, perpendiculaires entre eux et à la direction de propagation.\n\n### Ce que signifie « monochromatique »\nLe point clé est la présence d’une **seule fréquence** : cela implique une **pulsation \\(\\omega\\) constante** avec \\(\\omega = 2\\pi f\\). C’est la propriété la plus directement liée au mot <span style=\"color:#c62828\"><b>monochromatique</b></span>.\n\n### Photon et énergie\nPour un rayonnement électromagnétique, l’énergie d’un photon suit :\n**E = h f = h c / \\lambda**.\nDonc l’énergie est **proportionnelle à la fréquence** et **inversement proportionnelle à la longueur d’onde**.\n\n### Rayonnement ionisant ou non\nUn rayonnement électromagnétique peut être **non ionisant** (ondes radio, micro-ondes, visible...) ou **ionisant** (UV énergétiques, rayons X, γ) selon son **énergie photonique**.\n\n| Idée clé | Relation essentielle |\n|---|---|\n| Onde EM | **Champ électrique + champ magnétique** en propagation |\n| Monochromatique | **Une seule fréquence** → **pulsation constante** |\n| Énergie du photon | **E = hf = hc/λ** |\n| Ionisation | possible si **énergie suffisante** ⚠️ |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "Blida_BIOPHYSIQUE_1_ERE_RX_1",
+    "moduleId": "Blida_BIOPHYSIQUE_1_ERE",
+    "courseId": "Blida_BIOPHYSIQUE_1_ERE_RX",
+    "courseName": "RX",
+    "type": "qcs",
+    "questionText": "Les rayons X:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Sont des ondes électromagnétiques d'origine nucléaire."
+      },
+      {
+        "key": "B",
+        "text": "Sont moins énergétiques que les rayons gamma (y)."
+      },
+      {
+        "key": "C",
+        "text": "Sont des rayonnements ionisants."
+      },
+      {
+        "key": "D",
+        "text": "Sont plus énergétiques que les rayons infrarouges."
+      },
+      {
+        "key": "E",
+        "text": "Sont produits uniquement par réarrangement électronique."
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définition\nLes **rayons X** sont des **ondes électromagnétiques** de **haute énergie** et de **courte longueur d’onde**. Ils appartiennent au même spectre que la lumière visible, les infrarouges et les rayons gamma, mais se distinguent surtout en pratique par leur **mode de production**.\n\n### Origine physique\nLes rayons X sont produits principalement dans le **cortège électronique** :\n- soit par **freinage d’électrons rapides** au contact d’une cible métallique (**rayonnement de freinage**),\n- soit par **réarrangement électronique** après ionisation d’une couche interne (**rayons X caractéristiques**).\n\nÀ l’inverse, les **rayons gamma** proviennent d’un **noyau atomique excité**. Retenir :\n**X = extra-nucléaire** ; **γ = nucléaire**.\n\n### Propriété essentielle\nLes rayons X sont des **rayonnements ionisants** : ils peuvent arracher des électrons à la matière, ce qui explique leur **intérêt en imagerie** mais aussi leur **toxicité potentielle** sur les tissus.\n\n### Importance clinique ⚠️\nEn médecine, ils sont utilisés pour la **radiographie**, le **scanner** et la **radioscopie**. Leur emploi impose une logique de **radioprotection** car l’ionisation peut induire des **lésions de l’ADN**.\n\n| Élément | À retenir |\n|---|---|\n| Nature | **Onde électromagnétique** |\n| Origine usuelle | **Freinage électronique** + **réarrangement électronique** |\n| Origine gamma | **Nucléaire** |\n| Effet biologique | **Ionisant** |\n| Énergie vs infrarouge | **Beaucoup plus élevée** |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  }
+]

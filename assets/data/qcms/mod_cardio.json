@@ -1,0 +1,2087 @@
+[
+  {
+    "id": "c_cardio_valvulo_1",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "L’insuffisance mitrale aigue peut compliquer toutes ces pathologies sauf une",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une rupture du pilier"
+      },
+      {
+        "key": "B",
+        "text": "Un infarctus du myocarde"
+      },
+      {
+        "key": "C",
+        "text": "Une endocardite infectieuse"
+      },
+      {
+        "key": "D",
+        "text": "Une calcification de l'anneau"
+      },
+      {
+        "key": "E",
+        "text": "Un traumatisme"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Insuffisance mitrale aiguë : notions clés\n\nL’<span style=\"color:#e60000; font-weight:bold\">insuffisance mitrale aiguë</span> correspond à une perte brutale de la coaptation des feuillets mitraux, entraînant un <span style=\"color:#e65c00; font-weight:bold\">volume régurgité massif</span> vers l’oreillette gauche non adaptée (non dilatée), avec élévation rapide des pressions pulmonaires et tableau d’<span style=\"color:#cc0000; font-weight:bold\">œdème aigu du poumon / choc cardiogénique</span>.\n\nLes causes typiques sont des lésions soudaines de l’appareil mitral :\n- <span style=\"color:#0073e6\">Rupture de pilier</span> ou de cordage (ischémie, infarctus, traumatisme, dégénérescence aiguë) → perte immédiate de support d’un feuillet.\n- <span style=\"color:#009933\">Endocardite infectieuse</span> → perforation ou destruction d’un feuillet, végétation entravant la coaptation.\n- <span style=\"color:#990099\">Traumatisme thoracique</span> → rupture brutale de cordages ou de pilier.\n\nÀ l’inverse, la <span style=\"color:#666666; font-weight:bold\">calcification de l’anneau mitral</span> est un processus lent, dégénératif, donnant une <span style=\"color:#666666; font-weight:bold\">insuffisance mitrale chronique</span> (± sténose fonctionnelle), sans tableau aigu brutal.\n\n| Élément | <span style=\"color:#e60000\">Aigu</span> vs <span style=\"color:#666666\">Chronique</span> | Mécanisme typique | Exemples de causes |\n|---|---|---|---|\n| <span style=\"color:#e60000\">IM aiguë</span> | Installation <span style=\"color:#e60000\">brutale</span>, OG non dilatée, OAP, choc | Rupture pilier/cordages, perforation valvulaire | Infarctus, endocardite, traumatisme |\n| <span style=\"color:#666666\">IM chronique</span> | Installation <span style=\"color:#666666\">progressive</span>, OG dilatée, symptômes d’IC d’effort | Remodelage valvulaire/annulaire lent | Calcification de l’anneau mitral, maladie dégénérative |",
+    "source": "Externat Blida 2022",
+    "year": 2022
+  },
+  {
+    "id": "c_cardio_valvulo_2",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Parmi les propositions concernant l’insuffisance mitrale. Laquelle est vraie ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "L’insuffisance mitrale fonctionnelle réalise un type Il de la classification de Carpentier"
+      },
+      {
+        "key": "B",
+        "text": "Chez un patient avec prolapsus de valve mitrale âgé de 60 ans, une insuffisance mitrale aigue fait évoquer d'emblée le diagnostic de rupture de cordage"
+      },
+      {
+        "key": "C",
+        "text": "Des ondes P de plus de 2,5 mm d’amplitude à l ECG sont souvent observées en cas d'insuffisance mitrale évoluée."
+      },
+      {
+        "key": "D",
+        "text": "Le remplacement de la valve mitrale est la thérapeutique de 1ere intention en cas d’insuffisance mitrale symptomatique."
+      },
+      {
+        "key": "E",
+        "text": "Le caractère volumineux d'une insuffisance mitrale peut être affirmé par l'auscultation d'un souffle intense"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Insuffisance mitrale : rappels structurés\n\n### 1. Classification de Carpentier\nCarpentier classe l’insuffisance mitrale selon la **cinétique des feuillets** :\n- <span style=\"color:green; font-weight:bold\">Type I</span> : mouvement normal, fuite par **dilatation annulaire** ou perforation.\n- <span style=\"color:orange; font-weight:bold\">Type II</span> : mouvement **excessif** (prolapsus, rupture de cordage).\n- <span style=\"color:red; font-weight:bold\">Type III</span> : mouvement **restreint** (IIIa : rhumatismal ; IIIb : cardiomyopathies ischémiques/dilatées).\nL’insuffisance mitrale dite **fonctionnelle** est habituellement de type I (anneau dilaté) ou IIIb (restriction systolique), pas de type II.\n\n### 2. Prolapsus mitral et rupture de cordage\nChez un patient avec **prolapsus mitral dégénératif**, l’**apparition brutale** d’une insuffisance mitrale importante à 50–70 ans évoque en priorité une **rupture de cordage** (étiologie classique d’IM aiguë sur valve native dégénérative).\n\n### 3. Signes ECG de l’IM chronique\nL’IM chronique provoque une **dilatation de l’oreillette gauche** → aspect de **P mitrale** : onde P **large et bifide** en DII (pas une onde P haute et pointue). Une onde P > 2,5 mm correspond plutôt à une **hypertrophie auriculaire droite** (P pulmonale).\n\n### 4. Stratégie thérapeutique\nEn IM organique sévère symptomatique avec valve réparable, la stratégie de référence est la **plastie mitrale** (réparation), associée à un meilleur pronostic que le remplacement valvulaire. Le **remplacement** est réservé aux cas **non réparables** ou récidives complexes.\n\n### 5. Souffle et sévérité de l’IM\nL’**intensité** du souffle holosystolique d’IM ne reflète pas de manière fiable le **volume de la fuite** : \n- IM aiguë sévère → parfois **souffle discret**.\n- IM chronique sévère peut être bruyante ou non. \nLa quantification de la sévérité repose sur l’**échocardiographie Doppler** (surface de l’orifice régurgitant, volume régurgité, jets, dimensions ventriculaires, pressions pulmonaires).\n\n| Point clé | Mécanisme / Signe | Message pratique |\n|----------|-------------------|------------------|\n| <span style=\"color:orange\">Carpentier II</span> | Mouvement **excessif** (prolapsus, rupture cordage) | ≠ IM fonctionnelle (plutôt I ou IIIb) |\n| <span style=\"color:green\">IM aiguë sur prolapsus</span> | Sujet ~60 ans, prolapsus connu, IM aiguë brutale | Évoquer d’emblée **rupture de cordage** |\n| <span style=\"color:blue\">ECG</span> | IM chronique → dilatation OG → **P mitrale** (large, bifide) | Ondes P > 2,5 mm = plutôt OG droite (P pulmonale) |\n| <span style=\"color:purple\">Traitement</span> | IM sévère symptomatique réparable | **Plastie mitrale** = 1ère intention |\n| <span style=\"color:red\">Souffle</span> | Intensité du souffle d’IM | Ne reflète pas de façon fiable la **sévérité** de la fuite |",
+    "source": "Externat Blida 2020, Externat Blida 2021, Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_valvulo_3",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Parmi les propositions suivantes, la(ou les)quelle(s) est (sont) fausse(s)?L'IM massive chronique entraîne:",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une dilatation de l'OG"
+      },
+      {
+        "key": "B",
+        "text": "Un gradient holodiastolique OG-VG"
+      },
+      {
+        "key": "C",
+        "text": "Une dilatation du VG"
+      },
+      {
+        "key": "D",
+        "text": "Une défaillance ventriculaire droite"
+      },
+      {
+        "key": "E",
+        "text": "Une hypertension artérielle pulmonaire (HAP)"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Insuffisance mitrale massive chronique : retentissement principal\n\nL’**insuffisance mitrale (IM) massive chronique** correspond à un volumineux reflux systolique du VG vers l’OG à chaque systole.\n\n- En **systole**, une partie du volume d’éjection retourne dans l’OG → <span style=\"color:red; font-weight:bold\">surcharge volumique de l’OG</span> → dilatation de l’OG, élévation chronique des pressions OG, puis hypertension pulmonaire.\n- En **diastole**, le VG se remplit à partir de l’OG (volume normal + volume régurgité) → <span style=\"color:darkorange; font-weight:bold\">surcharge volumique du VG</span> → dilatation puis dysfonction systolique du VG (baisse de la FE vraie, malgré une FE souvent « pseudo-normale/augmentée » au début).\n- La hausse chronique des pressions dans l’OG se transmet aux **capillaires pulmonaires**, puis à l’**artère pulmonaire**, puis au **ventricule droit** → HAP post-capillaire, puis défaillance VD.\n\n🔑 Point clé : le **gradient holodiastolique** est typique de l’**insuffisance aortique (aorte–VG)** et non de l’IM (OG–VG) où la régurgitation est **systolique**.\n\n| Élément | OG | VG | Poumon / AP | VD |\n|--------|----|----|-------------|----|\n| Surcharge principale | <span style=\"color:red;\">Volumique + pression</span> | <span style=\"color:darkorange;\">Volumique</span> | <span style=\"color:red;\">⟶ HAP</span> | <span style=\"color:purple;\">⟶ Défaillance VD</span> |\n| Conséquence morphologique | Dilatation OG | Dilatation VG | HTAP post-capillaire | Dilatation/FA VD |\n| Gradient holodiastolique OG–VG ? | <span style=\"color:green;\">Non</span> | – | – | – |\n| Évolution tardive FE VG | – | <span style=\"color:red;\">↘ FE (dysfonction VG)</span> | – | – |",
+    "source": "Externat Blida 2020",
+    "year": 2020
+  },
+  {
+    "id": "c_cardio_valvulo_4",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "La maladie de Barlow est :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Atteinte dystrophique de la valve mitrale avec prolapsus responsable d’IM"
+      },
+      {
+        "key": "B",
+        "text": "Atteinte dégénérative des valves mitrales qui deviennent très fines"
+      },
+      {
+        "key": "C",
+        "text": "Atteinte dystrophique de la racine aortique responsable d'insuffisance aortique"
+      },
+      {
+        "key": "D",
+        "text": "Classée type III de Carpentier"
+      },
+      {
+        "key": "E",
+        "text": "Donne des calcifications massives des valves mitrales"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Maladie de Barlow : forme particulière de dégénérescence mitrale\n\nLa **maladie de Barlow** est une atteinte **dystrophique / myxomateuse** de la valve mitrale, caractérisée par des **valves épaisses, redondantes, « en parachute »**, avec **allongement des cordages**. Elle entraîne un **prolapsus mitral** (excès de mobilité : type II de Carpentier) responsable d’une **insuffisance mitrale souvent volumineuse**.\n\nSur le plan anatomopathologique, on observe une **infiltration myxoïde** du tissu valvulaire, une **dilatation annulaire** possible, et un prolapsus souvent **bivalvulaire**. À distinguer de la **déficience fibro-élastique** où les valves sont au contraire **fines**, avec rupture de cordage isolée chez le sujet âgé.\n\n| Élément                     | <span style=\"color:#0B7285;\">Maladie de Barlow</span> | <span style=\"color:#D9480F;\">Déficience fibro-élastique</span> |\n|----------------------------|----------------------------------------------|----------------------------------------------------|\n| Morphologie des valves     | <span style=\"color:#0B7285;\">Épaisses, redondantes, myxomateuses</span> | <span style=\"color:#D9480F;\">Fines, peu redondantes</span> |\n| Cordages                   | <span style=\"color:#0B7285;\">Allongés, multiples anomalies</span> | <span style=\"color:#D9480F;\">Rupture isolée fréquente</span> |\n| Mécanisme Carpentier       | <span style=\"color:#0B7285;\">Type II (excès de mobilité)</span> | <span style=\"color:#D9480F;\">Type II localisé</span> |\n| Lésion principale          | <span style=\"color:#0B7285;\">Dégénérescence myxoïde diffuse</span> | <span style=\"color:#D9480F;\">Perte tissu fibro-élastique</span> |\n| Conséquence clinique       | <span style=\"color:#0B7285;\">IM prolapsus souvent bivalvulaire</span> | <span style=\"color:#D9480F;\">IM par rupture cordage localisée</span> |",
+    "source": "Externat Blida 2020, Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_valvulo_5",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Le caractère volumineux d'une insuffisance mitrale peut être affirmé par l’auscultation :",
+    "options": [
+      {
+        "key": "A",
+        "text": "D'un souffle systolique"
+      },
+      {
+        "key": "B",
+        "text": "D'un click mésosystolique"
+      },
+      {
+        "key": "C",
+        "text": "D'une abolition du deuxième bruit"
+      },
+      {
+        "key": "D",
+        "text": "D'un troisième bruit suivi d'un roulement diastolique"
+      },
+      {
+        "key": "E",
+        "text": "D'un galop présystolique (B4)"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Insuffisance mitrale volumineuse : ce que dit l’auscultation\n\nDans l’<span style=\"color:#c2185b;\">insuffisance mitrale volumineuse</span>, la surcharge volumique du ventricule gauche et de l’oreillette gauche entraîne :\n- un <span style=\"color:#1976d2;\">débit accru à travers la valve mitrale</span> en début de diastole\n- un <span style=\"color:#d84315;\">remplissage très rapide du VG</span>, souvent déjà dilaté et peu compliant\n\nCela se traduit par :\n- un **3e bruit (B3)** protodiastolique lié au remplissage rapide d’un VG dilaté\n- un **roulement diastolique** fonctionnel (flux augmenté à travers une valve morphologiquement saine ou peu altérée)\n\nCes éléments signent une <span style=\"color:#2e7d32;\">insuffisance mitrale importante (volumineuse)</span>, alors que le simple souffle systolique d’IM ne renseigne pas de façon fiable sur la sévérité.\n\n| Élément auscultatoire | Signification principale | Lien avec IM volumineuse |\n|---|---|---|\n| Souffle systolique holosystolique apexien | Existence d’une IM | Niveau de sévérité mal corrélé |\n| B3 + roulement diastolique apexien | Surcharge volumique et flux mitral accru | **Fortement évocateur d’IM volumineuse** |\n| B4 (galop présystolique) | VG raide, HTA, cardiopathies hypertrophiques | Non spécifique de l’IM volumineuse |\n| Click mésosystolique | Prolapsus mitral | N’indique pas le volume de régurgitation |\n| Abolition du B2 | Valvulopathies aortiques ou autres contextes | Sans lien direct avec le volume de l’IM |",
+    "source": "Externat Blida 2020",
+    "year": 2020
+  },
+  {
+    "id": "c_cardio_valvulo_6",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Dans quelle(s) forme(s) étiologique(s) d'insuffisance mitrale peut-on être amené à une solution chirurgicale rapide ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Insuffisance mitrale par rupture de pilier lors d'un infarctus du myocarde"
+      },
+      {
+        "key": "B",
+        "text": "Insuffisance mitrale massive par rupture de cordage"
+      },
+      {
+        "key": "C",
+        "text": "Insuffisance mitrale secondaire à une endocardite algue"
+      },
+      {
+        "key": "D",
+        "text": "Une insuffisance mitrale massive compliquant une procédure de commissurotomie mitrale Percutanée."
+      },
+      {
+        "key": "E",
+        "text": "Toutes les réponses sont Justes."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Insuffisance mitrale aiguë : une urgence mécanique\n\nUne **IM aiguë massive** est mal tolérée car l’oreillette gauche, non adaptée à une brusque surcharge volumique, développe rapidement une élévation majeure de pression : **œdème aigu du poumon**, hypotension puis choc cardiogénique possibles.\n\nLes causes nécessitant fréquemment une discussion de **chirurgie rapide ou urgente** sont les destructions aiguës de l’appareil mitral : complication mécanique d’un infarctus, rupture spontanée de cordages avec volet flail, endocardite infectieuse destructrice, ou lésion iatrogène après valvuloplastie mitrale percutanée.\n\nLe traitement initial vise la stabilisation hémodynamique (oxygénation/ventilation, diurétiques et vasodilatation si pression artérielle suffisante). Il ne corrige toutefois pas la lésion anatomique : une **réparation** ou un **remplacement valvulaire** est alors envisagé sans attendre lorsque la fuite est sévère et mal tolérée.\n\n⚠️ Une endocardite aiguë relève particulièrement d’une chirurgie précoce en cas d’**insuffisance cardiaque**, de fuite sévère, d’abcès ou d’infection non contrôlée.",
+    "source": "Externat Blida 2020",
+    "year": 2020
+  },
+  {
+    "id": "c_cardio_valvulo_7",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "L'auscultation d'un souffle de régurgitation chez un porteur de prothèse valvulaire vous évoque :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une thrombose obstructive de prothèse."
+      },
+      {
+        "key": "B",
+        "text": "Une désinsertion de prothèse."
+      },
+      {
+        "key": "C",
+        "text": "Une thrombose non obstructive de prothèse."
+      },
+      {
+        "key": "D",
+        "text": "Un traitement anticoagulant insuffisant."
+      },
+      {
+        "key": "E",
+        "text": "Une arythmie cardiaque."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Souffle de régurgitation sur prothèse valvulaire\n\nChez un porteur de prothèse valvulaire, l’apparition ou la majoration d’un **souffle de régurgitation** signe le plus souvent un **problème mécanique de fuite**, en particulier :\n- une **désinsertion (déhisiscence) de prothèse** → fuite paraprothétique,\n- plus rarement une **rupture/altération des éléments mobiles** de la prothèse.\n\nLes complications **thrombotiques** donnent surtout un tableau de **sténose (obstruction)** avec élévation des gradients et/ou embolies, plutôt qu’un souffle net de régurgitation. De même, une **arythmie** ou un **défaut d’anticoagulation** peuvent favoriser des complications, mais n’expliquent pas à eux seuls un nouveau souffle de régurgitation.\n\n| Élément clé | Complication évoquée | Mécanisme principal | Retentissement typique |\n|-------------|----------------------|----------------------|-------------------------|\n| <span style=\"color:#c0392b; font-weight:bold;\">Nouveau/majoration souffle de régurgitation</span> | <span style=\"color:#c0392b;\">Désinsertion de prothèse</span> | Fuite para-prothétique | Insuffisance valvulaire aiguë ou chronique |\n| <span style=\"color:#2980b9; font-weight:bold;\">Souffle de sténose, clics modifiés, dyspnée aiguë</span> | Thrombose **obstructive** | Obstruction orifice prothèse | Sténose valvulaire, OAP possible |\n| <span style=\"color:#16a085; font-weight:bold;\">Trouble du rythme / INR inadapté</span> | Facteur favorisant complication | Hémodynamique ou thrombotique | Non spécifique d’un souffle de régurgitation |",
+    "source": "Externat Blida 2020",
+    "year": 2020
+  },
+  {
+    "id": "c_cardio_valvulo_8",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Le caractère volumineux d’une insuffisance mitrale peut être affirme par :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Un souffle systolique intense"
+      },
+      {
+        "key": "B",
+        "text": "un click mesosystolique"
+      },
+      {
+        "key": "C",
+        "text": "Une abolition du deuxième bruit"
+      },
+      {
+        "key": "D",
+        "text": "Un roulement protodiastolique"
+      },
+      {
+        "key": "E",
+        "text": "Un galop présystolique"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Reconnaître une insuffisance mitrale importante\n\nLe **volume régurgité** retourne du ventricule gauche vers l’oreillette gauche pendant la systole. En diastole, ce volume supplémentaire doit ensuite repasser à travers la valve mitrale, créant un **hyperdébit transmitral**.\n\nLorsque cet hyperdébit est marqué, il peut produire un **roulement protodiastolique apical**, grave et bref : il s’agit d’un **roulement de débit** (ou « sténose mitrale fonctionnelle »), évocateur d’une régurgitation importante.\n\nL’intensité du souffle holosystolique n’est pas un bon reflet isolé de la sévérité : dans une insuffisance mitrale très sévère avec égalisation rapide des pressions ventriculo-auriculaires, le souffle peut même paraître moins intense. L’évaluation de gravité repose surtout sur l’échocardiographie Doppler (volume régurgité, EROA, retentissement sur l’oreillette et le ventricule gauches, pression pulmonaire).\n\n🩸 **IM volumineuse** → surcharge de volume OG → **hyperdébit mitral diastolique** → roulement protodiastolique.",
+    "source": "Externat Blida 2020, Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_valvulo_9",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Quel signe clinique est en faveur d'une insuffisance mitrale importante :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Clique méso-systolique"
+      },
+      {
+        "key": "B",
+        "text": "Roulement méso-diastolique à la pointe"
+      },
+      {
+        "key": "C",
+        "text": "Souffle systolique intense à la pointe"
+      },
+      {
+        "key": "D",
+        "text": "Eclat de B1"
+      },
+      {
+        "key": "E",
+        "text": "Aucun des signes sus cités"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Insuffisance mitrale : rappels cliniques\n\nL’<span style=\"color:#e63946; font-weight:bold\">insuffisance mitrale (IM)</span> correspond à un reflux systolique du sang du VG vers l’OG à cause d’une incompétence de l’appareil mitral (valves, cordages, pilier, anneau).\n\n### Bruits et souffles caractéristiques\n- **Souffle d’IM typique** : holosystolique, en jet de vapeur, **maximal à la pointe**, irradiant vers l’aisselle ; son **intensité ne corrèle pas** de façon fiable avec la sévérité.\n- En cas d’<span style=\"color:#d62828\">IM importante</span>, le volume régurgité est élevé → afflux massif de sang vers l’OG puis retour augmenté vers le VG en diastole, ce qui peut entraîner un **roulement méso-diastolique apexien fonctionnel** (pseudo-sténose mitrale par hyperdébit).\n- Dans l’IM chronique sévère, **B1 est plutôt assourdie** (fermeture imparfaite de la valve), et non éclatante.\n- Le **clic méso-systolique** évoque surtout un **prolapsus mitral** isolé, qui n’est pas en soi un signe de gravité régurgitative.\n\n### Importance clinique\nUne IM importante entraîne : dilatation de l’OG et du VG, HTAP, dyspnée, œdème pulmonaire, et impose une évaluation échographique précise pour décider d’une réparation/remplacement valvulaire.\n\n| Élément clinique | Orientation principale | Lien avec sévérité de l’IM |\n|---|---|---|\n| <span style=\"color:#457b9d\">Souffle holosystolique apexien</span> | Diagnostic d’IM | Intensité peu corrélée à la sévérité |\n| <span style=\"color:#d62828\">Roulement méso-diastolique apexien</span> | Hyperdébit à travers la mitrale | En faveur d’IM **importante** (volume régurgité élevé) |\n| Clic méso-systolique | Prolapsus mitral | Pas un marqueur fiable de sévérité |\n| B1 éclatante | Sténose mitrale débutante / valve encore mobile | En IM chronique sévère, B1 plutôt diminuée |\n| Options « aucune des réponses » | À considérer si aucun item n’est adapté | Ici non adaptée car un signe spécifique est présent |",
+    "source": "Externat Blida 2018",
+    "year": 2018
+  },
+  {
+    "id": "c_cardio_valvulo_10",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "l'importance d'une insuffisance mitrale à l'échographie n'est pas évaluée par :",
+    "options": [
+      {
+        "key": "A",
+        "text": "La largeur du jet régurgitant à son origine"
+      },
+      {
+        "key": "B",
+        "text": "Le volume régurgite"
+      },
+      {
+        "key": "C",
+        "text": "Taille des cavités gauches"
+      },
+      {
+        "key": "D",
+        "text": "Degrés de remaniement des valves sigmoïdes en cas d'IM rhumatismale"
+      },
+      {
+        "key": "E",
+        "text": "Pression artérielle pulmonaire systolique"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Évaluation échographique de la sévérité d'une insuffisance mitrale\n\nLa sévérité de l’IM repose sur des **paramètres quantitatifs** (volume régurgité, fraction régurgitée, surface de l’orifice régurgitant) et des **paramètres semi‑quantitatifs** (largeur du jet à son origine/vena contracta, aspect du jet couleur, débit dans les veines pulmonaires). Ces paramètres sont complétés par l’analyse des **conséquences hémodynamiques** : dilatation des cavités gauches (OG, VG) et élévation de la pression artérielle pulmonaire systolique.\n\nEn revanche, les **lésions étiologiques des valves** (aspect rhumatismal : valves « sigmoïdes », épaissies, rétractées) orientent sur la cause et la réparabilité mais **ne servent pas directement à quantifier** la sévérité de la régurgitation.\n\n| Élément évalué à l’écho-Doppler | Rôle principal | Lien avec la sévérité de l’IM |\n|---|---|---|\n| Largeur du jet/vena contracta | Semi‑quantitatif | Jet large et serré à l’origine → IM au moins modérée à sévère |\n| Volume/fraction régurgitée, EROA | Quantitatif | Volume régurgité et EROA élevés → IM sévère |\n| Taille OG/VG | Conséquences chroniques | Dilatation cavités gauches → IM significative et ancienne |\n| PAPs estimée (IT + Doppler) | Conséquences hémodynamiques | PAPs élevée → IM significative/retentissement pulmonaire |\n| Aspect morphologique rhumatismal des valves | Analyse étiologique | Guide la stratégie chirurgicale mais ne quantifie pas la sévérité de l’IM 🩸 |",
+    "source": "Externat Blida 2018",
+    "year": 2018
+  },
+  {
+    "id": "c_cardio_valvulo_11",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Parmi les signes suivants, lequel ne peut peuvent appartenir au tableau de thrombose obstructive de valve mécanique mitrale :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une embolie systémique."
+      },
+      {
+        "key": "B",
+        "text": "Un OAP."
+      },
+      {
+        "key": "C",
+        "text": "Un état de choc."
+      },
+      {
+        "key": "D",
+        "text": "Une splénomégalie."
+      },
+      {
+        "key": "E",
+        "text": "Un roulement diastolique avec abolition des clicks."
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Thrombose obstructive de valve mécanique mitrale\n\nLa thrombose obstructive d’une prothèse mitrale provoque une **obstruction brutale de l’oreillette gauche vers le ventricule gauche**, mimant un rétrécissement mitral aigu : augmentation des pressions en amont, stase pulmonaire, baisse du débit cardiaque.\n\n### Principaux signes cliniques et hémodynamiques\n- <span style=\"color:red; font-weight:bold;\">Insuffisance cardiaque gauche aiguë</span> : dyspnée, orthopnée, **OAP**.\n- <span style=\"color:red; font-weight:bold;\">Bas débit</span> : **état de choc**, marbrures, oligurie.\n- <span style=\"color:blue; font-weight:bold;\">Modifications des bruits de prothèse</span> : diminution/abolition des **clicks métalliques** normaux, apparition possible d’un **roulement diastolique** de type RM.\n- <span style=\"color:purple; font-weight:bold;\">Complications emboliques</span> : **embolie systémique** par migration d’un fragment de thrombus.\n\n### Pourquoi la splénomégalie est atypique\nLa **splénomégalie** est un signe de pathologie **chronique** (hypertension portale, hémopathies, endocardite subaiguë, hémolyse prolongée…), non d’un accident **aigu** comme la thrombose obstructive d’une valve mécanique.\n\n| Élément clinique/hémodynamique | Lien avec thrombose obstructive mitrale mécanique | Caractère aigu/chronique |\n|---|---|---|\n| Embolie systémique | Fragmentation du thrombus → migration artérielle | <span style=\"color:red;\">Aigu</span> |\n| OAP | Obstruction mitrale aiguë → ↑ pression OG et capillaires pulmonaires | <span style=\"color:red;\">Aigu</span> |\n| État de choc | Obstruction → chute du débit cardiaque | <span style=\"color:red;\">Aigu</span> |\n| Splénomégalie | Signe de maladie chronique (portale, hématologique, infectieuse…) | <span style=\"color:gray;\">Plutôt chronique</span> |\n| Roulement diastolique + abolition des clicks | Dysfonction mécanique de la prothèse (obstruction) | <span style=\"color:red;\">Aigu / subaigu</span> |",
+    "source": "Externat Blida 2018",
+    "year": 2018
+  },
+  {
+    "id": "c_cardio_valvulo_12",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "L'ECG d'un rétrécissement mitral serré peut mettre en évidence (RJ) :",
+    "options": [
+      {
+        "key": "A",
+        "text": "HAD + HVG diastolique."
+      },
+      {
+        "key": "B",
+        "text": "HAG + HVG systolique."
+      },
+      {
+        "key": "C",
+        "text": "HAG + HAD"
+      },
+      {
+        "key": "D",
+        "text": "HVD"
+      },
+      {
+        "key": "E",
+        "text": "HAG + HVD."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### ECG dans le rétrécissement mitral serré\n\nLe rétrécissement mitral entraîne une **augmentation chronique de la pression de l’oreillette gauche (OG)**, responsable d’une **hypertrophie/ dilatation auriculaire gauche (HAG)**, typiquement visible sur l’ECG sous forme de **P mitrale** (onde P large, souvent bifide en DII, aspect ± terminal négatif en V1).\n\nQuand le rétrécissement est <span style=\"color:red; font-weight:bold\">sévère et ancien</span>, l’**hypertension artérielle pulmonaire** s’installe, imposant une surcharge de pression au **ventricule droit (VD)** ; ceci conduit à une **hypertrophie ventriculaire droite (HVD)** avec signes ECG (axe droit, R dominante en V1, etc.). Une dilatation de l’oreillette droite peut aussi apparaître, mais elle s’associe en pratique à la surcharge du VD.\n\n| Élément | Conséquence principale | Aspect ECG typique | Lien avec RM serré |\n|--------|------------------------|--------------------|---------------------|\n| <span style=\"color:darkred\">HAG</span> | Pression OG ↑ chronique | **P mitrale** (P large, bifide) | Atteinte quasi constante dans RM évolué |\n| <span style=\"color:darkblue\">HVD</span> | HTAP secondaire | Axe droit, grande R en V1 | Stade avancé de RM séquellaire |\n| <span style=\"color:green\">Association HAG + HVD</span> | OG sous pression + VD surchargé | P mitrale + signes HVD | Tableau ECG classique d’un RM serré ancien |",
+    "source": "Externat Blida 2015, Externat Blida 2016",
+    "year": 2016
+  },
+  {
+    "id": "c_cardio_valvulo_13",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Au cours du rétrécissement mitral pur, toutes les complications suivantes peuvent être observées, sauf une. Laquelle?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Œdème aigu du poumon."
+      },
+      {
+        "key": "B",
+        "text": "Embolies systémiques."
+      },
+      {
+        "key": "C",
+        "text": "Fibrillation auriculaire."
+      },
+      {
+        "key": "D",
+        "text": "Insuffisance ventriculaire droite."
+      },
+      {
+        "key": "E",
+        "text": "Tachycardie ventriculaire."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Complications majeures du rétrécissement mitral\n\nLe rétrécissement mitral entraîne une <span style=\"color:red; font-weight:bold\">élévation chronique de la pression dans l’oreillette gauche</span>, se transmettant en amont vers les veines pulmonaires, puis l’artère pulmonaire et enfin le cœur droit.\n\n### Axe pulmonaire et cœur droit\n- Pression OG ↑ → <span style=\"color:darkorange\">hypertension veineuse pulmonaire</span> → dyspnée, orthopnée, **œdème aigu pulmonaire**.\n- À long terme : <span style=\"color:darkred\">hypertension artérielle pulmonaire</span> → surcharge du VD → **insuffisance ventriculaire droite** (turgescence jugulaire, hépatomégalie, œdèmes MI).\n\n### Axe rythmique et embolique\n- Dilatation de l’OG favorise la <span style=\"color:purple\">fibrillation auriculaire</span> (FA) → perte de la systole auriculaire, aggravation des symptômes.\n- En FA et OG dilatée, formation de **thrombus intra-auriculaires gauches** → <span style=\"color:crimson\">embolies systémiques</span> (AVC, ischémies périphériques).\n\n### Rythmes ventriculaires\n- Les troubles du rythme classiques du rétrécissement mitral sont <span style=\"color:purple\">supraventriculaires</span> (FA, flutter, tachycardie atriale) ; les **tachycardies ventriculaires** ne sont ni typiques ni directement attendues dans un rétrécissement mitral pur.\n\n| Mécanisme clé 🧬 | Conséquence principale ⚠️ | Manifestations typiques 🩺 |\n|---|---|---|\n| Pression OG ↑ → pression pulmonaire veineuse ↑ | Congestion pulmonaire | Dyspnée, orthopnée, **œdème aigu du poumon** |\n| Dilatation OG | Turbulence + stase sanguine | **Fibrillation auriculaire**, thrombus OG |\n| Thrombus OG | Embolisation systémique | **Embolies systémiques** (AVC, ischémie membre) |\n| HTAP chronique | Surcharge VD | **Insuffisance ventriculaire droite** (TJ, œdèmes, hépatomégalie) |\n| Atteinte ventriculaire intrinsèque (non spécifique) | Troubles du rythme ventriculaire | **Tachycardie ventriculaire** : non caractéristique d’un rétrécissement mitral pur |",
+    "source": "Externat Blida 2015, Externat Blida 2016",
+    "year": 2016
+  },
+  {
+    "id": "c_cardio_valvulo_14",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Parmi les propositions suivantes, laquelle n'est pas une étiologie de l'insuffisance ventriculaire gauche :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Infarctus du myocarde étendu."
+      },
+      {
+        "key": "B",
+        "text": "Cœur pulmonaire chronique."
+      },
+      {
+        "key": "C",
+        "text": "Cardiomyopathie dilatée primitive."
+      },
+      {
+        "key": "D",
+        "text": "insuffisance mitrale évoluée."
+      },
+      {
+        "key": "E",
+        "text": "Rétrécissement aortique."
+      },
+      {
+        "key": "F",
+        "text": "Veuillez cocher cette option. De cette façon, vous ne serez pas pénalisé par un point incorrect dû à un manque d'information dans notre base de données."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Insuffisance ventriculaire gauche : grandes étiologies\n\nL’<span style=\"color:#d12c2c; font-weight:bold\">insuffisance ventriculaire gauche (IVG)</span> résulte surtout d’une surcharge de **pression**, de **volume** ou d’une **atteinte myocardique** primitive.\n\n### Principales causes d’IVG\n- <span style=\"color:#e67e22\">Cardiopathies ischémiques</span> : infarctus du myocarde étendu ou répété → nécrose, remodelage, baisse de la contractilité.\n- <span style=\"color:#2980b9\">Cardiomyopathies dilatées primitives</span> : dysfonction systolique globale, dilatation des cavités gauches.\n- <span style=\"color:#16a085\">Surcharge de volume</span> : insuffisance mitrale évoluée → régurgitation chronique, dilatation du VG.\n- <span style=\"color:#8e44ad\">Surcharge de pression</span> : rétrécissement aortique serré → hypertrophie concentrique puis défaillance.\n\nÀ l’inverse, le <span style=\"color:#c0392b\">cœur pulmonaire chronique</span> est l’expression d’une **insuffisance ventriculaire droite secondaire à une pathologie pulmonaire ou vasculaire pulmonaire**, et non une étiologie typique d’IVG.\n\n| Élément clé | Atteinte prédominante | Mécanisme principal | Lien avec IVG |\n|------------|------------------------|----------------------|---------------|\n| Infarctus du myocarde étendu | VG | Nécrose, remodelage | Cause classique d’IVG |\n| Cardiomyopathie dilatée primitive | VG (souvent global) | Dysfonction systolique | Cause fréquente d’IVG chronique |\n| Insuffisance mitrale évoluée | VG + OG | Surcharge de volume | Conduit à IVG puis globale |\n| Rétrécissement aortique | VG | Surcharge de pression | Hypertrophie puis IVG |\n| Cœur pulmonaire chronique | VD | HTAP secondaire pulmonaire | Cause d’IVD, pas d’IVG |",
+    "source": "Externat Blida 2015, Externat Blida 2016",
+    "year": 2016
+  },
+  {
+    "id": "c_cardio_valvulo_15",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Les signes auscultatoires de l'insuffisance mitrale importante sont les suivants : (RF)",
+    "options": [
+      {
+        "key": "A",
+        "text": "Claquement d'ouverture de la valve mitrale."
+      },
+      {
+        "key": "B",
+        "text": "Roulement diastolique."
+      },
+      {
+        "key": "C",
+        "text": "Diminution de l'intensité du 1er bruit."
+      },
+      {
+        "key": "D",
+        "text": "Souffle systolique apexo - axillaire."
+      },
+      {
+        "key": "E",
+        "text": "Bruit proto diastolique."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Insuffisance mitrale importante : que cherche-t-on à l’auscultation ?\nL’**insuffisance mitrale (IM)** correspond à un reflux du sang du **ventricule gauche** vers l’**oreillette gauche** pendant la **systole**. Quand elle est **importante**, l’auscultation traduit surtout un **défaut de fermeture mitrale** et une **surcharge volumique** du cœur gauche.\n\n### Signes typiques\n- **Souffle systolique apexo-axillaire** : c’est le signe le plus classique, souvent **holosystolique**, maximal à la **pointe** et irradiant vers l’**aisselle**.\n- **B1 diminué** : les valves mitrales se ferment mal, donc le **1er bruit** est souvent **assourdi**.\n- **Roulement diastolique apical** : dans les IM sévères, l’augmentation du flux transmitral peut créer un **roulement fonctionnel** sans sténose mitrale organique.\n- **Bruit protodiastolique = B3** : reflet de la **surcharge volumique** ventriculaire gauche, fréquent dans les formes importantes.\n\n### Piège classique\nLe **claquement d’ouverture mitral** évoque au contraire une **sténose mitrale** : il traduit l’ouverture brutale d’une valve mitrale encore mobile mais rétrécie. Ce n’est **pas** un signe habituel d’IM importante.\n\n| Signe auscultatoire | IM importante ? | Idée clé |\n|---|---:|---|\n| Souffle systolique apexo-axillaire | ✅ | Signe cardinal de régurgitation mitrale |\n| B1 diminué | ✅ | Fermeture mitrale inefficace |\n| Roulement diastolique | ✅ | Hyperdébit transmitral dans les formes sévères |\n| Bruit protodiastolique (B3) | ✅ | Surcharge volumique du VG |\n| Claquement d’ouverture mitral | ❌ | Oriente vers **sténose mitrale** |",
+    "source": "Résidanat Blida 2018",
+    "year": 2018
+  },
+  {
+    "id": "c_cardio_valvulo_16",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "L'insuffisance mitrale par ballonnisation de la valve mitrale (maladie de Barlow) est caractérisée par toutes les propositions suivantes sauf une, laquelle",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une dégénérescence myxomateuse de la valve"
+      },
+      {
+        "key": "B",
+        "text": "Une plus grande fréquence chez la femme jeune"
+      },
+      {
+        "key": "C",
+        "text": "Un click protosystolique"
+      },
+      {
+        "key": "D",
+        "text": "Une grande fréquence des troubles du rythme"
+      },
+      {
+        "key": "E",
+        "text": "Elle réalise le type II de la classification de Carpentier"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Ballonnisation mitrale (maladie de Barlow)\n\nIl s’agit d’une valvulopathie **dégénérative** caractérisée par un excès de tissu valvulaire, souvent associé à un allongement ou une rupture de cordages. Les feuillets, particulièrement le postérieur, se déplacent anormalement vers l’oreillette gauche pendant la systole : c’est un **prolapsus mitral**.\n\nDans la classification fonctionnelle de Carpentier, ce mécanisme relève du **type II** : la mobilité valvulaire est excessive. L’auscultation est dynamique : la tension brutale de l’appareil valvulaire devenu redondant produit un clic systolique, puis éventuellement un souffle régurgitant tardif. Ce phénomène survient après le début de l’éjection ventriculaire, et sa chronologie varie avec les conditions de charge.\n\nLes palpitations et troubles du rythme sont possibles, notamment par extrasystolie et tachyarythmies supraventriculaires. La maladie est volontiers décrite chez la femme jeune, même si elle peut concerner tout âge et tout sexe.\n\n🧬 Dégénérescence myxomateuse → prolapsus → mobilité excessive (**Carpentier II**) → clic <span><b>méso-/télésystolique</b></span>.",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_valvulo_17",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "L’insuffisance mitrale par ballonisation de la petite valve (syndrome de Barlow) est caractérisée par : Toutes les propositions suivantes sont exactes sauf une, laquelle ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une dégénérescence myxomateuse de la valve mitrale"
+      },
+      {
+        "key": "B",
+        "text": "Une plus grande fréquence chez la femme jeune"
+      },
+      {
+        "key": "C",
+        "text": "Un click protosystolique"
+      },
+      {
+        "key": "D",
+        "text": "Une grande fréquence de troubles du rythme"
+      },
+      {
+        "key": "E",
+        "text": "Elle réalise le type II de la classification de Carpentier"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Syndrome de Barlow : insuffisance mitrale par prolapsus\n\nLe syndrome de Barlow correspond à une **dégénérescence myxomateuse** de l’appareil valvulaire mitral, avec feuillets épaissis et redondants, anneau souvent dilaté et cordages allongés. Le mécanisme de l’insuffisance mitrale est un **excès de mobilité valvulaire** : un ou deux feuillets dépassent le plan de l’anneau dans l’oreillette gauche pendant la systole.\n\nDans la classification fonctionnelle de Carpentier, cela définit le **type II** : mouvement excessif des feuillets (prolapsus/éversion), à distinguer du type I (mobilité normale) et du type III (mobilité restreinte).\n\nL’auscultation typique associe un **click mésosystolique**, lié à la mise en tension brutale des cordages et du feuillet prolapsant, puis éventuellement un souffle télésystolique. La position debout ou la diminution de précharge rapprochent le click de B1. Des palpitations et divers troubles du rythme peuvent être observés, notamment supraventriculaires ou ventriculaires.\n\n| Mécanisme | Signe évocateur |\n|---|---|\n| Prolapsus mitral myxomateux | Click **mésosystolique** |\n| Carpentier II | Mobilité valvulaire **excessive** |\n| IM associée | Souffle souvent **télésystolique** |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_valvulo_18",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcm",
+    "questionText": "Parmi les propositions suivantes, la(ou les)quelle(s) est (sont) fausse(s) ? L’IM aiguë entraîne :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une dilatation du VG"
+      },
+      {
+        "key": "B",
+        "text": "Une dilatation de l’OG"
+      },
+      {
+        "key": "C",
+        "text": "Une hyperpression de l’OG"
+      },
+      {
+        "key": "D",
+        "text": "Une HTP sévère"
+      },
+      {
+        "key": "E",
+        "text": "Une augmentation des pressions télédiastoliques VG"
+      }
+    ],
+    "correctAnswers": [
+      "A",
+      "+",
+      "B"
+    ],
+    "explanation": "### Physiopathologie de l’IM aiguë\n\nDans l’**insuffisance mitrale aiguë sévère**, une partie du volume éjecté par le ventricule gauche reflue brutalement vers une oreillette gauche **non préparée** à recevoir ce volume supplémentaire. Il n’existe donc pas encore de remodelage des cavités.\n\nL’oreillette gauche, peu compliante à court terme, développe une élévation très rapide de sa pression, avec de grandes ondes **V**. Cette pression se transmet en amont aux veines et capillaires pulmonaires : elle explique la dyspnée aiguë, l’**œdème aigu du poumon** et une hypertension pulmonaire post-capillaire parfois majeure.\n\nLe ventricule gauche reçoit simultanément le retour veineux pulmonaire et le volume régurgité : sa pression télédiastolique augmente. Malgré une fraction d’éjection parfois apparemment conservée, le **débit antérograde effectif** diminue car l’éjection se fait en partie vers l’oreillette gauche, cavité à basse impédance.\n\n<span><b>Piège majeur :</b></span> la dilatation des cavités gauches est une adaptation de l’**IM chronique**, pas de l’IM aiguë.\n\n**IM aiguë** → OG non compliante → ↑ pression OG → congestion/HTP post-capillaire → OAP ; ↑ volume télédiastolique VG → ↑ pression télédiastolique VG.",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_valvulo_19",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcm",
+    "questionText": "Parmi les propositions suivantes, la(ou les)quelle(s) est (sont) fausse(s)? L’IM massive chronique entraîne :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une dilatation de l’OG"
+      },
+      {
+        "key": "B",
+        "text": "Une dilatation ventriculaire gauche"
+      },
+      {
+        "key": "C",
+        "text": "Une hypertrophie ventriculaire gauche"
+      },
+      {
+        "key": "D",
+        "text": "Une hypertension artérielle pulmonaire précapillaire"
+      },
+      {
+        "key": "E",
+        "text": "Une diminution de la FE VG"
+      }
+    ],
+    "correctAnswers": [
+      "D",
+      "+",
+      "E"
+    ],
+    "explanation": "### Remodelage de l’IM chronique massive\nLa régurgitation mitrale impose une **surcharge volumique** à l’oreillette gauche et au ventricule gauche : à chaque systole, une partie du volume éjecté retourne vers l’OG, puis revient au VG durant la diastole.\n\nL’adaptation est initialement favorable : l’OG se dilate, le VG augmente son volume télédiastolique et développe une **hypertrophie excentrique**. La fraction d’éjection mesurée peut rester normale, voire paraître élevée, car le VG éjecte aussi vers l’OG, cavité à faible impédance. Elle ne reflète donc pas fidèlement le débit antérograde.\n\nL’élévation chronique des pressions de l’OG se transmet en amont aux veines et capillaires pulmonaires : il s’agit d’abord d’une **hypertension pulmonaire postcapillaire**. Une composante précapillaire peut exceptionnellement se surajouter très tardivement par remodelage artériolaire pulmonaire, mais elle n’est pas le mécanisme attendu de base.\n\n| Adaptation attendue | Mécanisme |\n|---|---|\n| Dilatation OG + VG | Surcharge volumique chronique |\n| HVG excentrique | Normalisation du stress pariétal |\n| Pression pulmonaire postcapillaire | Transmission rétrograde depuis l’OG |\n| FE VG longtemps conservée | Éjection facilitée vers l’OG |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_valvulo_20",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Toutes ces pathologies peuvent engendrer une surcharge ventriculaire de type systolique sauf une, laquelle ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hypertension artérielle"
+      },
+      {
+        "key": "B",
+        "text": "Rétrécissement aortique"
+      },
+      {
+        "key": "C",
+        "text": "Coarctation de l’aorte"
+      },
+      {
+        "key": "D",
+        "text": "Insuffisance mitrale"
+      },
+      {
+        "key": "E",
+        "text": "Rétrécissement pulmonaire"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Surcharge ventriculaire : pression ou volume ?\n\nUne surcharge **systolique** correspond à une surcharge de **pression** : le ventricule doit éjecter le sang contre une postcharge élevée. Elle entraîne typiquement une **hypertrophie ventriculaire concentrique** afin de réduire la contrainte pariétale.\n\nLes obstacles à l’éjection du ventricule gauche ou droit, ainsi que l’élévation chronique de la pression artérielle, relèvent donc de cette physiopathologie. À l’inverse, une régurgitation valvulaire expose le ventricule situé en amont à un surplus de volume à chaque cycle : c’est une surcharge **diastolique** (ou volumique), associée à une dilatation et une hypertrophie plutôt excentrique.\n\n| Type de surcharge | Mécanisme hémodynamique | Remodelage dominant |\n|---|---|---|\n| **Systolique** | <span>Obstacle à l’éjection / pression élevée</span> | Hypertrophie concentrique |\n| **Diastolique** | <span>Excès de volume télédiastolique</span> | Dilatation, hypertrophie excentrique |\n\n⚠️ Une insuffisance valvulaire est avant tout une lésion de **volume**, car une partie du volume éjecté revient dans la cavité ventriculaire pendant le cycle suivant.",
+    "source": "Externat Blida 2025, Externat Blida 2025",
+    "year": 2025
+  },
+  {
+    "id": "c_cardio_valvulo_21",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "l’insuffisance mitrale peut résulter des mécanismes suivants : la RF",
+    "options": [
+      {
+        "key": "A",
+        "text": "Rupture de cordage"
+      },
+      {
+        "key": "B",
+        "text": "Dilatation de l’anneau"
+      },
+      {
+        "key": "C",
+        "text": "Raccourcissement des cordages"
+      },
+      {
+        "key": "D",
+        "text": "Fente mitrale"
+      },
+      {
+        "key": "E",
+        "text": "Prolapsus de la petite valve mitrale"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Mécanismes de l’insuffisance mitrale\n\nL’insuffisance mitrale correspond à une **coaptation incomplète** des feuillets pendant la systole : le sang reflue alors du ventricule gauche vers l’oreillette gauche.\n\nLes mécanismes fondamentaux sont :\n\n- anomalie des feuillets : prolapsus, fente congénitale, perforation ;\n- anomalie de l’appareil sous-valvulaire : rupture ou allongement des cordages, rupture de pilier ;\n- anomalie de l’anneau : dilatation annulaire, souvent dans l’IM fonctionnelle ;\n- restriction de mobilité valvulaire, notamment rhumatismale : elle associe habituellement épaississement, fusion et rétraction des structures valvulaires.\n\n⚠️ Le **raccourcissement isolé des cordages** est classiquement rattaché à la maladie mitrale rhumatismale, volontiers sténosante ; pour l’IM par excès de mobilité, le mécanisme typique est plutôt l’**allongement** ou la rupture des cordages.\n\n<span>Excès de mobilité</span> → prolapsus / rupture cordage → fuite\n<span>Défaut de soutien</span> → dilatation annulaire → fuite\n<span>Restriction rhumatismale</span> → rétraction cordages-feuillets → surtout sténose ou lésion mixte",
+    "source": "Résidanat Blida 2010",
+    "year": 2010
+  },
+  {
+    "id": "c_cardio_valvulo_22",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Dans quelles formes étiologiques d'insuffisance mitrale peut-on être amené à une solution chirurgicale rapide ? (RF)",
+    "options": [
+      {
+        "key": "A",
+        "text": "Insuffisance mitrale par rupture de pilier lors d’un infarctus du myocarde"
+      },
+      {
+        "key": "B",
+        "text": "Insuffisance mitrale par prolapsus de la valve mitrale"
+      },
+      {
+        "key": "C",
+        "text": "Insuffisance mitrale massive par rupture de cordage"
+      },
+      {
+        "key": "D",
+        "text": "Insuffisance mitrale massive lors d’une dilatation mitrale percutanée"
+      },
+      {
+        "key": "E",
+        "text": "Insuffisance mitrale secondaire à une endocardite aiguë"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Insuffisance mitrale aiguë : mécanisme et urgence\n\nUne **IM aiguë massive** est mal tolérée car l’oreillette gauche, non adaptée à une élévation brutale de volume et de pression, transmet rapidement l’hyperpression au lit veineux pulmonaire : **œdème aigu du poumon**, bas débit et parfois choc cardiogénique.\n\nLes causes destructrices ou mécaniques imposent donc souvent une discussion de **chirurgie très rapide** après stabilisation hémodynamique : complication mécanique d’infarctus, rupture de cordages, IM iatrogène sévère après geste percutané, ou endocardite aiguë compliquée d’insuffisance cardiaque/atteinte valvulaire sévère.\n\nÀ l’inverse, le **prolapsus valvulaire mitral** donne le plus souvent une IM chronique. La réparation est envisagée selon la sévérité, les symptômes, la fonction ventriculaire gauche, la fibrillation atriale ou l’hypertension pulmonaire, mais il ne constitue pas en lui-même une indication habituelle de chirurgie immédiate.\n\n⚠️ **IM aiguë massive → OAP/choc possible → chirurgie urgente selon l’étiologie.**",
+    "source": "Externat Blida 2020, Externat Blida 2021, Externat Blida 2025, Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_valvulo_23",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qroc",
+    "questionText": "5 complications de l'insuffisance mitrale",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "La régurgitation chronique dilate l’oreillette gauche et augmente les pressions pulmonaires : elle favorise la fibrillation auriculaire, la stase thrombotique et l’insuffisance cardiaque.\n\nIM → dilatation OG → FA + embolies ; surcharge pulmonaire → HTAP ; évolution → insuffisance cardiaque.",
+    "source": "Externat Blida 2024",
+    "year": 2024
+  },
+  {
+    "id": "c_cardio_valvulo_24",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qroc",
+    "questionText": "Signes auscultatoires de IM sévère",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "Dans l’IM sévère chronique, le volume régurgité augmente le remplissage diastolique du VG : cela explique le **B3** et le **roulement diastolique fonctionnel**. Le souffle peut paradoxalement s’atténuer si la dysfonction ventriculaire gauche est majeure.\n\n→ IM sévère : souffle holosystolique + B3 + roulement diastolique.",
+    "source": "Externat Blida 2024",
+    "year": 2024
+  },
+  {
+    "id": "c_cardio_valvulo_25",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Toutes ces propositions sont justes sauf une, laquelle :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Les maladies non transmissibles sont la première cause de mortalité en Algérie."
+      },
+      {
+        "key": "B",
+        "text": "Le rhumatisme articulaire aigu demeure encore la première cause des valvulopathies en Algérie."
+      },
+      {
+        "key": "C",
+        "text": "L’Algérie assiste à une transition épidémiologique des maladies transmissibles vers des maladies non transmissibles."
+      },
+      {
+        "key": "D",
+        "text": "La mortalité des maladies cancéreuses est supérieure à celles des maladies cardiovasculaires."
+      },
+      {
+        "key": "E",
+        "text": "La fréquence des valvulopathies dégénératives est en constante augmentation."
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Épidémiologie des valvulopathies en Algérie\n\nL’Algérie connaît une **transition épidémiologique** : les pathologies infectieuses régressent relativement, tandis que les **maladies non transmissibles** prennent une place prédominante. Parmi elles, les maladies cardiovasculaires constituent un enjeu majeur de mortalité.\n\nEn valvulopathie, le **rhumatisme articulaire aigu** reste une étiologie importante, notamment chez le sujet jeune et dans les atteintes plurivalvulaires. Parallèlement, l’allongement de l’espérance de vie accroît la part des lésions **dégénératives calcifiées**, observées surtout chez les sujets âgés.\n\n⚠️ Le piège consiste à confondre la progression des cancers avec leur rang dans la mortalité globale : ils augmentent, mais ne dépassent pas nécessairement les maladies cardiovasculaires.\n\n**Transition sanitaire** → maladies non transmissibles ↑ → valvulopathies dégénératives ↑ ; persistance du RAA → valvulopathies rhumatismales encore fréquentes.",
+    "source": "Externat Blida 2017, Externat Blida 2021",
+    "year": 2021
+  },
+  {
+    "id": "c_cardio_valvulo_26",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Quelle situation n'est pas un argument en faveur d’une origine auto-immune de lésion valvulaire. (Réponse fausse)",
+    "options": [
+      {
+        "key": "A",
+        "text": "SCA à 26e"
+      },
+      {
+        "key": "B",
+        "text": "Potentiels antécédents d’AVC thrombo-embolique"
+      },
+      {
+        "key": "C",
+        "text": "Femme de surcroît de grossesse"
+      },
+      {
+        "key": "D",
+        "text": "Contre-indication au traitement anticoagulant"
+      },
+      {
+        "key": "E",
+        "text": "Antécédent de thrombose de prothèse"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Énoncé incohérent\nLes items proposés ne constituent pas des critères étiologiques d’une atteinte valvulaire **auto-immune**. Ils correspondent plutôt au choix entre **prothèse mécanique** et **bioprothèse** : âge jeune et contexte thrombo-embolique orientent plutôt vers une stratégie nécessitant une anticoagulation durable, tandis que grossesse souhaitée ou contre-indication aux anticoagulants orientent vers une bioprothèse.\n\nUne origine auto-immune valvulaire se discute devant un contexte de **rhumatisme articulaire aigu**, lupus/syndrome des antiphospholipides, autres manifestations systémiques, biologie immunologique évocatrice et morphologie valvulaire compatible. Aucun de ces éléments n’est présent ici.\n\n⚠️ Puisque la question impose une seule réponse fausse alors que les cinq propositions sont hors sujet vis-à-vis de l’origine auto-immune, la correction la plus cohérente est de signaler l’erreur de formulation. Si le libellé visait une **prothèse mécanique**, la contre-indication aux anticoagulants serait clairement un argument contre celle-ci.",
+    "source": "Externat Blida 2021",
+    "year": 2021
+  },
+  {
+    "id": "c_cardio_valvulo_27",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcm",
+    "questionText": "Parmi les étiologies suivantes, quelle est celle ou quelles sont celles à l’origine d’une insuffisance mitrale (RJ) :",
+    "options": [
+      {
+        "key": "A",
+        "text": "endocardite infectieuse."
+      },
+      {
+        "key": "B",
+        "text": "R.A.A."
+      },
+      {
+        "key": "C",
+        "text": "maladie de Marfan."
+      },
+      {
+        "key": "D",
+        "text": "D.M.I."
+      },
+      {
+        "key": "E",
+        "text": "toutes ces réponses sont justes."
+      }
+    ],
+    "correctAnswers": [
+      "A",
+      "+",
+      "B",
+      "+",
+      "C",
+      "+",
+      "D"
+    ],
+    "explanation": "### Mécanismes étiologiques de l’insuffisance mitrale\n\nL’insuffisance mitrale résulte d’un défaut de coaptation des feuillets mitraux pendant la systole. Elle peut être liée à une atteinte **organique** de la valve ou de son appareil sous-valvulaire.\n\nLes grandes causes incluent :\n- une destruction ou perforation valvulaire par **endocardite infectieuse** ;\n- une atteinte post-rhumatismale, souvent associée à une sténose mais parfois responsable d’une fuite prédominante ;\n- une dilatation de l’anneau et un prolapsus liés aux anomalies du tissu conjonctif, notamment dans le **syndrome de Marfan** ;\n- une dégénérescence myxoïde responsable de prolapsus, cadre habituel de la **maladie dégénérative mitrale**.\n\n⚠️ Une IM peut aussi être fonctionnelle, par dilatation du ventricule gauche ou ischémie, sans lésion primitive des feuillets.",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_valvulo_28",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Une expansion systolique du foie à l’inspection témoigne",
+    "options": [
+      {
+        "key": "A",
+        "text": "d’une cirrhose d’origine cardiaque"
+      },
+      {
+        "key": "B",
+        "text": "Péricardite constrictive"
+      },
+      {
+        "key": "C",
+        "text": "Rétrécissement tricuspide"
+      },
+      {
+        "key": "D",
+        "text": "Insuffisance tricuspide importante"
+      },
+      {
+        "key": "E",
+        "text": "Hypertension artérielle pulmonaire"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Physiopathologie\n\nUne **expansion systolique hépatique** est un foie qui augmente de volume de façon palpable ou visible pendant la systole ventriculaire droite. Elle traduit la transmission rétrograde de l’onde de pression systolique depuis le ventricule droit vers l’oreillette droite, puis les veines caves et les veines hépatiques.\n\nCe signe est donc très évocateur d’une **régurgitation tricuspide sévère** : le reflux systolique est suffisamment important pour être transmis au foie congestif. Il s’associe volontiers à une turgescence jugulaire avec **ondes V** amples et à des signes d’insuffisance cardiaque droite.\n\n⚠️ Une hépatomégalie congestive isolée n’est pas forcément pulsatile : le caractère **systolique expansif** est l’élément discriminant.",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_valvulo_29",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "L'importance de l'insuffisance mitrale s'apprécie par tous les éléments suivants sauf un :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Intensité du souffle holosystolique"
+      },
+      {
+        "key": "B",
+        "text": "Existence de signes d'hypertension artérielle pulmonaire"
+      },
+      {
+        "key": "C",
+        "text": "Présence d'un roulement proto diastolique"
+      },
+      {
+        "key": "D",
+        "text": "Existence de signes de dilatation des cavités gauches"
+      },
+      {
+        "key": "E",
+        "text": "Présence d'un troisième bruit"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Évaluation clinique de la sévérité\n\nDans l’**insuffisance mitrale (IM)** chronique, la gravité s’apprécie surtout par le **retentissement hémodynamique** de la fuite : surcharge volumique de l’oreillette puis du ventricule gauche, élévation secondaire des pressions pulmonaires et augmentation du débit transmitral.\n\nUn **roulement protodiastolique apical** traduit un débit diastolique élevé à travers une valve non sténosée : c’est un signe de fuite importante (« sténose mitrale fonctionnelle »). Le **B3** traduit une surcharge volumique ventriculaire gauche. Les signes d’**hypertension pulmonaire** et la dilatation des cavités gauches indiquent également une IM significative et/ou évoluée.\n\n⚠️ L’auscultation seule ne quantifie pas fiablement une fuite : un souffle peut être discret malgré une IM sévère, notamment si la pression auriculaire gauche est élevée ou dans une IM aiguë.\n\n**Sévérité d’IM → retentissement VG/OG + pression pulmonaire + hyperdébit transmitral, confirmés par échocardiographie.**",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_valvulo_30",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Parmi les signes échocardiographiques de l’insuffisance mitrale par rupture de cordage on peut retrouver tous les éléments suivants sauf un, lequel ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une dilatation du ventricule gauche"
+      },
+      {
+        "key": "B",
+        "text": "Une dilatation de l’oreillette gauche"
+      },
+      {
+        "key": "C",
+        "text": "Une hyperkinésie des parois du ventricule gauche"
+      },
+      {
+        "key": "D",
+        "text": "Une grande amplitude des mouvements d’un des feuillets de la valve mitrale"
+      },
+      {
+        "key": "E",
+        "text": "Une diminution de la pente EF mitrale."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Rupture de cordage : profil d’une insuffisance mitrale sévère\nLa rupture de cordage entraîne un **feuillet flottant (flail leaflet)**, dont l’excursion est anormalement ample, avec un reflux systolique important vers l’oreillette gauche. Le ventricule gauche éjecte une partie de son volume vers une cavité à basse pression : sa vidange paraît donc **hyperdynamique** malgré la gravité de la fuite.\n\nLa surcharge volémique chronique peut dilater l’**oreillette gauche** et le **ventricule gauche**. En situation très aiguë, ces cavités peuvent au contraire ne pas encore être dilatées : l’absence de dilatation n’exclut donc pas une rupture récente.\n\nLa pente **E–F** correspond à la fermeture diastolique progressive de la valve mitrale. Sa diminution évoque surtout un **obstacle au remplissage mitral**, classiquement le rétrécissement mitral. Lors d’une fuite mitrale importante, le remplissage rapide est habituellement majoré, avec une pente E–F plutôt abrupte.\n\n🩸 Rupture cordage → feuillet flottant + fuite massive → VG hyperkinétique ; pente E–F diminuée → penser plutôt **sténose mitrale**.",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_valvulo_31",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Parmi les causes habituelles suivantes d’insuffisance mitrale aiguë, l’une est inexacte",
+    "options": [
+      {
+        "key": "A",
+        "text": "La myocardiopathie hypertrophique et obstructive"
+      },
+      {
+        "key": "B",
+        "text": "Le traumatisme"
+      },
+      {
+        "key": "C",
+        "text": "L’endocardite bactérienne"
+      },
+      {
+        "key": "D",
+        "text": "La rupture de cordage"
+      },
+      {
+        "key": "E",
+        "text": "L’infarctus du myocarde."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Insuffisance mitrale aiguë : mécanisme et gravité\n\nL’insuffisance mitrale aiguë résulte d’une **perte brutale de coaptation** des feuillets : rupture d’un élément de l’appareil sous-valvulaire, destruction/perforation valvulaire ou lésion traumatique. Le ventricule gauche et l’oreillette gauche, non adaptés à cette surcharge volumique soudaine, ne peuvent pas se dilater rapidement.\n\nIl en résulte une élévation majeure de la pression dans l’oreillette gauche puis dans les veines pulmonaires : **œdème aigu du poumon**, dyspnée brutale, parfois choc cardiogénique. Le souffle systolique peut être discret car les pressions ventriculaire et auriculaire gauches s’égalisent rapidement.\n\nLa situation typique post-infarctus est la défaillance ischémique ou la rupture d’un **muscle papillaire**, responsable d’une fuite massive. Les atteintes infectieuses peuvent léser directement les feuillets ou les cordages.\n\n🩸 Rupture structurale brutale → régurgitation massive → hausse aiguë de pression OG → **OAP ± choc**.",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_valvulo_32",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Parmi les cardiopathies suivantes, qu’elle est celle qui peut provoquer un OAP :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Prolapsus de la valve mitrale"
+      },
+      {
+        "key": "B",
+        "text": "Péricardite constrictive"
+      },
+      {
+        "key": "C",
+        "text": "Endocardite aortique"
+      },
+      {
+        "key": "D",
+        "text": "Rétrécissement pulmonaire"
+      },
+      {
+        "key": "E",
+        "text": "Insuffisance tricuspide"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Œdème aigu du poumon (OAP) : mécanisme\nL’OAP cardiogénique traduit une élévation brutale de la **pression dans l’oreillette gauche et les veines pulmonaires**, avec transsudation de liquide vers l’interstitium puis les alvéoles. Il survient donc surtout lors d’une atteinte aiguë des cavités gauches ou des valves **mitrale/aortique**.\n\nUne infection valvulaire aortique peut détruire rapidement les cuspides et entraîner une **insuffisance aortique aiguë**. Le ventricule gauche, non adapté à cette surcharge volémique brutale, transmet l’élévation de pression en amont : c’est une cause classique d’OAP sévère.\n\n⚠️ Un prolapsus mitral habituellement modéré n’entraîne pas d’OAP ; celui-ci devient possible seulement s’il se complique d’une **insuffisance mitrale aiguë importante** (par exemple rupture de cordage). Dans une question à réponse unique, l’atteinte aortique infectieuse est donc la réponse la plus directement évocatrice.",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_valvulo_33",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "parmi les signes stéthacoustiques suivant, une seul ne témoigne pas de la sévérité d’une insuffisance mitrale: (RJ)",
+    "options": [
+      {
+        "key": "A",
+        "text": "L’existence d’un troisième bruit"
+      },
+      {
+        "key": "B",
+        "text": "Augmentation du B1 au foyer mitral"
+      },
+      {
+        "key": "C",
+        "text": "Souffle holosystolique a la pointe irradiant dans le dos"
+      },
+      {
+        "key": "D",
+        "text": "Roulement d’hyperdébit au foyer mitral"
+      },
+      {
+        "key": "E",
+        "text": "L’existence d’un éclat de B2 au foyer pulmonaire."
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Insuffisance mitrale sévère : traduction auscultatoire\n\nLa sévérité d’une insuffisance mitrale chronique se reconnaît surtout par les conséquences du **volume régurgité** sur le ventricule gauche, l’oreillette gauche et la circulation pulmonaire.\n\nUn **B3** traduit une surcharge volumique ventriculaire gauche avec pressions de remplissage élevées. Le flux diastolique mitral augmenté peut produire un **roulement d’hyperdébit apical** : il ne s’agit pas d’une sténose mitrale associée. L’élévation chronique des pressions pulmonaires explique un **B2 pulmonaire éclatant**.\n\nLe souffle typique est **holosystolique**, maximal à la pointe ; son irradiation dépend notamment de la direction du jet régurgitant et ne suffit pas isolément à quantifier la fuite. À l’inverse, dans une fuite importante, la fermeture mitrale est moins efficace : le premier bruit est volontiers **assourdi** plutôt que renforcé.\n\n🩸 Fuite importante → surcharge VG → **B3** et roulement de débit ; pression pulmonaire élevée → **P2 éclatant**.",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_valvulo_34",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Toutes les affections suivantes peuvent être responsable d’une insuffisance mitrale sauf une laquelle ? (RJ)",
+    "options": [
+      {
+        "key": "A",
+        "text": "Prolapsus de la valve mitrale"
+      },
+      {
+        "key": "B",
+        "text": "Endocardite"
+      },
+      {
+        "key": "C",
+        "text": "RAA"
+      },
+      {
+        "key": "D",
+        "text": "Maladie de Marfan"
+      },
+      {
+        "key": "E",
+        "text": "Embolie pulmonaire"
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Insuffisance mitrale : mécanismes\nL’**insuffisance mitrale (IM)** correspond à un reflux systolique du ventricule gauche vers l’oreillette gauche par défaut de coaptation valvulaire. Ses grandes causes sont :\n\n- atteinte **primitive des feuillets** : prolapsus, endocardite, rhumatisme articulaire aigu (RAA) ;\n- dilatation de l’**anneau mitral** ou atteinte de l’appareil sous-valvulaire : connectivopathies, cardiomyopathies, ischémie.\n\nLe **prolapsus** entraîne une coaptation insuffisante ; l’**endocardite** peut perforer ou détruire un feuillet ; le **RAA** peut provoquer une valvulopathie mitrale chronique ; la maladie de **Marfan** favorise une dégénérescence myxoïde avec prolapsus.\n\nÀ l’inverse, une embolie pulmonaire atteint la circulation pulmonaire et surcharge surtout le **ventricule droit**. Elle n’est pas une étiologie directe d’IM.\n\n🫀 Atteinte mitrale structurale ou de son appareil → IM ; atteinte vasculaire pulmonaire droite isolée → pas d’IM.",
+    "source": "Externat Blida 2016",
+    "year": 2016
+  },
+  {
+    "id": "c_cardio_valvulo_35",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "L'ECG d'une insuffisance mitrale importante peut mettre en évidence (RJ):",
+    "options": [
+      {
+        "key": "A",
+        "text": "HAD + HVG diastolique."
+      },
+      {
+        "key": "B",
+        "text": "HAG + HVG systolique."
+      },
+      {
+        "key": "C",
+        "text": "HAG + HAD."
+      },
+      {
+        "key": "D",
+        "text": "HVG diastolique."
+      },
+      {
+        "key": "E",
+        "text": "HAG + HVG diastolique."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Insuffisance mitrale chronique importante\n\nLa régurgitation systolique du ventricule gauche vers l’oreillette gauche crée une **surcharge volumique** de l’oreillette gauche et du ventricule gauche.\n\n- L’oreillette gauche se dilate progressivement : l’ECG peut montrer une **hypertrophie/augmentation auriculaire gauche** (onde P large, souvent bifide en DII ; composante terminale négative accentuée en V1).\n- Le ventricule gauche reçoit à la fois le volume éjecté normalement par l’oreillette et le volume régurgité : il s’agit d’une surcharge de volume, classiquement appelée **HVG diastolique** dans la sémiologie ECG.\n\nUne atteinte droite n’est pas attendue au début. Elle peut apparaître tardivement, en cas d’**hypertension pulmonaire** puis de retentissement sur les cavités droites.\n\n🩸 Fuite mitrale chronique → dilatation OG + surcharge volumique VG → **HAG + HVG diastolique**.",
+    "source": "Externat Blida 2016",
+    "year": 2016
+  },
+  {
+    "id": "c_cardio_valvulo_36",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcm",
+    "questionText": "Dans quelles formes étiologiques d'insuffisance mitrale peut-on être amener à une solution chirurgicale rapide ? (cochez la RF)",
+    "options": [
+      {
+        "key": "A",
+        "text": "Dans quelles formes étiologiques d'insuffisance mitrale peut-on être amener à une solution chirurgicale rapide ? (cochez la RF)"
+      },
+      {
+        "key": "B",
+        "text": "Insuffisance mitrale par prolapsus de la valve mitrale"
+      },
+      {
+        "key": "C",
+        "text": "Insuffisance mitrale massive par rupture de cordage"
+      },
+      {
+        "key": "D",
+        "text": "Insuffisance mitrale massive lors d'une dilatation mitrale percutané"
+      },
+      {
+        "key": "E",
+        "text": "insuffisance mitrale secondaire a une endocardite aiguë"
+      }
+    ],
+    "correctAnswers": [
+      "A",
+      "+",
+      "B"
+    ],
+    "explanation": "### Insuffisance mitrale aiguë : une urgence hémodynamique\n\nUne **solution chirurgicale rapide** se discute devant une insuffisance mitrale (IM) **aiguë sévère**, particulièrement si elle provoque un **œdème aigu du poumon**, un choc cardiogénique ou une mauvaise tolérance malgré le traitement médical.\n\nLe mécanisme est une surcharge volumique brutale de l’oreillette gauche et du ventricule gauche, qui n’ont pas eu le temps de se dilater ni de s’adapter : la pression auriculaire augmente brutalement → congestion pulmonaire sévère.\n\nLes contextes classiques sont :\n- rupture aiguë de cordage avec fuite massive ;\n- complication d’un geste de dilatation mitrale percutanée ;\n- endocardite infectieuse aiguë destructrice, surtout en cas d’insuffisance cardiaque ou de complication locale.\n\nÀ l’inverse, le **prolapsus valvulaire** est habituellement responsable d’une IM chronique, surveillée puis opérée selon le degré de fuite, les symptômes et le retentissement ventriculaire ; il n’impose pas, à lui seul, une chirurgie rapide.\n\n<span>IM aiguë sévère</span> → pression OG brutale ↑ → <span>OAP / instabilité</span> → chirurgie ou réparation urgente selon la cause.",
+    "source": "Externat Blida 2021",
+    "year": 2021
+  },
+  {
+    "id": "c_cardio_valvulo_37",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qroc",
+    "questionText": "Citer deux signes auscultatoires d'une insuffisance mitrale sévère.",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "Le souffle traduit le reflux systolique du VG vers l’OG. Un B3 évoque une surcharge volumique du VG, en faveur d’un retentissement important.\n\n→ IM sévère : souffle apical holosystolique + B3.",
+    "source": "Externat Blida 2013",
+    "year": 2013
+  },
+  {
+    "id": "c_cardio_valvulo_38",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qroc",
+    "questionText": "Citer trois étiologies d’une insuffisance mitrale aigue ?",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "Une IM aiguë survient lors d’une rupture brutale de l’appareil valvulaire ou d’une destruction infectieuse. Elle peut provoquer rapidement un OAP ou un choc cardiogénique et impose une prise en charge urgente.\n\n**Rupture cordage/pilier ou endocardite → IM aiguë → OAP/choc.**",
+    "source": "Externat Blida 2013",
+    "year": 2013
+  },
+  {
+    "id": "c_cardio_valvulo_39",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Les lésions anatomiques suivantes de la valve mitrale et de l'appareil sous valvulaire mitral peuvent générer une insuffisance mitrale pure sauf une. Cocher la réponse fausse",
+    "options": [
+      {
+        "key": "A",
+        "text": "dilatation de l'anneau"
+      },
+      {
+        "key": "B",
+        "text": "perforation valvulaire"
+      },
+      {
+        "key": "C",
+        "text": "soudure commissurale"
+      },
+      {
+        "key": "D",
+        "text": "rupture de cordage"
+      },
+      {
+        "key": "E",
+        "text": "ballonisation mitrale"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Mécanismes anatomiques de l’insuffisance mitrale\n\nUne **insuffisance mitrale (IM) pure** résulte d’un défaut de coaptation systolique des feuillets. Elle peut être due à une atteinte :\n\n- de l’**anneau** : dilatation annulaire, souvent fonctionnelle ;\n- des **feuillets** : perforation (endocardite), excès de tissu avec prolapsus ;\n- de l’**appareil sous-valvulaire** : rupture de cordage, responsable d’un prolapsus ou d’un volet flottant.\n\nLa **ballonisation mitrale** correspond à un prolapsus valvulaire : les feuillets se déplacent vers l’oreillette gauche en systole et peuvent laisser persister un orifice régurgitant.\n\nÀ l’inverse, la fusion des commissures réduit l’ouverture diastolique de la valve : c’est le mécanisme typique du **rétrécissement mitral**, le plus souvent rhumatismal. Une fuite peut s’y associer dans une atteinte mixte, mais cette lésion ne produit pas une IM pure.\n\n**Défaut de fermeture systolique** → IM ; **obstacle à l’ouverture diastolique** → sténose mitrale.",
+    "source": "Résidanat Blida 2001",
+    "year": 2001
+  },
+  {
+    "id": "c_cardio_valvulo_40",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "Le souffle systolique d'insuffisance tricuspidienne est reconnu sur toutes les caractéristiques suivantes sauf une. Cocher la réponse fausse",
+    "options": [
+      {
+        "key": "A",
+        "text": "temps systolique"
+      },
+      {
+        "key": "B",
+        "text": "maximal au niveau de l'appendice xiphoïde"
+      },
+      {
+        "key": "C",
+        "text": "augmente d'intensité à l'expiration profonde"
+      },
+      {
+        "key": "D",
+        "text": "mieux entendu en apnée inspiratoire"
+      },
+      {
+        "key": "E",
+        "text": "souvent associé à une expansion systolique du foie et des jugulaires"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Insuffisance tricuspide : souffle droit\n\nLe reflux systolique du ventricule droit vers l’oreillette droite produit habituellement un souffle **holosystolique**, doux et aspiratif, maximal au bord sternal inférieur, près de l’appendice xiphoïde.\n\nSa caractéristique sémiologique majeure est le **signe de Carvallo** : l’inspiration augmente le retour veineux systémique, donc le volume éjecté par le ventricule droit et l’intensité du souffle. Il est ainsi mieux perçu pendant une **apnée en inspiration**.\n\nUne insuffisance tricuspide importante transmet la pression systolique vers le système veineux cave : on peut observer une **turgescence jugulaire systolique** et un **foie pulsatile expansif**.\n\n🩸 Inspiration → retour veineux droit ↑ → souffle d’IT ↑",
+    "source": "Résidanat Blida 2001",
+    "year": 2001
+  },
+  {
+    "id": "c_cardio_valvulo_41",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_valvulo",
+    "courseName": "Valvulopathies (Rao, IM, RM, IA)",
+    "type": "qcs",
+    "questionText": "La récidive d'une crise de rhumatisme articulaire aigu est définie par (Cochez la réponse juste):",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une élévation de la VS et de la CRP lors de la dégression du traitement corticoïde"
+      },
+      {
+        "key": "B",
+        "text": "L'apparition d'une hyperleucocytose"
+      },
+      {
+        "key": "C",
+        "text": "L'apparition d'une autre poussée après normalisation clinique et biologique"
+      },
+      {
+        "key": "D",
+        "text": "L'apparition d'arthralgies et d'une élévation de la VS"
+      },
+      {
+        "key": "E",
+        "text": "La réascension du taux d'ASLO"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Définition\nUne **récidive de rhumatisme articulaire aigu (RAA)** correspond à une **nouvelle poussée inflammatoire** survenant après une période de **rémission complète**, c’est-à-dire avec normalisation à la fois clinique et biologique.\n\nElle traduit habituellement une nouvelle infection pharyngée à streptocoque A chez un patient insuffisamment protégé par la prophylaxie secondaire. Elle doit être distinguée d’un simple rebond biologique ou de douleurs isolées au cours de la décroissance thérapeutique : ces anomalies peuvent refléter une inflammation résiduelle, sans constituer une nouvelle crise.\n\n⚠️ Le diagnostic repose donc sur la réapparition d’un tableau évocateur de RAA après guérison préalable, et non sur un seul marqueur inflammatoire ou streptococcique.\n\n**Rémission clinique + biologique** → nouvel épisode compatible avec le RAA → **récidive**",
+    "source": "Résidanat Blida 2008",
+    "year": 2008
+  },
+  {
+    "id": "c_cardio_ic_1",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Au cours d’un œdème aigu du poumon cardiogénique, quelle est l’affirmation vraie :",
+    "options": [
+      {
+        "key": "A",
+        "text": "L’électrocardiogramme est inutile"
+      },
+      {
+        "key": "B",
+        "text": "Une hypotension artérielle n’est pas signe de gravite"
+      },
+      {
+        "key": "C",
+        "text": "Une expansion volumique est injustifié"
+      },
+      {
+        "key": "D",
+        "text": "Les diurétiques sont inutiles"
+      },
+      {
+        "key": "E",
+        "text": "L’échographie cardiaque est un examen invasif inutile"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Œdème aigu du poumon (OAP) cardiogénique : bases\n\nL’<span style=\"color:#0066cc;\">OAP cardiogénique</span> correspond à une **inondation alvéolaire par transsudat riche en eau** secondaire à une **élévation aiguë des pressions de remplissage du cœur gauche** (↑ pression télédiastolique VG, ↑ pression capillaire pulmonaire).\n\n### Mécanisme hémodynamique\n- Dysfonction VG (ischémique, valvulaire, rythmique, hypertensive…) → <span style=\"color:#cc0000;\">↑ pression dans l’oreillette gauche</span> → transmission au lit capillaire pulmonaire → passage de liquide dans l’interstitium puis les alvéoles.\n- Résultat : **dyspnée aiguë**, orthopnée, râles crépitants diffus, hypoxémie parfois sévère.\n\n### Importance des constantes et de l’hémodynamique\n- Une <span style=\"color:#cc0000;\">hypotension artérielle</span> traduit souvent une **défaillance myocardique sévère** et signe la gravité (risque de choc cardiogénique).\n- L’<span style=\"color:#cc6600;\">expansion volumique</span> aggrave en général la **congestion pulmonaire** (surcharge de pression dans le cœur gauche) et est donc **habituellement contre-indiquée**, sauf situation particulière de choc avec hypovolémie associée.\n\n### Examens essentiels\n- **ECG** : recherche d’ischémie aiguë, infarctus, trouble du rythme ou de conduction à l’origine de l’OAP.\n- **Échocardiographie cardiaque transthoracique** : examen **non invasif** qui précise la fonction VG, VD, les valvulopathies, les pressions pulmonaires et oriente la cause précise de l’OAP.\n\n### Principes thérapeutiques\n- Oxygénothérapie ± VNI/CPAP, position assise.\n- **Diurétiques de l’anse (furosémide)** pour diminuer la pression de remplissage gauche.\n- Vasodilatateurs (selon TA), traitement de la cause (SCA, poussée HTA, trouble du rythme, etc.).\n\n| Élément clé | Rôle/Implication clinique |\n|------------|---------------------------|\n| <span style=\"color:#cc0000;\">↑ pression capillaire pulmonaire</span> | Mécanisme central de l’OAP cardiogénique |\n| Hypotension artérielle | Marqueur de <span style=\"color:#cc0000;\">gravité</span> et de possible choc cardiogénique |\n| Diurétiques (furosémide) | Traitement majeur pour ↓ pressions de remplissage VG et congestion pulmonaire |\n| ECG | Dépiste ischémie, infarctus, troubles du rythme responsables de l’OAP |\n| Échocardiographie | Examen **non invasif** clé pour la cause et la sévérité de la défaillance cardiaque |\n| Expansion volumique | En règle générale <span style=\"color:#cc0000;\">déconseillée</span> dans l’OAP cardiogénique (risque d’aggravation) |",
+    "source": "Externat Blida 2020",
+    "year": 2020
+  },
+  {
+    "id": "c_cardio_ic_2",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Toutes ces propositions concernant l'état de choc sont fausse sauf :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Les dérivés nitrés sont parfois indiqués pour diminuer la précharge en cas de choc cardiogénique."
+      },
+      {
+        "key": "B",
+        "text": "Le remplissage vasculaire est le traitement principal du choc cardiogénique"
+      },
+      {
+        "key": "C",
+        "text": "La pression veineuse centrale est basse en cas de choc secondaire à une embolie pulmonaire massive."
+      },
+      {
+        "key": "D",
+        "text": "Le recours aux catécholamines est presque systématique en cas de choc hypovolémique"
+      },
+      {
+        "key": "E",
+        "text": "Le choc cardiogénique est la conséquence exclusive d'un défaut d'éjection du ventricule gauche."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Rappels clés sur les états de choc\n\nLes **états de choc** correspondent à une **hypoperfusion tissulaire aiguë** entraînant une souffrance cellulaire et un risque de défaillances multiviscérales. On distingue plusieurs grands types :\n- <span style=\"color:#1f77b4;\">**Choc hypovolémique**</span> : perte de volume (hémorragie, déshydratation) → priorité au **remplissage vasculaire massif**.\n- <span style=\"color:#d62728;\">**Choc cardiogénique**</span> : défaillance de la **pompe cardiaque** (infarctus, troubles du rythme, atteinte VD, valvulopathie aiguë…) → priorité à la **réanimation hémodynamique spécialisée** (inotropes, vasopresseurs, assistance circulatoire), remplissage très prudent.\n- <span style=\"color:#2ca02c;\">**Choc obstructif**</span> : obstacle au remplissage ou à l’éjection (EP massive, tamponnade…) → PVC et pressions droites souvent **élevées**.\n- <span style=\"color:#ff7f0e;\">**Choc distributif**</span> (septicémique, anaphylactique) : vasodilatation majeure.\n\nEn **choc cardiogénique**, les **dérivés nitrés** ne sont envisagés qu’avec beaucoup de prudence, parfois à faible dose, pour **diminuer la précharge** quand la pression artérielle est suffisante et que la congestion pulmonaire est majeure ; ce n’est ni systématique ni au centre du traitement. À l’inverse, en **choc hypovolémique**, le traitement de base est le **remplissage**, les catécholamines n’intervenant que secondairement si la pression artérielle reste insuffisante malgré la correction de la volémie.\n\n| Type de choc | Mécanisme principal | Signes hémodynamiques typiques | Traitement de base |\n|--------------|---------------------|---------------------------------|---------------------|\n| Hypovolémique | ↓ volume circulant | PVC basse, débit cardiaque ↓ | Remplissage massif (cristalloïdes, sang) |\n| Cardiogénique | Défaillance pompe VG/VD | Pressions de remplissage ↑, débit cardiaque ↓ | Inotropes/vasopresseurs, revascularisation, assistance ; remplissage prudent |\n| Obstructif (EP, tamponnade) | Obstacle remplissage/éjection | PVC ↑, choc parfois brutal | Lever l’obstacle (thrombolyse, drainage…) |\n| Distributif (sepsis…) | Vasoplégie périphérique | RVS ↓, souvent débit cardiaque ↑ au début | Remplissage + vasopresseur (noradrénaline) |",
+    "source": "Externat Blida 2017",
+    "year": 2017
+  },
+  {
+    "id": "c_cardio_ic_3",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcm",
+    "questionText": "L'œdème aigu du poumon d'origine hémodynamique (indiquer la ou les bonnes réponses):",
+    "options": [
+      {
+        "key": "A",
+        "text": "Traduit une insuffisance cardiaque droite sévère"
+      },
+      {
+        "key": "B",
+        "text": "Peut compliquer un rétrécissement mitral serré"
+      },
+      {
+        "key": "C",
+        "text": "Est dû à un bronchospasme"
+      },
+      {
+        "key": "D",
+        "text": "Est toujours la conséquence d'une élévation de la pression capillaire pulmonaire"
+      },
+      {
+        "key": "E",
+        "text": "Traduit une altération de la fonction cardiaque gauche"
+      }
+    ],
+    "correctAnswers": [
+      "B",
+      "+",
+      "D",
+      "+",
+      "E"
+    ],
+    "explanation": "### Définition (OAP hémodynamique = cardiogénique)\nL’**œdème aigu du poumon (OAP) d’origine hémodynamique** correspond à une **inondation alvéolo-interstitielle** liée à une **augmentation de la pression hydrostatique** dans le lit capillaire pulmonaire, le plus souvent par **élévation de la pression de l’oreillette gauche** (et donc de la **pression capillaire pulmonaire / PCP**).\n\n### Mécanisme clé (forces de Starling)\nQuand la **PCP** dépasse la capacité de drainage lymphatique, le liquide transsude :\n- d’abord dans l’**interstitium** (lignes de Kerley, dyspnée)\n- puis dans les **alvéoles** (orthopnée, crépitants, expectoration mousseuse).\n\n<font color=\"#b00020\"><b>Point discriminant</b></font> : dans l’OAP **hémodynamique**, l’évènement causal est l’**élévation de la pression hydrostatique** (≠ OAP lésionnel/SDRA où prédomine l’**augmentation de perméabilité**).\n\n### Étiologies typiques\n- **Dysfonction systolique/diastolique du VG** (ischémie, poussée hypertensive, troubles du rythme)\n- **Valvulopathies gauches** : notamment **rétrécissement mitral serré** (↑ pression OG → ↑ pression veineuse pulmonaire → OAP)\n\n### Tableau récapitulatif\n| Élément | OAP hémodynamique (cardiogénique) |\n|---|---|\n| Mécanisme | <font color=\"#1565c0\"><b>↑ pression hydrostatique</b></font> → transsudation |\n| Pression capillaire pulmonaire (PCP) | <font color=\"#1565c0\"><b>Élevée</b></font> |\n| Cause cardiaque typique | <font color=\"#2e7d32\"><b>Atteinte du cœur gauche</b></font> (VG/OG, valvules gauches) |\n| Exemple valvulaire | <font color=\"#2e7d32\"><b>Rétrécissement mitral serré</b></font> |\n| N’est pas | <font color=\"#b00020\"><b>Bronchospasme</b></font> (asthme) ni IC droite isolée |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_ic_4",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcm",
+    "questionText": "Une poussée d'insuffisance ventriculaire droite peut s'accompagner de: (Indiquer la ou les bonnes réponses)",
+    "options": [
+      {
+        "key": "A",
+        "text": "Souffle d'insuffisance tricuspidienne"
+      },
+      {
+        "key": "B",
+        "text": "Râles crépitants"
+      },
+      {
+        "key": "C",
+        "text": "Edèmes des membres inférieurs"
+      },
+      {
+        "key": "D",
+        "text": "Râles sibilants"
+      },
+      {
+        "key": "E",
+        "text": "Reflux hépato-jugulaire"
+      }
+    ],
+    "correctAnswers": [
+      "A",
+      "+",
+      "C",
+      "+",
+      "E"
+    ],
+    "explanation": "### Poussée d’insuffisance ventriculaire droite (IVD) : ce qu’il faut reconnaître\nUne **décompensation d’IVD** correspond à une élévation de la **pression veineuse systémique** par incapacité du ventricule droit à éjecter correctement vers la circulation pulmonaire. Elle se traduit surtout par des signes de **congestion veineuse périphérique** (et non par des signes pulmonaires).\n\n### Mécanismes clés\n- **↑ Pression dans l’oreillette droite et les veines caves** → distension jugulaire, **reflux hépato-jugulaire**, hépatomégalie douloureuse, ascite.\n- **↑ Pression hydrostatique veineuse périphérique** → **œdèmes déclives** (chevilles, jambes).\n- Dilatation de l’anneau tricuspide possible → **insuffisance tricuspide fonctionnelle** avec souffle.\n\n### À ne pas confondre avec l’insuffisance ventriculaire gauche\nLes **râles crépitants** et les **sibilants** sont surtout des signes de **congestion bronchopulmonaire** (plutôt insuffisance ventriculaire gauche / OAP).\n\n| Atteinte | Signes typiques | Exemples (QCM) |\n|---|---|---|\n| <span style=\"color:#1f77b4\"><b>Ventricule droit</b></span> (congestion <b>systémique</b>) | <b>Turgescence jugulaire</b>, <b>RHJ</b>, <b>œdèmes</b>, hépatomégalie, ascite, possible <b>IT</b> | <span style=\"color:#1f77b4\"><b>A, C, E</b></span> |\n| <span style=\"color:#d62728\"><b>Ventricule gauche</b></span> (congestion <b>pulmonaire</b>) | <b>Râles crépitants</b>, dyspnée, orthopnée, possible <b>sibilants</b> (« asthme cardiaque ») | <span style=\"color:#d62728\"><b>B, D</b></span> |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_ic_5",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Un œdème aigu pulmonaire cardiogénique peut être traité par: (1- Furosemide, 2-Digoxine, 3- Nitroglycérine, 4 - Propanolol) +2",
+    "options": [
+      {
+        "key": "A",
+        "text": "1, 2, 3"
+      },
+      {
+        "key": "B",
+        "text": "1, 2, 4"
+      },
+      {
+        "key": "C",
+        "text": "1, 4"
+      },
+      {
+        "key": "D",
+        "text": "1, 2, 3, 4"
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Œdème aigu du poumon (OAP) cardiogénique : logique du traitement\nL’OAP cardiogénique correspond à une **élévation brutale des pressions de remplissage du ventricule gauche** → **augmentation de la pression hydrostatique capillaire pulmonaire** → passage de liquide dans l’interstitium/alvéoles → **dyspnée aiguë, orthopnée, râles crépitants, hypoxémie**.\n\n### Objectifs thérapeutiques (urgence)\n1) <span style=\"color:#c0392b\"><b>Décharger</b></span> le ventricule gauche (↓ précharge ± ↓ postcharge)\n2) <span style=\"color:#2980b9\"><b>Améliorer l’oxygénation</b></span> (O₂, VNI/CPAP si besoin)\n3) <span style=\"color:#8e44ad\"><b>Traiter le facteur déclenchant</b></span> (SCA, HTA, trouble du rythme, valvulopathie, surcharge hydro-sodée…)\n\n### Médicaments proposés\n- **Furosémide**: diurétique de l’anse → **déplétion volémique** (et effet veino-dilatateur précoce) → utile si surcharge.\n- **Nitroglycérine**: **vasodilatateur veineux** (↓ précharge) et à dose plus élevée **artériel** (↓ postcharge) → très utile surtout si **HTA**/ischémie.\n- **Digoxine**: n’est pas le traitement de première intention de l’OAP “pur”, mais peut être utilisée si OAP sur **insuffisance cardiaque systolique** et surtout en cas de **fibrillation auriculaire rapide** (contrôle de fréquence + effet inotrope modéré).\n- **Propranolol**: bêtabloquant non sélectif → **effet inotrope négatif** ; en **décompensation aiguë** (OAP), il est en principe **à éviter** (hors situations très particulières et stabilisation).\n\n| Médicament | Intérêt dans OAP cardiogénique | Message clé |\n|---|---|---|\n| Furosémide | <span style=\"color:#27ae60\"><b>Oui</b></span> | ↓ surcharge/↓ précharge |\n| Nitroglycérine | <span style=\"color:#27ae60\"><b>Oui</b></span> | Vasodilatation → ↓ précharge (± postcharge) |\n| Digoxine | <span style=\"color:#f39c12\"><b>Oui (situations sélectionnées)</b></span> | Surtout si **FA rapide** + IC systolique |\n| Propranolol | <span style=\"color:#c0392b\"><b>Non (phase aiguë)</b></span> | Inotrope − → aggrave la décompensation |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_ic_6",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Les catécholamines dans l'insuffisance cardiaque: (Cocher la réponse fausse)",
+    "options": [
+      {
+        "key": "A",
+        "text": "Augmentent la contractilité des ventricules"
+      },
+      {
+        "key": "B",
+        "text": "Activent le système rénine-angiotensine"
+      },
+      {
+        "key": "C",
+        "text": "Augmentent la pression artérielle grâce à l'action vaso-constrictrice sur les récepteurs alpha"
+      },
+      {
+        "key": "D",
+        "text": "Diminuent le besoin d'oxygène de cœur et corrigent l'ischémie myocardique"
+      },
+      {
+        "key": "E",
+        "text": "Améliorent le débit cardiaque grâce à une action inotrope positive"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Définition\nLes **catécholamines** (ex. **adrénaline**, **noradrénaline**, **dobutamine**) sont des médicaments **inotropes/vasopresseurs** utilisés surtout dans l’**insuffisance cardiaque aiguë** avec **hypoperfusion**, **bas débit** ou **choc cardiogénique**.\n\n### Mécanismes essentiels\nElles stimulent les récepteurs **β1** cardiaques → **↑ contractilité** et souvent **↑ fréquence cardiaque** ; cela peut **augmenter le débit cardiaque**. Certaines stimulent aussi les récepteurs **α1** vasculaires → **vasoconstriction** et **↑ pression artérielle**.\n\nSur le plan neuro-hormonal, l’activation sympathique favorise aussi le **système rénine–angiotensine–aldostérone** via la stimulation **β1 juxta-glomérulaire** rénale. Donc elles soutiennent l’hémodynamique à court terme, mais au prix d’un **coût énergétique myocardique** élevé.\n\n### Point clinique capital ⚠️\nLes catécholamines **n’économisent pas l’oxygène du myocarde** : elles font plutôt **↑ consommation d’oxygène** du cœur, peuvent **favoriser les troubles du rythme** et **aggraver une ischémie** si le terrain coronarien est fragile.\n\n### Repère visuel\n**β1 cardiaque** → ↑ inotropie / ↑ chronotropie → ↑ débit cardiaque  \n**α1 vasculaire** → vasoconstriction → ↑ pression artérielle  \n**Effet indésirable majeur** → ↑ consommation en O₂ myocardique → <span style=\"color:#c62828\"><b>ischémie possible</b></span>\n\n| Effet des catécholamines | Conséquence |\n|---|---|\n| **Stimulation β1** | **↑ contractilité ventriculaire** |\n| **Stimulation α1** | **↑ vasoconstriction** puis **↑ PA** |\n| **Activation sympathique rénale** | **↑ rénine** puis **activation du SRAA** |\n| **Effet métabolique cardiaque** | <span style=\"color:#c62828\"><b>↑ besoin en O₂ du myocarde</b></span> |\n| **Bilan clinique** | utiles si **bas débit/choc**, mais à surveiller pour **arythmie** et **ischémie** |",
+    "source": "Externat Blida 2016, Résidanat Blida 2016, Résidanat Blida 2019",
+    "year": 2019
+  },
+  {
+    "id": "c_cardio_ic_7",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Un homme de 74 ans est admis pour dyspnée aiguë avec orthopnée. Il présente des râles crépitants bilatéraux et une SpO₂ à 84% en air ambiant. La pression artérielle est à 175/100 mmHg. Quel traitement fait partie de la prise en charge initiale de l’œdème aigu pulmonaire cardiogénique ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Remplissage vasculaire rapide"
+      },
+      {
+        "key": "B",
+        "text": "Diurétiques IV"
+      },
+      {
+        "key": "C",
+        "text": "Restriction hydrosodée seule"
+      },
+      {
+        "key": "D",
+        "text": "Corticothérapie IV systématique"
+      },
+      {
+        "key": "E",
+        "text": "Anticoagulation systématique"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Œdème aigu du poumon (OAP) cardiogénique : urgence respiratoire\n\nL’OAP cardiogénique correspond à une **augmentation brutale de la pression hydrostatique capillaire pulmonaire**, le plus souvent par défaillance aiguë du ventricule gauche. Le liquide envahit l’interstitium puis les alvéoles : dyspnée intense, orthopnée, crépitants diffus et hypoxémie en résultent.\n\nLa pression artérielle élevée suggère ici un profil **hypertensif** : l’augmentation de la postcharge aggrave la congestion pulmonaire. La prise en charge initiale associe installation assise, oxygénation (souvent VNI/CPAP si détresse persistante), monitorage et traitement rapide de la congestion. Les **diurétiques de l’anse IV** diminuent la volémie et les pressions de remplissage ; ils sont particulièrement indiqués lorsqu’il existe une surcharge volémique/congestion.\n\nEn cas d’OAP hypertensif, des **vasodilatateurs nitrés IV** peuvent aussi être très utiles, sous surveillance tensionnelle, car ils réduisent précharge et postcharge. À l’inverse, un remplissage rapide risque d’augmenter davantage les pressions pulmonaires et d’aggraver l’hypoxémie.\n\n🫁 **Insuffisance VG aiguë** → ↑ pression OG/capillaire pulmonaire → liquide alvéolaire → hypoxémie\n\n| Priorités immédiates | But |\n|---|---|\n| Position demi-assise + O₂/VNI selon gravité | Corriger l’hypoxémie, réduire le travail respiratoire |\n| Diurétique de l’anse IV | Décongestionner |\n| Dérivés nitrés si HTA et absence de contre-indication | Diminuer précharge/postcharge |",
+    "source": "Externat Blida 2026",
+    "year": 2026
+  },
+  {
+    "id": "c_cardio_ic_8",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "les symptômes de l’œdème aigu du poumon sont : (RF)",
+    "options": [
+      {
+        "key": "A",
+        "text": "L’expectoration mousseuse saumonée"
+      },
+      {
+        "key": "B",
+        "text": "Le grésillement laryngé"
+      },
+      {
+        "key": "C",
+        "text": "La dyspnée avec bradypnée expiratoire"
+      },
+      {
+        "key": "D",
+        "text": "L’orthopnée"
+      },
+      {
+        "key": "E",
+        "text": "La toux sèche de primodécubitus"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Œdème aigu du poumon cardiogénique\nL’élévation brutale de la pression dans les capillaires pulmonaires entraîne une inondation de l’interstitium puis des alvéoles. Il en résulte une **détresse respiratoire aiguë**, volontiers nocturne ou aggravée par le décubitus.\n\nLes manifestations typiques associent une **dyspnée intense à prédominance inspiratoire**, une **polypnée**, une orthopnée et une toux initialement sèche. Lorsque l’œdème alvéolaire est important, l’expectoration devient mousseuse et rosée (« saumonée »), par mélange d’air, de liquide alvéolaire et d’une faible quantité de sang.\n\nÀ l’auscultation, les râles crépitants peuvent progressivement envahir les deux champs pulmonaires ; un bronchospasme associé peut donner un tableau d’« asthme cardiaque ».\n\n⚠️ Dyspnée aiguë de l’EAP → **tachypnée/polypnée**, non ralentissement expiratoire.",
+    "source": "Externat Blida 2010",
+    "year": 2010
+  },
+  {
+    "id": "c_cardio_ic_9",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Au cours de l’état de choc cardiogénique (RJ) :",
+    "options": [
+      {
+        "key": "A",
+        "text": "La pression veineuse périphérique est élevée."
+      },
+      {
+        "key": "B",
+        "text": "La P. veineuse périphérique est basse."
+      },
+      {
+        "key": "C",
+        "text": "La pression veineuse périphérique est normale."
+      },
+      {
+        "key": "D",
+        "text": "La pression artérielle est élevée."
+      },
+      {
+        "key": "E",
+        "text": "Aucune de ces réponses n’est juste."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Choc cardiogénique : mécanisme hémodynamique\n\nLe choc cardiogénique résulte d’une **défaillance de pompe** : le débit cardiaque chute, entraînant une hypotension et une hypoperfusion tissulaire. Le sang s’accumule en amont du ventricule défaillant, ce qui augmente les pressions de remplissage.\n\nDans la forme habituelle avec atteinte du ventricule gauche, cette congestion est surtout visible dans le territoire pulmonaire (dyspnée, râles crépitants, œdème aigu du poumon). Lorsque l’insuffisance cardiaque droite est associée ou prédominante, la congestion veineuse systémique devient manifeste : turgescence jugulaire et **pression veineuse périphérique augmentée**.\n\n⚠️ À opposer au choc hypovolémique, où les veines périphériques sont collabées et la pression veineuse basse.\n\n**Défaillance de pompe → ↓ débit cardiaque et ↓ pression artérielle + ↑ pressions veineuses en amont**",
+    "source": "Externat Blida 2007",
+    "year": 2007
+  },
+  {
+    "id": "c_cardio_ic_10",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Le stade IV de la classification de Killip correspond à (RD).",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une auscultation normale"
+      },
+      {
+        "key": "B",
+        "text": "Des crépitants aux bases pulmonaires"
+      },
+      {
+        "key": "C",
+        "text": "Des râles crépitants dépassant la moitié des champs pulmonaires"
+      },
+      {
+        "key": "D",
+        "text": "Un choc cardiogénique"
+      },
+      {
+        "key": "E",
+        "text": "Aucune de ces propositions n’est exacte"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Classification de Killip dans l’infarctus aigu du myocarde\n\nLa classification de **Killip-Kimball** apprécie la gravité de l’**insuffisance cardiaque aiguë** au cours d’un syndrome coronarien aigu, à partir de l’examen clinique. Elle a une valeur pronostique : plus le stade est élevé, plus le risque de mortalité est important.\n\nLe dernier stade traduit une défaillance majeure de la pompe cardiaque : le débit cardiaque devient insuffisant pour assurer une perfusion tissulaire adéquate. On recherche alors une **hypotension**, des extrémités froides et moites, une oligurie, des troubles de conscience et des signes de vasoconstriction périphérique.\n\n| Stade | Présentation clinique dominante |\n|---|---|\n| I | Absence de signe d’insuffisance cardiaque |\n| II | Congestion pulmonaire modérée, ± galop B3 |\n| III | Œdème aigu du poumon |\n| IV | Défaillance circulatoire avec hypoperfusion périphérique |\n\n⚠️ La présence de crépitants caractérise une **congestion pulmonaire**, mais ne suffit pas à définir le stade le plus sévère.",
+    "source": "Externat Blida 2004",
+    "year": 2004
+  },
+  {
+    "id": "c_cardio_ic_11",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcm",
+    "questionText": "Au cours d'un tableau d'OAP aiguë massive (RF):",
+    "options": [
+      {
+        "key": "A",
+        "text": "l'étiologie la plus fréquente est l'endocardite infectieuse."
+      },
+      {
+        "key": "B",
+        "text": "le tableau le plus fréquent est celui d'un OAP."
+      },
+      {
+        "key": "C",
+        "text": "il existe très souvent une cardiomégalie importante."
+      },
+      {
+        "key": "D",
+        "text": "les pressions pulmonaires sont très élevées."
+      },
+      {
+        "key": "E",
+        "text": "l'ECG est souvent normal."
+      }
+    ],
+    "correctAnswers": [
+      "A",
+      "+",
+      "C",
+      "+",
+      "E"
+    ],
+    "explanation": "### Œdème aigu pulmonaire (OAP) massif\n\nL’OAP cardiogénique résulte d’une élévation brutale de la **pression hydrostatique capillaire pulmonaire** : le liquide quitte les capillaires et envahit d’abord l’interstitium puis les alvéoles. Il associe typiquement dyspnée aiguë intense, orthopnée, râles crépitants diffus, expectoration mousseuse parfois rosée, hypoxémie et détresse respiratoire.\n\nLes causes majeures sont une décompensation d’insuffisance cardiaque gauche, souvent sur **syndrome coronarien aigu**, poussée hypertensive, trouble du rythme ou valvulopathie aiguë. Une endocardite peut exceptionnellement provoquer une fuite valvulaire aiguë, mais ne constitue pas l’étiologie dominante.\n\nLa radiographie peut montrer un syndrome alvéolaire bilatéral périhilaire en « ailes de papillon ». Une silhouette cardiaque normale n’exclut pas l’OAP : lors d’une élévation très brutale des pressions de remplissage, notamment en cas d’insuffisance mitrale aiguë, la cardiomégalie peut manquer.\n\n⚠️ Un **ECG anormal** est fréquent et recherche surtout ischémie, trouble du rythme ou signes d’hypertrophie ventriculaire gauche.",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_ic_12",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Dans l’œdème pulmonaire cardiogénique, une des réponses suivantes est fausse, laquelle ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Est dû à une hyper pression capillaire pulmonaire"
+      },
+      {
+        "key": "B",
+        "text": "Peut être secondaire à une cardiopathie ischémique"
+      },
+      {
+        "key": "C",
+        "text": "Peut être secondaire à une embolie pulmonaire"
+      },
+      {
+        "key": "D",
+        "text": "Peut être secondaire à une HTA"
+      },
+      {
+        "key": "E",
+        "text": "La saignée est rarement indiquée"
+      }
+    ],
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "### Œdème pulmonaire cardiogénique\n\nIl résulte d’une **élévation de la pression hydrostatique dans les capillaires pulmonaires**, habituellement par augmentation des pressions de remplissage du **cœur gauche**. Le liquide traverse alors l’interstitium puis les alvéoles, entraînant dyspnée aiguë, râles crépitants et parfois expectoration mousseuse rosée.\n\nLes causes classiques sont une décompensation d’insuffisance ventriculaire gauche : **syndrome coronarien aigu ou cardiopathie ischémique**, poussée hypertensive, valvulopathie mitrale ou aortique, trouble du rythme rapide. La prise en charge vise surtout l’oxygénation/ventilation si nécessaire et la réduction de la congestion par diurétiques et traitement du facteur déclenchant.\n\nLa **saignée** pouvait diminuer rapidement la volémie dans des situations extrêmes de surcharge veineuse, mais elle est aujourd’hui exceptionnelle, réservée à de rares circonstances lorsque les moyens usuels ne sont pas immédiatement disponibles ou inefficaces.\n\n**Pression capillaire pulmonaire ↑ → transsudation alvéolaire → œdème pulmonaire cardiogénique**",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_ic_13",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Un coronarien de 55 ans, présente une dyspnée aiguë avec cyanose. L’examen clinique retrouve un rythme régulier à 120/min, une tachypnée à 35/min, des râles inspiratoires fins aux deux bases pulmonaires, un bruit de galop gauche. Sa température est à 37,2 degrés. Quel est votre diagnostic ?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Embolie pulmonaire"
+      },
+      {
+        "key": "B",
+        "text": "Pneumonie bilatérale"
+      },
+      {
+        "key": "C",
+        "text": "Broncho-pneumonie"
+      },
+      {
+        "key": "D",
+        "text": "Œdème aigu du poumon"
+      },
+      {
+        "key": "E",
+        "text": "Insuffisance respiratoire aiguë"
+      }
+    ],
+    "correctAnswers": [
+      "D"
+    ],
+    "explanation": "### Tableau d’**œdème aigu du poumon** cardiogénique\n\nChez ce patient coronarien, l’association d’une **dyspnée brutale**, d’une **tachypnée**, d’une cyanose, de râles crépitants bilatéraux et d’un **galop gauche** traduit une élévation aiguë des pressions de remplissage du ventricule gauche. La défaillance ventriculaire gauche augmente la pression dans les capillaires pulmonaires : du liquide passe dans l’interstitium puis les alvéoles, ce qui altère rapidement les échanges gazeux.\n\nL’absence de fièvre significative et le contexte cardiaque rendent une infection pulmonaire moins probable. L’embolie pulmonaire peut causer une dyspnée aiguë, mais n’explique pas typiquement les crépitants bilatéraux ni le galop gauche. L’insuffisance respiratoire aiguë est ici une **conséquence** de l’inondation alvéolaire, non le diagnostic étiologique principal.\n\n**Coronaropathie / dysfonction VG** → ↑ pression veineuse pulmonaire → congestion alvéolaire → hypoxémie, crépitants, détresse respiratoire.",
+    "source": "Externat Blida 2005",
+    "year": 2005
+  },
+  {
+    "id": "c_cardio_ic_14",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Concernant le choc cardiogénique (RJ) :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Il existe une défaillance de la pompe cardiaque."
+      },
+      {
+        "key": "B",
+        "text": "Il n’y a pas d’hypovolémie."
+      },
+      {
+        "key": "C",
+        "text": "Le diagnostic se fait par des mesures hémodynamiques."
+      },
+      {
+        "key": "D",
+        "text": "La cause la plus fréquente reste l’infarctus du myocarde."
+      },
+      {
+        "key": "E",
+        "text": "Toutes ces réponses sont justes."
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Choc cardiogénique\n\nLe choc cardiogénique est une **insuffisance circulatoire aiguë par défaillance de la pompe cardiaque** : le débit cardiaque devient insuffisant pour assurer une perfusion tissulaire adéquate. Il en résulte une hypotension, des signes d’hypoperfusion périphérique (marbrures, oligurie, confusion, hyperlactatémie) et souvent une congestion pulmonaire.\n\nLe profil hémodynamique typique associe une baisse du débit cardiaque avec des **pressions de remplissage élevées**. Les mesures hémodynamiques, aujourd’hui souvent complétées par l’échocardiographie, permettent d’objectiver ce mécanisme et d’évaluer sa gravité.\n\nL’étiologie dominante demeure l’**infarctus aigu du myocarde**, notamment lorsqu’il est étendu ou compliqué mécaniquement. Une hypovolémie n’est pas le mécanisme causal du choc cardiogénique ; elle caractérise le choc hypovolémique, même si des mécanismes mixtes peuvent exceptionnellement coexister.\n\n🫀 Défaillance myocardique → ↓ débit cardiaque → hypoperfusion systémique, souvent avec ↑ pressions de remplissage.",
+    "source": "Externat Blida 2016",
+    "year": 2016
+  },
+  {
+    "id": "c_cardio_ic_15",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Concernant le choc cardiogénique : (RF)",
+    "options": [
+      {
+        "key": "A",
+        "text": "Il existe une défaillance de la pompe cardiaque"
+      },
+      {
+        "key": "B",
+        "text": "Il existe une vasodilatation périphérique importante"
+      },
+      {
+        "key": "C",
+        "text": "Le diagnostic est fait par des mesures hémodynamiques"
+      },
+      {
+        "key": "D",
+        "text": "La cause la plus fréquente reste l’infarctus du myocarde"
+      },
+      {
+        "key": "E",
+        "text": "la pression veineuse périphérique est élevée"
+      }
+    ],
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "### Profil hémodynamique\nLe choc cardiogénique est une insuffisance circulatoire aiguë par **défaillance de pompe** : le débit cardiaque devient insuffisant pour assurer une perfusion tissulaire adéquate. Il associe typiquement hypotension, signes d’hypoperfusion (marbrures, oligurie, confusion, lactates élevés) et souvent congestion.\n\nLa baisse du débit active le système sympathique et le système rénine-angiotensine : la réponse habituelle est donc une **vasoconstriction périphérique** avec extrémités froides. Les pressions de remplissage sont fréquemment élevées, notamment en cas d’atteinte du ventricule gauche ou d’insuffisance cardiaque globale.\n\nL’infarctus aigu du myocarde est la cause classique la plus fréquente. Les mesures hémodynamiques montrent habituellement :\n\n| Débit cardiaque / index cardiaque | Résistances périphériques | Pressions de remplissage |\n|---|---|---|\n| ↓ | ↑ | ↑ |\n\n🩸 Défaillance de pompe → bas débit → hypoperfusion + vasoconstriction compensatrice.",
+    "source": "Externat Blida 2016",
+    "year": 2016
+  },
+  {
+    "id": "c_cardio_ic_16",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Le traitement diurétique de l’œdème aigu du poumon fait appel à (RJ) :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Hydrochlorothiazide"
+      },
+      {
+        "key": "B",
+        "text": "Acétazolamide"
+      },
+      {
+        "key": "C",
+        "text": "Amiloride"
+      },
+      {
+        "key": "D",
+        "text": "Indapamide"
+      },
+      {
+        "key": "E",
+        "text": "Furosémide"
+      }
+    ],
+    "correctAnswers": [
+      "E"
+    ],
+    "explanation": "### Diurétique de l’œdème aigu du poumon\n\nL’**œdème aigu du poumon cardiogénique** correspond à une élévation brutale de la pression hydrostatique capillaire pulmonaire, entraînant le passage de liquide dans l’interstitium puis les alvéoles. Le traitement vise notamment à diminuer rapidement la **volémie efficace** et les **pressions de remplissage du ventricule gauche**.\n\nLe diurétique utilisé en urgence est un **diurétique de l’anse**, administrable par voie intraveineuse : son action est rapide et puissante, avec une natriurèse importante. Il inhibe la réabsorption de sodium, potassium et chlore dans la branche ascendante large de l’anse de Henlé. Son effet veino-dilatateur initial contribue aussi à réduire la précharge avant même la diurèse.\n\nLes thiazidiques et apparentés ont une action moins puissante et moins adaptée à la prise en charge initiale urgente. L’acétazolamide et l’amiloride ne constituent pas le traitement diurétique de référence de cette situation.\n\n🩸 <span>EAP cardiogénique</span> → <span>diminuer la précharge</span> → <span>diurétique de l’anse IV</span>.",
+    "source": "Externat Blida 2016",
+    "year": 2016
+  },
+  {
+    "id": "c_cardio_ic_17",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qcs",
+    "questionText": "Mr KM Ggé de 50 ans tabagique et diabétique, présente au pavillon des urgences pour une dyspnee inaugurale d'installation aigue évoluant depuis 30 min, à l'examen le patient est polypnéique, dyspnéique PA-110/80. SPO2 a 85%, présente des crépitants au 2/3 des deux champs pulmonaires de discrets oedème des membres inférieurs. l'ECG retrouve un rythme sinusal régulier à 120 bpm avec un aspect de bloc de branche gauche complet, le patient est uniquement sous Aspirine et antidiabétiques oraux Afin de confirmer votre hypothèse diagnostique, vous devez demander l'examen para clinique suivant :",
+    "options": [
+      {
+        "key": "A",
+        "text": "Une échocardiographie trans-oesophagienne"
+      },
+      {
+        "key": "B",
+        "text": "Un angioscanner thoracique"
+      },
+      {
+        "key": "C",
+        "text": "Une scintigraphie myocardique"
+      },
+      {
+        "key": "D",
+        "text": "Une scintigraphie pulmonaire (perfusion/ventilation)"
+      },
+      {
+        "key": "E",
+        "text": "Un holter ECG."
+      }
+    ],
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "### Tableau compatible avec un œdème aigu du poumon cardiogénique\n\nLa combinaison d’une **dyspnée brutale**, d’une **hypoxémie sévère** (SpO₂ 85 %), de crépitants bilatéraux étendus et d’œdèmes périphériques évoque une insuffisance cardiaque aiguë congestive, avec œdème aigu du poumon. La pression artérielle conservée définit ici un profil « chaud et humide » : congestion prédominante sans choc cardiogénique.\n\nL’ECG montre une tachycardie sinusale et un **bloc de branche gauche complet** ; chez ce patient diabétique et tabagique, il faut rechercher en urgence une cardiopathie structurelle ou ischémique déclenchante. L’échocardiographie évalue rapidement la fonction ventriculaire gauche, les troubles de cinétique segmentaire, une valvulopathie aiguë et les pressions de remplissage. En pratique, l’**échocardiographie transthoracique** est l’examen initial habituel ; l’approche trans-œsophagienne est utile lorsque les images transthoraciques sont insuffisantes ou si une complication valvulaire/aortique est suspectée.\n\n⚠️ Les explorations scintigraphiques et le Holter ne répondent pas à l’urgence diagnostique d’une détresse respiratoire aiguë.",
+    "source": "Externat Blida 2020",
+    "year": 2020
+  },
+  {
+    "id": "c_cardio_ic_18",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qroc",
+    "questionText": "Citer trois étiologies d’un état de choc cardiogénique ?",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "Le choc cardiogénique résulte d’une défaillance aiguë de la pompe cardiaque avec baisse majeure du débit cardiaque. Le cours cite notamment les troubles du rythme parmi les causes de décompensation et décrit l’insuffisance aortique aiguë comme pouvant évoluer vers un choc cardiogénique.",
+    "source": "Externat Blida 2013",
+    "year": 2013
+  },
+  {
+    "id": "c_cardio_ic_19",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qroc",
+    "questionText": "Citer 3 étiologies responsables d’un choc cardiogénique.",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "Le choc cardiogénique résulte d’une chute majeure du débit cardiaque par altération de la **contractilité myocardique**. Le cours cite notamment l’infarctus, la myocardite et la cardiomyopathie dilatée.\n\n→ Contractilité ↓ → débit cardiaque ↓ → hypoperfusion périphérique.",
+    "source": "Externat Blida 2013",
+    "year": 2013
+  },
+  {
+    "id": "c_cardio_ic_20",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qroc",
+    "questionText": "Citer deux étiologies d’une insuffisance cardiaque aiguë.",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "L’ICA est souvent une décompensation d’une insuffisance cardiaque chronique. Parmi les facteurs déclenchants cités dans le cours figurent l’infection, l’HTA non contrôlée, les troubles du rythme, l’embolie pulmonaire et la non-adhérence thérapeutique.\n\n→ Décompensation : rechercher systématiquement un facteur déclenchant.",
+    "source": "Externat Blida 2013",
+    "year": 2013
+  },
+  {
+    "id": "c_cardio_ic_21",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qroc",
+    "questionText": "3 médicaments indiqués en cas d’insuffisance ventriculaire gauche aigue",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "Le cours indique le furosémide parentéral lors des décompensations aiguës et les dérivés nitrés dans l’OAP pour améliorer la congestion pulmonaire.\n\nLa dobutamine est un inotrope positif, utile lorsque l’IVG aiguë s’accompagne d’hypoperfusion ou de bas débit.\n\n→ Congestion : furosémide + nitré ; bas débit : dobutamine.",
+    "source": "Externat Blida 2014",
+    "year": 2014
+  },
+  {
+    "id": "c_cardio_ic_22",
+    "moduleId": "mod_cardio",
+    "courseId": "c_cardio_ic",
+    "courseName": "Insuffisance Cardiaque Aiguë et Chronique",
+    "type": "qroc",
+    "questionText": "complications de l’ICD aiguë",
+    "options": [],
+    "correctAnswers": [],
+    "explanation": "La défaillance aiguë du ventricule droit provoque à la fois une stase veineuse systémique en amont et une diminution du débit cardiaque en aval. L’hypoperfusion rénale aggrave la rétention hydrosodée et donc la congestion.\n\n→ VD défaillant ⇄ congestion systémique + bas débit → choc, oligurie/IRA.",
+    "source": "Externat Blida 2014",
+    "year": 2014
+  }
+]

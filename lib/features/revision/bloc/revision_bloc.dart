@@ -38,9 +38,16 @@ class RevisionBloc extends Bloc<RevisionEvent, RevisionState> {
     emit(state.copyWith(selectedModule: event.module));
   }
 
-  void _onOpenCourseQuestions(OpenCourseQuestionsEvent event, Emitter<RevisionState> emit) {
-    emit(state.copyWith(status: RevisionStatus.loading));
-    final questions = ResidencyRepository.getQuestionsForCourse(event.course.id);
+  Future<void> _onOpenCourseQuestions(OpenCourseQuestionsEvent event, Emitter<RevisionState> emit) async {
+    emit(state.copyWith(
+      status: RevisionStatus.loading,
+      selectedCourse: event.course,
+      currentQuestions: [],
+      currentQuestionIndex: 0,
+      userAnswers: {},
+      revealedQuestions: {},
+    ));
+    final questions = await ResidencyRepository.getQuestionsForCourseAsync(event.course);
     emit(state.copyWith(
       status: RevisionStatus.studySession,
       selectedCourse: event.course,

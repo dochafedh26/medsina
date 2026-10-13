@@ -14,24 +14,74 @@ class QcmStudyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<RevisionBloc, RevisionState>(
       builder: (context, state) {
-        final q = state.activeQuestion;
-        if (q == null) {
+        if (state.status == RevisionStatus.loading) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Entraînement')),
+            appBar: AppBar(
+              title: Text(
+                state.selectedCourse?.name ?? 'Révision QCM',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Aucune question disponible pour cette session.'),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<RevisionBloc>().add(ResetSessionEvent());
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Retour au catalogue'),
+                  const CircularProgressIndicator(color: AppTheme.primaryTeal),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Chargement des QCMs officiels pour\n"${state.selectedCourse?.name ?? 'ce cours'}"...',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                   ),
                 ],
+              ),
+            ),
+          );
+        }
+
+        final q = state.activeQuestion;
+        if (q == null) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                state.selectedCourse?.name ?? 'Entraînement',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.quiz_outlined, size: 64, color: Colors.grey.shade400),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Aucune question officielle enregistrée pour\n"${state.selectedCourse?.name ?? 'ce cours'}"',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Les séries de questions pour ce cours sont en cours de numérisation.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryTeal,
+                        foregroundColor: Colors.white,
+                      ),
+                      icon: const Icon(Icons.arrow_back_rounded, size: 16),
+                      onPressed: () {
+                        context.read<RevisionBloc>().add(ResetSessionEvent());
+                        Navigator.of(context).pop();
+                      },
+                      label: const Text('Retour au catalogue'),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
