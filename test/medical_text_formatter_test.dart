@@ -23,6 +23,30 @@ void main() {
       final output = MedicalTextFormatter.clean(input);
       expect(output, '1/2 dose de 500 mg ± 50 et ≤ 10 µg');
     });
+
+    test('cleans HTML spans, details, styles and entities from QCM explanation screenshot', () {
+      const input =
+          '### Groupe musculaire médial de la cuisse (adducteurs)\n\n'
+          'Le <span style="color:#0B7285; font-weight:bold;">groupe médial de la cuisse</span> '
+          'correspond au groupe des **adducteurs** : il s\'insère globalement sur le '
+          '<span style="color:#D9480F;">pubis / ischion</span> et se termine sur la '
+          '<span style="color:#D9480F;">ligne âpre du fémur</span> ou la patte d\'oie. '
+          'Il comprend <span style="color:#5C940D; font-weight:bold;">5 muscles</span> : '
+          '**pectiné**, **long adducteur**, **court adducteur**.\n\n'
+          '| Élément | <span style="color:#0B7285;">Groupe médial (adducteurs)</span> |\n'
+          '|---|---|\n'
+          '| Muscles clés | Pectiné, Long adducteur |';
+
+      final output = MedicalTextFormatter.clean(input);
+
+      expect(output.contains('<span'), isFalse);
+      expect(output.contains('</span>'), isFalse);
+      expect(output.contains('style='), isFalse);
+      expect(output.contains('**groupe médial de la cuisse**'), isTrue);
+      expect(output.contains('**5 muscles**'), isTrue);
+      expect(output.contains('pubis / ischion'), isTrue);
+      expect(output.contains('| Élément | Groupe médial (adducteurs) |'), isTrue);
+    });
   });
 }
 

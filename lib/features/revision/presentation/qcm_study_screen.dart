@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/medical_text_formatter.dart';
 import '../../ai_assistant/presentation/qcm_tutor_sheet.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
@@ -189,7 +191,7 @@ class QcmStudyScreen extends StatelessWidget {
 
                     // Question Statement
                     Text(
-                      q.questionText,
+                      MedicalTextFormatter.clean(q.questionText),
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, height: 1.4),
                     ),
                     const SizedBox(height: 20),
@@ -348,7 +350,7 @@ class QcmStudyScreen extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  opt.text,
+                  MedicalTextFormatter.clean(opt.text),
                   style: const TextStyle(fontSize: 14, height: 1.35),
                 ),
               ),
@@ -407,10 +409,23 @@ class QcmStudyScreen extends StatelessWidget {
             'Explication Médicale Détaillée :',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1F2937)),
           ),
-          const SizedBox(height: 6),
-          Text(
-            q.explanation,
-            style: const TextStyle(fontSize: 13, height: 1.45, color: Color(0xFF374151)),
+          const SizedBox(height: 10),
+          MarkdownBody(
+            data: MedicalTextFormatter.clean(q.explanation),
+            selectable: true,
+            styleSheet: MarkdownStyleSheet(
+              p: const TextStyle(fontSize: 13.5, height: 1.55, color: Color(0xFF374151)),
+              h1: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF111827)),
+              h2: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1F2937)),
+              h3: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F766E)),
+              strong: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF111827)),
+              listBullet: const TextStyle(color: AppTheme.primaryTeal),
+              tableHead: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF111827), fontSize: 12.5),
+              tableBody: const TextStyle(fontSize: 12.5, color: Color(0xFF374151)),
+              tableBorder: TableBorder.all(color: Colors.grey.shade300, width: 1),
+              tableColumnWidth: const FlexColumnWidth(),
+              tableCellsPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            ),
           ),
           const SizedBox(height: 14),
           SizedBox(
