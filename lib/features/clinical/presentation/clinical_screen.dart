@@ -1289,7 +1289,7 @@ class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
                   ),
                 )
               else
-                ...filteredDrugs.map((drug) => _buildDrugCard(drug)),
+                ...filteredDrugs.map((drug) => _EmergencyDrugCard(drug: drug)),
             ],
           ),
         );
@@ -1333,8 +1333,22 @@ class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
       ),
     );
   }
+}
 
-  Widget _buildDrugCard(EmergencyDrugModel drug) {
+class _EmergencyDrugCard extends StatefulWidget {
+  final EmergencyDrugModel drug;
+  const _EmergencyDrugCard({required this.drug});
+
+  @override
+  State<_EmergencyDrugCard> createState() => _EmergencyDrugCardState();
+}
+
+class _EmergencyDrugCardState extends State<_EmergencyDrugCard> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final drug = widget.drug;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
@@ -1344,171 +1358,188 @@ class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
         side: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
       ),
       elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top Row: DCI, Brand, Category, Route
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => setState(() => _expanded = !_expanded),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top Row: DCI, Brand, Category, Route & Expand icon
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          drug.dci,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF2563EB)),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          drug.brand,
+                          style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    alignment: WrapAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          drug.route,
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                        ),
+                      ),
+                      if (drug.algerianAvailability != null && drug.algerianAvailability!.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.local_hospital_rounded, size: 10, color: Color(0xFF059669)),
+                              const SizedBox(width: 4),
+                              Text(
+                                drug.algerianAvailability!,
+                                style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFF047857)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(width: 2),
+                      Icon(
+                        _expanded ? Icons.expand_less : Icons.expand_more,
+                        size: 20,
+                        color: Colors.grey.shade600,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+
+              // Indication preview (1 line if collapsed, full if expanded)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('🎯 ', style: TextStyle(fontSize: 12)),
+                  Expanded(
+                    child: Text(
+                      drug.indication,
+                      style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+                      maxLines: _expanded ? null : 1,
+                      overflow: _expanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+
+              if (_expanded) ...[
+                const SizedBox(height: 10),
+                const Divider(height: 1),
+                const SizedBox(height: 10),
+
+                // Posologie Container
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        drug.dci,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF2563EB)),
+                      const Text(
+                        '📋 Posologie & Administration :',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryDarkTeal),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
-                        drug.brand,
-                        style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+                        drug.dose,
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.35,
+                          color: isDark ? Colors.white70 : const Color(0xFF1E293B),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                Wrap(
-                  spacing: 4,
-                  runSpacing: 4,
-                  alignment: WrapAlignment.end,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2563EB).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        drug.route,
-                        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
-                      ),
-                    ),
-                    if (drug.algerianAvailability != null && drug.algerianAvailability!.isNotEmpty)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF10B981).withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.local_hospital_rounded, size: 10, color: Color(0xFF059669)),
-                            const SizedBox(width: 4),
-                            Text(
-                              drug.algerianAvailability!,
-                              style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFF047857)),
-                            ),
-                          ],
+                const SizedBox(height: 8),
+
+                // Alert Row
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF3C7).withValues(alpha: isDark ? 0.2 : 0.6),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.warning_amber_rounded, size: 15, color: Color(0xFFD97706)),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          drug.alert,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isDark ? const Color(0xFFFCD34D) : const Color(0xFFB45309),
+                            fontWeight: FontWeight.w600,
+                            height: 1.3,
+                          ),
                         ),
                       ),
-                  ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // AI Copilot Action Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF2563EB),
+                      side: BorderSide(color: const Color(0xFF2563EB).withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(vertical: 7),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    icon: const Icon(Icons.auto_awesome_rounded, size: 14),
+                    label: const Text(
+                      'Précisions Posologie & Adaptation avec le Copilote Gemini ✨',
+                      style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      ClinicalCopilotSheet.show(
+                        context,
+                        initialSituation: 'Posologie, adaptation et précautions pour ${drug.dci} (${drug.brand}) dans l\'indication : ${drug.indication}.',
+                      );
+                    },
+                  ),
                 ),
               ],
-            ),
-            const SizedBox(height: 8),
-
-            // Indication
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('🎯 ', style: TextStyle(fontSize: 12)),
-                Expanded(
-                  child: Text(
-                    drug.indication,
-                    style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // Posologie Container
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '📋 Posologie & Administration :',
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryDarkTeal),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    drug.dose,
-                    style: TextStyle(
-                      fontSize: 12,
-                      height: 1.35,
-                      color: isDark ? Colors.white70 : const Color(0xFF1E293B),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Alert Row
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFEF3C7).withValues(alpha: isDark ? 0.2 : 0.6),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.warning_amber_rounded, size: 15, color: Color(0xFFD97706)),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      drug.alert,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: isDark ? const Color(0xFFFCD34D) : const Color(0xFFB45309),
-                        fontWeight: FontWeight.w600,
-                        height: 1.3,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // AI Copilot Action Button
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF2563EB),
-                  side: BorderSide(color: const Color(0xFF2563EB).withValues(alpha: 0.5)),
-                  padding: const EdgeInsets.symmetric(vertical: 7),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                icon: const Icon(Icons.auto_awesome_rounded, size: 14),
-                label: const Text(
-                  'Précisions Posologie & Adaptation avec le Copilote Gemini ✨',
-                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  ClinicalCopilotSheet.show(
-                    context,
-                    initialSituation: 'Posologie, adaptation et précautions pour ${drug.dci} (${drug.brand}) dans l\'indication : ${drug.indication}.',
-                  );
-                },
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

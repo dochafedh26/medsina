@@ -223,17 +223,7 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
                       final m = filtered[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
-                        child: _buildMementoCard(
-                          m.title,
-                          m.icon,
-                          m.color,
-                          m.points,
-                          category: m.category,
-                          references: m.scientificReferences,
-                        ),
-                      );
+                      return _OnCallMementoCard(memento: m);
                     },
                   ),
           ),
@@ -241,89 +231,129 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
       ),
     );
   }
+}
 
-  Widget _buildMementoCard(
-    String title,
-    IconData icon,
-    Color color,
-    List<String> points, {
-    String? category,
-    String? references,
-  }) {
+class _OnCallMementoCard extends StatefulWidget {
+  final OnCallMemento memento;
+  const _OnCallMementoCard({required this.memento});
+
+  @override
+  State<_OnCallMementoCard> createState() => _OnCallMementoCardState();
+}
+
+class _OnCallMementoCardState extends State<_OnCallMementoCard> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final m = widget.memento;
+    final color = m.color;
+
     return Card(
       elevation: 0,
+      margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(color: Colors.grey.shade200, width: 1.2),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(icon, color: color, size: 22),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
-                      ),
-                      if (category != null && category.isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          category,
-                          style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            ...points.map((p) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('• ', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16)),
-                      Expanded(
-                        child: Text(p, style: const TextStyle(fontSize: 13, height: 1.4)),
-                      ),
-                    ],
-                  ),
-                )),
-            if (references != null && references.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              const Divider(),
-              const SizedBox(height: 4),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () => setState(() => _expanded = !_expanded),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.menu_book_rounded, size: 14, color: Colors.grey.shade500),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      references,
-                      style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade600),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    child: Icon(m.icon, color: color, size: 22),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          m.title,
+                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                        ),
+                        if (m.category.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            m.category,
+                            style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${m.points.length} réflexes',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    _expanded ? Icons.expand_less : Icons.expand_more,
+                    size: 20,
+                    color: Colors.grey.shade600,
                   ),
                 ],
               ),
+              if (_expanded) ...[
+                const SizedBox(height: 14),
+                const Divider(height: 1),
+                const SizedBox(height: 12),
+                ...m.points.map((p) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('• ', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16)),
+                          Expanded(
+                            child: Text(p, style: const TextStyle(fontSize: 13, height: 1.4)),
+                          ),
+                        ],
+                      ),
+                    )),
+                if (m.scientificReferences != null && m.scientificReferences!.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  const Divider(),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.menu_book_rounded, size: 14, color: Colors.grey.shade500),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          m.scientificReferences!,
+                          style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade600),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
