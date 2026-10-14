@@ -39,7 +39,6 @@ def _resolve_gemini_key() -> str:
     key = os.environ.get("GEMINI_API_KEY")
     if key:
         return key
-    # Fallback to local uncommitted app_secrets.dart if available
     secrets_file = Path(__file__).resolve().parents[2] / "lib" / "core" / "config" / "app_secrets.dart"
     if secrets_file.exists():
         try:
@@ -52,8 +51,24 @@ def _resolve_gemini_key() -> str:
             pass
     return ""
 
+def _resolve_supabase_key() -> str:
+    key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
+    if key:
+        return key
+    secrets_file = Path(__file__).resolve().parents[2] / "lib" / "core" / "config" / "app_secrets.dart"
+    if secrets_file.exists():
+        try:
+            import re
+            content = secrets_file.read_text(encoding="utf-8")
+            m = re.search(r"supabaseServiceKey\s*=\s*['\"]([^'\"]+)['\"]", content)
+            if m:
+                return m.group(1)
+        except Exception:
+            pass
+    return ""
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL", DEFAULT_SUPABASE_URL).rstrip("/")
-SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY", "")
+SUPABASE_KEY = _resolve_supabase_key()
 GEMINI_API_KEY = _resolve_gemini_key()
 
 CATALOG_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "modules_catalog_47.json"
@@ -646,7 +661,7 @@ def main():
     summary_results = []
 
     # 1. Conduite à Tenir (CAT)
-    if args.action in ("cat", "both"):
+    if args.action in ("cat", "both", "all"):
         cat_course = pick_candidate_course_for_cat(courses, supabase, target_course_id=args.course_id)
         if cat_course:
             cat_data = generate_clinical_protocol(cat_course, supabase, dry_run=args.dry_run)
@@ -660,7 +675,7 @@ def main():
                 })
 
     # 2. Daily Pearl (Perle du Jour)
-    if args.action in ("pearl", "both"):
+    if args.action in ("pearl", "both", "all"):
         pearl_course = pick_candidate_course_for_pearl(courses, supabase, target_course_id=args.course_id)
         if pearl_course:
             pearl_data = generate_daily_pearl(pearl_course, supabase, dry_run=args.dry_run)
