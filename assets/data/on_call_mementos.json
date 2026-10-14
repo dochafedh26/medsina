@@ -310,5 +310,24 @@
     "is_active": true,
     "created_at": "2026-10-14T16:52:40.091468+00:00",
     "updated_at": "2026-10-14T16:52:40.091487+00:00"
+  },
+  {
+    "id": "memento_aes_exposition_sang",
+    "title": "💉 Accident d'Exposition au Sang (AES)",
+    "category": "Infectiologie & Urgences",
+    "icon_name": "health_and_safety_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Nettoyage immédiat à l'eau et au savon puis antisepsie (Dakin ou Alcool à 70%) pendant 5 minutes. Ne jamais faire saigner, ne pas frotter.",
+      "Étape 2 : Évaluation du risque source (VIH, VHB, VHC) et statut vaccinal du soignant (Hépargyl / Rappel VHB / Ac anti-HBs).",
+      "Étape 3 : Consultation infectiologue de garde pour évaluation de la prophylaxie post-exposition (PPE) VIH dans les 4h (Trithérapie : Tenofovir/Emtricitabine + Dolutégravir).",
+      "Étape 4 : Bilan biologique urgent à H0 (Ag HBs, Ac anti-HCV, Sérologie VIH, Créatininémie, Transaminases, Bêta-HCG chez la femme).",
+      "Étape 5 : Déclaration obligatoire de l'accident au service de médecine du travail de l'établissement sous 24h et ouverture du dossier médico-légal."
+    ],
+    "scientific_references": "Consensus SFMU / Ministère de la Santé (MSPRH Algérie) / CCLIN",
+    "is_active": true,
+    "created_at": "2026-10-14T20:49:29.417790+00:00",
+    "updated_at": "2026-10-14T20:49:29.417803+00:00"
   }
 ]

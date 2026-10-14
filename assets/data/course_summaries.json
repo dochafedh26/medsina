@@ -67,6 +67,28 @@
     "treatment_summary": "Fond: Corticoïde Inhalé (CSI) + Formotérol (BDLA) par paliers GINA 1 à 5; Crise: Salbutamol nébulisé 5mg + Ipratropium + Corticothérapie IV/PO",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-14T17:40:00.000Z"
+  },
+  {
+    "course_id": "Blida_URGENCES_UMC_ENVENIMATIONS_ANIMALES",
+    "course_name": "Envenimations animales",
+    "module_id": "Blida_URGENCES_UMC",
+    "module_name": "Urgences (UMC)",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\n- **Envenimation scorpionique (Scorpionisme)** : Majeure en Algérie (**Androctonus australis** et **Buthus occitanus**). Le venin est un mélange neurotoxique bloquant les canaux ioniques (sodiques, potassiques, calciques), entraînant une libération massive de catécholamines (**tempête catécholaminergique**).\n- **Envenimation vipérine** : Due aux vipères du genre *Cerastes* ou *Daboia mauritanica*. Le venin a des propriétés cytotoxiques, myotoxiques, hémolytiques et **coagulantes** (consommation des facteurs de coagulation → CIVD).\n- **Méduse et poissons venimeux** : Toxines dermonécrotiques, neurotoxiques et cardiotoxiques.\n\n## 2. Démarche Diagnostique\n- **Classement OMS des envenimations scorpioniques (Algérie)** :\n  - **Classe I** : Douleur locale isolée (givre, rougeur, œdème).\n  - **Classe II** : Signes généraux mineurs (sueur, vomissements, tachycardie, priapisme, agitation).\n  - **Classe III** : Signes généraux majeurs / **Détresse vitale** (OAP hémodynamique, choc cardiogénique, collapsus, convulsions, coma).\n- **Envenimation vipérine** : \n  - Signes locaux : Double morsure (crochets), œdème évolutif, phlyctènes, nécrose.\n  - Signes généraux : Nausées, vomissements, hypotension, choc, syndrome hémorragique.\n- **Paraclinique d'urgence** : \n  - NFS, plaquettes, **TP, TCA, Fibrinogène** (recherche de CIVD / CIVD fruste).\n  - Ionogramme sanguin, fonction rénale, enzymes cardiaques (troponine, créatine kinase).\n  - Électrocardiogramme (ECG systématique devant une morsure de scorpion : troubles du rythme, ondes T négatives).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Diagnostic différentiel** : Piqûre simple d'hyménoptère (choc anaphylactique allergique vs envenimation toxique vraie).\n- **Forme pédiatrique** : Urgence absolue pour le scorpionisme (les enfants de 0 à 5 ans font les formes graves de classe III par **OAP cardiogénique** pur).\n\n## 4. Stratégie Thérapeutique\n- **Mesures générales communes** :\n  - **Interdit absolu** : Incision, aspiration, garrot (aggrave la nécrose locale et la diffusion du venin).\n  - Lavage abondant, désinfection, immobilisation du membre mordu.\n  - Anti-algiques (paracétamol), **Vaccination antitétanique** à jour.\n- **Traitement de l'envenimation scorpionique (Algérie)** :\n  - **Sérum antiscorpionique (SAS)** : Indiqué en classe II et III (selon protocoles nationaux du MSPRH). Voie I.M. ou I.V. lente après test cutané (attention au choc anaphylactique).\n  - Classe III : **Urgence réanimatoire absolue** → Remplissage prudent, **dobutamine** en cas de choc cardiogénique ou d'OAP (effet inotrope positif pour contrer la sidération myocardique catécholaminergique), ventilation mécanique si détresse.\n- **Traitement de l'envenimation vipérine** :\n  - **Sérum antivipérin (SAV)** si signes généraux ou œdème progressif au-delà d'une articulation.\n  - Correction des troubles de l'hémostase (plasma frais congelé, fibrinogène si CIVD avérée).\n  - Antibiothérapie prophylaxie si signes de surinfection locale.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Pronostic vital engagé** à court terme dans le scorpionisme (décès par collapsus cardiovasculaire ou OAP fulminant dans les premières heures).\n- **Complications** : Nécrose cutanée extensive (vipères), syndrome des loges, insuffisance rénale aiguë organique, CIVD, séquelles neurologiques post-anoxiques.",
+    "key_takeaways": [
+      "Le venin d'Androctonus australis induit une tempête catécholaminergique responsable d'un OAP cardiogénique et non lésionnel.",
+      "Interdiction formelle de poser un garrot ou d'inciser la plaie de morsure/piqûre.",
+      "La classification OMS du scorpionisme guide l'attitude thérapeutique : Classe III = Urgence absolue (réanimation, dobutamine, SAS).",
+      "Les enfants de moins de 5 ans sont la population la plus vulnérable aux formes graves de scorpionisme en Algérie.",
+      "Le venin de vipère entraîne un syndrome hémorragique et des troubles de la coagulation (surveiller TP, TCA, Fibrinogène)."
+    ],
+    "exam_traps": [
+      "Piège Annales : Proposer l'utilisation d'un garrot ou une incision-aspiration devant une morsure de vipère ou piqûre de scorpion (Réponse fausse et dangereuse).",
+      "Piège Traitement : Utiliser massivement les solutés de remplissage isotoniques dans l'OAP scorpionique de classe III (Risque d'aggraver la surcharge pulmonaire ; préférer les inotropes positifs comme la dobutamine).",
+      "Piège Diagnostic : Confondre un choc anaphylactique allergique (urticaire, bronchospasme) avec une envenimation systémique vraie (toxique)."
+    ],
+    "diagnostic_criteria": "Présentation clinique d'une piqûre ou morsure en zone endémique associée à une symptomatologie locale (douleur, œdème) et/ou générale classée selon l'OMS (classes I à III pour le scorpionisme, ou atteinte hémostatique/nécrotique pour lexisme vipérin).",
+    "treatment_summary": "Pas de garrot ni d'incision. Antibiothérapie, ATS/VAT. Pour le scorpionisme : Sérothérapie spécifique (SAS) dès la classe II, et réanimation agressive (dobutamine/ventilation) en classe III. Pour la vipère : Sérothérapie spécifique (SAV) et correction des troubles de l'hémostase.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-14T20:49:40.520149+00:00"
   }
 ]
-

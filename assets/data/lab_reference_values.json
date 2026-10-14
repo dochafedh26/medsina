@@ -306,5 +306,20 @@
     ],
     "created_at": "2026-10-14T16:52:36.982845+00:00",
     "updated_at": "2026-10-14T16:52:36.982862+00:00"
+  },
+  {
+    "id": "lab_hba1c",
+    "name": "Hémoglobine glyquée (HbA1c)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Normal : < 5.7 % | Prédiabète : 5.7 - 6.4 % | Diabète : ≥ 6.5 %",
+    "unit": "% (ou mmol/mol selon IFCC)",
+    "high_interpretation": "Valeur élevée : Témoigne d'un déséquilibre glycémique chronique sur les 3 derniers mois. Causes : Diabète de type 1 ou 2 mal contrôlé, mauvaise observance thérapeutique, iatrogénie (corticothérapie). Seuils et urgence : Pas d'urgence vitale immédiate isolée, mais un taux > 10 % expose à un risque majeur de complications métaboliques aiguës (acidocétose diabétique, syndrome hyperosmolaire) en cas de facteur déclenchant. Conduite à tenir : Réévaluation de la stratégie thérapeutique, recherche de facteurs favorisants, éducation thérapeutique.",
+    "low_interpretation": "Valeur basse : Causes : Hypoglycémies chroniques, variants d'hémoglobine, hémolyse chronique, saignements récents ou transfusions massives (diminution de la durée de vie des globules rouges faussant le dosage). Seuil d'urgence : Aucun seuil d'urgence vitale directe lié à l'HbA1c basse, mais recherche d'une pathologie sous-jacente (anémie hémolytique, insuffisance rénale chronique avancée). Conduite à tenir : Corréler avec l'hémogramme et le profil glycémique capillaire.",
+    "clinical_notes": [
+      "Pièges pré-analytiques majeurs : Fausse baisse de l'HbA1c en cas de diminution de la durée de vie érythrocytaire (hémolyse, saignements, grossesses, splénomégalie, transfusion) ou d'hémoglobinopathies (AS, AC, etc., selon la technique de dosage). Fausse augmentation en cas de carence en fer (diminution du renouvellement érythrocytaire, fausse glycation) ou d'urémie.",
+      "L'HbA1c n'est pas recommandée pour le diagnostic du diabète chez l'enfant, la femme enceinte, en cas d'anémie sévère ou d'insuffisance rénale chronique terminale, où l'on préfère l'autosurveillance glycémique et la glycémie à jeun."
+    ],
+    "created_at": "2026-10-14T20:49:21.655277+00:00",
+    "updated_at": "2026-10-14T20:49:21.655288+00:00"
   }
 ]
