@@ -257,7 +257,7 @@ jobs:
 
       - name: 📡 Register New OTA Release into Supabase
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
