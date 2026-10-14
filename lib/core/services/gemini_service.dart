@@ -7,8 +7,12 @@ import '../utils/medical_text_formatter.dart';
 import '../../features/revision/data/residency_repository.dart';
 
 class GeminiService {
-  // Configured Gemini API Key from git-ignored secrets
-  static String get apiKey => AppSecrets.geminiApiKey;
+  // Configured Gemini API Key from environment or git-ignored secrets
+  static String get apiKey {
+    const envKey = String.fromEnvironment('GEMINI_API_KEY');
+    if (envKey.isNotEmpty) return envKey;
+    return AppSecrets.geminiApiKey;
+  }
 
   // Active models with fallback cascade
   static const List<String> _modelCascade = [

@@ -56,6 +56,17 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: 🔑 Configure App Secrets
+        run: |
+          mkdir -p lib/core/config
+          if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
+            echo "class AppSecrets { static const String geminiApiKey = '${{ secrets.GEMINI_API_KEY }}'; }" > lib/core/config/app_secrets.dart
+          elif [ -f lib/core/config/app_secrets.dart.example ]; then
+            cp lib/core/config/app_secrets.dart.example lib/core/config/app_secrets.dart
+          else
+            echo "class AppSecrets { static const String geminiApiKey = ''; }" > lib/core/config/app_secrets.dart
+          fi
+
       - name: 📦 Install dependencies
         run: flutter pub get
 
@@ -100,6 +111,19 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: 🔑 Configure App Secrets
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "lib/core/config"
+          $key = "${{ secrets.GEMINI_API_KEY }}"
+          if ($key) {
+            "class AppSecrets { static const String geminiApiKey = '$key'; }" | Out-File -FilePath "lib/core/config/app_secrets.dart" -Encoding utf8
+          } elseif (Test-Path "lib/core/config/app_secrets.dart.example") {
+            Copy-Item -Path "lib/core/config/app_secrets.dart.example" -Destination "lib/core/config/app_secrets.dart" -Force
+          } else {
+            "class AppSecrets { static const String geminiApiKey = ''; }" | Out-File -FilePath "lib/core/config/app_secrets.dart" -Encoding utf8
+          }
+
       - name: 📦 Install dependencies
         run: flutter pub get
 
@@ -136,6 +160,17 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+
+      - name: 🔑 Configure App Secrets
+        run: |
+          mkdir -p lib/core/config
+          if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
+            echo "class AppSecrets { static const String geminiApiKey = '${{ secrets.GEMINI_API_KEY }}'; }" > lib/core/config/app_secrets.dart
+          elif [ -f lib/core/config/app_secrets.dart.example ]; then
+            cp lib/core/config/app_secrets.dart.example lib/core/config/app_secrets.dart
+          else
+            echo "class AppSecrets { static const String geminiApiKey = ''; }" > lib/core/config/app_secrets.dart
+          fi
 
       - name: 📦 Install dependencies
         run: flutter pub get
@@ -216,7 +251,7 @@ jobs:
             dist-release/*
 
       - name: 📡 Register New OTA Release into Supabase
-        if: env.SUPABASE_SERVICE_ROLE_KEY != ''
+        if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -270,3 +305,4 @@ jobs:
               r = requests.post(f'{url}/rest/v1/app_releases', headers=headers, json=rec)
               print(f'Supabase OTA registration for {rec[\"platform\"]}: status {r.status_code}')
           "
+
