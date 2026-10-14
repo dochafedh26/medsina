@@ -244,5 +244,21 @@
     "clinical_notes": [
       "Toujours calculer la calcémie corrigée en fonction de l'albuminémie : Ca_corr = Ca_mesuré + 0.02 * (40 - Albuminémie g/L)."
     ]
+  },
+  {
+    "id": "calcemie_corrigee_ionise",
+    "name": "Calcémie corrigée (Ca corr) & Calcium ionisé (Ca2+)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Calcémie totale: 2.20 - 2.60 | Calcium ionisé: 1.15 - 1.30",
+    "unit": "mmol/L",
+    "high_interpretation": "Hypercalcémie : Hyperparathyroïdie primaire, néoplasies (lyse osseuse, PTHrp), sarcoïdose, intoxication Vit D, immobilisation prolongée. Urgence vitale si > 3.5 mmol/L (risque d'arythmie, coma, arrêt cardiaque). Conduite : Réhydratation isotonique (NaCl 0.9%), biphosphonates, diurétiques de l'anse après remplissage.",
+    "low_interpretation": "Hypocalcémie : Hypoparathyroïdie, carence en Vit D, insuffisance rénale chronique, hypomagnésémie, pancréatite aiguë. Urgence vitale si < 1.75 mmol/L ou signes de tétanie (Chvostek, Trousseau). Conduite : Gluconate de calcium IV lent sous scope.",
+    "clinical_notes": [
+      "La calcémie totale dépend de l'albuminémie. Formule de correction : Ca corr (mmol/L) = Ca mesuré + 0.02 x (40 - Albumine en g/L).",
+      "Le calcium ionisé est la fraction biologiquement active, non influencée par l'albumine, mais dépendante du pH (l'acidose augmente le Ca2+ ionisé, l'alcalose le diminue).",
+      "Piège de concours : Toute hypocalcémie doit faire doser la magnésémie, car l'hypomagnésémie sévère induit une résistance à la PTH et une inhibition de sa sécrétion."
+    ],
+    "created_at": "2026-10-14T11:56:30.383520+00:00",
+    "updated_at": "2026-10-14T11:56:30.383533+00:00"
   }
 ]

@@ -231,5 +231,25 @@
       "Déclaration obligatoire au SEMEP et transmission de la fiche de toxicovigilance à l'Institut Pasteur d'Algérie."
     ],
     "scientific_references": "Guide National de Prise en Charge des Envenimations Scorpioniques - MSPRH / IPA Algérie"
+  },
+  {
+    "id": "colique_nephretique_febrile",
+    "title": "🚨 Colique Néphrétique Fébrile (CNF)",
+    "category": "Urgences Urologiques",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation immédiate de la stabilité hémodynamique (recherche de sepsis/choc septique) et élimination d'une obstruction bilatérale ou sur rein unique.",
+      "Étape 2 : Bilan biologique urgent : NFS, CRP, Créatininémie, Ionogramme sanguin, ECBU (avant antibiothérapie) et Hémocultures si fièvre > 38.5°C.",
+      "Étape 3 : Antalgie multimodale : AINS (Kétoprofène 100mg IV lent) si pas de contre-indication, associés à des antispasmodiques (Phloroglucinol 160mg IV) et paliers 2 ou 3 (Tramadol 100mg ou Paracétamol 1g IV).",
+      "Étape 4 : Antibiothérapie probabiliste IV immédiate après prélèvements : C3G (Ceftriaxone 2g/j) ou Fluoroquinolone (Ciprofloxacine 400mg x2/j) selon antibiogramme local.",
+      "Étape 5 : Drainage des voies urinaires en urgence (sonde JJ ou néphrostomie percutanée) si sepsis, anurie ou insuffisance rénale aiguë obstructive.",
+      "Étape 6 : Piège : Ne jamais retarder le drainage chirurgical par une antibiothérapie seule en cas de sepsis sévère ; risque de choc septique irréversible."
+    ],
+    "scientific_references": "Consensus AFU / SFMU / Recommandations MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-14T11:56:44.786516+00:00",
+    "updated_at": "2026-10-14T11:56:44.786530+00:00"
   }
 ]
