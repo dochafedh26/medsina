@@ -22,14 +22,14 @@ def _resolve_supabase_key() -> str:
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
     if key:
         return key
-    secrets_file = Path(__file__).resolve().parents[2] / "lib" / "core" / "config" / "app_secrets.dart"
-    if secrets_file.exists():
+    env_file = Path(__file__).resolve().parents[2] / ".env"
+    if env_file.exists():
         try:
             import re
-            content = secrets_file.read_text(encoding="utf-8")
-            m = re.search(r"supabaseServiceKey\s*=\s*['\"]([^'\"]+)['\"]", content)
+            content = env_file.read_text(encoding="utf-8")
+            m = re.search(r"SUPABASE_SERVICE_ROLE_KEY\s*=\s*['\"]?([^'\"\r\n]+)['\"]?", content)
             if m:
-                return m.group(1)
+                return m.group(1).strip()
         except Exception:
             pass
     return ""
@@ -67,3 +67,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

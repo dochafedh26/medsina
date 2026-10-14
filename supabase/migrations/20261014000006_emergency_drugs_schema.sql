@@ -38,3 +38,4 @@ USING (true);
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_emergency_drugs_dci ON public.emergency_drugs (dci);
 CREATE INDEX IF NOT EXISTS idx_emergency_drugs_category ON public.emergency_drugs (category);
+
