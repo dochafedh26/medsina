@@ -3,6 +3,7 @@
 *.log
 *.pyc
 *.swp
+*.xlsx
 .DS_Store
 .env*
 lib/core/config/app_secrets.dart

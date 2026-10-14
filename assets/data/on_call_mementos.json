@@ -1,0 +1,235 @@
+[
+  {
+    "id": "memento_checklist_garde",
+    "title": "Checklist de Début de Garde Hospitalière",
+    "category": "Organisation & Sécurité",
+    "icon_name": "checklist_rounded",
+    "color_hex": "#0D9488",
+    "priority_level": 3,
+    "points": [
+      "Prendre les transmissions orales et écrites du médecin sortant (patients instables en priorité absolue).",
+      "Vérifier les coordonnées d'urgence : Réanimation de garde, SAMU 115, Laboratoire central, Banque du sang (CTS).",
+      "Tester le chariot d'urgence du service : Défibrillateur opérationnel, laryngoscope et lames, ampoules d'Adrénaline et solutés.",
+      "Vérifier les bilans biologiques en attente des admissions de fin d'après-midi.",
+      "Identifier les patients à risque dans les lits du service (sepsis, détresse respiratoire, post-opératoire immédiat)."
+    ],
+    "scientific_references": "Guide Pratique de l'Interne de Garde SFMU / Recommandations d'organisation des urgences"
+  },
+  {
+    "id": "memento_ordonnance_conforme",
+    "title": "Règle de Rédaction d'Ordonnance Conforme (MSPRH)",
+    "category": "Bonne Pratique Médicale",
+    "icon_name": "description_rounded",
+    "color_hex": "#0284C7",
+    "priority_level": 3,
+    "points": [
+      "Identité complète du malade : Nom, prénom, âge, poids (obligatoire chez l'enfant et l'insuffisant rénal).",
+      "Date du jour et signature lisible avec cachet médical officiel.",
+      "Dénomination Commune Internationale (DCI) recommandée — la spécialité commerciale entre parenthèses.",
+      "Posologie explicite : dose unitaire, voie d'administration, rythme des prises et durée exacte du traitement.",
+      "Mention « Ne pas dépasser » pour les antalgiques de palier 1 et 2.",
+      "En pédiatrie : toujours inscrire le poids en kg et calculer la dose exacte en mg/kg/j."
+    ],
+    "scientific_references": "Décret exécutif MSPRH relatif aux règles de prescription et de dispensation des médicaments"
+  },
+  {
+    "id": "memento_hypoglycemie",
+    "title": "CAT Hypoglycémie Sévère (Glycémie < 0,5 g/L)",
+    "category": "Urgences Métaboliques",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#F59E0B",
+    "priority_level": 1,
+    "points": [
+      "Confirmer immédiatement par dextrostix capillaire au lit du malade.",
+      "Si voie veineuse disponible : Sérum Glucosé à 30% (G30%) 50 mL IV direct (ou G10% 200 mL en 15 min).",
+      "Si pas de voie veineuse : Glucagon 1 mg SC ou IM (inefficace si dénutrition ou hépatopathie sévère).",
+      "Resucrage oral dès que le patient reprend conscience : boisson sucrée + sucres lents (pain, biscuit).",
+      "Surveillance glycémique toutes les 30 min pendant 2h. Rechercher impérativement la cause déclenchante.",
+      "Hospitaliser si : hypoglycémie sous sulfamides hypoglycémiants (risque de récidive sur 48h) ou sujet isolé."
+    ],
+    "scientific_references": "Consensus SFD / HAS Prise en charge des urgences métaboliques chez le diabétique"
+  },
+  {
+    "id": "memento_detresse_respiratoire",
+    "title": "CAT Détresse Respiratoire Aiguë aux Urgences",
+    "category": "Urgences Vitales",
+    "icon_name": "air_rounded",
+    "color_hex": "#0284C7",
+    "priority_level": 1,
+    "points": [
+      "Alerter le réanimateur si SpO2 < 88% sous O2 fort débit ou Fréquence Respiratoire > 35/min ou signes d'épuisement.",
+      "Installer le patient en position assise ou demi-assise (45°), O2 au masque haute concentration 12-15 L/min.",
+      "Monitorage continu : SpO2, FC, FR, Pression artérielle, tracé ECG, température.",
+      "Bilan d'urgence : NFS, CRP, D-Dimères, BNP, GDS artériel, radiographie thoracique au lit.",
+      "Éliminer les urgences vitales immédiates : Embolie pulmonaire, OAP cardiogénique, Pneumothorax suffocant, Crise d'asthme aigu grave.",
+      "En cas d'OAP : Furosémide 40 à 80 mg IVD + Dérivés nitrés si PAS > 110 mmHg + VNI (CPAP de Boussignac précoce)."
+    ],
+    "scientific_references": "Recommandations SRLF / SFMU Détresses respiratoires aiguës de l'adulte"
+  },
+  {
+    "id": "memento_douleur_thoracique",
+    "title": "CAT Douleur Thoracique aux Urgences & SCA ST+",
+    "category": "Urgences Cardiologiques",
+    "icon_name": "favorite_border_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "ECG 18 dérivations obligatoire réalisé et interprété en moins de 10 minutes.",
+      "Si sus-décalage ST persistant (SCA ST+) : alerte cardiologie interventionnelle immédiate, stratégie de reperfusion < 120 min.",
+      "Traitement d'urgence immédiat : Aspirine 250-500 mg IV ou PO à croquer + Héparinothérapie (HNF ou Énoxaparine) + Antalgie.",
+      "Si pas de sus-décalage ST : dosage de la troponine ultra-sensible (protocole H0-H1 ou H0-H3).",
+      "Bilan systématique : NFS, TP-TCA, ionogramme, créatinine, radio thorax de face, lipase si douleur épigastrique.",
+      "Ne jamais administrer d'antalgiques morphiniques sans avoir éliminé une dissection aortique ou une urgence chirurgicale."
+    ],
+    "scientific_references": "Guidelines ESC 2023 Acute Coronary Syndromes / Consensus Société Algérienne de Cardiologie"
+  },
+  {
+    "id": "memento_sepsis_6",
+    "title": "Choc Septique — Protocole Sepsis 6 Heure 1",
+    "category": "Urgences Vitales",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#DC2626",
+    "priority_level": 1,
+    "points": [
+      "1. PRÉLEVER : Hémocultures (2 paires aéro-anaérobies) et prélèvements de foyers AVANT d'injecter les antibiotiques.",
+      "2. OXYGÉNER : O2 adapté pour cibler SpO2 ≥ 95% (ou 88-92% chez le BPCO reteneur).",
+      "3. REMPLIR : Remplissage vasculaire cristalloïde rapide 30 mL/kg en 30 à 60 min (NaCl 0.9% ou Ringer Lactate).",
+      "4. ANTIBIOTIQUES : Antibiothérapie IV probabiliste à large spectre débutée impérativement dans la 1ère heure.",
+      "5. VASOPRESSEURS : Noradrénaline IV titrée au PSE si PAS < 65 mmHg persistant après 1-2L de remplissage.",
+      "6. MONITORER : Dosage des lactates artériels initiaux et surveillance horaire de la diurèse par sonde urinaire."
+    ],
+    "scientific_references": "Surviving Sepsis Campaign International Guidelines 2021-2024"
+  },
+  {
+    "id": "memento_agitation_adulte",
+    "title": "Fiche Réflexe : Agitation Aiguë de l'Adulte en Garde",
+    "category": "Psychiatrie & Neurologie",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Priorité 1 : Éliminer formellement une cause organique d'extrême urgence : Hypoglycémie capillaire immédiate ! Hypoxie, Globe vésical aigu, Fécalome du sujet âgé, Intoxication toxique ou CO.",
+      "Priorité 2 : Mesures non pharmacologiques de désescalade verbale, pièce calme, retirer les objets contondants.",
+      "Priorité 3 : Sédation médicamenteuse uniquement si dangerosité : Hydroxyzine (Atarax) 50-100 mg ou Cyamémazine (Tercian) 25-50 mg PO ou IM selon tolérance hémodynamique.",
+      "Contre-indication des benzodiazépines chez le sujet âgé ou insuffisant respiratoire BPCO (risque d'arrêt respiratoire)."
+    ],
+    "scientific_references": "Recommandations SFMU / Conférence de consensus Agitation en milieu d'urgence"
+  },
+  {
+    "id": "memento_antidotes",
+    "title": "Antidotes d'Urgence à Connaître par Cœur",
+    "category": "Toxicologie Clinique",
+    "icon_name": "medication_liquid_rounded",
+    "color_hex": "#7C3AED",
+    "priority_level": 1,
+    "points": [
+      "Paracétamol : N-Acétylcystéine (NAC) IV selon le nomogramme de Rumack-Matthew, efficace jusqu'à H16.",
+      "Benzodiazépines : Flumazénil (Anexate) 0.2 mg IVD en 15 sec, puis 0.1 mg toutes les min (max 1-2 mg).",
+      "Opiacés / Morphine : Naloxone (Narcan) 0.4 mg IV ou IM, titration par paliers de 0.1 mg toutes les 2-3 min.",
+      "Organophosphorés (insecticides agricoles) : Atropine IV fortes doses (1 à 3 mg répétés) + Pralidoxime (Contrathion).",
+      "Antivitamines K (Sintrom) : PPSB (Concentré de Complexe Prothrombinique) 25 à 50 UI/kg + Vitamine K1 10 mg IV lente.",
+      "Héparine non fractionnée : Sulfate de Protamine (1 mg neutralise 100 UI d'héparine).",
+      "Bêtabloquants : Glucagon 3 à 5 mg IVD puis perfusion continue (ou émulsion lipidique Intralipide)."
+    ],
+    "scientific_references": "Guide des Antidotes SFMU / Centre Antipoison CAP Algérie"
+  },
+  {
+    "id": "memento_valeurs_alerte",
+    "title": "Valeurs Biologiques d'Alerte Absolue",
+    "category": "Biologie Médicale",
+    "icon_name": "biotech_rounded",
+    "color_hex": "#0D9488",
+    "priority_level": 1,
+    "points": [
+      "Kaliémie < 2.5 mmol/L ou > 6.5 mmol/L → ECG d'urgence + protocole de correction immédiat.",
+      "Natrémie < 120 mmol/L ou > 155 mmol/L → risque neurologique extrême, correction lente.",
+      "Glycémie capillaire < 0.5 g/L (< 2.8 mmol/L) → resucrage IV immédiat (G30%).",
+      "pH artériel < 7.20 ou > 7.55 → gazométrie de contrôle, appel du réanimateur de garde.",
+      "Plaquettes < 20 000/mm³ → risque d'hémorragie cérébrale spontanée, transfusion plaquettaire.",
+      "Taux de Prothrombine (TP) < 30% avec saignement actif → PFC ou facteurs en urgence.",
+      "Créatininémie > 500 µmol/L aiguë avec anurie → indication de dialyse urgente."
+    ],
+    "scientific_references": "Normes SFBC et critères d'alerte critique biologique hospitalière"
+  },
+  {
+    "id": "memento_urgences_obstetrique",
+    "title": "Urgences Obstétricales en Garde",
+    "category": "Gynécologie-Obstétrique",
+    "icon_name": "pregnant_woman_rounded",
+    "color_hex": "#EC4899",
+    "priority_level": 1,
+    "points": [
+      "Pré-éclampsie sévère : PAS ≥ 160 ou PAD ≥ 110 mmHg + protéinurie + céphalées en casque / phosphènes → Nicardipine IV (Loxen) au PSE + Sulfate de magnésium (MgSO4) pour prévenir l'éclampsie.",
+      "Crise d'éclampsie : MgSO4 4 g IV en 15 min puis 1 g/h au PSE. Antidote : Gluconate de calcium 1g IV à portée de main.",
+      "Hémorragie du Post-Partum (HPP) : Ocytocine 5 à 10 UI IV lente, massage utérin immédiat, sac de recueil, appel équipe d'anesthésie-obstétrique. Transfusion précoce.",
+      "Interdiction formelle des AINS et de l'Aspirine forte dose à partir du 6e mois de grossesse (fermeture prématurée du canal artériel)."
+    ],
+    "scientific_references": "Recommandations CNGOF / SFAR Prise en charge des urgences obstétricales"
+  },
+  {
+    "id": "memento_pediatrie_doses",
+    "title": "Urgences Pédiatriques — Règles de Calcul de Dose",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#2563EB",
+    "priority_level": 2,
+    "points": [
+      "Paracétamol : 15 mg/kg par prise toutes les 6 heures (maximum 60 mg/kg/j).",
+      "Ibuprofène : 10 mg/kg par prise toutes les 8 heures (max 30 mg/kg/j). Contre-indiqué si < 3 mois, varicelle ou déshydratation.",
+      "Amoxicilline : 50 à 80 mg/kg/j en 3 prises (jusqu'à 90 mg/kg/j dans l'OMA purulente).",
+      "Salbutamol en nébulisation : 0.15 mg/kg (minimum 2.5 mg, max 5 mg) dilué dans du NaCl 0.9% sous débit O2 6-8 L/min.",
+      "Soluté de Réhydratation Orale (SRO) : 50 mL/kg sur 4h en cas de déshydratation aiguë modérée.",
+      "Estimation rapide du poids si inconnu : Poids (kg) = (Âge en années × 2) + 8 (valable de 1 à 10 ans)."
+    ],
+    "scientific_references": "Consensus Société Algérienne de Pédiatrie / SFMU Pédiatrique"
+  },
+  {
+    "id": "memento_coma_abcde",
+    "title": "Coma — Prise en Charge Initiale Standardisée (ABCDE)",
+    "category": "Neurologie & Urgences",
+    "icon_name": "psychology_rounded",
+    "color_hex": "#6D28D9",
+    "priority_level": 1,
+    "points": [
+      "A (Airway) : Libération des voies aériennes, canule de Guédel, position latérale de sécurité (PLS) si pas de traumatisme rachidien.",
+      "B (Breathing) : Oxygénothérapie au masque. Si Glasgow ≤ 8 : Intubation orotrachéale (IOT) sous séquence rapide pour protéger les voies aériennes.",
+      "C (Circulation) : Monitorage TA, Scope, deux voies veineuses périphériques de gros calibre, bilan biologique.",
+      "D (Disability) : Évaluation du score de Glasgow, réactivité et symétrie pupillaire (mydriase unilatérale = engagement cérébral urgent), glycémie capillaire immédiate.",
+      "E (Exposure) : Mesure de la température (hypothermie ? hyperthermie ?), examen cutané (purpura fulminans ? traces d'injections ?).",
+      "Si suspicion d'encéphalopathie de Gayet-Wernicke (dénutrition, alcoolisme) : injecter Thiamine (Vitamine B1) 500 mg IV AVANT tout apport glucosé."
+    ],
+    "scientific_references": "Consensus SRLF / SFAR Comas non traumatiques de l'adulte"
+  },
+  {
+    "id": "memento_brulures_parkland",
+    "title": "Brûlures Graves — Règle de Parkland et Réanimation",
+    "category": "Chirurgie & Réanimation",
+    "icon_name": "local_fire_department_rounded",
+    "color_hex": "#EA580C",
+    "priority_level": 1,
+    "points": [
+      "Évaluation de la Surface Corporelle Brûlée (SCB) par la règle des 9 de Wallace (Tête: 9%, Membres sup: 9% chacun, Membres inf: 18% chacun, Tronc ant: 18%, Tronc post: 18%, Périnée: 1%).",
+      "Brûlure grave nécessitant un centre de grands brûlés : SCB ≥ 20% adulte, ≥ 10% enfant ou localisation critique (face, mains, plis, périnée).",
+      "Formule de Parkland (24 premières heures) : Ringer Lactate = 4 mL × Poids (kg) × % SCB. Administrer la moitié dans les 8 premières heures, le reste sur les 16 heures suivantes.",
+      "Refroidissement précoce à l'eau courante tiède (15-20°C) pendant 15 minutes dans les 30 premières minutes.",
+      "Analgésie multimodale précoce (Morphine IV titrée). Ne jamais mettre de glace ni de corps gras."
+    ],
+    "scientific_references": "Recommandations SFETB (Société Française d'Étude et de Traitement des Brûlures)"
+  },
+  {
+    "id": "memento_scorpionisme",
+    "title": "CAT Envenimation Scorpionique (Algérie)",
+    "category": "Toxicologie Nationale",
+    "icon_name": "bug_report_rounded",
+    "color_hex": "#059669",
+    "priority_level": 1,
+    "points": [
+      "Classe I (Piqûre locale simple, pas de signes généraux) : Désinfection locale, surveillance médicale 4 heures, antalgiques (Paracétamol), pas de sérum.",
+      "Classe II (Signes généraux modérés : sudation profuse, priapisme, vomissements, agitation) : Hospitalisation, Prazosine 0.25 à 0.5 mg sublingual + surveillance continue scopée.",
+      "Classe III (Détresse vitale : choc cardiogénique, OAP, coma, convulsions) : Réanimation d'urgence, Dobutamine au PSE, VNI ou IOT, Sérothérapie antivenimeuse IPA.",
+      "Contre-indication absolue des morphiniques et des corticoïdes dans le scorpionisme (aggravent la défaillance hémodynamique).",
+      "Déclaration obligatoire au SEMEP et transmission de la fiche de toxicovigilance à l'Institut Pasteur d'Algérie."
+    ],
+    "scientific_references": "Guide National de Prise en Charge des Envenimations Scorpioniques - MSPRH / IPA Algérie"
+  }
+]

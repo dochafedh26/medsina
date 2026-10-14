@@ -14,6 +14,7 @@ import os
 import sys
 import json
 import random
+import re
 import argparse
 import datetime
 from pathlib import Path
@@ -73,6 +74,8 @@ GEMINI_API_KEY = _resolve_gemini_key()
 
 CATALOG_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "modules_catalog_47.json"
 EMERGENCY_DRUGS_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "emergency_drugs_algeria.json"
+LAB_VALUES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "lab_reference_values.json"
+ON_CALL_MEMENTOS_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "on_call_mementos.json"
 
 GEMINI_MODELS = [
     "gemini-3.5-flash-lite",
@@ -641,10 +644,348 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
     return data
 
 
+# =============================================================================
+# 4. BIOLOGICAL LAB REFERENCE VALUES (NORMES BIOLOGIQUES)
+# =============================================================================
+
+MASTER_LAB_POOL = [
+    "Troponine T et I hypersensible (hs-cTn)",
+    "D-Dimères",
+    "Procalcitonine (PCT)",
+    "Gazométrie artérielle (pH, PaO2, PaCO2, HCO3-, SaO2)",
+    "Ferritine sérique & Coefficient de Saturation de la Transferrine (CST)",
+    "Transaminases ALAT et ASAT",
+    "Lipase sérique",
+    "Bilirubine totale, conjuguée et libre",
+    "Phosphatases Alcalines (PAL) & Gamma-GT",
+    "Urée sérique / sanguine",
+    "Acide urique (Uricémie)",
+    "Hémoglobine glyquée (HbA1c)",
+    "Peptide Natriurétique BNP et NT-proBNP",
+    "TSH ultrasensible (TSHus)",
+    "T4 libre (FT4) et T3 libre (FT3)",
+    "Magnésémie (Magnésium sérique)",
+    "Phosphorémie (Phosphate inorganique)",
+    "Lactates plasmatiques (Lactatémie artérielle / veineuse)",
+    "Cholestérol total, HDL-C et calcul du LDL-C (Friedewald)",
+    "Triglycérides sériques",
+    "Protéinurie des 24h & Rapport Albuminurie/Créatininurie (RAC)",
+    "Microalbuminurie",
+    "Vitesse de Sédimentation (VS)",
+    "Temps de Quick (TQ) et INR",
+    "Temps de Céphaline Activée (TCA)",
+    "Fibrinogène sérique",
+    "Cortisol sérique à 8h",
+    "Prolactine sérique",
+    "Ammoniémie (Ammoniaque plasmatique)",
+    "Créatine Phosphokinase totale (CPK)",
+    "Calcémie corrigée & Calcium ionisé",
+    "Électrophorèse des protéines sériques (EPS) & Pic monoclonal",
+    "Bêta-HCG plasmatique quantitative",
+    "Antigène Spécifique de la Prostate (PSA total et libre)",
+    "Facteur Rhumatoïde (FR) & Anticorps Anti-CCP (ACPA)",
+    "Anticorps Anti-Nucléaires (AAN / ANA)",
+    "Complément sérique C3 et C4",
+    "Vitamines B12 et Folates (Vitamine B9)",
+    "Vitamine D (25-OH-Vitamine D3)",
+    "Osmolalité plasmatique & Trou osmotique",
+]
+
+
+def pick_candidate_lab_value(supabase: SupabaseClient, target_lab: Optional[str] = None) -> Optional[str]:
+    """Selects a biological parameter that does not already exist in the database or local catalog."""
+    if target_lab:
+        return target_lab
+
+    existing_names = set()
+    # Check remote Supabase
+    remote_labs = supabase.get("lab_reference_values", params={"select": "id,name"})
+    for l in remote_labs:
+        if l.get("id"):
+            existing_names.add(l["id"].lower())
+        if l.get("name"):
+            existing_names.add(l["name"].lower().strip())
+
+    # Check local JSON
+    if LAB_VALUES_FILE.exists():
+        try:
+            local_labs = json.loads(LAB_VALUES_FILE.read_text(encoding="utf-8"))
+            for l in local_labs:
+                if l.get("id"):
+                    existing_names.add(l["id"].lower())
+                if l.get("name"):
+                    existing_names.add(l["name"].lower().strip())
+        except Exception:
+            pass
+
+    def _normalize(s: str) -> str:
+        return re.sub(r'[^a-z0-9]', '', s.lower())
+
+    normalized_existing = {_normalize(n) for n in existing_names}
+
+    candidates = [
+        lab for lab in MASTER_LAB_POOL
+        if _normalize(lab) not in normalized_existing and not any(_normalize(lab) in ex or ex in _normalize(lab) for ex in normalized_existing)
+    ]
+
+    if not candidates:
+        print("All predefined lab values are already indexed! Picking random candidate for enrichment.")
+        return random.choice(MASTER_LAB_POOL)
+
+    return random.choice(candidates)
+
+
+def generate_lab_value(lab_name: str, supabase: SupabaseClient, dry_run: bool = False) -> Optional[Dict[str, Any]]:
+    """Generates an Algerian residency / clinical lab reference value monograph using Gemini Grounding."""
+    print(f"\n=======================================================")
+    print(f"🧪 GENERATING LAB REFERENCE VALUE: {lab_name}")
+    print(f"=======================================================")
+
+    system_prompt = """Tu es MedsinaPilot, biologiste médical hospitalier et réanimateur expert en médecine interne en Algérie.
+Ton rôle est de créer une fiche de valeur biologique de référence hyper-précise et adaptée aux candidats au concours de résidanat et aux médecins internes/résidents hospitaliers algériens.
+La fiche doit être claire, immédiatement exploitable au laboratoire et au lit du malade, et scientifiquement irréprochable (Consensus internationaux, SFBC, HAS, MSPRH Algérie).
+
+Format JSON STRICT attendu :
+{
+  "id": "lab_nom_sans_accents",
+  "name": "Nom de l'examen biologique exact (avec abréviation usuelle)",
+  "category": "Catégorie biologique",
+  "normal_range": "Plage physiologique normale (ex: 3.5 - 5.0 ou Homme: ... | Femme: ...)",
+  "unit": "Unité de mesure usuelle (ex: mmol/L, g/L, UI/L, µmol/L)",
+  "high_interpretation": "Interprétation clinique si valeur élevée (causes fréquentes, seuil d'urgence vitale, conduite à tenir immédiate)",
+  "low_interpretation": "Interprétation clinique si valeur basse (causes fréquentes, seuil d'urgence vitale, conduite à tenir immédiate)",
+  "clinical_notes": [
+    "Point de vigilance pré-analytique ou piège diagnostique (ex: fausse hyperkaliémie par hémolyse)",
+    "Règle de correction ou calcul associé indispensable au concours / lit du malade"
+  ]
+}
+Catégories autorisées : "Ionogramme & Rein", "Hématologie & Hémostase", "Cardiologie & Vasculaire", "Hépato-Gastro & Pancréas", "Endocrinologie & Métabolisme", "Infectiologie & Inflammation", "Gazométrie & Équilibre Acido-Basique", "Immunologie & Rhumatologie", "Vitamines & Oligo-éléments", "Marqueurs Tumoraux & Toxicologie".
+N'utilise AUCUNE balise Markdown dans ta réponse brute, juste le JSON pur.
+"""
+
+    prompt = f"""Rédige la fiche de référence biologique complète pour l'examen : {lab_name}.
+Fournis les normes usuelles exactes, les causes et seuils critiques d'urgence pour les valeurs hautes et basses, ainsi que 2 à 3 perles cliniques ou pièges fréquents du concours de résidanat."""
+
+    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        data = extract_clean_json(raw_response)
+    except Exception as e:
+        print(f"Error parsing JSON from Gemini: {e}\nRaw snippet:\n{raw_response[:400]}")
+        return None
+
+    if not data.get("id"):
+        clean_id = re.sub(r'[^a-zA-Z0-9]', '_', lab_name.lower()).strip('_')
+        data["id"] = f"lab_{clean_id}"
+
+    data["created_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    data["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    print(f"Generated Lab Value: {data.get('name')}")
+    print(f"Normal Range: {data.get('normal_range')} {data.get('unit')} | Category: {data.get('category')}")
+
+    if dry_run:
+        print("\n[DRY RUN] Generated Lab snippet:")
+        print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        return data
+
+    # 1. Save to remote Supabase
+    res = supabase.post("lab_reference_values", data, upsert=True)
+    if res:
+        print("Successfully saved lab value to Supabase lab_reference_values table!")
+    else:
+        print("Notice: Lab value generated locally (Supabase write skipped or pending).")
+
+    # 2. Append/Update local JSON asset file
+    if LAB_VALUES_FILE.exists():
+        try:
+            local_list = json.loads(LAB_VALUES_FILE.read_text(encoding="utf-8"))
+            idx = next((i for i, d in enumerate(local_list) if d.get("id") == data["id"] or d.get("name", "").lower() == data.get("name", "").lower()), None)
+            if idx is not None:
+                local_list[idx] = data
+            else:
+                local_list.append(data)
+            LAB_VALUES_FILE.write_text(json.dumps(local_list, indent=2, ensure_ascii=False), encoding="utf-8")
+            print(f"Updated local {LAB_VALUES_FILE.name} ({len(local_list)} total lab values)!")
+        except Exception as e:
+            print(f"Warning updating local lab values file: {e}")
+
+    return data
+
+
+# =============================================================================
+# 5. ON-CALL MEMENTOS (MÉMENTO DE GARDE HOSPITALIÈRE)
+# =============================================================================
+
+MASTER_MEMENTO_POOL = [
+    "État de Mal Épileptique / Convulsions Aiguës de l'Adulte",
+    "OAP Flash Hypertensif et Crise Aiguë Hypertensive",
+    "Hémorragie Digestive Haute par Rupture de Varices Œsophagiennes",
+    "Pneumothorax Spontané Compressif sous Tension",
+    "Accident d'Exposition au Sang et Liquides Biologiques (AES)",
+    "Malaise et Syncope aux Urgences — Algorithme Diagnostique",
+    "Rétention Aiguë d'Urine (Globe Vésical) en Urgence",
+    "Transfusion d'Urgence Vitale & Choc Hémorragique Massif",
+    "Pancréatite Aiguë — Tri et Prise en Charge Initiale",
+    "Syndrome Méningé Aigu & Indication de la Ponction Lombaire",
+    "Hyperkaliémie Aiguë avec Menace ECG Immédiate",
+    "Acidocétose Diabétique de l'Adulte — Réanimation Métabolique",
+    "Syndrome Coronarien Aigu sans Élévation du Segment ST (SCA non ST+)",
+    "Asthme Aigu Grave (AAG) aux Urgences",
+    "Arrêt Cardio-Respiratoire (ACR) de l'Adulte — Réanimation Spécialisée",
+    "Intoxication Médicamenteuse Aiguë Poly-médicamenteuse",
+    "Traumatisme Crânien Léger à Modéré — Critères de Scanner",
+    "Pédiatrie : Convulsion Fébrilée et État de Mal Pédiatrique",
+    "Pédiatrie : Déshydratation Aiguë et Réhydratation IV",
+    "Pédiatrie : Bronchiolite Aiguë du Nourrisson aux Urgences",
+    "Ischémie Aiguë de Membre Inférieur — Urgence Vasculaire",
+    "Morsures de Vipère en Algérie — Conduite Clinique et Antivenin",
+    "Choc Anaphylactique — Adrénaline Immédiate et Surveillance",
+    "Métrorragies du Premier Trimestre et Suspicion de GEU",
+    "Colique Néphrétique Hyperalgique et Fébrilée",
+]
+
+
+def pick_candidate_on_call_memento(supabase: SupabaseClient, target_memento: Optional[str] = None) -> Optional[str]:
+    """Selects an on-call memento topic that does not already exist in the database or local catalog."""
+    if target_memento:
+        return target_memento
+
+    existing_titles = set()
+    # Check remote Supabase
+    remote_mementos = supabase.get("on_call_mementos", params={"select": "id,title"})
+    for m in remote_mementos:
+        if m.get("id"):
+            existing_titles.add(m["id"].lower())
+        if m.get("title"):
+            existing_titles.add(m["title"].lower().strip())
+
+    # Check local JSON
+    if ON_CALL_MEMENTOS_FILE.exists():
+        try:
+            local_mementos = json.loads(ON_CALL_MEMENTOS_FILE.read_text(encoding="utf-8"))
+            for m in local_mementos:
+                if m.get("id"):
+                    existing_titles.add(m["id"].lower())
+                if m.get("title"):
+                    existing_titles.add(m["title"].lower().strip())
+        except Exception:
+            pass
+
+    def _normalize(s: str) -> str:
+        return re.sub(r'[^a-z0-9]', '', s.lower())
+
+    normalized_existing = {_normalize(t) for t in existing_titles}
+
+    candidates = [
+        topic for topic in MASTER_MEMENTO_POOL
+        if _normalize(topic) not in normalized_existing and not any(_normalize(topic) in ex or ex in _normalize(topic) for ex in normalized_existing)
+    ]
+
+    if not candidates:
+        print("All predefined on-call mementos are already indexed! Picking random candidate for enrichment.")
+        return random.choice(MASTER_MEMENTO_POOL)
+
+    return random.choice(candidates)
+
+
+def generate_on_call_memento(memento_title: str, supabase: SupabaseClient, dry_run: bool = False) -> Optional[Dict[str, Any]]:
+    """Generates an Algerian hospital on-call reflex protocol sheet using Gemini Grounding."""
+    print(f"\n=======================================================")
+    print(f"🌙 GENERATING ON-CALL MEMENTO PROTOCOL: {memento_title}")
+    print(f"=======================================================")
+
+    system_prompt = """Tu es MedsinaPilot, médecin chef de garde des urgences médico-chirurgicales (UMC) et réanimateur en Algérie.
+Ton rôle est de créer une fiche réflexe pour le « Mémento de Garde Hospitalière », destinée aux internes et résidents assurant la garde hospitalière de nuit.
+La fiche doit être ultra-synthétique, immédiatement opérationnelle au lit du malade au déchoquage, et scientifiquement irréprochable (SFMU, SRLF, ESC, Consensus Nationaux Algériens).
+
+Format JSON STRICT attendu :
+{
+  "id": "memento_nom_sans_accents",
+  "title": "Titre percutant avec emoji (ex: ⚡ Titre du Protocole)",
+  "category": "Catégorie de la garde",
+  "icon_name": "nom_icone_materiel",
+  "color_hex": "#HEX_COULEUR",
+  "priority_level": 1,
+  "points": [
+    "Étape 1 : geste immédiat, évaluation initiale ou élimination d'une urgence vitale",
+    "Étape 2 : examens paracliniques urgents à prélever au lit du malade",
+    "Étape 3 : thérapeutique d'urgence de 1ère intention avec posologies précises",
+    "Étape 4 : surveillance armée, critères de gravité imposant le transfert en réanimation",
+    "Étape 5 : piège médico-légal ou contre-indication absolue en situation d'urgence"
+  ],
+  "scientific_references": "Consensus SFMU / SRLF / Collège de Réanimation / MSPRH Algérie"
+}
+
+Noms d'icônes valides autorisés :
+"checklist_rounded", "description_rounded", "bolt_rounded", "air_rounded", "favorite_border_rounded", "emergency_rounded", "medication_liquid_rounded", "biotech_rounded", "pregnant_woman_rounded", "child_care_rounded", "psychology_rounded", "local_fire_department_rounded", "bug_report_rounded", "health_and_safety_rounded", "healing_rounded", "warning_rounded".
+
+priority_level :
+1 = Urgence vitale extrême (rouge/orange foncé)
+2 = Vigilance accrue / Protocole standard (bleu/cyan/violet)
+3 = Bonne pratique & organisationnelle (vert/teal)
+
+Couleurs recommandées (color_hex) :
+"#EF4444" (Rouge alerte), "#DC2626" (Rouge sombre), "#F59E0B" (Ambre urgence), "#0284C7" (Bleu ciel), "#2563EB" (Bleu roi), "#7C3AED" (Violet), "#0D9488" (Teal/Vert d'eau), "#059669" (Émeraude), "#EA580C" (Orange vif).
+
+N'utilise AUCUNE balise Markdown dans ta réponse brute, juste le JSON pur.
+"""
+
+    prompt = f"""Rédige la fiche réflexe de garde d'urgence pour : {memento_title}.
+Rédige entre 4 et 6 points réflexes numérotés ou ordonnés par ordre chronologique d'intervention, avec les posologies exactes adaptées à la pratique hospitalière en Algérie."""
+
+    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        data = extract_clean_json(raw_response)
+    except Exception as e:
+        print(f"Error parsing JSON from Gemini: {e}\nRaw snippet:\n{raw_response[:400]}")
+        return None
+
+    if not data.get("id"):
+        clean_id = re.sub(r'[^a-zA-Z0-9]', '_', memento_title.lower()).strip('_')
+        data["id"] = f"memento_{clean_id}"
+
+    data["is_active"] = True
+    data["created_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    data["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    print(f"Generated Memento: {data.get('title')}")
+    print(f"Category: {data.get('category')} | Priority: {data.get('priority_level')}")
+
+    if dry_run:
+        print("\n[DRY RUN] Generated Memento snippet:")
+        print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        return data
+
+    # 1. Save to remote Supabase
+    res = supabase.post("on_call_mementos", data, upsert=True)
+    if res:
+        print("Successfully saved memento to Supabase on_call_mementos table!")
+    else:
+        print("Notice: Memento generated locally (Supabase write skipped or pending).")
+
+    # 2. Append/Update local JSON asset file
+    if ON_CALL_MEMENTOS_FILE.exists():
+        try:
+            local_list = json.loads(ON_CALL_MEMENTOS_FILE.read_text(encoding="utf-8"))
+            idx = next((i for i, d in enumerate(local_list) if d.get("id") == data["id"] or d.get("title", "").lower() == data.get("title", "").lower()), None)
+            if idx is not None:
+                local_list[idx] = data
+            else:
+                local_list.append(data)
+            ON_CALL_MEMENTOS_FILE.write_text(json.dumps(local_list, indent=2, ensure_ascii=False), encoding="utf-8")
+            print(f"Updated local {ON_CALL_MEMENTOS_FILE.name} ({len(local_list)} total on-call mementos)!")
+        except Exception as e:
+            print(f"Warning updating local mementos file: {e}")
+
+    return data
+
+
 def main():
     parser = argparse.ArgumentParser(description="MedsinaPilot Autonomous Medical Agent")
-    parser.add_argument("--action", choices=["cat", "pearl", "drugs", "both", "all"], default="all", help="Action to perform")
+    parser.add_argument("--action", choices=["cat", "pearl", "drugs", "lab", "memento", "both", "all"], default="all", help="Action to perform")
     parser.add_argument("--dci", type=str, default=None, help="Specific drug DCI to generate")
+    parser.add_argument("--lab", type=str, default=None, help="Specific lab test name to generate")
+    parser.add_argument("--memento", type=str, default=None, help="Specific on-call memento topic to generate")
     parser.add_argument("--course-id", type=str, default=None, help="Specific course ID to process")
     parser.add_argument("--dry-run", action="store_true", help="Run without writing to Supabase")
     args = parser.parse_args()
@@ -688,7 +1029,7 @@ def main():
                     "status": "Succès ✅",
                 })
 
-        # 3. Emergency Drug Monograph (Urgences & DCI Algérie)
+    # 3. Emergency Drug Monograph (Urgences & DCI Algérie)
     if args.action in ("drugs", "all"):
         drug_dci = pick_candidate_emergency_drug(supabase, target_dci=args.dci)
         if drug_dci:
@@ -702,12 +1043,40 @@ def main():
                     "status": "Succès ✅",
                 })
 
+    # 4. Biological Reference Values (Normes Biologiques)
+    if args.action in ("lab", "all"):
+        lab_candidate = pick_candidate_lab_value(supabase, target_lab=args.lab)
+        if lab_candidate:
+            lab_data = generate_lab_value(lab_candidate, supabase, dry_run=args.dry_run)
+            if lab_data:
+                summary_results.append({
+                    "type": "Normes Biologiques",
+                    "course": (lab_data.get("normal_range") or "") + " " + (lab_data.get("unit") or ""),
+                    "specialty": lab_data.get("category", "Biologie"),
+                    "title": lab_data.get("name", lab_candidate),
+                    "status": "Succès ✅",
+                })
+
+    # 5. On-Call Hospital Memento (Mémento de Garde)
+    if args.action in ("memento", "all"):
+        memento_candidate = pick_candidate_on_call_memento(supabase, target_memento=args.memento)
+        if memento_candidate:
+            memento_data = generate_on_call_memento(memento_candidate, supabase, dry_run=args.dry_run)
+            if memento_data:
+                summary_results.append({
+                    "type": "Mémento de Garde",
+                    "course": f"Priorité {memento_data.get('priority_level', 1)}",
+                    "specialty": memento_data.get("category", "Garde Hospitalière"),
+                    "title": memento_data.get("title", memento_candidate),
+                    "status": "Succès ✅",
+                })
+
     # Print GitHub Actions step summary if available
     github_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if github_summary_path:
         with open(github_summary_path, "a", encoding="utf-8") as gf:
             gf.write("## 🩺 MedsinaPilot Automation Summary\n\n")
-            gf.write("| Type | Cours Officiel | Spécialité | Titre Généré | Statut |\n")
+            gf.write("| Type | Cours / Info | Spécialité | Titre Généré | Statut |\n")
             gf.write("| :--- | :--- | :--- | :--- | :--- |\n")
             for r in summary_results:
                 gf.write(f"| {r['type']} | {r['course']} | {r['specialty']} | {r['title']} | {r['status']} |\n")

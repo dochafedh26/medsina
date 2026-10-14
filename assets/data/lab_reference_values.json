@@ -1,0 +1,248 @@
+[
+  {
+    "id": "lab_potassium",
+    "name": "Potassium sérique (Kaliémie)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "3.5 - 5.0",
+    "unit": "mmol/L",
+    "high_interpretation": "Hyperkaliémie : Urgence vitale si > 6.0 mmol/L ou anomalies ECG (ondes T pointues et symétriques, élargissement QRS, disparition P). Risque d'arrêt cardiaque en asystolie. Causes : insuffisance rénale aiguë/chronique, acidose métabolique, rhabdomyolyse, lyse tumorale, surdosage en IEC, ARA2 ou spironolactone.",
+    "low_interpretation": "Hypokaliémie : Urgence si < 3.0 mmol/L. Risque d'arythmies ventriculaires majeures (torsades de pointes, fibrillation ventriculaire). Signes ECG : aplatissement T, sous-décalage ST, onde U proéminente, allongement QT. Causes : pertes digestives (vomissements, diarrhées), diurétiques hypokaliémiants (furosémide, thiazidiques), hyperaldostéronisme.",
+    "clinical_notes": [
+      "Attention à la fausse hyperkaliémie par hémolyse lors d'un prélèvement difficile ou garrot prolongé.",
+      "Toute dyskaliémie modérée à sévère justifie impérativement un ECG 12 dérivations immédiat."
+    ]
+  },
+  {
+    "id": "lab_sodium",
+    "name": "Sodium sérique (Natrémie)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "135 - 145",
+    "unit": "mmol/L",
+    "high_interpretation": "Hypernatrémie (> 145 mmol/L) : Traduit toujours une déshydratation intracellulaire. Signes : soif intense, sécheresse des muqueuses, fièvre centrale, somnolence, convulsions. Corriger lentement (< 10-12 mmol/L par 24h) avec du G5% pour éviter l'œdème cérébral iatrogène.",
+    "low_interpretation": "Hyponatrémie (< 135 mmol/L) : Hyperhydratation intracellulaire. Nausées, dégoût de l'eau, céphalées, confusion, coma si < 120 mmol/L. Risque fatal de myélinolyse centropontine (démyélinisation osmotique) en cas de correction trop brutale.",
+    "clinical_notes": [
+      "Calculer systématiquement la natrémie corrigée en présence d'hyperglycémie : Na_corr = Na + 1.6 * (Glycémie g/L - 1).",
+      "Distinguer l'hyponatrémie vraie par mesure de l'osmolalité plasmatique."
+    ]
+  },
+  {
+    "id": "lab_creatinine",
+    "name": "Créatinine sérique & DFG",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Homme : 60 - 110 | Femme : 45 - 90",
+    "unit": "µmol/L",
+    "high_interpretation": "Insuffisance rénale aiguë (IRA) ou chronique (IRC). Évaluer l'ancienneté par les valeurs antérieures et la taille des reins à l'échographie. Une hausse de 26 µmol/L en 48h définit une IRA (KDIGO stade 1).",
+    "low_interpretation": "Dénutrition sévère, sarcopénie majeure, hémodilution, grossesse (hyperfiltration physiologique).",
+    "clinical_notes": [
+      "Toujours estimer le Débit de Filtration Glomérulaire (DFG) par l'équation CKD-EPI (ou Cockcroft-Gault pour l'adaptation posologique des médicaments).",
+      "Arrêt immédiat des médicaments néphrotoxiques (AINS, aminosides, produits de contraste iodés)."
+    ]
+  },
+  {
+    "id": "lab_uree",
+    "name": "Urée sanguine",
+    "category": "Ionogramme & Rein",
+    "normal_range": "2.5 - 7.5",
+    "unit": "mmol/L (0.15 - 0.45 g/L)",
+    "high_interpretation": "Insuffisance rénale, déshydratation extracellulaire (IRA fonctionnelle : rapport Urée/Créat molaire > 100), hémorragie digestive haute (digestion des hématies), hypercatabolisme protidique ou corticothérapie.",
+    "low_interpretation": "Insuffisance hépatocellulaire sévère (baisse de synthèse du cycle de l'urée), dénutrition protidique sévère, hémodilution, grossesse.",
+    "clinical_notes": [
+      "Une élévation isolée de l'urée avec créatinine subnormale évoque en priorité une déshydratation fonctionnelle ou un saignement digestif haut occulte."
+    ]
+  },
+  {
+    "id": "lab_hemoglobine",
+    "name": "Hémoglobine (NFS)",
+    "category": "Hématologie",
+    "normal_range": "Homme : 13 - 17 | Femme : 12 - 15.5 | Enceinte : > 10.5",
+    "unit": "g/dL",
+    "high_interpretation": "Polyglobulie primitive (Maladie de Vaquez) ou secondaire (hypoxie chronique BPCO, cardiopathie cyanogène, tabagisme, tumeur sécrétant de l'EPO). Fausse polyglobulie par hémoconcentration.",
+    "low_interpretation": "Anémie. Classifier impérativement selon le VGM : Microcytaire (< 80 fl : carence martiale, thalassémie, anémie inflammatoire), Normocytaire (80-100 fl) ou Macrocytaire (> 100 fl : carence B12/folates, éthylisme, hypothyroïdie).",
+    "clinical_notes": [
+      "Seuil transfusionnel standard : Hb < 7 g/dL chez le sujet jeune sans antécédent ; Hb < 8 à 10 g/dL en cas de coronaropathie active ou SCA."
+    ]
+  },
+  {
+    "id": "lab_plaquettes",
+    "name": "Numération plaquettaire",
+    "category": "Hématologie",
+    "normal_range": "150 000 - 400 000",
+    "unit": "/mm³",
+    "high_interpretation": "Thrombocytose (> 450 000) : Réactionnelle inflammatoire/infectieuse, carence en fer, splénectomie, ou syndrome myéloprolifératif (Thrombocytémie essentielle). Risque thrombotique si > 1 000 000/mm³.",
+    "low_interpretation": "Thrombopénie (< 150 000) : Risque hémorragique spontané majeur si < 20 000/mm³. Causes urgentes : CIVD, microangiopathie thrombotique (PTT/SHU), purpura thrombopénique immunologique (PTI), thrombopénie induite par l'héparine (TIH).",
+    "clinical_notes": [
+      "Toujours éliminer une fausse thrombopénie par agglutination à l'EDTA en demandant un contrôle sur tube citraté.",
+      "Rechercher un purpura pétéchial et des bulles hémorragiques endobuccales."
+    ]
+  },
+  {
+    "id": "lab_leucocytes",
+    "name": "Globules Blancs (Leucocytes)",
+    "category": "Hématologie",
+    "normal_range": "4 000 - 10 000",
+    "unit": "/mm³",
+    "high_interpretation": "Hyperleucocytose : Polynucléose neutrophile (> 7 500) en faveur d'une infection bactérienne, nécrose tissulaire, tabagisme ou corticoïdes. Hyperéosinophilie (> 500) : parasitose, allergie médicamenteuse. Hyperlymphocytose : infection virale, LLC.",
+    "low_interpretation": "Leucopénie (< 4 000) / Neutropénie (< 1 500) : Agranulocytose médicale (< 500 PNN) : urgence vitale infectieuse (isolement, antibiothérapie immédiate si fièvre). Causes : chimio, toxiques, sepsis sévère, viroses (VIH, hépatites).",
+    "clinical_notes": [
+      "Neutropénie fébrile (PNN < 500 et T° ≥ 38.3°C) : urgence médicale absolue, hémocultures et antibiothérapie IV antipyocyanique dans l'heure."
+    ]
+  },
+  {
+    "id": "lab_crp",
+    "name": "Protéine C-Réactive (CRP)",
+    "category": "Inflammation & Infectiologie",
+    "normal_range": "< 5",
+    "unit": "mg/L",
+    "high_interpretation": "Syndrome inflammatoire biologique. Si CRP > 50 à 100 mg/L : forte suspicion d'infection bactérienne invasive, pneumonie franche, pyélonéphrite, péritonite, crise d'arthrite microcristalline ou maladie systémique.",
+    "low_interpretation": "Absence de syndrome inflammatoire systémique significatif.",
+    "clinical_notes": [
+      "Cinétique de la CRP : s'élève 6 à 12h après le début de l'agression, pic à 48h, demi-vie courte (19h). Excellent marqueur de surveillance de l'efficacité thérapeutique."
+    ]
+  },
+  {
+    "id": "lab_procalcitonine",
+    "name": "Procalcitonine (PCT)",
+    "category": "Inflammation & Infectiologie",
+    "normal_range": "< 0.1",
+    "unit": "ng/mL (µg/L)",
+    "high_interpretation": "Infection bactérienne systémique et sepsis. > 0.5 ng/mL : infection bactérienne probable ; > 2.0 ng/mL : sepsis sévère à haut risque de choc septique.",
+    "low_interpretation": "< 0.25 ng/mL : infection bactérienne systémique peu probable (oriente vers étiologie virale ou bactérienne localisée).",
+    "clinical_notes": [
+      "Très utile pour guider l'initiation et l'arrêt d'une antibiothérapie en réanimation et pneumologie (pneumonies communautaires)."
+    ]
+  },
+  {
+    "id": "lab_troponine",
+    "name": "Troponine ultra-sensible (hs-cTnI / hs-cTnT)",
+    "category": "Cardiologie & Urgences",
+    "normal_range": "< 14 (sexe féminin: < 10)",
+    "unit": "ng/L (pg/mL)",
+    "high_interpretation": "Nécrose myocardique. Élévation aiguë avec cinétique (delta H0-H1 ou H0-H3) : Syndrome Coronarien Aigu (SCA sans sus-décalage de ST). Élévation sans cinétique : myocardite, embolie pulmonaire, choc septique, insuffisance rénale, décompensation cardiaque.",
+    "low_interpretation": "Valeur indétectable ou très basse à H0 et H1 : élimine le SCA avec une valeur prédictive négative > 99%.",
+    "clinical_notes": [
+      "La troponine ne fait pas le diagnostic de thrombose coronarienne, elle signe une souffrance myocardique : interprétation indissociable de l'ECG et de la clinique."
+    ]
+  },
+  {
+    "id": "lab_bnp",
+    "name": "BNP et NT-proBNP",
+    "category": "Cardiologie & Urgences",
+    "normal_range": "BNP < 100 | NT-proBNP < 300",
+    "unit": "pg/mL (ng/L)",
+    "high_interpretation": "Insuffisance cardiaque aiguë ou chronique (étirement pariétal myocardique ventriculaire). OAP cardiogénique en décompensation. Autres causes : embolie pulmonaire, insuffisance rénale, fibrillation auriculaire, âge avancé.",
+    "low_interpretation": "Valeur prédictive négative excellente : élimine une origine cardiaque devant une dyspnée aiguë aux urgences.",
+    "clinical_notes": [
+      "Les seuils d'exclusion diffèrent selon l'âge pour le NT-proBNP : < 450 pg/mL (< 50 ans), < 900 pg/mL (50-75 ans), < 1800 pg/mL (> 75 ans)."
+    ]
+  },
+  {
+    "id": "lab_d_dimeres",
+    "name": "D-Dimères (produits de dégradation de fibrine)",
+    "category": "Hémostase & Thromboembolie",
+    "normal_range": "< 500 (ajusté à l'âge : âge × 10 au-delà de 50 ans)",
+    "unit": "ng/mL (µg/L)",
+    "high_interpretation": "Thrombose veineuse profonde (TVP) ou Embolie pulmonaire (EP). Nombreux faux positifs : âge > 50 ans, grossesse, cancer évolutif, chirurgie récente, infection, traumatisme, CIVD.",
+    "low_interpretation": "D-Dimères < seuil ajusté avec probabilité clinique non forte (score de Wells / Genève) : élimine formellement la maladie thromboembolique veineuse sans nécessité d'angioscanner.",
+    "clinical_notes": [
+      "Ne jamais doser les D-Dimères en cas de probabilité clinique forte d'emblée : aller directement à l'imagerie (angioscanner thoracique)."
+    ]
+  },
+  {
+    "id": "lab_tp_inr",
+    "name": "Taux de Prothrombine (TP) & INR",
+    "category": "Hémostase & Coagulation",
+    "normal_range": "TP : 70 - 100% | INR normal : 0.8 - 1.2",
+    "unit": "% et ratio",
+    "high_interpretation": "INR élevé : surdosage en AVK (Sintrom / Acénocoumarol). Si INR > 4.5 à 6 : risque hémorragique croissant ; si INR > 10 ou saignement grave : urgence absolue (antidote PPSB + Vitamine K1).",
+    "low_interpretation": "TP bas (< 50%) : Insuffisance hépatocellulaire (cirrhose, hépatite fulminante avec Facteur V abaissé), déficit en vitamine K, consommation par CIVD.",
+    "clinical_notes": [
+      "Cible thérapeutique sous AVK : INR 2.0 - 3.0 (prothèses mécaniques aortiques : 2.5 - 3.5, mitrales : 3.0 - 4.0).",
+      "Doser le Facteur V pour différencier une insuffisance hépatique (Facteur V bas) d'une carence en vitamine K (Facteur V normal)."
+    ]
+  },
+  {
+    "id": "lab_tca",
+    "name": "Temps de Céphaline Activée (TCA)",
+    "category": "Hémostase & Coagulation",
+    "normal_range": "Ratio Patient/Témoin : 0.8 - 1.2",
+    "unit": "ratio",
+    "high_interpretation": "Allongement (Ratio > 1.2) : Traitement par Héparine non fractionnée (HNF, cible 1.5 - 2.5), déficit constitutionnel en facteur (Hémophilie A VIII, Hémophilie B IX, Willebrand), anticoagulant circulant de type lupique (SAPL), CIVD.",
+    "low_interpretation": "État d'hypercoagulabilité biologique, prélèvement difficile.",
+    "clinical_notes": [
+      "Les HBPM (Lovenox) et les AOD ne modifient généralement pas le TCA de façon proportionnelle."
+    ]
+  },
+  {
+    "id": "lab_alat_asat",
+    "name": "Transaminases (ALAT / ASAT)",
+    "category": "Gastroentérologie & Foie",
+    "normal_range": "ALAT < 45 UI/L | ASAT < 35 UI/L",
+    "unit": "UI/L",
+    "high_interpretation": "Cytolyse hépatique aiguë. Si transaminases > 10 à 20x LSN : hépatite virale aiguë (A, B, E), hépatite médicamenteuse/toxique (Paracétamol), hépatite ischémique (foie de choc). ALAT prédomine dans les hépatites aiguës virales ; ASAT prédomine dans l'alcoolisme chronique (ratio ASAT/ALAT > 2).",
+    "low_interpretation": "Sans signification pathologique.",
+    "clinical_notes": [
+      "Devant toute cytolyse aiguë sévère, doser immédiatement le TP et le Facteur V pour dépister une hépatite fulminante (seuil TP < 50% = transfert en réanimation hépatologique)."
+    ]
+  },
+  {
+    "id": "lab_bilirubine",
+    "name": "Bilirubine totale et conjuguée",
+    "category": "Gastroentérologie & Foie",
+    "normal_range": "Totale : < 17 µmol/L (10 mg/L) | Conjuguée : < 5 µmol/L",
+    "unit": "µmol/L",
+    "high_interpretation": "Ictère clinique dès > 40-50 µmol/L. Bilirubine conjuguée prédominante : cholestase (lithiase biliaire, cancer du pancréas, cirrhose biliaire). Bilirubine libre non conjuguée prédominante : hémolyse intravasculaire ou maladie de Gilbert (bénigne).",
+    "low_interpretation": "Sans signification pathologique.",
+    "clinical_notes": [
+      "Devant un ictère fébrile douloureux (triade de Charcot : douleur, fièvre, ictère) : angiocholite aiguë, urgence médico-chirurgicale."
+    ]
+  },
+  {
+    "id": "lab_lipase",
+    "name": "Lipasémie",
+    "category": "Gastroentérologie & Urgences",
+    "normal_range": "< 60",
+    "unit": "UI/L",
+    "high_interpretation": "Pancréatite aiguë si Lipase > 3x LSN associée à une douleur épigastrique transfixiante typique. Pas d'indication à répéter le dosage (ne préjuge pas de la sévérité). Autres causes : insuffisance rénale, perforation digestive, ischémie mésentérique.",
+    "low_interpretation": "Sans valeur sémiologique.",
+    "clinical_notes": [
+      "L'amylasémie est obsolète et ne doit plus être dosée au profit exclusif de la lipase.",
+      "Scanner abdominal avec injection à réaliser à 72-96h du début des douleurs pour évaluer la nécrose (score de Balthazar)."
+    ]
+  },
+  {
+    "id": "lab_gazometrie_ph",
+    "name": "Gazométrie artérielle : pH et GDS",
+    "category": "Réanimation & Pneumologie",
+    "normal_range": "pH : 7.35 - 7.45 | PaO2 : 80 - 100 mmHg | PaCO2 : 35 - 45 mmHg | HCO3- : 22 - 26 mmol/L",
+    "unit": "GDS artériel",
+    "high_interpretation": "Alcalose métabolique (HCO3- élevé, hypokaliémie, vomissements) ou alcalose respiratoire (hyperventilation, angoisse, EP).",
+    "low_interpretation": "Acidose : Métabolique (HCO3- bas, calculer le trou anionique : acidocétose, acidose lactique, toxiques) ou Respiratoire (PaCO2 élevée : hypoventilation, décompensation BPCO).",
+    "clinical_notes": [
+      "Calcul du Trou Anionique plasmatique : TA = (Na + K) - (Cl + HCO3). Valeur normale : 12-16 mmol/L. Si TA augmenté : présence d'anions indosés (lactates, corps cétoniques, salicylés, méthanol)."
+    ]
+  },
+  {
+    "id": "lab_lactates",
+    "name": "Lactatémie artérielle / veineuse",
+    "category": "Réanimation & Urgences",
+    "normal_range": "0.5 - 2.0",
+    "unit": "mmol/L",
+    "high_interpretation": "Hypoperfusion tissulaire et hypoxie cellulaire. Lactates > 2 mmol/L : alerte sepsis ; > 4 mmol/L : critère de gravité majeur du choc septique, cardiogénique ou hémorragique. Causes non hypoxiques : metformine, insuffisance hépatique sévère, crise convulsive.",
+    "low_interpretation": "Bonne oxygénation tissulaire basale.",
+    "clinical_notes": [
+      "La clairance des lactates (baisse de > 20% toutes les 2h sous réanimation) est l'un des meilleurs reflets de la restauration hémodynamique."
+    ]
+  },
+  {
+    "id": "lab_calcium",
+    "name": "Calcémie totale et corrigée",
+    "category": "Métabolisme & Endocrinologie",
+    "normal_range": "2.20 - 2.60",
+    "unit": "mmol/L (88 - 104 mg/L)",
+    "high_interpretation": "Hypercalcémie : Urgence vitale si > 3.0 - 3.5 mmol/L (raccourcissement QT à l'ECG, confusion, déshydratation aiguë). Causes : hyperparathyroïdie primitive, métastases osseuses, myélome multiple, granulomatoses (sarcoïdose).",
+    "low_interpretation": "Hypocalcémie (< 2.20 mmol/L) : Allongement du QT à l'ECG (risque de torsades de pointes), paresthésies péri-buccales, signe de Trousseau, signe de Chvostek, tétanie. Causes : hypoparathyroïdie, carence en vitamine D, pancréatite aiguë.",
+    "clinical_notes": [
+      "Toujours calculer la calcémie corrigée en fonction de l'albuminémie : Ca_corr = Ca_mesuré + 0.02 * (40 - Albuminémie g/L)."
+    ]
+  }
+]

@@ -160,6 +160,35 @@ class SupabaseService {
     }
   }
 
+  /// Fetch Lab Reference Values (Normes Biologiques)
+  static Future<List<Map<String, dynamic>>> fetchLabReferenceValues() async {
+    try {
+      final response = await client
+          .from('lab_reference_values')
+          .select()
+          .order('name', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching lab reference values from Cloud: $e');
+      return [];
+    }
+  }
+
+  /// Fetch On-Call Mementos (Mémento de Garde Hospitalière)
+  static Future<List<Map<String, dynamic>>> fetchOnCallMementos() async {
+    try {
+      final response = await client
+          .from('on_call_mementos')
+          .select()
+          .eq('is_active', true)
+          .order('priority_level', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching on-call mementos from Cloud: $e');
+      return [];
+    }
+  }
+
   /// Fetch Algerian Official Nomenclature Drugs (MSPRH)
   static Future<List<Map<String, dynamic>>> fetchAlgerianNomenclature({
     String? query,
@@ -246,16 +275,6 @@ class SupabaseService {
     }
   }
 
-  /// Fetch Lab Reference Values
-  static Future<List<Map<String, dynamic>>> fetchLabReferenceValues() async {
-    try {
-      final response = await client.from('lab_reference_values').select();
-      return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      debugPrint('Error fetching lab values: $e');
-      return [];
-    }
-  }
 
   // --- ADMIN PORTAL RPC CALLS ---
 
