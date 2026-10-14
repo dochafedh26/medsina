@@ -23,20 +23,38 @@ ON public.app_releases (platform, is_active, build_number DESC);
 -- Enable RLS
 ALTER TABLE public.app_releases ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if re-running
+DROP POLICY IF EXISTS "Public read active releases" ON public.app_releases;
+DROP POLICY IF EXISTS "Admin write app releases" ON public.app_releases;
+DROP POLICY IF EXISTS "Enable insert for app_releases" ON public.app_releases;
+DROP POLICY IF EXISTS "Enable update for app_releases" ON public.app_releases;
+
 -- Everyone can read active releases
 CREATE POLICY "Public read active releases" 
 ON public.app_releases
 FOR SELECT 
 USING (is_active = TRUE);
 
--- Only authenticated admins or service role can insert/update/delete releases
-CREATE POLICY "Admin write app releases" 
+-- Insert & Update allowed for Admin users or Service Role
+CREATE POLICY "Enable insert for app_releases" 
 ON public.app_releases
-FOR ALL
-USING (
+FOR INSERT 
+WITH CHECK (
+    auth.role() = 'service_role' OR
     EXISTS (
         SELECT 1 FROM public.profiles
-        WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+        WHERE profiles.id = auth.uid() AND (profiles.is_admin = TRUE OR profiles.medical_role = 'Admin')
+    )
+);
+
+CREATE POLICY "Enable update for app_releases" 
+ON public.app_releases
+FOR UPDATE 
+USING (
+    auth.role() = 'service_role' OR
+    EXISTS (
+        SELECT 1 FROM public.profiles
+        WHERE profiles.id = auth.uid() AND (profiles.is_admin = TRUE OR profiles.medical_role = 'Admin')
     )
 );
 
@@ -75,3 +93,4 @@ INSERT INTO public.app_releases (
     true
 )
 ON CONFLICT DO NOTHING;
+
