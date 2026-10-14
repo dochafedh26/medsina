@@ -57,10 +57,12 @@ jobs:
           cache: true
 
       - name: 🔑 Configure App Secrets
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           mkdir -p lib/core/config
-          if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
-            echo "class AppSecrets { static const String geminiApiKey = '${{ secrets.GEMINI_API_KEY }}'; }" > lib/core/config/app_secrets.dart
+          if [ -n "$GEMINI_API_KEY" ]; then
+            echo "class AppSecrets { static const String geminiApiKey = '$GEMINI_API_KEY'; }" > lib/core/config/app_secrets.dart
           elif [ -f lib/core/config/app_secrets.dart.example ]; then
             cp lib/core/config/app_secrets.dart.example lib/core/config/app_secrets.dart
           else
@@ -113,11 +115,12 @@ jobs:
 
       - name: 🔑 Configure App Secrets
         shell: pwsh
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           New-Item -ItemType Directory -Force -Path "lib/core/config"
-          $key = "${{ secrets.GEMINI_API_KEY }}"
-          if ($key) {
-            "class AppSecrets { static const String geminiApiKey = '$key'; }" | Out-File -FilePath "lib/core/config/app_secrets.dart" -Encoding utf8
+          if ($env:GEMINI_KEY) {
+            "class AppSecrets { static const String geminiApiKey = '$($env:GEMINI_KEY)'; }" | Out-File -FilePath "lib/core/config/app_secrets.dart" -Encoding utf8
           } elseif (Test-Path "lib/core/config/app_secrets.dart.example") {
             Copy-Item -Path "lib/core/config/app_secrets.dart.example" -Destination "lib/core/config/app_secrets.dart" -Force
           } else {
@@ -162,10 +165,12 @@ jobs:
           cache: true
 
       - name: 🔑 Configure App Secrets
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           mkdir -p lib/core/config
-          if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
-            echo "class AppSecrets { static const String geminiApiKey = '${{ secrets.GEMINI_API_KEY }}'; }" > lib/core/config/app_secrets.dart
+          if [ -n "$GEMINI_API_KEY" ]; then
+            echo "class AppSecrets { static const String geminiApiKey = '$GEMINI_API_KEY'; }" > lib/core/config/app_secrets.dart
           elif [ -f lib/core/config/app_secrets.dart.example ]; then
             cp lib/core/config/app_secrets.dart.example lib/core/config/app_secrets.dart
           else
@@ -251,11 +256,14 @@ jobs:
             dist-release/*
 
       - name: 📡 Register New OTA Release into Supabase
-        if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "ℹ️ SUPABASE_SERVICE_ROLE_KEY is not set. Skipping Supabase OTA registration."
+            exit 0
+          fi
           TAG="${{ steps.vars.outputs.tag }}"
           VERSION="${{ steps.vars.outputs.version }}"
           BUILD="${{ steps.vars.outputs.build }}"
