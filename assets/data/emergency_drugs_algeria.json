@@ -615,5 +615,17 @@
     "alert": "• Contre-indications absolues : Hypersensibilité aux quinolones, antécédents de tendinopathie liée aux fluoroquinolones, allongement congénital ou acquis de l'intervalle QT, hypokaliémie non corrigée, insuffisance hépatique sévère (Child-Pugh C), grossesse et allaitement, enfants de moins de 18 ans.\n• Pièges létaux : Risque d'arythmie ventriculaire grave (Torsades de pointes) en cas d'association avec des médicaments allongeant le QT (amiodarone, neuroleptiques). Risque de rupture tendineuse (notamment tendon d'Achille), exacerbation de la myasthénie.\n• Surveillance : ECG (contrôle du QTc), ionogramme sanguin (potassium, magnésium), fonction rénale et hépatique, surveillance clinique neuropsychologique et ostéo-articulaire.",
     "algerian_availability": "Disponible en milieu hospitalier (PCH, UMC, services de réanimation et grands services de maladies infectieuses) et en officine (laboratoires locaux et princeps).",
     "created_at": "2026-10-14T12:37:47.503713+00:00"
+  },
+  {
+    "id": "drug_ciprofloxacine",
+    "dci": "Ciprofloxacine",
+    "brand": "Ciflox (Sanofi), Ciprol (Saidal), Bioracef (Frater-Razes), Ciprofloxacin (Biopharm)",
+    "category": "Infectiologie",
+    "route": "Perfusion IV lente (en 60 minutes minimum par flacon de 200 mg ou 400 mg)",
+    "indication": "Infections sévères de l'adulte et de l'enfant (infections urinaires compliquées, pyélonéphrite aiguë, infections ostéo-articulaires, neutropénie fébrile, infections digestives sévères, méningites à bacilles à Gram négatif sensibles)",
+    "dose": "• Posologie adulte : 400 mg toutes les 8 à 12 heures en perfusion intraveineuse lente (diluée dans du NaCl 0,9% ou G5%). En cas d'infections sévères (ex: PNA compliquée, choc septique), adapter selon la fonction rénale (clairance de la créatinine < 30 mL/min : 200-400 mg toutes les 24h ou réduction de 50% de la dose).\n• Posologie pédiatrique : Réservée aux situations d'urgence ou impasses thérapeutiques (infections à P. aeruginosa chez le mucoviscidose, infections graves multi-résistantes) : 10 mg/kg par prise (max 400 mg par dose) toutes les 8 à 12 heures en IV lente.",
+    "alert": "• Contre-indications absolues : Hypersensibilité aux fluoroquinolones, association avec la tizanidine, antécédent de tendinopathie avec les fluoroquinolones, épilepsie non contrôlée, grossesse et allaitement (sauf indication vitale pédiatrique).\n• Pièges létaux : Risque de tendinite et de rupture tendineuse (notamment tendon d'Achille), allongement de l'intervalle QT (attention aux associations avec les arythmigènes), troubles neuropsychiques (convulsions, confusion), toxicité rénale.\n• Surveillance : Fonction rénale (créatininémie, diurèse), ECG (QT) en cas de co-prescription, surveillance neurologique et ostéo-articulaire.",
+    "algerian_availability": "Disponible en milieu hospitalier (UMC, services de réanimation, PCH, pharmacies hospitalières) et officines (formes orales et injectables).",
+    "created_at": "2026-10-14T16:52:32.805545+00:00"
   }
 ]
