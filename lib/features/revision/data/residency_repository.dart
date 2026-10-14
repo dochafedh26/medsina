@@ -187,4 +187,24 @@ class ResidencyRepository {
 
     return allQuestions;
   }
+
+  /// Finds a CourseModel by ID across all loaded modules
+  static Future<CourseModel?> findCourseById(String courseId) async {
+    final modules = await loadModulesAsync();
+    for (final m in modules) {
+      for (final c in m.courses) {
+        if (c.id == courseId) return c;
+      }
+    }
+    return null;
+  }
+
+  /// Finds the MedicalModuleModel containing a given courseId
+  static Future<MedicalModuleModel?> findModuleForCourse(String courseId) async {
+    final modules = await loadModulesAsync();
+    for (final m in modules) {
+      if (m.courses.any((c) => c.id == courseId)) return m;
+    }
+    return null;
+  }
 }

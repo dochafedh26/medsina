@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/recent_activity_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
 import '../../auth/bloc/auth_bloc.dart';
@@ -13,7 +14,16 @@ import '../models/clinical_calculator_model.dart';
 import '../models/emergency_drug_model.dart';
 
 class ClinicalScreen extends StatefulWidget {
-  const ClinicalScreen({super.key});
+  final int initialTabIndex;
+  final String? targetProtocolId;
+  final String? targetDrugQuery;
+
+  const ClinicalScreen({
+    super.key,
+    this.initialTabIndex = 0,
+    this.targetProtocolId,
+    this.targetDrugQuery,
+  });
 
   @override
   State<ClinicalScreen> createState() => _ClinicalScreenState();
@@ -25,7 +35,10 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    final initialIdx = (widget.initialTabIndex >= 0 && widget.initialTabIndex < 3)
+        ? widget.initialTabIndex
+        : 0;
+    _tabController = TabController(length: 3, vsync: this, initialIndex: initialIdx);
     context.read<ClinicalBloc>().add(LoadClinicalDataEvent());
   }
 
@@ -75,10 +88,10 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                _ProtocolsTab(),
-                _CalculatorsTab(),
-                _EmergencyDrugsTab(),
+              children: [
+                _ProtocolsTab(targetProtocolId: widget.targetProtocolId),
+                const _CalculatorsTab(),
+                _EmergencyDrugsTab(targetDrugQuery: widget.targetDrugQuery),
               ],
             ),
           ),
@@ -89,7 +102,8 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
 }
 
 class _ProtocolsTab extends StatelessWidget {
-  const _ProtocolsTab();
+  final String? targetProtocolId;
+  const _ProtocolsTab({this.targetProtocolId});
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +111,20 @@ class _ProtocolsTab extends StatelessWidget {
       builder: (context, state) {
         if (state.status == ClinicalStatus.loading) {
           return const Center(child: CircularProgressIndicator());
+        }
+
+        // Reorder protocols if a target protocol ID was specified
+        var protocols = List<ClinicalProtocol>.from(state.filteredProtocols);
+        if (targetProtocolId != null && targetProtocolId!.isNotEmpty) {
+          final query = targetProtocolId!.toLowerCase();
+          final idx = protocols.indexWhere((p) =>
+              p.id.toLowerCase() == query ||
+              p.id.toLowerCase().contains(query) ||
+              p.title.toLowerCase().contains(query));
+          if (idx > 0) {
+            final target = protocols.removeAt(idx);
+            protocols.insert(0, target);
+          }
         }
 
         return Column(
@@ -151,7 +179,7 @@ class _ProtocolsTab extends StatelessWidget {
 
             // Protocols List
             Expanded(
-              child: state.filteredProtocols.isEmpty
+              child: protocols.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -164,10 +192,18 @@ class _ProtocolsTab extends StatelessWidget {
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.all(16),
-                      itemCount: state.filteredProtocols.length,
+                      itemCount: protocols.length,
                       itemBuilder: (context, index) {
-                        final protocol = state.filteredProtocols[index];
-                        return _ProtocolCard(protocol: protocol);
+                        final protocol = protocols[index];
+                        final isTarget = targetProtocolId != null &&
+                            (protocol.id.toLowerCase() == targetProtocolId!.toLowerCase() ||
+                             protocol.id.toLowerCase().contains(targetProtocolId!.toLowerCase()) ||
+                             protocol.title.toLowerCase().contains(targetProtocolId!.toLowerCase()));
+
+                        return _ProtocolCard(
+                          protocol: protocol,
+                          initiallyExpanded: isTarget,
+                        );
                       },
                     ),
             ),
@@ -180,14 +216,32 @@ class _ProtocolsTab extends StatelessWidget {
 
 class _ProtocolCard extends StatefulWidget {
   final ClinicalProtocol protocol;
-  const _ProtocolCard({required this.protocol});
+  final bool initiallyExpanded;
+
+  const _ProtocolCard({
+    required this.protocol,
+    this.initiallyExpanded = false,
+  });
 
   @override
   State<_ProtocolCard> createState() => _ProtocolCardState();
 }
 
 class _ProtocolCardState extends State<_ProtocolCard> {
-  bool _expanded = false;
+  late bool _expanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _expanded = widget.initiallyExpanded;
+    if (widget.initiallyExpanded) {
+      RecentActivityService.instance.recordProtocolView(
+        protocolId: widget.protocol.id,
+        title: widget.protocol.title,
+        specialty: widget.protocol.specialty,
+      );
+    }
+  }
 
   Color _getUrgencyColor(String urgency) {
     if (urgency.contains('Vitale')) return const Color(0xFFDC2626);
@@ -260,7 +314,16 @@ class _ProtocolCardState extends State<_ProtocolCard> {
             _showPaywallPrompt(context, reason);
             return;
           }
-          setState(() => _expanded = !_expanded);
+          setState(() {
+            _expanded = !_expanded;
+            if (_expanded) {
+              RecentActivityService.instance.recordProtocolView(
+                protocolId: p.id,
+                title: p.title,
+                specialty: p.specialty,
+              );
+            }
+          });
         },
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -1049,7 +1112,8 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
 
 
 class _EmergencyDrugsTab extends StatefulWidget {
-  const _EmergencyDrugsTab();
+  final String? targetDrugQuery;
+  const _EmergencyDrugsTab({this.targetDrugQuery});
 
   @override
   State<_EmergencyDrugsTab> createState() => _EmergencyDrugsTabState();
@@ -1058,6 +1122,17 @@ class _EmergencyDrugsTab extends StatefulWidget {
 class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
   final TextEditingController _searchController = TextEditingController();
   bool _triageExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.targetDrugQuery != null && widget.targetDrugQuery!.isNotEmpty) {
+      _searchController.text = widget.targetDrugQuery!;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<ClinicalBloc>().add(SearchEmergencyDrugsEvent(widget.targetDrugQuery!));
+      });
+    }
+  }
 
   @override
   void dispose() {

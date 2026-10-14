@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../../core/services/recent_activity_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/presentation/test_accounts_sheet.dart';
-import '../../clinical/presentation/clinical_screen.dart';
-import '../../lab_analysis/presentation/lab_analysis_screen.dart';
-import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 
@@ -593,320 +591,365 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildQuickAccessCards(BuildContext context, SubscriptionTier tier, bool isExpired) {
-    if (tier == SubscriptionTier.residentElite && !isExpired) {
-      // Resident Elite: 100% residency exam cards
-      return Column(
-        children: [
-          ListTile(
-            tileColor: Theme.of(context).cardColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            leading: const CircleAvatar(
-              backgroundColor: Color(0xFFCCFBF1),
-              child: Icon(Icons.school_rounded, color: Color(0xFF0D9488)),
-            ),
-            title: const Text('Entraînement QCM : Cardiologie & HTA', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            subtitle: const Text('Reprendre la session : 340 questions classées • Annales Blida 2024'),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          ListTile(
-            tileColor: Theme.of(context).cardColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            leading: const CircleAvatar(
-              backgroundColor: Color(0xFFEDE9FE),
-              child: Icon(Icons.timer_rounded, color: Color(0xFF8B5CF6)),
-            ),
-            title: const Text('Examen Blanc Chronométré : Concours National', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            subtitle: const Text('Épreuve type 100 questions multi-spécialités • Calcul de note en temps réel'),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
-              );
-            },
-          ),
-        ],
-      );
-    } else if (tier == SubscriptionTier.clinicalPro && !isExpired) {
-      // Clinique Pro: 100% clinical and emergency hospital cards
-      return Column(
-        children: [
-          ListTile(
-            tileColor: Theme.of(context).cardColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            leading: const CircleAvatar(
-              backgroundColor: Color(0xFFFEF3C7),
-              child: Icon(Icons.fact_check_rounded, color: Color(0xFFD97706)),
-            ),
-            title: const Text('Analyse d\'Ordonnance (Moteur Vidal)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            subtitle: const Text('Détection des interactions médicamenteuses, contre-indications terrain & audit IA'),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const PrescriptionAnalysisScreen()),
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          ListTile(
-            tileColor: Theme.of(context).cardColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            leading: const CircleAvatar(
-              backgroundColor: Color(0xFFCCFBF1),
-              child: Icon(Icons.biotech_rounded, color: Color(0xFF0D9488)),
-            ),
-            title: Row(
-              children: [
-                const Text('Analyse de Bilan Biologique', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0D9488).withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(6),
+    return FutureBuilder<List<RecentActivityItem>>(
+      future: RecentActivityService.instance.getRecentActivities(tier: tier),
+      builder: (context, snapshot) {
+        final activities = snapshot.data ?? [];
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (snapshot.connectionState == ConnectionState.waiting && activities.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primaryTeal),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Chargement de votre dernière activité...',
+                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      ),
+                    ],
                   ),
-                  child: const Text('Nouveau ✨', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF0D9488))),
                 ),
-              ],
-            ),
-            subtitle: const Text('Interprétation croisée NFS, Ionogramme, GDS, Foie • Calculs auto & diagnostic syndromique'),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const LabAnalysisScreen()),
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          ListTile(
-            tileColor: Theme.of(context).cardColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            leading: const CircleAvatar(
-              backgroundColor: Color(0xFFFEE2E2),
-              child: Icon(Icons.emergency_rounded, color: Color(0xFFEF4444)),
-            ),
-            title: const Text('CAT Urgence : Prise en charge SCA ST+ (IDM)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            subtitle: const Text('Arbre décisionnel reperfusion < 120 min • Posologies antithrombotiques'),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ClinicalScreen()),
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          ListTile(
-            tileColor: Theme.of(context).cardColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            leading: const CircleAvatar(
-              backgroundColor: Color(0xFFE0F2FE),
-              child: Icon(Icons.medication_rounded, color: Color(0xFF0284C7)),
-            ),
-            title: const Text('Mémento DCI Algérie : Adrénaline & Sérums IPA', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-            subtitle: const Text('Recherche instantanée • Posologies d\'urgence et protocoles Saidal / IPA'),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ClinicalScreen()),
-              );
-            },
-          ),
-          const SizedBox(height: 14),
-          // Modern Residency awareness banner for Clinique Pro doctors
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+              )
+            else ...[
+              ...activities.map((item) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildRecentActivityCard(context, item, isExpired),
+                  )),
+            ],
+
+            // Action footer: Discover full catalog or tools
+            Padding(
+              padding: const EdgeInsets.only(top: 4, bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      visualDensity: VisualDensity.compact,
+                      foregroundColor: AppTheme.primaryTeal,
+                    ),
+                    icon: const Icon(Icons.explore_outlined, size: 15),
+                    label: const Text(
+                      'Ouvrir le catalogue complet (47 Modules) ➔',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+                      );
+                    },
+                  ),
+                ],
               ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFF334155)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.12),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0D9488).withValues(alpha: 0.25),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFF0D9488)),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.school_rounded, color: Color(0xFF2DD4BF), size: 14),
-                          SizedBox(width: 5),
-                          Text(
-                            'FORMATION RÉSIDANAT MEDSINA',
-                            style: TextStyle(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF2DD4BF),
-                              letterSpacing: 0.5,
-                            ),
+
+            // If Clinical Pro: specialized Residency Awareness banner at the bottom
+            if (tier == SubscriptionTier.clinicalPro && !isExpired) ...[
+              const SizedBox(height: 10),
+              _buildResidencyAwarenessBanner(context),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildRecentActivityCard(BuildContext context, RecentActivityItem item, bool isExpired) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      color: Theme.of(context).cardColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: Theme.of(context).dividerColor),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () {
+          if (isExpired) {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+            );
+            return;
+          }
+          RecentActivityService.instance.launchActivity(context, item);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top meta header: Badge + relative time
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: item.badgeColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: item.badgeColor.withValues(alpha: 0.25)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: item.badgeColor,
                           ),
-                        ],
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          item.badgeText,
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w800,
+                            color: item.badgeColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.schedule_rounded, size: 12, color: Colors.grey.shade500),
+                      const SizedBox(width: 4),
+                      Text(
+                        item.relativeTime,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey.shade500,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Title and Icon row
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: item.iconColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    const Spacer(),
-                    const Text(
-                      'Concours Blida 2027',
-                      style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w600),
+                    child: Icon(item.icon, color: item.iconColor, size: 22),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          item.subtitle,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Vous préparez le concours ou encadrez des internes & résidents ?',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.5),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: item.iconColor.withValues(alpha: 0.08),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 16,
+                      color: item.iconColor,
+                    ),
+                  ),
+                ],
+              ),
+
+              // Progress bar if present (e.g. QCM session)
+              if (item.progressPercent != null) ...[
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: item.progressPercent,
+                    backgroundColor: item.badgeColor.withValues(alpha: 0.15),
+                    valueColor: AlwaysStoppedAnimation(item.badgeColor),
+                    minHeight: 5,
+                  ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Accédez à la base nationale de 47 modules médicaux, 6 240+ QCMs d\'annales corrigées, fiches de cours officielles et examens blancs interactifs.',
-                  style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
-                ),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 8,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        side: const BorderSide(color: Colors.white38),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    Text(
+                      'Progression : ${(item.progressPercent! * 100).toInt()}%',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade600,
                       ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
-                        );
-                      },
-                      icon: const Icon(Icons.explore_rounded, size: 16),
-                      label: const Text('Découvrir le catalogue', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
                     ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0D9488),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
-                        );
-                      },
-                      icon: const Icon(Icons.upgrade_rounded, size: 16),
-                      label: const Text('Voir les formules Résidanat', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Reprendre directement',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: item.badgeColor,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(Icons.play_arrow_rounded, size: 14, color: item.badgeColor),
+                      ],
                     ),
                   ],
                 ),
               ],
-            ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResidencyAwarenessBanner(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF334155)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
-      );
-    }
-
-    // All-Access VIP or Free Trial or Expired: General access cards
-    return Column(
-      children: [
-        ListTile(
-          tileColor: Theme.of(context).cardColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Theme.of(context).dividerColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0D9488).withValues(alpha: 0.25),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF0D9488)),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.school_rounded, color: Color(0xFF2DD4BF), size: 14),
+                    SizedBox(width: 5),
+                    Text(
+                      'FORMATION RÉSIDANAT MEDSINA',
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF2DD4BF),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              const Text(
+                'Concours Blida 2027',
+                style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w600),
+              ),
+            ],
           ),
-          leading: const CircleAvatar(
-            backgroundColor: Color(0xFFFEF3C7),
-            child: Icon(Icons.fact_check_rounded, color: Color(0xFFD97706)),
+          const SizedBox(height: 10),
+          const Text(
+            'Vous préparez le concours ou encadrez des internes & résidents ?',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.5),
           ),
-          title: const Text('Analyse d\'Ordonnance (Moteur Vidal)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-          subtitle: const Text('Détection des interactions, contre-indications terrain & audit MedsinaPilot'),
-          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const PrescriptionAnalysisScreen()),
-            );
-          },
-        ),
-        const SizedBox(height: 10),
-        ListTile(
-          tileColor: Theme.of(context).cardColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Theme.of(context).dividerColor),
+          const SizedBox(height: 6),
+          const Text(
+            'Accédez à la base nationale de 47 modules médicaux, 6 240+ QCMs d\'annales corrigées, fiches de cours officielles et examens blancs interactifs.',
+            style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
           ),
-          leading: const CircleAvatar(
-            backgroundColor: Color(0xFFE0F2FE),
-            child: Icon(Icons.favorite_rounded, color: AppTheme.primaryTeal),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            children: [
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.white38),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+                  );
+                },
+                icon: const Icon(Icons.explore_rounded, size: 16),
+                label: const Text('Découvrir le catalogue', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D9488),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                  );
+                },
+                icon: const Icon(Icons.upgrade_rounded, size: 16),
+                label: const Text('Voir les formules Résidanat', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+              ),
+            ],
           ),
-          title: const Text('Cardiologie — HTA & Syndromes Coronariens Aigus', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-          subtitle: const Text('Reprendre l\'entraînement : 340 questions disponibles • Fiche de cours PDF prête'),
-          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
-            );
-          },
-        ),
-        const SizedBox(height: 10),
-        ListTile(
-          tileColor: Theme.of(context).cardColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Theme.of(context).dividerColor),
-          ),
-          leading: const CircleAvatar(
-            backgroundColor: Color(0xFFFEE2E2),
-            child: Icon(Icons.flash_on_rounded, color: Color(0xFFEF4444)),
-          ),
-          title: const Text('CAT Urgence : Prise en charge SCA ST+ (IDM)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-          subtitle: const Text('Arbre de décision reperfusion < 120 min • Posologies antithrombotiques'),
-          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const ClinicalScreen()),
-            );
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart' as p;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../core/services/recent_activity_service.dart';
 import '../models/module_model.dart';
 
 class PdfSearchOccurrence {
@@ -64,6 +65,10 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
   void initState() {
     super.initState();
     _loadPdfSecurely();
+    RecentActivityService.instance.recordCourseView(
+      course: widget.course,
+      moduleName: widget.moduleName,
+    );
   }
 
   @override
