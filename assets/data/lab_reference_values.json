@@ -260,5 +260,20 @@
     ],
     "created_at": "2026-10-14T11:56:30.383520+00:00",
     "updated_at": "2026-10-14T11:56:30.383533+00:00"
+  },
+  {
+    "id": "lab_ferritine_cst",
+    "name": "Ferritine sérique & Coefficient de Saturation de la Transferrine (CST)",
+    "category": "Vitamines & Oligo-éléments",
+    "normal_range": "Ferritine - Homme: 30-300 µg/L | Femme: 15-200 µg/L (post-ménopause: 30-300 µg/L). CST: 20 - 40 %",
+    "unit": "µg/L (Ferritine) et % (CST)",
+    "high_interpretation": "Ferritine haute (>300 H / >200 F) avec CST bas/normal : Syndrome inflammatoire (protéine de l'acute phase), cytolyse hépatique, syndrome métabolique, alcoolisme. Ferritine haute avec CST > 50% : Surcharge en fer (Hemochromatose génétique liée au gène HFE, transfusions multiples, hémochromatose secondaire). Urgence si ferritinémie massivement augmentée (>10 000 µg/L) avec défaillance multiviscérale : suspecter un Syndrome d'Activation Macrophagique (SAM) ou une Hémophagocytose. Conduite à tenir : Bilan hépatique,CRP, ferritinémie de contrôle, test génétique HFE (C282Y) si CST élevé persistant.",
+    "low_interpretation": "Ferritine basse (<15 µg/L) : Carence martiale (anémie ferriprive). C'est le marqueur le plus spécifique des réserves en fer de l'organisme. Une ferritinémie basse confirme le diagnostic de carence en fer (valeur < 30 µg/L évocatrice chez l'insuffisant rénal ou l'insuffisant cardiaque). Conduite à tenir : Rechercher une cause (pertes sanguines digestives, gynécologiques, malabsorption type cœliaque).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : La ferritine est une protéine de l'inflammation (CRP). Une carence martiale peut être masquée par un syndrome inflammatoire (une ferritine dite 'normale' à 50 µg/L peut en réalité cacher une carence si la CRP est très élevée). Dans ce cas, le CST reste bas (<20%) et le récepteur soluble de la transferrine (RsTf) est augmenté.",
+      "Calcul du CST : CST (%) = [Fer sérique (µg/L) / Transferrine (g/L) x 1.41] x 100. Un CST > 50% chez l'homme ou > 45% chez la femme est le seuil de dépistage de la surcharge en fer."
+    ],
+    "created_at": "2026-10-14T12:21:13.317640+00:00",
+    "updated_at": "2026-10-14T12:21:13.317656+00:00"
   }
 ]

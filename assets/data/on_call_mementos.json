@@ -251,5 +251,24 @@
     "is_active": true,
     "created_at": "2026-10-14T11:56:44.786516+00:00",
     "updated_at": "2026-10-14T11:56:44.786530+00:00"
+  },
+  {
+    "id": "memento_bronchiolite_nourrisson",
+    "title": "👶 Bronchiolite Aiguë du Nourrisson",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#0284C7",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation immédiate de la détresse respiratoire (score de Wood modifié) et de la tolérance hémodynamique ; satO2 en air ambiant (seuil d'alarme < 92%).",
+      "Étape 2 : Bilan minimal au déchoquage : GDS capillaire ou veineux si détresse sévère, recherche de VRS/Grippe selon disponibilité, panachage selon protocole local.",
+      "Étape 3 : Conditionnement : Maintien de la tête en position neutre (ou fléchie modérément), désobstruction rhinopharyngée (DRP) au sérum salé 0.9% rigoureuse, oxygénothérapie aux lunettes si SatO2 < 92%.",
+      "Étape 4 : Surveillance armée (fréquence respiratoire, signes de lutte, pauses respiratoires, tolérance des tètes) ; critères de transfert en réa : épuisement, apnées, acidose respiratoire (pH < 7.32, PaCO2 > 60 mmHg).",
+      "Étape 5 : Piège thérapeutique : Éviter les corticoïdes systémiques et les antibiotiques en première intention (sauf surinfection bactérienne avérée) ; prudence avec les kinésithérapies respiratoires instrumentales agressives."
+    ],
+    "scientific_references": "Consensus SFMU / SFP / Recommandations MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-14T12:21:16.411916+00:00",
+    "updated_at": "2026-10-14T12:21:16.411965+00:00"
   }
 ]
