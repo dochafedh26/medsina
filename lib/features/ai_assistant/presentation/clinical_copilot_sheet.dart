@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -31,6 +32,7 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
   bool _isLoading = false;
   String? _response;
   String _activeQuestionAsked = '';
+  StreamSubscription<String>? _streamSub;
 
   final List<String> _clinicalSuggestions = [
     '⚡ CAT devant une détresse respiratoire aiguë',
@@ -49,6 +51,7 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
 
   @override
   void dispose() {
+    _streamSub?.cancel();
     _queryController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -57,35 +60,55 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
   Future<void> _askCopilot(String query) async {
     if (query.trim().isEmpty) return;
 
+    await _streamSub?.cancel();
+
     setState(() {
       _isLoading = true;
       _activeQuestionAsked = query;
-      _response = null;
+      _response = '';
     });
 
     try {
-      final answer = await GeminiService.getClinicalAdvice(
+      final stream = GeminiService.streamClinicalAdvice(
         clinicalSituation: widget.initialSituation ?? 'Consultation médicale hospitalière / Urgences',
         userQuery: query,
       );
 
-      if (mounted) {
-        setState(() {
-          _response = answer;
-          _isLoading = false;
-        });
+      _streamSub = stream.listen(
+        (chunk) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _response = (_response ?? '') + chunk;
+            });
 
-        // Gently scroll down so user immediately sees the beginning of the generated answer
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              80.0,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOut,
-            );
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_scrollController.hasClients) {
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
           }
-        });
-      }
+        },
+        onError: (e) {
+          if (mounted) {
+            setState(() {
+              _response = 'Erreur lors de la communication avec MedsinaPilot: $e';
+              _isLoading = false;
+            });
+          }
+        },
+        onDone: () {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        },
+      );
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -267,7 +290,7 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
                   ),
 
                 // AI Response Area
-                if (_isLoading)
+                if (_isLoading && (_response == null || _response!.isEmpty))
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
@@ -287,7 +310,7 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
                       ),
                     ),
                   )
-                else if (_response != null)
+                else if (_response != null && _response!.isNotEmpty)
                   Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(

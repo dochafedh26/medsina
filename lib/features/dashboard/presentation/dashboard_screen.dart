@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/presentation/test_accounts_sheet.dart';
+import '../../clinical/presentation/clinical_screen.dart';
 import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
@@ -609,8 +610,8 @@ class DashboardScreen extends StatelessWidget {
             subtitle: const Text('Reprendre la session : 340 questions classées • Annales Blida 2024'),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Accédez à l\'onglet Résidanat pour lancer la session !')),
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
               );
             },
           ),
@@ -629,8 +630,8 @@ class DashboardScreen extends StatelessWidget {
             subtitle: const Text('Épreuve type 100 questions multi-spécialités • Calcul de note en temps réel'),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Accédez à l\'onglet Résidanat pour lancer un examen blanc.')),
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
               );
             },
           ),
@@ -674,8 +675,8 @@ class DashboardScreen extends StatelessWidget {
             subtitle: const Text('Arbre décisionnel reperfusion < 120 min • Posologies antithrombotiques'),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Accédez à l\'onglet Pratique Clinique pour consulter le protocole.')),
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ClinicalScreen()),
               );
             },
           ),
@@ -694,8 +695,8 @@ class DashboardScreen extends StatelessWidget {
             subtitle: const Text('Recherche instantanée • Posologies d\'urgence et protocoles Saidal / IPA'),
             trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Consultez l\'onglet Urgences & DCI dans Pratique Clinique.')),
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ClinicalScreen()),
               );
             },
           ),
@@ -846,8 +847,8 @@ class DashboardScreen extends StatelessWidget {
           subtitle: const Text('Reprendre l\'entraînement : 340 questions disponibles • Fiche de cours PDF prête'),
           trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Accédez à l\'onglet Résidanat pour lancer la session !')),
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
             );
           },
         ),
@@ -866,8 +867,8 @@ class DashboardScreen extends StatelessWidget {
           subtitle: const Text('Arbre de décision reperfusion < 120 min • Posologies antithrombotiques'),
           trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Accédez à l\'onglet Clinique pour consulter le protocole complet.')),
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ClinicalScreen()),
             );
           },
         ),

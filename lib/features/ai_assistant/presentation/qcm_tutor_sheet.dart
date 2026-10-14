@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -34,6 +35,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
   bool _isLoading = false;
   String? _response;
   String _activeQuestionAsked = '';
+  StreamSubscription<String>? _streamSub;
 
   final List<String> _suggestedPrompts = [
     '💡 Explique-moi les pièges classiques de ce QCM',
@@ -51,6 +53,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
 
   @override
   void dispose() {
+    _streamSub?.cancel();
     _queryController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -59,16 +62,18 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
   Future<void> _askPilot(String query) async {
     if (query.trim().isEmpty) return;
 
+    await _streamSub?.cancel();
+
     setState(() {
       _isLoading = true;
       _activeQuestionAsked = query;
-      _response = null;
+      _response = '';
     });
 
     final optionsList = widget.question.options.map((o) => '${o.key}. ${o.text}').toList();
 
     try {
-      final answer = await GeminiService.explainQcm(
+      final stream = GeminiService.streamExplainQcm(
         questionTitle: widget.question.questionText,
         optionsText: optionsList,
         correctKeys: widget.question.correctAnswers,
@@ -77,23 +82,41 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
         moduleId: widget.question.moduleId,
       );
 
-      if (mounted) {
-        setState(() {
-          _response = answer;
-          _isLoading = false;
-        });
+      _streamSub = stream.listen(
+        (chunk) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _response = (_response ?? '') + chunk;
+            });
 
-        // Gently scroll down to reveal the explanation
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              80.0,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOut,
-            );
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_scrollController.hasClients) {
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
           }
-        });
-      }
+        },
+        onError: (e) {
+          if (mounted) {
+            setState(() {
+              _response = 'Erreur lors de la communication avec MedsinaPilot: $e';
+              _isLoading = false;
+            });
+          }
+        },
+        onDone: () {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        },
+      );
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -285,7 +308,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                   ),
 
                 // AI Response Area
-                if (_isLoading)
+                if (_isLoading && (_response == null || _response!.isEmpty))
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
@@ -305,7 +328,7 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
                       ),
                     ),
                   )
-                else if (_response != null)
+                else if (_response != null && _response!.isNotEmpty)
                   Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(

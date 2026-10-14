@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -11,11 +12,9 @@ class GeminiService {
 
   // Active models with fallback cascade
   static const List<String> _modelCascade = [
-    'gemini-flash-latest',
-    'gemini-2.5-flash-lite',
-    'gemini-flash-lite-latest',
     'gemini-2.5-flash',
-    'gemini-2.5-pro',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
   ];
 
   static const String _baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
@@ -205,6 +204,126 @@ ${moduleId != null ? 'Module d\'enseignement: $moduleId' : ''}
     String? moduleId,
   }) async {
     return await generateMedicalResponse(
+      prompt: userQuery,
+      contextInfo: 'Situation Clinique: $clinicalSituation',
+      courseName: courseName,
+      moduleId: moduleId,
+    );
+  }
+
+  /// Streaming version — yields partial text chunks as they arrive from Gemini SSE
+  static Stream<String> streamMedicalResponse({
+    required String prompt,
+    String? contextInfo,
+    String? courseName,
+    String? moduleId,
+  }) async* {
+    final matchingResources = _findMatchingCoursesInDrive(
+      '$prompt ${contextInfo ?? ""}',
+      courseHint: courseName,
+      moduleHint: moduleId,
+    );
+    String groundingContext = '';
+    if (matchingResources.isNotEmpty) {
+      groundingContext = '\n\n[RESSOURCES OFFICIELLES DU PROGRAMME DANS GOOGLE DRIVE (medsina_ressources)]:\n${matchingResources.join("\n")}';
+    }
+    final fullPrompt = contextInfo != null
+        ? '$_medicalSystemPrompt$groundingContext\n\n[CONTEXTE DE LA QUESTION OU DU PATIENT]:\n$contextInfo\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt'
+        : '$_medicalSystemPrompt$groundingContext\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt';
+
+    final requestData = {
+      'contents': [
+        {
+          'parts': [
+            {'text': fullPrompt}
+          ]
+        }
+      ],
+      'generationConfig': {
+        'temperature': 0.25,
+        'maxOutputTokens': 8192,
+      }
+    };
+
+    for (final model in _modelCascade) {
+      bool modelSucceeded = false;
+      try {
+        final url = '$_baseUrl/$model:streamGenerateContent?alt=sse&key=$apiKey';
+        final response = await _dio.post<ResponseBody>(
+          url,
+          options: Options(
+            headers: {'Content-Type': 'application/json'},
+            responseType: ResponseType.stream,
+          ),
+          data: requestData,
+        );
+
+        if (response.data != null) {
+          final stream = response.data!.stream
+              .cast<List<int>>()
+              .transform(utf8.decoder)
+              .transform(const LineSplitter());
+
+          await for (final line in stream) {
+            if (!line.startsWith('data: ')) continue;
+            final jsonStr = line.substring(6).trim();
+            if (jsonStr.isEmpty || jsonStr == '[DONE]') continue;
+            try {
+              final chunk = jsonDecode(jsonStr) as Map<String, dynamic>;
+              final candidates = chunk['candidates'] as List?;
+              if (candidates == null || candidates.isEmpty) continue;
+              final parts = candidates[0]['content']?['parts'] as List?;
+              if (parts == null || parts.isEmpty) continue;
+              final text = parts[0]['text'] as String?;
+              if (text != null && text.isNotEmpty) {
+                yield MedicalTextFormatter.clean(text);
+                modelSucceeded = true;
+              }
+            } catch (_) {}
+          }
+        }
+        if (modelSucceeded) return;
+      } catch (e) {
+        debugPrint('Gemini streaming exception with $model: $e');
+      }
+    }
+
+    yield 'Désolé, MedsinaPilot est momentanément indisponible. Veuillez réessayer dans quelques instants.';
+  }
+
+  /// Streaming QCM explanation
+  static Stream<String> streamExplainQcm({
+    required String questionTitle,
+    required List<String> optionsText,
+    required List<String> correctKeys,
+    required String userQuery,
+    String? courseName,
+    String? moduleId,
+  }) {
+    final context = '''
+Question d'examen: $questionTitle
+Propositions:
+${optionsText.join('\n')}
+Bonne(s) réponse(s) officielle(s): ${correctKeys.join(', ')}
+${courseName != null ? 'Cours officiel rattaché: $courseName' : ''}
+${moduleId != null ? 'Module d\'enseignement: $moduleId' : ''}
+''';
+    return streamMedicalResponse(
+      prompt: userQuery,
+      contextInfo: context,
+      courseName: courseName,
+      moduleId: moduleId,
+    );
+  }
+
+  /// Streaming clinical advice
+  static Stream<String> streamClinicalAdvice({
+    required String clinicalSituation,
+    required String userQuery,
+    String? courseName,
+    String? moduleId,
+  }) {
+    return streamMedicalResponse(
       prompt: userQuery,
       contextInfo: 'Situation Clinique: $clinicalSituation',
       courseName: courseName,
