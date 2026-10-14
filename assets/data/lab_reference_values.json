@@ -275,5 +275,20 @@
     ],
     "created_at": "2026-10-14T12:21:13.317640+00:00",
     "updated_at": "2026-10-14T12:21:13.317656+00:00"
+  },
+  {
+    "id": "lab_tsh_ultrasensible",
+    "name": "TSH ultrasensible (TSHus)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "0.4 - 4.0",
+    "unit": "mUI/L",
+    "high_interpretation": "Hypothyroïdie (primaire si TSH > 4 mUI/L avec T4L basse). Causes fréquentes : Thyroïdite d'Hashimoto (anticorps anti-TPO positifs), iatrogène (amiodarone, lithium), post-thérapeutique (chirurgie, I131), carence iodée sévère. Si TSH > 10 mUI/L : hypothyroïdie franche, risque cardiovasculaire accru et dyslipidémie. Conduite à tenir : contrôler T4L et avis endocrinologie pour introduction progressive de L-thyroxine (surtout chez le coronarien).",
+    "low_interpretation": "Hyperthyroïdie (si associée à T4L/T3L élevées) ou thyrotoxicose infra-clinique (si T4L/T3L normales). Causes fréquentes : Maladie de Basedow (anticorps anti-récepteurs de la TSH positifs), goitre multinodulaire toxique, adénome toxique, thyroïdite subaiguë de de Quervain (phase initiale avec douleur cervicale). Urgence vitale : Crise thyrotoxique aiguë (fièvre > 38.5°C, tachycardie disproportionnée, troubles neuro-psychiatriques, insuffisance cardiaque) engageant le pronostic vital nécessitant une hospitalisation en réanimation. Autres causes de TSH basse : prise de corticoïdes, dopamine, syndrome de conversion (euthyroid sick syndrome).",
+    "clinical_notes": [
+      "Piège pré-analytique : Variations physiologiques (grossesse : premier trimestre avec limite inf abaissée à 0.1 mUI/L, nycthémère, âge) et interférences médicamenteuses (biotine à forte dose provoquant de fausses diminutions de TSH ou fausses augmentations des hormones thyroïdiennes selon les trousses immuno-enzymatiques).",
+      "Règle d'or diagnostique : Ne jamais interpréter une TSH isolément sans doser simultanément la T4 libre (T4L), indispensable pour différencier une atteinte hypophysaire centrale (TSH basse ou normale avec T4L basse) d'une atteinte périphérique."
+    ],
+    "created_at": "2026-10-14T12:37:53.483170+00:00",
+    "updated_at": "2026-10-14T12:37:53.483182+00:00"
   }
 ]

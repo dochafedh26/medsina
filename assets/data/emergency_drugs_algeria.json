@@ -603,6 +603,17 @@
     "dose": "• ISR : 1,5 à 2 mg/kg IV directe\n• Analgésie sédation : 0,2 à 0,5 mg/kg IV",
     "alert": "Effet bronchodilatateur et préservation du tonus sympathique. Éviter en cas d'hypertension intracrânienne non contrôlée ou de coronaropathie aiguë.",
     "algerian_availability": "Disponible Blocs / Déchoquage UMC / SMUR"
+  },
+  {
+    "id": "drug_moxifloxacine",
+    "dci": "Moxifloxacine",
+    "brand": "Moxiflox (Biopharm), Proflox (Frater-Razes), Moxifloxacine Saidal, Avelox (Bayer - Princeps)",
+    "category": "Infectiologie",
+    "route": "Perfusion IV lente (minimum 60 minutes). Pas de voie IM, pas de voie sous-cutanée, pas d'IV directe.",
+    "indication": "Pneumonie acquise sous ventilation (PAV) ou communautaire (PAC) grave, infections intra-abdominales compliquées, exacerbations sévères de BPCO en réanimation (en alternative si risque pseudomonal écarté ou association adaptée).",
+    "dose": "• Posologie adulte : 400 mg en perfusion IV unique par 24 heures (pas de dose de charge nécessaire). Le flacon prêt à l'emploi de 400 mg/250 ml de NaCl 0,9% ou G5% doit passer en 60 minutes exactement. Durée du traitement selon l'indication (généralement 7 à 14 jours).\n• Posologie pédiatrique : Contre-indiquée chez l'enfant et l'adolescent en croissance (risque d'atteinte du cartilage articulaire).",
+    "alert": "• Contre-indications absolues : Hypersensibilité aux quinolones, antécédents de tendinopathie liée aux fluoroquinolones, allongement congénital ou acquis de l'intervalle QT, hypokaliémie non corrigée, insuffisance hépatique sévère (Child-Pugh C), grossesse et allaitement, enfants de moins de 18 ans.\n• Pièges létaux : Risque d'arythmie ventriculaire grave (Torsades de pointes) en cas d'association avec des médicaments allongeant le QT (amiodarone, neuroleptiques). Risque de rupture tendineuse (notamment tendon d'Achille), exacerbation de la myasthénie.\n• Surveillance : ECG (contrôle du QTc), ionogramme sanguin (potassium, magnésium), fonction rénale et hépatique, surveillance clinique neuropsychologique et ostéo-articulaire.",
+    "algerian_availability": "Disponible en milieu hospitalier (PCH, UMC, services de réanimation et grands services de maladies infectieuses) et en officine (laboratoires locaux et princeps).",
+    "created_at": "2026-10-14T12:37:47.503713+00:00"
   }
 ]
-
