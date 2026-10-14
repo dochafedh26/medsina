@@ -70,3 +70,4 @@ CREATE POLICY "Enable update for on_call_mementos" ON public.on_call_mementos
 CREATE INDEX IF NOT EXISTS idx_on_call_mementos_category ON public.on_call_mementos (category);
 CREATE INDEX IF NOT EXISTS idx_on_call_mementos_priority ON public.on_call_mementos (priority_level);
 CREATE INDEX IF NOT EXISTS idx_on_call_mementos_created ON public.on_call_mementos (created_at DESC);
+
