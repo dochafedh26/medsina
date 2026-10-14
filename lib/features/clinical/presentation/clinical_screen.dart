@@ -50,7 +50,31 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final canPop = Navigator.of(context).canPop();
+
     return Scaffold(
+      appBar: canPop
+          ? AppBar(
+              title: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Pratique Clinique & Protocoles d\'Urgence',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  Text(
+                    'Conduites à Tenir, Scores & Mémento DCI Algérie',
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
+              ),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                tooltip: 'Retour au tableau de bord',
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            )
+          : null,
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color(0xFF2563EB),
         foregroundColor: Colors.white,
@@ -198,9 +222,11 @@ class _ProtocolsTab extends StatelessWidget {
                         final isTarget = targetProtocolId != null &&
                             (protocol.id.toLowerCase() == targetProtocolId!.toLowerCase() ||
                              protocol.id.toLowerCase().contains(targetProtocolId!.toLowerCase()) ||
-                             protocol.title.toLowerCase().contains(targetProtocolId!.toLowerCase()));
+                             protocol.title.toLowerCase().contains(targetProtocolId!.toLowerCase()) ||
+                             targetProtocolId!.toLowerCase().contains(protocol.id.toLowerCase()));
 
                         return _ProtocolCard(
+                          key: ValueKey('${protocol.id}_$isTarget'),
                           protocol: protocol,
                           initiallyExpanded: isTarget,
                         );
@@ -219,6 +245,7 @@ class _ProtocolCard extends StatefulWidget {
   final bool initiallyExpanded;
 
   const _ProtocolCard({
+    super.key,
     required this.protocol,
     this.initiallyExpanded = false,
   });
@@ -240,6 +267,14 @@ class _ProtocolCardState extends State<_ProtocolCard> {
         title: widget.protocol.title,
         specialty: widget.protocol.specialty,
       );
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _ProtocolCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initiallyExpanded && !_expanded) {
+      setState(() => _expanded = true);
     }
   }
 
