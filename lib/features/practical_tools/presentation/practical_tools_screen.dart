@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../lab_analysis/presentation/lab_analysis_screen.dart';
 import '../models/lab_value_model.dart';
 
 class PracticalToolsScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _loadData();
   }
 
@@ -64,15 +65,19 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
             unselectedLabelColor: Colors.grey.shade600,
             indicatorColor: AppTheme.primaryTeal,
             indicatorWeight: 3,
-            labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+            labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
             tabs: [
+              const Tab(
+                icon: Icon(Icons.psychology_rounded),
+                text: 'Analyseur IA ✨',
+              ),
               Tab(
                 icon: const Icon(Icons.biotech_rounded),
-                text: 'Normes Biologiques (${_allLabs.length})',
+                text: 'Normes (${_allLabs.length})',
               ),
               Tab(
                 icon: const Icon(Icons.nightlight_round),
-                text: 'Mémento de Garde (${_allMementos.length})',
+                text: 'Mémento (${_allMementos.length})',
               ),
             ],
           ),
@@ -87,6 +92,7 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
           child: TabBarView(
             controller: _tabController,
             children: [
+              const LabAnalysisScreen(showAppBar: false),
               _buildLabValuesTab(),
               _buildOnCallTab(),
             ],

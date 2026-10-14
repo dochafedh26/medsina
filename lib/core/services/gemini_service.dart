@@ -331,6 +331,63 @@ ${moduleId != null ? 'Module d\'enseignement: $moduleId' : ''}
     );
   }
 
+  /// Advanced Cross-Parameter Biological Lab Results Analyzer with Gemini Streaming
+  static Stream<String> streamLabAnalysis({
+    required String labData,
+    String? patientAge,
+    String? patientSex,
+    String? clinicalContext,
+  }) {
+    final patientInfo = [
+      if (patientAge != null && patientAge.isNotEmpty) 'Âge: $patientAge ans',
+      if (patientSex != null && patientSex.isNotEmpty) 'Sexe: $patientSex',
+      if (clinicalContext != null && clinicalContext.isNotEmpty) 'Contexte/Motif: $clinicalContext',
+    ].join(' | ');
+
+    final prompt = '''
+Tu es un médecin biologiste hospitalier et réanimateur senior expert en Algérie (CHU d'Alger, Blida, Oran, Constantine) et enseignant préparateur au concours de résidanat.
+Analyse ce bilan biologique de manière rigoureuse, croisée et immédiatement actionnable.
+
+[DONNÉES DU PATIENT]:
+${patientInfo.isEmpty ? 'Non précisé' : patientInfo}
+
+[RÉSULTATS BIOLOGIQUES REÇUS]:
+$labData
+
+Directives de rédaction :
+Rédige une analyse médicale structurée en Markdown enrichi avec les sections suivantes obligatoires :
+
+### 1. 🚨 Alertes Vitales & Seuils Critiques
+(Indique immédiatement les valeurs engageant le pronostic vital ou justifiant une action dans l'heure : kaliémie extrême, acidose sévère, thrombopénie majeure, cytolyse fulminante, lactates élevés, etc. Si tout est stable, indique « Aucune anomalie critique immédiate »).
+
+### 2. 📊 Interprétation Croisée des Paramètres
+(Dresse la liste des anomalies avec leur statut : [BAS 🔻], [NORMAL ✅], [ÉLEVÉ 🔺]. Ne te contente pas d'isoler les chiffres : mets-les en relation systémique : ex: anémie + VGM bas + ferritine basse = anémie microcytaire ferriprive ; Na bas + glycémie très haute = fausse hyponatrémie par hyperosmolarité).
+
+### 3. 🧮 Calculs & Formules Clés Appliquées
+(Détaille les calculs pertinents :
+- Trou Anionique Plasmatique = Na - (Cl + HCO3) [Norme : 12 ± 4 mmol/L]
+- Trou Osmolaire si applicable
+- Natrémie Corrigée de Katz si hyperglycémie
+- Calcémie Corrigée sur l'albumine si hypoalbuminémie
+- DFG estimé CKD-EPI ou Cockcroft si âge/créatinine disponibles
+- Ratio De Ritis (ASAT / ALAT) si bilan hépatique).
+
+### 4. 🧠 Diagnostic Syndromique & Hypothèses Étiologiques
+(Formule une conclusion syndromique claire : ex: « Acidose métabolique à trou anionique élevé compatible avec une décompensation acido-cétosique diabétique inaugurale sur terrain d'insuffisance rénale fonctionnelle ». Détaille les diagnostics différentiels par ordre de probabilité).
+
+### 5. 🎯 Conduite à Tenir Clinique Immédiate (CAT)
+(Protocole thérapeutique d'urgence : solutés de réhydratation, insulinothérapie IVSE, correction hydro-électrolytique prudente, bilans complémentaires urgents à prélever sans délai).
+
+### 6. 💡 Pièges du Concours de Résidanat & Vigilance Pré-analytique
+(Souligne les pièges classiques posés aux dossiers de résidanat et les artefacts de laboratoire : fausse hyperkaliémie sur hémolyse du tube ou garrot trop serré, prélèvement sur bras perfusé, etc.).
+''';
+
+    return streamMedicalResponse(
+      prompt: prompt,
+      contextInfo: 'Analyse de Bilan Biologique Hospitalier & Résidanat Algérie',
+    );
+  }
+
   /// Fast Structured Audit for Prescription & Terrain Safety (0 False Negatives)
   static Future<Map<String, dynamic>?> auditPrescriptionWithAi({
     required List<String> drugs,

@@ -7,6 +7,7 @@ import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/presentation/test_accounts_sheet.dart';
 import '../../clinical/presentation/clinical_screen.dart';
+import '../../lab_analysis/presentation/lab_analysis_screen.dart';
 import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
@@ -657,6 +658,39 @@ class DashboardScreen extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const PrescriptionAnalysisScreen()),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          ListTile(
+            tileColor: Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Theme.of(context).dividerColor),
+            ),
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFFCCFBF1),
+              child: Icon(Icons.biotech_rounded, color: Color(0xFF0D9488)),
+            ),
+            title: Row(
+              children: [
+                const Text('Analyse de Bilan Biologique', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0D9488).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text('Nouveau ✨', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF0D9488))),
+                ),
+              ],
+            ),
+            subtitle: const Text('Interprétation croisée NFS, Ionogramme, GDS, Foie • Calculs auto & diagnostic syndromique'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const LabAnalysisScreen()),
               );
             },
           ),
