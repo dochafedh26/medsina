@@ -290,5 +290,21 @@
     ],
     "created_at": "2026-10-14T12:37:53.483170+00:00",
     "updated_at": "2026-10-14T12:37:53.483182+00:00"
+  },
+  {
+    "id": "lab_vitamine_d",
+    "name": "Vitamine D (25-OH-Vitamine D totale)",
+    "category": "Vitamines & Oligo-éléments",
+    "normal_range": "Suffisance: 30 - 100 | Insuffisance: 10 - 29 | Carence: < 10",
+    "unit": "ng/mL (facteur de conversion en nmol/L : multiplier par 2.5)",
+    "high_interpretation": "Hypervitaminose D : > 150 ng/mL. Causes : iatrogène (surdosage médicamenteux en cholécalciférol ou ergocalciférol), granulomatoses (sarcoïdose, tuberculose par hydroxylation macrophagique extra-rénale non régulée), lymphomes. Risque d'urgence vitale : Hypercalcémie menaçante (> 3.0 mmol/L) avec insuffisance rénale aiguë, troubles du rythme cardiaque et calcifications métastatiques. Conduite à tenir : Arrêt immédiat de la vitamine D et du calcium, hydratation IV massive, diurétiques de l'anse, corticoïdes si granulomatose.",
+    "low_interpretation": "Carence ou insuffisance en vitamine D : < 30 ng/mL. Causes : défaut d'exposition solaire (mode de vie urbain, voilée, en Algérie paradoxalement très fréquent malgré l'ensoleillement), malabsorption intestinale (maladie cœliaque, Crohn, chirurgie bariatrique), insuffisance rénale ou hépatique chronique, traitements inducteurs enzymatiques (anti-épileptiques). Risque d'urgence : Hypocalcémie sévère avec tétanie, convulsions ou allongement du QT si carence profonde associée à une hypomagnésémie. Conduite à tenir : Supplémentation adaptée (charge puis entretien), correction préalable ou concomitante d'une hypomagnésémie.",
+    "clinical_notes": [
+      "Piège pré-analytique : Le prélèvement doit être protégé de la lumière (photolabilité de la 25-OH-D) et centrifugé rapidement avec décantation du sérum.",
+      "Forme circulante : La 25-hydroxyvitamine D est le reflet fidèle des réserves corporelles (via l'apport solaire et nutritionnel) en raison de sa longue demi-vie (2 à 3 semaines), contrairement à la 1,25-dihydroxyvitamine D (calcitriol) qui a une demi-vie très courte et dont le taux peut être normal ou faussement élevé par hyperparathyroïdie secondaire.",
+      "Contexte Algérien : La carence en vitamine D est un véritable problème de santé publique en Algérie, touchant plus de 80% de la population saine (femmes enceintes, nouveau-nés, personnes âgées), nécessitant une systématisation du dépistage et de la prophylaxie."
+    ],
+    "created_at": "2026-10-14T16:52:36.982845+00:00",
+    "updated_at": "2026-10-14T16:52:36.982862+00:00"
   }
 ]
