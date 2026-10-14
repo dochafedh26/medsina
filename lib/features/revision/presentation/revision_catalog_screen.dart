@@ -41,68 +41,84 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RevisionBloc, RevisionState>(
-      builder: (context, state) {
-        if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
-          return const Center(child: CircularProgressIndicator(color: AppTheme.primaryTeal));
-        }
+    final canPop = Navigator.of(context).canPop();
 
-        final filteredModules = state.modules.where((m) {
-          final matchesCat = _selectedCategory == 'Tous' ||
-              m.category.toLowerCase().contains(_selectedCategory.toLowerCase());
-          final matchesSearch = _searchQuery.isEmpty ||
-              m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-              m.courses.any((c) => c.name.toLowerCase().contains(_searchQuery.toLowerCase()));
-          return matchesCat && matchesSearch;
-        }).toList();
-
-        final totalVisibleCourses = filteredModules.fold<int>(0, (sum, m) => sum + m.totalCourses);
-
-        return DefaultTabController(
-          length: 2,
-          child: Column(
-            children: [
-              // Navigation TabBar: Catalogue vs Sessions Sur-Mesure
-              Container(
-                color: Theme.of(context).cardColor,
-                child: TabBar(
-                  indicatorColor: AppTheme.primaryTeal,
-                  indicatorWeight: 3,
-                  labelColor: AppTheme.primaryTeal,
-                  unselectedLabelColor: Colors.grey.shade600,
-                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                  tabs: [
-                    const Tab(
-                      icon: Icon(Icons.menu_book_rounded, size: 20),
-                      text: 'Catalogue (47 Modules)',
-                    ),
-                    Tab(
-                      icon: const Icon(Icons.dashboard_customize_rounded, size: 20),
-                      text: state.customSessions.isNotEmpty
-                          ? 'Sessions Sur-Mesure (${state.customSessions.length})'
-                          : 'Sessions Sur-Mesure',
-                    ),
-                  ],
-                ),
+    return Scaffold(
+      appBar: canPop
+          ? AppBar(
+              title: const Text(
+                'Catalogue & Révision Résidanat',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-              const Divider(height: 1),
-
-              // Tab Views
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    // Tab 1: Official Modules & Courses Catalogue
-                    _buildCatalogTab(context, state, filteredModules, totalVisibleCourses),
-
-                    // Tab 2: Custom Multi-Course Sessions
-                    _buildCustomSessionsTab(context, state),
-                  ],
-                ),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                onPressed: () => Navigator.of(context).pop(),
               ),
-            ],
-          ),
-        );
-      },
+            )
+          : null,
+      body: BlocBuilder<RevisionBloc, RevisionState>(
+        builder: (context, state) {
+          if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
+            return const Center(child: CircularProgressIndicator(color: AppTheme.primaryTeal));
+          }
+
+          final filteredModules = state.modules.where((m) {
+            final matchesCat = _selectedCategory == 'Tous' ||
+                m.category.toLowerCase().contains(_selectedCategory.toLowerCase());
+            final matchesSearch = _searchQuery.isEmpty ||
+                m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                m.courses.any((c) => c.name.toLowerCase().contains(_searchQuery.toLowerCase()));
+            return matchesCat && matchesSearch;
+          }).toList();
+
+          final totalVisibleCourses = filteredModules.fold<int>(0, (sum, m) => sum + m.totalCourses);
+
+          return DefaultTabController(
+            length: 2,
+            child: Column(
+              children: [
+                // Navigation TabBar: Catalogue vs Sessions Sur-Mesure
+                Container(
+                  color: Theme.of(context).cardColor,
+                  child: TabBar(
+                    indicatorColor: AppTheme.primaryTeal,
+                    indicatorWeight: 3,
+                    labelColor: AppTheme.primaryTeal,
+                    unselectedLabelColor: Colors.grey.shade600,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    tabs: [
+                      const Tab(
+                        icon: Icon(Icons.menu_book_rounded, size: 20),
+                        text: 'Catalogue (47 Modules)',
+                      ),
+                      Tab(
+                        icon: const Icon(Icons.dashboard_customize_rounded, size: 20),
+                        text: state.customSessions.isNotEmpty
+                            ? 'Sessions Sur-Mesure (${state.customSessions.length})'
+                            : 'Sessions Sur-Mesure',
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+
+                // Tab Views
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      // Tab 1: Official Modules & Courses Catalogue
+                      _buildCatalogTab(context, state, filteredModules, totalVisibleCourses),
+
+                      // Tab 2: Custom Multi-Course Sessions
+                      _buildCustomSessionsTab(context, state),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

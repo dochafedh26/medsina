@@ -55,50 +55,66 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          color: Theme.of(context).cardColor,
-          child: TabBar(
-            controller: _tabController,
-            labelColor: AppTheme.primaryTeal,
-            unselectedLabelColor: Colors.grey.shade600,
-            indicatorColor: AppTheme.primaryTeal,
-            indicatorWeight: 3,
-            labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-            tabs: [
-              const Tab(
-                icon: Icon(Icons.psychology_rounded),
-                text: 'Analyseur IA ✨',
+    final canPop = Navigator.of(context).canPop();
+
+    return Scaffold(
+      appBar: canPop
+          ? AppBar(
+              title: const Text(
+                'Mémento & Normes Biologiques',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-              Tab(
-                icon: const Icon(Icons.biotech_rounded),
-                text: 'Normes (${_allLabs.length})',
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_rounded),
+                onPressed: () => Navigator.of(context).pop(),
               ),
-              Tab(
-                icon: const Icon(Icons.nightlight_round),
-                text: 'Mémento (${_allMementos.length})',
-              ),
-            ],
+            )
+          : null,
+      body: Column(
+        children: [
+          Container(
+            color: Theme.of(context).cardColor,
+            child: TabBar(
+              controller: _tabController,
+              labelColor: AppTheme.primaryTeal,
+              unselectedLabelColor: Colors.grey.shade600,
+              indicatorColor: AppTheme.primaryTeal,
+              indicatorWeight: 3,
+              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+              tabs: [
+                const Tab(
+                  icon: Icon(Icons.psychology_rounded),
+                  text: 'Analyseur IA ✨',
+                ),
+                Tab(
+                  icon: const Icon(Icons.biotech_rounded),
+                  text: 'Normes (${_allLabs.length})',
+                ),
+                Tab(
+                  icon: const Icon(Icons.nightlight_round),
+                  text: 'Mémento (${_allMementos.length})',
+                ),
+              ],
+            ),
           ),
-        ),
-        if (_isLoading)
-          const LinearProgressIndicator(
-            backgroundColor: Colors.transparent,
-            color: AppTheme.primaryTeal,
-            minHeight: 2,
+          if (_isLoading)
+            const LinearProgressIndicator(
+              backgroundColor: Colors.transparent,
+              color: AppTheme.primaryTeal,
+              minHeight: 2,
+            ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                const LabAnalysisScreen(showAppBar: false),
+                _buildLabValuesTab(),
+                _buildOnCallTab(),
+              ],
+            ),
           ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              const LabAnalysisScreen(showAppBar: false),
-              _buildLabValuesTab(),
-              _buildOnCallTab(),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
