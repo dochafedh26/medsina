@@ -6,6 +6,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/presentation/test_accounts_sheet.dart';
+import '../../prescription/presentation/prescription_analysis_screen.dart';
+import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -645,6 +647,26 @@ class DashboardScreen extends StatelessWidget {
               side: BorderSide(color: Theme.of(context).dividerColor),
             ),
             leading: const CircleAvatar(
+              backgroundColor: Color(0xFFFEF3C7),
+              child: Icon(Icons.fact_check_rounded, color: Color(0xFFD97706)),
+            ),
+            title: const Text('Analyse d\'Ordonnance (Moteur Vidal)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+            subtitle: const Text('Détection des interactions médicamenteuses, contre-indications terrain & audit IA'),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const PrescriptionAnalysisScreen()),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          ListTile(
+            tileColor: Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: Theme.of(context).dividerColor),
+            ),
+            leading: const CircleAvatar(
               backgroundColor: Color(0xFFFEE2E2),
               child: Icon(Icons.emergency_rounded, color: Color(0xFFEF4444)),
             ),
@@ -677,6 +699,112 @@ class DashboardScreen extends StatelessWidget {
               );
             },
           ),
+          const SizedBox(height: 14),
+          // Modern Residency awareness banner for Clinique Pro doctors
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFF334155)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.12),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0D9488).withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFF0D9488)),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.school_rounded, color: Color(0xFF2DD4BF), size: 14),
+                          SizedBox(width: 5),
+                          Text(
+                            'FORMATION RÉSIDANAT MEDSINA',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF2DD4BF),
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    const Text(
+                      'Concours Blida 2027',
+                      style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Vous préparez le concours ou encadrez des internes & résidents ?',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.5),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Accédez à la base nationale de 47 modules médicaux, 6 240+ QCMs d\'annales corrigées, fiches de cours officielles et examens blancs interactifs.',
+                  style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
+                ),
+                const SizedBox(height: 14),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 8,
+                  children: [
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.white38),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.explore_rounded, size: 16),
+                      label: const Text('Découvrir le catalogue', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                    ),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0D9488),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                        );
+                      },
+                      icon: const Icon(Icons.upgrade_rounded, size: 16),
+                      label: const Text('Voir les formules Résidanat', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
       );
     }
@@ -684,6 +812,26 @@ class DashboardScreen extends StatelessWidget {
     // All-Access VIP or Free Trial or Expired: General access cards
     return Column(
       children: [
+        ListTile(
+          tileColor: Theme.of(context).cardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: Theme.of(context).dividerColor),
+          ),
+          leading: const CircleAvatar(
+            backgroundColor: Color(0xFFFEF3C7),
+            child: Icon(Icons.fact_check_rounded, color: Color(0xFFD97706)),
+          ),
+          title: const Text('Analyse d\'Ordonnance (Moteur Vidal)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+          subtitle: const Text('Détection des interactions, contre-indications terrain & audit MedsinaPilot'),
+          trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PrescriptionAnalysisScreen()),
+            );
+          },
+        ),
+        const SizedBox(height: 10),
         ListTile(
           tileColor: Theme.of(context).cardColor,
           shape: RoundedRectangleBorder(

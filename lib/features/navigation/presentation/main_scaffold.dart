@@ -12,6 +12,7 @@ import '../../admin/presentation/admin_dashboard_screen.dart';
 import '../../clinical/presentation/clinical_screen.dart';
 import '../../dashboard/presentation/dashboard_screen.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
+import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../auth/presentation/test_accounts_sheet.dart';
@@ -51,6 +52,8 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   void initState() {
     super.initState();
+    final initialUserId = context.read<AuthBloc>().state.user?.id;
+    RealtimeNotificationService.instance.setCurrentUser(initialUserId);
     _notificationSub = RealtimeNotificationService.instance.onNewNotification.listen((notif) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -130,8 +133,8 @@ class _MainScaffoldState extends State<MainScaffold> {
         page: RevisionCatalogScreen(),
       ));
       items.add(const NavItemConfig(
-        label: 'Outils',
-        title: 'Applications Pratiques & Mémento de Garde',
+        label: 'Mémento',
+        title: 'Mémento de Garde',
         icon: Icons.handyman_outlined,
         selectedIcon: Icons.handyman_rounded,
         page: PracticalToolsScreen(),
@@ -148,8 +151,8 @@ class _MainScaffoldState extends State<MainScaffold> {
             page: RevisionCatalogScreen(),
           ));
           items.add(const NavItemConfig(
-            label: 'Outils',
-            title: 'Outils de Révision & Calculs Médicaux',
+            label: 'Mémento',
+            title: 'Mémento de Garde',
             icon: Icons.handyman_outlined,
             selectedIcon: Icons.handyman_rounded,
             page: PracticalToolsScreen(),
@@ -157,7 +160,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           break;
 
         case SubscriptionTier.clinicalPro:
-          // Dr. Yasmine: Uniquement Pratique Clinique et Outils de garde
+          // Dr. Yasmine: Pratique Clinique, Analyse Ordonnance (Vidal) et Mémento de garde
           items.add(const NavItemConfig(
             label: 'Clinique',
             title: 'Pratique Clinique & Protocoles d\'Urgence',
@@ -166,8 +169,15 @@ class _MainScaffoldState extends State<MainScaffold> {
             page: ClinicalScreen(),
           ));
           items.add(const NavItemConfig(
-            label: 'Outils Garde',
-            title: 'Mémento de Garde & Scores Cliniques',
+            label: 'Ordonnance',
+            title: 'Analyse d\'Ordonnance (Vidal)',
+            icon: Icons.fact_check_outlined,
+            selectedIcon: Icons.fact_check_rounded,
+            page: PrescriptionAnalysisScreen(),
+          ));
+          items.add(const NavItemConfig(
+            label: 'Mémento',
+            title: 'Mémento de Garde',
             icon: Icons.handyman_outlined,
             selectedIcon: Icons.handyman_rounded,
             page: PracticalToolsScreen(),
@@ -185,6 +195,13 @@ class _MainScaffoldState extends State<MainScaffold> {
             page: ClinicalScreen(),
           ));
           items.add(const NavItemConfig(
+            label: 'Ordonnance',
+            title: 'Analyse d\'Ordonnance (Vidal)',
+            icon: Icons.fact_check_outlined,
+            selectedIcon: Icons.fact_check_rounded,
+            page: PrescriptionAnalysisScreen(),
+          ));
+          items.add(const NavItemConfig(
             label: 'Résidanat',
             title: 'Formation & Préparation Résidanat 2027',
             icon: Icons.school_outlined,
@@ -192,8 +209,8 @@ class _MainScaffoldState extends State<MainScaffold> {
             page: RevisionCatalogScreen(),
           ));
           items.add(const NavItemConfig(
-            label: 'Outils',
-            title: 'Applications Pratiques & Mémento de Garde',
+            label: 'Mémento',
+            title: 'Mémento de Garde',
             icon: Icons.handyman_outlined,
             selectedIcon: Icons.handyman_rounded,
             page: PracticalToolsScreen(),
@@ -220,7 +237,11 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= 850;
 
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listenWhen: (prev, current) => prev.user?.id != current.user?.id,
+      listener: (context, authState) {
+        RealtimeNotificationService.instance.setCurrentUser(authState.user?.id);
+      },
       builder: (context, authState) {
         final user = authState.user;
         final isAdmin = user?.isAdmin == true;
@@ -433,6 +454,79 @@ class _MainScaffoldState extends State<MainScaffold> {
               },
             ),
           ),
+
+          // Modern Residency promo card in sidebar for Clinique Pro
+          if (tier == SubscriptionTier.clinicalPro)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFF334155)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.school_rounded, size: 14, color: Color(0xFF2DD4BF)),
+                        const SizedBox(width: 6),
+                        const Text(
+                          'Espace Résidanat',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF2DD4BF),
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2DD4BF).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('47 modules', style: TextStyle(fontSize: 9, color: Colors.white70)),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      '6 240+ QCMs d\'annales pour le concours.',
+                      style: TextStyle(fontSize: 10.5, color: Colors.white70, height: 1.3),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: const BorderSide(color: Color(0xFF0D9488)),
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          minimumSize: const Size(0, 28),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+                          );
+                        },
+                        child: const Text(
+                          'Découvrir le programme',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
           const Divider(height: 1),
           // Footer

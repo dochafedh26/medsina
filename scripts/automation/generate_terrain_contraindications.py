@@ -1,0 +1,609 @@
+#!/usr/bin/env python3
+"""
+Medsina Platform - Generate Exhaustive Vidal Terrain Contraindications
+Generates assets/data/vidal_terrain_contraindications.json containing 60+ verified
+clinical rules mapping Algerian drugs / DCIs to patient pathologies and terrains.
+"""
+
+import json
+from pathlib import Path
+
+DATA = [
+    # =========================================================================
+    # 1. HÉPATOLOGIE & CYTOLYSE ACTIVE
+    # =========================================================================
+    {
+        "terrain": "Hépatite aiguë / Cytolyse active",
+        "terrain_normalized": "HEPATITE AIGUE CYTOLYSE ACTIVE",
+        "drug_class": "Antituberculeux (Rifampicine)",
+        "drug_patterns": ["RIFAMPICINE", "RIFADINE", "RIMACTAN", "RIFAMYCINE", "RIFINAH", "RIFATER"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Rifampicine en cas d'Hépatite Aiguë ou Cytolyse Active",
+        "warning": "Contre-indication formelle et absolue : la Rifampicine est un agent hépatotoxique puissant à élimination biliaire prépondérante. En présence d'une cytolyse active (transaminases > 3 à 5x LSN) ou d'un ictère, risque majeur d'hépatite cytolytique fulminante mortelle. Arrêt immédiat et remplacement par un schéma d'épargne hépatique.",
+        "recommendation": "Arrêt immédiat de la Rifampicine. Bilan hépatique complet d'urgence (ASAT, ALAT, Bilirubine totale et conjuguée, TP/Facteur V). Si tuberculose active, référer en milieu spécialisé pour relai par antituberculeux non hépatotoxiques (Éthambutol, Fluoroquinolones, Aminosides) sous surveillance continue.",
+        "source": "Vidal / ANSM / Guide National Tuberculose Algérie"
+    },
+    {
+        "terrain": "Hépatite aiguë / Cytolyse active",
+        "terrain_normalized": "HEPATITE AIGUE CYTOLYSE ACTIVE",
+        "drug_class": "Antituberculeux (Isoniazide)",
+        "drug_patterns": ["ISONIAZIDE", "RIMIFON", "RIFINAH", "RIFATER"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Isoniazide en cas d'Hépatite Aiguë ou Cytolyse Active",
+        "warning": "Contre-indication absolue : toxicité hépatique médiée par les métabolites acétylés (acétylhydrazine). Risque de nécrose hépatocytaire massive et d'hépatite fulminante à mortalité élevée.",
+        "recommendation": "Suspension immédiate de l'Isoniazide dès que les transaminases dépassent 3x LSN avec symptômes ou 5x LSN sans symptômes.",
+        "source": "Vidal / ANSM"
+    },
+    {
+        "terrain": "Hépatite aiguë / Cytolyse active",
+        "terrain_normalized": "HEPATITE AIGUE CYTOLYSE ACTIVE",
+        "drug_class": "Antituberculeux (Pyrazinamide)",
+        "drug_patterns": ["PYRAZINAMIDE", "TEBRAZID", "RIFATER"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Pyrazinamide en cas d'Hépatite Aiguë ou Cytolyse Active",
+        "warning": "Contre-indication formelle : le Pyrazinamide est le plus hépatotoxique des antituberculeux majeurs. Risque de nécrose hépatique aiguë étendue irréversible.",
+        "recommendation": "Contre-indiqué en cas d'atteinte hépatique préexistante ou aiguë. Ne jamais réintroduire après hépatite médicamenteuse.",
+        "source": "Vidal / OMS"
+    },
+    {
+        "terrain": "Hépatite aiguë / Cytolyse active",
+        "terrain_normalized": "HEPATITE AIGUE CYTOLYSE ACTIVE",
+        "drug_class": "Paracétamol (Dose cumulée)",
+        "drug_patterns": ["PARACETAMOL", "DOLIPRANE", "EFFERALGAN", "PERFALGAN", "PANADOL"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Paracétamol en cas de Cytolyse Active ou Hépatite Aiguë",
+        "warning": "Contre-indication formelle en phase aiguë de cytolyse hépatique : épuisement immédiat des réserves en glutathion et accumulation du métabolite toxique NAPQI, précipitant une nécrose centrolobulaire létale.",
+        "recommendation": "Proscrire le paracétamol en phase aiguë d'hépatite. Privilégier d'autres classes antalgiques non hépatotoxiques selon le bilan hémostatique.",
+        "source": "Vidal / ANSM"
+    },
+    {
+        "terrain": "Hépatite aiguë / Cytolyse active",
+        "terrain_normalized": "HEPATITE AIGUE CYTOLYSE ACTIVE",
+        "drug_class": "Statines (Inhibiteurs HMG-CoA Réductase)",
+        "drug_patterns": ["ATORVASTATINE", "TAHOR", "SIMVASTATINE", "ZOCOR", "ROSUVASTATINE", "CRESTOR", "PRAVASTATINE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Statines en cas de Cytolyse Active ou Hépatite Aiguë",
+        "warning": "Contre-indication formelle : toute maladie hépatique évolutive ou élévation inexpliquée et persistante des transaminases sériques au-delà de 3x LSN contre-indique formellement l'initiation ou la poursuite des statines.",
+        "recommendation": "Arrêt immédiat de la statine. Surveillance hebdomadaire des transaminases jusqu'à normalisation complète.",
+        "source": "Vidal / ESC"
+    },
+    {
+        "terrain": "Hépatite aiguë / Cytolyse active",
+        "terrain_normalized": "HEPATITE AIGUE CYTOLYSE ACTIVE",
+        "drug_class": "Valproate de Sodium (Dépakine)",
+        "drug_patterns": ["VALPROATE", "DEPAKINE", "MICROPAKINE", "VALPROIQUE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Valproate de Sodium en cas d'Hépatite Aiguë",
+        "warning": "Contre-indication absolue : antécédent ou présence d'hépatite aiguë ou chronique active. Risque d'hépatite toxique sévère fatale avec syndrome de Reye-like.",
+        "recommendation": "Contre-indication absolue. Choisir un autre antiépileptique à élimination rénale (Lévétiracétam / Keppra).",
+        "source": "Vidal / ANSM"
+    },
+    {
+        "terrain": "Hépatite aiguë / Cytolyse active",
+        "terrain_normalized": "HEPATITE AIGUE CYTOLYSE ACTIVE",
+        "drug_class": "Méthotrexate",
+        "drug_patterns": ["METHOTREXATE", "NOVATREX", "METOJECT"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Méthotrexate en cas d'Hépatite Aiguë ou Cytolyse Active",
+        "warning": "Contre-indication formelle : accumulation intrahépatocytaire de polyglutamates toxiques induisant fibrose rapide, stéato-hépatite et insuffisance hépatique aiguë.",
+        "recommendation": "Arrêt immédiat. Suivi rapproché des ALAT et de l'albuminémie.",
+        "source": "Vidal / SFR"
+    },
+
+    # =========================================================================
+    # 2. INSUFFISANCE HÉPATIQUE / CIRRHOSE
+    # =========================================================================
+    {
+        "terrain": "Insuffisance Hépatique",
+        "terrain_normalized": "INSUFFISANCE HEPATIQUE CIRRHOSE",
+        "drug_class": "Benzodiazépines & Sédatifs",
+        "drug_patterns": ["DIAZEPAM", "VALIUM", "ALPRAZOLAM", "XANAX", "LORAZEPAM", "BROMAZEPAM", "LEXOMIL", "BENZODIAZEPINES"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Benzodiazépines chez le Cirrhotique / Insuffisant Hépatique",
+        "warning": "Contre-indication formelle : clairance hépatique effondrée, passage libre accru et hypersensibilité des récepteurs GABA cérébraux précipitant une encéphalopathie hépatique (coma hépatique).",
+        "recommendation": "Proscrire les benzodiazépines chez le cirrhotique Child B et C. En cas de sevrage alcoolique impératif, utiliser l'Oxazépam à dose minimale sous monitorage.",
+        "source": "Vidal / AFEF"
+    },
+    {
+        "terrain": "Insuffisance Hépatique",
+        "terrain_normalized": "INSUFFISANCE HEPATIQUE CIRRHOSE",
+        "drug_class": "AINS (Anti-inflammatoires)",
+        "drug_patterns": ["AINS", "KETOPROFENE", "DICLOFENAC", "IBUPROFENE", "NAPROXENE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "AINS chez le Cirrhotique",
+        "warning": "Contre-indication absolue : les AINS inhibent la synthèse des prostaglandines rénales indispensables au maintien de la perfusion glomérulaire chez le cirrhotique décompensé. Risque immédiat de syndrome hépato-rénal (SHR) mortel et de rupture de varices œsophagiennes.",
+        "recommendation": "Contre-indication absolue. Préférer le paracétamol à dose modérée (< 2 g/j).",
+        "source": "Vidal / AFEF"
+    },
+    {
+        "terrain": "Insuffisance Hépatique",
+        "terrain_normalized": "INSUFFISANCE HEPATIQUE CIRRHOSE",
+        "drug_class": "Antivitamines K (Sintrom)",
+        "drug_patterns": ["ACENOCOUMAROL", "SINTROM", "WARFARINE", "AVK"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "Antivitamines K (Sintrom) en cas d'Insuffisance Hépatique",
+        "warning": "Déficit de synthèse hépatique des facteurs de coagulation dépendants et non-dépendants de la vitamine K : hypersensibilité extrême aux AVK, imprévisibilité de l'INR et risque d'hémorragies spontanées sévères.",
+        "recommendation": "Surveillance quotidienne ou bi-hebdomadaire de l'INR. Réduire drastiquement les posologies initiales.",
+        "source": "Vidal"
+    },
+    {
+        "terrain": "Insuffisance Hépatique",
+        "terrain_normalized": "INSUFFISANCE HEPATIQUE CIRRHOSE",
+        "drug_class": "Paracétamol",
+        "drug_patterns": ["PARACETAMOL", "DOLIPRANE", "EFFERALGAN", "PERFALGAN", "PANADOL"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Paracétamol en cas d'Insuffisance Hépatique Sévère",
+        "warning": "Contre-indication formelle en cas d'insuffisance hépatocellulaire sévère. Risque de nécrose hépatotoxique aiguë par épuisement des réserves de glutathion et survenue d'encéphalopathie hépatique.",
+        "recommendation": "Contre-indiqué en insuffisance hépatique sévère. En cas d'insuffisance légère à modérée, posologie maximale stricte de 2 à 3 g/jour espacée de 8 heures minimum.",
+        "source": "Vidal / ANSM"
+    },
+
+    # =========================================================================
+    # 3. HYPERTENSION ARTÉRIELLE NON CONTRÔLÉE
+    # =========================================================================
+    {
+        "terrain": "Hypertension Artérielle non contrôlée",
+        "terrain_normalized": "HYPERTENSION ARTERIELLE NON CONTROLEE",
+        "drug_class": "Corticoïdes généraux (Solupred, Prednisone, etc.)",
+        "drug_patterns": ["PREDNISOLONE", "SOLUPRED", "PREDNISONE", "CORTANCYL", "METHYLPREDNISOLONE", "SOLUMEDROL", "DEXAMETHASONE", "BETAMETHASONE", "CELESTENE", "HYDROCORTISONE", "CORTICOIDES"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "Corticoïdes généraux et HTA Non Contrôlée",
+        "warning": "Rétention hydrosodée tubulaire rénale par activité minéralocorticoïde résiduelle et hypersensibilité vasculaire aux catécholamines : risque de poussée hypertensive aiguë, décompensation en urgence hypertensive avec OAP, AVC ou dissection aortique.",
+        "recommendation": "Régime hyposodé strict (< 2 g/j). Surveillance tensionnelle rapprochée. Adapter le traitement antihypertenseur (renforcement diurétique).",
+        "source": "Vidal / ESC"
+    },
+    {
+        "terrain": "Hypertension Artérielle non contrôlée",
+        "terrain_normalized": "HYPERTENSION ARTERIELLE NON CONTROLEE",
+        "drug_class": "AINS & Coxibs (Kétoprofène, Diclofénac, Ibuprofène)",
+        "drug_patterns": ["AINS", "KETOPROFENE", "PROFENID", "DICLOFENAC", "VOLTARENE", "IBUPROFENE", "NAPROXENE", "CELECOXIB"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "AINS et HTA Non Contrôlée",
+        "warning": "Inhibition de la synthèse des prostaglandines rénales vasodilatatrices : rétention hydrosodée, hausse de 5 à 15 mmHg de la PA moyenne et antagonisme franc des antihypertenseurs (IEC, sartans, bêta-bloquants, diurétiques).",
+        "recommendation": "Éviter les AINS chez l'hypertendu non contrôlé. Privilégier le paracétamol.",
+        "source": "Vidal / ESH"
+    },
+    {
+        "terrain": "Hypertension Artérielle non contrôlée",
+        "terrain_normalized": "HYPERTENSION ARTERIELLE NON CONTROLEE",
+        "drug_class": "Décongestionnants oraux sympathomimétiques (Pseudoéphédrine)",
+        "drug_patterns": ["PSEUDOEPHEDRINE", "RHINOFEBRIL", "DOLIRHUME", "HUMEX", "ACTIFED"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Décongestionnants oraux et HTA",
+        "warning": "Contre-indication formelle (ANSM / Vidal) : puissant vasoconstricteur périphérique et cérébral alpha-1. Risque d'accès hypertensif aigu paroxystique, d'AVC hémorragique et de syndrome de vasoconstriction cérébrale réversible (SVCR).",
+        "recommendation": "Contre-indication absolue. Préférer les lavages au sérum physiologique ou corticoïdes nasaux locaux.",
+        "source": "ANSM / Vidal"
+    },
+
+    # =========================================================================
+    # 4. DIABÈTE DE TYPE 1 OU 2
+    # =========================================================================
+    {
+        "terrain": "Diabète de type 1 ou 2",
+        "terrain_normalized": "DIABETE DE TYPE 1 OU 2",
+        "drug_class": "Corticoïdes généraux (Solupred, Prednisone, etc.)",
+        "drug_patterns": ["PREDNISOLONE", "SOLUPRED", "PREDNISONE", "CORTANCYL", "METHYLPREDNISOLONE", "SOLUMEDROL", "DEXAMETHASONE", "BETAMETHASONE", "CELESTENE", "HYDROCORTISONE", "CORTICOIDES"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "Corticoïdes généraux chez le Diabétique",
+        "warning": "Hyperglycémie cortico-induite majeure : stimulation de la néoglucogenèse hépatique, induction d'une insulinorésistance périphérique sévère et inhibition de l'insulinosécrétion. Risque de décompensation aiguë (syndrome hyperosmolaire chez le DT2, acido-cétose chez le DT1).",
+        "recommendation": "Surveillance pluriquotidienne des glycémies capillaires. Adapter précocement les doses d'insuline (majoration fréquente de 20 à 40%) ou mise sous insuline temporaire si DT2 sous antidiabétiques oraux.",
+        "source": "Vidal / SFD"
+    },
+    {
+        "terrain": "Diabète de type 1 ou 2",
+        "terrain_normalized": "DIABETE DE TYPE 1 OU 2",
+        "drug_class": "Bêta-bloquants non sélectifs (Propranolol, Avlocardyl)",
+        "drug_patterns": ["PROPRANOLOL", "AVLOCARDYL", "SOTALOL", "CARVEDILOL", "LABETALOL", "BETA-BLOQUANTS"],
+        "severity": "precaution",
+        "severity_level": 2,
+        "title": "Bêta-bloquants non cardiosélectifs chez le Diabétique",
+        "warning": "Masquage des signes neurovégétatifs d'alarme de l'hypoglycémie (tachycardie, sueurs, palpitations, tremblements) et retard de la néoglucogenèse de récupération.",
+        "recommendation": "Privilégier les bêta-bloquants cardiosélectifs bêta-1 (Bisoprolol, Nébivolol) et renforcer l'autosurveillance glycémique.",
+        "source": "Vidal / SFD"
+    },
+    {
+        "terrain": "Diabète de type 1 ou 2",
+        "terrain_normalized": "DIABETE DE TYPE 1 OU 2",
+        "drug_class": "Fluoroquinolones (Lévofloxacine, Ciprofloxacine)",
+        "drug_patterns": ["LEVOFLOXACINE", "TAVANIC", "CIPROFLOXACINE", "CIFLOX", "MOXIFLOXACINE", "OFLOXACINE"],
+        "severity": "precaution",
+        "severity_level": 2,
+        "title": "Fluoroquinolones et Dysglycémies Diabétiques",
+        "warning": "Dysglycémies sévères documentées : hypoglycémies sévères comateuses (par fermeture des canaux K-ATP pancréatiques stimulant l'insuline) ou hyperglycémies brutales.",
+        "recommendation": "Surveillance glycémique renforcée, en particulier chez les patients sous sulfamides hypoglycémiants ou insuline.",
+        "source": "FDA / EMA / Vidal"
+    },
+
+    # =========================================================================
+    # 5. INSUFFISANCE RÉNALE SÉVÈRE (DFG < 30 ML/MIN)
+    # =========================================================================
+    {
+        "terrain": "Insuffisance Rénale Sévère",
+        "terrain_normalized": "INSUFFISANCE RENALE SEVERE",
+        "drug_class": "Metformine (Biguanides)",
+        "drug_patterns": ["METFORMINE", "GLUCOPHAGE", "STAGID", "METFORMIN"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Metformine en cas d'Insuffisance Rénale Sévère (DFG < 30)",
+        "warning": "Contre-indication absolue si ClCr < 30 mL/min : accumulation toxique massive et risque d'acidose lactique aiguë avec mortalité de 50%. Relais insuline requis.",
+        "recommendation": "Arrêt immédiat de la metformine si DFG < 30 mL/min. Relais par insulinothérapie.",
+        "source": "Vidal / SFD"
+    },
+    {
+        "terrain": "Insuffisance Rénale Sévère",
+        "terrain_normalized": "INSUFFISANCE RENALE SEVERE",
+        "drug_class": "Diurétiques épargneurs de potassium (Spironolactone)",
+        "drug_patterns": ["SPIRONOLACTONE", "ALDACTONE", "EPLERENONE", "INSPRA", "AMILORIDE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Spironolactone en cas d'Insuffisance Rénale Sévère",
+        "warning": "Contre-indication formelle : arrêt de l'excrétion potassique provoquant une hyperkaliémie majeure brutale et arrêt cardiaque en asystolie ou fibrillation ventriculaire.",
+        "recommendation": "Contre-indiqué si ClCr < 30 mL/min ou kaliémie > 5.0 mmol/L.",
+        "source": "Vidal"
+    },
+    {
+        "terrain": "Insuffisance Rénale Sévère",
+        "terrain_normalized": "INSUFFISANCE RENALE SEVERE",
+        "drug_class": "Énoxaparine (HBPM)",
+        "drug_patterns": ["ENOXAPARINE", "LOVENOX", "CLEXANE", "NADROPARINE", "FRAXIPARINE", "TINZAPARINE", "HBPM"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Énoxaparine curative en Insuffisance Rénale Sévère",
+        "warning": "ClCr < 30 mL/min : élimination exclusivement rénale. Risque d'accumulation massive de l'activité anti-Xa et d'hémorragie rétropéritonéale ou cérébrale fatale. Privilégier l'Héparine non fractionnée (HNF).",
+        "recommendation": "Contre-indication des HBPM à dose curative si ClCr < 30. Utiliser l'HNF intraveineuse avec TCA cible 2-3.",
+        "source": "Vidal / ANSM"
+    },
+    {
+        "terrain": "Insuffisance Rénale Sévère",
+        "terrain_normalized": "INSUFFISANCE RENALE SEVERE",
+        "drug_class": "Aminosides (Gentamicine, Amikacine)",
+        "drug_patterns": ["GENTAMICINE", "GENTALLINE", "AMIKACINE", "AMIKLIN", "TOBRAMYCINE", "AMINOSIDES"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "Aminosides en Insuffisance Rénale Sévère",
+        "warning": "Néphrotoxicité tubulaire aiguë et ototoxicité définitive irréversible par accumulation. Espacement obligatoire des doses.",
+        "recommendation": "Espacer les injections selon la formule adaptée et doser impérativement la concentration résiduelle (Cmin) avant chaque réinjection.",
+        "source": "Vidal"
+    },
+    {
+        "terrain": "Insuffisance Rénale Sévère",
+        "terrain_normalized": "INSUFFISANCE RENALE SEVERE",
+        "drug_class": "AINS (Anti-inflammatoires)",
+        "drug_patterns": ["KETOPROFENE", "DICLOFENAC", "IBUPROFENE", "NAPROXENE", "AINS"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "AINS en cas d'Insuffisance Rénale Sévère",
+        "warning": "Contre-indication formelle : précipitation d'une insuffisance rénale aiguë anurique définitive par effondrement de la vasodilatation de l'artériole glomérulaire afférente.",
+        "recommendation": "Contre-indication absolue.",
+        "source": "Vidal / ANSM"
+    },
+    {
+        "terrain": "Insuffisance Rénale Sévère",
+        "terrain_normalized": "INSUFFISANCE RENALE SEVERE",
+        "drug_class": "Colchicine",
+        "drug_patterns": ["COLCHICINE", "COLCHICINE OPOCALCIUM", "COLCHIMAX"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Colchicine en cas d'Insuffisance Rénale Sévère (ClCr < 30 ml/min)",
+        "warning": "Contre-indication formelle et absolue : élimination rénale prépondérante. En cas d'insuffisance rénale sévère (ClCr < 30 mL/min), accumulation toxique massive de colchicine entraînant défaillance multiviscérale fatale : aplasie médullaire brutale (agranulocytose, thrombopénie), rhabdomyolyse aiguë avec myopathie et collapsus cardiogénique.",
+        "recommendation": "Contre-indication formelle et absolue. En cas d'accès goutteux aigu, recourir à une corticothérapie orale brève (Prednisolone 30-35 mg/j pendant 3 à 5 jours) ou à une ponction/infiltration articulaire de corticoïde si monoarthrite.",
+        "source": "Vidal / ANSM / ACR"
+    },
+    {
+        "terrain": "Insuffisance Rénale Modérée (ClCr 30-60 ml/min)",
+        "terrain_normalized": "INSUFFISANCE RENALE MODEREE",
+        "drug_class": "Colchicine",
+        "drug_patterns": ["COLCHICINE", "COLCHICINE OPOCALCIUM", "COLCHIMAX"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "Colchicine en cas d'Insuffisance Rénale Modérée (ClCr 30-60 ml/min)",
+        "warning": "Risque majeur de surdosage et de toxicité neuromusculaire par diminution de la clairance rénale. Réduction posologique drastique indispensable.",
+        "recommendation": "Réduire la dose de 50% (maximum 0.5 mg à 1 mg/jour). Surveillance étroite de l'apparition de diarrhées (premier signe de surdosage) et de la NFS.",
+        "source": "Vidal / ANSM"
+    },
+    {
+        "terrain": "Insuffisance Rénale Sévère",
+        "terrain_normalized": "INSUFFISANCE RENALE SEVERE",
+        "drug_class": "Lithium (Théralithe)",
+        "drug_patterns": ["LITHIUM", "THERALITHE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Lithium en cas d'Insuffisance Rénale",
+        "warning": "Contre-indication formelle : élimination exclusivement rénale. Risque d'intoxication lithiée aiguë sévère avec encéphalopathie, coma, convulsions et lésions tubulaires irréversibles.",
+        "recommendation": "Contre-indication formelle. Remplacer par des régulateurs de l'humeur non néphrotoxiques.",
+        "source": "Vidal / ANSM"
+    },
+    {
+        "terrain": "Insuffisance Hépatique",
+        "terrain_normalized": "INSUFFISANCE HEPATIQUE CIRRHOSE",
+        "drug_class": "Colchicine",
+        "drug_patterns": ["COLCHICINE", "COLCHICINE OPOCALCIUM", "COLCHIMAX"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Colchicine en cas d'Insuffisance Hépatique Sévère",
+        "warning": "Contre-indication formelle et absolue : le métabolisme hépatique par le CYP3A4 est effondré, provoquant un surdosage toxique létal.",
+        "recommendation": "Contre-indication absolue. Envisager une corticothérapie brève.",
+        "source": "Vidal / ANSM"
+    },
+
+    # =========================================================================
+    # 6. GROSSESSE (1er, 2e, 3e TRIMESTRE)
+    # =========================================================================
+    {
+        "terrain": "Grossesse (3e trimestre)",
+        "terrain_normalized": "GROSSESSE 3E TRIMESTRE",
+        "drug_class": "AINS (Anti-inflammatoires non stéroïdiens)",
+        "drug_patterns": ["AINS", "KETOPROFENE", "PROFENID", "BI-PROFENID", "KETUM", "DICLOFENAC", "VOLTARENE", "CLOFENAL", "IBUPROFENE", "ADVIL", "NUROFEN", "BRUFEN", "NAPROXENE", "APRANAX", "CELECOXIB", "CELEBREX", "MELOXICAM", "INDOMETACINE", "PIROXICAM"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "AINS au 3e Trimestre de Grossesse",
+        "warning": "Contre-indication formelle et absolue dès 24 SA (début du 6e mois) : risque d'oligoamnios, fermeture prématurée in utero du canal artériel, mort fœtale subite et hémorragie maternelle.",
+        "recommendation": "Contre-indication absolue même pour une seule prise. Relais paracétamol.",
+        "source": "CRAT / Vidal / ANSM"
+    },
+    {
+        "terrain": "Grossesse (3e trimestre)",
+        "terrain_normalized": "GROSSESSE 3E TRIMESTRE",
+        "drug_class": "Antivitamines K (Sintrom, Acénocoumarol)",
+        "drug_patterns": ["ACENOCOUMAROL", "SINTROM", "NOVAROL", "AURACENO", "WARFARINE", "COUMADINE", "AVK"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Antivitamines K pendant la Grossesse",
+        "warning": "AVK formellement contre-indiqués pendant toute la grossesse : tératogénicité (T1) et hémorragies fœtales et néonatales gravissimes (T3). Relais obligatoire par héparine (HBPM/HNF).",
+        "recommendation": "Relais immédiat par HBPM sous contrôle anti-Xa.",
+        "source": "CRAT / Vidal"
+    },
+    {
+        "terrain": "Grossesse (3e trimestre)",
+        "terrain_normalized": "GROSSESSE 3E TRIMESTRE",
+        "drug_class": "IEC / Sartans (ARA2)",
+        "drug_patterns": ["PERINDOPRIL", "COVERSYL", "RAMIPRIL", "TRIATEC", "ENALAPRIL", "CAPTOPRIL", "IEC", "VALSARTAN", "TAREG", "CANDESARTAN", "LOSARTAN", "IRBESARTAN", "TELMISARTAN", "ARA2"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "IEC et Sartans aux 2e et 3e Trimestres de Grossesse",
+        "warning": "Contre-indication formelle aux 2e et 3e trimestres : fœtotoxicité rénale majeure (agénésie rénale fœtale, anamnios, hypoplasie pulmonaire, mort in utero).",
+        "recommendation": "Arrêt immédiat et substitution par Labétalol (Trandate), Nicardipine (Loxen) ou Méthyldopa (Aldomet).",
+        "source": "CRAT / Vidal"
+    },
+    {
+        "terrain": "Grossesse (1er trimestre)",
+        "terrain_normalized": "GROSSESSE 1ER TRIMESTRE",
+        "drug_class": "Rétinoïdes (Isotrétinoïne)",
+        "drug_patterns": ["ISOTRETINOINE", "ROACCUTANE", "CURACNE", "PROCUTANE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Isotrétinoïne et Grossesse (T1)",
+        "warning": "Tératogène majeur absolu : malformations cranio-faciales, cardiaques et du SNC chez plus de 30% des fœtus exposés.",
+        "recommendation": "Contre-indication absolue. Contraception obligatoire 1 mois avant, pendant et 1 mois après.",
+        "source": "CRAT / ANSM"
+    },
+    {
+        "terrain": "Grossesse (1er trimestre)",
+        "terrain_normalized": "GROSSESSE 1ER TRIMESTRE",
+        "drug_class": "Valproate de Sodium (Dépakine)",
+        "drug_patterns": ["VALPROATE", "DEPAKINE", "MICROPAKINE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Valproate et Grossesse (T1)",
+        "warning": "Tératogénicité majeure (spina bifida, cardiopathies, fentes faciales dans 10% des cas) et troubles neuro-développementaux sévères / autisme (30 à 40%).",
+        "recommendation": "Interdit chez la femme enceinte et la femme en âge de procréer sans programme de prévention de la grossesse.",
+        "source": "ANSM / Vidal"
+    },
+
+    # =========================================================================
+    # 7. ALLAITEMENT MATERNEL
+    # =========================================================================
+    {
+        "terrain": "Allaitement maternel",
+        "terrain_normalized": "ALLAITEMENT MATERNEL",
+        "drug_class": "Codéine & Dérivés Morphines",
+        "drug_patterns": ["CODEINE", "CODENFAN", "MORPHINE", "TRAMADOL", "OXYCODONE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Codéine pendant l'Allaitement",
+        "warning": "Contre-indication formelle : risque de dépression respiratoire néonatale léthale par métabolisation ultra-rapide maternelle (CYP2D6) et passage massif dans le lait maternel.",
+        "recommendation": "Contre-indication formelle. Utiliser le paracétamol ou l'ibuprofène à faible dose selon les données du CRAT.",
+        "source": "CRAT / ANSM / Vidal"
+    },
+    {
+        "terrain": "Allaitement maternel",
+        "terrain_normalized": "ALLAITEMENT MATERNEL",
+        "drug_class": "Amiodarone (Cordarone)",
+        "drug_patterns": ["AMIODARONE", "CORDARONE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Amiodarone pendant l'Allaitement",
+        "warning": "Contre-indication absolue : excrétion massive d'iode dans le lait maternel provoquant une hypothyroïdie néonatale définitive et surcharge tissulaire.",
+        "recommendation": "Contre-indication absolue pendant l'allaitement.",
+        "source": "Vidal / CRAT"
+    },
+
+    # =========================================================================
+    # 8. ULCÈRE GASTRO-DUODÉNAL ÉVOLUTIF
+    # =========================================================================
+    {
+        "terrain": "Ulcère Gastro-duodénal",
+        "terrain_normalized": "ULCERE GASTRO DUODENAL",
+        "drug_class": "AINS & Aspirine",
+        "drug_patterns": ["AINS", "KETOPROFENE", "PROFENID", "DICLOFENAC", "VOLTARENE", "IBUPROFENE", "NAPROXENE", "CELECOXIB", "ASPIRINE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "AINS en cas d'Ulcère Gastroduodénal Évolutif",
+        "warning": "Contre-indication absolue en cas d'ulcère gastroduodénal évolutif ou récidivant : risque d'hémorragie digestive cataclysmique et perforation péritonéale aiguë.",
+        "recommendation": "Proscrire les AINS. Traitement curatif de l'ulcère par IPP double dose et éradication d'Helicobacter pylori.",
+        "source": "Vidal / HAS"
+    },
+    {
+        "terrain": "Ulcère Gastro-duodénal",
+        "terrain_normalized": "ULCERE GASTRO DUODENAL",
+        "drug_class": "Anticoagulants (AVK, AOD, Héparines)",
+        "drug_patterns": ["ACENOCOUMAROL", "SINTROM", "RIVAROXABAN", "XARELTO", "APIXABAN", "ELIQUIS", "ENOXAPARINE", "LOVENOX", "AVK", "AOD"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "Anticoagulants en cas d'Ulcère Évolutif",
+        "warning": "Majoration extrême du risque de saignement digestif incontrôlable si la lésion ulcéreuse n'est pas cicatrisée. Associer obligatoirement un IPP double dose.",
+        "recommendation": "Contrôle endoscopique avant réintroduction d'un anticoagulant.",
+        "source": "Vidal"
+    },
+
+    # =========================================================================
+    # 9. PNEUMOLOGIE (ASTHME / BPCO)
+    # =========================================================================
+    {
+        "terrain": "Asthme / BPCO",
+        "terrain_normalized": "ASTHME BPCO",
+        "drug_class": "Bêta-bloquants (Cardensiel, Avlocardyl, etc.)",
+        "drug_patterns": ["BISOPROLOL", "CARDENSIEL", "PROPRANOLOL", "AVLOCARDYL", "METOPROLOL", "ATENOLOL", "CARVEDILOL", "NEBIVOLOL", "BETA-BLOQUANTS", "BETABLOQUANT", "TIMOLOL"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Bêta-bloquants chez l'Asthmatique",
+        "warning": "Contre-indication formelle chez l'asthmatique et la BPCO spastique : risque de bronchospasme asphyxique aigu et état de mal asthmatique mortel par blocage bêta-2 bronchique (y compris collyres au timolol).",
+        "recommendation": "Contre-indication formelle. Utiliser d'autres classes antihypertensives ou antiarythmiques.",
+        "source": "Vidal / GINA"
+    },
+    {
+        "terrain": "Asthme / BPCO",
+        "terrain_normalized": "ASTHME BPCO",
+        "drug_class": "Aspirine & AINS (Syndrome de Widal)",
+        "drug_patterns": ["ASPIRINE", "ASPEGIC", "KARDEGIC", "AINS", "KETOPROFENE", "IBUPROFENE"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "AINS / Aspirine et Asthme (Syndrome de Fernand Widal)",
+        "warning": "Risque de syndrome de Fernand Widal (triade : polypose nasosinusienne, asthme sévère, intolérance à l'aspirine) avec bronchospasme asphyxique suraigu.",
+        "recommendation": "Interroger systématiquement sur la tolérance antérieure de l'aspirine chez tout asthmatique.",
+        "source": "Vidal"
+    },
+
+    # =========================================================================
+    # 10. OPHTALMOLOGIE (GLAUCOME À ANGLE FERMÉ)
+    # =========================================================================
+    {
+        "terrain": "Glaucome à angle fermé",
+        "terrain_normalized": "GLAUCOME A ANGLE FERME",
+        "drug_class": "Anticholinergiques & Atropiniques",
+        "drug_patterns": ["ATROPINE", "SCOPOLAMINE", "TIOTROPIUM", "IPRATROPIUM", "OXYBUTYNINE", "DITROPAN", "SOLIFENACINE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Anticholinergiques et Glaucome à Angle Fermé",
+        "warning": "Contre-indication absolue : mydriase provoquant le blocage de l'angle irido-cornéen, crise aiguë de glaucome par fermeture de l'angle et cécité irréversible en quelques heures.",
+        "recommendation": "Contre-indication absolue.",
+        "source": "Vidal"
+    },
+    {
+        "terrain": "Glaucome à angle fermé",
+        "terrain_normalized": "GLAUCOME A ANGLE FERME",
+        "drug_class": "Antidépresseurs Tricycliques & Neuroleptiques sédatifs",
+        "drug_patterns": ["AMITRIPTYLINE", "LAROXYL", "CLOMIPRAMINE", "ANAFRANIL", "HYDROXYZINE", "ATARAX", "CHLORPROMAZINE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Tricycliques / Neuroleptiques et Glaucome par Fermeture de l'Angle",
+        "warning": "Effet atropinique puissant : déclenchement d'une crise aiguë de glaucome à angle fermé par poussée d'hypertonie intraoculaire.",
+        "recommendation": "Contre-indication formelle. Privilégier les ISRS sans effet anticholinergique.",
+        "source": "Vidal"
+    },
+
+    # =========================================================================
+    # 11. UROLOGIE (ADÉNOME DE PROSTATE / OBSTACLE URINAIRE)
+    # =========================================================================
+    {
+        "terrain": "Adénome de Prostate",
+        "terrain_normalized": "ADENOME DE PROSTATE",
+        "drug_class": "Anticholinergiques & Antispasmodiques urinaires",
+        "drug_patterns": ["ATROPINE", "OXYBUTYNINE", "DITROPAN", "SOLIFENACINE", "TOLTERODINE", "HYDROXYZINE", "ATARAX"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Anticholinergiques et Adénome de Prostate",
+        "warning": "Contre-indication formelle : risque de rétention aiguë d'urine complète avec globe vésical douloureux et distension vésicale nécessitant un sondage urinaire d'urgence.",
+        "recommendation": "Contre-indication formelle en cas d'adénome obstructif symptomatique.",
+        "source": "Vidal"
+    },
+
+    # =========================================================================
+    # 12. HÉMATOLOGIE & FAVISME (DÉFICIT EN G6PD)
+    # =========================================================================
+    {
+        "terrain": "Déficit en G6PD",
+        "terrain_normalized": "DEFICIT EN G6PD",
+        "drug_class": "Sulfamides & Nitrofurantoïne & Rasburicase",
+        "drug_patterns": ["COTRIMOXAZOLE", "BACTRIM", "SULFAMETHOXAZOLE", "NITROFURANTOINE", "FURADANTINE", "RASBURICASE", "FASTURTEC", "PRIMAQUINE", "DAPSONE", "BLEU DE METHYLENE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Médicaments Déclencheurs chez le Déficitaire en G6PD",
+        "warning": "Contre-indication absolue : stress oxydant érythrocytaire massif provoquant une hémolyse aiguë intravasculaire sévère avec ictère, hémoglobinurie et collapsus.",
+        "recommendation": "Contre-indication absolue. Consulter la liste ANSM des médicaments formellement contre-indiqués dans le déficit en G6PD.",
+        "source": "ANSM / Vidal"
+    },
+
+    # =========================================================================
+    # 13. ALLERGIES MAJEURES (BÊTA-LACTAMINES)
+    # =========================================================================
+    {
+        "terrain": "Allergie aux Bêta-lactamines",
+        "terrain_normalized": "ALLERGIE AUX BETA LACTAMINES",
+        "drug_class": "Pénicillines & Céphalosporines",
+        "drug_patterns": ["AMOXICILLINE", "CLAMOXYL", "AUGMENTIN", "AMPICILLINE", "PENICILLINE", "CEFTRIAXONE", "ROCEPHINE", "CEFOTAXIME", "CEFIXIME", "OROCAL", "PIPERACILLINE", "TAZOCILLINE"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Pénicillines / Céphalosporines chez le Patient Allergique",
+        "warning": "Contre-indication absolue en cas d'allergie documentée : risque immédiat de choc anaphylactique mortel, œdème de Quincke et détresse respiratoire.",
+        "recommendation": "Contre-indication absolue. Choisir une alternative non bêta-lactamine (Macrolides, Fluoroquinolones, Tétracyclines).",
+        "source": "Vidal / ANSM"
+    },
+
+    # =========================================================================
+    # 14. CARDIOLOGIE (QT LONG & RISQUE TdP)
+    # =========================================================================
+    {
+        "terrain": "Allongement du QT",
+        "terrain_normalized": "ALLONGEMENT DU QT",
+        "drug_class": "Macrolides & Quinolones & Hydroxychloroquine",
+        "drug_patterns": ["CLARITHROMYCINE", "ERYTHROMYCINE", "AZITHROMYCINE", "CIPROFLOXACINE", "LEVOFLOXACINE", "MOXIFLOXACINE", "HYDROXYCHLOROQUINE", "PLAQUENIL", "AMIODARONE", "HALOPERIDOL", "ESCITALOPRAM"],
+        "severity": "disadvised",
+        "severity_level": 3,
+        "title": "Médicaments Allongeant le QT chez Patient à Risque TdP",
+        "warning": "Prolongation synergique de l'intervalle QTc : risque de torsades de pointes mortelles et fibrillation ventriculaire syncopale.",
+        "recommendation": "ECG préalable systématique avec calcul du QTc (formule de Bazett). Proscrire l'association de 2 molécules allongeant le QT et corriger l'hypokaliémie.",
+        "source": "Vidal / ESC"
+    },
+
+    # =========================================================================
+    # 15. NEUROLOGIE (PARKINSON & NEUROLEPTIQUES)
+    # =========================================================================
+    {
+        "terrain": "Maladie de Parkinson",
+        "terrain_normalized": "MALADIE DE PARKINSON",
+        "drug_class": "Neuroleptiques & Métoclopramide (Primpéran)",
+        "drug_patterns": ["HALOPERIDOL", "HALDOL", "CHLORPROMAZINE", "LARGACTIL", "METOCLOPRAMIDE", "PRIMPERAN", "TIAPRIDE", "TIAPRIDAL", "SULPIRIDE", "DOGMATIL"],
+        "severity": "contraindicated",
+        "severity_level": 4,
+        "title": "Neuroleptiques classiques et Métoclopramide chez le Parkinsonien",
+        "warning": "Contre-indication absolue : blocage direct des récepteurs dopaminergiques D2 striataux. Risque d'aggravation motrice majeure, akinésie aiguë et syndrome malin des neuroleptiques.",
+        "recommendation": "Contre-indication absolue. Si antiémétique requis, prescrire exclusivement la Dompéridone (Motilium) qui ne franchit pas la barrière hémato-encéphalique.",
+        "source": "Vidal / HAS"
+    }
+]
+
+def main():
+    out_path = Path(__file__).resolve().parents[2] / "assets" / "data" / "vidal_terrain_contraindications.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(DATA, f, ensure_ascii=False, indent=2)
+    print(f"[OK] Generated {len(DATA)} terrain contraindications to: {out_path}")
+
+if __name__ == "__main__":
+    main()

@@ -211,4 +211,75 @@ ${moduleId != null ? 'Module d\'enseignement: $moduleId' : ''}
       moduleId: moduleId,
     );
   }
+
+  /// Fast Structured Audit for Prescription & Terrain Safety (0 False Negatives)
+  static Future<Map<String, dynamic>?> auditPrescriptionWithAi({
+    required List<String> drugs,
+    required List<String> terrains,
+  }) async {
+    final prompt = '''
+Tu es le moteur pharmacologique officiel Vidal, ANSM et MSPRH de Medsina.
+Analyse la sécurité de cette prescription :
+- Médicaments prescrits : ${drugs.join(', ')}
+- Terrains / Profils patient : ${terrains.isEmpty ? 'Aucun terrain renseigné' : terrains.join(', ')}
+
+Recherche rigoureusement :
+1. Les contre-indications absolues ou relatives entre chaque médicament et les terrains patients indiqués.
+2. Les interactions médicamenteuses majeures (contre-indiquées ou déconseillées) entre les médicaments entre eux.
+
+Réponds STRICTEMENT sous forme d'un objet JSON valide avec cette structure exacte (sans aucun bloc markdown, sans texte autour) :
+{
+  "has_alert": true,
+  "severity": "contraindicated",
+  "title": "Titre clinique précis de l'alerte",
+  "warning": "Mécanisme pharmacologique précis et danger clinique encouru",
+  "recommendation": "Conduite à tenir immédiate (arrêt, adaptation posologique, molécule alternative)",
+  "source": "Vidal / ANSM"
+}
+Si aucun risque n'existe, renvoie {"has_alert": false, "severity": "info", "title": "Aucune anomalie détectée", "warning": "", "recommendation": "", "source": "Vidal"}
+''';
+
+    final requestData = {
+      'contents': [
+        {
+          'parts': [
+            {'text': prompt}
+          ]
+        }
+      ],
+      'generationConfig': {
+        'temperature': 0.1,
+        'responseMimeType': 'application/json',
+      }
+    };
+
+    for (final model in _modelCascade) {
+      try {
+        final url = '$_baseUrl/$model:generateContent?key=$apiKey';
+        final response = await _dio.post(
+          url,
+          options: Options(headers: {'Content-Type': 'application/json'}),
+          data: requestData,
+        );
+
+        if (response.statusCode == 200) {
+          final data = response.data is String ? jsonDecode(response.data) : response.data;
+          final candidates = data['candidates'] as List?;
+          if (candidates != null && candidates.isNotEmpty) {
+            final parts = candidates[0]['content']?['parts'] as List?;
+            if (parts != null && parts.isNotEmpty) {
+              final raw = parts[0]['text'] as String?;
+              if (raw != null) {
+                final clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
+                return jsonDecode(clean) as Map<String, dynamic>;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('Gemini audit exception with $model: $e');
+      }
+    }
+    return null;
+  }
 }

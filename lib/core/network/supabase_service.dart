@@ -146,6 +146,90 @@ class SupabaseService {
     }
   }
 
+  /// Fetch Emergency Drugs (Urgences & DCI Algérie)
+  static Future<List<Map<String, dynamic>>> fetchEmergencyDrugs() async {
+    try {
+      final response = await client
+          .from('emergency_drugs')
+          .select()
+          .order('dci', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching emergency drugs from Cloud: $e');
+      return [];
+    }
+  }
+
+  /// Fetch Algerian Official Nomenclature Drugs (MSPRH)
+  static Future<List<Map<String, dynamic>>> fetchAlgerianNomenclature({
+    String? query,
+    int limit = 50,
+  }) async {
+    try {
+      var builder = client.from('algerian_nomenclature').select();
+      if (query != null && query.trim().isNotEmpty) {
+        final q = query.trim().toUpperCase();
+        builder = builder.or('brand_name.ilike.%$q%,dci.ilike.%$q%,code.ilike.%$q%');
+      }
+      final response = await builder.limit(limit);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching Algerian nomenclature from Cloud: $e');
+      return [];
+    }
+  }
+
+  /// Fetch Vidal Drug Interactions from Supabase
+  static Future<List<Map<String, dynamic>>> fetchVidalInteractions() async {
+    try {
+      final response = await client
+          .from('vidal_drug_interactions')
+          .select()
+          .order('severity_level', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching Vidal interactions from Cloud: $e');
+      return [];
+    }
+  }
+
+  /// Insert a newly discovered Vidal interaction into Supabase (Self-enriching database)
+  static Future<bool> insertVidalInteraction(Map<String, dynamic> interaction) async {
+    try {
+      await client.from('vidal_drug_interactions').insert(interaction);
+      return true;
+    } catch (e) {
+      debugPrint('Error inserting new Vidal interaction: $e');
+      return false;
+    }
+  }
+
+  /// Fetch Vidal Terrain Contraindications from Supabase
+  static Future<List<Map<String, dynamic>>> fetchVidalTerrainContraindications() async {
+    try {
+      final response = await client
+          .from('vidal_terrain_contraindications')
+          .select()
+          .order('severity_level', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching Vidal terrain contraindications from Cloud: $e');
+      return [];
+    }
+  }
+
+  /// Insert a newly discovered Vidal terrain contraindication into Supabase
+  static Future<bool> insertVidalTerrainContraindication(Map<String, dynamic> data) async {
+    try {
+      await client.from('vidal_terrain_contraindications').insert(data);
+      return true;
+    } catch (e) {
+      debugPrint('Error inserting new Vidal terrain contraindication: $e');
+      return false;
+    }
+  }
+
+
   /// Fetch the latest Daily Clinical Pearl & Exam Trap
   static Future<Map<String, dynamic>?> fetchLatestDailyPearl() async {
     try {

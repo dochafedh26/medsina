@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import '../../../core/network/supabase_service.dart';
 import '../models/cat_protocol_model.dart';
+import '../models/emergency_drug_model.dart';
 
 class ClinicalRepository {
   static List<ClinicalProtocol> getInitialProtocols() {
@@ -513,4 +516,45 @@ class ClinicalRepository {
       return initialList;
     }
   }
+
+  static List<EmergencyDrugModel>? _cachedDrugs;
+
+  /// Fetches emergency drugs with offline-first priority (JSON asset) + Supabase merge
+  static Future<List<EmergencyDrugModel>> fetchEmergencyDrugs({bool forceRefresh = false}) async {
+    if (!forceRefresh && _cachedDrugs != null && _cachedDrugs!.isNotEmpty) {
+      return _cachedDrugs!;
+    }
+
+    final localList = <EmergencyDrugModel>[];
+    try {
+      final jsonStr = await rootBundle.loadString('assets/data/emergency_drugs_algeria.json');
+      final list = jsonDecode(jsonStr) as List<dynamic>;
+      for (var item in list) {
+        if (item is Map<String, dynamic>) {
+          localList.add(EmergencyDrugModel.fromJson(item));
+        }
+      }
+    } catch (_) {}
+
+    final Map<String, EmergencyDrugModel> map = {
+      for (var d in localList) d.id: d,
+    };
+
+    // Merge from Supabase (Urgences & DCI Algérie)
+    try {
+      final remoteRows = await SupabaseService.fetchEmergencyDrugs();
+      for (var row in remoteRows) {
+        try {
+          final drug = EmergencyDrugModel.fromJson(row);
+          if (drug.id.isNotEmpty) {
+            map[drug.id] = drug;
+          }
+        } catch (_) {}
+      }
+    } catch (_) {}
+
+    _cachedDrugs = map.values.toList();
+    return _cachedDrugs!;
+  }
 }
+

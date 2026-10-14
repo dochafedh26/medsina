@@ -10,6 +10,7 @@ import '../bloc/clinical_event.dart';
 import '../bloc/clinical_state.dart';
 import '../models/cat_protocol_model.dart';
 import '../models/clinical_calculator_model.dart';
+import '../models/emergency_drug_model.dart';
 
 class ClinicalScreen extends StatefulWidget {
   const ClinicalScreen({super.key});
@@ -1046,25 +1047,6 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
   }
 }
 
-class EmergencyDrugItem {
-  final String dci;
-  final String brand;
-  final String category;
-  final String route;
-  final String indication;
-  final String dose;
-  final String alert;
-
-  const EmergencyDrugItem({
-    required this.dci,
-    required this.brand,
-    required this.category,
-    required this.route,
-    required this.indication,
-    required this.dose,
-    required this.alert,
-  });
-}
 
 class _EmergencyDrugsTab extends StatefulWidget {
   const _EmergencyDrugsTab();
@@ -1074,398 +1056,244 @@ class _EmergencyDrugsTab extends StatefulWidget {
 }
 
 class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
-  String _searchQuery = '';
-  String _selectedCategory = 'Tous';
+  final TextEditingController _searchController = TextEditingController();
   bool _triageExpanded = false;
 
-  final List<String> _categories = [
-    'Tous',
-    'Cardio / ACR / Choc',
-    'Respiratoire',
-    'Neurologie / Sédation',
-    'Infectiologie',
-    'Antidotes & Sérums',
-    'Antalgiques',
-    'Hémostase & Anticoagulants',
-    'Métabolisme & Endocrinologie',
-  ];
-
-  static const List<EmergencyDrugItem> _allDrugs = [
-    EmergencyDrugItem(
-      dci: 'Adrénaline',
-      brand: 'Adrénaline Aguettant / Saidal',
-      category: 'Cardio / ACR / Choc',
-      route: 'IM / IVD',
-      indication: 'Choc anaphylactique & Arrêt Cardiorespiratoire (ACR)',
-      dose: '• Anaphylaxie : 0,5 mg IM (face antérolatérale de la cuisse)\n• Arrêt Cardiaque : 1 mg IVD toutes les 3-5 min\n• Enfant : 0,01 mg/kg IM (max 0,3 mg)',
-      alert: 'Ne jamais injecter 1 mg IV directe en dehors de l\'arrêt cardiaque (risque de FV létale ou crise hypertensive sévère).',
-    ),
-    EmergencyDrugItem(
-      dci: 'Noradrénaline',
-      brand: 'Lévophed / Noradrénaline Saidal',
-      category: 'Cardio / ACR / Choc',
-      route: 'Perfusion IV (PSE)',
-      indication: 'Choc septique, choc vasoplégique résistant au remplissage',
-      dose: '• 0,1 à 1 µg/kg/min au PSE sur VVC (ou VVP de gros calibre en attente)\n• Objectif : PAM ≥ 65 mmHg',
-      alert: 'Risque d\'ischémie distale sévère et de nécrose cutanée majeure en cas d\'extravasation veineuse.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Sérum Antiscorpionique (SAS)',
-      brand: 'Institut Pasteur d\'Algérie (IPA)',
-      category: 'Antidotes & Sérums',
-      route: 'IVD lente / Perfusion',
-      indication: 'Envenimation scorpionique Stades 2 et 3 (Guide MSPRH Algérie)',
-      dose: '• 1 à 2 ampoules en IV directe lente (ou perfusion dans 50 mL NaCl 0,9% en 15 min)\n• Réévaluation à H2 : répéter 1 ampoule si persistance des signes systémiques',
-      alert: 'Efficacité maximale dans les 2 premières heures après la piqûre. Inutile au Stade 1 (douleur locale isolée).',
-    ),
-    EmergencyDrugItem(
-      dci: 'Amiodarone',
-      brand: 'Cordarone / Saidal',
-      category: 'Cardio / ACR / Choc',
-      route: 'IVD / Perfusion',
-      indication: 'Fibrillation / Tachycardie Ventriculaire sans pouls (ACR), TACFA instable',
-      dose: '• ACR : 300 mg dans 20-30 mL G5% IVD après le 3e choc électrique, puis 150 mg après le 5e choc\n• TACFA : 5 mg/kg dans 250 mL G5% sur 20-60 min',
-      alert: 'Toujours diluer dans du Sérum Glucosé 5% (G5%), jamais dans du NaCl 0,9% (précipitation immédiate).',
-    ),
-    EmergencyDrugItem(
-      dci: 'Furosémide',
-      brand: 'Lasilix / Saidal',
-      category: 'Cardio / ACR / Choc',
-      route: 'IVD lente',
-      indication: 'Œdème Aigu du Poumon (OAP cardiogénique), surcharge volémique',
-      dose: '• 40 à 80 mg IV directe lente (1 à 2 ampoules de 20 mg ou 1 ampoule de 40 mg)\n• Si insuffisance rénale : jusqu\'à 160-250 mg IV',
-      alert: 'Contre-indiqué formellement si PAS < 90 mmHg (hypovolémie/choc). Surveiller kaliémie et diurèse horaire.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Ceftriaxone',
-      brand: 'Rocéphine / Saftriaxone Saidal',
-      category: 'Infectiologie',
-      route: 'Perfusion IV',
-      indication: 'Méningites purulentes, purpura fulminans, pneumopathies graves, choc septique',
-      dose: '• Sepsis général : 2 g/j en perfusion IV de 30 min\n• Suspicion méningite purulente : 100 mg/kg/j IV (max 4 g/j), injecter immédiatement',
-      alert: 'Céphalosporine de 3e génération de référence dans les UMC algériennes.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Méthylprednisolone',
-      brand: 'Solumédrol / Saidal',
-      category: 'Respiratoire',
-      route: 'IVD / IM',
-      indication: 'Crise d\'asthme sévère / AAG, laryngite aiguë sous-glottique, anaphylaxie',
-      dose: '• Adulte : 1 à 2 mg/kg IV (soit 80 à 120 mg IV)\n• Enfant : 1 à 2 mg/kg IV ou IM',
-      alert: 'Délai d\'action anti-inflammatoire de 4 à 6 heures. Ne remplace pas les bronchodilatateurs inhalés d\'urgence.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Salbutamol',
-      brand: 'Ventoline / Saidal',
-      category: 'Respiratoire',
-      route: 'Nébulisation / IV',
-      indication: 'Asthme Aigu Grave (AAG), BPCO décompensée, Hyperkaliémie menaçante',
-      dose: '• AAG : 5 mg dans 4 mL sérum physiologique sous 6-8 L/min d\'O2, renouvelable toutes les 20 min\n• Hyperkaliémie : 10 à 20 mg en nébulisation',
-      alert: 'Surveiller tachycardie, tremblements et hypokaliémie.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Diazépam',
-      brand: 'Valium / Saidal',
-      category: 'Neurologie / Sédation',
-      route: 'IVD lente / Intra-rectal',
-      indication: 'État de mal convulsif, crise convulsive fébrile, agitation sévère',
-      dose: '• Adulte : 10 mg IV lente (1 ampoule) en 2 min, répéter une fois à 5-10 min si persistance\n• Enfant : 0,5 mg/kg en intra-rectal (canule)',
-      alert: 'Risque d\'apnée et de dépression respiratoire : matériel de ventilation (Ambu/O2) obligatoire à portée de main.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Morphine (Sulfate de Morphine)',
-      brand: 'Morphine Aguettant / Saidal',
-      category: 'Antalgiques',
-      route: 'IV titration',
-      indication: 'Douleur aiguë intense (EVA ≥ 7), Syndrome Coronarien Aigu, OAP cardiogénique',
-      dose: '• Titration IV : Bolus initial 2 à 3 mg IVD, puis 1 à 2 mg toutes les 5 minutes jusqu\'à EVA < 4\n• Antidote obligatoire à disposition : Naloxone (Narcan)',
-      alert: 'Surveiller FR (FR < 10 = bradypnée toxique), sédation (score de Rudkin) et SpO2.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Enoxaparine',
-      brand: 'Lovenox / Saidal',
-      category: 'Hémostase & Anticoagulants',
-      route: 'SC / Bolus IV',
-      indication: 'Syndrome Coronarien Aigu (SCA), Embolie Pulmonaire, TVP',
-      dose: '• Curatif : 100 UI/kg (soit 1 mg/kg) SC toutes les 12 heures\n• Bolus IV (SCA ST+ < 75 ans) : 3 000 UI IVD suivi de 1 mg/kg SC',
-      alert: 'Adapter posologie si clairance créatinine < 30 mL/min (contre-indication relative, privilégier HNF).',
-    ),
-    EmergencyDrugItem(
-      dci: 'Acide Tranexamique',
-      brand: 'Exacyl / Saidal',
-      category: 'Hémostase & Anticoagulants',
-      route: 'Perfusion IV',
-      indication: 'Hémorragie du post-partum, traumatisme grave avec choc hémorragique (CRASH-2)',
-      dose: '• 1 g IV dans 100 mL NaCl 0,9% en 10 minutes, puis 1 g en perfusion continue sur 8 heures\n• À injecter impérativement dans les 3 premières heures suivant le saignement',
-      alert: 'Efficacité nulle ou délétère si administré après 3 heures du traumatisme.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Insuline Rapide',
-      brand: 'Actrapid / Umuline Rapide',
-      category: 'Métabolisme & Endocrinologie',
-      route: 'IV continu (PSE)',
-      indication: 'Acidocétose diabétique, coma hyperosmolaire, hyperkaliémie sévère',
-      dose: '• Acidocétose : 0,1 UI/kg/h au PSE après réhydratation par NaCl 0,9%\n• Hyperkaliémie : 10 UI dans 500 mL G10% en 30 min',
-      alert: 'Ne jamais baisser la glycémie de plus de 0,5 à 1 g/L par heure. Surveiller la kaliémie en continu.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Gluconate de Calcium',
-      brand: 'Gluconate de Calcium Saidal 10%',
-      category: 'Métabolisme & Endocrinologie',
-      route: 'IVD lente (5-10 min)',
-      indication: 'Hyperkaliémie sévère (≥ 6,5 mmol/L ou anomalies ECG : ondes T pointues / élargissement QRS)',
-      dose: '• 1 ampoule de 10 mL à 10% IV directe lente sur 5 minutes sous scope ECG\n• Renouvelable à 5-10 min si persistance des signes ECG',
-      alert: 'Ne fait pas baisser le potassium ! Stabilise la membrane myocardique contre la FV. Contre-indiqué si digitaliques.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Atropine',
-      brand: 'Sulfate d\'Atropine Saidal',
-      category: 'Cardio / ACR / Choc',
-      route: 'IVD',
-      indication: 'Bradycardie sinusale symptomatique sévère (FC < 40, hypotension), intoxication organophosphorés',
-      dose: '• Bradycardie : 0,5 mg à 1 mg IVD toutes les 3-5 min (dose max 3 mg)\n• Intoxication organophosphorés : 2 à 5 mg IVD toutes les 10-15 min jusqu\'à atropinisation',
-      alert: 'Inefficace sur les blocs auriculo-ventriculaires de haut degré (BAV III, Mobitz II à QRS large).',
-    ),
-    EmergencyDrugItem(
-      dci: 'Trinitrine / Dinitrate d\'Isosorbide',
-      brand: 'Risordan / Saidal / Lenitral',
-      category: 'Cardio / ACR / Choc',
-      route: 'Sublingual / PSE',
-      indication: 'Syndrome Coronarien Aigu (SCA), Poussée hypertensive avec OAP',
-      dose: '• Sublingual : 1 bouffée de spray sous la langue toutes les 5 min (max 3 bouffées)\n• PSE : 1 à 3 mg/h au pousse-seringue électrique',
-      alert: 'Contre-indiqué formellement si PAS < 90 mmHg, infarctus du ventricule droit ou prise de Viagra/Cialis < 48h.',
-    ),
-    EmergencyDrugItem(
-      dci: 'Vaccin Antirabique + Sérum',
-      brand: 'Rabipur / Sérum Antirabique IPA',
-      category: 'Antidotes & Sérums',
-      route: 'IM / Infiltration',
-      indication: 'Exposition suspecte de rage (morsure, griffure Catégorie II et III - Guide IPA/OMS)',
-      dose: '• Protocole Zagreb : 2 doses à J0 (1 dans chaque deltoïde), 1 dose à J7, 1 dose à J21\n• Sérum (Catégorie III) : 20 UI/kg infiltré dans et autour de la plaie',
-      alert: 'Ne pas suturer immédiatement ! Nettoyage abondant à l\'eau et au savon pendant 15 minutes obligatoire.',
-    ),
-  ];
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final query = _searchQuery.trim().toLowerCase();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final filteredDrugs = _allDrugs.where((drug) {
-      final matchesCategory = _selectedCategory == 'Tous' || drug.category == _selectedCategory;
-      if (!matchesCategory) return false;
+    return BlocBuilder<ClinicalBloc, ClinicalState>(
+      builder: (context, state) {
+        final filteredDrugs = state.filteredDrugs;
+        final categories = state.availableDrugCategories;
+        final selectedCategory = state.selectedDrugCategory;
+        final searchQuery = state.drugSearchQuery;
 
-      if (query.isEmpty) return true;
-
-      return drug.dci.toLowerCase().contains(query) ||
-          drug.brand.toLowerCase().contains(query) ||
-          drug.indication.toLowerCase().contains(query) ||
-          drug.category.toLowerCase().contains(query) ||
-          drug.route.toLowerCase().contains(query) ||
-          drug.dose.toLowerCase().contains(query);
-    }).toList();
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        // Collapsible Triage Banner
-        Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Column(
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<ClinicalBloc>().add(const LoadClinicalDataEvent(forceRefresh: true));
+          },
+          child: ListView(
+            padding: const EdgeInsets.all(16),
             children: [
-              InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: () => setState(() => _triageExpanded = !_triageExpanded),
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2563EB).withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
+              // Collapsible Triage Banner
+              Card(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Column(
+                  children: [
+                    InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => setState(() => _triageExpanded = !_triageExpanded),
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.local_hospital_rounded, color: Color(0xFF2563EB), size: 18),
+                            ),
+                            const SizedBox(width: 10),
+                            const Expanded(
+                              child: Text(
+                                'Triage National des Urgences (MSPRH Algérie)',
+                                style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _triageExpanded ? 'Masquer' : 'Afficher',
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              _triageExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                              color: const Color(0xFF2563EB),
+                              size: 20,
+                            ),
+                          ],
                         ),
-                        child: const Icon(Icons.local_hospital_rounded, color: Color(0xFF2563EB), size: 18),
                       ),
-                      const SizedBox(width: 10),
-                      const Expanded(
-                        child: Text(
-                          'Triage National des Urgences (MSPRH Algérie)',
-                          style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                    ),
+                    if (_triageExpanded) ...[
+                      const Divider(height: 1),
+                      Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          children: [
+                            _buildTriageLevel(
+                              code: 'U1 - CODE ROUGE',
+                              delay: '< 5 min',
+                              title: 'Urgence Vitale Immédiate',
+                              desc: 'Arrêt cardiorespiratoire, choc, détresse respiratoire aiguë, coma, polytraumatisé. Salle de déchoquage immédiate.',
+                              color: const Color(0xFFDC2626),
+                            ),
+                            const SizedBox(height: 8),
+                            _buildTriageLevel(
+                              code: 'U2 - CODE ORANGE',
+                              delay: '< 30 min',
+                              title: 'Urgence Grave Différée',
+                              desc: 'Douleur thoracique aiguë, déficit neurologique (AVC), fracture ouverte, colique néphrétique hyperalgique, hémorragie contrôlée.',
+                              color: const Color(0xFFD97706),
+                            ),
+                            const SizedBox(height: 8),
+                            _buildTriageLevel(
+                              code: 'U3 - CODE VERT',
+                              delay: '> 60 min',
+                              title: 'Urgence Relative / Ambulatoire',
+                              desc: 'Fonctions vitales normales. Traumatismes mineurs, sutures simples. Orientation vers les polycliniques.',
+                              color: const Color(0xFF16A34A),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _triageExpanded ? 'Masquer' : 'Afficher',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        _triageExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-                        color: const Color(0xFF2563EB),
-                        size: 20,
                       ),
                     ],
-                  ),
+                  ],
                 ),
               ),
-              if (_triageExpanded) ...[
-                const Divider(height: 1),
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Column(
-                    children: [
-                      _buildTriageLevel(
-                        code: 'U1 - CODE ROUGE',
-                        delay: '< 5 min',
-                        title: 'Urgence Vitale Immédiate',
-                        desc: 'Arrêt cardiorespiratoire, choc, détresse respiratoire aiguë, coma, polytraumatisé. Salle de déchoquage immédiate.',
-                        color: const Color(0xFFDC2626),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildTriageLevel(
-                        code: 'U2 - CODE ORANGE',
-                        delay: '< 30 min',
-                        title: 'Urgence Grave Différée',
-                        desc: 'Douleur thoracique aiguë, déficit neurologique (AVC), fracture ouverte, colique néphrétique hyperalgique, hémorragie contrôlée.',
-                        color: const Color(0xFFD97706),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildTriageLevel(
-                        code: 'U3 - CODE VERT',
-                        delay: '> 60 min',
-                        title: 'Urgence Relative / Ambulatoire',
-                        desc: 'Fonctions vitales normales. Traumatismes mineurs, sutures simples. Orientation vers les polycliniques.',
-                        color: const Color(0xFF16A34A),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
 
-        const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-        // Search Bar Card
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Rechercher par DCI, marque Saidal/IPA, indication (ACR, OAP, sepsis)...',
-                  prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primaryTeal),
-                  suffixIcon: _searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear_rounded, size: 18),
-                          onPressed: () => setState(() => _searchQuery = ''),
-                        )
-                      : null,
-                  filled: true,
-                  fillColor: Theme.of(context).brightness == Brightness.dark
-                      ? AppTheme.darkSurfaceElevated
-                      : const Color(0xFFF8FAFC),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                ),
-                onChanged: (val) => setState(() => _searchQuery = val),
-              ),
-              const SizedBox(height: 10),
-
-              // Categories Horizontal Scroll
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: _categories.map((cat) {
-                    final isSelected = _selectedCategory == cat;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 6),
-                      child: ChoiceChip(
-                        label: Text(cat),
-                        selected: isSelected,
-                        selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
-                        labelStyle: TextStyle(
-                          fontSize: 11,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                          color: isSelected ? AppTheme.primaryTeal : null,
-                        ),
-                        onSelected: (_) => setState(() => _selectedCategory = cat),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              // Results counter
-              Row(
-                children: [
-                  Text(
-                    '${filteredDrugs.length} molécule${filteredDrugs.length > 1 ? 's' : ''} disponible${filteredDrugs.length > 1 ? 's' : ''}',
-                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
-                  ),
-                  if (_searchQuery.isNotEmpty || _selectedCategory != 'Tous') ...[
-                    const Spacer(),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 20),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () => setState(() {
-                        _searchQuery = '';
-                        _selectedCategory = 'Tous';
-                      }),
-                      child: const Text('Réinitialiser les filtres', style: TextStyle(fontSize: 11)),
+              // Search Bar Card
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
-                ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Rechercher par DCI, marque Saidal/IPA, indication (ACR, OAP, sepsis)...',
+                        prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primaryTeal),
+                        suffixIcon: searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear_rounded, size: 18),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  context.read<ClinicalBloc>().add(const SearchEmergencyDrugsEvent(''));
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: isDark
+                            ? AppTheme.darkSurfaceElevated
+                            : const Color(0xFFF8FAFC),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                      ),
+                      onChanged: (val) {
+                        context.read<ClinicalBloc>().add(SearchEmergencyDrugsEvent(val));
+                      },
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Categories Horizontal Scroll
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: categories.map((cat) {
+                          final isSelected = selectedCategory == cat;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: ChoiceChip(
+                              label: Text(cat),
+                              selected: isSelected,
+                              selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
+                              labelStyle: TextStyle(
+                                fontSize: 11,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                color: isSelected ? AppTheme.primaryTeal : null,
+                              ),
+                              onSelected: (_) {
+                                context.read<ClinicalBloc>().add(FilterDrugCategoryEvent(cat));
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Results counter
+                    Row(
+                      children: [
+                        Text(
+                          '${filteredDrugs.length} molécule${filteredDrugs.length > 1 ? 's' : ''} disponible${filteredDrugs.length > 1 ? 's' : ''}',
+                          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
+                        ),
+                        if (searchQuery.isNotEmpty || selectedCategory != 'Tous') ...[
+                          const Spacer(),
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(0, 20),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: () {
+                              _searchController.clear();
+                              context.read<ClinicalBloc>().add(const SearchEmergencyDrugsEvent(''));
+                              context.read<ClinicalBloc>().add(const FilterDrugCategoryEvent('Tous'));
+                            },
+                            child: const Text('Réinitialiser les filtres', style: TextStyle(fontSize: 11)),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
+
+              const SizedBox(height: 14),
+
+              // Drug Cards List
+              if (filteredDrugs.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      const Icon(Icons.medication_outlined, size: 48, color: Colors.grey),
+                      const SizedBox(height: 12),
+                      const Text('Aucun médicament trouvé', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Aucune molécule ne correspond à "${searchQuery.isNotEmpty ? searchQuery : selectedCategory}".',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                )
+              else
+                ...filteredDrugs.map((drug) => _buildDrugCard(drug)),
             ],
           ),
-        ),
-
-        const SizedBox(height: 14),
-
-        // Drug Cards List
-        if (filteredDrugs.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(32),
-            alignment: Alignment.center,
-            child: Column(
-              children: [
-                const Icon(Icons.medication_outlined, size: 48, color: Colors.grey),
-                const SizedBox(height: 12),
-                const Text('Aucun médicament trouvé', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                const SizedBox(height: 4),
-                Text(
-                  'Aucune molécule ne correspond à "${_searchQuery.isNotEmpty ? _searchQuery : _selectedCategory}".',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          )
-        else
-          ...filteredDrugs.map((drug) => _buildDrugCard(drug)),
-      ],
+        );
+      },
     );
   }
 
@@ -1506,7 +1334,7 @@ class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
     );
   }
 
-  Widget _buildDrugCard(EmergencyDrugItem drug) {
+  Widget _buildDrugCard(EmergencyDrugModel drug) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
@@ -1543,6 +1371,8 @@ class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
                 ),
                 Wrap(
                   spacing: 4,
+                  runSpacing: 4,
+                  alignment: WrapAlignment.end,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
@@ -1555,6 +1385,26 @@ class _EmergencyDrugsTabState extends State<_EmergencyDrugsTab> {
                         style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
                       ),
                     ),
+                    if (drug.algerianAvailability != null && drug.algerianAvailability!.isNotEmpty)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.local_hospital_rounded, size: 10, color: Color(0xFF059669)),
+                            const SizedBox(width: 4),
+                            Text(
+                              drug.algerianAvailability!,
+                              style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFF047857)),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ],

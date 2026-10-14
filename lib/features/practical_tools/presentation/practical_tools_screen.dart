@@ -41,7 +41,7 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
             labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
             tabs: const [
               Tab(icon: Icon(Icons.biotech_rounded), text: 'Normes Biologiques'),
-              Tab(icon: Icon(Icons.nightlight_round), text: 'Mémento de Garde & Pratique'),
+              Tab(icon: Icon(Icons.nightlight_round), text: 'Mémento de Garde'),
             ],
           ),
         ),

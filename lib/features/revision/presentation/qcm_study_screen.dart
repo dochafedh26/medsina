@@ -92,69 +92,110 @@ class QcmStudyScreen extends StatelessWidget {
         final isRevealed = state.isCurrentAnswerRevealed;
         final selectedOptions = state.currentSelectedOptions;
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              state.selectedCourse?.name ?? 'Révision QCM',
-              style: const TextStyle(fontSize: 16),
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) return;
+            _showExitDialog(context);
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                state.sessionTitle,
+                style: const TextStyle(fontSize: 16),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              actions: [
+                FilledButton.tonalIcon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                    foregroundColor: AppTheme.primaryTeal,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    minimumSize: const Size(0, 32),
+                  ),
+                  icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                  label: const Text(
+                    'MedsinaPilot 🩺',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                  ),
+                  onPressed: () => MedsinaPilotSheet.show(context, q),
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: const Icon(Icons.pause_circle_outline_rounded, color: AppTheme.primaryTeal),
+                  tooltip: 'Mettre en pause',
+                  onPressed: () {
+                    context.read<RevisionBloc>().add(PauseCurrentSessionEvent());
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Session mise en pause ⏸️. Progression enregistrée.'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  tooltip: 'Quitter la session',
+                  onPressed: () => _showExitDialog(context),
+                ),
+                const SizedBox(width: 8),
+              ],
             ),
-            actions: [
-              FilledButton.tonalIcon(
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.12),
-                  foregroundColor: AppTheme.primaryTeal,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  minimumSize: const Size(0, 32),
-                ),
-                icon: const Icon(Icons.auto_awesome_rounded, size: 16),
-                label: const Text(
-                  'MedsinaPilot 🩺',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
-                ),
-                onPressed: () => MedsinaPilotSheet.show(context, q),
-              ),
-              const SizedBox(width: 6),
-              IconButton(
-                icon: const Icon(Icons.close_rounded),
-                tooltip: 'Quitter la session',
-                onPressed: () {
-                  context.read<RevisionBloc>().add(ResetSessionEvent());
-                  Navigator.of(context).pop();
-                },
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
-          body: Column(
-            children: [
-              // Progress Bar & Header
-              _buildProgressHeader(context, state),
-              const Divider(height: 1),
+            body: Column(
+              children: [
+                // Progress Bar & Header
+                _buildProgressHeader(context, state),
+                const Divider(height: 1),
 
-              // Question Content Scroll Area
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(18),
-                  children: [
-                    // Question Metadata Chips
-                    Row(
-                      children: [
-                        _buildTypeBadge(q.type),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
+                // Question Content Scroll Area
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(18),
+                    children: [
+                      // Question Metadata Chips
+                      Row(
+                        children: [
+                          _buildTypeBadge(q.type),
+                          const SizedBox(width: 8),
+                          if (state.isCustomSession) ...[
+                            Flexible(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  q.courseName,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.primaryTeal,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '${q.source} (${q.year})',
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                            ),
                           ),
-                          child: Text(
-                            '${q.source} (${q.year})',
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
 
                     // Clinical case card if available
                     if (q.clinicalCaseText != null) ...[
@@ -234,9 +275,10 @@ class QcmStudyScreen extends StatelessWidget {
               _buildBottomControls(context, state, q),
             ],
           ),
-        );
-      },
-    );
+        ),
+      );
+    },
+  );
   }
 
   Widget _buildProgressHeader(BuildContext context, RevisionState state) {
@@ -501,9 +543,9 @@ class QcmStudyScreen extends StatelessWidget {
                   ? () => context.read<RevisionBloc>().add(NextQuestionEvent())
                   : () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Félicitations ! Vous avez terminé cette série de QCMs.')),
+                        const SnackBar(content: Text('Félicitations ! Vous avez terminé cette session de QCMs.')),
                       );
-                      context.read<RevisionBloc>().add(ResetSessionEvent());
+                      context.read<RevisionBloc>().add(const ResetSessionEvent(clearSavedProgress: true));
                       Navigator.of(context).pop();
                     },
               icon: Icon(hasNext ? Icons.arrow_forward_rounded : Icons.check_circle_rounded, size: 18),
@@ -511,6 +553,60 @@ class QcmStudyScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showExitDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dlgContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.pause_circle_filled_rounded, color: AppTheme.primaryTeal),
+            SizedBox(width: 10),
+            Text('Quitter la révision ?', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: const Text(
+          'Votre progression actuelle peut être mise en pause pour reprendre plus tard exactement où vous étiez.',
+          style: TextStyle(fontSize: 13.5, height: 1.4),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dlgContext).pop(),
+            child: const Text('Continuer'),
+          ),
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(foregroundColor: Colors.red.shade700),
+            onPressed: () {
+              Navigator.of(dlgContext).pop();
+              context.read<RevisionBloc>().add(const ResetSessionEvent(clearSavedProgress: true));
+              Navigator.of(context).pop();
+            },
+            child: const Text('Recommencer à zéro plus tard'),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryTeal,
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.pause_rounded, size: 16),
+            onPressed: () {
+              Navigator.of(dlgContext).pop();
+              context.read<RevisionBloc>().add(PauseCurrentSessionEvent());
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Session mise en pause ⏸️. Progression sauvegardée.'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+              Navigator.of(context).pop();
+            },
+            label: const Text('Mettre en pause & Quitter'),
+          ),
+        ],
       ),
     );
   }

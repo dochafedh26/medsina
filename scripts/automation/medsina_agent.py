@@ -57,6 +57,7 @@ SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SU
 GEMINI_API_KEY = _resolve_gemini_key()
 
 CATALOG_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "modules_catalog_47.json"
+EMERGENCY_DRUGS_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "emergency_drugs_algeria.json"
 
 GEMINI_MODELS = [
     "gemini-3.5-flash-lite",
@@ -476,9 +477,159 @@ def pick_candidate_course_for_pearl(
     return random.choice(candidates) if candidates else None
 
 
+
+MASTER_EMERGENCY_DCI_POOL = [
+    "Labetalol",
+    "Esmolol",
+    "Pipéracilline + Tazobactam",
+    "Céfépime",
+    "Imipénème + Cilastatine",
+    "Méropénème",
+    "Colistine",
+    "Linézolide",
+    "Moxifloxacine",
+    "Ciprofloxacine",
+    "Aciclovir",
+    "Rocuronium",
+    "Atracurium",
+    "Sugammadex",
+    "Rémifentanil",
+    "Sufentanil",
+    "Fentanyl",
+    "Glucagon",
+    "Octréotide",
+    "Bleu de Méthylène",
+    "Pralidoxime",
+    "Hydroxocobalamine",
+    "Digifab",
+    "Sérum Antivipérin",
+    "Albumine Humaine",
+    "Aténolol",
+    "Propofol",
+    "Éphédrine",
+    "Dobutamine",
+    "Nicardipine",
+    "Phénytoïne",
+]
+
+
+def pick_candidate_emergency_drug(supabase: SupabaseClient, target_dci: Optional[str] = None) -> Optional[str]:
+    """Selects an emergency DCI that does not already exist in the database or local catalog."""
+    if target_dci:
+        return target_dci
+
+    existing_ids = set()
+    # Check remote Supabase
+    remote_drugs = supabase.get("emergency_drugs", params={"select": "id,dci"})
+    for d in remote_drugs:
+        if d.get("id"):
+            existing_ids.add(d["id"].lower())
+        if d.get("dci"):
+            existing_ids.add(d["dci"].lower().strip())
+
+    # Check local JSON
+    if EMERGENCY_DRUGS_FILE.exists():
+        try:
+            local_drugs = json.loads(EMERGENCY_DRUGS_FILE.read_text(encoding="utf-8"))
+            for d in local_drugs:
+                if d.get("id"):
+                    existing_ids.add(d["id"].lower())
+                if d.get("dci"):
+                    existing_ids.add(d["dci"].lower().strip())
+        except Exception:
+            pass
+
+    candidates = [
+        dci for dci in MASTER_EMERGENCY_DCI_POOL
+        if dci.lower().strip() not in existing_ids
+    ]
+
+    if not candidates:
+        print("All predefined emergency drugs are already indexed! Picking random candidate for enrichment.")
+        return random.choice(MASTER_EMERGENCY_DCI_POOL)
+
+    return random.choice(candidates)
+
+
+def generate_emergency_drug(dci_name: str, supabase: SupabaseClient, dry_run: bool = False) -> Optional[Dict[str, Any]]:
+    """Generates an Algerian hospital emergency drug monograph using Gemini Grounding."""
+    print(f"\n=======================================================")
+    print(f"💊 GENERATING EMERGENCY DRUG MONOGRAPH: {dci_name}")
+    print(f"=======================================================")
+
+    system_prompt = """Tu es MedsinaPilot, pharmacologue hospitalier et réanimateur expert en médecine d'urgence en Algérie.
+Ton rôle est de créer une fiche médicamenteuse d'urgence hyper-précise et adaptée aux UMC, services de réanimation et pharmacies hospitalières algériennes (PCH / Saidal / Institut Pasteur d'Algérie).
+La fiche doit être claire, immédiatement actionnable au déchoquage, et scientifiquement irréprochable (SFMU, HAS, SRLF, MSPRH Algérie).
+
+Format JSON STRICT attendu :
+{
+  "id": "drug_nom_dci_sans_accents",
+  "dci": "Nom DCI exact",
+  "brand": "Marques commerciales courantes en Algérie (ex: Saidal, Biopharm, Frater-Razes, Aguettant, Princeps)",
+  "category": "Cardio / ACR / Choc",
+  "route": "Voies d'administration (ex: IVD, Perfusion IV (PSE), IM, Nébulisation)",
+  "indication": "Indications majeures en urgence vitale ou pratique hospitalière",
+  "dose": "• Posologie adulte précise (bolus, entretien, vitesse de titration, solvant de dilution G5% ou NaCl)\n• Posologie pédiatrique en mg/kg si applicable",
+  "alert": "Contre-indications absolues, pièges létaux et surveillance rapprochée (ECG, TA, diurèse)",
+  "algerian_availability": "Disponibilité typique (ex: Disponible UMC / PCH / Blocs opératoires / Saidal)"
+}
+Les catégories possibles sont : "Cardio / ACR / Choc", "Respiratoire", "Neurologie / Sédation", "Infectiologie", "Antidotes & Sérums", "Antalgiques", "Hémostase & Anticoagulants", "Métabolisme & Endocrinologie", "Gastro-entérologie".
+N'utilise AUCUNE balise Markdown dans ta réponse brute, juste le JSON pur.
+"""
+
+    prompt = f"""Rédige la fiche officielle d'urgence pour la molécule : {dci_name}.
+Recherche les noms de marques déposées et laboratoires présents en Algérie (Saidal, IPA, PCH, etc.).
+Détaille les posologies exactes de titration pour l'adulte et l'enfant en situation d'urgence."""
+
+    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        data = extract_clean_json(raw_response)
+    except Exception as e:
+        print(f"Error parsing JSON from Gemini: {e}\nRaw snippet:\n{raw_response[:400]}")
+        return None
+
+    if not data.get("id"):
+        clean_id = dci_name.lower().replace(" ", "_").replace("+", "et").replace("'", "")
+        data["id"] = f"drug_{clean_id}"
+
+    data["created_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    print(f"Generated Drug: {data.get('dci')} ({data.get('brand')})")
+    print(f"Category: {data.get('category')} | Route: {data.get('route')}")
+
+    if dry_run:
+        print("\n[DRY RUN] Generated Drug snippet:")
+        print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        return data
+
+    # 1. Save to remote Supabase
+    res = supabase.post("emergency_drugs", data, upsert=True)
+    if res:
+        print("Successfully saved drug to Supabase emergency_drugs table!")
+    else:
+        print("Notice: Drug generated locally (Supabase write skipped or pending).")
+
+    # 2. Append/Update local JSON asset file
+    if EMERGENCY_DRUGS_FILE.exists():
+        try:
+            local_list = json.loads(EMERGENCY_DRUGS_FILE.read_text(encoding="utf-8"))
+            idx = next((i for i, d in enumerate(local_list) if d.get("id") == data["id"]), None)
+            if idx is not None:
+                local_list[idx] = data
+            else:
+                local_list.append(data)
+            EMERGENCY_DRUGS_FILE.write_text(json.dumps(local_list, indent=2, ensure_ascii=False), encoding="utf-8")
+            print(f"Updated local {EMERGENCY_DRUGS_FILE.name} ({len(local_list)} total drugs)!")
+        except Exception as e:
+            print(f"Warning updating local drugs file: {e}")
+
+    return data
+
+
 def main():
     parser = argparse.ArgumentParser(description="MedsinaPilot Autonomous Medical Agent")
-    parser.add_argument("--action", choices=["cat", "pearl", "both"], default="both", help="Action to perform")
+    parser.add_argument("--action", choices=["cat", "pearl", "drugs", "both", "all"], default="all", help="Action to perform")
+    parser.add_argument("--dci", type=str, default=None, help="Specific drug DCI to generate")
     parser.add_argument("--course-id", type=str, default=None, help="Specific course ID to process")
     parser.add_argument("--dry-run", action="store_true", help="Run without writing to Supabase")
     args = parser.parse_args()
@@ -519,6 +670,20 @@ def main():
                     "course": pearl_course["name"],
                     "specialty": pearl_course["module_name"],
                     "title": pearl_data.get("title"),
+                    "status": "Succès ✅",
+                })
+
+        # 3. Emergency Drug Monograph (Urgences & DCI Algérie)
+    if args.action in ("drugs", "all"):
+        drug_dci = pick_candidate_emergency_drug(supabase, target_dci=args.dci)
+        if drug_dci:
+            drug_data = generate_emergency_drug(drug_dci, supabase, dry_run=args.dry_run)
+            if drug_data:
+                summary_results.append({
+                    "type": "Médicament d'Urgence & DCI",
+                    "course": drug_data.get("brand", "Algérie (Saidal/IPA)"),
+                    "specialty": drug_data.get("category", "Urgences"),
+                    "title": drug_data.get("dci", drug_dci),
                     "status": "Succès ✅",
                 })
 

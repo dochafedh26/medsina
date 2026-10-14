@@ -8,8 +8,11 @@ import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
 import '../models/module_model.dart';
+import '../models/revision_session_model.dart';
 import 'course_pdf_viewer_screen.dart';
+import 'custom_session_builder_dialog.dart';
 import 'qcm_study_screen.dart';
+import 'resume_session_sheet.dart';
 
 class RevisionCatalogScreen extends StatefulWidget {
   const RevisionCatalogScreen({super.key});
@@ -41,7 +44,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
     return BlocBuilder<RevisionBloc, RevisionState>(
       builder: (context, state) {
         if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: AppTheme.primaryTeal));
         }
 
         final filteredModules = state.modules.where((m) {
@@ -55,78 +58,278 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
 
         final totalVisibleCourses = filteredModules.fold<int>(0, (sum, m) => sum + m.totalCourses);
 
-        return Column(
-          children: [
-            // Search & Category Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              color: Theme.of(context).cardColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        return DefaultTabController(
+          length: 2,
+          child: Column(
+            children: [
+              // Navigation TabBar: Catalogue vs Sessions Sur-Mesure
+              Container(
+                color: Theme.of(context).cardColor,
+                child: TabBar(
+                  indicatorColor: AppTheme.primaryTeal,
+                  indicatorWeight: 3,
+                  labelColor: AppTheme.primaryTeal,
+                  unselectedLabelColor: Colors.grey.shade600,
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  tabs: [
+                    const Tab(
+                      icon: Icon(Icons.menu_book_rounded, size: 20),
+                      text: 'Catalogue (47 Modules)',
+                    ),
+                    Tab(
+                      icon: const Icon(Icons.dashboard_customize_rounded, size: 20),
+                      text: state.customSessions.isNotEmpty
+                          ? 'Sessions Sur-Mesure (${state.customSessions.length})'
+                          : 'Sessions Sur-Mesure',
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+
+              // Tab Views
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    // Tab 1: Official Modules & Courses Catalogue
+                    _buildCatalogTab(context, state, filteredModules, totalVisibleCourses),
+
+                    // Tab 2: Custom Multi-Course Sessions
+                    _buildCustomSessionsTab(context, state),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCatalogTab(
+    BuildContext context,
+    RevisionState state,
+    List<MedicalModuleModel> filteredModules,
+    int totalVisibleCourses,
+  ) {
+    return Column(
+      children: [
+        // Search & Category Header
+        Container(
+          padding: const EdgeInsets.all(16),
+          color: Theme.of(context).cardColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Rechercher parmi les 47 modules et 1 205 cours (ex: HTA, Asthme, ECG)...',
+                  prefixIcon: const Icon(Icons.search_rounded),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () => setState(() => _searchQuery = ''),
+                        )
+                      : null,
+                ),
+                onChanged: (val) => setState(() => _searchQuery = val),
+              ),
+              const SizedBox(height: 12),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _categories.map((cat) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: _buildFilterChip(cat),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Rechercher parmi les 47 modules et 1 205 cours (ex: HTA, Asthme, ECG)...',
-                      prefixIcon: const Icon(Icons.search_rounded),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () => setState(() => _searchQuery = ''),
-                            )
-                          : null,
-                    ),
-                    onChanged: (val) => setState(() => _searchQuery = val),
-                  ),
-                  const SizedBox(height: 12),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: _categories.map((cat) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: _buildFilterChip(cat),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
                   Text(
                     '${filteredModules.length} modules affichés • $totalVisibleCourses cours officiels révisables',
                     style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
                   ),
+                  if (state.activeCourseProgresses.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade100,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '${state.activeCourseProgresses.length} révision(s) en pause ⏸️',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber.shade900,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+
+        // Modules List
+        Expanded(
+          child: filteredModules.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.shade400),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Aucun module trouvé pour "$_searchQuery"',
+                        style: TextStyle(color: Colors.grey.shade500),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: filteredModules.length,
+                  itemBuilder: (context, index) {
+                    final module = filteredModules[index];
+                    return _ModuleCard(
+                      module: module,
+                      activeProgresses: state.activeCourseProgresses,
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCustomSessionsTab(BuildContext context, RevisionState state) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Promo Creation Card
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.primaryTeal.withValues(alpha: 0.12),
+                AppTheme.primaryTeal.withValues(alpha: 0.04),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.25)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryTeal,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 22),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Sessions de Révision Sur-Mesure',
+                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Créez des séries ciblées en combinant plusieurs modules & cours',
+                          style: TextStyle(fontSize: 12, color: Color(0xFF4B5563)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryTeal,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.add_rounded, size: 20),
+                  label: const Text(
+                    'Nouvelle Session Personnalisée 🎯',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  onPressed: () => CustomSessionBuilderDialog.show(context, state.modules),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Active Custom Sessions List
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Mes Sessions Enregistrées',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+            ),
+            Text(
+              '${state.customSessions.length} session(s)',
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        if (state.customSessions.isEmpty) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(Icons.dashboard_customize_outlined, size: 48, color: Colors.grey.shade400),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Aucune session personnalisée pour le moment.',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Cliquez sur le bouton ci-dessus pour composer votre première session multi-cours.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  ),
                 ],
               ),
             ),
-            const Divider(height: 1),
-
-            // Modules List
-            Expanded(
-              child: filteredModules.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.shade400),
-                          const SizedBox(height: 12),
-                          Text(
-                            'Aucun module trouvé pour "$_searchQuery"',
-                            style: TextStyle(color: Colors.grey.shade500),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: filteredModules.length,
-                      itemBuilder: (context, index) {
-                        final module = filteredModules[index];
-                        return _ModuleCard(module: module);
-                      },
-                    ),
-            ),
-          ],
-        );
-      },
+          ),
+        ] else ...[
+          ...state.customSessions.map((s) => _CustomSessionCard(session: s)),
+        ],
+      ],
     );
   }
 
@@ -146,9 +349,150 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
   }
 }
 
+class _CustomSessionCard extends StatelessWidget {
+  final CustomRevisionSession session;
+  const _CustomSessionCard({required this.session});
+
+  @override
+  Widget build(BuildContext context) {
+    final currentQ = session.currentQuestionIndex + 1;
+    final totalQ = session.totalQuestions;
+    final pct = (session.progressPercentage * 100).toInt();
+    final isPaused = session.currentQuestionIndex > 0 && !session.isCompleted;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isPaused ? AppTheme.primaryTeal.withValues(alpha: 0.4) : Colors.grey.shade200,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    session.title,
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                  ),
+                ),
+                if (isPaused)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.shade100,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'En pause ⏸️ ($pct%)',
+                      style: TextStyle(color: Colors.amber.shade900, fontWeight: FontWeight.bold, fontSize: 11),
+                    ),
+                  ),
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert_rounded, size: 20),
+                  onSelected: (val) {
+                    if (val == 'delete') {
+                      context.read<RevisionBloc>().add(DeleteCustomSessionEvent(session.id));
+                    }
+                  },
+                  itemBuilder: (_) => [
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Supprimer la session', style: TextStyle(color: Colors.red, fontSize: 13)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '${session.courseIds.length} cours • ${session.moduleNames.take(2).join(", ")}${session.moduleNames.length > 2 ? "..." : ""}',
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 12),
+
+            // Progress Bar
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: session.progressPercentage,
+                minHeight: 6,
+                backgroundColor: Colors.grey.shade200,
+                valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryTeal),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Actions Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  totalQ > 0 ? 'Question $currentQ sur $totalQ' : '${session.questionLimit == -1 ? "Tous" : session.questionLimit} questions',
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    if (isPaused) ...[
+                      TextButton.icon(
+                        style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                        icon: const Icon(Icons.refresh_rounded, size: 16),
+                        label: const Text('Recommencer', style: TextStyle(fontSize: 12)),
+                        onPressed: () {
+                          context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false));
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 6),
+                    ],
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryTeal,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        minimumSize: const Size(0, 34),
+                      ),
+                      icon: Icon(isPaused ? Icons.play_arrow_rounded : Icons.play_arrow_rounded, size: 16),
+                      label: Text(
+                        isPaused ? 'Reprendre (Q. $currentQ)' : 'Démarrer',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                      ),
+                      onPressed: () {
+                        context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: isPaused));
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ModuleCard extends StatefulWidget {
   final MedicalModuleModel module;
-  const _ModuleCard({required this.module});
+  final Map<String, CourseRevisionProgress> activeProgresses;
+
+  const _ModuleCard({required this.module, required this.activeProgresses});
 
   @override
   State<_ModuleCard> createState() => _ModuleCardState();
@@ -198,102 +542,121 @@ class _ModuleCardState extends State<_ModuleCard> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                      color: AppTheme.primaryTeal.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(_getIconData(m.iconName), color: AppTheme.primaryTeal, size: 24),
+                    child: Icon(_getIconData(m.iconName), color: AppTheme.primaryTeal, size: 28),
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(
+                          m.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
-                            Expanded(
-                              child: Text(
-                                m.name,
-                                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
-                              ),
+                            Text(
+                              '${m.totalCourses} cours • ${m.totalQuestions} QCMs',
+                              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                             ),
+                            const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: Colors.blue.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 m.category,
-                                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                                style: const TextStyle(fontSize: 10, color: Colors.blue, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          '${m.totalCourses} cours officiels • ${m.totalQuestions} QCMs',
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                        ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                    onPressed: () => setState(() => _expanded = !_expanded),
-                  ),
+                  Icon(_expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded),
                 ],
               ),
             ),
-
             if (_expanded) ...[
-              const SizedBox(height: 12),
-              const Divider(),
-              const SizedBox(height: 8),
-              ...m.courses.map((course) => _buildCourseRow(context, course, m.name)),
+              const Divider(height: 24),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: m.courses.length,
+                separatorBuilder: (_, index) => const Divider(height: 1),
+                itemBuilder: (context, i) {
+                  final course = m.courses[i];
+                  return _CourseTile(
+                    course: course,
+                    moduleName: m.name,
+                    progress: widget.activeProgresses[course.id],
+                  );
+                },
+              ),
             ],
           ],
         ),
       ),
     );
   }
+}
 
-  void _showPaywallPrompt(BuildContext context, String message) {
+class _CourseTile extends StatelessWidget {
+  final CourseModel course;
+  final String moduleName;
+  final CourseRevisionProgress? progress;
+
+  const _CourseTile({
+    required this.course,
+    required this.moduleName,
+    this.progress,
+  });
+
+  void _showPaywallPrompt(BuildContext context, String lockReason) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (dlgContext) => AlertDialog(
         title: const Row(
           children: [
-            Icon(Icons.workspace_premium_rounded, color: Color(0xFFF59E0B)),
+            Icon(Icons.lock_rounded, color: Colors.amber),
             SizedBox(width: 8),
-            Text('Contenu Réservé', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text('Contenu Verrouillé'),
           ],
         ),
-        content: Text(message, style: const TextStyle(fontSize: 13, height: 1.4)),
+        content: Text(
+          lockReason.isNotEmpty
+              ? lockReason
+              : 'Ce cours fait partie du programme officiel avancé. Choisissez un abonnement pour débloquer l\'accès complet.',
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Plus tard'),
+            onPressed: () => Navigator.pop(dlgContext),
+            child: const Text('Annuler'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryTeal,
-              foregroundColor: Colors.white,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal),
             onPressed: () {
-              Navigator.pop(ctx);
-              Navigator.push(
-                context,
+              Navigator.pop(dlgContext);
+              Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
               );
             },
-            child: const Text('Voir les Formules ➔'),
+            child: const Text('Voir les Plans'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCourseRow(BuildContext context, CourseModel course, String moduleName) {
+  @override
+  Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
     final user = authState.user;
     final isExpired = user?.isSubscriptionActive == false;
@@ -312,15 +675,10 @@ class _ModuleCardState extends State<_ModuleCard> {
       lockReason = 'Le module "$moduleName" est réservé aux abonnés. Votre Pass Découverte inclut le module Cardiologie en accès gratuit. Choisissez le Pass Résident Élite ou All-Access pour débloquer tous les modules.';
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? AppTheme.darkSurfaceElevated
-            : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(10),
-      ),
+    final isPaused = progress != null && !progress!.isCompleted;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Expanded(
@@ -329,51 +687,32 @@ class _ModuleCardState extends State<_ModuleCard> {
               children: [
                 Row(
                   children: [
-                    if (isLocked) ...[
-                      const Icon(Icons.lock_rounded, size: 14, color: Color(0xFFF59E0B)),
-                      const SizedBox(width: 6),
-                    ],
                     Expanded(
                       child: Text(
                         course.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                          color: isLocked ? Colors.grey.shade600 : null,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 3),
-                Row(
-                  children: [
-                    Text(
-                      '${course.questionsCount} QCMs',
-                      style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-                    ),
-                    const SizedBox(width: 8),
-                    if (course.hasPdf)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFDCFCE7),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text('PDF Officiel', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFF16A34A))),
-                      ),
-                    if (isLocked) ...[
+                    if (isPaused) ...[
                       const SizedBox(width: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFEF3C7),
+                          color: Colors.amber.shade100,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text('Verrouillé', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFFD97706))),
+                        child: Text(
+                          '⏸️ En pause (${progress!.currentQuestionIndex + 1}/${progress!.totalQuestions})',
+                          style: TextStyle(fontSize: 10, color: Colors.amber.shade900, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${course.questionsCount} questions officielles de concours',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
                 ),
               ],
             ),
@@ -413,21 +752,36 @@ class _ModuleCardState extends State<_ModuleCard> {
           const SizedBox(width: 8),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: isLocked ? Colors.grey.shade400 : AppTheme.primaryTeal,
+              backgroundColor: isLocked
+                  ? Colors.grey.shade400
+                  : (isPaused ? const Color(0xFFD97706) : AppTheme.primaryTeal),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               minimumSize: const Size(0, 32),
             ),
-            icon: Icon(isLocked ? Icons.lock_rounded : Icons.play_arrow_rounded, size: 16),
-            label: Text(isLocked ? 'Débloquer' : 'Réviser', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+            icon: Icon(
+              isLocked
+                  ? Icons.lock_rounded
+                  : (isPaused ? Icons.play_arrow_rounded : Icons.play_arrow_rounded),
+              size: 16,
+            ),
+            label: Text(
+              isLocked ? 'Débloquer' : (isPaused ? 'Continuer' : 'Réviser'),
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+            ),
             onPressed: () {
               if (isLocked) {
                 _showPaywallPrompt(context, lockReason);
                 return;
               }
-              context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course));
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-              );
+
+              if (isPaused) {
+                ResumeSessionSheet.show(context, course: course, progress: progress!);
+              } else {
+                context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: false));
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
+                );
+              }
             },
           ),
         ],

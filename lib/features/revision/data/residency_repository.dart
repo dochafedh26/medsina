@@ -143,4 +143,48 @@ class ResidencyRepository {
     }
     return [];
   }
+
+  /// Loads and aggregates questions across multiple courses & modules for custom revision sessions.
+  static Future<List<QcmQuestion>> getQuestionsForMultipleCoursesAsync({
+    required List<String> courseIds,
+    required List<String> moduleIds,
+    int limit = -1,
+    bool shuffle = true,
+  }) async {
+    final allQuestions = <QcmQuestion>[];
+    final courseIdSet = courseIds.toSet();
+
+    for (final modId in moduleIds.toSet()) {
+      final safeModId = _sanitizeModuleId(modId);
+      List<QcmQuestion>? modQuestions = _moduleQuestionsCache[safeModId];
+
+      if (modQuestions == null) {
+        try {
+          final path = 'assets/data/qcms/$safeModId.json';
+          final jsonStr = await rootBundle.loadString(path);
+          final list = jsonDecode(jsonStr) as List<dynamic>;
+          modQuestions = list.map((item) => QcmQuestion.fromJson(item as Map<String, dynamic>)).toList();
+          _moduleQuestionsCache[safeModId] = modQuestions;
+        } catch (_) {
+          modQuestions = [];
+        }
+      }
+
+      if (courseIdSet.isEmpty) {
+        allQuestions.addAll(modQuestions);
+      } else {
+        allQuestions.addAll(modQuestions.where((q) => courseIdSet.contains(q.courseId)));
+      }
+    }
+
+    if (shuffle) {
+      allQuestions.shuffle();
+    }
+
+    if (limit > 0 && allQuestions.length > limit) {
+      return allQuestions.take(limit).toList();
+    }
+
+    return allQuestions;
+  }
 }

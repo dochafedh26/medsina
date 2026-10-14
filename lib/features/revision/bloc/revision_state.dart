@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../models/module_model.dart';
 import '../models/qcm_model.dart';
+import '../models/revision_session_model.dart';
 
 enum RevisionStatus { initial, loading, loaded, studySession, error }
 
@@ -17,6 +18,13 @@ class RevisionState extends Equatable {
   final Set<String> revealedQuestions;
   final String? errorMessage;
 
+  // Persistence & Custom Session fields
+  final String sessionTitle;
+  final bool isCustomSession;
+  final CustomRevisionSession? activeCustomSession;
+  final Map<String, CourseRevisionProgress> activeCourseProgresses;
+  final List<CustomRevisionSession> customSessions;
+
   const RevisionState({
     this.status = RevisionStatus.initial,
     this.modules = const [],
@@ -27,6 +35,11 @@ class RevisionState extends Equatable {
     this.userAnswers = const {},
     this.revealedQuestions = const {},
     this.errorMessage,
+    this.sessionTitle = 'Révision QCM',
+    this.isCustomSession = false,
+    this.activeCustomSession,
+    this.activeCourseProgresses = const {},
+    this.customSessions = const [],
   });
 
   QcmQuestion? get activeQuestion =>
@@ -57,6 +70,11 @@ class RevisionState extends Equatable {
     Map<String, Set<String>>? userAnswers,
     Set<String>? revealedQuestions,
     String? errorMessage,
+    String? sessionTitle,
+    bool? isCustomSession,
+    CustomRevisionSession? activeCustomSession,
+    Map<String, CourseRevisionProgress>? activeCourseProgresses,
+    List<CustomRevisionSession>? customSessions,
   }) {
     return RevisionState(
       status: status ?? this.status,
@@ -68,6 +86,11 @@ class RevisionState extends Equatable {
       userAnswers: userAnswers ?? this.userAnswers,
       revealedQuestions: revealedQuestions ?? this.revealedQuestions,
       errorMessage: errorMessage ?? this.errorMessage,
+      sessionTitle: sessionTitle ?? this.sessionTitle,
+      isCustomSession: isCustomSession ?? this.isCustomSession,
+      activeCustomSession: activeCustomSession ?? this.activeCustomSession,
+      activeCourseProgresses: activeCourseProgresses ?? this.activeCourseProgresses,
+      customSessions: customSessions ?? this.customSessions,
     );
   }
 
@@ -82,5 +105,10 @@ class RevisionState extends Equatable {
         userAnswers,
         revealedQuestions,
         errorMessage,
+        sessionTitle,
+        isCustomSession,
+        activeCustomSession,
+        activeCourseProgresses,
+        customSessions,
       ];
 }
