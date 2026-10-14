@@ -19,6 +19,8 @@ on:
     - cron: '15 1 * * 5'
     # 5. Mémento de Garde Hospitalière : Samedi & Dimanche à 01:15 UTC (= 02:15 heure d'Algérie)
     - cron: '15 1 * * 6,0'
+    # 6. Résumé Continu de Cours de Résidanat : Déclenché toutes les 4 heures (00h, 04h, 08h, 12h, 16h, 20h UTC = ~6 résumés/24h)
+    - cron: '0 */4 * * *'
 
   workflow_dispatch:
     inputs:
@@ -35,6 +37,7 @@ on:
           - drugs
           - lab
           - memento
+          - summary
       dci:
         description: 'DCI spécifique optionnelle pour médicament (ex: Labetalol, Esmolol)'
         required: false
@@ -101,8 +104,13 @@ jobs:
           # If triggered by cron schedule:
           if [ "${{ github.event_name }}" = "schedule" ]; then
             CRON_HOUR=$(date -u +"%H")
+            CRON_MINUTE=$(date -u +"%M")
             CRON_DOW=$(date -u +"%u") # 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat, 7=Sun
-            if [ "$CRON_HOUR" -ge 1 ] && [ "$CRON_HOUR" -le 3 ]; then
+            
+            # The 4-hour summary cron fires at minute 0 (00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC)
+            if [ "$CRON_MINUTE" -le 10 ] && [ $((10#$CRON_HOUR % 4)) -eq 0 ]; then
+              ACTION="summary"
+            elif [ "$CRON_HOUR" -ge 1 ] && [ "$CRON_HOUR" -le 3 ]; then
               if [ "$CRON_DOW" = "1" ] || [ "$CRON_DOW" = "3" ]; then
                 ACTION="cat"
               elif [ "$CRON_DOW" = "2" ] || [ "$CRON_DOW" = "4" ]; then

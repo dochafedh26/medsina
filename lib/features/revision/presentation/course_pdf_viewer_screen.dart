@@ -8,6 +8,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../core/services/recent_activity_service.dart';
 import '../models/module_model.dart';
+import 'course_summary_screen.dart';
 
 class PdfSearchOccurrence {
   final int index;
@@ -307,6 +308,21 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
         ),
         title: _isSearching ? _buildSearchBar() : _buildTitle(),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.summarize_rounded, color: AppTheme.primaryTeal),
+            tooltip: 'Fiche Synthétique du Cours',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CourseSummaryScreen(
+                    course: widget.course,
+                    moduleName: widget.moduleName,
+                  ),
+                ),
+              );
+            },
+          ),
           if (!_isLoading && _pdfBytes != null) ...[
             if (!_isSearching)
               IconButton(

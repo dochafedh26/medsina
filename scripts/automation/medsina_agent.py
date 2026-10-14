@@ -76,6 +76,7 @@ CATALOG_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "module
 EMERGENCY_DRUGS_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "emergency_drugs_algeria.json"
 LAB_VALUES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "lab_reference_values.json"
 ON_CALL_MEMENTOS_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "on_call_mementos.json"
+COURSE_SUMMARIES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "course_summaries.json"
 
 GEMINI_MODELS = [
     "gemini-3.5-flash-lite",
@@ -980,9 +981,164 @@ Rédige entre 4 et 6 points réflexes numérotés ou ordonnés par ordre chronol
     return data
 
 
+def pick_candidate_course_for_summary(
+    courses: List[Dict[str, Any]],
+    supabase: SupabaseClient,
+    target_course_id: Optional[str] = None,
+) -> Optional[Dict[str, Any]]:
+    """Selects a course that DOES NOT ALREADY HAVE a summary (zero duplicate)."""
+    if target_course_id:
+        match = next((c for c in courses if c["id"] == target_course_id), None)
+        if match:
+            return match
+        print(f"Warning: Specified course ID '{target_course_id}' not found.")
+
+    # 1. Existing IDs from Supabase
+    existing_summaries = supabase.get("course_summaries", params={"select": "course_id"})
+    existing_ids = {s["course_id"] for s in existing_summaries if s.get("course_id")}
+
+    # 2. Existing IDs from local JSON file
+    if COURSE_SUMMARIES_FILE.exists():
+        try:
+            local_list = json.loads(COURSE_SUMMARIES_FILE.read_text(encoding="utf-8"))
+            for item in local_list:
+                if item.get("course_id"):
+                    existing_ids.add(item["course_id"])
+        except Exception as e:
+            print(f"Warning reading local course summaries: {e}")
+
+    print(f"Found {len(existing_ids)} existing course summaries.")
+
+    candidates = [c for c in courses if c["id"] not in existing_ids]
+    print(f"Remaining courses without summary: {len(candidates)} / {len(courses)} total.")
+
+    if not candidates:
+        print("All courses already summarized! Selecting at random for update.")
+        return random.choice(courses) if courses else None
+
+    # Prioritize clinical modules for the residency exam
+    priority_modules = {
+        "Cardiologie", "Pneumologie", "Neurologie", "Gastro-entérologie",
+        "Néphrologie", "Infectieux", "Pédiatrie", "Endocrinologie",
+        "Hématologie", "Gynécologie", "Urgences", "Psychiatrie", "Rhumatologie"
+    }
+    priority_candidates = [
+        c for c in candidates
+        if any(pm.lower() in c.get("module_name", "").lower() for pm in priority_modules)
+    ]
+
+    chosen = random.choice(priority_candidates) if priority_candidates else random.choice(candidates)
+    return chosen
+
+
+def generate_course_summary(
+    course: Dict[str, Any],
+    supabase: SupabaseClient,
+    dry_run: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Generates an academic, high-yield Course Summary for the Algerian Residency Concours."""
+    print(f"\n=======================================================")
+    print(f"📖 GENERATING COURSE SUMMARY (Fiche Résumé) : {course['name']}")
+    print(f"📚 Spécialité : {course['module_name']} (ID: {course['id']})")
+    print(f"=======================================================")
+
+    system_prompt = """Tu es MedsinaPilot, l'assistant médical d'excellence pour la préparation du Concours de Résidanat de Médecine en Algérie (Alger, Blida, Constantine, Oran).
+Ton rôle est de générer une FICHE SYNTHÉTIQUE DE COURS ULTRA-COMPLÈTE, structurée, rigoureuse et orientée QCM.
+Tu dois t'appuyer sur les cours officiels de résidanat et les derniers consensus médicaux internationaux et algériens (HAS, ESC, GINA, GOLD, SFMU, MSPRH).
+
+STRUCTURE DE LA FICHE :
+La fiche doit contenir un texte Markdown complet divisé en sections claires :
+1. Définition & Physiopathologie essentielle
+2. Démarche Diagnostique (Clinique, Paraclinique de référence, Critères diagnostiques)
+3. Diagnostic Différentiel & Formes Cliniques
+4. Stratégie Thérapeutique (Mesures générales, Traitement de 1ère et 2ème ligne, DCI, Contre-indications)
+5. Évolution, Pronostic & Complications majeures
+
+La réponse DOIT ÊTRE UN OBJET JSON STRICT respectant scrupuleusement ce schéma :
+{
+  "course_id": "id_du_cours",
+  "course_name": "Nom exact du cours",
+  "module_id": "id_du_module",
+  "module_name": "Nom du module / spécialité",
+  "summary_markdown": "Texte markdown riche et soigné, avec titres h2 (##), listes à puces, mise en gras des mots-clés et valeurs chiffrées importantes pour le concours.",
+  "key_takeaways": [
+    "Point clé 1 incontournable pour le concours",
+    "Point clé 2...",
+    "Point clé 3...",
+    "Point clé 4...",
+    "Point clé 5..."
+  ],
+  "exam_traps": [
+    "Piège Annales : formulation classique vicieuse ou fausse proposition type des annales",
+    "Piège Traitement : contre-indication ou erreur de prescription éliminatoire",
+    "Piège Diagnostic : signe à ne jamais confondre"
+  ],
+  "diagnostic_criteria": "Résumé en 1-2 phrases des critères formels de diagnostic positif",
+  "treatment_summary": "Résumé en 1-2 phrases de la ligne thérapeutique de référence et des urgences",
+  "target_audience": "Concours Résidanat 2027"
+}
+
+N'utilise AUCUNE balise LaTeX. Utilise du texte Unicode pur (ex: ≥, ≤, µg, ², →).
+Réponds UNIQUEMENT par le JSON pur sans texte avant ni après.
+"""
+
+    prompt = f"""Rédige la Fiche Synthétique de Révision officielle pour :
+- Nom du cours : {course['name']}
+- Module : {course['module_name']}
+- ID du cours : {course['id']}
+
+Fournis une fiche médicale approfondie d'au moins 5 sections avec des points clés à haut rendement pour réussir les QCM du résidanat."""
+
+    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        data = extract_clean_json(raw_response)
+    except Exception as e:
+        print(f"Error parsing JSON from Gemini: {e}\nRaw snippet:\n{raw_response[:400]}")
+        return None
+
+    data["course_id"] = course["id"]
+    data["course_name"] = course["name"]
+    data["module_id"] = course.get("module_id")
+    data["module_name"] = course["module_name"]
+    data["target_audience"] = "Concours Résidanat 2027"
+    data["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    print(f"Generated Summary for: {data.get('course_name')}")
+    print(f"Key Takeaways count: {len(data.get('key_takeaways', []))}")
+    print(f"Exam Traps count: {len(data.get('exam_traps', []))}")
+
+    if dry_run:
+        print("\n[DRY RUN] Generated Course Summary snippet:")
+        print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        return data
+
+    # 1. Save to Supabase
+    res = supabase.post("course_summaries", data, upsert=True)
+    if res:
+        print("Successfully saved course summary to Supabase course_summaries table!")
+    else:
+        print("Notice: Summary generated locally (Supabase write skipped or pending).")
+
+    # 2. Append/Update local JSON asset file
+    if COURSE_SUMMARIES_FILE.exists():
+        try:
+            local_list = json.loads(COURSE_SUMMARIES_FILE.read_text(encoding="utf-8"))
+            idx = next((i for i, d in enumerate(local_list) if d.get("course_id") == data["course_id"]), None)
+            if idx is not None:
+                local_list[idx] = data
+            else:
+                local_list.append(data)
+            COURSE_SUMMARIES_FILE.write_text(json.dumps(local_list, indent=2, ensure_ascii=False), encoding="utf-8")
+            print(f"Updated local {COURSE_SUMMARIES_FILE.name} ({len(local_list)} total course summaries)!")
+        except Exception as e:
+            print(f"Warning updating local course summaries file: {e}")
+
+    return data
+
+
 def main():
     parser = argparse.ArgumentParser(description="MedsinaPilot Autonomous Medical Agent")
-    parser.add_argument("--action", choices=["cat", "pearl", "drugs", "lab", "memento", "both", "all"], default="all", help="Action to perform")
+    parser.add_argument("--action", choices=["cat", "pearl", "drugs", "lab", "memento", "summary", "both", "all"], default="all", help="Action to perform")
     parser.add_argument("--dci", type=str, default=None, help="Specific drug DCI to generate")
     parser.add_argument("--lab", type=str, default=None, help="Specific lab test name to generate")
     parser.add_argument("--memento", type=str, default=None, help="Specific on-call memento topic to generate")
@@ -1068,6 +1224,20 @@ def main():
                     "course": f"Priorité {memento_data.get('priority_level', 1)}",
                     "specialty": memento_data.get("category", "Garde Hospitalière"),
                     "title": memento_data.get("title", memento_candidate),
+                    "status": "Succès ✅",
+                })
+
+    # 6. Official Residency Course Summary (Fiche Résumé Concours)
+    if args.action in ("summary", "all"):
+        summary_course = pick_candidate_course_for_summary(courses, supabase, target_course_id=args.course_id)
+        if summary_course:
+            summary_data = generate_course_summary(summary_course, supabase, dry_run=args.dry_run)
+            if summary_data:
+                summary_results.append({
+                    "type": "Fiche Résumé Cours",
+                    "course": summary_course["name"],
+                    "specialty": summary_course["module_name"],
+                    "title": summary_data.get("course_name"),
                     "status": "Succès ✅",
                 })
 

@@ -10,6 +10,7 @@ import '../bloc/revision_state.dart';
 import '../models/module_model.dart';
 import '../models/revision_session_model.dart';
 import 'course_pdf_viewer_screen.dart';
+import 'course_summary_screen.dart';
 import 'custom_session_builder_dialog.dart';
 import 'qcm_study_screen.dart';
 import 'resume_session_sheet.dart';
@@ -733,6 +734,38 @@ class _CourseTile extends StatelessWidget {
               ],
             ),
           ),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+              minimumSize: const Size(0, 32),
+              side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.5)),
+            ),
+            icon: Icon(
+              isLocked ? Icons.lock_outline_rounded : Icons.menu_book_rounded,
+              size: 14,
+              color: AppTheme.primaryTeal,
+            ),
+            label: const Text(
+              'Fiche',
+              style: TextStyle(fontSize: 11, color: AppTheme.primaryTeal, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              if (isLocked) {
+                _showPaywallPrompt(context, lockReason);
+                return;
+              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CourseSummaryScreen(
+                    course: course,
+                    moduleName: moduleName,
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(width: 6),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

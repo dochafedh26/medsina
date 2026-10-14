@@ -664,4 +664,33 @@ class SupabaseService {
       return false;
     }
   }
+
+  // --- COURSE SUMMARIES ---
+
+  static Future<Map<String, dynamic>?> fetchCourseSummary(String courseId) async {
+    try {
+      final res = await client
+          .from('course_summaries')
+          .select()
+          .eq('course_id', courseId)
+          .maybeSingle();
+      return res;
+    } catch (e) {
+      debugPrint('Error fetching course summary for $courseId: $e');
+      return null;
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchCourseSummaries() async {
+    try {
+      final res = await client
+          .from('course_summaries')
+          .select()
+          .order('updated_at', ascending: false);
+      return List<Map<String, dynamic>>.from(res);
+    } catch (e) {
+      debugPrint('Error fetching all course summaries: $e');
+      return [];
+    }
+  }
 }

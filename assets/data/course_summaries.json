@@ -1,0 +1,71 @@
+[
+  {
+    "course_id": "c_cardio_hta",
+    "course_name": "Hypertension Artérielle de l'Adulte (HTA)",
+    "module_id": "mod_cardio",
+    "module_name": "Cardiologie",
+    "summary_markdown": "## 1. Définition & Diagnostic Positif\n- **Définition** : PAS ≥ 140 mmHg et/ou PAD ≥ 90 mmHg mesurée au cabinet médical lors d'au moins 2 consultations distinctes à plusieurs semaines d'intervalle.\n- **Confirmation indispensable** avant de débuter un traitement (sauf HTA grade 3 d'emblée ≥ 180/110 mmHg ou avec retentissement viscéral aigu) :\n  - **MAPA (Mesure Ambulatoire de la Pression Artérielle)** : Moyenne 24h ≥ 130/80 mmHg, diurne ≥ 135/85 mmHg, nocturne ≥ 120/70 mmHg.\n  - **Automesure tensionnelle (AMT)** : Règle des 3 (3 mesures matin, 3 mesures soir pendant 3 jours consécutifs au repos) : seuil ≥ 135/85 mmHg.\n\n## 2. Bilan Initial Systématique (Bilan de retentissement & OMS/ESH)\n- **Bilan biologique initial** :\n  - Glycémie à jeun, ionogramme sanguin (kaliémie obligatoire à la recherche d'hyperaldostéronisme primaire si hypokaliémie), créatininémie avec estimation du DFG (CKD-EPI).\n  - Bilan lipidique à jeun (EAL : CT, HDL, LDL, Triglycérides).\n  - Bandelette urinaire ou rapport albuminurie/créatininurie (microalbuminurie).\n- **ECG de repos 12 dérivations** : recherche d'une hypertrophie ventriculaire gauche (HVG : Indice de Sokolow-Lyon > 35 mm ou Indice de Cornell > 28 mm chez l'homme / 20 mm chez la femme).\n\n## 3. Étiologies : HTA Essentielle vs Secondaire\n- **HTA essentielle** : 90-95% des cas, sujet > 40 ans avec ATCD familiaux, surpoids, syndrome métabolique.\n- **HTA secondaire (5-10%) à évoquer chez sujet jeune (< 35 ans), HTA résistante ou sévère d'emblée** :\n  - **Rénovasculaire** : Sténose de l'artère rénale (fibrodysplasie chez femme jeune, athérome chez sujet âgé tabagique). Souffle lombaire/flanc, aggravation sous IEC.\n  - **Surrénalienne** : Hyperaldostéronisme primaire (Adénome de Conn, hypokaliémie avec kaliurèse conservée), Phéochromocytome (triade de Ménard : Céphalées, Sueurs, Palpitations), Syndrome de Cushing.\n  - **Coarctation aortique** : Abolition ou retard des pouls fémoraux, gradient tensionnel membres supérieurs > membres inférieurs.\n  - **Syndrome d'Apnées Obstructives du Sommeil (SAOS)** : Ronflements, somnolence diurne, HTA nocturne non dipper.\n\n## 4. Stratégie Thérapeutique\n- **Mesures Hygiéno-Diététiques (MHD)** : Toujours prescrites (régime hyposodé < 5-6 g NaCl/j, réduction pondérale, activité physique aérobie 150 min/semaine, arrêt tabac, modération alcool).\n- **Traitement Médicamenteux de 1ère intention** (Recommandations ESC/ESH) :\n  - **Bithérapie fixe d'emblée** chez la majorité des patients : IEC (ou ARA2) + Inhibiteur Calcique (ex: Périndopril + Amlodipine) OU IEC (ou ARA2) + Diurétique Thiazidique (ex: Indapamide).\n  - Monothérapie réservée : sujet très âgé fragile, ou HTA grade 1 à faible risque CV.\n  - **En cas d'échec à pleine dose** : Trithérapie IEC (ou ARA2) + IC + Thiazidique.\n  - **HTA résistante** (trithérapie à doses maximales incluant un diurétique sans contrôle) : ajouter Spironolactone 25-50 mg/j.",
+    "key_takeaways": [
+      "Seuil diagnostique au cabinet : ≥ 140/90 mmHg confirmé par MAPA (≥ 130/80) ou Automesure (≥ 135/85).",
+      "Bithérapie fixe en un seul comprimé d'emblée recommandée en 1ère intention (IEC/ARA2 + IC ou Thiazidique).",
+      "Ne JAMAIS associer un IEC et un ARA2 (risque majeur d'insuffisance rénale aiguë et d'hyperkaliémie sans bénéfice CV).",
+      "Hypokaliémie chez un hypertendu = Hyperaldostéronisme primaire (Adénome de Conn) jusqu'à preuve du contraire.",
+      "Souffle systolique abdominal chez une femme jeune = Fibrodysplasie de l'artère rénale (angioplastie sans stent)."
+    ],
+    "exam_traps": [
+      "Piège Annales : Ne pas poser le diagnostic d'HTA sur une seule consultation sauf si HTA grade 3 (≥ 180/110) avec souffrance viscérale immédiate.",
+      "Piège Médicaments : Les bêtabloquants ne sont PLUS un traitement de 1ère intention dans l'HTA essentielle non compliquée (sauf coronaropathie ou IC à FE réduite associée).",
+      "Piège Kaliémie : Les thiazidiques provoquent une hypokaliémie et une hyperuricémie (goutte), tandis que les IEC/ARA2 provoquent une hyperkaliémie et toux (IEC)."
+    ],
+    "diagnostic_criteria": "Consultation: ≥ 140/90 mmHg; MAPA 24h: ≥ 130/80 mmHg; AMT: ≥ 135/85 mmHg",
+    "treatment_summary": "1ère ligne: Bithérapie IEC/ARA2 + IC ou Diurétique thiazidique en monoprise; 2ème ligne: Trithérapie; 3ème ligne (résistante): + Spironolactone",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-14T17:40:00.000Z"
+  },
+  {
+    "course_id": "c_cardio_sca",
+    "course_name": "Syndromes Coronariens Aigus (SCA ST+ / ST-)",
+    "module_id": "mod_cardio",
+    "module_name": "Cardiologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie\n- **Mécanisme principal** : Rupture ou érosion d'une plaque d'athérome vulnérable avec formation d'un thrombus intracoronaire.\n- **SCA ST+ (IDM transmural)** : Thrombus totalement occlusif → Nécrose myocardique transmurale d'emblée. Urgence vitale absolue pour désobstruction immédiate (< 120 min).\n- **SCA non ST+ (SCA ST-)** : Thrombus sub-occlusif ou embolisation distale micro-vasculaire → Ischémie myocardique sans sus-décalage persistant (onde T négative, sous-décalage ST ou ECG normal).\n  - Si troponine positive = NSTEMI (Infarctus sans sus-décalage de ST).\n  - Si troponine normale = Angor instable.\n\n## 2. Démarche Diagnostique Immédiate\n- **Clinique** : Douleur thoracique constrictive, rétrosternale, irradiant vers la mâchoire et le bras gauche, durant > 20 minutes, résistante aux dérivés nitrés.\n- **ECG 12 dérivations + dérivations postérieures (V7-V8-V9) et droites (V3R-V4R)** à réaliser et interpréter en **< 10 minutes** impérativement.\n  - **Critères SCA ST+** : Sus-décalage ST convexe vers le haut ≥ 1 mm dans au moins 2 dérivations contiguës (≥ 2 mm en V2-V3 chez l'homme), ou nouveau BBG complet présumé récent.\n  - Image en miroir très évocatrice.\n\n## 3. Stratégie de Reperfusion du SCA ST+ (ESC 2023)\n- **Objectif absolu** : Reperfusion la plus précoce possible (« Le temps, c'est du muscle »).\n- **Si délai Premier Contact Médical (PCM) → Gonflement de ballonnet ≤ 120 minutes** :\n  - **Angioplastie Primaire (Coronarographie)** est la méthode de référence absolue.\n- **Si délai > 120 minutes** (zone éloignée, transport long) :\n  - **Fibrinolyse intraveineuse immédiate** dans les 10 minutes suivant le diagnostic (Ténectéplase IV bolus ajusté au poids), sauf contre-indication absolue.\n  - Transfert immédiat vers un centre d'angioplastie (stratégie pharmaco-invasive : coronarographie systématique à 2-24h, ou de sauvetage immédiate en cas d'échec de fibrinolyse).\n\n## 4. Traitement Antithrombotique d'Urgence\n- **Double Antiagrégation Plaquettaire (DAPT)** :\n  - **Aspirine** : 150 à 300 mg IV ou PO à croquer, puis 75 mg/j à vie.\n  - **Inhibiteur P2Y12 puissant** : Ticagrélor (180 mg charge puis 90 mg x2/j) ou Prasugrel (60 mg charge puis 10 mg/j si coronarographie effectuée) ; Clopidogrel (600 mg charge) seulement si CI ou fibrinolyse.\n- **Anticoagulation parentérale** : Enoxaparine (0,5 mg/kg IV bolus) ou HNF (bolus 70-100 UI/kg).\n\n## 5. Traitement Médical au Long Cours : Ordonnance BASIC\n- **B** : Bêtabloquant (Bisoprolol ou Métoprolol titré)\n- **A** : Antiagrégant plaquettaire (Aspirine à vie + P2Y12 pendant 12 mois)\n- **S** : Statine à forte dose (Atorvastatine 80 mg ou Rosuvastatine 20 mg, cible LDL < 0,55 g/L)\n- **I** : IEC (Ramipril ou Périndopril titré préventif du remodelage ventriculaire)\n- **C** : Contrôle des facteurs de risque CV (sevrage tabagique strict, activité physique, réadaptation cardiaque).",
+    "key_takeaways": [
+      "ECG 12 dérivations + V7-V8-V9 et V3R-V4R interprété en moins de 10 minutes.",
+      "Angioplastie primaire de référence si délai PCM-ballon ≤ 120 min ; Fibrinolyse immédiate si délai > 120 min.",
+      "Ne JAMAIS attendre les résultats de la troponine pour déclencher la reperfusion d'un SCA ST+.",
+      "DAPT systématique : Aspirine + Ticagrélor ou Prasugrel pendant 12 mois minimum.",
+      "Ordonnance de sortie 'BASIC' systématique pour prévenir les récidives et le remodelage VG."
+    ],
+    "exam_traps": [
+      "Piège Annales : Attendre la troponine devant un tableau clinique typique avec sus-décalage ST à l'ECG = FAUTE ÉLIMINATOIRE au concours.",
+      "Piège Dérivés Nitrés : Contre-indication formelle des dérivés nitrés si PAS < 90 mmHg ou si Infarctus du Ventricule Droit (V3R-V4R+), car risque de collapsus sévère par chute de précharge.",
+      "Piège Traitement : L'association Prasugrel est contre-indiquée en cas d'antécédent d'AVC/AIT ou chez le sujet > 75 ans pesant < 60 kg."
+    ],
+    "diagnostic_criteria": "Douleur angineuse > 20 min + Sus-décalage persistant du segment ST (≥ 1 mm dans 2 dérivations contiguës ou BBG récent)",
+    "treatment_summary": "Reperfusion urgente (Angioplastie < 120 min ou Fibrinolyse Ténectéplase) + DAPT (Aspirine + Ticagrélor) + Anticoagulation (HNF/Enoxaparine) + BASIC",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-14T17:40:00.000Z"
+  },
+  {
+    "course_id": "c_pneumo_asthme",
+    "course_name": "Asthme de l'Adulte et de l'Enfant",
+    "module_id": "mod_pneumo",
+    "module_name": "Pneumologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie\n- **Maladie inflammatoire chronique des voies aériennes** caractérisée par une hyperréactivité bronchique et une obstruction bronchique variable et réversible, spontanément ou sous bronchodilatateur.\n- Terrain atopique fréquent (rhinite, conjonctivite, eczéma, antécédents familiaux).\n\n## 2. Démarche Diagnostique\n- **Symptômes évocateurs** : Dyspnée paroxystique sifflante à prédominance nocturne ou au petit matin, oppression thoracique, toux spasmodique déclenchée par l'effort, le froid, les allergènes ou les AINS (syndrome de Widal).\n- **Confirmation fonctionnelle obligatoire (EFR - Spirométrie)** :\n  - **Trouble Ventilatoire Obstructif (TVO)** : Rapport VEMS / CVF (indice de Tiffeneau) < 70% (ou < LIN).\n  - **Test de réversibilité positif** : Augmentation du VEMS de **> 12% ET > 200 mL** 15 minutes après inhalation de 400 µg de Salbutamol.\n  - Si spirométrie normale : Test de provocation bronchique à la Méthacholine (recherche d'hyperréactivité bronchique).\n\n## 3. Évaluation du Contrôle (Critères GINA - 4 dernières semaines)\n- Évalue 4 critères au cours des 4 dernières semaines :\n  1. Symptômes diurnes > 2 fois par semaine ?\n  2. Réveils nocturnes liés à l'asthme ?\n  3. Prise de traitement de secours (BDCA) > 2 fois par semaine ?\n  4. Limitation des activités de la vie quotidienne ?\n- **Score de contrôle** :\n  - 0 critère = Asthme **Bien contrôlé**.\n  - 1 à 2 critères = Asthme **Partiellement contrôlé**.\n  - 3 à 4 critères = Asthme **Non contrôlé** (nécessite une réévaluation de l'observance et de la technique d'inhalation avant palier supérieur).\n\n## 4. Stratégie Thérapeutique de Fond (Recommandations GINA)\n- **Règle fondamentale** : Le traitement de fond repose sur les **Corticoïdes Inhalés (CSI)**.\n- **Paliers thérapeutiques** :\n  - **Palier 1-2** : CSI à faible dose + Formotérol (CSI-BDLA) à la demande (traitement de crise et de fond simultané = SMART) OU CSI faible dose quotidien + BDCA à la demande.\n  - **Palier 3** : CSI faible dose + BDLA (ex: Budésonide + Formotérol) en prise quotidienne régulière.\n  - **Palier 4** : CSI dose moyenne/forte + BDLA quotidien.\n  - **Palier 5 (Asthme sévère non contrôlé)** : Avis pneumologue spécialisé, ajout d'un Anticholinergique longue durée (Tiotropium LAMA) ou Biothérapie ciblée anti-IgE (Omalizumab), anti-IL5 (Mépolizumab).\n\n## 5. Crise d'Asthme Aigu Grave (AAG) : Urgence Vitale\n- **Signes de gravité extrême (Imminence d'arrêt respiratoire)** :\n  - Silence auscultatoire (« poumon muet »), bradypnée ou respiration paradoxale abdominale.\n  - Troubles de la conscience, agitation extrême ou coma, sueurs profuses, cyanose.\n  - Instabilité hémodynamique : collapsus, bradycardie.\n  - Gazométrie artérielle : Normocapnie ou hypercapnie (PaCO2 ≥ 45 mmHg = signe d'épuisement respiratoire majeur !).\n- **Traitement d'urgence immédiat** :\n  - Oxygénothérapie à haut débit pour cibler SpO2 93-95%.\n  - **Salbutamol nébulisé** à forte dose (5 mg toutes les 20 min ou continu) couplé à l'Ipratropium (0,5 mg nébulisé).\n  - **Corticothérapie générale précoce** : Méthylprednisolone 1 à 2 mg/kg/j IV.\n  - Sulfate de Magnésium (MgSO4) 2 g IV si crise réfractaire.",
+    "key_takeaways": [
+      "Diagnostic formel par EFR : TVO réversible (gain VEMS > 12% et > 200 mL sous Salbutamol).",
+      "La pierre angulaire du traitement de fond est le Corticoïde Inhalé (CSI), jamais de BDLA seul !",
+      "Évaluation du contrôle selon les 4 critères GINA (symptômes diurnes, nocturnes, secours, activité).",
+      "Une PaCO2 normale ou élevée lors d'une crise d'asthme signifie épuisement respiratoire aigu = réanimation immédiate.",
+      "Vérifier TOUJOURS la technique d'inhalation et l'observance avant d'augmenter de palier thérapeutique."
+    ],
+    "exam_traps": [
+      "Piège Annales : Ne JAMAIS prescrire de bêta-2 agoniste de longue durée d'action (BDLA) en monothérapie sans corticoïde inhalé (surmortalité par crise fatale).",
+      "Piège Gazométrie : Chez un patient asthmatique en tachypnée, la gazométrie normale montre une hypocapnie avec alcalose respiratoire. Si la PaCO2 est 'normale' (40 mmHg), c'est un piège : le patient s'épuise !",
+      "Piège AINS : L'aspirine et les AINS sont contre-indiqués chez le patient avec syndrome de Widal (Asthme + Polypose nasosinusienne + Intolérance AINS)."
+    ],
+    "diagnostic_criteria": "EFR: VEMS/CVF < 70% avec réversibilité significative (VEMS +12% ET +200 mL post-bronchodilatateur)",
+    "treatment_summary": "Fond: Corticoïde Inhalé (CSI) + Formotérol (BDLA) par paliers GINA 1 à 5; Crise: Salbutamol nébulisé 5mg + Ipratropium + Corticothérapie IV/PO",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-14T17:40:00.000Z"
+  }
+]
