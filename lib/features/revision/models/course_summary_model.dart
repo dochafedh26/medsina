@@ -81,3 +81,4 @@ class CourseSummaryModel extends Equatable {
         updatedAt,
       ];
 }
+

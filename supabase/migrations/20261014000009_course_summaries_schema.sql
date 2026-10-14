@@ -34,3 +34,4 @@ CREATE POLICY "Enable update for course_summaries" ON public.course_summaries
 
 CREATE INDEX IF NOT EXISTS idx_course_summaries_module_id ON public.course_summaries (module_id);
 CREATE INDEX IF NOT EXISTS idx_course_summaries_course_name ON public.course_summaries (course_name);
+

@@ -79,3 +79,4 @@ class CourseSummaryRepository {
     return _cache[courseId];
   }
 }
+
