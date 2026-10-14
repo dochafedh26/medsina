@@ -87,13 +87,17 @@ jobs:
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
           flutter build appbundle --release --build-name=$VERSION --build-number=$BUILD_NUM
 
+      - name: 📦 Prepare Android Deliverables
+        run: |
+          mkdir -p android-dist
+          cp build/app/outputs/flutter-apk/app-release.apk android-dist/app-release.apk
+          cp build/app/outputs/bundle/release/app-release.aab android-dist/app-release.aab
+
       - name: 📤 Upload Android Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: android-release
-          path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
+          path: android-dist/*
 
   # ----------------------------------------------------
   # JOB 2 : Build Windows Desktop (x64)
@@ -138,13 +142,14 @@ jobs:
 
       - name: 🗜️ Archive Windows Release
         run: |
-          Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "build\Medsina_Windows_x64.zip" -Force
+          New-Item -ItemType Directory -Force -Path "win-dist"
+          Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "win-dist\Medsina_Windows_x64.zip" -Force
 
       - name: 📤 Upload Windows Artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-release
-          path: build/Medsina_Windows_x64.zip
+          path: win-dist\Medsina_Windows_x64.zip
 
   # ----------------------------------------------------
   # JOB 3 : Build Web Production
@@ -185,13 +190,14 @@ jobs:
 
       - name: 🗜️ Archive Web
         run: |
-          cd build/web && zip -r ../../Medsina_Web_Production.zip . && cd ../..
+          mkdir -p web-dist
+          cd build/web && zip -r ../../web-dist/Medsina_Web_Production.zip . && cd ../..
 
       - name: 📤 Upload Web Artifact
         uses: actions/upload-artifact@v4
         with:
           name: web-release
-          path: Medsina_Web_Production.zip
+          path: web-dist/Medsina_Web_Production.zip
 
   # ----------------------------------------------------
   # JOB 4 : GitHub Release & Supabase OTA Broadcast
@@ -232,11 +238,20 @@ jobs:
           echo "version=$TAG" >> $GITHUB_OUTPUT
           echo "build=$BUILD_NUM" >> $GITHUB_OUTPUT
 
-          # Rename files clearly
-          mv dist-release/app-release.apk "dist-release/Medsina_v${TAG}_Android.apk"
-          mv dist-release/app-release.aab "dist-release/Medsina_v${TAG}_GooglePlay.aab"
-          mv dist-release/Medsina_Windows_x64.zip "dist-release/Medsina_v${TAG}_Windows_x64.zip"
-          mv dist-release/Medsina_Web_Production.zip "dist-release/Medsina_v${TAG}_Web.zip"
+          echo "🔍 Contents of downloaded artifacts:"
+          ls -laR dist-release
+
+          # Reliably find and move files to dist-release root regardless of directory nesting
+          find dist-release -type f -name "*app-release.apk" -exec mv {} "dist-release/Medsina_v${TAG}_Android.apk" \;
+          find dist-release -type f -name "*app-release.aab" -exec mv {} "dist-release/Medsina_v${TAG}_GooglePlay.aab" \;
+          find dist-release -type f -name "*Windows_x64.zip" -exec mv {} "dist-release/Medsina_v${TAG}_Windows_x64.zip" \;
+          find dist-release -type f \( -name "*Web_Production.zip" -o -name "*Web.zip" \) -exec mv {} "dist-release/Medsina_v${TAG}_Web.zip" \;
+
+          # Clean any leftover subdirectories
+          find dist-release -mindepth 1 -type d -exec rm -rf {} + 2>/dev/null || true
+
+          echo "✅ Final release deliverables in dist-release:"
+          ls -la dist-release
 
       - name: 🎉 Create GitHub Release with Assets
         uses: softprops/action-gh-release@v2
