@@ -693,4 +693,36 @@ class SupabaseService {
       return [];
     }
   }
+
+  // --- OTA APP RELEASES ---
+
+  static Future<Map<String, dynamic>?> fetchLatestRelease(String platform) async {
+    try {
+      final res = await client
+          .from('app_releases')
+          .select()
+          .inFilter('platform', [platform.toLowerCase(), 'all'])
+          .eq('is_active', true)
+          .order('build_number', ascending: false)
+          .limit(1)
+          .maybeSingle();
+      return res;
+    } catch (e) {
+      debugPrint('Error fetching latest release for $platform: $e');
+      return null;
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchAllReleases() async {
+    try {
+      final res = await client
+          .from('app_releases')
+          .select()
+          .order('build_number', ascending: false);
+      return List<Map<String, dynamic>>.from(res);
+    } catch (e) {
+      debugPrint('Error fetching all releases: $e');
+      return [];
+    }
+  }
 }

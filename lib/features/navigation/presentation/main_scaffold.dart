@@ -19,6 +19,8 @@ import '../../auth/presentation/test_accounts_sheet.dart';
 import '../../notifications/models/medical_notification.dart';
 import '../../notifications/presentation/notifications_modal_sheet.dart';
 import '../../notifications/services/realtime_notification_service.dart';
+import '../../../core/services/ota_update_service.dart';
+import 'ota_update_dialog.dart';
 
 class NavItemConfig {
   final String label;
@@ -96,6 +98,27 @@ class _MainScaffoldState extends State<MainScaffold> {
         );
       }
     });
+
+    // Check for Over-The-Air updates after frame renders
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkOtaUpdateOnLaunch();
+    });
+  }
+
+  Future<void> _checkOtaUpdateOnLaunch() async {
+    // Delay slightly to not block initial home render
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+
+    final check = await OtaUpdateService.checkForUpdates();
+    if (check.hasUpdate && check.latestRelease != null && mounted) {
+      OtaUpdateDialog.show(
+        context,
+        release: check.latestRelease!,
+        currentVersion: check.currentVersion,
+        isMandatory: check.isMandatory,
+      );
+    }
   }
 
   @override
@@ -550,6 +573,11 @@ class _MainScaffoldState extends State<MainScaffold> {
                   ),
                 ),
                 IconButton(
+                  icon: const Icon(Icons.system_update_rounded, size: 18),
+                  tooltip: 'Vérifier les mises à jour',
+                  onPressed: () => _manualCheckOtaUpdates(context),
+                ),
+                IconButton(
                   icon: const Icon(Icons.logout_rounded, size: 18),
                   tooltip: 'Déconnexion',
                   onPressed: () => _confirmLogout(context),
@@ -562,6 +590,34 @@ class _MainScaffoldState extends State<MainScaffold> {
     ),
   );
 }
+
+  Future<void> _manualCheckOtaUpdates(BuildContext context) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Recherche de mises à jour en cours...'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+
+    final check = await OtaUpdateService.checkForUpdates(ignoreDismissed: true);
+    if (!context.mounted) return;
+
+    if (check.hasUpdate && check.latestRelease != null) {
+      OtaUpdateDialog.show(
+        context,
+        release: check.latestRelease!,
+        currentVersion: check.currentVersion,
+        isMandatory: check.isMandatory,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vous utilisez déjà la dernière version (v${check.currentVersion}) ✨'),
+          backgroundColor: AppTheme.primaryTeal,
+        ),
+      );
+    }
+  }
 
   Widget _buildNavItem({
     required int index,

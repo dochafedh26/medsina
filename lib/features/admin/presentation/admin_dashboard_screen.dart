@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../bloc/admin_bloc.dart';
 import '../bloc/admin_event.dart';
@@ -1395,6 +1396,65 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ),
         const SizedBox(height: 20),
 
+        // OTA Releases Management Card
+        Card(
+          elevation: isDark ? 0 : 2,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.system_update_rounded, color: AppTheme.primaryTeal),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Mises à Jour OTA & Versions en Ligne',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal, foregroundColor: Colors.white),
+                      icon: const Icon(Icons.publish_rounded, size: 16),
+                      label: const Text('Publier une Version', style: TextStyle(fontSize: 12)),
+                      onPressed: () => _showPublishReleaseDialog(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Déployez instantanément une nouvelle version sans passer par les stores. L\'application vérifie chaque version au lancement et invite les résidents à installer l\'APK ou télécharger le binaire.',
+                  style: TextStyle(fontSize: 12, height: 1.45, color: isDark ? Colors.white70 : Colors.grey.shade700),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline_rounded, size: 20, color: Colors.blue),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Version actuelle en production : v${AppConstants.appVersion} (Build 1) • Android APK + Windows x64 + Web',
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.blue),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
         // Medical Content Index Card
         Card(
           elevation: isDark ? 0 : 2,
@@ -1747,6 +1807,137 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 }
               },
               child: const Text('Publier l\'Annonce'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPublishReleaseDialog(BuildContext context) {
+    final versionCtrl = TextEditingController(text: '1.0.1');
+    final buildCtrl = TextEditingController(text: '2');
+    final notesCtrl = TextEditingController(
+      text: '### Nouveautés de Medsina ✨\n- Améliorations de performance et fiches de cours enrichies.\n- Nouveaux mementos de garde et protocoles cliniques.',
+    );
+    final urlCtrl = TextEditingController(
+      text: 'https://qzfssrhhuorljftpdvjm.supabase.co/storage/v1/object/public/releases/Medsina_v1.0.1_Android_Release.apk',
+    );
+    String platform = 'android';
+    bool isMandatory = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.system_update_rounded, color: AppTheme.primaryTeal),
+              SizedBox(width: 8),
+              Text('Diffuser une Version OTA'),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  initialValue: platform,
+                  decoration: const InputDecoration(labelText: 'Plateforme Cible'),
+                  items: const [
+                    DropdownMenuItem(value: 'android', child: Text('Android (APK Direct)')),
+                    DropdownMenuItem(value: 'windows', child: Text('Windows (Desktop x64)')),
+                    DropdownMenuItem(value: 'web', child: Text('Web Production')),
+                    DropdownMenuItem(value: 'all', child: Text('Toutes les plateformes')),
+                  ],
+                  onChanged: (val) => setDlgState(() => platform = val ?? platform),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: versionCtrl,
+                        decoration: const InputDecoration(labelText: 'Version (ex: 1.0.1)'),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: buildCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(labelText: 'Build Number (ex: 2)'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: urlCtrl,
+                  decoration: const InputDecoration(labelText: 'URL de Téléchargement Direct (APK / ZIP)'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: notesCtrl,
+                  maxLines: 4,
+                  decoration: const InputDecoration(labelText: 'Notes de Version (Markdown)'),
+                ),
+                const SizedBox(height: 10),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Mise à jour obligatoire (Bloquante)'),
+                  subtitle: const Text('Empêche l\'accès aux anciennes versions tant que la mise à jour n\'est pas faite.'),
+                  value: isMandatory,
+                  activeThumbColor: Colors.red,
+                  onChanged: (val) => setDlgState(() => isMandatory = val),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal, foregroundColor: Colors.white),
+              onPressed: () async {
+                final vName = versionCtrl.text.trim();
+                final bNum = int.tryParse(buildCtrl.text.trim()) ?? 2;
+                final url = urlCtrl.text.trim();
+                final notes = notesCtrl.text.trim();
+
+                if (vName.isNotEmpty && url.isNotEmpty) {
+                  Navigator.pop(ctx);
+                  try {
+                    await SupabaseService.client.from('app_releases').insert({
+                      'platform': platform,
+                      'version_name': vName,
+                      'build_number': bNum,
+                      'release_notes': notes,
+                      'download_url': url,
+                      'is_mandatory': isMandatory,
+                      'min_supported_build': isMandatory ? bNum : 1,
+                      'is_active': true,
+                    });
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Version OTA publiée avec succès sur Supabase Cloud ! 🚀'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Erreur lors de la publication : $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+              child: const Text('Publier la Version'),
             ),
           ],
         ),
