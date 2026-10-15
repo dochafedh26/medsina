@@ -9,6 +9,7 @@ import '../../auth/bloc/auth_state.dart';
 import '../../auth/presentation/test_accounts_sheet.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
+import 'daily_pearls_archive_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -40,7 +41,7 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 28),
 
               // Clinical Tip of the Day
-              _buildClinicalTipCard(context, tier, user?.isSubscriptionActive ?? true),
+              ClinicalTipCard(tier: tier, isSubscriptionActive: user?.isSubscriptionActive ?? true),
               const SizedBox(height: 28),
 
               // Quick Actions / Modules En Cours
@@ -377,219 +378,6 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildClinicalTipCard(BuildContext context, SubscriptionTier tier, bool isSubscriptionActive) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasResidentAccess =
-        (tier == SubscriptionTier.residentElite || tier == SubscriptionTier.allAccess) && isSubscriptionActive;
-
-    return FutureBuilder<Map<String, dynamic>?>(
-      future: SupabaseService.fetchLatestDailyPearl(),
-      builder: (context, snapshot) {
-        final pearl = snapshot.data;
-        final title = pearl?['title'] ?? 'Perle Clinique du Jour : Décompensation Acido-Cétosique';
-        final courseName = pearl?['course_name'] as String?;
-        final moduleName = pearl?['module_name'] as String?;
-        final pearlText = pearl?['pearl_text'] ??
-            'Règle vitale : Ne JAMAIS débuter l\'insuline si la kaliémie initiale est < 3,3 mmol/L. L\'insuline provoque une entrée massive de potassium dans les cellules et risque d\'entraîner un arrêt cardiaque en hypokaliémie foudroyante.';
-        final vitalRule = pearl?['vital_rule'] as String?;
-        final examTrap = pearl?['exam_trap'] as String?;
-
-        return Card(
-          color: AppTheme.accentCyan.withValues(alpha: 0.06),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide(color: AppTheme.accentCyan.withValues(alpha: 0.2)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.tips_and_updates_rounded, color: AppTheme.accentCyan, size: 28),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (moduleName != null) ...[
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryTeal.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              moduleName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppTheme.primaryTeal),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                      ],
-                      Text(
-                        title,
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppTheme.accentCyan),
-                      ),
-                      if (courseName != null) ...[
-                        const SizedBox(height: 3),
-                        Text(
-                          '📖 Cours : $courseName',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
-                        ),
-                      ],
-                      const SizedBox(height: 8),
-                      Text(
-                        pearlText,
-                        style: TextStyle(fontSize: 13, height: 1.4, color: Theme.of(context).textTheme.bodyMedium?.color),
-                      ),
-                      if (vitalRule != null && vitalRule.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFD97706)),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  vitalRule,
-                                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFFB45309)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                      if (examTrap != null && examTrap.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        if (hasResidentAccess)
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEF4444).withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.25)),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.school_rounded, size: 16, color: Color(0xFFDC2626)),
-                                const SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    examTrap,
-                                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Color(0xFFB91C1C)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        else
-                          LayoutBuilder(
-                            builder: (context, box) {
-                              final isCompact = box.maxWidth < 450;
-                              return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: const Color(0xFF9333EA).withValues(alpha: 0.3)),
-                                ),
-                                child: isCompact
-                                    ? Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Icon(Icons.lock_rounded, size: 16, color: Color(0xFF9333EA)),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                  '🎯 Piège de Concours Résidanat masqué • Réservé aux Pass Résident Élite & All-Access',
-                                                  style: TextStyle(
-                                                    fontSize: 11.5,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: isDark ? Colors.white70 : const Color(0xFF4B5563),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Align(
-                                            alignment: Alignment.centerRight,
-                                            child: TextButton.icon(
-                                              onPressed: () {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
-                                                );
-                                              },
-                                              style: TextButton.styleFrom(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                minimumSize: Size.zero,
-                                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                foregroundColor: const Color(0xFF9333EA),
-                                              ),
-                                              icon: const Icon(Icons.lock_open_rounded, size: 14),
-                                              label: const Text('Débloquer', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11.5)),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Row(
-                                        children: [
-                                          const Icon(Icons.lock_rounded, size: 16, color: Color(0xFF9333EA)),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              '🎯 Piège de Concours Résidanat masqué • Réservé aux Pass Résident Élite & All-Access',
-                                              style: TextStyle(
-                                                fontSize: 11.5,
-                                                fontWeight: FontWeight.w600,
-                                                color: isDark ? Colors.white70 : const Color(0xFF4B5563),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
-                                              );
-                                            },
-                                            style: TextButton.styleFrom(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                              minimumSize: Size.zero,
-                                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              foregroundColor: const Color(0xFF9333EA),
-                                            ),
-                                            child: const Text('Débloquer', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11.5)),
-                                          ),
-                                        ],
-                                      ),
-                              );
-                            },
-                          ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   Widget _buildQuickAccessCards(BuildContext context, SubscriptionTier tier, bool isExpired) {
     return FutureBuilder<List<RecentActivityItem>>(
@@ -951,6 +739,325 @@ class DashboardScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ClinicalTipCard extends StatefulWidget {
+  final SubscriptionTier tier;
+  final bool isSubscriptionActive;
+
+  const ClinicalTipCard({
+    super.key,
+    required this.tier,
+    required this.isSubscriptionActive,
+  });
+
+  @override
+  State<ClinicalTipCard> createState() => _ClinicalTipCardState();
+}
+
+class _ClinicalTipCardState extends State<ClinicalTipCard> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasResidentAccess = (widget.tier == SubscriptionTier.residentElite ||
+            widget.tier == SubscriptionTier.allAccess) &&
+        widget.isSubscriptionActive;
+
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: SupabaseService.fetchAllDailyPearls(),
+      builder: (context, snapshot) {
+        final pearls = snapshot.data ?? SupabaseService.defaultDailyPearls;
+        if (pearls.isEmpty) return const SizedBox.shrink();
+
+        final safeIndex = _currentIndex.clamp(0, pearls.length - 1);
+        final pearl = pearls[safeIndex];
+        final title = pearl['title'] ?? 'Perle Clinique du Jour';
+        final courseName = pearl['course_name'] as String?;
+        final moduleName = pearl['module_name'] as String?;
+        final pearlText = pearl['pearl_text'] ?? '';
+        final vitalRule = pearl['vital_rule'] as String?;
+        final examTrap = pearl['exam_trap'] as String?;
+
+        return Card(
+          color: AppTheme.accentCyan.withValues(alpha: 0.06),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: AppTheme.accentCyan.withValues(alpha: 0.2)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Row: Icon + Module + Pagination + Archive Button
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.tips_and_updates_rounded, color: AppTheme.accentCyan, size: 24),
+                    const SizedBox(width: 8),
+                    if (moduleName != null && moduleName.isNotEmpty)
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            moduleName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: AppTheme.primaryTeal),
+                          ),
+                        ),
+                      ),
+                    const Spacer(),
+
+                    // Flip Previous / Next Pearls directly on the Card
+                    if (pearls.length > 1) ...[
+                      IconButton(
+                        tooltip: 'Perle précédente',
+                        icon: const Icon(Icons.chevron_left_rounded, size: 20),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                        onPressed: safeIndex > 0
+                            ? () => setState(() => _currentIndex = safeIndex - 1)
+                            : null,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          '${safeIndex + 1}/${pearls.length}',
+                          style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: Colors.grey.shade600),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Perle suivante',
+                        icon: const Icon(Icons.chevron_right_rounded, size: 20),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                        onPressed: safeIndex < pearls.length - 1
+                            ? () => setState(() => _currentIndex = safeIndex + 1)
+                            : null,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+
+                    // Open Full Archive Screen
+                    OutlinedButton.icon(
+                      onPressed: () => DailyPearlsArchiveScreen.navigateTo(context),
+                      icon: const Icon(Icons.auto_stories_rounded, size: 14),
+                      label: const Text('Toutes', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppTheme.accentCyan,
+                        side: BorderSide(color: AppTheme.accentCyan.withValues(alpha: 0.4)),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Pearl Title
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5, color: AppTheme.accentCyan),
+                ),
+                if (courseName != null && courseName.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    '📖 Cours : $courseName',
+                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
+                  ),
+                ],
+                const SizedBox(height: 10),
+
+                // Pearl Body
+                Text(
+                  pearlText,
+                  style: TextStyle(fontSize: 13, height: 1.45, color: Theme.of(context).textTheme.bodyMedium?.color),
+                ),
+
+                // Vital Rule Box
+                if (vitalRule != null && vitalRule.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFD97706)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            vitalRule,
+                            style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFFB45309)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
+                // Exam Trap Box (with paywall gating)
+                if (examTrap != null && examTrap.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  if (hasResidentAccess)
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.25)),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.school_rounded, size: 16, color: Color(0xFFDC2626)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              examTrap,
+                              style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Color(0xFFB91C1C)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    LayoutBuilder(
+                      builder: (context, box) {
+                        final isCompact = box.maxWidth < 450;
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFF9333EA).withValues(alpha: 0.3)),
+                          ),
+                          child: isCompact
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Icon(Icons.lock_rounded, size: 16, color: Color(0xFF9333EA)),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            '🎯 Piège de Concours Résidanat masqué • Réservé aux Pass Résident Élite & All-Access',
+                                            style: TextStyle(
+                                              fontSize: 11.5,
+                                              fontWeight: FontWeight.w600,
+                                              color: isDark ? Colors.white70 : const Color(0xFF4B5563),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: TextButton.icon(
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                                          );
+                                        },
+                                        style: TextButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          minimumSize: Size.zero,
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          foregroundColor: const Color(0xFF9333EA),
+                                        ),
+                                        icon: const Icon(Icons.lock_open_rounded, size: 14),
+                                        label: const Text('Débloquer', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11.5)),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  children: [
+                                    const Icon(Icons.lock_rounded, size: 16, color: Color(0xFF9333EA)),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        '🎯 Piège de Concours Résidanat masqué • Réservé aux Pass Résident Élite & All-Access',
+                                        style: TextStyle(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: isDark ? Colors.white70 : const Color(0xFF4B5563),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        minimumSize: Size.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        foregroundColor: const Color(0xFF9333EA),
+                                      ),
+                                      child: const Text('Débloquer', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11.5)),
+                                    ),
+                                  ],
+                                ),
+                        );
+                      },
+                    ),
+                ],
+
+                // Footer Discover Link
+                const SizedBox(height: 12),
+                InkWell(
+                  onTap: () => DailyPearlsArchiveScreen.navigateTo(context),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Explorer les ${pearls.length} perles du jour',
+                          style: const TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.accentCyan,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(Icons.arrow_forward_rounded, size: 14, color: AppTheme.accentCyan),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

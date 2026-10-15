@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/network/supabase_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/medsina_logo.dart';
@@ -21,9 +23,19 @@ void main() async {
     debugPrint('Supabase initialization fallback: $e');
   }
 
-  // Initialize Realtime Medical Notifications (CAT, Courses, QCM, Pearl)
+  // Initialize Realtime Medical Notifications (CAT, Courses, QCM, Pearl) with active user context
   try {
-    await RealtimeNotificationService.instance.initialize();
+    String? activeUserId;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userJson = prefs.getString('medsina_active_user');
+      if (userJson != null) {
+        final data = jsonDecode(userJson);
+        activeUserId = data['id']?.toString();
+      }
+    } catch (_) {}
+    activeUserId ??= SupabaseService.currentSession?.user.id;
+    await RealtimeNotificationService.instance.initialize(userId: activeUserId);
   } catch (e) {
     debugPrint('Realtime Notification initialization notice: $e');
   }

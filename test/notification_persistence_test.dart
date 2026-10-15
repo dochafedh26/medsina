@@ -56,4 +56,36 @@ void main() {
     expect(amineRestoredFirstNotif.isRead, true);
     expect(service.unreadCount, equals(initialUnread - 1));
   });
+
+  test('Notifications remain marked as read across simulated Hot-Restart', () async {
+    final service = RealtimeNotificationService.instance;
+    service.resetForTesting();
+
+    // 1. App starts for Dr. Hafedh
+    await service.initialize(userId: 'usr_demo_all_access');
+    expect(service.notifications.isNotEmpty, true);
+    final initialUnread = service.unreadCount;
+    expect(initialUnread > 0, true);
+
+    // 2. Doctor marks all notifications as read
+    await service.markAllAsRead();
+    expect(service.unreadCount, 0);
+    expect(service.notifications.every((n) => n.isRead), true);
+
+    // 3. User performs a HOT-RESTART:
+    // Reset service state (simulates Dart VM reload)
+    service.resetForTesting();
+
+    // In main(), initialize is called (e.g. before auth resolves or with cached user)
+    await service.initialize();
+
+    // All notifications must REMAIN MARKED AS READ!
+    expect(service.unreadCount, 0);
+    expect(service.notifications.every((n) => n.isRead), true);
+
+    // Once MainScaffold mounts and passes the user ID, it must still remain read!
+    await service.setCurrentUser('usr_demo_all_access');
+    expect(service.unreadCount, 0);
+    expect(service.notifications.every((n) => n.isRead), true);
+  });
 }

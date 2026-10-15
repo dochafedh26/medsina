@@ -259,7 +259,121 @@ class SupabaseService {
   }
 
 
-  /// Fetch the latest Daily Clinical Pearl & Exam Trap
+  /// Curated High-Yield Clinical Pearls for Algerian Residency & Hospital Practice
+  static final List<Map<String, dynamic>> defaultDailyPearls = [
+    {
+      'id': 'pearl_seed_cad',
+      'module_name': 'Endocrinologie',
+      'course_name': 'Diabète sucré et complications métaboliques',
+      'title': 'Perle Clinique : Décompensation Acido-Cétosique (CAD)',
+      'pearl_text': 'Règle vitale : Ne JAMAIS débuter l\'insuline si la kaliémie initiale est < 3,3 mmol/L. L\'insuline provoque une entrée massive de potassium dans les cellules et risque d\'entraîner un arrêt cardiaque en hypokaliémie foudroyante.',
+      'vital_rule': 'Réhydrater au SSI 0.9% et recharger en KCl (20-30 mEq/h) avant toute injection d\'insuline si K+ < 3.3.',
+      'exam_trap': 'Piège QCM Concours : La cétonurie peut persister faussement positive sous forme d\'acétoacétate alors que l\'état s\'améliore (le bêta-hydroxybutyrate se transforme en acétoacétate éliminé dans les urines). Le critère de guérison est la normalisation du trou anionique et des bicarbonates, JAMAIS la bandelette urinaire !',
+      'scientific_sources': 'Consensus International ADA / EASD 2024 & Recommandations Nationales Résidanat Algérie',
+      'created_at': DateTime.now().toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_hyponatremie',
+      'module_name': 'Néphrologie - Réanimation',
+      'course_name': 'Désordres hydro-électrolytiques',
+      'title': 'Perle Clinique : Hyponatrémie Sévère & Myélinolyse',
+      'pearl_text': 'La correction d\'une hyponatrémie chronique sévère (< 120 mmol/L) doit être impérativement lente. Une remontée trop rapide expose au risque dramatique et irréversible de myélinolyse centropontine (démyélinisation osmotique).',
+      'vital_rule': 'Règle vitale : Ne jamais dépasser une élévation de natrémie de 8 à 10 mmol/L en 24 heures et 18 mmol/L en 48 heures.',
+      'exam_trap': 'Piège QCM Concours : Seule l\'hyponatrémie aiguë symptomatique avec convulsions / coma justifie un bolus rapide de NaCl 3% (150 mL en 20 min). En chronique, le calcul du déficit en sodium sert à fixer la vitesse de perfusion, pas à administrer en urgence.',
+      'scientific_sources': 'European Society of Endocrinology Guidelines on Hyponatraemia & SFMU',
+      'created_at': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_sca_vd',
+      'module_name': 'Cardiologie',
+      'course_name': 'Syndromes Coronariens Aigus (SCA)',
+      'title': 'Perle Clinique : Infarctus du Ventricule Droit & Dérivés Nitrés',
+      'pearl_text': 'Devant tout SCA ST+ inférieur (DII, DIII, aVF), il faut systématiquement réaliser les dérivations droites V3R et V4R pour rechercher une extension au ventricule droit.',
+      'vital_rule': 'Contre-indication formelle aux dérivés nitrés et aux diurétiques en cas d\'infarctus du VD : risque de collapsus cardiovasculaire par chute de précharge ventriculaire droite ! Le traitement repose sur le remplissage vasculaire abondant.',
+      'exam_trap': 'Piège QCM Concours : La triade classique de l\'infarctus du VD associe : hypotension, turgescence jugulaire, et champs pulmonaires clairs (absence de râles crépitants). La présence de râles élimine une insuffisance ventriculaire droite pure.',
+      'scientific_sources': 'ESC Guidelines on Acute Coronary Syndromes 2023 & SFC',
+      'created_at': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_status_epilepticus',
+      'module_name': 'Neurologie - Urgences',
+      'course_name': 'État de mal épileptique',
+      'title': 'Perle Clinique : État de Mal Épileptique Convulsif',
+      'pearl_text': 'Toute crise convulsive généralisée continue durant plus de 5 minutes ou plus de 2 crises sans reprise de conscience entre elles définit un état de mal épileptique nécessitant une thérapeutique immédiate.',
+      'vital_rule': 'Délai d\'action : Clonazépam 1 mg IV lente (ou Diazépam 10 mg / Midazolam 10 mg IM). Si échec à T+5 min, renouveler une seule fois la même dose. Si persistance à T+10 min : antiépileptique d\'action prolongée immédiat (Lévétiracétam 60 mg/kg ou Phénytoïne ou Acide valproïque).',
+      'exam_trap': 'Piège QCM Concours : Ne JAMAIS répéter les benzodiazépines indéfiniment (maximum 2 injections) en raison du risque de dépression respiratoire sévère et de réfractérité réceptorielle GABA. Le passage à la molécule de 2e ligne est impératif dès T+10 min.',
+      'scientific_sources': 'Consensus SFMU/SRLF État de Mal Épileptique & ILAE Guidelines',
+      'created_at': DateTime.now().subtract(const Duration(days: 3)).toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_bronchiolite',
+      'module_name': 'Pédiatrie',
+      'course_name': 'Pathologies respiratoires du nourrisson',
+      'title': 'Perle Clinique : Bronchiolite Aiguë du Nourrisson',
+      'pearl_text': 'Dans la bronchiolite aiguë typique du nourrisson de moins de 12 mois, les études internationales ont formellement démontré l\'absence de bénéfice des traitements médicamenteux habituels.',
+      'vital_rule': 'Aucune indication en première intention pour : corticoïdes oraux ou injectables, bronchodilatateurs (salbutamol), antibiotiques, mucolytiques ou antitussifs. Le traitement repose exclusivement sur la désobstruction rhinopharyngée (DRP) au sérum physiologique et l\'hydratation.',
+      'exam_trap': 'Piège QCM Concours : L\'antibiothérapie n\'est indiquée QUE dans 3 situations précises : otite moyenne aiguë purulente associée, suspicion de surinfection pulmonaire documentée (foyer radiologique net + CRP élevée + fièvre > 38.5°C persistante), ou altération sévère de l\'état général.',
+      'scientific_sources': 'HAS Recommandations Prise en charge de la bronchiolite aiguë & Guide Pédiatrie Blida',
+      'created_at': DateTime.now().subtract(const Duration(days: 4)).toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_vo',
+      'module_name': 'Hépato-Gastro-Entérologie',
+      'course_name': 'Cirrhose et Hypertension Portale',
+      'title': 'Perle Clinique : Rupture de Varices Œsophagiennes (VO)',
+      'pearl_text': 'Chez le patient cirrhique en hémorragie digestive haute, la mortalité est réduite si les mesures hémodynamiques et pharmacologiques sont initiées AVANT l\'endoscopie digestive.',
+      'vital_rule': 'Trépied d\'urgence dès l\'admission : 1) Remplissage prudent (Objectif Hb 7-8 g/dL, ne pas sur-transfuser au risque d\'augmenter la pression portale), 2) Traitement vasoactif précoce (Terlipressine ou Octréotide / Somatostatine), 3) Antibioprophylaxie systématique par Ceftriaxone 1g/j pendant 7 jours.',
+      'exam_trap': 'Piège QCM Concours : L\'antibioprophylaxie par Ceftriaxone réduit la mortalité et le risque de récidive hémorragique de façon spectaculaire chez le cirrhique hémorragique, même en l\'absence de fièvre ou de signes d\'infection d\'ascite.',
+      'scientific_sources': 'Conférence de Consensus Baveno VII sur l\'Hypertension Portale',
+      'created_at': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_meningite',
+      'module_name': 'Infectiologie',
+      'course_name': 'Méningites infectieuses aiguës',
+      'title': 'Perle Clinique : Dexaméthasone dans la Méningite Purulente',
+      'pearl_text': 'Dans les méningites purulentes communautaires de l\'adulte (notamment à Pneumocoque), l\'adjonction de corticoïdes réduit significativement la mortalité et les séquelles neurosensorielles.',
+      'vital_rule': 'Dexaméthasone 10 mg IV à administrer AVANT ou SIMULTANÉMENT à la 1ère dose de Ceftriaxone/Céfotaxime. Si l\'antibiotique a déjà été injecté depuis plus de 4 heures, la dexaméthasone perd son efficacité et ne doit pas être débutée.',
+      'exam_trap': 'Piège QCM Concours : La présence de purpura fulminans impose l\'injection IMMÉDIATE d\'une C3G (Ceftriaxone 2g IV ou IM) au domicile ou au cabinet avant même tout transfert hospitalier et SANS attendre la ponction lombaire !',
+      'scientific_sources': 'Recommandations SPILF / SRLF Méningites Purulentes de l\'Adulte',
+      'created_at': DateTime.now().subtract(const Duration(days: 6)).toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_ep',
+      'module_name': 'Pneumologie - Réanimation',
+      'course_name': 'Maladie Thrombo-Embolique Veineuse',
+      'title': 'Perle Clinique : Embolie Pulmonaire Grave & Thrombolyse',
+      'pearl_text': 'La stratification pronostique d\'une embolie pulmonaire conditionne directement la thérapeutique thrombolytique ou anticoagulante.',
+      'vital_rule': 'La thrombolyse par rtPA (Altéplase 100 mg sur 2h) n\'est indiquée en urgence QUE dans l\'EP à haut risque avec instabilité hémodynamique (PAS < 90 mmHg, collapsus ou état de choc cardiogénique). Dans les EP à risque intermédiaire ou faible, elle est formellement déconseillée en 1ère intention en raison du risque hémorragique cérébral.',
+      'exam_trap': 'Piège QCM Concours : Une élévation de la troponine et des BNP associée à une dilatation du ventricule droit à l\'échographie définit le groupe "risque intermédiaire-élevé", mais ne justifie PAS de thrombolyse d\'emblée sans défaillance hémodynamique.',
+      'scientific_sources': 'ESC Guidelines on Pulmonary Embolism 2019',
+      'created_at': DateTime.now().subtract(const Duration(days: 7)).toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_ptt',
+      'module_name': 'Hématologie',
+      'course_name': 'Microangiopathies thrombotiques',
+      'title': 'Perle Clinique : Purpura Thrombotique Thrombocytopénique (PTT)',
+      'pearl_text': 'Le PTT (déficit sévère en métalloprotéase ADAMTS13) associe anémie hémolytique mécanique avec schizocytes, thrombopénie sévère de consommation et signes neurologiques fluctuants.',
+      'vital_rule': 'CONTRE-INDICATION ABSOLUE aux transfusions de culots plaquettaires (même en cas de thrombopénie < 10 000/mm³) : transfuser des plaquettes "jette de l\'huile sur le feu" et précipite des accidents ischémiques cérébraux ou cardiaques fatals !',
+      'exam_trap': 'Piège QCM Concours : L\'urgence thérapeutique absolue est la réalisation précoce d\'échanges plasmatiques (plasmaphérèse) avec apport de plasma frais congelé et corticothérapie, sans attendre le résultat du dosage de l\'ADAMTS13.',
+      'scientific_sources': 'Centre de Référence des Microangiopathies Thrombotiques (CNR-MAT)',
+      'created_at': DateTime.now().subtract(const Duration(days: 8)).toIso8601String(),
+    },
+    {
+      'id': 'pearl_seed_arthrite',
+      'module_name': 'Rhumatologie',
+      'course_name': 'Arthrites aiguës et chroniques',
+      'title': 'Perle Clinique : Monoarthrite Aiguë Fébrille',
+      'pearl_text': 'Toute monoarthrite aiguë fébrile est une arthrite septique jusqu\'à preuve formelle du contraire. C\'est une urgence médico-chirurgicale absolue menaçant le pronostic fonctionnel articulaire en 24 à 48 heures.',
+      'vital_rule': 'Ponction articulaire diagnostique impérative et urgente avant toute mise sous antibiothérapie. L\'analyse du liquide synovial (cytologie, examen direct avec coloration de Gram, mise en culture et recherche de microcristaux) guide immédiatement la prise en charge.',
+      'exam_trap': 'Piège QCM Concours : La présence de microcristaux d\'urate de sodium ou de pyrophosphate de calcium n\'élimine PAS de façon certaine une arthrite septique sous-jacente (l\'infection articulaire peut déclencher un accès goutteux concomitant).',
+      'scientific_sources': 'SFR - Société Française de Rhumatologie & Consensus Résidanat',
+      'created_at': DateTime.now().subtract(const Duration(days: 9)).toIso8601String(),
+    },
+  ];
+
+  /// Fetch the latest Daily Clinical Pearl & Exam Trap (falls back to curated list)
   static Future<Map<String, dynamic>?> fetchLatestDailyPearl() async {
     try {
       final response = await client
@@ -268,11 +382,30 @@ class SupabaseService {
           .order('created_at', ascending: false)
           .limit(1)
           .maybeSingle();
-      return response;
+      if (response != null && response.isNotEmpty) {
+        return response;
+      }
     } catch (e) {
-      debugPrint('Error fetching daily pearl: $e');
-      return null;
+      debugPrint('Error fetching daily pearl from Cloud, falling back to curated pearls: $e');
     }
+    return defaultDailyPearls.first;
+  }
+
+  /// Fetch all Daily Clinical Pearls (archive & collection)
+  static Future<List<Map<String, dynamic>>> fetchAllDailyPearls() async {
+    try {
+      final response = await client
+          .from('daily_pearls')
+          .select()
+          .order('created_at', ascending: false);
+      final list = List<Map<String, dynamic>>.from(response);
+      if (list.isNotEmpty) {
+        return list;
+      }
+    } catch (e) {
+      debugPrint('Error fetching all daily pearls from Cloud: $e');
+    }
+    return defaultDailyPearls;
   }
 
 

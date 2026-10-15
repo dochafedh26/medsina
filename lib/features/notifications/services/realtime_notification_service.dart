@@ -52,7 +52,6 @@ class RealtimeNotificationService {
 
   /// Changes the active user context and re-applies their specific read status
   Future<void> setCurrentUser(String? userId) async {
-    if (_currentUserId == userId && _initialized) return;
     _currentUserId = userId;
     await _loadUserReadIds();
     _applyReadIds();
@@ -61,8 +60,21 @@ class RealtimeNotificationService {
   Future<void> _loadUserReadIds() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final list = prefs.getStringList(_getStorageKey(_currentUserId)) ?? [];
-      _readIds = list.toSet();
+      final userKey = _getStorageKey(_currentUserId);
+      final userList = prefs.getStringList(userKey) ?? [];
+      
+      // If current user has a specific account, merge any read IDs marked during anonymous session
+      if (_currentUserId != null && _currentUserId != 'anonymous') {
+        final anonymousList = prefs.getStringList(_getStorageKey(null)) ?? [];
+        _readIds = {...userList, ...anonymousList};
+        if (anonymousList.isNotEmpty) {
+          // Persist the combined set for the user
+          await prefs.setStringList(userKey, _readIds.toList());
+        }
+      } else {
+        final lastActive = prefs.getStringList('medsina_last_active_read_notifs') ?? [];
+        _readIds = {...userList, ...lastActive};
+      }
     } catch (e) {
       debugPrint('Error loading user read notification IDs: $e');
       _readIds = {};
@@ -72,7 +84,14 @@ class RealtimeNotificationService {
   Future<void> _saveUserReadIds() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList(_getStorageKey(_currentUserId), _readIds.toList());
+      final userKey = _getStorageKey(_currentUserId);
+      final list = _readIds.toList();
+      await prefs.setStringList(userKey, list);
+      // If logged in, also mirror to last active read cache so hot-restart before auth always stays read
+      await prefs.setStringList('medsina_last_active_read_notifs', list);
+      if (_currentUserId == null || _currentUserId == 'anonymous') {
+        await prefs.setStringList(_getStorageKey(null), list);
+      }
     } catch (e) {
       debugPrint('Error saving user read notification IDs: $e');
     }
@@ -149,34 +168,55 @@ class RealtimeNotificationService {
       debugPrint('Supabase initial load notice: $e');
     }
 
-    // Add local default fallback notifications if items list is empty
-    if (items.isEmpty) {
-      items.addAll([
-        MedicalNotification(
-          id: 'seed_pearl_1',
-          title: '💡 Perle du Jour : Hyponatrémie sévère',
-          message: 'Règle vitale : Ne jamais dépasser 8-10 mmol/L de correction en 24h',
-          type: NotificationType.pearl,
-          createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
-          isRead: _readIds.contains('seed_pearl_1'),
-        ),
-        MedicalNotification(
-          id: 'seed_cat_1',
-          title: '🚨 Nouvelle CAT : Prise en charge SCA ST+ (IDM)',
-          message: 'Consensus national UMC & SFMU mis à jour',
-          type: NotificationType.cat,
-          createdAt: DateTime.now().subtract(const Duration(hours: 2)),
-          isRead: _readIds.contains('seed_cat_1'),
-        ),
-        MedicalNotification(
-          id: 'seed_qcm_1',
-          title: '🎯 Nouvelle Banque QCM : Cardiologie Blida 2024',
-          message: '340 QCMs classés avec corrections détaillées ajoutés',
-          type: NotificationType.qcm,
-          createdAt: DateTime.now().subtract(const Duration(hours: 6)),
-          isRead: _readIds.contains('seed_qcm_1'),
-        ),
-      ]);
+    // Always ensure at least 1 Daily Pearl notification is available
+    final hasPearl = items.any((n) => n.type == NotificationType.pearl);
+    if (!hasPearl) {
+      try {
+        final latest = await SupabaseService.fetchLatestDailyPearl();
+        if (latest != null) {
+          final id = 'pearl_${latest['id'] ?? 'seed_pearl_1'}';
+          items.add(MedicalNotification(
+            id: id,
+            title: '💡 ${latest['title'] ?? 'Perle du Jour'}',
+            message: '${latest['course_name'] ?? 'Clinique'} • ${latest['module_name'] ?? 'Résidanat'}',
+            type: NotificationType.pearl,
+            createdAt: latest['created_at'] != null
+                ? DateTime.tryParse(latest['created_at'].toString()) ?? DateTime.now()
+                : DateTime.now().subtract(const Duration(minutes: 30)),
+            targetId: latest['id']?.toString(),
+            metadata: latest,
+            isRead: _readIds.contains(id),
+          ));
+        }
+      } catch (_) {}
+    }
+
+    // Always ensure at least 1 Urgent CAT protocol notification is available
+    final hasCat = items.any((n) => n.type == NotificationType.cat);
+    if (!hasCat) {
+      const catId = 'seed_cat_1';
+      items.add(MedicalNotification(
+        id: catId,
+        title: '🚨 Nouvelle CAT : Prise en charge SCA ST+ (IDM)',
+        message: 'Consensus national UMC & SFMU mis à jour',
+        type: NotificationType.cat,
+        createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+        isRead: _readIds.contains(catId),
+      ));
+    }
+
+    // Always ensure at least 1 QCM bank notification is available
+    final hasQcm = items.any((n) => n.type == NotificationType.qcm);
+    if (!hasQcm) {
+      const qcmId = 'seed_qcm_1';
+      items.add(MedicalNotification(
+        id: qcmId,
+        title: '🎯 Nouvelle Banque QCM : Cardiologie Blida 2024',
+        message: '340 QCMs classés avec corrections détaillées ajoutés',
+        type: NotificationType.qcm,
+        createdAt: DateTime.now().subtract(const Duration(hours: 6)),
+        isRead: _readIds.contains(qcmId),
+      ));
     }
 
     _setNotifications(items);
@@ -347,6 +387,15 @@ class RealtimeNotificationService {
 
   void addSimulatedNotification(MedicalNotification notif) {
     _pushNewNotification(notif);
+  }
+
+  @visibleForTesting
+  void resetForTesting() {
+    _initialized = false;
+    _currentUserId = null;
+    _readIds = {};
+    notificationsNotifier.value = [];
+    unreadCountNotifier.value = 0;
   }
 
   void dispose() {
