@@ -15,6 +15,7 @@ import '../bloc/admin_bloc.dart';
 import '../bloc/admin_event.dart';
 import '../bloc/admin_state.dart';
 import '../models/admin_models.dart';
+import '../../subscription/models/subscription_duration.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -287,11 +288,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   ],
                 ),
                 const SizedBox(height: 16),
-                _buildTierRow('All-Access VIP (Complet)', m.allAccess, const Color(0xFFEAB308), '19 900 DZD'),
+                _buildTierRow('All-Access VIP (Complet)', m.allAccess, const Color(0xFFEAB308), '6 500 DZD / an'),
                 const Divider(height: 20),
-                _buildTierRow('Résident Élite (47 Modules)', m.residentElite, const Color(0xFF9333EA), '12 900 DZD'),
+                _buildTierRow('Résident Élite (47 Modules)', m.residentElite, const Color(0xFF9333EA), '5 600 DZD / an'),
                 const Divider(height: 20),
-                _buildTierRow('Clinical Pro (Pratique)', m.clinicalPro, const Color(0xFF0284C7), '6 900 DZD'),
+                _buildTierRow('Clinical Pro (Pratique)', m.clinicalPro, const Color(0xFF0284C7), '5 000 DZD / an'),
                 const Divider(height: 20),
                 _buildTierRow('Essai Gratuit (14 jours)', m.freeTrials, Colors.grey, 'Gratuit'),
               ],
@@ -671,8 +672,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 items: const [
                   DropdownMenuItem(value: 30, child: Text('30 jours (1 mois)', overflow: TextOverflow.ellipsis)),
                   DropdownMenuItem(value: 90, child: Text('90 jours (3 mois)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 365, child: Text('365 jours (Concours 2027)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 730, child: Text('730 jours (2 ans)', overflow: TextOverflow.ellipsis)),
+                  DropdownMenuItem(value: 180, child: Text('180 jours (6 mois)', overflow: TextOverflow.ellipsis)),
+                  DropdownMenuItem(value: 365, child: Text('365 jours (1 an / Concours 2027)', overflow: TextOverflow.ellipsis)),
+                  DropdownMenuItem(value: 730, child: Text('730 jours (2 ans - Réduction -20%)', overflow: TextOverflow.ellipsis)),
                 ],
                 onChanged: (val) => setDialogState(() => durationDays = val ?? durationDays),
               ),
@@ -1222,7 +1224,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             Row(
               children: [
                 Text(
-                  'Formule : ${payment.tier.toUpperCase()} (${payment.durationDays} jours)',
+                  'Formule : ${payment.tier.toUpperCase()} (${SubscriptionDuration.formatDays(payment.durationDays)})',
                   style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600),
                 ),
                 if (payment.receiptReference != null && payment.receiptReference!.isNotEmpty) ...[
@@ -2056,10 +2058,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
     final emailCtrl = TextEditingController();
     final nameCtrl = TextEditingController();
-    final amountCtrl = TextEditingController(text: defaultPlan.priceYearly.toStringAsFixed(0));
-    final refCtrl = TextEditingController();
+    SubscriptionDuration selectedDuration = SubscriptionDuration.oneYear;
     String tier = 'all_access';
-    int duration = 365;
+    final amountCtrl = TextEditingController(
+      text: selectedDuration.calculatePrice(defaultPlan).toStringAsFixed(0),
+    );
+    final refCtrl = TextEditingController();
     String method = 'baridimob';
 
     showDialog(
@@ -2088,18 +2092,51 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   decoration: const InputDecoration(labelText: 'Formule Choisie'),
                   items: plans.where((p) => p.id != 'free').map((p) => DropdownMenuItem(
                     value: p.id,
-                    child: Text('${p.name} (${p.priceYearly.toStringAsFixed(0)} DZD)', overflow: TextOverflow.ellipsis),
+                    child: Text('${p.name} (${selectedDuration.calculatePrice(p).toStringAsFixed(0)} DZD)', overflow: TextOverflow.ellipsis),
                   )).toList(),
                   onChanged: (val) {
                     if (val != null) {
                       setDlgState(() {
                         tier = val;
                         final p = plans.firstWhere((item) => item.id == val, orElse: () => defaultPlan);
-                        amountCtrl.text = p.priceYearly.toStringAsFixed(0);
+                        amountCtrl.text = selectedDuration.calculatePrice(p).toStringAsFixed(0);
                       });
                     }
                   },
                 ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<SubscriptionDuration>(
+                  initialValue: selectedDuration,
+                  isExpanded: true,
+                  decoration: const InputDecoration(labelText: 'Durée de l\'Abonnement'),
+                  items: SubscriptionDuration.values.map((d) => DropdownMenuItem(
+                    value: d,
+                    child: Text('${d.label} (${d.days} jours)${d.badge != null ? ' - ${d.badge}' : ''}'),
+                  )).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setDlgState(() {
+                        selectedDuration = val;
+                        final p = plans.firstWhere((item) => item.id == tier, orElse: () => defaultPlan);
+                        amountCtrl.text = selectedDuration.calculatePrice(p).toStringAsFixed(0);
+                      });
+                    }
+                  },
+                ),
+                if (selectedDuration == SubscriptionDuration.twoYears) ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      'Remise de -20% appliquée sur l\'abonnement 2 ans',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF7C3AED)),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   initialValue: method,
@@ -2143,7 +2180,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                           userEmail: email,
                           userName: name.isNotEmpty ? name : email.split('@').first,
                           tier: tier,
-                          durationDays: duration,
+                          durationDays: selectedDuration.days,
                           amount: amount,
                           paymentMethod: method,
                           receiptReference: ref.isNotEmpty ? ref : 'MANUAL-${DateTime.now().millisecondsSinceEpoch}',
