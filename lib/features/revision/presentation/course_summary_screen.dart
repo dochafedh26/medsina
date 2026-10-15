@@ -61,8 +61,10 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,9 +77,9 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
             ),
             Text(
               '${widget.moduleName ?? "Module"} • Fiche Synthétique Concours',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Colors.white70,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -103,10 +105,10 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
+          indicatorColor: AppTheme.primaryTeal,
           indicatorWeight: 3,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          labelColor: AppTheme.primaryTeal,
+          unselectedLabelColor: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           tabs: const [
             Tab(icon: Icon(Icons.article_rounded, size: 20), text: 'Fiche Synthèse'),
