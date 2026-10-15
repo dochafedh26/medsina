@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medsina/features/prescription/data/algerian_nomenclature_repository.dart';
 import 'package:medsina/features/prescription/data/vidal_interaction_repository.dart';
 import 'package:medsina/features/prescription/data/terrain_contraindication_repository.dart';
+import 'package:medsina/features/prescription/presentation/prescription_analysis_screen.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -243,6 +245,35 @@ void main() {
       expect(colchicineWarning.severityLevel, equals(4));
       expect(colchicineWarning.warning, contains('aplasie médullaire'));
       expect(colchicineWarning.recommendation, contains('Contre-indication formelle et absolue'));
+    });
+
+    testWidgets('Prescription analysis search suggestions render without crash on narrow mobile screen', (tester) async {
+      tester.view.physicalSize = const Size(360, 740);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: PrescriptionAnalysisScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Enter search text for a common drug
+      final searchField = find.byType(TextField);
+      expect(searchField, findsOneWidget);
+      await tester.enterText(searchField, 'Sintrom');
+      await tester.pumpAndSettle();
+
+      // Suggestions should appear and not crash
+      expect(find.textContaining('SINTROM'), findsWidgets);
+
+      // Tap first suggestion
+      await tester.tap(find.textContaining('SINTROM').first);
+      await tester.pumpAndSettle();
+
+      // Drug should be added as a chip
+      expect(find.text('Médicaments dans l\'ordonnance à analyser :'), findsOneWidget);
     });
   });
 }

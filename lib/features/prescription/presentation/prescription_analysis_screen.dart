@@ -815,28 +815,56 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                         separatorBuilder: (_, index) => const Divider(height: 1),
                         itemBuilder: (context, index) {
                           final drug = _searchResults[index];
-                          return ListTile(
-                            dense: true,
-                            leading: CircleAvatar(
-                              radius: 14,
-                              backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
-                              child: const Icon(Icons.medication_rounded, size: 14, color: AppTheme.primaryTeal),
-                            ),
-                            title: Text(
-                              drug.brand,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                            ),
-                            subtitle: Text(
-                              'DCI: ${drug.dci} • ${drug.dosage} ${drug.form}',
-                              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            trailing: Text(
-                              drug.lab,
-                              style: const TextStyle(fontSize: 10, color: Colors.grey),
-                            ),
+                          final details = [
+                            if (drug.dci.isNotEmpty) 'DCI: ${drug.dci}',
+                            if (drug.dosage.isNotEmpty || drug.form.isNotEmpty) '${drug.dosage} ${drug.form}'.trim(),
+                            if (drug.lab.isNotEmpty) drug.lab,
+                          ].join(' • ');
+
+                          return InkWell(
                             onTap: () => _addDrugFromCatalog(drug),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 14,
+                                    backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                                    child: const Icon(Icons.medication_rounded, size: 14, color: AppTheme.primaryTeal),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          drug.brand,
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        if (details.isNotEmpty) ...[
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            details,
+                                            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.add_circle_outline_rounded,
+                                    size: 18,
+                                    color: AppTheme.primaryTeal,
+                                  ),
+                                ],
+                              ),
+                            ),
                           );
                         },
                       ),
