@@ -121,7 +121,6 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
   void initState() {
     super.initState();
     _loadData();
-    _customDrugController.addListener(_onSearchChanged);
   }
 
   Future<void> _loadData() async {
@@ -144,13 +143,13 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
     }
   }
 
-  void _onSearchChanged() {
-    final text = _customDrugController.text.trim();
-    if (text.length >= 2) {
+  void _onSearchChangedText(String val) {
+    final text = val.trim();
+    if (text.isNotEmpty) {
       final results = AlgerianNomenclatureRepository.search(text, limit: 12);
       setState(() {
         _searchResults = results;
-        _showSuggestions = true;
+        _showSuggestions = results.isNotEmpty;
       });
     } else {
       setState(() {
@@ -653,13 +652,20 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
               children: [
                 Icon(Icons.fact_check_rounded, color: AppTheme.primaryTeal, size: 20),
                 SizedBox(width: 8),
-                Text('Analyse d\'Ordonnance (Vidal & Nomenclature Algérienne)',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                Expanded(
+                  child: Text(
+                    'Analyse d\'Ordonnance (Vidal & Algérie)',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
             Text(
-              '5 425+ Spécialités MSPRH • Moteur Vidal Pro • Interactions & Contre-indications',
+              '5 425+ Spécialités MSPRH • Moteur Vidal Pro • Interactions',
               style: TextStyle(fontSize: 11, color: Colors.grey),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -683,11 +689,13 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                     children: [
                       const Icon(Icons.medication_liquid_rounded, color: Color(0xFF2563EB), size: 20),
                       const SizedBox(width: 8),
-                      const Text(
-                        '1. Médicaments Prescrits dans l\'Ordonnance',
-                        style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800),
+                      const Expanded(
+                        child: Text(
+                          '1. Médicaments Prescrits',
+                          style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800),
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
@@ -696,7 +704,7 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                           border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
                         ),
                         child: Text(
-                          '${_algerianCatalog.length} Produits Algérie',
+                          '${_algerianCatalog.length} Produits DZ',
                           style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF059669)),
                         ),
                       ),
@@ -763,15 +771,16 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                   // Autocomplete Input field
                   TextField(
                     controller: _customDrugController,
+                    onChanged: _onSearchChangedText,
                     decoration: InputDecoration(
-                      hintText: 'Rechercher un médicament (ex: Sintrom, Rifampicine, Kardegic)...',
+                      hintText: 'Rechercher un médicament (ex: Sintrom, Rifampicine)...',
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: _customDrugController.text.isNotEmpty
                           ? IconButton(
                               icon: const Icon(Icons.clear_rounded),
                               onPressed: () {
                                 _customDrugController.clear();
-                                setState(() => _showSuggestions = false);
+                                _onSearchChangedText('');
                               },
                             )
                           : null,
@@ -800,6 +809,8 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                       ),
                       child: ListView.separated(
                         shrinkWrap: true,
+                        primary: false,
+                        physics: const ClampingScrollPhysics(),
                         itemCount: _searchResults.length,
                         separatorBuilder: (_, index) => const Divider(height: 1),
                         itemBuilder: (context, index) {
@@ -877,12 +888,14 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                     children: [
                       const Icon(Icons.person_pin_rounded, color: Color(0xFFD97706), size: 20),
                       const SizedBox(width: 8),
-                      const Text(
-                        '2. Profil & Terrain Physiopathologique du Patient',
-                        style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800),
+                      const Expanded(
+                        child: Text(
+                          '2. Profil & Terrains du Patient',
+                          style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800),
+                        ),
                       ),
-                      const Spacer(),
-                      if (_selectedTerrains.isNotEmpty)
+                      if (_selectedTerrains.isNotEmpty) ...[
+                        const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
@@ -895,6 +908,7 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                             style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFFB45309)),
                           ),
                         ),
+                      ],
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -939,22 +953,25 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                   ],
 
                   // Quick Suggestion Chips + "Explorer tout le catalogue" button
-                  Row(
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
                       const Text(
                         'Accès rapide & Fréquents :',
                         style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey),
                       ),
-                      const Spacer(),
                       TextButton.icon(
                         style: TextButton.styleFrom(
                           visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         ),
-                        icon: const Icon(Icons.tune_rounded, size: 16, color: Color(0xFFD97706)),
+                        icon: const Icon(Icons.tune_rounded, size: 15, color: Color(0xFFD97706)),
                         label: const Text(
-                          'Catalogue & Saisie libre',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFFD97706)),
+                          'Catalogue complet',
+                          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFFD97706)),
                         ),
                         onPressed: () => _showTerrainSelectionSheet(context),
                       ),
@@ -1188,18 +1205,20 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                     children: [
                       const Icon(Icons.auto_awesome_rounded, color: AppTheme.primaryTeal, size: 20),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Audit Pharmacologique Approfondi MedsinaPilot (Moteur Vidal)',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                      const Expanded(
+                        child: Text(
+                          'Audit Pharmacologique MedsinaPilot',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
                           color: const Color(0xFF2563EB).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: const Text('Vidal Pro Connected',
+                        child: const Text('Vidal Pro',
                             style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB))),
                       ),
                     ],
@@ -1376,7 +1395,10 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -1397,13 +1419,10 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '• ${warn.terrain}',
-                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFFB45309)),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  '• ${warn.terrain}',
+                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFFB45309)),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
