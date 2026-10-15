@@ -100,6 +100,8 @@ USING (
 -- -----------------------------------------------------------------------------
 -- 5. RPC: SUBMIT PAYMENT WITH AUTOMATIC ADMIN ALERT
 -- -----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.submit_payment_with_admin_alert(uuid, text, text, text, integer, numeric, text, text, text, text);
+DROP FUNCTION IF EXISTS public.submit_payment_with_admin_alert;
 CREATE OR REPLACE FUNCTION public.submit_payment_with_admin_alert(
   p_user_id uuid,
   p_user_email text,
@@ -198,6 +200,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- -----------------------------------------------------------------------------
 -- 6. RPC: APPROVE PAYMENT WITH USER CELEBRATION NOTIFICATION
 -- -----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.approve_payment_with_user_notif(uuid, uuid, text, integer, text);
+DROP FUNCTION IF EXISTS public.approve_payment_with_user_notif;
 CREATE OR REPLACE FUNCTION public.approve_payment_with_user_notif(
   p_payment_id uuid,
   p_user_id uuid,
@@ -277,6 +281,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- -----------------------------------------------------------------------------
 -- 7. RPC: REJECT PAYMENT WITH FRAUD CHECK & AUTOMATIC 3-STRIKE BAN
 -- -----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.reject_payment_with_fraud_check(uuid, text);
+DROP FUNCTION IF EXISTS public.reject_payment_with_fraud_check;
 CREATE OR REPLACE FUNCTION public.reject_payment_with_fraud_check(
   p_payment_id uuid,
   p_admin_notes text DEFAULT 'Reçu de paiement non conforme ou illisible'
@@ -414,6 +420,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- -----------------------------------------------------------------------------
 -- 8. RPC: UNBAN USER
 -- -----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.unban_user(uuid, text);
+DROP FUNCTION IF EXISTS public.unban_user;
 CREATE OR REPLACE FUNCTION public.unban_user(
   p_user_id uuid,
   p_admin_notes text DEFAULT 'Réactivé par l''administrateur'
@@ -462,6 +470,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- -----------------------------------------------------------------------------
 -- 9. RPC: MARK RECEIPT AS ARCHIVED TO GOOGLE DRIVE
 -- -----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.mark_receipt_archived(uuid, text, text);
+DROP FUNCTION IF EXISTS public.mark_receipt_archived;
 CREATE OR REPLACE FUNCTION public.mark_receipt_archived(
   p_payment_id uuid,
   p_drive_url text,
@@ -484,6 +494,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- -----------------------------------------------------------------------------
 -- 10. RPC: GET APPROVED RECEIPTS ELIGIBLE FOR ARCHIVAL (OLDER THAN N DAYS)
 -- -----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.get_receipts_eligible_for_archival(integer);
+DROP FUNCTION IF EXISTS public.get_receipts_eligible_for_archival;
 CREATE OR REPLACE FUNCTION public.get_receipts_eligible_for_archival(
   p_retention_days integer DEFAULT 30
 )
@@ -524,6 +536,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- -----------------------------------------------------------------------------
 -- 11. RPC: ADMIN LIST USERS WITH BAN & FRAUD FIELDS
 -- -----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.admin_list_users();
+DROP FUNCTION IF EXISTS public.admin_list_users;
 CREATE OR REPLACE FUNCTION public.admin_list_users()
 RETURNS TABLE (
   id uuid,
