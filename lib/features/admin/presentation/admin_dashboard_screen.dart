@@ -1535,9 +1535,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ? state.plans
         : [
             const SubscriptionPlanItem(id: 'free', name: 'Pass Découverte', badge: 'GRATUIT', priceYearly: 0, priceMonthly: 0),
-            const SubscriptionPlanItem(id: 'clinical_pro', name: 'Pass Clinique Pro', badge: 'INTERNES & PRATICIENS', priceYearly: 10000, priceMonthly: 1200, discountPercent: 15),
-            const SubscriptionPlanItem(id: 'resident_elite', name: 'Pass Résident Élite', badge: 'SPÉCIAL CONCOURS', priceYearly: 15000, priceMonthly: 1800, discountPercent: 20),
-            const SubscriptionPlanItem(id: 'all_access', name: 'Medsina All-Access (VIP)', badge: 'RECOMMANDÉ • SUITE COMPLÈTE', priceYearly: 20000, priceMonthly: 2500, discountPercent: 30),
+            const SubscriptionPlanItem(id: 'clinical_pro', name: 'Pass Clinique Pro', badge: 'INTERNES & PRATICIENS', priceYearly: 5000, priceMonthly: 850, discountPercent: 15),
+            const SubscriptionPlanItem(id: 'resident_elite', name: 'Pass Résident Élite', badge: 'SPÉCIAL CONCOURS', priceYearly: 5600, priceMonthly: 750, discountPercent: 20),
+            const SubscriptionPlanItem(id: 'all_access', name: 'Medsina All-Access (VIP)', badge: 'RECOMMANDÉ • SUITE COMPLÈTE', priceYearly: 6500, priceMonthly: 1200, discountPercent: 30),
           ];
 
     return ListView(
@@ -2048,9 +2048,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   }
 
   void _showManualPaymentDialog(BuildContext context) {
+    final state = context.read<AdminBloc>().state;
+    final plans = state.plans.isNotEmpty
+        ? state.plans
+        : SupabaseService.defaultPlans.map((m) => SubscriptionPlanItem.fromJson(m)).toList();
+    final defaultPlan = plans.firstWhere((p) => p.id == 'all_access', orElse: () => plans.first);
+
     final emailCtrl = TextEditingController();
     final nameCtrl = TextEditingController();
-    final amountCtrl = TextEditingController(text: '20000');
+    final amountCtrl = TextEditingController(text: defaultPlan.priceYearly.toStringAsFixed(0));
     final refCtrl = TextEditingController();
     String tier = 'all_access';
     int duration = 365;
@@ -2080,12 +2086,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   initialValue: tier,
                   isExpanded: true,
                   decoration: const InputDecoration(labelText: 'Formule Choisie'),
-                  items: const [
-                    DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP', overflow: TextOverflow.ellipsis)),
-                    DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite', overflow: TextOverflow.ellipsis)),
-                    DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro', overflow: TextOverflow.ellipsis)),
-                  ],
-                  onChanged: (val) => setDlgState(() => tier = val ?? tier),
+                  items: plans.where((p) => p.id != 'free').map((p) => DropdownMenuItem(
+                    value: p.id,
+                    child: Text('${p.name} (${p.priceYearly.toStringAsFixed(0)} DZD)', overflow: TextOverflow.ellipsis),
+                  )).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setDlgState(() {
+                        tier = val;
+                        final p = plans.firstWhere((item) => item.id == val, orElse: () => defaultPlan);
+                        amountCtrl.text = p.priceYearly.toStringAsFixed(0);
+                      });
+                    }
+                  },
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(

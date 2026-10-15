@@ -24,6 +24,26 @@ class SubscriptionPaywallScreen extends StatefulWidget {
 
 class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
   final TextEditingController _licenseController = TextEditingController();
+  List<SubscriptionPlanItem> _fetchedPlans = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPlans();
+  }
+
+  Future<void> _loadPlans() async {
+    try {
+      final raw = await SupabaseService.fetchSubscriptionPlans();
+      if (mounted && raw.isNotEmpty) {
+        setState(() {
+          _fetchedPlans = raw.map((m) => SubscriptionPlanItem.fromJson(m)).toList();
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading plans on paywall screen: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -57,9 +77,17 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
 
         SubscriptionPlanItem? getPlan(String id) {
           try {
+            if (_fetchedPlans.isNotEmpty) {
+              return _fetchedPlans.firstWhere((p) => p.id == id);
+            }
             return adminPlans.firstWhere((p) => p.id == id);
           } catch (_) {
-            return null;
+            try {
+              final def = SupabaseService.defaultPlans.firstWhere((p) => p['id'] == id);
+              return SubscriptionPlanItem.fromJson(def);
+            } catch (_) {
+              return null;
+            }
           }
         }
 
@@ -215,12 +243,13 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
               // 4 Tier Cards
               _buildPlanCard(
                 context,
+                user: state.user,
                 tier: SubscriptionTier.allAccess,
                 title: allAccessPlan?.name ?? 'Medsina All-Access (VIP)',
                 badge: allAccessPlan?.badge ?? 'RECOMMANDÉ • SUITE COMPLÈTE',
                 price: allAccessPlan != null
                     ? '${allAccessPlan.priceYearly.toStringAsFixed(0)} DZD / an (ou ${allAccessPlan.priceMonthly.toStringAsFixed(0)} DZD / mois)'
-                    : '20 000 DZD / an (ou 2 500 DZD / mois)',
+                    : '6 500 DZD / an (ou 1 200 DZD / mois)',
                 color: const Color(0xFF8B5CF6),
                 features: allAccessPlan?.features.isNotEmpty == true
                     ? allAccessPlan!.features
@@ -239,12 +268,13 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
 
               _buildPlanCard(
                 context,
+                user: state.user,
                 tier: SubscriptionTier.residentElite,
                 title: residentElitePlan?.name ?? 'Pass Résident Élite',
                 badge: residentElitePlan?.badge ?? 'SPÉCIAL CONCOURS',
                 price: residentElitePlan != null
                     ? '${residentElitePlan.priceYearly.toStringAsFixed(0)} DZD / an (ou ${residentElitePlan.priceMonthly.toStringAsFixed(0)} DZD / mois)'
-                    : '15 000 DZD / an (ou 1 800 DZD / mois)',
+                    : '5 600 DZD / an (ou 750 DZD / mois)',
                 color: AppTheme.primaryTeal,
                 features: residentElitePlan?.features.isNotEmpty == true
                     ? residentElitePlan!.features
@@ -261,12 +291,13 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
 
               _buildPlanCard(
                 context,
+                user: state.user,
                 tier: SubscriptionTier.clinicalPro,
                 title: clinicalProPlan?.name ?? 'Pass Clinique Pro',
                 badge: clinicalProPlan?.badge ?? 'INTERNES & PRATICIENS',
                 price: clinicalProPlan != null
                     ? '${clinicalProPlan.priceYearly.toStringAsFixed(0)} DZD / an (ou ${clinicalProPlan.priceMonthly.toStringAsFixed(0)} DZD / mois)'
-                    : '10 000 DZD / an (ou 1 200 DZD / mois)',
+                    : '5 000 DZD / an (ou 850 DZD / mois)',
                 color: AppTheme.accentCyan,
                 features: clinicalProPlan?.features.isNotEmpty == true
                     ? clinicalProPlan!.features
@@ -283,6 +314,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
 
               _buildPlanCard(
                 context,
+                user: state.user,
                 tier: SubscriptionTier.free,
                 title: 'Pass Découverte',
                 badge: 'GRATUIT',
@@ -304,6 +336,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
 
   Widget _buildPlanCard(
     BuildContext context, {
+    required UserModel? user,
     required SubscriptionTier tier,
     required String title,
     required String badge,
@@ -367,9 +400,13 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                   : ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: color),
                       onPressed: () {
-                        context.read<AuthBloc>().add(UpgradeTierEvent(newTier: tier));
+                        if (tier == SubscriptionTier.free) {
+                          context.read<AuthBloc>().add(UpgradeTierEvent(newTier: tier));
+                        } else {
+                          _showPaymentSubmissionDialog(context, user, initialTier: tier.id);
+                        }
                       },
-                      child: Text('Sélectionner $title'),
+                      child: Text('Souscrire à $title'),
                     ),
             ),
           ],
@@ -378,11 +415,28 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
     );
   }
 
-  void _showPaymentSubmissionDialog(BuildContext context, UserModel? user) {
-    String selectedTier = 'all_access';
+  void _showPaymentSubmissionDialog(BuildContext context, UserModel? user, {String initialTier = 'all_access'}) {
+    final availablePlans = (_fetchedPlans.isNotEmpty
+            ? _fetchedPlans
+            : SupabaseService.defaultPlans.map((m) => SubscriptionPlanItem.fromJson(m)).toList())
+        .where((p) => p.id != 'free')
+        .toList();
+
+    String selectedTier = availablePlans.any((p) => p.id == initialTier)
+        ? initialTier
+        : (availablePlans.isNotEmpty ? availablePlans.first.id : 'all_access');
     String paymentMethod = 'baridimob';
     final refController = TextEditingController();
-    final amountController = TextEditingController(text: '20000');
+
+    SubscriptionPlanItem getSelectedPlanObj() {
+      try {
+        return availablePlans.firstWhere((p) => p.id == selectedTier);
+      } catch (_) {
+        return availablePlans.first;
+      }
+    }
+
+    final amountController = TextEditingController(text: getSelectedPlanObj().priceYearly.toStringAsFixed(0));
     bool isSubmitting = false;
 
     PlatformFile? pickedReceiptFile;
@@ -433,18 +487,21 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                   initialValue: selectedTier,
                   isExpanded: true,
                   decoration: const InputDecoration(isDense: true),
-                  items: const [
-                    DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP (20 000 DZD)', overflow: TextOverflow.ellipsis)),
-                    DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite (15 000 DZD)', overflow: TextOverflow.ellipsis)),
-                    DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro (10 000 DZD)', overflow: TextOverflow.ellipsis)),
-                  ],
+                  items: availablePlans.map((plan) {
+                    return DropdownMenuItem<String>(
+                      value: plan.id,
+                      child: Text(
+                        '${plan.name} (${plan.priceYearly.toStringAsFixed(0)} DZD)',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  }).toList(),
                   onChanged: (val) {
                     if (val != null) {
                       setDlgState(() {
                         selectedTier = val;
-                        if (val == 'all_access') amountController.text = '20000';
-                        if (val == 'resident_elite') amountController.text = '15000';
-                        if (val == 'clinical_pro') amountController.text = '10000';
+                        final p = getSelectedPlanObj();
+                        amountController.text = p.priceYearly.toStringAsFixed(0);
                       });
                     }
                   },
@@ -599,7 +656,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                       }
 
                       setDlgState(() => isSubmitting = true);
-                      final amount = double.tryParse(amountController.text) ?? 20000.0;
+                      final amount = double.tryParse(amountController.text) ?? getSelectedPlanObj().priceYearly;
 
                       String? uploadedReceiptUrl;
                       if (receiptBytes != null && receiptFileName != null) {
