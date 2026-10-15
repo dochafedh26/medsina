@@ -82,6 +82,8 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                 Container(
                   color: Theme.of(context).cardColor,
                   child: TabBar(
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
                     indicatorColor: AppTheme.primaryTeal,
                     indicatorWeight: 3,
                     labelColor: AppTheme.primaryTeal,
@@ -574,13 +576,15 @@ class _ModuleCardState extends State<_ModuleCard> {
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         const SizedBox(height: 4),
-                        Row(
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             Text(
                               '${m.totalCourses} cours • ${m.totalQuestions} QCMs',
                               style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                             ),
-                            const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
@@ -696,144 +700,169 @@ class _CourseTile extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isNarrow = constraints.maxWidth < 480;
+
+          final titleSection = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      course.name,
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                    ),
+                  ),
+                  if (isPaused) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade100,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        '⏸️ En pause (${progress!.currentQuestionIndex + 1}/${progress!.totalQuestions})',
+                        style: TextStyle(fontSize: 10, color: Colors.amber.shade900, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${course.questionsCount} questions officielles de concours',
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+              ),
+            ],
+          );
+
+          final actionButtons = Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                  minimumSize: const Size(0, 32),
+                  side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.5)),
+                ),
+                icon: Icon(
+                  isLocked ? Icons.lock_outline_rounded : Icons.menu_book_rounded,
+                  size: 14,
+                  color: AppTheme.primaryTeal,
+                ),
+                label: const Text(
+                  'Fiche',
+                  style: TextStyle(fontSize: 11, color: AppTheme.primaryTeal, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  if (isLocked) {
+                    _showPaywallPrompt(context, lockReason);
+                    return;
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CourseSummaryScreen(
+                        course: course,
+                        moduleName: moduleName,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  minimumSize: const Size(0, 32),
+                ),
+                icon: Icon(isLocked ? Icons.lock_outline_rounded : Icons.picture_as_pdf_rounded, size: 14),
+                label: const Text('PDF', style: TextStyle(fontSize: 11)),
+                onPressed: () {
+                  if (isLocked) {
+                    _showPaywallPrompt(context, lockReason);
+                    return;
+                  }
+                  if (course.hasPdf || (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty)) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CoursePdfViewerScreen(
+                          course: course,
+                          moduleName: moduleName,
+                        ),
+                      ),
+                    );
+                    return;
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Support PDF pour "${course.name}" en cours de préparation.'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isLocked
+                      ? Colors.grey.shade400
+                      : (isPaused ? const Color(0xFFD97706) : AppTheme.primaryTeal),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  minimumSize: const Size(0, 32),
+                ),
+                icon: Icon(
+                  isLocked
+                      ? Icons.lock_rounded
+                      : (isPaused ? Icons.play_arrow_rounded : Icons.play_arrow_rounded),
+                  size: 16,
+                ),
+                label: Text(
+                  isLocked ? 'Débloquer' : (isPaused ? 'Continuer' : 'Réviser'),
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  if (isLocked) {
+                    _showPaywallPrompt(context, lockReason);
+                    return;
+                  }
+
+                  if (isPaused) {
+                    ResumeSessionSheet.show(context, course: course, progress: progress!);
+                  } else {
+                    context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: false));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
+                    );
+                  }
+                },
+              ),
+            ],
+          );
+
+          if (isNarrow) {
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        course.name,
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                      ),
-                    ),
-                    if (isPaused) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.shade100,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          '⏸️ En pause (${progress!.currentQuestionIndex + 1}/${progress!.totalQuestions})',
-                          style: TextStyle(fontSize: 10, color: Colors.amber.shade900, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${course.questionsCount} questions officielles de concours',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
-                ),
+                titleSection,
+                const SizedBox(height: 8),
+                actionButtons,
               ],
-            ),
-          ),
-          OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-              minimumSize: const Size(0, 32),
-              side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.5)),
-            ),
-            icon: Icon(
-              isLocked ? Icons.lock_outline_rounded : Icons.menu_book_rounded,
-              size: 14,
-              color: AppTheme.primaryTeal,
-            ),
-            label: const Text(
-              'Fiche',
-              style: TextStyle(fontSize: 11, color: AppTheme.primaryTeal, fontWeight: FontWeight.bold),
-            ),
-            onPressed: () {
-              if (isLocked) {
-                _showPaywallPrompt(context, lockReason);
-                return;
-              }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CourseSummaryScreen(
-                    course: course,
-                    moduleName: moduleName,
-                  ),
-                ),
-              );
-            },
-          ),
-          const SizedBox(width: 6),
-          OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              minimumSize: const Size(0, 32),
-            ),
-            icon: Icon(isLocked ? Icons.lock_outline_rounded : Icons.picture_as_pdf_rounded, size: 14),
-            label: const Text('PDF', style: TextStyle(fontSize: 11)),
-            onPressed: () {
-              if (isLocked) {
-                _showPaywallPrompt(context, lockReason);
-                return;
-              }
-              if (course.hasPdf || (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty)) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CoursePdfViewerScreen(
-                      course: course,
-                      moduleName: moduleName,
-                    ),
-                  ),
-                );
-                return;
-              }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Support PDF pour "${course.name}" en cours de préparation.'),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isLocked
-                  ? Colors.grey.shade400
-                  : (isPaused ? const Color(0xFFD97706) : AppTheme.primaryTeal),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              minimumSize: const Size(0, 32),
-            ),
-            icon: Icon(
-              isLocked
-                  ? Icons.lock_rounded
-                  : (isPaused ? Icons.play_arrow_rounded : Icons.play_arrow_rounded),
-              size: 16,
-            ),
-            label: Text(
-              isLocked ? 'Débloquer' : (isPaused ? 'Continuer' : 'Réviser'),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-            ),
-            onPressed: () {
-              if (isLocked) {
-                _showPaywallPrompt(context, lockReason);
-                return;
-              }
+            );
+          }
 
-              if (isPaused) {
-                ResumeSessionSheet.show(context, course: course, progress: progress!);
-              } else {
-                context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: false));
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-                );
-              }
-            },
-          ),
-        ],
+          return Row(
+            children: [
+              Expanded(child: titleSection),
+              const SizedBox(width: 12),
+              actionButtons,
+            ],
+          );
+        },
       ),
     );
   }

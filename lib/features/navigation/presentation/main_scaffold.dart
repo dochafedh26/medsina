@@ -296,37 +296,57 @@ class _MainScaffoldState extends State<MainScaffold> {
         // Mobile Layout (Android APK & small screens)
         return Scaffold(
           appBar: AppBar(
-            title: const MedsinaLogo(height: 28),
+            titleSpacing: 16,
+            title: const MedsinaLogo(height: 26),
             actions: [
               IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 icon: const Icon(Icons.switch_account_rounded, size: 20),
                 tooltip: 'Tester un autre profil',
                 onPressed: () => TestAccountsSheet.show(context),
               ),
               _buildNotificationBellAction(context),
-              _buildTierBadge(context, tier),
-              const SizedBox(width: 8),
+              _buildTierBadge(context, tier, compact: true),
+              const SizedBox(width: 4),
               _buildUserAvatarAction(context, user),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
             ],
           ),
           body: IndexedStack(
             index: safeIndex,
             children: navItems.map((item) => item.page).toList(),
           ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: safeIndex,
-            onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
-            destinations: navItems.map((item) {
-              return NavigationDestination(
-                icon: Icon(item.icon),
-                selectedIcon: Icon(
-                  item.selectedIcon,
-                  color: item.isSpecial ? const Color(0xFFDC2626) : AppTheme.primaryTeal,
+          bottomNavigationBar: NavigationBarTheme(
+            data: NavigationBarThemeData(
+              height: 64,
+              labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+                (states) => TextStyle(
+                  fontSize: navItems.length >= 5 ? 10 : 11.5,
+                  fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
+                  letterSpacing: -0.2,
                 ),
-                label: item.label,
-              );
-            }).toList(),
+              ),
+            ),
+            child: NavigationBar(
+              selectedIndex: safeIndex,
+              onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
+              destinations: navItems.map((item) {
+                String displayLabel = item.label;
+                if (navItems.length >= 5 && displayLabel == 'Ordonnance') {
+                  displayLabel = 'Ordo / Rx';
+                }
+                return NavigationDestination(
+                  icon: Icon(item.icon, size: 22),
+                  selectedIcon: Icon(
+                    item.selectedIcon,
+                    size: 22,
+                    color: item.isSpecial ? const Color(0xFFDC2626) : AppTheme.primaryTeal,
+                  ),
+                  label: displayLabel,
+                );
+              }).toList(),
+            ),
           ),
         );
       },
@@ -751,7 +771,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
-  Widget _buildTierBadge(BuildContext context, SubscriptionTier tier) {
+  Widget _buildTierBadge(BuildContext context, SubscriptionTier tier, {bool compact = false}) {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
@@ -760,7 +780,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       },
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: compact ? 8 : 12, vertical: compact ? 4 : 6),
         decoration: BoxDecoration(
           color: tier.color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
@@ -769,17 +789,19 @@ class _MainScaffoldState extends State<MainScaffold> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.workspace_premium_rounded, size: 16, color: tier.color),
-            const SizedBox(width: 6),
-            Text(
-              tier.badgeText,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                color: tier.color,
-                letterSpacing: 0.5,
+            Icon(Icons.workspace_premium_rounded, size: compact ? 15 : 16, color: tier.color),
+            if (!compact) ...[
+              const SizedBox(width: 6),
+              Text(
+                tier.badgeText,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: tier.color,
+                  letterSpacing: 0.5,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
