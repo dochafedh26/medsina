@@ -183,3 +183,25 @@ class DeleteAnnouncementEvent extends AdminEvent {
   List<Object?> get props => [id];
 }
 
+class UnbanUserEvent extends AdminEvent {
+  final String userId;
+  final String? adminNotes;
+
+  const UnbanUserEvent({
+    required this.userId,
+    this.adminNotes,
+  });
+
+  @override
+  List<Object?> get props => [userId, adminNotes];
+}
+
+class ArchiveEligibleReceiptsEvent extends AdminEvent {
+  final int retentionDays;
+
+  const ArchiveEligibleReceiptsEvent({this.retentionDays = 30});
+
+  @override
+  List<Object?> get props => [retentionDays];
+}
+

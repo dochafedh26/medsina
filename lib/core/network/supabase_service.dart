@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../services/medsina_notification_dispatcher.dart';
 
 class SupabaseService {
   static const String supabaseUrl = 'https://qzfssrhhuorljftpdvjm.supabase.co';
@@ -734,20 +735,57 @@ class SupabaseService {
     String? receiptFileName,
   }) async {
     try {
-      await client.from('payments').insert({
-        'user_id': userId,
-        'user_email': userEmail,
-        'user_name': userName,
-        'tier': tier,
-        'duration_days': durationDays,
-        'amount': amount,
-        'currency': 'DZD',
-        'payment_method': paymentMethod,
-        'receipt_reference': receiptReference,
-        'receipt_url': ?receiptUrl,
-        'receipt_file_name': ?receiptFileName,
-        'status': 'pending',
-      });
+      bool submitted = false;
+      try {
+        final rpcRes = await client.rpc('submit_payment_with_admin_alert', params: {
+          'p_user_id': userId,
+          'p_user_email': userEmail,
+          'p_user_name': userName,
+          'p_tier': tier,
+          'p_duration_days': durationDays,
+          'p_amount': amount,
+          'p_payment_method': paymentMethod,
+          'p_receipt_reference': receiptReference,
+          'p_receipt_url': receiptUrl,
+          'p_receipt_file_name': receiptFileName,
+        });
+        if (rpcRes is Map && rpcRes['success'] == true) {
+          submitted = true;
+        } else if (rpcRes is Map && rpcRes['error'] != null) {
+          debugPrint('submit_payment_with_admin_alert blocked: ${rpcRes['error']}');
+          return false;
+        }
+      } catch (e) {
+        debugPrint('RPC submit_payment_with_admin_alert fallback: $e');
+      }
+
+      if (!submitted) {
+        await client.from('payments').insert({
+          'user_id': userId,
+          'user_email': userEmail,
+          'user_name': userName,
+          'tier': tier,
+          'duration_days': durationDays,
+          'amount': amount,
+          'currency': 'DZD',
+          'payment_method': paymentMethod,
+          'receipt_reference': receiptReference,
+          'receipt_url': receiptUrl,
+          'receipt_file_name': receiptFileName,
+          'status': 'pending',
+        });
+      }
+
+      // Dispatch async admin email alert
+      MedsinaNotificationDispatcher.notifyAdminNewPayment(
+        userName: userName,
+        userEmail: userEmail,
+        tier: tier,
+        amount: amount,
+        paymentMethod: paymentMethod,
+        receiptReference: receiptReference,
+      );
+
       return true;
     } catch (e) {
       debugPrint('Error submitting payment: $e');
@@ -852,17 +890,50 @@ class SupabaseService {
     required String? userId,
     required String tier,
     required int durationDays,
+    double? amount,
     String? adminNotes,
   }) async {
     try {
-      // 1. Update payment status to approved
+      // 1. Call RPC approve_payment_with_user_notif
+      try {
+        final rpcRes = await client.rpc('approve_payment_with_user_notif', params: {
+          'p_payment_id': paymentId,
+          'p_user_id': userId,
+          'p_tier': tier,
+          'p_duration_days': durationDays,
+          'p_admin_notes': adminNotes ?? 'Validé par l\'administrateur',
+        });
+        if (rpcRes is Map) {
+          final userEmail = rpcRes['user_email']?.toString();
+          final userName = rpcRes['user_name']?.toString() ?? 'Docteur';
+          final expiryStr = rpcRes['expires_at']?.toString();
+          final expiryDate = expiryStr != null
+              ? DateTime.tryParse(expiryStr) ?? DateTime.now().add(Duration(days: durationDays))
+              : DateTime.now().add(Duration(days: durationDays));
+
+          if (userEmail != null && userEmail.isNotEmpty) {
+            MedsinaNotificationDispatcher.sendCandidatePaymentApprovedEmail(
+              userEmail: userEmail,
+              userName: userName,
+              tierName: tier.toUpperCase(),
+              durationDays: durationDays,
+              expiryDate: expiryDate,
+              amount: amount ?? 0.0,
+            );
+          }
+          return true;
+        }
+      } catch (e) {
+        debugPrint('approve_payment_with_user_notif RPC fallback: $e');
+      }
+
+      // Fallback direct updates if RPC not deployed yet
       await client.from('payments').update({
         'status': 'approved',
         'admin_notes': adminNotes,
         'updated_at': DateTime.now().toIso8601String(),
       }).eq('id', paymentId);
 
-      // 2. Automatically upgrade user subscription if userId is present
       if (userId != null && userId.isNotEmpty) {
         await updateUserSubscription(
           userId: userId,
@@ -877,20 +948,200 @@ class SupabaseService {
     }
   }
 
-  /// Reject payment with admin notes
-  static Future<bool> rejectPayment({
+  /// Reject payment with fraud check, strike counter, and automatic immediate drive archive
+  static Future<Map<String, dynamic>> rejectPaymentWithFraudCheck({
     required String paymentId,
     required String adminNotes,
   }) async {
     try {
+      Map<String, dynamic> result = {'success': true};
+      try {
+        final rpcRes = await client.rpc('reject_payment_with_fraud_check', params: {
+          'p_payment_id': paymentId,
+          'p_admin_notes': adminNotes,
+        });
+        if (rpcRes is Map) {
+          result = Map<String, dynamic>.from(rpcRes);
+        }
+      } catch (e) {
+        debugPrint('reject_payment_with_fraud_check RPC fallback: $e');
+        await client.from('payments').update({
+          'status': 'rejected',
+          'admin_notes': adminNotes,
+          'updated_at': DateTime.now().toIso8601String(),
+        }).eq('id', paymentId);
+      }
+
+      final userEmail = result['user_email']?.toString();
+      final userName = result['user_name']?.toString() ?? 'Candidat';
+      final receiptUrl = result['receipt_url']?.toString();
+      final receiptFileName = result['receipt_file_name']?.toString();
+      final rejectedCount = (result['rejected_count'] as num?)?.toInt() ?? 1;
+      final isBanned = result['is_banned'] == true;
+
+      // 1. Immediately archive rejected receipt to Google Drive & clean from Supabase Storage
+      if (receiptUrl != null && receiptUrl.isNotEmpty) {
+        MedsinaNotificationDispatcher.archiveRejectedReceiptImmediately(
+          paymentId: paymentId,
+          receiptUrl: receiptUrl,
+          receiptFileName: receiptFileName,
+          userName: userName,
+        );
+      }
+
+      // 2. Dispatch email to user
+      if (userEmail != null && userEmail.isNotEmpty) {
+        if (isBanned) {
+          MedsinaNotificationDispatcher.sendCandidateAccountBannedEmail(
+            userEmail: userEmail,
+            userName: userName,
+            reason: adminNotes,
+          );
+        } else {
+          MedsinaNotificationDispatcher.sendCandidatePaymentRejectedEmail(
+            userEmail: userEmail,
+            userName: userName,
+            reason: adminNotes,
+            rejectedCount: rejectedCount,
+          );
+        }
+      }
+
+      return result;
+    } catch (e) {
+      debugPrint('Error in rejectPaymentWithFraudCheck: $e');
+      return {'success': false, 'error': e.toString()};
+    }
+  }
+
+  /// Backward compatible wrapper for rejecting payments
+  static Future<bool> rejectPayment({
+    required String paymentId,
+    required String adminNotes,
+  }) async {
+    final res = await rejectPaymentWithFraudCheck(
+      paymentId: paymentId,
+      adminNotes: adminNotes,
+    );
+    return res['success'] == true;
+  }
+
+  /// Delete receipt file from Supabase Storage bucket 'receipts'
+  static Future<bool> deleteReceiptFileFromStorage(String receiptUrl) async {
+    try {
+      String objectPath = receiptUrl;
+      if (receiptUrl.contains('/receipts/')) {
+        objectPath = receiptUrl.split('/receipts/').last;
+        if (objectPath.contains('?')) {
+          objectPath = objectPath.split('?').first;
+        }
+      }
+      if (objectPath.isEmpty) return false;
+
+      await client.storage.from('receipts').remove([objectPath]);
+      debugPrint('Successfully deleted receipt from Supabase Storage: $objectPath');
+      return true;
+    } catch (e) {
+      debugPrint('Error deleting receipt from Supabase storage: $e');
+      return false;
+    }
+  }
+
+  /// Mark receipt as archived to Google Drive
+  static Future<bool> markReceiptArchived({
+    required String paymentId,
+    required String driveUrl,
+    required String folder,
+  }) async {
+    try {
+      try {
+        await client.rpc('mark_receipt_archived', params: {
+          'p_payment_id': paymentId,
+          'p_drive_url': driveUrl,
+          'p_folder': folder,
+        });
+        return true;
+      } catch (e) {
+        debugPrint('mark_receipt_archived RPC fallback: $e');
+      }
+
       await client.from('payments').update({
-        'status': 'rejected',
-        'admin_notes': adminNotes,
-        'updated_at': DateTime.now().toIso8601String(),
+        'is_archived': true,
+        'archive_drive_url': driveUrl,
+        'archive_drive_folder': folder,
+        'archived_at': DateTime.now().toIso8601String(),
       }).eq('id', paymentId);
       return true;
     } catch (e) {
-      debugPrint('Error rejecting payment: $e');
+      debugPrint('Error marking receipt archived: $e');
+      return false;
+    }
+  }
+
+  /// Fetch approved receipts older than retentionDays (e.g. 30 days) that are not archived yet
+  static Future<List<Map<String, dynamic>>> fetchReceiptsEligibleForArchival(
+      [int retentionDays = 30]) async {
+    try {
+      try {
+        final res = await client.rpc('get_receipts_eligible_for_archival', params: {
+          'p_retention_days': retentionDays,
+        });
+        if (res is List) {
+          return List<Map<String, dynamic>>.from(res);
+        }
+      } catch (e) {
+        debugPrint('get_receipts_eligible_for_archival RPC fallback: $e');
+      }
+
+      final cutoff = DateTime.now().subtract(Duration(days: retentionDays)).toIso8601String();
+      final response = await client
+          .from('payments')
+          .select()
+          .eq('status', 'approved')
+          .eq('is_archived', false)
+          .lte('created_at', cutoff)
+          .not('receipt_url', 'is', null)
+          .neq('receipt_url', '')
+          .order('created_at', ascending: true);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching receipts eligible for archival: $e');
+      return [];
+    }
+  }
+
+  /// Unban user and reset rejection strike counter
+  static Future<bool> unbanUser({
+    required String userId,
+    String? adminNotes,
+  }) async {
+    try {
+      try {
+        await client.rpc('unban_user', params: {
+          'p_user_id': userId,
+          'p_admin_notes': adminNotes ?? 'Réactivé par l\'administrateur',
+        });
+        return true;
+      } catch (e) {
+        debugPrint('unban_user RPC fallback: $e');
+      }
+
+      await client.from('profiles').update({
+        'is_banned': false,
+        'ban_reason': null,
+        'banned_at': null,
+        'rejected_payments_count': 0,
+      }).eq('id', userId);
+
+      await client.from('subscriptions').update({
+        'status': 'active',
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('user_id', userId);
+
+      return true;
+    } catch (e) {
+      debugPrint('Error unbanning user: $e');
       return false;
     }
   }

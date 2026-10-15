@@ -11,6 +11,9 @@ class UserModel extends Equatable {
   final DateTime subscriptionExpiry;
   final String token;
   final bool isAdmin;
+  final bool isBanned;
+  final String? banReason;
+  final int rejectedPaymentsCount;
 
   const UserModel({
     required this.id,
@@ -22,13 +25,17 @@ class UserModel extends Equatable {
     required this.subscriptionExpiry,
     required this.token,
     this.isAdmin = false,
+    this.isBanned = false,
+    this.banReason,
+    this.rejectedPaymentsCount = 0,
   });
 
   bool get isSubscriptionActive {
-    return DateTime.now().isBefore(subscriptionExpiry);
+    return !isBanned && DateTime.now().isBefore(subscriptionExpiry);
   }
 
   int get daysRemaining {
+    if (isBanned) return 0;
     final diff = subscriptionExpiry.difference(DateTime.now()).inDays;
     return diff > 0 ? diff : 0;
   }
@@ -43,6 +50,9 @@ class UserModel extends Equatable {
     DateTime? subscriptionExpiry,
     String? token,
     bool? isAdmin,
+    bool? isBanned,
+    String? banReason,
+    int? rejectedPaymentsCount,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -54,6 +64,9 @@ class UserModel extends Equatable {
       subscriptionExpiry: subscriptionExpiry ?? this.subscriptionExpiry,
       token: token ?? this.token,
       isAdmin: isAdmin ?? this.isAdmin,
+      isBanned: isBanned ?? this.isBanned,
+      banReason: banReason ?? this.banReason,
+      rejectedPaymentsCount: rejectedPaymentsCount ?? this.rejectedPaymentsCount,
     );
   }
 
@@ -61,13 +74,22 @@ class UserModel extends Equatable {
     return {
       'id': id,
       'fullName': fullName,
+      'full_name': fullName,
       'email': email,
       'medicalRole': medicalRole,
+      'medical_role': medicalRole,
       'faculty': faculty,
       'tier': tier.id,
       'subscriptionExpiry': subscriptionExpiry.toIso8601String(),
       'token': token,
       'isAdmin': isAdmin,
+      'is_admin': isAdmin,
+      'isBanned': isBanned,
+      'is_banned': isBanned,
+      'banReason': banReason,
+      'ban_reason': banReason,
+      'rejectedPaymentsCount': rejectedPaymentsCount,
+      'rejected_payments_count': rejectedPaymentsCount,
     };
   }
 
@@ -86,12 +108,15 @@ class UserModel extends Equatable {
     }
 
     final isAdm = json['isAdmin'] == true || json['is_admin'] == true;
+    final isBan = json['isBanned'] == true || json['is_banned'] == true;
+    final reason = json['banReason'] ?? json['ban_reason'];
+    final rejections = (json['rejectedPaymentsCount'] ?? json['rejected_payments_count'] as num?)?.toInt() ?? 0;
 
     return UserModel(
       id: json['id'] ?? '',
-      fullName: json['fullName'] ?? '',
+      fullName: json['fullName'] ?? json['full_name'] ?? '',
       email: json['email'] ?? '',
-      medicalRole: json['medicalRole'] ?? 'Candidat Résidanat',
+      medicalRole: json['medicalRole'] ?? json['medical_role'] ?? 'Candidat Résidanat',
       faculty: json['faculty'] ?? 'Faculté de Médecine de Blida',
       tier: parseTier(json['tier']),
       subscriptionExpiry: json['subscriptionExpiry'] != null
@@ -99,6 +124,9 @@ class UserModel extends Equatable {
           : DateTime.now().add(const Duration(days: 30)),
       token: json['token'] ?? '',
       isAdmin: isAdm,
+      isBanned: isBan,
+      banReason: reason,
+      rejectedPaymentsCount: rejections,
     );
   }
 
@@ -113,5 +141,8 @@ class UserModel extends Equatable {
         subscriptionExpiry,
         token,
         isAdmin,
+        isBanned,
+        banReason,
+        rejectedPaymentsCount,
       ];
 }

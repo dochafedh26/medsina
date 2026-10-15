@@ -92,3 +92,4 @@ enum SubscriptionDuration {
     return SubscriptionDuration.twoYears;
   }
 }
+

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../../core/services/medsina_notification_dispatcher.dart';
 import '../models/admin_models.dart';
 import 'admin_event.dart';
 import 'admin_state.dart';
@@ -19,6 +20,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<CreateAnnouncementEvent>(_onCreateAnnouncement);
     on<ToggleAnnouncementEvent>(_onToggleAnnouncement);
     on<DeleteAnnouncementEvent>(_onDeleteAnnouncement);
+    on<UnbanUserEvent>(_onUnbanUser);
+    on<ArchiveEligibleReceiptsEvent>(_onArchiveEligibleReceipts);
   }
 
   void _onClearAdminMessage(ClearAdminMessageEvent event, Emitter<AdminState> emit) {
@@ -162,21 +165,35 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   Future<void> _onRejectPayment(RejectPaymentEvent event, Emitter<AdminState> emit) async {
     emit(state.copyWith(status: AdminStatus.loading, clearMessages: true));
     try {
-      final success = await SupabaseService.rejectPayment(
+      final res = await SupabaseService.rejectPaymentWithFraudCheck(
         paymentId: event.paymentId,
         adminNotes: event.adminNotes,
       );
+      final isBanned = res['is_banned'] == true;
+      final rejectedCount = res['rejected_count'] ?? 1;
 
       final paymentsData = await SupabaseService.fetchPayments();
+      final usersData = await SupabaseService.fetchAdminUsers();
+      final metricsData = await SupabaseService.fetchAdminMetrics();
+
       final updatedPayments = paymentsData.map((p) => PaymentItem.fromJson(p)).toList();
+      final updatedUsers = usersData.map((u) => AdminUserItem.fromJson(u)).toList();
       final financialMetrics = FinancialMetrics.fromPayments(updatedPayments);
+      final updatedMetrics = AdminMetrics.fromJson(metricsData);
+
+      final msg = isBanned
+          ? 'Paiement rejeté. L\'utilisateur a atteint 3 rejets et a été AUTOMATIQUEMENT BANNI.'
+          : 'Paiement rejeté (Avertissement $rejectedCount/3 envoyé au candidat). Reçu archivé sur Drive.';
 
       emit(state.copyWith(
         status: AdminStatus.loaded,
         payments: updatedPayments,
         filteredPayments: updatedPayments,
+        users: updatedUsers,
+        filteredUsers: updatedUsers,
+        metrics: updatedMetrics,
         financialMetrics: financialMetrics,
-        successMessage: success ? 'Paiement marqué comme rejeté.' : 'Statut mis à jour.',
+        successMessage: msg,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -352,5 +369,62 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       ));
     }
   }
+
+  Future<void> _onUnbanUser(UnbanUserEvent event, Emitter<AdminState> emit) async {
+    emit(state.copyWith(status: AdminStatus.loading, clearMessages: true));
+    try {
+      final success = await SupabaseService.unbanUser(
+        userId: event.userId,
+        adminNotes: event.adminNotes,
+      );
+
+      final usersData = await SupabaseService.fetchAdminUsers();
+      final metricsData = await SupabaseService.fetchAdminMetrics();
+      final updatedUsers = usersData.map((u) => AdminUserItem.fromJson(u)).toList();
+      final updatedMetrics = AdminMetrics.fromJson(metricsData);
+
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        users: updatedUsers,
+        filteredUsers: updatedUsers,
+        metrics: updatedMetrics,
+        successMessage: success
+            ? 'Utilisateur débanni avec succès ! Le compteur de rejets a été réinitialisé.'
+            : 'Échec du déblocage de l\'utilisateur.',
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        errorMessage: 'Erreur lors du déblocage : $e',
+      ));
+    }
+  }
+
+  Future<void> _onArchiveEligibleReceipts(ArchiveEligibleReceiptsEvent event, Emitter<AdminState> emit) async {
+    emit(state.copyWith(status: AdminStatus.loading, clearMessages: true));
+    try {
+      final count = await MedsinaNotificationDispatcher.archiveApprovedReceiptsOlderThanDays(
+        retentionDays: event.retentionDays,
+      );
+
+      final paymentsData = await SupabaseService.fetchPayments();
+      final updatedPayments = paymentsData.map((p) => PaymentItem.fromJson(p)).toList();
+
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        payments: updatedPayments,
+        filteredPayments: updatedPayments,
+        successMessage: count > 0
+            ? '$count reçu(s) validé(s) de plus de ${event.retentionDays} jours ont été archivés sur Google Drive et nettoyés du stockage Supabase !'
+            : 'Aucun reçu validé de plus de ${event.retentionDays} jours à archiver.',
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        errorMessage: 'Erreur lors de l\'archivage sur Google Drive : $e',
+      ));
+    }
+  }
 }
+
 

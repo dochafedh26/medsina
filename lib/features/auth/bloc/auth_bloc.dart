@@ -62,6 +62,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 : DateTime.now().add(const Duration(days: 14));
 
             final isAdm = profile['is_admin'] == true;
+            final isBanned = profile['is_banned'] == true;
+
+            if (isBanned) {
+              await SupabaseService.signOut();
+              await prefs.remove(_userPrefsKey);
+              emit(state.copyWith(
+                status: AuthStatus.unauthenticated,
+                errorMessage: 'Votre compte Medsina est suspendu suite à des tentatives de paiement non conformes répétées. Contact : doc.hafedh26@gmail.com',
+              ));
+              return;
+            }
 
             final user = UserModel(
               id: userId,
@@ -73,6 +84,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               subscriptionExpiry: expiry,
               token: session.accessToken,
               isAdmin: isAdm,
+              isBanned: isBanned,
+              banReason: profile['ban_reason'],
+              rejectedPaymentsCount: (profile['rejected_payments_count'] as num?)?.toInt() ?? 0,
             );
 
             await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -89,6 +103,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (userJson != null) {
         final Map<String, dynamic> data = jsonDecode(userJson);
         final user = UserModel.fromJson(data);
+        if (user.isBanned) {
+          await prefs.remove(_userPrefsKey);
+          emit(state.copyWith(
+            status: AuthStatus.unauthenticated,
+            errorMessage: 'Votre compte Medsina a été suspendu.',
+          ));
+          return;
+        }
         if (session != null && session.user.id == user.id) {
           emit(state.copyWith(status: AuthStatus.authenticated, user: user));
           return;
@@ -153,7 +175,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           }
         }
 
-        final isAdm = cloudData?['profile']?['is_admin'] == true;
+        final profileMap = cloudData?['profile'] as Map<String, dynamic>?;
+        final isAdm = profileMap?['is_admin'] == true;
+        final isBanned = profileMap?['is_banned'] == true;
+
+        if (isBanned) {
+          await SupabaseService.signOut();
+          await prefs.remove(_userPrefsKey);
+          emit(state.copyWith(
+            status: AuthStatus.unauthenticated,
+            errorMessage: 'Votre compte est suspendu suite à 3 rejets consécutifs de preuve de paiement. Contactez le support : doc.hafedh26@gmail.com',
+          ));
+          return;
+        }
 
         final user = UserModel(
           id: supaUser.id,
@@ -165,6 +199,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           subscriptionExpiry: expiry,
           token: authResponse.session?.accessToken ?? '',
           isAdmin: isAdm,
+          isBanned: isBanned,
+          banReason: profileMap?['ban_reason'],
+          rejectedPaymentsCount: (profileMap?['rejected_payments_count'] as num?)?.toInt() ?? 0,
         );
 
         await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));

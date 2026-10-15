@@ -57,6 +57,9 @@ class AdminUserItem extends Equatable {
   final String status;
   final DateTime? expiresAt;
   final bool isAdmin;
+  final bool isBanned;
+  final String? banReason;
+  final int rejectedPaymentsCount;
   final DateTime? createdAt;
 
   const AdminUserItem({
@@ -69,10 +72,17 @@ class AdminUserItem extends Equatable {
     required this.status,
     this.expiresAt,
     this.isAdmin = false,
+    this.isBanned = false,
+    this.banReason,
+    this.rejectedPaymentsCount = 0,
     this.createdAt,
   });
 
   factory AdminUserItem.fromJson(Map<String, dynamic> json) {
+    final isBan = json['is_banned'] == true || json['isBanned'] == true;
+    final reason = json['ban_reason'] ?? json['banReason'];
+    final rejections = (json['rejected_payments_count'] ?? json['rejectedPaymentsCount'] as num?)?.toInt() ?? 0;
+
     return AdminUserItem(
       id: json['id'] ?? '',
       email: json['email'] ?? '',
@@ -80,15 +90,18 @@ class AdminUserItem extends Equatable {
       medicalRole: json['medical_role'] ?? 'Candidat Résidanat',
       faculty: json['faculty'] ?? 'Faculté de Médecine de Blida',
       tier: json['tier'] ?? 'free',
-      status: json['status'] ?? 'active',
+      status: json['status'] ?? (isBan ? 'suspended' : 'active'),
       expiresAt: json['expires_at'] != null ? DateTime.tryParse(json['expires_at']) : null,
       isAdmin: json['is_admin'] == true,
+      isBanned: isBan,
+      banReason: reason,
+      rejectedPaymentsCount: rejections,
       createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
     );
   }
 
   @override
-  List<Object?> get props => [id, email, fullName, medicalRole, faculty, tier, status, expiresAt, isAdmin, createdAt];
+  List<Object?> get props => [id, email, fullName, medicalRole, faculty, tier, status, expiresAt, isAdmin, isBanned, banReason, rejectedPaymentsCount, createdAt];
 }
 
 class AdminLicenseItem extends Equatable {
@@ -229,6 +242,10 @@ class PaymentItem extends Equatable {
   final String? receiptFileName;
   final String status; // 'pending', 'approved', 'rejected'
   final String? adminNotes;
+  final bool isArchived;
+  final String? archiveDriveUrl;
+  final String? archiveDriveFolder;
+  final DateTime? archivedAt;
   final DateTime createdAt;
   final DateTime? updatedAt;
 
@@ -247,6 +264,10 @@ class PaymentItem extends Equatable {
     this.receiptFileName,
     required this.status,
     this.adminNotes,
+    this.isArchived = false,
+    this.archiveDriveUrl,
+    this.archiveDriveFolder,
+    this.archivedAt,
     required this.createdAt,
     this.updatedAt,
   });
@@ -267,6 +288,10 @@ class PaymentItem extends Equatable {
       receiptFileName: json['receipt_file_name'],
       status: json['status'] ?? 'pending',
       adminNotes: json['admin_notes'],
+      isArchived: json['is_archived'] == true,
+      archiveDriveUrl: json['archive_drive_url'],
+      archiveDriveFolder: json['archive_drive_folder'],
+      archivedAt: json['archived_at'] != null ? DateTime.tryParse(json['archived_at']) : null,
       createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at']) ?? DateTime.now() : DateTime.now(),
       updatedAt: json['updated_at'] != null ? DateTime.tryParse(json['updated_at']) : null,
     );
@@ -277,6 +302,10 @@ class PaymentItem extends Equatable {
     String? adminNotes,
     String? receiptUrl,
     String? receiptFileName,
+    bool? isArchived,
+    String? archiveDriveUrl,
+    String? archiveDriveFolder,
+    DateTime? archivedAt,
   }) {
     return PaymentItem(
       id: id,
@@ -293,6 +322,10 @@ class PaymentItem extends Equatable {
       receiptFileName: receiptFileName ?? this.receiptFileName,
       status: status ?? this.status,
       adminNotes: adminNotes ?? this.adminNotes,
+      isArchived: isArchived ?? this.isArchived,
+      archiveDriveUrl: archiveDriveUrl ?? this.archiveDriveUrl,
+      archiveDriveFolder: archiveDriveFolder ?? this.archiveDriveFolder,
+      archivedAt: archivedAt ?? this.archivedAt,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
     );
@@ -314,6 +347,10 @@ class PaymentItem extends Equatable {
         receiptFileName,
         status,
         adminNotes,
+        isArchived,
+        archiveDriveUrl,
+        archiveDriveFolder,
+        archivedAt,
         createdAt,
         updatedAt,
       ];

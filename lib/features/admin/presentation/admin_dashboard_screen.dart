@@ -9,6 +9,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../../core/services/medsina_notification_dispatcher.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/license_key_formatter.dart';
 import '../bloc/admin_bloc.dart';
@@ -558,6 +559,34 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                               ),
                             ),
                           ],
+                          if (u.isBanned) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDC2626).withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFDC2626)),
+                              ),
+                              child: const Text(
+                                'SUSPENDU (3 rejets) ⛔',
+                                style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFFDC2626)),
+                              ),
+                            ),
+                          ] else if (u.rejectedPaymentsCount > 0) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                '${u.rejectedPaymentsCount}/3 Rejets ⚠️',
+                                style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.orange),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                       Text(
@@ -566,6 +595,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      if (u.isBanned && u.banReason != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          'Motif : ${u.banReason}',
+                          style: const TextStyle(fontSize: 10.5, color: Color(0xFFDC2626), fontStyle: FontStyle.italic),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -610,14 +646,33 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       : 'Durée illimitée',
                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
-                TextButton.icon(
-                  style: TextButton.styleFrom(
-                    visualDensity: VisualDensity.compact,
-                    foregroundColor: AppTheme.primaryTeal,
-                  ),
-                  icon: const Icon(Icons.edit_note_rounded, size: 16),
-                  label: const Text('Gérer Abonnement', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  onPressed: () => _showUpgradeUserModal(context, u),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (u.isBanned) ...[
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          backgroundColor: const Color(0xFF16A34A),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        ),
+                        icon: const Icon(Icons.lock_open_rounded, size: 14),
+                        label: const Text('Débannir', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                        onPressed: () => _confirmUnbanUser(context, u),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        foregroundColor: AppTheme.primaryTeal,
+                      ),
+                      icon: const Icon(Icons.edit_note_rounded, size: 16),
+                      label: const Text('Gérer Abonnement', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      onPressed: () => _showUpgradeUserModal(context, u),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -697,6 +752,33 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmUnbanUser(BuildContext context, AdminUserItem user) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.lock_open_rounded, color: Color(0xFF16A34A)),
+            SizedBox(width: 8),
+            Text('Débannir le Médecin'),
+          ],
+        ),
+        content: Text('Voulez-vous réactiver le compte de ${user.fullName} (${user.email}) ? Son compteur de rejets sera réinitialisé à zéro et ses accès rétablis.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF16A34A), foregroundColor: Colors.white),
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AdminBloc>().add(UnbanUserEvent(userId: user.id));
+            },
+            child: const Text('Confirmer le Déblocage'),
+          ),
+        ],
       ),
     );
   }
@@ -1238,6 +1320,42 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               'Date : ${payment.createdAt.day}/${payment.createdAt.month}/${payment.createdAt.year} à ${payment.createdAt.hour}h${payment.createdAt.minute.toString().padLeft(2, '0')}',
               style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
             ),
+            if (payment.isArchived) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F9D58).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: const Color(0xFF0F9D58).withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.cloud_done_rounded, size: 15, color: Color(0xFF0F9D58)),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        'Archivé sur Google Drive ☁️ (${payment.archiveDriveFolder ?? 'Drive'})',
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF0F9D58)),
+                      ),
+                    ),
+                    if (payment.archiveDriveUrl != null && payment.archiveDriveUrl!.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () async {
+                          final uri = Uri.tryParse(payment.archiveDriveUrl!);
+                          if (uri != null) {
+                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          }
+                        },
+                        child: const Icon(Icons.open_in_new_rounded, size: 14, color: Color(0xFF0F9D58)),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
             if (payment.receiptUrl != null && payment.receiptUrl!.isNotEmpty) ...[
               const SizedBox(height: 8),
               OutlinedButton.icon(
@@ -1889,6 +2007,75 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ),
         const SizedBox(height: 20),
 
+        // Google Drive Archival & Storage Manager Card
+        Card(
+          elevation: isDark ? 0 : 2,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.cloud_sync_rounded, color: Color(0xFF0F9D58)),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Stockage Supabase & Archivage Google Drive ☁️',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF0F9D58),
+                        side: const BorderSide(color: Color(0xFF0F9D58)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      ),
+                      icon: const Icon(Icons.settings_ethernet_rounded, size: 16),
+                      label: const Text('Webhook Drive & Email', style: TextStyle(fontSize: 11.5)),
+                      onPressed: () => _showConfigureWebhookDialog(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Politique de rétention zéro-coût : les reçus approuvés sont conservés 30 jours dans Supabase Storage pour consultation rapide, puis archivés sur Google Drive ("Medsina - Reçus Validés (Archives 30j)") et nettoyés de Supabase. Les reçus rejetés sont archivés immédiatement. Le quota Supabase reste ainsi perpétuellement libre.',
+                  style: TextStyle(fontSize: 12, height: 1.45, color: isDark ? Colors.white70 : Colors.grey.shade700),
+                ),
+                const SizedBox(height: 14),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0F9D58),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      ),
+                      icon: const Icon(Icons.archive_rounded, size: 16),
+                      label: const Text(
+                        'Archiver les Reçus Validés (+30 jours)',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        context.read<AdminBloc>().add(const ArchiveEligibleReceiptsEvent(retentionDays: 30));
+                      },
+                    ),
+                    Text(
+                      'Règle de rétention : 30 jours',
+                      style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
         // Medical Content Index Card
         Card(
           elevation: isDark ? 0 : 2,
@@ -2198,27 +2385,66 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
   void _showRejectPaymentDialog(BuildContext context, PaymentItem payment) {
     final noteCtrl = TextEditingController(text: 'Reçu non conforme ou illisible');
+    final adminState = context.read<AdminBloc>().state;
+    final matchingUser = adminState.users.where((u) => u.id == payment.userId || u.email == payment.userEmail).firstOrNull;
+    final currentRejections = matchingUser?.rejectedPaymentsCount ?? 0;
+    final willBeBanned = currentRejections >= 2;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Rejeter la Preuve de Paiement'),
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: willBeBanned ? const Color(0xFFDC2626) : Colors.orange),
+            const SizedBox(width: 8),
+            Text(willBeBanned ? 'Rejet & Bannissement Auto' : 'Rejeter la Preuve de Paiement'),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Médecin : ${payment.userName} (${payment.userEmail})'),
+            Text('Médecin : ${payment.userName} (${payment.userEmail})', style: const TextStyle(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: willBeBanned ? const Color(0xFFDC2626).withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: willBeBanned ? const Color(0xFFDC2626) : Colors.orange),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    willBeBanned
+                        ? '🚨 ATTENTION : Ce médecin a déjà $currentRejections rejet(s) enregistré(s). Ce rejet portera son total à ${currentRejections + 1}/3 et déclenchera son BANNISSEMENT AUTOMATIQUE IMMÉDIAT.'
+                        : '⚠️ Avertissement : Ce sera le rejet n°${currentRejections + 1}/3 pour ce médecin. À 3 rejets, son compte sera automatiquement suspendu.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: willBeBanned ? const Color(0xFFDC2626) : Colors.orange.shade800,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    '☁️ Le reçu sera immédiatement transféré sur Google Drive ("Medsina - Reçus Rejetés") et purgé du stockage Supabase.',
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: noteCtrl,
-              decoration: const InputDecoration(labelText: 'Motif du rejet (visible par l\'admin)'),
+              decoration: const InputDecoration(labelText: 'Motif du rejet (notifié par email au candidat)'),
             ),
           ],
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626)),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626), foregroundColor: Colors.white),
             onPressed: () {
               Navigator.pop(ctx);
               context.read<AdminBloc>().add(
@@ -2228,7 +2454,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     ),
                   );
             },
-            child: const Text('Confirmer le Rejet'),
+            child: Text(willBeBanned ? 'Confirmer & Bannir' : 'Confirmer le Rejet'),
           ),
         ],
       ),
@@ -2425,6 +2651,69 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showConfigureWebhookDialog(BuildContext context) async {
+    final currentUrl = await MedsinaNotificationDispatcher.getWebhookUrl() ?? '';
+    if (!mounted) return;
+    final ctrl = TextEditingController(text: currentUrl);
+
+    if (!context.mounted) return;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.webhook_rounded, color: Color(0xFF0F9D58)),
+            SizedBox(width: 8),
+            Text('Webhook Google Apps Script'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'URL du Webhook Google Apps Script (Drive + Email sans frais externes) :',
+              style: TextStyle(fontSize: 12),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: ctrl,
+              decoration: const InputDecoration(
+                hintText: 'https://script.google.com/macros/s/.../exec',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Fichier script : supabase/google_drive_and_email_dispatcher.js',
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0F9D58), foregroundColor: Colors.white),
+            onPressed: () async {
+              await MedsinaNotificationDispatcher.setWebhookUrl(ctrl.text.trim());
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('URL du Webhook Google Apps Script enregistrée avec succès !'),
+                    backgroundColor: Color(0xFF0F9D58),
+                  ),
+                );
+              }
+            },
+            child: const Text('Enregistrer'),
+          ),
+        ],
       ),
     );
   }
