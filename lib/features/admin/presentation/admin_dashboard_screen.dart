@@ -1,7 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
@@ -1300,98 +1305,228 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
   void _showReceiptViewerModal(BuildContext context, PaymentItem payment) {
     final url = payment.receiptUrl ?? '';
-    final isPdf = (payment.receiptFileName?.toLowerCase().endsWith('.pdf') == true) || url.startsWith('data:application/pdf');
+    final isPdf = (payment.receiptFileName?.toLowerCase().endsWith('.pdf') == true) ||
+        url.startsWith('data:application/pdf') ||
+        url.toLowerCase().contains('.pdf');
     final isBase64 = url.startsWith('data:');
+
+    Uint8List? base64Bytes;
+    if (isBase64) {
+      try {
+        base64Bytes = base64Decode(url.contains(',') ? url.split(',')[1] : url);
+      } catch (e) {
+        debugPrint('Error decoding base64 receipt: $e');
+      }
+    }
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final dialogWidth = (screenWidth * 0.85).clamp(380.0, 780.0);
+    final viewerHeight = (screenHeight * 0.70).clamp(380.0, 600.0);
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        titlePadding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
         title: Row(
           children: [
-            Icon(isPdf ? Icons.picture_as_pdf_rounded : Icons.image_rounded, color: AppTheme.primaryTeal),
-            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isPdf ? Colors.red.withValues(alpha: 0.12) : AppTheme.primaryTeal.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                isPdf ? Icons.picture_as_pdf_rounded : Icons.image_rounded,
+                color: isPdf ? Colors.red.shade700 : AppTheme.primaryTeal,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                'Reçu : ${payment.receiptFileName ?? payment.userName}',
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    payment.receiptFileName ?? 'Reçu de paiement',
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Candidat : ${payment.userName} (${payment.userEmail})\nMontant : ${payment.amount.toStringAsFixed(0)} ${payment.currency} • Formule : ${payment.tier.toUpperCase()}',
+                    style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, height: 1.3),
+                  ),
+                ],
               ),
             ),
           ],
         ),
         content: SizedBox(
-          width: 500,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Candidat : ${payment.userName} (${payment.userEmail})\nMontant : ${payment.amount.toStringAsFixed(0)} ${payment.currency} • Formule : ${payment.tier.toUpperCase()}',
-                  style: const TextStyle(fontSize: 12, height: 1.4),
-                ),
-                const SizedBox(height: 12),
-                if (!isPdf && isBase64) ...[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.memory(
-                      base64Decode(url.contains(',') ? url.split(',')[1] : url),
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const Center(
-                        child: Text('Impossible d\'afficher l\'image du reçu.'),
-                      ),
-                    ),
-                  ),
-                ] else if (!isPdf && url.startsWith('http')) ...[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      url,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const Center(
-                        child: Text('Impossible de charger l\'image du reçu depuis l\'URL.'),
-                      ),
-                    ),
-                  ),
-                ] else ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Column(
-                      children: [
-                        const Icon(Icons.picture_as_pdf_rounded, size: 48, color: Colors.red),
-                        const SizedBox(height: 8),
-                        Text(
-                          payment.receiptFileName ?? 'Document PDF Reçu',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'Document PDF joint par l\'utilisateur comme preuve de versement.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 11, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
+          width: dialogWidth,
+          height: viewerHeight,
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey.shade50,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(9),
+              child: _buildReceiptContent(
+                url: url,
+                isPdf: isPdf,
+                isBase64: isBase64,
+                base64Bytes: base64Bytes,
+                fileName: payment.receiptFileName ?? 'recu_paiement.pdf',
+              ),
             ),
           ),
         ),
         actions: [
-          TextButton(
+          if (url.isNotEmpty)
+            OutlinedButton.icon(
+              icon: const Icon(Icons.open_in_new_rounded, size: 16),
+              label: Text(isPdf ? 'Ouvrir dans le lecteur PDF' : 'Ouvrir en externe'),
+              onPressed: () => _openReceiptExternally(
+                context: ctx,
+                url: url,
+                fileName: payment.receiptFileName ?? (isPdf ? 'recu.pdf' : 'recu.jpg'),
+                bytes: base64Bytes,
+              ),
+            ),
+          FilledButton(
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Fermer'),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildReceiptContent({
+    required String url,
+    required bool isPdf,
+    required bool isBase64,
+    required Uint8List? base64Bytes,
+    required String fileName,
+  }) {
+    if (url.isEmpty && base64Bytes == null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.broken_image_outlined, size: 48, color: Colors.grey.shade400),
+            const SizedBox(height: 12),
+            const Text('Aucune preuve ou URL de reçu disponible.', style: TextStyle(color: Colors.grey)),
+          ],
+        ),
+      );
+    }
+
+    if (isPdf) {
+      if (isBase64 && base64Bytes != null) {
+        return SfPdfViewer.memory(
+          base64Bytes,
+          canShowScrollHead: true,
+          canShowScrollStatus: true,
+          enableDoubleTapZooming: true,
+          onDocumentLoadFailed: (details) {
+            debugPrint('SfPdfViewer memory load error: ${details.error}');
+          },
+        );
+      } else if (url.startsWith('http')) {
+        return SfPdfViewer.network(
+          url,
+          canShowScrollHead: true,
+          canShowScrollStatus: true,
+          enableDoubleTapZooming: true,
+          onDocumentLoadFailed: (details) {
+            debugPrint('SfPdfViewer network load error: ${details.error}');
+          },
+        );
+      }
+    }
+
+    // Image rendering
+    if (isBase64 && base64Bytes != null) {
+      return InteractiveViewer(
+        maxScale: 4.0,
+        child: Image.memory(
+          base64Bytes,
+          fit: BoxFit.contain,
+          errorBuilder: (_, _, _) => const Center(
+            child: Text('Impossible d\'afficher l\'image du reçu.'),
+          ),
+        ),
+      );
+    } else if (url.startsWith('http')) {
+      return InteractiveViewer(
+        maxScale: 4.0,
+        child: Image.network(
+          url,
+          fit: BoxFit.contain,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(child: CircularProgressIndicator());
+          },
+          errorBuilder: (_, _, _) => const Center(
+            child: Text('Impossible de charger l\'image du reçu depuis le serveur.'),
+          ),
+        ),
+      );
+    }
+
+    return Center(
+      child: Text('Format de reçu non pris en charge ($fileName)'),
+    );
+  }
+
+  Future<void> _openReceiptExternally({
+    required BuildContext context,
+    required String url,
+    required String fileName,
+    required Uint8List? bytes,
+  }) async {
+    try {
+      if (url.startsWith('http')) {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          return;
+        }
+      }
+
+      if (bytes != null && bytes.isNotEmpty) {
+        final tempDir = await getTemporaryDirectory();
+        final sanitized = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
+        final file = File('${tempDir.path}/$sanitized');
+        await file.writeAsBytes(bytes);
+        final result = await OpenFilex.open(file.path);
+        if (result.type != ResultType.done && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Ouverture du fichier : ${result.message}')),
+          );
+        }
+        return;
+      }
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Impossible d\'ouvrir ce fichier en externe.')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error opening receipt externally: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur lors de l\'ouverture : $e')),
+        );
+      }
+    }
   }
 
   // --- TAB 4 : PRICING PLANS & OFFERS ---
