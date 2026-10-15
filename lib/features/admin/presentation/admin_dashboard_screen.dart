@@ -102,6 +102,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             bottom: TabBar(
               controller: _tabController,
               isScrollable: true,
+              tabAlignment: TabAlignment.start,
               labelColor: AppTheme.primaryTeal,
               unselectedLabelColor: isDark ? Colors.white60 : Colors.grey.shade600,
               indicatorColor: AppTheme.primaryTeal,
@@ -362,9 +363,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             ],
           ),
           const SizedBox(height: 10),
-          Text(
-            value,
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: color),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: color),
+            ),
           ),
         ],
       ),
@@ -550,6 +555,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       Text(
                         u.email,
                         style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -583,8 +590,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               ],
             ),
             const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 Text(
                   u.expiresAt != null
@@ -909,50 +919,108 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
     final payments = state.filteredPayments;
 
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        // Financial Metrics Header
-        Row(
-          children: [
-            Expanded(
-              child: _buildMetricCard(
-                'Revenu Total Encaissé',
-                '${fm.totalRevenue.toStringAsFixed(0)} DZD',
-                Icons.check_circle_rounded,
-                const Color(0xFF16A34A),
-                isDark,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildMetricCard(
-                'En Attente de Validation',
-                '${fm.pendingRevenue.toStringAsFixed(0)} DZD',
-                Icons.pending_actions_rounded,
-                const Color(0xFFD97706),
-                isDark,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildMetricCard(
-                'Transactions',
-                '${fm.totalTransactions}',
-                Icons.receipt_long_rounded,
-                const Color(0xFF2563EB),
-                isDark,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 18),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 650;
 
-        // Action & Filter Bar
-        Row(
+        return ListView(
+          padding: const EdgeInsets.all(20),
           children: [
-            Expanded(
-              child: SingleChildScrollView(
+            // Financial Metrics Header
+            if (isNarrow)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 180,
+                      child: _buildMetricCard(
+                        'Revenu Total Encaissé',
+                        '${fm.totalRevenue.toStringAsFixed(0)} DZD',
+                        Icons.check_circle_rounded,
+                        const Color(0xFF16A34A),
+                        isDark,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 180,
+                      child: _buildMetricCard(
+                        'En Attente de Validation',
+                        '${fm.pendingRevenue.toStringAsFixed(0)} DZD',
+                        Icons.pending_actions_rounded,
+                        const Color(0xFFD97706),
+                        isDark,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 150,
+                      child: _buildMetricCard(
+                        'Transactions',
+                        '${fm.totalTransactions}',
+                        Icons.receipt_long_rounded,
+                        const Color(0xFF2563EB),
+                        isDark,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildMetricCard(
+                      'Revenu Total Encaissé',
+                      '${fm.totalRevenue.toStringAsFixed(0)} DZD',
+                      Icons.check_circle_rounded,
+                      const Color(0xFF16A34A),
+                      isDark,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildMetricCard(
+                      'En Attente de Validation',
+                      '${fm.pendingRevenue.toStringAsFixed(0)} DZD',
+                      Icons.pending_actions_rounded,
+                      const Color(0xFFD97706),
+                      isDark,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildMetricCard(
+                      'Transactions',
+                      '${fm.totalTransactions}',
+                      Icons.receipt_long_rounded,
+                      const Color(0xFF2563EB),
+                      isDark,
+                    ),
+                  ),
+                ],
+              ),
+            const SizedBox(height: 18),
+
+            // Action & Filter Bar
+            if (isNarrow) ...[
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryTeal,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: const Text('Enregistrer Paiement', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  onPressed: () => _showManualPaymentDialog(context),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
@@ -966,21 +1034,39 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   ],
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryTeal,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            ] else
+              Row(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildFilterChip(context, 'Tous (${state.payments.length})', 'all', state.paymentStatusFilter),
+                          const SizedBox(width: 8),
+                          _buildFilterChip(context, 'En attente (${fm.pendingCount})', 'pending', state.paymentStatusFilter),
+                          const SizedBox(width: 8),
+                          _buildFilterChip(context, 'Validés (${fm.approvedCount})', 'approved', state.paymentStatusFilter),
+                          const SizedBox(width: 8),
+                          _buildFilterChip(context, 'Rejetés (${fm.rejectedCount})', 'rejected', state.paymentStatusFilter),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryTeal,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    ),
+                    icon: const Icon(Icons.add_rounded, size: 18),
+                    label: const Text('Enregistrer Paiement', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
+                    onPressed: () => _showManualPaymentDialog(context),
+                  ),
+                ],
               ),
-              icon: const Icon(Icons.add_rounded, size: 18),
-              label: const Text('Enregistrer Paiement', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
-              onPressed: () => _showManualPaymentDialog(context),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
         if (payments.isEmpty)
           Container(
@@ -1003,6 +1089,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           ...payments.map((p) => _buildPaymentCard(context, p, isDark)),
       ],
     );
+  },
+);
   }
 
   Widget _buildFilterChip(BuildContext context, String label, String statusKey, String currentFilter) {
@@ -1123,8 +1211,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               const SizedBox(height: 12),
               const Divider(height: 1),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: 10,
+                runSpacing: 8,
                 children: [
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
@@ -1136,7 +1226,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     label: const Text('Rejeter', style: TextStyle(fontSize: 12)),
                     onPressed: () => _showRejectPaymentDialog(context, payment),
                   ),
-                  const SizedBox(width: 10),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF16A34A),
@@ -1250,28 +1339,36 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 6,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: planColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(plan.badge, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: planColor)),
-                ),
-                if (plan.discountPercent > 0) ...[
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFDC2626).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: planColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(plan.badge, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: planColor)),
                     ),
-                    child: Text('-${plan.discountPercent}%', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFFDC2626))),
-                  ),
-                ],
-                const Spacer(),
+                    if (plan.discountPercent > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDC2626).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text('-${plan.discountPercent}%', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFFDC2626))),
+                      ),
+                  ],
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
@@ -1288,7 +1385,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             const SizedBox(height: 10),
             Text(plan.name, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
-            Row(
+            Wrap(
+              spacing: 24,
+              runSpacing: 8,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1300,7 +1399,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     ),
                   ],
                 ),
-                const SizedBox(width: 24),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1334,95 +1432,155 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
   // --- TAB 6 : ANNOUNCEMENTS & SYSTEM ---
   Widget _buildSystemAndAnnouncementsTab(BuildContext context, AdminState state, bool isDark) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        // Announcements Section
-        Card(
-          elevation: isDark ? 0 : 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.campaign_rounded, color: AppTheme.primaryTeal),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: Text(
-                        'Diffusion d\'Annonces & Messages Généraux',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-                      ),
-                    ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal, foregroundColor: Colors.white),
-                      icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Publier', style: TextStyle(fontSize: 12)),
-                      onPressed: () => _showCreateAnnouncementDialog(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                if (state.announcements.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Text('Aucune annonce active diffusée pour l\'instant.', style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
-                  )
-                else
-                  ...state.announcements.map((a) => ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(a.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5)),
-                        subtitle: Text(a.message, style: const TextStyle(fontSize: 12)),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Switch(
-                              value: a.isActive,
-                              activeThumbColor: AppTheme.primaryTeal,
-                              onChanged: (val) => context.read<AdminBloc>().add(ToggleAnnouncementEvent(id: a.id, isActive: val)),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFDC2626), size: 18),
-                              onPressed: () => context.read<AdminBloc>().add(DeleteAnnouncementEvent(a.id)),
-                            ),
-                          ],
-                        ),
-                      )),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 500;
 
-        // OTA Releases Management Card
-        Card(
-          elevation: isDark ? 0 : 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+        return ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            // Announcements Section
+            Card(
+              elevation: isDark ? 0 : 2,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.system_update_rounded, color: AppTheme.primaryTeal),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: Text(
-                        'Mises à Jour OTA & Versions en Ligne',
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    if (isNarrow) ...[
+                      const Row(
+                        children: [
+                          Icon(Icons.campaign_rounded, color: AppTheme.primaryTeal),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Diffusion d\'Annonces & Messages',
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal, foregroundColor: Colors.white),
-                      icon: const Icon(Icons.publish_rounded, size: 16),
-                      label: const Text('Publier une Version', style: TextStyle(fontSize: 12)),
-                      onPressed: () => _showPublishReleaseDialog(context),
-                    ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryTeal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          ),
+                          icon: const Icon(Icons.add, size: 16),
+                          label: const Text('Publier une Annonce', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
+                          onPressed: () => _showCreateAnnouncementDialog(context),
+                        ),
+                      ),
+                    ] else
+                      Row(
+                        children: [
+                          const Icon(Icons.campaign_rounded, color: AppTheme.primaryTeal),
+                          const SizedBox(width: 8),
+                          const Expanded(
+                            child: Text(
+                              'Diffusion d\'Annonces & Messages Généraux',
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal, foregroundColor: Colors.white),
+                            icon: const Icon(Icons.add, size: 16),
+                            label: const Text('Publier', style: TextStyle(fontSize: 12)),
+                            onPressed: () => _showCreateAnnouncementDialog(context),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(height: 14),
+                    if (state.announcements.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Text('Aucune annonce active diffusée pour l\'instant.', style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                      )
+                    else
+                      ...state.announcements.map((a) => ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(a.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5)),
+                            subtitle: Text(a.message, style: const TextStyle(fontSize: 12)),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Switch(
+                                  value: a.isActive,
+                                  activeThumbColor: AppTheme.primaryTeal,
+                                  onChanged: (val) => context.read<AdminBloc>().add(ToggleAnnouncementEvent(id: a.id, isActive: val)),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFDC2626), size: 18),
+                                  onPressed: () => context.read<AdminBloc>().add(DeleteAnnouncementEvent(a.id)),
+                                ),
+                              ],
+                            ),
+                          )),
                   ],
                 ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // OTA Releases Management Card
+            Card(
+              elevation: isDark ? 0 : 2,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isNarrow) ...[
+                      const Row(
+                        children: [
+                          Icon(Icons.system_update_rounded, color: AppTheme.primaryTeal),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Mises à Jour OTA & Versions en Ligne',
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryTeal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          ),
+                          icon: const Icon(Icons.publish_rounded, size: 16),
+                          label: const Text('Publier une Version', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
+                          onPressed: () => _showPublishReleaseDialog(context),
+                        ),
+                      ),
+                    ] else
+                      Row(
+                        children: [
+                          const Icon(Icons.system_update_rounded, color: AppTheme.primaryTeal),
+                          const SizedBox(width: 8),
+                          const Expanded(
+                            child: Text(
+                              'Mises à Jour OTA & Versions en Ligne',
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal, foregroundColor: Colors.white),
+                            icon: const Icon(Icons.publish_rounded, size: 16),
+                            label: const Text('Publier une Version', style: TextStyle(fontSize: 12)),
+                            onPressed: () => _showPublishReleaseDialog(context),
+                          ),
+                        ],
+                      ),
                 const SizedBox(height: 12),
                 Text(
                   'Déployez instantanément une nouvelle version sans passer par les stores. L\'application vérifie chaque version au lancement et invite les résidents à installer l\'APK ou télécharger le binaire.',
@@ -1512,6 +1670,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ),
       ],
     );
+  },
+);
   }
 
   Widget _buildContentRow(String title, String count, IconData icon) {
