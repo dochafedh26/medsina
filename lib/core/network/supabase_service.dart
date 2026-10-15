@@ -764,9 +764,17 @@ class SupabaseService {
     try {
       final sanitized = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
       final path = '$userId/${DateTime.now().millisecondsSinceEpoch}_$sanitized';
+      final mimeType = fileName.toLowerCase().endsWith('.pdf')
+          ? 'application/pdf'
+          : (fileName.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg');
+
       await client.storage.from('receipts').uploadBinary(
         path,
         Uint8List.fromList(bytes),
+        fileOptions: FileOptions(
+          contentType: mimeType,
+          upsert: true,
+        ),
       );
       final publicUrl = client.storage.from('receipts').getPublicUrl(path);
       return publicUrl;
