@@ -26,6 +26,7 @@ class RealtimeNotificationService {
   RealtimeChannel? _courseChannel;
   RealtimeChannel? _qcmChannel;
   RealtimeChannel? _notificationChannel;
+  RealtimeChannel? _readsChannel;
 
   bool _initialized = false;
   String? _currentUserId;
@@ -79,6 +80,21 @@ class RealtimeNotificationService {
       debugPrint('Error loading user read notification IDs: $e');
       _readIds = {};
     }
+
+    // Cloud Reconciliation: Asynchronously fetch read notification IDs from Supabase
+    if (_currentUserId != null && !_currentUserId!.startsWith('usr_demo_') && _currentUserId != 'anonymous') {
+      try {
+        final cloudReads = await SupabaseService.fetchCloudReadNotificationIds(_currentUserId);
+        if (cloudReads.isNotEmpty) {
+          _readIds.addAll(cloudReads);
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setStringList(_getStorageKey(_currentUserId), _readIds.toList());
+          _applyReadIds();
+        }
+      } catch (e) {
+        debugPrint('Cloud read notification reconciliation notice: $e');
+      }
+    }
   }
 
   Future<void> _saveUserReadIds() async {
@@ -114,6 +130,22 @@ class RealtimeNotificationService {
     try {
       final client = SupabaseService.client;
 
+      // 0. Fetch centralized broadcast notifications from Supabase Cloud
+      try {
+        final cloudNotifs = await SupabaseService.fetchCloudMedicalNotifications();
+        for (final row in cloudNotifs) {
+          final id = row['id']?.toString() ?? '';
+          if (id.isNotEmpty) {
+            final notif = MedicalNotification.fromJson(row).copyWith(
+              isRead: _readIds.contains(id),
+            );
+            items.add(notif);
+          }
+        }
+      } catch (e) {
+        debugPrint('Supabase cloud medical_notifications load notice: $e');
+      }
+
       // 1. Fetch recent daily pearls (last 3)
       try {
         final pearls = await client
@@ -124,16 +156,18 @@ class RealtimeNotificationService {
 
         for (final p in pearls) {
           final id = 'pearl_${p['id']}';
-          items.add(MedicalNotification(
-            id: id,
-            title: '💡 ${p['title'] ?? 'Nouvelle Perle du Jour'}',
-            message: '${p['course_name']} • ${p['module_name']}',
-            type: NotificationType.pearl,
-            createdAt: DateTime.tryParse(p['created_at'].toString()) ?? DateTime.now(),
-            targetId: p['id']?.toString(),
-            metadata: p,
-            isRead: _readIds.contains(id),
-          ));
+          if (!items.any((n) => n.id == id)) {
+            items.add(MedicalNotification(
+              id: id,
+              title: '💡 ${p['title'] ?? 'Nouvelle Perle du Jour'}',
+              message: '${p['course_name']} • ${p['module_name']}',
+              type: NotificationType.pearl,
+              createdAt: DateTime.tryParse(p['created_at'].toString()) ?? DateTime.now(),
+              targetId: p['id']?.toString(),
+              metadata: p,
+              isRead: _readIds.contains(id),
+            ));
+          }
         }
       } catch (e) {
         debugPrint('Supabase daily_pearls init load notice: $e');
@@ -149,17 +183,19 @@ class RealtimeNotificationService {
 
         for (final c in courses) {
           final id = 'course_${c['id']}';
-          items.add(MedicalNotification(
-            id: id,
-            title: '📖 Nouveau Cours Disponible',
-            message: '${c['name']}',
-            type: NotificationType.course,
-            createdAt: c['created_at'] != null
-                ? DateTime.tryParse(c['created_at'].toString()) ?? DateTime.now()
-                : DateTime.now().subtract(const Duration(hours: 4)),
-            targetId: c['id']?.toString(),
-            isRead: _readIds.contains(id),
-          ));
+          if (!items.any((n) => n.id == id)) {
+            items.add(MedicalNotification(
+              id: id,
+              title: '📖 Nouveau Cours Disponible',
+              message: '${c['name']}',
+              type: NotificationType.course,
+              createdAt: c['created_at'] != null
+                  ? DateTime.tryParse(c['created_at'].toString()) ?? DateTime.now()
+                  : DateTime.now().subtract(const Duration(hours: 4)),
+              targetId: c['id']?.toString(),
+              isRead: _readIds.contains(id),
+            ));
+          }
         }
       } catch (e) {
         debugPrint('Supabase courses init load notice: $e');
@@ -341,6 +377,26 @@ class RealtimeNotificationService {
             },
           )
           .subscribe();
+
+      // 6. Realtime sync on user_notification_reads (cross-device read sync)
+      _readsChannel = client
+          .channel('public:user_notification_reads')
+          .onPostgresChanges(
+            event: PostgresChangeEvent.insert,
+            schema: 'public',
+            table: 'user_notification_reads',
+            callback: (payload) {
+              final newRecord = payload.newRecord;
+              final notifId = newRecord['notification_id']?.toString();
+              final readUserId = newRecord['user_id']?.toString();
+              if (notifId != null && readUserId == _currentUserId && !_readIds.contains(notifId)) {
+                _readIds.add(notifId);
+                _saveUserReadIds();
+                _applyReadIds();
+              }
+            },
+          )
+          .subscribe();
     } catch (e) {
       debugPrint('Supabase realtime subscription notice: $e');
     }
@@ -366,14 +422,21 @@ class RealtimeNotificationService {
   }
 
   Future<void> markAllAsRead() async {
+    final allIds = <String>[];
     for (final n in notificationsNotifier.value) {
       _readIds.add(n.id);
+      allIds.add(n.id);
     }
     await _saveUserReadIds();
     final updated = notificationsNotifier.value
         .map((n) => n.copyWith(isRead: true))
         .toList();
     _setNotifications(updated);
+
+    // Persist to Supabase Cloud asynchronously
+    if (_currentUserId != null && !_currentUserId!.startsWith('usr_demo_') && _currentUserId != 'anonymous') {
+      unawaited(SupabaseService.markAllNotificationsReadOnCloud(allIds, userId: _currentUserId));
+    }
   }
 
   Future<void> markAsRead(String id) async {
@@ -383,6 +446,11 @@ class RealtimeNotificationService {
         .map((n) => n.id == id ? n.copyWith(isRead: true) : n)
         .toList();
     _setNotifications(updated);
+
+    // Persist to Supabase Cloud asynchronously
+    if (_currentUserId != null && !_currentUserId!.startsWith('usr_demo_') && _currentUserId != 'anonymous') {
+      unawaited(SupabaseService.markNotificationReadOnCloud(id, userId: _currentUserId));
+    }
   }
 
   void addSimulatedNotification(MedicalNotification notif) {
@@ -404,6 +472,7 @@ class RealtimeNotificationService {
     _courseChannel?.unsubscribe();
     _qcmChannel?.unsubscribe();
     _notificationChannel?.unsubscribe();
+    _readsChannel?.unsubscribe();
     _newNotificationController.close();
   }
 }

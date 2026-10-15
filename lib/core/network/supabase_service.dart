@@ -408,6 +408,104 @@ class SupabaseService {
     return defaultDailyPearls;
   }
 
+  // --- CLOUD NOTIFICATIONS & READ RECEIPTS ---
+
+  /// Fetch all active Medical Notifications from Supabase Cloud
+  static Future<List<Map<String, dynamic>>> fetchCloudMedicalNotifications() async {
+    try {
+      final response = await client
+          .from('medical_notifications')
+          .select()
+          .eq('is_broadcast', true)
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Notice: fetchCloudMedicalNotifications: $e');
+      return [];
+    }
+  }
+
+  /// Fetch IDs of notifications already read by the authenticated user from Supabase Cloud
+  static Future<List<String>> fetchCloudReadNotificationIds(String? userId) async {
+    if (userId == null || userId.isEmpty || userId.startsWith('usr_demo_') || userId == 'anonymous') {
+      return [];
+    }
+    try {
+      // 1. Try stored RPC
+      final response = await client.rpc('get_user_read_notifications');
+      if (response != null && response is List) {
+        return List<String>.from(response.map((e) => e.toString()));
+      }
+    } catch (e) {
+      // 2. Direct query fallback
+      try {
+        final rows = await client
+            .from('user_notification_reads')
+            .select('notification_id')
+            .eq('user_id', userId);
+        return List<String>.from(rows.map((r) => r['notification_id'].toString()));
+      } catch (e2) {
+        debugPrint('Notice: fetchCloudReadNotificationIds: $e2');
+      }
+    }
+    return [];
+  }
+
+  /// Mark a single notification as read on Supabase Cloud
+  static Future<bool> markNotificationReadOnCloud(String notificationId, {String? userId}) async {
+    final effectiveUserId = userId ?? currentSession?.user.id;
+    if (effectiveUserId == null || effectiveUserId.startsWith('usr_demo_') || effectiveUserId == 'anonymous') {
+      return false;
+    }
+    try {
+      await client.rpc('mark_notification_as_read', params: {
+        'p_notification_id': notificationId,
+      });
+      return true;
+    } catch (e) {
+      try {
+        await client.from('user_notification_reads').upsert({
+          'user_id': effectiveUserId,
+          'notification_id': notificationId,
+          'read_at': DateTime.now().toIso8601String(),
+        });
+        return true;
+      } catch (e2) {
+        debugPrint('Notice: markNotificationReadOnCloud: $e2');
+        return false;
+      }
+    }
+  }
+
+  /// Mark all notifications as read on Supabase Cloud
+  static Future<bool> markAllNotificationsReadOnCloud(List<String> notificationIds, {String? userId}) async {
+    final effectiveUserId = userId ?? currentSession?.user.id;
+    if (effectiveUserId == null || effectiveUserId.startsWith('usr_demo_') || effectiveUserId == 'anonymous') {
+      return false;
+    }
+    if (notificationIds.isEmpty) return true;
+
+    try {
+      await client.rpc('mark_all_notifications_as_read', params: {
+        'p_notification_ids': notificationIds,
+      });
+      return true;
+    } catch (e) {
+      try {
+        final payload = notificationIds.map((id) => {
+          'user_id': effectiveUserId,
+          'notification_id': id,
+          'read_at': DateTime.now().toIso8601String(),
+        }).toList();
+        await client.from('user_notification_reads').upsert(payload);
+        return true;
+      } catch (e2) {
+        debugPrint('Notice: markAllNotificationsReadOnCloud: $e2');
+        return false;
+      }
+    }
+  }
+
 
   // --- ADMIN PORTAL RPC CALLS ---
 
