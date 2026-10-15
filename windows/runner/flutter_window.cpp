@@ -3,6 +3,7 @@
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
+#include "resource.h"
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -12,6 +13,24 @@ FlutterWindow::~FlutterWindow() {}
 bool FlutterWindow::OnCreate() {
   if (!Win32Window::OnCreate()) {
     return false;
+  }
+
+  // Ensure window titlebar and taskbar icons are explicitly set from resources
+  HWND hwnd = GetHandle();
+  if (hwnd) {
+    HINSTANCE hinstance = GetModuleHandle(nullptr);
+    HICON hicon_big = static_cast<HICON>(LoadImage(
+        hinstance, MAKEINTRESOURCE(IDI_APP_ICON), IMAGE_ICON,
+        GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), 0));
+    if (hicon_big) {
+      SendMessage(hwnd, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hicon_big));
+    }
+    HICON hicon_small = static_cast<HICON>(LoadImage(
+        hinstance, MAKEINTRESOURCE(IDI_APP_ICON), IMAGE_ICON,
+        GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0));
+    if (hicon_small) {
+      SendMessage(hwnd, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hicon_small));
+    }
   }
 
   RECT frame = GetClientArea();

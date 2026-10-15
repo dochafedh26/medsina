@@ -4,7 +4,7 @@ class AppConstants {
   static const String appName = 'Medsina';
   static const String appSubtitle = 'Plateforme Médicale Globale';
   static const String appTagline = 'Pratique Clinique • Formation Résidanat • Applications Pratiques';
-  static const String appVersion = '1.0.4';
+  static const String appVersion = '1.0.5';
   static const String logoAsset = 'assets/medsina-logo.png';
   static const String logoDarkAsset = 'assets/medsina-logo-dark.png';
   static const String iconAsset = 'assets/medsina-icon.png';
