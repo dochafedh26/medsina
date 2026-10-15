@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/ai_quota_service.dart';
 import '../../../core/services/free_trial_quota_service.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/medical_text_formatter.dart';
 import '../../../core/widgets/medsina_logo.dart';
 import '../../auth/bloc/auth_bloc.dart';
+import '../../subscription/presentation/ai_quota_exhausted_dialog.dart';
 
 class ClinicalCopilotSheet extends StatefulWidget {
   final String? initialSituation;
@@ -75,6 +77,20 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
         return;
       }
       FreeTrialQuotaService.instance.consumeCopilotQuery(user);
+    } else {
+      // Check daily quota & bonus credits for paying subscribers
+      final quotaRes = await AiQuotaService.instance.checkAndConsume(user);
+      if (!quotaRes.allowed) {
+        if (mounted) {
+          AiQuotaExhaustedDialog.show(
+            context,
+            dailyLimit: quotaRes.dailyLimit,
+            dailyUsed: quotaRes.dailyUsed,
+            bonusRemaining: quotaRes.bonusRemaining,
+          );
+        }
+        return;
+      }
     }
 
     await _streamSub?.cancel();

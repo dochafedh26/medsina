@@ -4,11 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/ai_quota_service.dart';
 import '../../../core/services/free_trial_quota_service.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
 import '../../auth/bloc/auth_bloc.dart';
+import '../../subscription/presentation/ai_quota_exhausted_dialog.dart';
 import '../models/lab_preset_model.dart';
 
 class LabAnalysisScreen extends StatefulWidget {
@@ -146,6 +148,19 @@ class _LabAnalysisScreenState extends State<LabAnalysisScreen> {
         return;
       }
       FreeTrialQuotaService.instance.consumeLabAnalysis(user);
+    } else {
+      final quotaRes = await AiQuotaService.instance.checkAndConsume(user);
+      if (!quotaRes.allowed) {
+        if (mounted) {
+          AiQuotaExhaustedDialog.show(
+            context,
+            dailyLimit: quotaRes.dailyLimit,
+            dailyUsed: quotaRes.dailyUsed,
+            bonusRemaining: quotaRes.bonusRemaining,
+          );
+        }
+        return;
+      }
     }
 
     setState(() {

@@ -1238,6 +1238,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         statusIcon = Icons.hourglass_top_rounded;
     }
 
+    final isQuotaTopup = payment.paymentType == 'quota_topup' || payment.tier.startsWith('pack_') || payment.tier.startsWith('quota_');
+    final bonusCount = payment.bonusCredits > 0 ? payment.bonusCredits : 50;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
@@ -1272,6 +1275,27 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     ],
                   ),
                 ),
+                if (isQuotaTopup) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.flash_on_rounded, size: 13, color: Colors.amber),
+                        const SizedBox(width: 4),
+                        Text(
+                          '+$bonusCount REQUÊTES IA',
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.amber),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(width: 8),
                 Text(
                   '${payment.amount.toStringAsFixed(0)} ${payment.currency}',
@@ -1306,8 +1330,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             Row(
               children: [
                 Text(
-                  'Formule : ${payment.tier.toUpperCase()} (${SubscriptionDuration.formatDays(payment.durationDays)})',
-                  style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600),
+                  isQuotaTopup
+                      ? 'Recharge IA : +$bonusCount requêtes permanentes'
+                      : 'Formule : ${payment.tier.toUpperCase()} (${SubscriptionDuration.formatDays(payment.durationDays)})',
+                  style: TextStyle(fontSize: 11.5, color: isQuotaTopup ? AppTheme.primaryTeal : Colors.grey.shade600, fontWeight: isQuotaTopup ? FontWeight.bold : FontWeight.normal),
                 ),
                 if (payment.receiptReference != null && payment.receiptReference!.isNotEmpty) ...[
                   const SizedBox(width: 8),
@@ -1401,7 +1427,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     ),
                     icon: const Icon(Icons.check_rounded, size: 16),
-                    label: const Text('Valider & Activer l\'Abonnement', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    label: Text(
+                      isQuotaTopup
+                          ? 'Valider & Créditer +$bonusCount Requêtes'
+                          : 'Valider & Activer l\'Abonnement',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
                     onPressed: () {
                       context.read<AdminBloc>().add(
                             ApprovePaymentEvent(
@@ -1409,7 +1440,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                               userId: payment.userId,
                               tier: payment.tier,
                               durationDays: payment.durationDays,
-                              adminNotes: 'Validé par Admin via console',
+                              adminNotes: isQuotaTopup
+                                  ? 'Recharge validée (+ $bonusCount requêtes IA)'
+                                  : 'Validé par Admin via console',
                             ),
                           );
                     },

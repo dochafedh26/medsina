@@ -241,6 +241,8 @@ class PaymentItem extends Equatable {
   final String? receiptUrl;
   final String? receiptFileName;
   final String status; // 'pending', 'approved', 'rejected'
+  final String paymentType; // 'subscription', 'quota_topup'
+  final int bonusCredits; // e.g. 50, 150, 500
   final String? adminNotes;
   final bool isArchived;
   final String? archiveDriveUrl;
@@ -263,6 +265,8 @@ class PaymentItem extends Equatable {
     this.receiptUrl,
     this.receiptFileName,
     required this.status,
+    this.paymentType = 'subscription',
+    this.bonusCredits = 0,
     this.adminNotes,
     this.isArchived = false,
     this.archiveDriveUrl,
@@ -287,6 +291,8 @@ class PaymentItem extends Equatable {
       receiptUrl: json['receipt_url'],
       receiptFileName: json['receipt_file_name'],
       status: json['status'] ?? 'pending',
+      paymentType: json['payment_type'] ?? 'subscription',
+      bonusCredits: (json['bonus_credits'] as num?)?.toInt() ?? 0,
       adminNotes: json['admin_notes'],
       isArchived: json['is_archived'] == true,
       archiveDriveUrl: json['archive_drive_url'],
@@ -299,6 +305,8 @@ class PaymentItem extends Equatable {
 
   PaymentItem copyWith({
     String? status,
+    String? paymentType,
+    int? bonusCredits,
     String? adminNotes,
     String? receiptUrl,
     String? receiptFileName,
@@ -321,6 +329,8 @@ class PaymentItem extends Equatable {
       receiptUrl: receiptUrl ?? this.receiptUrl,
       receiptFileName: receiptFileName ?? this.receiptFileName,
       status: status ?? this.status,
+      paymentType: paymentType ?? this.paymentType,
+      bonusCredits: bonusCredits ?? this.bonusCredits,
       adminNotes: adminNotes ?? this.adminNotes,
       isArchived: isArchived ?? this.isArchived,
       archiveDriveUrl: archiveDriveUrl ?? this.archiveDriveUrl,
@@ -346,6 +356,8 @@ class PaymentItem extends Equatable {
         receiptUrl,
         receiptFileName,
         status,
+        paymentType,
+        bonusCredits,
         adminNotes,
         isArchived,
         archiveDriveUrl,

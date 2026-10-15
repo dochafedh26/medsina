@@ -1,12 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../core/services/ai_quota_service.dart';
+import '../../../core/services/free_trial_quota_service.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/medical_text_formatter.dart';
 import '../../../core/widgets/medsina_logo.dart';
+import '../../auth/bloc/auth_bloc.dart';
 import '../../revision/models/qcm_model.dart';
+import '../../subscription/presentation/ai_quota_exhausted_dialog.dart';
 
 class MedsinaPilotSheet extends StatefulWidget {
   final QcmQuestion question;
@@ -61,6 +67,32 @@ class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
 
   Future<void> _askPilot(String query) async {
     if (query.trim().isEmpty) return;
+
+    final user = context.read<AuthBloc>().state.user;
+    if (user?.tier == SubscriptionTier.free) {
+      if (!FreeTrialQuotaService.instance.canUseCopilot(user)) {
+        FreeTrialQuotaService.showQuotaLimitDialog(
+          context,
+          featureTitle: 'Limite MedsinaPilot Atteinte',
+          message: 'Le Pass Découverte inclut 1 requête MedsinaPilot offerte. Pour échanger sans limite 24/7 avec votre tuteur de révision, abonnez-vous à l\'un de nos plans.',
+        );
+        return;
+      }
+      FreeTrialQuotaService.instance.consumeCopilotQuery(user);
+    } else {
+      final quotaRes = await AiQuotaService.instance.checkAndConsume(user);
+      if (!quotaRes.allowed) {
+        if (mounted) {
+          AiQuotaExhaustedDialog.show(
+            context,
+            dailyLimit: quotaRes.dailyLimit,
+            dailyUsed: quotaRes.dailyUsed,
+            bonusRemaining: quotaRes.bonusRemaining,
+          );
+        }
+        return;
+      }
+    }
 
     await _streamSub?.cancel();
 

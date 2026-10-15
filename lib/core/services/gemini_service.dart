@@ -32,6 +32,70 @@ class GeminiService {
     receiveTimeout: const Duration(seconds: 45),
   ));
 
+  // Concurrency Limiter & Pacing Queue (FIFO Queue, 1 active request, 3-sec cooldown)
+  static final List<Completer<void>> _requestQueue = [];
+  static bool _isExecuting = false;
+  static DateTime? _lastRequestFinishTime;
+  static const Duration _pacingCooldown = Duration(milliseconds: 3000);
+
+  static Future<T> _executeWithConcurrencyAndPacing<T>(Future<T> Function() task) async {
+    final completer = Completer<void>();
+    _requestQueue.add(completer);
+
+    if (!_isExecuting && _requestQueue.length == 1) {
+      completer.complete();
+    }
+
+    await completer.future;
+    _isExecuting = true;
+
+    try {
+      if (_lastRequestFinishTime != null) {
+        final elapsed = DateTime.now().difference(_lastRequestFinishTime!);
+        if (elapsed < _pacingCooldown) {
+          await Future.delayed(_pacingCooldown - elapsed);
+        }
+      }
+      return await task();
+    } finally {
+      _lastRequestFinishTime = DateTime.now();
+      _isExecuting = false;
+      _requestQueue.remove(completer);
+      if (_requestQueue.isNotEmpty) {
+        _requestQueue.first.complete();
+      }
+    }
+  }
+
+  static Stream<T> _executeStreamWithPacing<T>(Stream<T> Function() streamFactory) async* {
+    final completer = Completer<void>();
+    _requestQueue.add(completer);
+
+    if (!_isExecuting && _requestQueue.length == 1) {
+      completer.complete();
+    }
+
+    await completer.future;
+    _isExecuting = true;
+
+    try {
+      if (_lastRequestFinishTime != null) {
+        final elapsed = DateTime.now().difference(_lastRequestFinishTime!);
+        if (elapsed < _pacingCooldown) {
+          await Future.delayed(_pacingCooldown - elapsed);
+        }
+      }
+      yield* streamFactory();
+    } finally {
+      _lastRequestFinishTime = DateTime.now();
+      _isExecuting = false;
+      _requestQueue.remove(completer);
+      if (_requestQueue.isNotEmpty) {
+        _requestQueue.first.complete();
+      }
+    }
+  }
+
   /// Medical Persona System Instruction with Grounding in medsina_ressources and Official Consensus
   static const String _medicalSystemPrompt = '''
 Tu es MedsinaPilot, l'assistant IA médical officiel de Medsina, la plateforme médicale de référence pour les médecins et candidats au concours de résidanat de médecine (Facultés de Blida, Alger, Constantine, Oran).
@@ -116,66 +180,68 @@ RÈGLES FONDAMENTALES DE RECHERCHE ET DE CITATION DE SOURCES :
     String? courseName,
     String? moduleId,
   }) async {
-    // 1. Retrieve matching official courses from medsina_ressources
-    final matchingResources = _findMatchingCoursesInDrive(
-      '$prompt ${contextInfo ?? ""}',
-      courseHint: courseName,
-      moduleHint: moduleId,
-    );
+    return _executeWithConcurrencyAndPacing(() async {
+      // 1. Retrieve matching official courses from medsina_ressources
+      final matchingResources = _findMatchingCoursesInDrive(
+        '$prompt ${contextInfo ?? ""}',
+        courseHint: courseName,
+        moduleHint: moduleId,
+      );
 
-    String groundingContext = '';
-    if (matchingResources.isNotEmpty) {
-      groundingContext = '\n\n[RESSOURCES OFFICIELLES DU PROGRAMME DANS GOOGLE DRIVE (medsina_ressources)]:\n${matchingResources.join("\n")}';
-    }
-
-    final fullPrompt = contextInfo != null
-        ? '$_medicalSystemPrompt$groundingContext\n\n[CONTEXTE DE LA QUESTION OU DU PATIENT]:\n$contextInfo\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt'
-        : '$_medicalSystemPrompt$groundingContext\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt';
-
-    final requestData = {
-      'contents': [
-        {
-          'parts': [
-            {'text': fullPrompt}
-          ]
-        }
-      ],
-      'generationConfig': {
-        'temperature': 0.25,
-        'maxOutputTokens': 8192,
+      String groundingContext = '';
+      if (matchingResources.isNotEmpty) {
+        groundingContext = '\n\n[RESSOURCES OFFICIELLES DU PROGRAMME DANS GOOGLE DRIVE (medsina_ressources)]:\n${matchingResources.join("\n")}';
       }
-    };
 
-    // Try model cascade until successful
-    for (final model in _modelCascade) {
-      try {
-        final url = '$_baseUrl/$model:generateContent?key=$apiKey';
-        final response = await _dio.post(
-          url,
-          options: Options(headers: {'Content-Type': 'application/json'}),
-          data: requestData,
-        );
+      final fullPrompt = contextInfo != null
+          ? '$_medicalSystemPrompt$groundingContext\n\n[CONTEXTE DE LA QUESTION OU DU PATIENT]:\n$contextInfo\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt'
+          : '$_medicalSystemPrompt$groundingContext\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt';
 
-        if (response.statusCode == 200) {
-          final data = response.data is String ? jsonDecode(response.data) : response.data;
-          final candidates = data['candidates'] as List?;
-          if (candidates != null && candidates.isNotEmpty) {
-            final parts = candidates[0]['content']?['parts'] as List?;
-            if (parts != null && parts.isNotEmpty) {
-              final raw = parts[0]['text'] as String?;
-              if (raw != null) {
-                return MedicalTextFormatter.clean(raw);
+      final requestData = {
+        'contents': [
+          {
+            'parts': [
+              {'text': fullPrompt}
+            ]
+          }
+        ],
+        'generationConfig': {
+          'temperature': 0.25,
+          'maxOutputTokens': 8192,
+        }
+      };
+
+      // Try model cascade until successful
+      for (final model in _modelCascade) {
+        try {
+          final url = '$_baseUrl/$model:generateContent?key=$apiKey';
+          final response = await _dio.post(
+            url,
+            options: Options(headers: {'Content-Type': 'application/json'}),
+            data: requestData,
+          );
+
+          if (response.statusCode == 200) {
+            final data = response.data is String ? jsonDecode(response.data) : response.data;
+            final candidates = data['candidates'] as List?;
+            if (candidates != null && candidates.isNotEmpty) {
+              final parts = candidates[0]['content']?['parts'] as List?;
+              if (parts != null && parts.isNotEmpty) {
+                final raw = parts[0]['text'] as String?;
+                if (raw != null) {
+                  return MedicalTextFormatter.clean(raw);
+                }
+                return 'Aucune réponse générée.';
               }
-              return 'Aucune réponse générée.';
             }
           }
+        } catch (e) {
+          debugPrint('Gemini Exception with $model: $e');
         }
-      } catch (e) {
-        debugPrint('Gemini Exception with $model: $e');
       }
-    }
 
-    return 'Désolé, MedsinaPilot est momentanément indisponible. Veuillez réessayer dans quelques instants.';
+      return 'Désolé, MedsinaPilot est momentanément indisponible. Veuillez réessayer dans quelques instants.';
+    });
   }
 
   /// QCM Explanation Helper with Medsina Drive & Consensus Grounding
@@ -225,78 +291,80 @@ ${moduleId != null ? 'Module d\'enseignement: $moduleId' : ''}
     String? contextInfo,
     String? courseName,
     String? moduleId,
-  }) async* {
-    final matchingResources = _findMatchingCoursesInDrive(
-      '$prompt ${contextInfo ?? ""}',
-      courseHint: courseName,
-      moduleHint: moduleId,
-    );
-    String groundingContext = '';
-    if (matchingResources.isNotEmpty) {
-      groundingContext = '\n\n[RESSOURCES OFFICIELLES DU PROGRAMME DANS GOOGLE DRIVE (medsina_ressources)]:\n${matchingResources.join("\n")}';
-    }
-    final fullPrompt = contextInfo != null
-        ? '$_medicalSystemPrompt$groundingContext\n\n[CONTEXTE DE LA QUESTION OU DU PATIENT]:\n$contextInfo\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt'
-        : '$_medicalSystemPrompt$groundingContext\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt';
-
-    final requestData = {
-      'contents': [
-        {
-          'parts': [
-            {'text': fullPrompt}
-          ]
-        }
-      ],
-      'generationConfig': {
-        'temperature': 0.25,
-        'maxOutputTokens': 8192,
+  }) {
+    return _executeStreamWithPacing(() async* {
+      final matchingResources = _findMatchingCoursesInDrive(
+        '$prompt ${contextInfo ?? ""}',
+        courseHint: courseName,
+        moduleHint: moduleId,
+      );
+      String groundingContext = '';
+      if (matchingResources.isNotEmpty) {
+        groundingContext = '\n\n[RESSOURCES OFFICIELLES DU PROGRAMME DANS GOOGLE DRIVE (medsina_ressources)]:\n${matchingResources.join("\n")}';
       }
-    };
+      final fullPrompt = contextInfo != null
+          ? '$_medicalSystemPrompt$groundingContext\n\n[CONTEXTE DE LA QUESTION OU DU PATIENT]:\n$contextInfo\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt'
+          : '$_medicalSystemPrompt$groundingContext\n\n[QUESTION DE L\'ÉTUDIANT]:\n$prompt';
 
-    for (final model in _modelCascade) {
-      bool modelSucceeded = false;
-      try {
-        final url = '$_baseUrl/$model:streamGenerateContent?alt=sse&key=$apiKey';
-        final response = await _dio.post<ResponseBody>(
-          url,
-          options: Options(
-            headers: {'Content-Type': 'application/json'},
-            responseType: ResponseType.stream,
-          ),
-          data: requestData,
-        );
-
-        if (response.data != null) {
-          final stream = response.data!.stream
-              .cast<List<int>>()
-              .transform(utf8.decoder)
-              .transform(const LineSplitter());
-
-          await for (final line in stream) {
-            if (!line.startsWith('data: ')) continue;
-            final jsonStr = line.substring(6).trim();
-            if (jsonStr.isEmpty || jsonStr == '[DONE]') continue;
-            try {
-              final chunk = jsonDecode(jsonStr) as Map<String, dynamic>;
-              final candidates = chunk['candidates'] as List?;
-              if (candidates == null || candidates.isEmpty) continue;
-              final parts = candidates[0]['content']?['parts'] as List?;
-              if (parts == null || parts.isEmpty) continue;
-              final text = parts[0]['text'] as String?;
-              if (text != null && text.isNotEmpty) {
-                yield MedicalTextFormatter.clean(text);
-                modelSucceeded = true;
-              }
-            } catch (_) {}
+      final requestData = {
+        'contents': [
+          {
+            'parts': [
+              {'text': fullPrompt}
+            ]
           }
+        ],
+        'generationConfig': {
+          'temperature': 0.25,
+          'maxOutputTokens': 8192,
         }
-        if (modelSucceeded) return;
-      } catch (e) {
-        debugPrint('Gemini streaming exception with $model: $e');
-      }
-    }
+      };
 
-    yield 'Désolé, MedsinaPilot est momentanément indisponible. Veuillez réessayer dans quelques instants.';
+      for (final model in _modelCascade) {
+        bool modelSucceeded = false;
+        try {
+          final url = '$_baseUrl/$model:streamGenerateContent?alt=sse&key=$apiKey';
+          final response = await _dio.post<ResponseBody>(
+            url,
+            options: Options(
+              headers: {'Content-Type': 'application/json'},
+              responseType: ResponseType.stream,
+            ),
+            data: requestData,
+          );
+
+          if (response.data != null) {
+            final stream = response.data!.stream
+                .cast<List<int>>()
+                .transform(utf8.decoder)
+                .transform(const LineSplitter());
+
+            await for (final line in stream) {
+              if (!line.startsWith('data: ')) continue;
+              final jsonStr = line.substring(6).trim();
+              if (jsonStr.isEmpty || jsonStr == '[DONE]') continue;
+              try {
+                final chunk = jsonDecode(jsonStr) as Map<String, dynamic>;
+                final candidates = chunk['candidates'] as List?;
+                if (candidates == null || candidates.isEmpty) continue;
+                final parts = candidates[0]['content']?['parts'] as List?;
+                if (parts == null || parts.isEmpty) continue;
+                final text = parts[0]['text'] as String?;
+                if (text != null && text.isNotEmpty) {
+                  yield MedicalTextFormatter.clean(text);
+                  modelSucceeded = true;
+                }
+              } catch (_) {}
+            }
+          }
+          if (modelSucceeded) return;
+        } catch (e) {
+          debugPrint('Gemini streaming exception with $model: $e');
+        }
+      }
+
+      yield 'Désolé, MedsinaPilot est momentanément indisponible. Veuillez réessayer dans quelques instants.';
+    });
   }
 
   /// Streaming QCM explanation
@@ -401,7 +469,8 @@ Rédige une analyse médicale structurée en Markdown enrichi avec les sections 
     required List<String> drugs,
     required List<String> terrains,
   }) async {
-    final prompt = '''
+    return _executeWithConcurrencyAndPacing(() async {
+      final prompt = '''
 Tu es le moteur pharmacologique officiel Vidal, ANSM et MSPRH de Medsina.
 Analyse la sécurité de cette prescription :
 - Médicaments prescrits : ${drugs.join(', ')}
@@ -423,47 +492,48 @@ Réponds STRICTEMENT sous forme d'un objet JSON valide avec cette structure exac
 Si aucun risque n'existe, renvoie {"has_alert": false, "severity": "info", "title": "Aucune anomalie détectée", "warning": "", "recommendation": "", "source": "Vidal"}
 ''';
 
-    final requestData = {
-      'contents': [
-        {
-          'parts': [
-            {'text': prompt}
-          ]
+      final requestData = {
+        'contents': [
+          {
+            'parts': [
+              {'text': prompt}
+            ]
+          }
+        ],
+        'generationConfig': {
+          'temperature': 0.1,
+          'responseMimeType': 'application/json',
         }
-      ],
-      'generationConfig': {
-        'temperature': 0.1,
-        'responseMimeType': 'application/json',
-      }
-    };
+      };
 
-    for (final model in _modelCascade) {
-      try {
-        final url = '$_baseUrl/$model:generateContent?key=$apiKey';
-        final response = await _dio.post(
-          url,
-          options: Options(headers: {'Content-Type': 'application/json'}),
-          data: requestData,
-        );
+      for (final model in _modelCascade) {
+        try {
+          final url = '$_baseUrl/$model:generateContent?key=$apiKey';
+          final response = await _dio.post(
+            url,
+            options: Options(headers: {'Content-Type': 'application/json'}),
+            data: requestData,
+          );
 
-        if (response.statusCode == 200) {
-          final data = response.data is String ? jsonDecode(response.data) : response.data;
-          final candidates = data['candidates'] as List?;
-          if (candidates != null && candidates.isNotEmpty) {
-            final parts = candidates[0]['content']?['parts'] as List?;
-            if (parts != null && parts.isNotEmpty) {
-              final raw = parts[0]['text'] as String?;
-              if (raw != null) {
-                final clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
-                return jsonDecode(clean) as Map<String, dynamic>;
+          if (response.statusCode == 200) {
+            final data = response.data is String ? jsonDecode(response.data) : response.data;
+            final candidates = data['candidates'] as List?;
+            if (candidates != null && candidates.isNotEmpty) {
+              final parts = candidates[0]['content']?['parts'] as List?;
+              if (parts != null && parts.isNotEmpty) {
+                final raw = parts[0]['text'] as String?;
+                if (raw != null) {
+                  final clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
+                  return jsonDecode(clean) as Map<String, dynamic>;
+                }
               }
             }
           }
+        } catch (e) {
+          debugPrint('Gemini audit exception with $model: $e');
         }
-      } catch (e) {
-        debugPrint('Gemini audit exception with $model: $e');
       }
-    }
-    return null;
+      return null;
+    });
   }
 }

@@ -733,6 +733,8 @@ class SupabaseService {
     required String receiptReference,
     String? receiptUrl,
     String? receiptFileName,
+    String paymentType = 'subscription',
+    int bonusCredits = 0,
   }) async {
     try {
       bool submitted = false;
@@ -748,6 +750,8 @@ class SupabaseService {
           'p_receipt_reference': receiptReference,
           'p_receipt_url': receiptUrl,
           'p_receipt_file_name': receiptFileName,
+          'p_payment_type': paymentType,
+          'p_bonus_credits': bonusCredits,
         });
         if (rpcRes is Map && rpcRes['success'] == true) {
           submitted = true;
@@ -773,6 +777,8 @@ class SupabaseService {
           'receipt_url': receiptUrl,
           'receipt_file_name': receiptFileName,
           'status': 'pending',
+          'payment_type': paymentType,
+          'bonus_credits': bonusCredits,
         });
       }
 
@@ -1302,6 +1308,35 @@ class SupabaseService {
     } catch (e) {
       debugPrint('Error fetching all releases: $e');
       return [];
+    }
+  }
+
+  // --- AI DAILY QUOTAS & RECHARGES ---
+
+  static Future<Map<String, dynamic>?> fetchUserAiQuotas(String userId) async {
+    try {
+      final res = await client.rpc('get_user_ai_quotas', params: {'p_user_id': userId});
+      if (res is Map) {
+        return Map<String, dynamic>.from(res);
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error in fetchUserAiQuotas RPC: $e');
+      return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>> consumeAiQuery(String userId) async {
+    try {
+      final res = await client.rpc('consume_user_ai_query', params: {'p_user_id': userId});
+      if (res is Map) {
+        return Map<String, dynamic>.from(res);
+      }
+      return {'allowed': true, 'consumed_from': 'fallback_local'};
+    } catch (e) {
+      debugPrint('Error in consumeAiQuery RPC: $e');
+      // If offline or network issue, allow request with fallback
+      return {'allowed': true, 'consumed_from': 'fallback_error'};
     }
   }
 }
