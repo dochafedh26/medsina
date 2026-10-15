@@ -89,7 +89,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (userJson != null) {
         final Map<String, dynamic> data = jsonDecode(userJson);
         final user = UserModel.fromJson(data);
-        emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+        if (session != null && session.user.id == user.id) {
+          emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+          return;
+        } else if (user.id.startsWith('demo_')) {
+          emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+          return;
+        } else {
+          // Stale cache without an active matching Supabase session
+          await prefs.remove(_userPrefsKey);
+          emit(state.copyWith(status: AuthStatus.unauthenticated));
+          return;
+        }
       } else {
         emit(state.copyWith(status: AuthStatus.unauthenticated));
       }
@@ -109,19 +120,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.copyWith(
         status: AuthStatus.unauthenticated,
         errorMessage: 'Veuillez saisir votre email et mot de passe.',
-      ));
-      return;
-    }
-
-    // Fast path: Check if user entered one of the preconfigured test accounts
-    final demoProfile = DemoAccounts.findByEmail(email);
-    if (demoProfile != null && (password == 'medsina2027' || password.isNotEmpty)) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_userPrefsKey, jsonEncode(demoProfile.user.toJson()));
-      emit(state.copyWith(
-        status: AuthStatus.authenticated,
-        user: demoProfile.user,
-        successMessage: 'Connexion réussie : ${demoProfile.user.fullName} (${demoProfile.user.tier.label}) !',
       ));
       return;
     }
@@ -240,9 +238,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           token: session?.accessToken ?? '',
         );
 
-        await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
-
         if (session != null) {
+          await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
           emit(state.copyWith(
             status: AuthStatus.authenticated,
             user: user,
@@ -250,9 +247,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           ));
         } else {
           // Email confirmation is required
+          await prefs.remove(_userPrefsKey);
           emit(state.copyWith(
             status: AuthStatus.unauthenticated,
-            successMessage: 'Compte créé avec succès ! Un e-mail de confirmation vous a été envoyé.',
+            successMessage: 'Compte créé avec succès ! Veuillez vérifier votre boîte mail et cliquer sur le lien de confirmation avant de vous connecter.',
           ));
         }
         return;

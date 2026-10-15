@@ -130,27 +130,11 @@ class DemoAccounts {
     expired,
   ];
 
-  /// Find demo profile by email
+  /// Find demo profile by exact email
   static DemoAccountProfile? findByEmail(String email) {
     final clean = email.trim().toLowerCase();
     for (final p in all) {
       if (p.user.email.toLowerCase() == clean) return p;
-    }
-    // Also match simple aliases like 'allaccess', 'resident', 'clinique', 'free', 'expire'
-    if (clean.contains('all') || clean.contains('vip') || clean.contains('hafedh')) {
-      return allAccess;
-    }
-    if (clean.contains('resident') || clean.contains('elite') || clean.contains('amine')) {
-      return residentElite;
-    }
-    if (clean.contains('clinic') || clean.contains('pro') || clean.contains('yasmine')) {
-      return clinicalPro;
-    }
-    if (clean.contains('decouverte') || clean.contains('free') || clean.contains('sarah')) {
-      return freeTrial;
-    }
-    if (clean.contains('expire') || clean.contains('karim')) {
-      return expired;
     }
     return null;
   }
