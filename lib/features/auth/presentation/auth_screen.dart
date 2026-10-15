@@ -7,8 +7,6 @@ import '../../../core/widgets/medsina_logo.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
-import '../models/demo_accounts.dart';
-import 'test_accounts_sheet.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -194,10 +192,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 20),
-                      // Quick Demo Login Button
-                      _buildDemoAccountButton(isLoading),
 
                       const SizedBox(height: 18),
                       Row(
@@ -455,54 +449,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                   )
                 : const Text('Créer mon Compte (14j Essai Gratuit)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDemoAccountButton(bool isLoading) {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0F172A),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 2,
-            ),
-            icon: const Icon(Icons.switch_account_rounded, color: AppTheme.accentCyan, size: 20),
-            label: const Text(
-              '🧪 Tester les Comptes & Plans d\'Abonnement',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-            ),
-            onPressed: isLoading ? null : () => TestAccountsSheet.show(context),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          alignment: WrapAlignment.center,
-          children: DemoAccounts.all.map((p) {
-            return ActionChip(
-              avatar: Icon(p.icon, size: 14, color: p.color),
-              label: Text(
-                p.user.tier.badgeText,
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: p.color),
-              ),
-              backgroundColor: p.color.withValues(alpha: 0.1),
-              side: BorderSide(color: p.color.withValues(alpha: 0.3)),
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              onPressed: isLoading
-                  ? null
-                  : () {
-                      context.read<AuthBloc>().add(DemoLoginEvent(p.user));
-                    },
-            );
-          }).toList(),
         ),
       ],
     );

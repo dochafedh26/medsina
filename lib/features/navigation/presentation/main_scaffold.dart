@@ -15,7 +15,6 @@ import '../../practical_tools/presentation/practical_tools_screen.dart';
 import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
-import '../../auth/presentation/test_accounts_sheet.dart';
 import '../../notifications/models/medical_notification.dart';
 import '../../notifications/presentation/notifications_modal_sheet.dart';
 import '../../notifications/services/realtime_notification_service.dart';
@@ -299,13 +298,6 @@ class _MainScaffoldState extends State<MainScaffold> {
             titleSpacing: 16,
             title: const MedsinaLogo(height: 26),
             actions: [
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                icon: const Icon(Icons.switch_account_rounded, size: 20),
-                tooltip: 'Tester un autre profil',
-                onPressed: () => TestAccountsSheet.show(context),
-              ),
               _buildNotificationBellAction(context),
               _buildTierBadge(context, tier, compact: true),
               const SizedBox(width: 4),
@@ -683,19 +675,6 @@ class _MainScaffoldState extends State<MainScaffold> {
     return AppBar(
       title: Text(pageTitle),
       actions: [
-        OutlinedButton.icon(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: AppTheme.accentCyan,
-            side: BorderSide(color: AppTheme.accentCyan.withValues(alpha: 0.5)),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            minimumSize: const Size(0, 32),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          ),
-          icon: const Icon(Icons.switch_account_rounded, size: 15),
-          label: const Text('Tester un profil', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
-          onPressed: () => TestAccountsSheet.show(context),
-        ),
-        const SizedBox(width: 10),
         _buildNotificationBellAction(context),
         const SizedBox(width: 8),
         _buildTierBadge(context, tier),
@@ -997,25 +976,6 @@ class _MainScaffoldState extends State<MainScaffold> {
                       ),
                     ),
                   ],
-                ),
-              ),
-
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.accentCyan,
-                    side: BorderSide(color: AppTheme.accentCyan.withValues(alpha: 0.6)),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  icon: const Icon(Icons.switch_account_rounded, size: 18),
-                  label: const Text('🧪 Tester un autre profil d\'abonnement', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    TestAccountsSheet.show(context);
-                  },
                 ),
               ),
 

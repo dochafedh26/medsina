@@ -6,7 +6,6 @@ import '../../../core/services/recent_activity_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
-import '../../auth/presentation/test_accounts_sheet.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import 'daily_pearls_archive_screen.dart';
@@ -169,18 +168,6 @@ class DashboardScreen extends StatelessWidget {
               },
               icon: const Icon(Icons.star_rounded, size: 18, color: Color(0xFFF59E0B)),
               label: const Text('Gérer Offre', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5)),
-            ),
-            OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: const BorderSide(color: Colors.white70),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                minimumSize: const Size(0, 32),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              icon: const Icon(Icons.switch_account_rounded, size: 14),
-              label: const Text('Tester un profil', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-              onPressed: () => TestAccountsSheet.show(context),
             ),
           ],
         );
