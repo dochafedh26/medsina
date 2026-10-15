@@ -498,53 +498,61 @@ def pick_candidate_course_for_pearl(
 
 
 MASTER_EMERGENCY_DCI_POOL = [
-    "Labetalol",
-    "Esmolol",
-    "Pipéracilline + Tazobactam",
-    "Céfépime",
-    "Imipénème + Cilastatine",
-    "Méropénème",
-    "Colistine",
-    "Linézolide",
-    "Moxifloxacine",
-    "Ciprofloxacine",
-    "Aciclovir",
-    "Rocuronium",
-    "Atracurium",
-    "Sugammadex",
-    "Rémifentanil",
-    "Sufentanil",
-    "Fentanyl",
-    "Glucagon",
-    "Octréotide",
-    "Bleu de Méthylène",
-    "Pralidoxime",
-    "Hydroxocobalamine",
-    "Digifab",
-    "Sérum Antivipérin",
-    "Albumine Humaine",
-    "Aténolol",
-    "Propofol",
-    "Éphédrine",
-    "Dobutamine",
-    "Nicardipine",
-    "Phénytoïne",
+    # Cardiovasculaire, Choc & Réanimation
+    "Labetalol", "Esmolol", "Isoprénaline", "Dobutamine", "Nicardipine", "Urapidil", "Clonidine",
+    "Amiodarone", "Atropine", "Trinitrine", "Dinitrate d'Isosorbide", "Diltiazem", "Vérapamil",
+    "Digoxine", "Furosémide", "Milrinone", "Lévosimendan", "Métoprolol", "Propranolol",
+    "Adrénaline", "Noradrénaline", "Éphédrine", "Nitroprussiate de sodium", "Adénosine",
+
+    # Anti-infectieux & Sepsis sévère
+    "Pipéracilline + Tazobactam", "Céfépime", "Imipénème + Cilastatine", "Méropénème",
+    "Ceftriaxone", "Céfotaxime", "Vancomycine", "Teicoplanine", "Colistine", "Linézolide",
+    "Amikacine", "Gentamicine", "Moxifloxacine", "Ciprofloxacine", "Lévofloxacine", "Métronidazole",
+    "Aciclovir", "Fluconazole", "Voriconazole", "Amphotéricine B", "Co-trimoxazole", "Oseltamivir",
+    "Tigécycline", "Fosfomycine injectable",
+
+    # Anesthésie, Sédation, Analgésie & Neurologie
+    "Propofol", "Étomidate", "Kétamine", "Midazolam", "Diazépam", "Clonazépam", "Phénytoïne",
+    "Lévétiracétam", "Valproate de sodium", "Rocuronium", "Atracurium", "Cisatracurium",
+    "Suxaméthonium", "Sugammadex", "Néostigmine", "Rémifentanil", "Sufentanil",
+    "Fentanyl", "Morphine", "Fosphénytoïne", "Halopéridol", "Loxapine", "Mannitol 20%",
+    "Chlorpromazine",
+
+    # Antidotes, Toxicologie & Envenimations
+    "Naloxone", "Flumazénil", "N-Acétylcystéine", "Pralidoxime", "Bleu de Méthylène",
+    "Hydroxocobalamine", "Sérum Antivipérin", "Sérum Antiscorpionique", "Sérum Antitétanique",
+    "Vitamine K1", "Sulfate de Protamine", "Gluconate de Calcium",
+    "Chlorure de Calcium", "Émulsion lipidique (Intralipid)", "Glucagon", "Digifab",
+    "Déféroxamine", "Physostigmine", "Charbon activé",
+
+    # Pneumologie & Urgences Métaboliques
+    "Salbutamol", "Terbutaline", "Bromure d'Ipratropium",
+    "Méthylprednisolone", "Hydrocortisone", "Dexaméthasone", "Sulfate de Magnésium",
+    "Insuline rapide", "Sérum Glucosé 30%", "Bicarbonate de sodium",
+    "Chlorure de potassium (KCl)",
+
+    # Hémostase, Gastro & Obstétrique
+    "Acide Tranexamique", "Complexe Prothrombinique Humain (PPSB)",
+    "Fibrinogène humain", "Facteur VIIa recombinant", "Desmopressine", "Enoxaparine",
+    "Héparine non fractionnée (HNF)", "Fondaparinux", "Octréotide", "Somatostatine",
+    "Terlipressine", "Ocytocine", "Carbétocine", "Sulprostone"
 ]
 
 
 def pick_candidate_emergency_drug(supabase: SupabaseClient, target_dci: Optional[str] = None) -> Optional[str]:
-    """Selects an emergency DCI that does not already exist in the database or local catalog."""
+    """Selects an emergency DCI that does not already exist in the database or local catalog.
+    If all predefined candidates are indexed, dynamically discovers a new emergency molecule using Gemini."""
     if target_dci:
         return target_dci
 
-    existing_ids = set()
+    existing_names = set()
     # Check remote Supabase
     remote_drugs = supabase.get("emergency_drugs", params={"select": "id,dci"})
     for d in remote_drugs:
         if d.get("id"):
-            existing_ids.add(d["id"].lower())
+            existing_names.add(d["id"].lower())
         if d.get("dci"):
-            existing_ids.add(d["dci"].lower().strip())
+            existing_names.add(d["dci"].lower().strip())
 
     # Check local JSON
     if EMERGENCY_DRUGS_FILE.exists():
@@ -552,22 +560,43 @@ def pick_candidate_emergency_drug(supabase: SupabaseClient, target_dci: Optional
             local_drugs = json.loads(EMERGENCY_DRUGS_FILE.read_text(encoding="utf-8"))
             for d in local_drugs:
                 if d.get("id"):
-                    existing_ids.add(d["id"].lower())
+                    existing_names.add(d["id"].lower())
                 if d.get("dci"):
-                    existing_ids.add(d["dci"].lower().strip())
+                    existing_names.add(d["dci"].lower().strip())
         except Exception:
             pass
 
+    def _normalize(s: str) -> str:
+        return re.sub(r'[^a-z0-9]', '', s.lower())
+
+    normalized_existing = {_normalize(n) for n in existing_names}
+
     candidates = [
         dci for dci in MASTER_EMERGENCY_DCI_POOL
-        if dci.lower().strip() not in existing_ids
+        if _normalize(dci) not in normalized_existing and not any(_normalize(dci) in ex or ex in _normalize(dci) for ex in normalized_existing)
     ]
 
-    if not candidates:
-        print("All predefined emergency drugs are already indexed! Picking random candidate for enrichment.")
-        return random.choice(MASTER_EMERGENCY_DCI_POOL)
+    print(f"Predefined emergency drug candidates remaining: {len(candidates)} / {len(MASTER_EMERGENCY_DCI_POOL)}.")
 
-    return random.choice(candidates)
+    if candidates:
+        return random.choice(candidates)
+
+    # Dynamic fallback: ask Gemini to propose an unindexed vital emergency molecule
+    print("All predefined emergency drugs are already indexed! Dynamically querying Gemini for a new unindexed emergency drug...")
+    prompt = (
+        f"Donne le nom DCI d'une molécule d'urgence vitale, réanimation, anesthésie ou antidote utilisée en milieu hospitalier en Algérie qui ne figure PAS dans cette liste : {', '.join(sorted(list(existing_names))[:100])}.\n"
+        "Réponds UNIQUEMENT par le nom de la molécule (DCI pure, 1 à 3 mots, sans aucun commentaire ni guillemets ni ponctuation)."
+    )
+    try:
+        suggested = call_gemini_api(prompt, "Tu es pharmacologue hospitalier.", enable_search=False).strip().strip('"').strip("'")
+        if suggested and len(suggested) > 2 and _normalize(suggested) not in normalized_existing:
+            print(f"Gemini dynamically discovered new emergency molecule: {suggested}")
+            return suggested
+    except Exception as e:
+        print(f"Notice querying Gemini for candidate drug: {e}")
+
+    # Ultimate fallback: pick random candidate
+    return random.choice(MASTER_EMERGENCY_DCI_POOL)
 
 
 def generate_emergency_drug(dci_name: str, supabase: SupabaseClient, dry_run: bool = False) -> Optional[Dict[str, Any]]:
@@ -608,10 +637,17 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
         return None
 
     if not data.get("id"):
-        clean_id = dci_name.lower().replace(" ", "_").replace("+", "et").replace("'", "")
+        clean_id = re.sub(r'[^a-zA-Z0-9]', '_', dci_name.lower()).strip('_')
         data["id"] = f"drug_{clean_id}"
 
     data["created_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    data["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    # Normalize availability key
+    if "algerianAvailability" in data and "algerian_availability" not in data:
+        data["algerian_availability"] = data.pop("algerianAvailability")
+    if "algerian_availability" in data:
+        data["algerianAvailability"] = data["algerian_availability"]
 
     print(f"Generated Drug: {data.get('dci')} ({data.get('brand')})")
     print(f"Category: {data.get('category')} | Route: {data.get('route')}")
@@ -621,8 +657,21 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
         print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
         return data
 
-    # 1. Save to remote Supabase
-    res = supabase.post("emergency_drugs", data, upsert=True)
+    # 1. Save to remote Supabase (only pass table columns)
+    supabase_record = {
+        "id": data["id"],
+        "dci": data.get("dci", dci_name),
+        "brand": data.get("brand", "Disponible PCH / Hôpitaux"),
+        "category": data.get("category", "Général"),
+        "route": data.get("route", ""),
+        "indication": data.get("indication", ""),
+        "dose": data.get("dose", ""),
+        "alert": data.get("alert", ""),
+        "algerian_availability": data.get("algerian_availability", ""),
+        "created_at": data["created_at"],
+        "updated_at": data["updated_at"],
+    }
+    res = supabase.post("emergency_drugs", supabase_record, upsert=True)
     if res:
         print("Successfully saved drug to Supabase emergency_drugs table!")
     else:
@@ -632,13 +681,14 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
     if EMERGENCY_DRUGS_FILE.exists():
         try:
             local_list = json.loads(EMERGENCY_DRUGS_FILE.read_text(encoding="utf-8"))
-            idx = next((i for i, d in enumerate(local_list) if d.get("id") == data["id"]), None)
+            idx = next((i for i, d in enumerate(local_list) if d.get("id") == data["id"] or d.get("dci", "").lower() == data.get("dci", "").lower()), None)
             if idx is not None:
                 local_list[idx] = data
+                print(f"Updated existing drug '{data.get('dci')}' in local catalog.")
             else:
                 local_list.append(data)
+                print(f"Added NEW drug monograph '{data.get('dci')}' to local catalog (now {len(local_list)} total drugs)!")
             EMERGENCY_DRUGS_FILE.write_text(json.dumps(local_list, indent=2, ensure_ascii=False), encoding="utf-8")
-            print(f"Updated local {EMERGENCY_DRUGS_FILE.name} ({len(local_list)} total drugs)!")
         except Exception as e:
             print(f"Warning updating local drugs file: {e}")
 
