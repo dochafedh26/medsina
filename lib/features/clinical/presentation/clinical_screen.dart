@@ -76,6 +76,7 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
             )
           : null,
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_clinical_copilot',
         backgroundColor: const Color(0xFF2563EB),
         foregroundColor: Colors.white,
         icon: const Icon(Icons.auto_awesome_rounded, size: 20),

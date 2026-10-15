@@ -698,6 +698,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_admin_generate_key',
         backgroundColor: AppTheme.primaryTeal,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
