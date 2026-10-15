@@ -134,22 +134,36 @@ jobs:
       - name: 📦 Install dependencies
         run: flutter pub get
 
+      - name: 🛠️ Install Inno Setup
+        run: choco install innosetup --yes --no-progress
+
       - name: 🛠️ Build Windows Release
         run: |
           $VERSION = "${{ inputs.version || github.ref_name }}".TrimStart('v')
           $BUILD_NUM = "${{ inputs.build_number || github.run_number }}"
           flutter build windows --release --build-name=$VERSION --build-number=$BUILD_NUM
 
-      - name: 🗜️ Archive Windows Release
+      - name: 📦 Build Windows Setup Installer (.exe)
+        run: |
+          $VERSION = "${{ inputs.version || github.ref_name }}".TrimStart('v')
+          New-Item -ItemType Directory -Force -Path "win-dist"
+          $iscc = "iscc"
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          }
+          echo "Compiling Inno Setup installer for version $VERSION using $iscc..."
+          & $iscc /DMyAppVersion="$VERSION" windows/installer/medsina_setup.iss
+
+      - name: 🗜️ Archive Windows Portable (.zip)
         run: |
           New-Item -ItemType Directory -Force -Path "win-dist"
           Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "win-dist\Medsina_Windows_x64.zip" -Force
 
-      - name: 📤 Upload Windows Artifact
+      - name: 📤 Upload Windows Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-release
-          path: win-dist\Medsina_Windows_x64.zip
+          path: win-dist/*
 
   # ----------------------------------------------------
   # JOB 3 : Build Web Production
@@ -244,7 +258,8 @@ jobs:
           # Reliably find and move files to dist-release root regardless of directory nesting
           find dist-release -type f -name "*app-release.apk" -exec mv {} "dist-release/Medsina_v${TAG}_Android.apk" \;
           find dist-release -type f -name "*app-release.aab" -exec mv {} "dist-release/Medsina_v${TAG}_GooglePlay.aab" \;
-          find dist-release -type f -name "*Windows_x64.zip" -exec mv {} "dist-release/Medsina_v${TAG}_Windows_x64.zip" \;
+          find dist-release -type f \( -name "*Windows_Setup.exe" -o -name "*Setup.exe" \) -exec mv {} "dist-release/Medsina_v${TAG}_Windows_Setup.exe" \;
+          find dist-release -type f -name "*Windows_x64.zip" -exec mv {} "dist-release/Medsina_v${TAG}_Windows_Portable.zip" \;
           find dist-release -type f \( -name "*Web_Production.zip" -o -name "*Web.zip" \) -exec mv {} "dist-release/Medsina_v${TAG}_Web.zip" \;
 
           # Clean any leftover subdirectories
@@ -265,8 +280,9 @@ jobs:
             ### 📦 Téléchargements Directs
             - **Android APK** : [Medsina_v${{ steps.vars.outputs.version }}_Android.apk](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_Android.apk)
             - **Google Play AAB** : [Medsina_v${{ steps.vars.outputs.version }}_GooglePlay.aab](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_GooglePlay.aab)
-            - **Windows x64** : [Medsina_v${{ steps.vars.outputs.version }}_Windows_x64.zip](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_Windows_x64.zip)
-            - **Web Bundle** : [Medsina_v${{ steps.vars.outputs.version }}_Web.zip](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_Web.zip)
+            - **Windows Installateur (.exe)** : [Medsina_v${{ steps.vars.outputs.version }}_Windows_Setup.exe](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_Windows_Setup.exe)
+            - **Windows Version Portable (.zip)** : [Medsina_v${{ steps.vars.outputs.version }}_Windows_Portable.zip](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_Windows_Portable.zip)
+            - **Web Bundle (.zip)** : [Medsina_v${{ steps.vars.outputs.version }}_Web.zip](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_Web.zip)
           files: |
             dist-release/*
 
@@ -284,7 +300,7 @@ jobs:
           BUILD="${{ steps.vars.outputs.build }}"
           REPO="${{ github.repository }}"
           APK_URL="https://github.com/$REPO/releases/download/$TAG/Medsina_v${VERSION}_Android.apk"
-          WIN_URL="https://github.com/$REPO/releases/download/$TAG/Medsina_v${VERSION}_Windows_x64.zip"
+          WIN_URL="https://github.com/$REPO/releases/download/$TAG/Medsina_v${VERSION}_Windows_Setup.exe"
 
           python -c "
           import os, requests, json
