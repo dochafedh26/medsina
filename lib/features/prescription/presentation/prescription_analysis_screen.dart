@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../core/services/free_trial_quota_service.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
+import '../../auth/bloc/auth_bloc.dart';
 import '../data/algerian_nomenclature_repository.dart';
 import '../data/terrain_contraindication_repository.dart';
 import '../data/vidal_interaction_repository.dart';
@@ -221,6 +225,19 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
 
   Future<void> _certifyWithAi() async {
     if (_prescribedDrugs.isEmpty) return;
+
+    final user = context.read<AuthBloc>().state.user;
+    if (user?.tier == SubscriptionTier.free) {
+      if (!FreeTrialQuotaService.instance.canAnalyzePrescription(user)) {
+        FreeTrialQuotaService.showQuotaLimitDialog(
+          context,
+          featureTitle: 'Limite Analyse Ordonnance Atteinte',
+          message: 'Le Pass Découverte inclut 1 analyse d\'ordonnance Vidal IA gratuite. Pour auditer d\'autres ordonnances en illimité, passez à l\'abonnement supérieur.',
+        );
+        return;
+      }
+      FreeTrialQuotaService.instance.consumePrescriptionAnalysis(user);
+    }
 
     setState(() {
       _isAiCertifying = true;

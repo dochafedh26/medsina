@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/license_key_formatter.dart';
 import '../bloc/admin_bloc.dart';
 import '../bloc/admin_event.dart';
 import '../bloc/admin_state.dart';
@@ -819,7 +821,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
   void _showGenerateKeyModal(BuildContext context) {
     final keyCtrl = TextEditingController(
-      text: 'MEDSINA-2027-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}',
+      text: LicenseKeyFormatter.generateKey(),
     );
     String targetTier = 'all_access';
     int duration = 365;
@@ -830,11 +832,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         builder: (dialogCtx, setDialogState) => AlertDialog(
           title: const Row(
             children: [
-              Icon(Icons.add_circle_outline_rounded, color: AppTheme.primaryTeal),
+              Icon(Icons.vpn_key_rounded, color: AppTheme.primaryTeal),
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Générer une Clé de Licence',
+                  'Générer Clé VIP Sécurisée',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -844,12 +846,33 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Code de la Clé :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              const Text('Format Pro (Windows Style) :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 6),
-              TextField(
-                controller: keyCtrl,
-                textCapitalization: TextCapitalization.characters,
-                decoration: const InputDecoration(isDense: true),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: keyCtrl,
+                      textCapitalization: TextCapitalization.characters,
+                      inputFormatters: [LicenseKeyInputFormatter()],
+                      style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.1, fontSize: 13.5),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        hintText: 'MSN27-XXXXX-XXXXX-XXXXX-XXXXX',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  IconButton(
+                    icon: const Icon(Icons.refresh_rounded, color: AppTheme.primaryTeal),
+                    tooltip: 'Régénérer une clé',
+                    onPressed: () {
+                      setDialogState(() {
+                        keyCtrl.text = LicenseKeyFormatter.generateKey();
+                      });
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 14),
               const Text('Formule Débloquée :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
@@ -1208,6 +1231,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               'Date : ${payment.createdAt.day}/${payment.createdAt.month}/${payment.createdAt.year} à ${payment.createdAt.hour}h${payment.createdAt.minute.toString().padLeft(2, '0')}',
               style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
             ),
+            if (payment.receiptUrl != null && payment.receiptUrl!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF2563EB),
+                  side: const BorderSide(color: Color(0xFF2563EB)),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  minimumSize: const Size(0, 32),
+                ),
+                icon: const Icon(Icons.attachment_rounded, size: 16),
+                label: Text(
+                  payment.receiptFileName != null && payment.receiptFileName!.isNotEmpty
+                      ? 'Inspecter le Reçu (${payment.receiptFileName})'
+                      : 'Inspecter le Reçu Joint',
+                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () => _showReceiptViewerModal(context, payment),
+              ),
+            ],
             if (payment.status == 'pending') ...[
               const SizedBox(height: 12),
               const Divider(height: 1),
@@ -1252,6 +1294,102 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _showReceiptViewerModal(BuildContext context, PaymentItem payment) {
+    final url = payment.receiptUrl ?? '';
+    final isPdf = (payment.receiptFileName?.toLowerCase().endsWith('.pdf') == true) || url.startsWith('data:application/pdf');
+    final isBase64 = url.startsWith('data:');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(isPdf ? Icons.picture_as_pdf_rounded : Icons.image_rounded, color: AppTheme.primaryTeal),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Reçu : ${payment.receiptFileName ?? payment.userName}',
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: 500,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Candidat : ${payment.userName} (${payment.userEmail})\nMontant : ${payment.amount.toStringAsFixed(0)} ${payment.currency} • Formule : ${payment.tier.toUpperCase()}',
+                  style: const TextStyle(fontSize: 12, height: 1.4),
+                ),
+                const SizedBox(height: 12),
+                if (!isPdf && isBase64) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.memory(
+                      base64Decode(url.contains(',') ? url.split(',')[1] : url),
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, _, _) => const Center(
+                        child: Text('Impossible d\'afficher l\'image du reçu.'),
+                      ),
+                    ),
+                  ),
+                ] else if (!isPdf && url.startsWith('http')) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      url,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, _, _) => const Center(
+                        child: Text('Impossible de charger l\'image du reçu depuis l\'URL.'),
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Column(
+                      children: [
+                        const Icon(Icons.picture_as_pdf_rounded, size: 48, color: Colors.red),
+                        const SizedBox(height: 8),
+                        Text(
+                          payment.receiptFileName ?? 'Document PDF Reçu',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Document PDF joint par l\'utilisateur comme preuve de versement.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 11, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Fermer'),
+          ),
+        ],
       ),
     );
   }

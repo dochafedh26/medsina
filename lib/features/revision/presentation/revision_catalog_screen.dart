@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/free_trial_quota_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../auth/bloc/auth_bloc.dart';
+import '../../auth/models/user_model.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
@@ -131,6 +133,16 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
     List<MedicalModuleModel> filteredModules,
     int totalVisibleCourses,
   ) {
+    final authState = context.watch<AuthBloc>().state;
+    final user = authState.user;
+    final isFree = user?.tier == SubscriptionTier.free;
+
+    if (isFree) {
+      _checkAndPromptFreeModules(context, user, state.modules);
+    }
+
+    final selectedModules = FreeTrialQuotaService.instance.selectedFreeModules;
+
     return Column(
       children: [
         // Search & Category Header
@@ -194,6 +206,64 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
             ],
           ),
         ),
+        if (isFree) ...[
+          Container(
+            margin: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.amber.shade50,
+                  Colors.amber.shade100.withValues(alpha: 0.5),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.amber.shade300),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade200,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.stars_rounded, color: Colors.amber.shade900, size: 20),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Pass Découverte Actif',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF78350F)),
+                      ),
+                      Text(
+                        selectedModules.isNotEmpty
+                            ? 'Modules choisis : ${selectedModules.join(" & ")} (2 cours débloqués par spécialité • 1 session QCM test)'
+                            : 'Choisissez 2 spécialités médicales à explorer (2 cours gratuits par spécialité).',
+                        style: const TextStyle(fontSize: 11, color: Color(0xFF92400E)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    foregroundColor: const Color(0xFF78350F),
+                  ),
+                  onPressed: () => _showSelectFreeModulesDialog(context, user!, state.modules),
+                  child: Text(
+                    selectedModules.isNotEmpty ? 'Modifier' : 'Choisir',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         const Divider(height: 1),
 
         // Modules List
@@ -352,6 +422,170 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
     );
   }
 
+  bool _checkedTrialModules = false;
+
+  void _checkAndPromptFreeModules(BuildContext context, UserModel? user, List<MedicalModuleModel> modules) {
+    if (_checkedTrialModules) return;
+    if (user != null && user.tier == SubscriptionTier.free && modules.isNotEmpty) {
+      _checkedTrialModules = true;
+      FreeTrialQuotaService.instance.loadQuotas(user.id).then((_) {
+        if (mounted) {
+          setState(() {});
+          if (FreeTrialQuotaService.instance.selectedFreeModules.length < 2) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showSelectFreeModulesDialog(context, user, modules);
+            });
+          }
+        }
+      });
+    }
+  }
+
+  void _showSelectFreeModulesDialog(BuildContext context, UserModel user, List<MedicalModuleModel> allModules) {
+    final currentSelected = List<String>.from(FreeTrialQuotaService.instance.selectedFreeModules);
+    final selectedNames = <String>{...currentSelected};
+    String filterText = '';
+
+    showDialog(
+      context: context,
+      barrierDismissible: currentSelected.length >= 2,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) {
+          final displayModules = allModules.where((m) {
+            if (filterText.isEmpty) return true;
+            return m.name.toLowerCase().contains(filterText.toLowerCase());
+          }).toList();
+
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade100,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.stars_rounded, color: Colors.amber.shade900, size: 24),
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Pass Découverte',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Choisissez 2 spécialités médicales à explorer',
+                        style: TextStyle(fontSize: 11.5, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              width: 500,
+              height: 400,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sélectionnez 2 modules de révision. Les 2 premiers cours de chacun seront immédiatement débloqués pour vos tests (${selectedNames.length}/2 sélectionnés).',
+                    style: const TextStyle(fontSize: 12, height: 1.35),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    decoration: const InputDecoration(
+                      hintText: 'Rechercher une spécialité...',
+                      prefixIcon: Icon(Icons.search_rounded, size: 18),
+                      isDense: true,
+                    ),
+                    onChanged: (val) => setDlgState(() => filterText = val.trim()),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: displayModules.length,
+                      itemBuilder: (context, i) {
+                        final mod = displayModules[i];
+                        final isChecked = selectedNames.contains(mod.name);
+                        return CheckboxListTile(
+                          dense: true,
+                          title: Text(
+                            mod.name,
+                            style: TextStyle(
+                              fontWeight: isChecked ? FontWeight.bold : FontWeight.w500,
+                              fontSize: 13,
+                              color: isChecked ? AppTheme.primaryTeal : null,
+                            ),
+                          ),
+                          subtitle: Text('${mod.totalCourses} cours • ${mod.totalQuestions} QCMs', style: const TextStyle(fontSize: 11)),
+                          value: isChecked,
+                          onChanged: (bool? val) {
+                            setDlgState(() {
+                              if (val == true) {
+                                if (selectedNames.length >= 2) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Le Pass Découverte est limité à 2 modules au choix.'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                selectedNames.add(mod.name);
+                              } else {
+                                selectedNames.remove(mod.name);
+                              }
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              if (currentSelected.length >= 2)
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Fermer'),
+                ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedNames.length == 2 ? AppTheme.primaryTeal : Colors.grey,
+                  foregroundColor: Colors.white,
+                ),
+                icon: const Icon(Icons.check_rounded, size: 16),
+                label: Text('Valider mes 2 modules (${selectedNames.length}/2)'),
+                onPressed: selectedNames.length == 2
+                    ? () async {
+                        final list = selectedNames.toList();
+                        await FreeTrialQuotaService.instance.selectFreeModules(user.id, list);
+                        if (context.mounted) {
+                          Navigator.pop(ctx);
+                          setState(() {});
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: const Color(0xFF16A34A),
+                              content: Text('Modules activés : ${list.join(" & ")}. Les 2 premiers cours sont débloqués !'),
+                            ),
+                          );
+                        }
+                      }
+                    : null,
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildFilterChip(String cat) {
     final isSelected = _selectedCategory == cat;
     return ChoiceChip(
@@ -469,6 +703,18 @@ class _CustomSessionCard extends StatelessWidget {
                         icon: const Icon(Icons.refresh_rounded, size: 16),
                         label: const Text('Recommencer', style: TextStyle(fontSize: 12)),
                         onPressed: () {
+                          final user = context.read<AuthBloc>().state.user;
+                          if (user?.tier == SubscriptionTier.free) {
+                            if (!FreeTrialQuotaService.instance.canStartQcmSession(user)) {
+                              FreeTrialQuotaService.showQuotaLimitDialog(
+                                context,
+                                featureTitle: 'Session Test Pass Découverte Utilisée',
+                                message: 'Vous avez déjà utilisé votre session de révision test gratuite. Pour continuer à vous entraîner sur les 6 240+ QCMs sans limite, abonnez-vous à l\'un de nos plans.',
+                              );
+                              return;
+                            }
+                            FreeTrialQuotaService.instance.consumeQcmSession(user);
+                          }
                           context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false));
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
@@ -490,6 +736,18 @@ class _CustomSessionCard extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                       ),
                       onPressed: () {
+                        final user = context.read<AuthBloc>().state.user;
+                        if (!isPaused && user?.tier == SubscriptionTier.free) {
+                          if (!FreeTrialQuotaService.instance.canStartQcmSession(user)) {
+                            FreeTrialQuotaService.showQuotaLimitDialog(
+                              context,
+                              featureTitle: 'Session Test Pass Découverte Utilisée',
+                              message: 'Vous avez déjà utilisé votre session de révision test gratuite. Pour composer et démarrer des sessions sur-mesure en illimité, abonnez-vous à l\'un de nos plans.',
+                            );
+                            return;
+                          }
+                          FreeTrialQuotaService.instance.consumeQcmSession(user);
+                        }
                         context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: isPaused));
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
@@ -617,6 +875,7 @@ class _ModuleCardState extends State<_ModuleCard> {
                   return _CourseTile(
                     course: course,
                     moduleName: m.name,
+                    courseIndex: i,
                     progress: widget.activeProgresses[course.id],
                   );
                 },
@@ -632,11 +891,13 @@ class _ModuleCardState extends State<_ModuleCard> {
 class _CourseTile extends StatelessWidget {
   final CourseModel course;
   final String moduleName;
+  final int courseIndex;
   final CourseRevisionProgress? progress;
 
   const _CourseTile({
     required this.course,
     required this.moduleName,
+    required this.courseIndex,
     this.progress,
   });
 
@@ -681,19 +942,33 @@ class _CourseTile extends StatelessWidget {
     final authState = context.watch<AuthBloc>().state;
     final user = authState.user;
     final isExpired = user?.isSubscriptionActive == false;
-    final isFree = user?.tier == SubscriptionTier.free;
     final isClinicalOnly = user?.tier == SubscriptionTier.clinicalPro;
-    final isCardioPreview = moduleName.toLowerCase().contains('cardio');
+    final isFree = user?.tier == SubscriptionTier.free;
 
-    final bool isLocked = isExpired || (isFree && !isCardioPreview) || (isClinicalOnly && !isCardioPreview);
+    final isUnlocked = FreeTrialQuotaService.instance.isCourseUnlocked(user, moduleName, courseIndex);
+    final bool isLocked = !isUnlocked;
 
     String lockReason = '';
     if (isExpired) {
       lockReason = 'Votre abonnement a expiré. Veuillez renouveler votre formule pour accéder aux 47 modules et 6 240+ QCMs.';
     } else if (isClinicalOnly) {
-      lockReason = 'Les 47 modules complets de préparation au Résidanat sont inclus dans le Pass Résident Élite ou All-Access. Votre Pass Clinique Pro est optimisé pour les urgences et la pratique hospitalière (avec accès au module Cardiologie en aperçu).';
+      lockReason = 'Les 47 modules complets de préparation au Résidanat sont inclus dans le Pass Résident Élite ou All-Access. Votre Pass Clinique Pro est optimisé pour les urgences et la pratique hospitalière.';
     } else if (isFree) {
-      lockReason = 'Le module "$moduleName" est réservé aux abonnés. Votre Pass Découverte inclut le module Cardiologie en accès gratuit. Choisissez le Pass Résident Élite ou All-Access pour débloquer tous les modules.';
+      final selected = FreeTrialQuotaService.instance.selectedFreeModules;
+      if (selected.isEmpty) {
+        lockReason = 'Veuillez choisir vos 2 spécialités médicales d\'essai dans le catalogue pour débloquer leurs 2 premiers cours.';
+      } else {
+        final normModule = FreeTrialQuotaService.instance.normalizeModuleName(moduleName);
+        final isChosen = selected.any((m) {
+          final chosenNorm = FreeTrialQuotaService.instance.normalizeModuleName(m);
+          return normModule.contains(chosenNorm) || chosenNorm.contains(normModule);
+        });
+        if (!isChosen) {
+          lockReason = 'Le module "$moduleName" n\'a pas été sélectionné dans vos 2 spécialités d\'essai (${selected.join(", ")}). Passez au Pass Résident Élite ou All-Access pour débloquer l\'intégralité des 47 modules.';
+        } else {
+          lockReason = 'Dans le Pass Découverte, seuls les 2 premiers cours de chaque spécialité choisie sont accessibles gratuitement. Passez au Pass Résident Élite ou All-Access pour débloquer les autres cours de ce module.';
+        }
+      }
     }
 
     final isPaused = progress != null && !progress!.isCompleted;
@@ -829,6 +1104,18 @@ class _CourseTile extends StatelessWidget {
                   if (isLocked) {
                     _showPaywallPrompt(context, lockReason);
                     return;
+                  }
+
+                  if (!isPaused && user?.tier == SubscriptionTier.free) {
+                    if (!FreeTrialQuotaService.instance.canStartQcmSession(user)) {
+                      FreeTrialQuotaService.showQuotaLimitDialog(
+                        context,
+                        featureTitle: 'Session Test Pass Découverte Utilisée',
+                        message: 'Vous avez déjà utilisé votre session de révision test gratuite. Pour continuer à vous entraîner sur l\'ensemble des 6 240+ QCMs sans limite, abonnez-vous à l\'un de nos plans.',
+                      );
+                      return;
+                    }
+                    FreeTrialQuotaService.instance.consumeQcmSession(user);
                   }
 
                   if (isPaused) {

@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/license_key_formatter.dart';
 import '../../../core/widgets/medsina_logo.dart';
 import '../../admin/bloc/admin_bloc.dart';
 import '../../admin/models/admin_models.dart';
@@ -129,7 +133,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Saisissez votre code d\'activation d\'établissement ou de partenaire pour débloquer votre accès (Ex: MEDSINA-2027-VIP).',
+                      'Saisissez votre clé de licence sécurisée pour débloquer immédiatement votre abonnement (Format : MSN27-XXXXX-XXXXX-XXXXX-XXXXX).',
                       style: TextStyle(fontSize: 12),
                     ),
                     const SizedBox(height: 12),
@@ -139,8 +143,9 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                           child: TextField(
                             controller: _licenseController,
                             textCapitalization: TextCapitalization.characters,
+                            inputFormatters: [LicenseKeyInputFormatter()],
                             decoration: const InputDecoration(
-                              hintText: 'Ex: MEDSINA-2027-VIP',
+                              hintText: 'MSN27-XXXXX-XXXXX-XXXXX-XXXXX',
                               contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                             ),
                           ),
@@ -148,9 +153,10 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         const SizedBox(width: 10),
                         ElevatedButton(
                           onPressed: () {
-                            if (_licenseController.text.trim().isNotEmpty) {
+                            final rawKey = _licenseController.text.trim();
+                            if (rawKey.isNotEmpty) {
                               context.read<AuthBloc>().add(
-                                    ActivateLicenseKeyEvent(licenseKey: _licenseController.text.trim()),
+                                    ActivateLicenseKeyEvent(licenseKey: rawKey),
                                   );
                             }
                           },
@@ -379,6 +385,10 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
     final amountController = TextEditingController(text: '20000');
     bool isSubmitting = false;
 
+    PlatformFile? pickedReceiptFile;
+    Uint8List? receiptBytes;
+    String? receiptFileName;
+
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
@@ -464,9 +474,107 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     prefixIcon: Icon(Icons.receipt_outlined, size: 18),
                   ),
                 ),
+                const SizedBox(height: 12),
+
+                // Upload Receipt Section
+                const Text('Preuve de Paiement (Reçu ou Relevé) :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: pickedReceiptFile != null
+                        ? const Color(0xFFF0FDF4)
+                        : (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC)),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: pickedReceiptFile != null ? const Color(0xFF16A34A) : Colors.grey.shade300,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (pickedReceiptFile == null) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                ),
+                                icon: const Icon(Icons.upload_file_rounded, size: 18),
+                                label: const Text('Scanner / Joindre Reçu (PDF ou Image)', style: TextStyle(fontSize: 12)),
+                                onPressed: () async {
+                                  final file = await FilePicker.pickFile(
+                                    type: FileType.custom,
+                                    allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+                                  );
+                                  if (file != null) {
+                                    final bytes = await file.readAsBytes();
+                                    setDlgState(() {
+                                      pickedReceiptFile = file;
+                                      receiptBytes = bytes;
+                                      receiptFileName = file.name;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Formats acceptés : PDF, JPG, PNG (Max 10 Mo)',
+                          style: TextStyle(fontSize: 10.5, color: Colors.grey),
+                        ),
+                      ] else ...[
+                        Row(
+                          children: [
+                            Icon(
+                              receiptFileName?.toLowerCase().endsWith('.pdf') == true
+                                  ? Icons.picture_as_pdf_rounded
+                                  : Icons.image_rounded,
+                              color: const Color(0xFF16A34A),
+                              size: 24,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    receiptFileName ?? 'Reçu sélectionné',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (receiptBytes != null && receiptBytes!.isNotEmpty)
+                                    Text(
+                                      '${(receiptBytes!.length / 1024).toStringAsFixed(1)} Ko',
+                                      style: TextStyle(fontSize: 10.5, color: Colors.grey.shade600),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close_rounded, size: 18, color: Colors.red),
+                              tooltip: 'Supprimer ce fichier',
+                              onPressed: () {
+                                setDlgState(() {
+                                  pickedReceiptFile = null;
+                                  receiptBytes = null;
+                                  receiptFileName = null;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Une fois soumis, l\'administrateur validera votre transaction dans les plus brefs délais pour activer votre formule.',
+                  'Une fois soumis, l\'administrateur validera votre transaction après vérification du reçu pour activer votre formule.',
                   style: TextStyle(fontSize: 10.5, color: Colors.grey),
                 ),
               ],
@@ -483,15 +591,32 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                   ? null
                   : () async {
                       final ref = refController.text.trim();
-                      if (ref.isEmpty) {
+                      if (ref.isEmpty && pickedReceiptFile == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Veuillez renseigner le numéro de transaction ou reçu.')),
+                          const SnackBar(content: Text('Veuillez renseigner le numéro de transaction ou joindre une preuve.')),
                         );
                         return;
                       }
 
                       setDlgState(() => isSubmitting = true);
                       final amount = double.tryParse(amountController.text) ?? 20000.0;
+
+                      String? uploadedReceiptUrl;
+                      if (receiptBytes != null && receiptFileName != null) {
+                        try {
+                          uploadedReceiptUrl = await SupabaseService.uploadPaymentReceipt(
+                            userId: user?.id ?? 'guest',
+                            fileName: receiptFileName!,
+                            bytes: receiptBytes!,
+                          );
+                        } catch (_) {}
+
+                        if (uploadedReceiptUrl == null || uploadedReceiptUrl.isEmpty) {
+                          final mime = receiptFileName!.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'image/jpeg';
+                          final b64 = base64Encode(receiptBytes!);
+                          uploadedReceiptUrl = 'data:$mime;base64,$b64';
+                        }
+                      }
 
                       final success = await SupabaseService.submitPaymentRequest(
                         userId: user?.id ?? '',
@@ -501,7 +626,9 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         durationDays: 365,
                         amount: amount,
                         paymentMethod: paymentMethod,
-                        receiptReference: ref,
+                        receiptReference: ref.isNotEmpty ? ref : (receiptFileName ?? 'Reçu numérique'),
+                        receiptUrl: uploadedReceiptUrl,
+                        receiptFileName: receiptFileName,
                       );
 
                       if (context.mounted) {

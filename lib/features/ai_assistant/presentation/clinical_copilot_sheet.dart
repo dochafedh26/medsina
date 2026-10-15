@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../core/services/free_trial_quota_service.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/medical_text_formatter.dart';
 import '../../../core/widgets/medsina_logo.dart';
+import '../../auth/bloc/auth_bloc.dart';
 
 class ClinicalCopilotSheet extends StatefulWidget {
   final String? initialSituation;
@@ -59,6 +63,19 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
 
   Future<void> _askCopilot(String query) async {
     if (query.trim().isEmpty) return;
+
+    final user = context.read<AuthBloc>().state.user;
+    if (user?.tier == SubscriptionTier.free) {
+      if (!FreeTrialQuotaService.instance.canUseCopilot(user)) {
+        FreeTrialQuotaService.showQuotaLimitDialog(
+          context,
+          featureTitle: 'Limite MedsinaPilot Atteinte',
+          message: 'Le Pass Découverte inclut 1 requête MedsinaPilot offerte. Pour échanger sans limite 24/7 avec votre copilote clinique d\'urgences, abonnez-vous à l\'un de nos plans.',
+        );
+        return;
+      }
+      FreeTrialQuotaService.instance.consumeCopilotQuery(user);
+    }
 
     await _streamSub?.cancel();
 

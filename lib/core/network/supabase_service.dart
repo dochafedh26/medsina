@@ -370,9 +370,11 @@ class SupabaseService {
           'discount_percent': 0,
           'is_active': true,
           'features': [
-            '2 modules d\'initiation au résidanat (50 QCMs)',
-            'Scores médicaux de base',
-            'Consultation des cours PDF en ligne',
+            '2 modules au choix (2 cours par module)',
+            '1 session de révision test',
+            '1 analyse d\'ordonnance Vidal IA',
+            '1 interprétation de bilan biologique',
+            '1 requête MedsinaPilot Assistant',
           ],
         },
         {
@@ -497,6 +499,8 @@ class SupabaseService {
     required double amount,
     required String paymentMethod,
     required String receiptReference,
+    String? receiptUrl,
+    String? receiptFileName,
   }) async {
     try {
       await client.from('payments').insert({
@@ -509,12 +513,97 @@ class SupabaseService {
         'currency': 'DZD',
         'payment_method': paymentMethod,
         'receipt_reference': receiptReference,
+        'receipt_url': ?receiptUrl,
+        'receipt_file_name': ?receiptFileName,
         'status': 'pending',
       });
       return true;
     } catch (e) {
       debugPrint('Error submitting payment: $e');
       return false;
+    }
+  }
+
+  /// Upload receipt to Supabase storage 'receipts' bucket, or fallback
+  static Future<String?> uploadPaymentReceipt({
+    required String userId,
+    required String fileName,
+    required List<int> bytes,
+  }) async {
+    try {
+      final sanitized = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
+      final path = '$userId/${DateTime.now().millisecondsSinceEpoch}_$sanitized';
+      await client.storage.from('receipts').uploadBinary(
+        path,
+        Uint8List.fromList(bytes),
+      );
+      final publicUrl = client.storage.from('receipts').getPublicUrl(path);
+      return publicUrl;
+    } catch (e) {
+      debugPrint('Error uploading receipt to storage: $e');
+      return null;
+    }
+  }
+
+  // --- FREE TRIAL QUOTAS (SUPABASE ENFORCED) ---
+
+  /// Fetch or initialize user trial quotas from Supabase Cloud
+  static Future<Map<String, dynamic>?> fetchUserTrialQuotas(String userId) async {
+    try {
+      final response = await client.rpc('get_or_create_user_trial_quotas', params: {
+        'p_user_id': userId,
+      });
+      if (response is Map) {
+        return Map<String, dynamic>.from(response);
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching user trial quotas via RPC: $e');
+      try {
+        final res = await client
+            .from('user_trial_quotas')
+            .select()
+            .eq('user_id', userId)
+            .maybeSingle();
+        return res;
+      } catch (e2) {
+        debugPrint('Direct user_trial_quotas table fallback error: $e2');
+        return null;
+      }
+    }
+  }
+
+  /// Save the 2 chosen free modules
+  static Future<bool> saveSelectedFreeModules(String userId, List<String> modules) async {
+    try {
+      final response = await client.rpc('save_selected_free_modules', params: {
+        'p_user_id': userId,
+        'p_modules': modules,
+      });
+      if (response is Map && response['success'] == true) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error saving selected free modules: $e');
+      return false;
+    }
+  }
+
+  /// Consume 1 unit of a trial quota (qcm_session, prescription_analysis, lab_analysis, copilot_query)
+  static Future<Map<String, dynamic>> consumeTrialQuota(String userId, String quotaType) async {
+    try {
+      final response = await client.rpc('consume_trial_quota', params: {
+        'p_user_id': userId,
+        'p_quota_type': quotaType,
+      });
+      if (response is Map) {
+        return Map<String, dynamic>.from(response);
+      }
+      return {'success': true};
+    } catch (e) {
+      debugPrint('Error consuming trial quota via RPC: $e');
+      return {'success': false, 'message': '$e'};
     }
   }
 

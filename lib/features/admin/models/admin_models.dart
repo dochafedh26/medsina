@@ -225,6 +225,8 @@ class PaymentItem extends Equatable {
   final String currency;
   final String paymentMethod;
   final String? receiptReference;
+  final String? receiptUrl;
+  final String? receiptFileName;
   final String status; // 'pending', 'approved', 'rejected'
   final String? adminNotes;
   final DateTime createdAt;
@@ -241,6 +243,8 @@ class PaymentItem extends Equatable {
     this.currency = 'DZD',
     required this.paymentMethod,
     this.receiptReference,
+    this.receiptUrl,
+    this.receiptFileName,
     required this.status,
     this.adminNotes,
     required this.createdAt,
@@ -259,6 +263,8 @@ class PaymentItem extends Equatable {
       currency: json['currency'] ?? 'DZD',
       paymentMethod: json['payment_method'] ?? 'baridimob',
       receiptReference: json['receipt_reference'],
+      receiptUrl: json['receipt_url'],
+      receiptFileName: json['receipt_file_name'],
       status: json['status'] ?? 'pending',
       adminNotes: json['admin_notes'],
       createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at']) ?? DateTime.now() : DateTime.now(),
@@ -269,6 +275,8 @@ class PaymentItem extends Equatable {
   PaymentItem copyWith({
     String? status,
     String? adminNotes,
+    String? receiptUrl,
+    String? receiptFileName,
   }) {
     return PaymentItem(
       id: id,
@@ -281,6 +289,8 @@ class PaymentItem extends Equatable {
       currency: currency,
       paymentMethod: paymentMethod,
       receiptReference: receiptReference,
+      receiptUrl: receiptUrl ?? this.receiptUrl,
+      receiptFileName: receiptFileName ?? this.receiptFileName,
       status: status ?? this.status,
       adminNotes: adminNotes ?? this.adminNotes,
       createdAt: createdAt,
@@ -300,6 +310,8 @@ class PaymentItem extends Equatable {
         currency,
         paymentMethod,
         receiptReference,
+        receiptUrl,
+        receiptFileName,
         status,
         adminNotes,
         createdAt,
