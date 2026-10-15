@@ -90,5 +90,28 @@
     "treatment_summary": "Pas de garrot ni d'incision. Antibiothérapie, ATS/VAT. Pour le scorpionisme : Sérothérapie spécifique (SAS) dès la classe II, et réanimation agressive (dobutamine/ventilation) en classe III. Pour la vipère : Sérothérapie spécifique (SAV) et correction des troubles de l'hémostase.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-14T20:49:40.520149+00:00"
+  },
+  {
+    "course_id": "Blida_CARDIOLOGIE_VASODILATATEURS",
+    "course_name": "Vasodilatateurs",
+    "module_id": "Blida_CARDIOLOGIE",
+    "module_name": "Cardiologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLes **vasodilatateurs** sont des médicaments qui entraînent un relâchement des fibres musculaires lisses vasculaires, provoquant une diminution des résistances vasculaires systémiques (RVS) et/ou une augmentation de la capacitance veineuse (veinodilatation). \n- **Artériodilatateurs pur (ex: Dihydropyridines, Minoxidil, Hydralazine)** : réduisent la post-charge (diminuent le travail ventriculaire gauche).\n- **Veinodilatateurs pur (ex: Dérivés nitrés)** : réduisent la pré-charge (diminuent les pressions de remplissage ventriculaire et la consommation myocardique en oxygène).\n- **Vasodilatateurs mixtes (ex: IEC, ARA2, Nitroprussiate de sodium)** : réduisent à la fois la pré-charge et la post-charge.\n\n## 2. Démarche Diagnostique (Indications majeures)\nL'utilisation des vasodilatateurs s'inscrit dans le cadre de pathologies cardiovasculaires aiguës et chroniques :\n- **Insuffisance Cardiaque (IC)** : IC aiguë (OAP) et IC chronique à fraction d'éjection altérée (IC-FEr).\n- **Syndrome Coronarien Aigu (SCA)** : angor stable et SCA (dérivés nitrés sublinguaux ou IV).\n- **Urgence hypertensive** : poussée hypertensive menaçant le pronostic vital (nicardipine IV, nitroprussiate).\n- **HTA chronique** : traitement de fond (IEC, ARA2, inhibiteurs calciques).\n\n## 3. Diagnostic Différentiel & Contre-indications communes\nAttention aux contre-indications absolues dépistées en QCM :\n- **Dérivés nitrés** : Association formelle avec les **inhibiteurs de la phosphodiestérase de type 5 (IPDE5)** (Sildénafil, Tadalafil) dans les 24h à 48h (risque de **choc cardiogénique réfractaire mortel**). IDM du ventricule droit (VD), cardiomyopathie obstructive.\n- **IEC / ARA2** : Sténose bilatérale des artères rénales (ou unilatérale sur rein unique), hyperkaliémie menaçante (K+ > 5 mmol/L), grossesse (teratogène absolu au 2e et 3e trimestre).\n\n## 4. Stratégie Thérapeutique\n- **OAP / Urgence hypertensive** : \n  - *Dérivés nitrés* (Trinitrine en spray ou Risordan en IVAE) si PAS > 100-110 mmHg.\n  - *Nicardipine (Loxen)* en IVSE pour les urgences hypertensives.\n- **Insuffisance Cardiaque chronique** :\n  - *IEC* (Ramipril, Perindopril) ou *ARNI* (Sacubitril/Valsartans) en 1ère intention, associés aux bêtabloquants et ARM.\n- **Effets indésirables principaux** :\n  - Hypotension artérielle orthostatique.\n  - Céphalées pulsatiles (très fréquentes sous dérivés nitrés).\n  - Toux sèche induite par les IEC (liée à la bradykinine).\n  - Œdèmes des membres inférieurs sous inhibiteurs calciques dihydropyridiniques.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Tolérance aux dérivés nitrés** : nécessité d'un intervalle libre de nitrés de 8 à 12 heures par 24 heures (patchs retirés la nuit) pour éviter la perte d'efficacité.\n- **Choc anaphylactique / Angio-œdème** sous IEC (œdème de Quincke laryngé, urgence absolue).\n- Surveillance stricte de la fonction rénale (créatininémie et débit de filtration glomérulaire) et de la kaliémie lors de l'instauration des IEC/ARA2.",
+    "key_takeaways": [
+      "L'association Dérivés Nitrés + IPDE5 (Sildénafil) est une CONTRE-INDICATION ABSOLUE et un piège majeur de QCM (risque d'hypotension fatale).",
+      "Les dérivés nitrés agissent principalement comme veinodilatateurs (réduction de la pré-charge), tandis que les dihydropyridines sont des artériodilatateurs pur (réduction de la post-charge).",
+      "La tolérance aux dérivés nitrés impose de respecter une 'fenêtre thérapeutique' sans traitement (généralement la nuit) pour restaurer l'efficacité.",
+      "Les IEC sont formellement contre-indiqués en cas de sténose bilatérale des artères rénales sous peine de provoquer une IRA organique par mise en faillite rénale.",
+      "La toux sèche sous IEC est un effet de classe non allergique lié à l'accumulation de bradykinine, imposant le passage aux ARA2."
+    ],
+    "exam_traps": [
+      "Piège Annales : 'Les inhibiteurs calciques bradycardisants (vérapamil/diltiazem) sont indiqués dans l'OAP avec dysfonction systolique sévère' -> FAUX, ils sont contre-indiqués en inotrope négatif puissant.",
+      "Piège Traitement : Prescrire des dérivés nitrés en première intention devant un IDM du ventricule droit isolé avec collapsus -> FAUX (aggravation majeure du choc par chute de la pré-charge).",
+      "Piège Diagnostic : Oublier que la nicardipine IV est le vasodiltateur de référence en cas d'urgence hypertensive avec encéphalopathie."
+    ],
+    "diagnostic_criteria": "Identification d'une surcharge volémique aiguë ou d'une vasoconstriction pathologique réfractaire nécessitant l'utilisation ciblée d'agents agissant sur les fibres musculaires lisses vasculaires (pré-charge ou post-charge).",
+    "treatment_summary": "Utilisation graduée des veinodilatateurs (dérivés nitrés) en urgence (OAP/SCA) et des vasodilatateurs mixtes (IEC/ARA2/ARNI) au long cours dans l'insuffisance cardiaque, en respectant scrupuleusement les contre-indications (IPDE5, sténose rénale).",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-15T13:20:13.925666+00:00"
   }
 ]
