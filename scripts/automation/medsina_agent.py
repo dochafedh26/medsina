@@ -132,6 +132,30 @@ class SupabaseClient:
             return None
 
 
+def send_broadcast_notification(
+    supabase: SupabaseClient,
+    notif_id: str,
+    title: str,
+    message: str,
+    notif_type: str,
+    target_id: Optional[str] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Dispatches a broadcast notification to all Medsina users via medical_notifications."""
+    payload = {
+        "id": notif_id,
+        "title": title,
+        "message": message,
+        "type": notif_type,
+        "target_id": target_id,
+        "target_role": "user",
+        "is_broadcast": True,
+        "metadata": metadata or {},
+    }
+    supabase.post("medical_notifications", payload, upsert=True)
+    print(f"📢 Broadcast Notification Sent: '{title}'")
+
+
 def call_gemini_api(prompt: str, system_prompt: str, enable_search: bool = True) -> str:
     """Calls Gemini API with cascading models and optional Google Search Grounding."""
     if not GEMINI_API_KEY:
@@ -352,6 +376,20 @@ Génère le JSON complet et structuré."""
     res = supabase.post("clinical_protocols", data, upsert=True)
     if res:
         print(f"Successfully saved protocol '{data['id']}' to Supabase clinical_protocols!")
+        send_broadcast_notification(
+            supabase=supabase,
+            notif_id=f"notif_cat_{data['id']}",
+            title=f"🚨 Nouvelle CAT Clinique : {data.get('title', course['name'])}",
+            message=f"La Conduite à Tenir officielle pour \"{course['name']}\" ({course['module_name']}) a été ajoutée aux Outils Pratiques Medsina !",
+            notif_type="cat",
+            target_id=data["id"],
+            metadata={
+                "protocol_id": data["id"],
+                "course_id": course["id"],
+                "module_name": course["module_name"],
+                "urgency_level": data.get("urgency_level", "Urgence"),
+            },
+        )
     else:
         print("Notice: Protocol generated locally (Supabase write skipped or pending).")
 
@@ -425,6 +463,20 @@ Génère le JSON complet."""
     res = supabase.post("daily_pearls", data, upsert=False)
     if res:
         print("Successfully saved daily pearl to Supabase daily_pearls table!")
+        pearl_id = data.get("id") or str(res.get("id", "")) if isinstance(res, dict) else ""
+        send_broadcast_notification(
+            supabase=supabase,
+            notif_id=f"notif_pearl_{pearl_id or datetime.datetime.now().strftime('%Y%m%d%H%M')}",
+            title=f"💡 Perle Clinique du Jour : {data.get('course_name', 'Medsina')}",
+            message=f"{data.get('title', 'Nouvelle perle clinique')} : découvrez la règle vitale et le piège de concours du jour !",
+            notif_type="pearl",
+            target_id=str(pearl_id or data.get("course_id", "")),
+            metadata={
+                "course_id": data.get("course_id"),
+                "course_name": data.get("course_name"),
+                "module_name": data.get("module_name"),
+            },
+        )
     else:
         print("Notice: Daily pearl generated locally (Supabase write skipped or pending).")
 
@@ -674,6 +726,20 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
     res = supabase.post("emergency_drugs", supabase_record, upsert=True)
     if res:
         print("Successfully saved drug to Supabase emergency_drugs table!")
+        send_broadcast_notification(
+            supabase=supabase,
+            notif_id=f"notif_drug_{data['id']}",
+            title=f"💊 Médicament d'Urgence : {data.get('dci', dci_name)}",
+            message=f"La fiche posologique et vigilance pratique de \"{data.get('dci', dci_name)}\" a été ajoutée au Codex Urgences !",
+            notif_type="announcement",
+            target_id=data["id"],
+            metadata={
+                "drug_id": data["id"],
+                "dci": data.get("dci", dci_name),
+                "brand": data.get("brand"),
+                "category": data.get("category"),
+            },
+        )
     else:
         print("Notice: Drug generated locally (Supabase write skipped or pending).")
 
@@ -1011,6 +1077,19 @@ Rédige entre 4 et 6 points réflexes numérotés ou ordonnés par ordre chronol
     res = supabase.post("on_call_mementos", data, upsert=True)
     if res:
         print("Successfully saved memento to Supabase on_call_mementos table!")
+        send_broadcast_notification(
+            supabase=supabase,
+            notif_id=f"notif_memento_{data['id']}",
+            title=f"📋 Mémento de Garde : {data.get('title', memento_title)}",
+            message=f"Nouveau mémento pratique de garde disponible : \"{data.get('title', memento_title)}\" ({data.get('category', 'Urgences')}) !",
+            notif_type="announcement",
+            target_id=data["id"],
+            metadata={
+                "memento_id": data["id"],
+                "title": data.get("title", memento_title),
+                "category": data.get("category"),
+            },
+        )
     else:
         print("Notice: Memento generated locally (Supabase write skipped or pending).")
 
@@ -1166,6 +1245,20 @@ Fournis une fiche médicale approfondie d'au moins 5 sections avec des points cl
     res = supabase.post("course_summaries", data, upsert=True)
     if res:
         print("Successfully saved course summary to Supabase course_summaries table!")
+        send_broadcast_notification(
+            supabase=supabase,
+            notif_id=f"notif_summary_{data['course_id']}",
+            title=f"📖 Nouvelle Fiche Synthèse : {data['course_name']}",
+            message=f"La fiche de révision officielle du cours \"{data['course_name']}\" (Module {data['module_name']}) est disponible sur Medsina avec points clés et pièges de concours !",
+            notif_type="course",
+            target_id=data["course_id"],
+            metadata={
+                "course_id": data["course_id"],
+                "course_name": data["course_name"],
+                "module_id": data["module_id"],
+                "module_name": data["module_name"],
+            },
+        )
     else:
         print("Notice: Summary generated locally (Supabase write skipped or pending).")
 

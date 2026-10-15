@@ -24,6 +24,7 @@ class RealtimeNotificationService {
   RealtimeChannel? _pearlChannel;
   RealtimeChannel? _protocolChannel;
   RealtimeChannel? _courseChannel;
+  RealtimeChannel? _summaryChannel;
   RealtimeChannel? _qcmChannel;
   RealtimeChannel? _notificationChannel;
   RealtimeChannel? _readsChannel;
@@ -200,6 +201,35 @@ class RealtimeNotificationService {
       } catch (e) {
         debugPrint('Supabase courses init load notice: $e');
       }
+
+      // 3. Fetch recent course summaries (last 3)
+      try {
+        final summaries = await client
+            .from('course_summaries')
+            .select('course_id, course_name, module_name, updated_at')
+            .order('updated_at', ascending: false)
+            .limit(3);
+
+        for (final s in summaries) {
+          final id = 'notif_summary_${s['course_id']}';
+          if (!items.any((n) => n.id == id)) {
+            items.add(MedicalNotification(
+              id: id,
+              title: '📖 Fiche Synthèse : ${s['course_name'] ?? 'Résumé de cours'}',
+              message: '${s['course_name']} (${s['module_name'] ?? 'Programme Résidanat'})',
+              type: NotificationType.course,
+              createdAt: s['updated_at'] != null
+                  ? DateTime.tryParse(s['updated_at'].toString()) ?? DateTime.now()
+                  : DateTime.now().subtract(const Duration(hours: 1)),
+              targetId: s['course_id']?.toString(),
+              metadata: s,
+              isRead: _readIds.contains(id),
+            ));
+          }
+        }
+      } catch (e) {
+        debugPrint('Supabase course_summaries init load notice: $e');
+      }
     } catch (e) {
       debugPrint('Supabase initial load notice: $e');
     }
@@ -329,6 +359,35 @@ class RealtimeNotificationService {
                 type: NotificationType.course,
                 createdAt: DateTime.now(),
                 targetId: newRecord['id']?.toString(),
+                metadata: newRecord,
+                isRead: _readIds.contains(id),
+              );
+              _pushNewNotification(notif);
+            },
+          )
+          .subscribe();
+
+      // 3b. Realtime on course_summaries (INSERT / UPDATE)
+      _summaryChannel = client
+          .channel('public:course_summaries')
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'course_summaries',
+            callback: (payload) {
+              final newRecord = payload.newRecord;
+              if (newRecord.isEmpty) return;
+              final courseId = newRecord['course_id']?.toString() ?? '${DateTime.now().millisecondsSinceEpoch}';
+              final id = 'notif_summary_$courseId';
+              final courseName = newRecord['course_name'] ?? 'Nouveau cours';
+              final moduleName = newRecord['module_name'] ?? 'Résidanat';
+              final notif = MedicalNotification(
+                id: id,
+                title: '📖 Nouvelle Fiche Synthèse : $courseName',
+                message: 'La fiche de révision officielle pour "$courseName" ($moduleName) est disponible avec points clés et pièges de concours !',
+                type: NotificationType.course,
+                createdAt: DateTime.now(),
+                targetId: courseId,
                 metadata: newRecord,
                 isRead: _readIds.contains(id),
               );
@@ -470,6 +529,7 @@ class RealtimeNotificationService {
     _pearlChannel?.unsubscribe();
     _protocolChannel?.unsubscribe();
     _courseChannel?.unsubscribe();
+    _summaryChannel?.unsubscribe();
     _qcmChannel?.unsubscribe();
     _notificationChannel?.unsubscribe();
     _readsChannel?.unsubscribe();

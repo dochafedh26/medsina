@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:medsina/features/notifications/models/medical_notification.dart';
 import 'package:medsina/features/notifications/services/realtime_notification_service.dart';
 
 void main() {
@@ -87,5 +88,37 @@ void main() {
     await service.setCurrentUser('usr_demo_all_access');
     expect(service.unreadCount, 0);
     expect(service.notifications.every((n) => n.isRead), true);
+  });
+
+  test('Course Summary and automated content notifications parse and broadcast correctly', () {
+    final rawSummaryJson = {
+      'id': 'notif_summary_cardio_sca_01',
+      'title': '📖 Nouvelle Fiche Synthèse : SCA ST+ (IDM)',
+      'message': 'La fiche de révision officielle du cours SCA ST+ est disponible avec points clés et pièges de concours !',
+      'type': 'course',
+      'created_at': DateTime.now().toIso8601String(),
+      'is_read': false,
+      'target_id': 'cardio_sca_01',
+      'metadata': {
+        'course_id': 'cardio_sca_01',
+        'course_name': 'SCA ST+ (IDM)',
+        'module_name': 'Cardiologie',
+      },
+    };
+
+    final notif = MedicalNotification.fromJson(rawSummaryJson);
+    expect(notif.id, 'notif_summary_cardio_sca_01');
+    expect(notif.type, NotificationType.course);
+    expect(notif.targetId, 'cardio_sca_01');
+    expect(notif.metadata?['module_name'], 'Cardiologie');
+
+    // Test addition to RealtimeNotificationService
+    final service = RealtimeNotificationService.instance;
+    service.resetForTesting();
+    service.addSimulatedNotification(notif);
+
+    expect(service.notifications.length, 1);
+    expect(service.unreadCount, 1);
+    expect(service.notifications.first.title, contains('SCA ST+'));
   });
 }
