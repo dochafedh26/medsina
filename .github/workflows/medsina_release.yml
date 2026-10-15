@@ -69,6 +69,16 @@ jobs:
             echo "class AppSecrets { static const String geminiApiKey = ''; }" > lib/core/config/app_secrets.dart
           fi
 
+      - name: 🔑 Configure Android Release Signing Key
+        run: |
+          mkdir -p android
+          cat << 'EOF' > android/key.properties
+          storePassword=medsina2027
+          keyPassword=medsina2027
+          keyAlias=upload
+          storeFile=upload-keystore.jks
+          EOF
+
       - name: 📦 Install dependencies
         run: flutter pub get
 

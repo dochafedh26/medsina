@@ -198,42 +198,76 @@ class _OtaUpdateDialogState extends State<OtaUpdateDialog> {
             ],
 
             // Actions Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (!widget.isMandatory && !_isDownloading) ...[
-                  TextButton(
-                    onPressed: () {
-                      OtaUpdateService.dismissBuild(rel.buildNumber);
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'Plus tard',
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                ],
-                ElevatedButton.icon(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 340;
+                final downloadBtn = ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: widget.isMandatory ? Colors.red.shade700 : AppTheme.primaryTeal,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   icon: Icon(
                     _isDownloading ? Icons.hourglass_top_rounded : Icons.download_rounded,
                     size: 18,
                   ),
-                  label: Text(
-                    _isDownloading
-                        ? 'Téléchargement...'
-                        : (widget.isMandatory ? 'Mettre à jour maintenant' : 'Installer la mise à jour'),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  label: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      _isDownloading
+                          ? 'Téléchargement...'
+                          : (widget.isMandatory ? 'Mettre à jour' : 'Installer la mise à jour'),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
                   ),
                   onPressed: _isDownloading ? null : _handleUpdate,
-                ),
-              ],
+                );
+
+                if (isNarrow) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      downloadBtn,
+                      if (!widget.isMandatory && !_isDownloading) ...[
+                        const SizedBox(height: 6),
+                        TextButton(
+                          onPressed: () {
+                            OtaUpdateService.dismissBuild(rel.buildNumber);
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'Plus tard',
+                            style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                          ),
+                        ),
+                      ],
+                    ],
+                  );
+                }
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (!widget.isMandatory && !_isDownloading) ...[
+                      TextButton(
+                        onPressed: () {
+                          OtaUpdateService.dismissBuild(rel.buildNumber);
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          'Plus tard',
+                          style: TextStyle(color: Colors.grey.shade600),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    Flexible(
+                      child: downloadBtn,
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
