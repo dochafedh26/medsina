@@ -9,6 +9,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../../core/services/github_actions_service.dart';
 import '../../../core/services/medsina_notification_dispatcher.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/license_key_formatter.dart';
@@ -29,11 +30,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
 
+  bool _isLoadingRuns = false;
+  List<GitHubWorkflowRun> _recentWorkflowRuns = [];
+  String? _triggeringAgentId;
+  bool _isGitHubConfigured = false;
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 6, vsync: this);
+    _tabController = TabController(length: 7, vsync: this);
     context.read<AdminBloc>().add(LoadAdminDataEvent());
+    _checkGitHubConfigAndLoadRuns();
   }
 
   @override
@@ -124,6 +131,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 Tab(icon: Icon(Icons.sell_outlined), text: 'Tarifs & Formules 🏷️'),
                 Tab(icon: Icon(Icons.vpn_key_outlined), text: 'Clés de Licence VIP'),
                 Tab(icon: Icon(Icons.campaign_outlined), text: 'Annonces & Système 📢'),
+                Tab(icon: Icon(Icons.smart_toy_rounded), text: 'Agents IA GitHub 🤖'),
               ],
             ),
           ),
@@ -138,6 +146,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     _buildPricingPlansTab(context, state, isDark),
                     _buildLicensesTab(context, state, isDark),
                     _buildSystemAndAnnouncementsTab(context, state, isDark),
+                    _buildGitHubAgentsTab(context, isDark),
                   ],
                 ),
         );
@@ -2747,6 +2756,681 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             child: const Text('Enregistrer'),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _checkGitHubConfigAndLoadRuns() async {
+    final configured = await GitHubActionsService.isConfigured();
+    if (mounted) {
+      setState(() => _isGitHubConfigured = configured);
+    }
+    await _refreshRecentWorkflowRuns();
+  }
+
+  Future<void> _refreshRecentWorkflowRuns() async {
+    if (_isLoadingRuns) return;
+    setState(() => _isLoadingRuns = true);
+    try {
+      final runs = await GitHubActionsService.fetchRecentRuns(perPage: 15);
+      if (mounted) {
+        setState(() {
+          _recentWorkflowRuns = runs;
+          _isLoadingRuns = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isLoadingRuns = false);
+    }
+  }
+
+  // --- TAB 7 : AGENTS IA & GITHUB ACTIONS AUTOMATION ---
+  Widget _buildGitHubAgentsTab(BuildContext context, bool isDark) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _checkGitHubConfigAndLoadRuns();
+      },
+      child: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          // 1. Header Banner & Connection Status
+          Card(
+            elevation: isDark ? 0 : 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF6366F1).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.smart_toy_rounded, color: Color(0xFF6366F1), size: 30),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Supervision des Agents IA GitHub',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Déclenchez manuellement les agents autonomes MedsinaPilot sur GitHub Actions sans attendre les planificateurs cron.',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(height: 1),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: _isGitHubConfigured
+                              ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                              : const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _isGitHubConfigured ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
+                              size: 14,
+                              color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _isGitHubConfigured ? 'GitHub PAT Connecté' : 'PAT GitHub Non Configuré',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.settings_rounded, size: 16),
+                        label: const Text('Configurer Token PAT'),
+                        style: OutlinedButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          foregroundColor: isDark ? Colors.white : Colors.black87,
+                        ),
+                        onPressed: _showConfigureGitHubTokenDialog,
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        tooltip: 'Actualiser le statut et les exécutions',
+                        icon: _isLoadingRuns
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(Icons.refresh_rounded),
+                        onPressed: _refreshRecentWorkflowRuns,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // 2. Agents List Section Title
+          const Row(
+            children: [
+              Icon(Icons.bolt_rounded, color: Color(0xFFF59E0B), size: 22),
+              SizedBox(width: 8),
+              Text(
+                'Lancer un Agent Automatique (À la demande)',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Cards of Available Agents
+          ...GitHubActionsService.availableAgents.map((agent) {
+            final isTriggering = _triggeringAgentId == agent.id;
+
+            return Card(
+              elevation: isDark ? 0 : 1.5,
+              margin: const EdgeInsets.only(bottom: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(
+                  color: isDark ? Colors.white12 : Colors.grey.shade200,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: agent.color.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(agent.icon, color: agent.color, size: 24),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      agent.title,
+                                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: isDark ? Colors.white10 : Colors.grey.shade100,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      agent.workflowFile,
+                                      style: TextStyle(
+                                        fontSize: 10.5,
+                                        fontFamily: 'monospace',
+                                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                agent.description,
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Icon(Icons.schedule_rounded, size: 13, color: Colors.grey.shade500),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    agent.defaultCadence,
+                                    style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    const Divider(height: 1),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: agent.color,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          icon: isTriggering
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                )
+                              : const Icon(Icons.play_arrow_rounded, size: 18),
+                          label: Text(
+                            isTriggering ? 'Déclenchement en cours...' : 'Lancer l\'Agent 🚀',
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                          ),
+                          onPressed: isTriggering ? null : () => _onTriggerAgentPressed(agent),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+
+          const SizedBox(height: 24),
+
+          // 3. Live Runs History Section
+          Row(
+            children: [
+              const Icon(Icons.history_rounded, color: Color(0xFF0284C7), size: 22),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'Historique des Exécutions Récentes (GitHub Actions)',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+              ),
+              if (_recentWorkflowRuns.isNotEmpty)
+                Text(
+                  '${_recentWorkflowRuns.length} runs',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          if (_isLoadingRuns && _recentWorkflowRuns.isEmpty)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          else if (_recentWorkflowRuns.isEmpty)
+            Card(
+              elevation: 0,
+              color: isDark ? Colors.white10 : Colors.grey.shade100,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Icon(Icons.cloud_off_rounded, size: 36, color: Colors.grey.shade400),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Aucune exécution récente récupérée.',
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Vérifiez la configuration de votre Token PAT ou cliquez sur "Actualiser".',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _recentWorkflowRuns.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final run = _recentWorkflowRuns[index];
+
+                Color statusColor = Colors.grey;
+                IconData statusIcon = Icons.hourglass_empty_rounded;
+                String statusLabel = 'En attente';
+
+                if (run.isRunning) {
+                  statusColor = const Color(0xFFF59E0B);
+                  statusIcon = Icons.sync_rounded;
+                  statusLabel = 'En cours ⏳';
+                } else if (run.isSuccess) {
+                  statusColor = const Color(0xFF10B981);
+                  statusIcon = Icons.check_circle_rounded;
+                  statusLabel = 'Succès ✅';
+                } else if (run.isFailure) {
+                  statusColor = const Color(0xFFEF4444);
+                  statusIcon = Icons.cancel_rounded;
+                  statusLabel = 'Échec ❌';
+                } else if (run.conclusion == 'cancelled') {
+                  statusColor = Colors.grey;
+                  statusIcon = Icons.do_not_disturb_on_rounded;
+                  statusLabel = 'Annulé';
+                }
+
+                return Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: isDark ? Colors.white12 : Colors.grey.shade200,
+                    ),
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    leading: CircleAvatar(
+                      backgroundColor: statusColor.withValues(alpha: 0.15),
+                      child: Icon(statusIcon, color: statusColor, size: 20),
+                    ),
+                    title: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            run.name,
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: statusColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            statusLabel,
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: statusColor),
+                          ),
+                        ),
+                      ],
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: isDark ? Colors.white10 : Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              run.event == 'schedule' ? '⏰ Automatique (Cron)' : '👤 Manuel (App/Dispatch)',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '#${run.runNumber} • ${run.createdAt.day.toString().padLeft(2, '0')}/${run.createdAt.month.toString().padLeft(2, '0')} à ${run.createdAt.hour.toString().padLeft(2, '0')}:${run.createdAt.minute.toString().padLeft(2, '0')}',
+                            style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                          ),
+                        ],
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                      tooltip: 'Consulter les logs sur GitHub Actions',
+                      onPressed: () async {
+                        if (run.htmlUrl.isNotEmpty) {
+                          final uri = Uri.parse(run.htmlUrl);
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          const SizedBox(height: 30),
+        ],
+      ),
+    );
+  }
+
+  void _onTriggerAgentPressed(GitHubAgentDefinition agent) async {
+    final configured = await GitHubActionsService.isConfigured();
+    if (!mounted) return;
+    if (!configured) {
+      _showConfigureGitHubTokenDialog();
+      return;
+    }
+
+    final inputCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: agent.color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(agent.icon, color: agent.color, size: 22),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Lancer ${agent.title}',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              agent.description,
+              style: const TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.blue.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline_rounded, color: Colors.blue, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Workflow cible : ${agent.workflowFile}\nBranche : main',
+                      style: const TextStyle(fontSize: 11.5, color: Colors.blue),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (agent.inputFieldKey != null) ...[
+              const SizedBox(height: 16),
+              Text(
+                '${agent.inputFieldLabel} :',
+                style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 6),
+              TextField(
+                controller: inputCtrl,
+                decoration: InputDecoration(
+                  hintText: agent.inputFieldHint,
+                  hintStyle: const TextStyle(fontSize: 12),
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Laissez le champ vide pour laisser l\'agent IA sélectionner automatiquement le cours / DCI prioritaire.',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: agent.color,
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.rocket_launch_rounded, size: 18),
+            label: const Text('Confirmer & Lancer'),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              setState(() => _triggeringAgentId = agent.id);
+
+              final val = inputCtrl.text.trim();
+              final inputs = val.isNotEmpty && agent.inputFieldKey != null ? {agent.inputFieldKey!: val} : null;
+
+              final result = await GitHubActionsService.triggerWorkflow(
+                workflowFileName: agent.workflowFile,
+                inputs: inputs,
+              );
+
+              if (!mounted) return;
+              setState(() => _triggeringAgentId = null);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                  content: Text(result.message),
+                  duration: const Duration(seconds: 4),
+                ),
+              );
+
+              // Wait 2s and refresh runs so the queued run shows up
+              await Future.delayed(const Duration(seconds: 2));
+              if (mounted) _refreshRecentWorkflowRuns();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConfigureGitHubTokenDialog() async {
+    final currentToken = await GitHubActionsService.getGitHubToken() ?? '';
+    final currentRepo = await GitHubActionsService.getRepo();
+
+    if (!mounted) return;
+    final tokenCtrl = TextEditingController(text: currentToken);
+    final repoCtrl = TextEditingController(text: currentRepo);
+    bool obscureToken = true;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.vpn_key_rounded, color: Color(0xFF6366F1)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Configuration GitHub Actions PAT',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Pour permettre le déclenchement des agents depuis l\'application, renseignez un Personal Access Token (PAT) avec la permission "workflow" ou "actions:write" :',
+                style: TextStyle(fontSize: 12.5),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: tokenCtrl,
+                obscureText: obscureToken,
+                decoration: InputDecoration(
+                  labelText: 'GitHub Personal Access Token (ghp_...)',
+                  hintText: 'ghp_xxxxxxxxxxxxxxxxxxxx',
+                  border: const OutlineInputBorder(),
+                  isDense: true,
+                  suffixIcon: IconButton(
+                    icon: Icon(obscureToken ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 20),
+                    onPressed: () => setDialogState(() => obscureToken = !obscureToken),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: repoCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Dépôt GitHub (owner/repo)',
+                  hintText: 'dochafedh26/medsina',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                  icon: const Icon(Icons.open_in_new_rounded, size: 14),
+                  label: const Text('Générer un Token sur GitHub', style: TextStyle(fontSize: 12)),
+                  onPressed: () async {
+                    final uri = Uri.parse('https://github.com/settings/tokens/new?scopes=repo,workflow');
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6366F1),
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                await GitHubActionsService.setGitHubToken(tokenCtrl.text.trim());
+                await GitHubActionsService.setRepo(repoCtrl.text.trim());
+                if (ctx.mounted) Navigator.pop(ctx);
+                if (!mounted) return;
+                _checkGitHubConfigAndLoadRuns();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Color(0xFF10B981),
+                    content: Text('Configuration GitHub Actions enregistrée avec succès !'),
+                  ),
+                );
+              },
+              child: const Text('Enregistrer'),
+            ),
+          ],
+        ),
       ),
     );
   }
