@@ -227,6 +227,19 @@ jobs:
             RewriteCond %{REQUEST_FILENAME} !-d
             RewriteRule . /index.html [L]
           </IfModule>
+
+          <IfModule mod_headers.c>
+            <FilesMatch "\.(html|json)$">
+              Header set Cache-Control "no-cache, no-store, must-revalidate"
+              Header set Pragma "no-cache"
+              Header set Expires 0
+            </FilesMatch>
+            <FilesMatch "(flutter_service_worker|flutter_bootstrap)\.js$">
+              Header set Cache-Control "no-cache, no-store, must-revalidate"
+              Header set Pragma "no-cache"
+              Header set Expires 0
+            </FilesMatch>
+          </IfModule>
           EOF
 
       - name: 🗜️ Archive Web

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'core/constants/app_constants.dart';
 import 'core/network/supabase_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/medsina_logo.dart';
@@ -36,6 +38,16 @@ void main() async {
     await SupabaseService.initialize();
   } catch (e) {
     debugPrint('Supabase initialization fallback: $e');
+  }
+
+  // Dynamically synchronize app version from runtime package info (web, android, windows)
+  try {
+    final pkg = await PackageInfo.fromPlatform();
+    if (pkg.version.isNotEmpty) {
+      AppConstants.appVersion = pkg.version;
+    }
+  } catch (e) {
+    debugPrint('PackageInfo initialization notice: $e');
   }
 
   // Initialize Realtime Medical Notifications (CAT, Courses, QCM, Pearl) with active user context

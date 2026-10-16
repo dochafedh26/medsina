@@ -7,3 +7,16 @@
   RewriteRule . /index.html [L]
 </IfModule>
 
+# Prevent aggressive browser caching of app shell & metadata
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|json)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
+  <FilesMatch "(flutter_service_worker|flutter_bootstrap)\.js$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
+</IfModule>
