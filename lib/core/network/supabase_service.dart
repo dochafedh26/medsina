@@ -1339,4 +1339,64 @@ class SupabaseService {
       return {'allowed': true, 'consumed_from': 'fallback_error'};
     }
   }
+
+  // --- ADMIN SYSTEM SETTINGS ---
+
+  /// Retrieve an admin-only system setting from Supabase
+  static Future<String?> getAdminSetting(String key) async {
+    try {
+      // 1. Try RPC function
+      final res = await client.rpc('get_admin_setting', params: {'p_key': key});
+      if (res != null) return res.toString();
+    } catch (_) {
+      // 2. Fallback to direct table query
+      try {
+        final res = await client
+            .from('admin_system_settings')
+            .select('setting_value')
+            .eq('setting_key', key)
+            .maybeSingle();
+        if (res != null && res['setting_value'] != null) {
+          return res['setting_value'].toString();
+        }
+      } catch (e) {
+        debugPrint('Error getting admin setting "$key" from Supabase: $e');
+      }
+    }
+    return null;
+  }
+
+  /// Persist or update an admin-only system setting in Supabase
+  static Future<bool> saveAdminSetting(
+    String key,
+    String value, {
+    String? description,
+  }) async {
+    try {
+      // 1. Try RPC function
+      final res = await client.rpc('save_admin_setting', params: {
+        'p_key': key,
+        'p_value': value,
+        'p_description': description,
+      });
+      if (res == true) return true;
+    } catch (_) {
+      // 2. Fallback to direct upsert
+      try {
+        await client.from('admin_system_settings').upsert({
+          'setting_key': key,
+          'setting_value': value,
+          'description': description,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+          'updated_by': currentUser?.id,
+        });
+        return true;
+      } catch (e) {
+        debugPrint('Error saving admin setting "$key" to Supabase: $e');
+        return false;
+      }
+    }
+    return false;
+  }
 }
+

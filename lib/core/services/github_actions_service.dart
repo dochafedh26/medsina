@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/app_secrets.dart';
+import '../network/supabase_service.dart';
 
 class GitHubAgentDefinition {
   final String id;
@@ -177,37 +178,119 @@ class GitHubActionsService {
   ];
 
   /// Get configured Personal Access Token
-  static Future<String?> getGitHubToken() async {
+  /// 1. Checks local SharedPreferences cache
+  /// 2. If fresh install or empty, attempts to restore from Supabase Cloud (admin_system_settings)
+  /// 3. Falls back to embedded AppSecrets.githubPat
+  static Future<String?> getGitHubToken({bool forceRemote = false}) async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey(_tokenPrefKey)) {
+
+    if (!forceRemote && prefs.containsKey(_tokenPrefKey)) {
       final userToken = prefs.getString(_tokenPrefKey);
       if (userToken != null && userToken.trim().isNotEmpty) {
         return userToken.trim();
       }
       return null;
     }
-    if (AppSecrets.githubPat.isNotEmpty) {
-      return AppSecrets.githubPat;
+
+    // Attempt recovery from Supabase Cloud (e.g. after app reinstallation or update)
+    try {
+      final remoteToken = await SupabaseService.getAdminSetting('github_pat');
+      if (remoteToken != null && remoteToken.trim().isNotEmpty) {
+        final cleanToken = remoteToken.trim();
+        await prefs.setString(_tokenPrefKey, cleanToken);
+        return cleanToken;
+      }
+    } catch (e) {
+      debugPrint('GitHubActionsService: Note - Supabase remote token fetch skipped: $e');
     }
+
+    if (AppSecrets.githubPat.isNotEmpty) {
+      final cleanSecret = AppSecrets.githubPat.trim();
+      await prefs.setString(_tokenPrefKey, cleanSecret);
+      // Asynchronously seed to Supabase if not yet present
+      SupabaseService.saveAdminSetting(
+        'github_pat',
+        cleanSecret,
+        description: 'GitHub Personal Access Token pour les Agents IA',
+      ).catchError((_) => false);
+      return cleanSecret;
+    }
+
     return null;
   }
 
   /// Save Personal Access Token
-  static Future<void> setGitHubToken(String token) async {
+  /// Persists locally and automatically synchronizes to Supabase Cloud for durability
+  static Future<void> setGitHubToken(String token, {bool syncSupabase = true}) async {
+    final clean = token.trim();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_tokenPrefKey, token.trim());
+    await prefs.setString(_tokenPrefKey, clean);
+
+    if (syncSupabase && clean.isNotEmpty) {
+      try {
+        await SupabaseService.saveAdminSetting(
+          'github_pat',
+          clean,
+          description: 'GitHub Personal Access Token pour les Agents IA',
+        );
+      } catch (e) {
+        debugPrint('GitHubActionsService: Erreur lors de la sauvegarde Supabase: $e');
+      }
+    }
   }
 
   /// Get configured repository (defaults to 'dochafedh26/medsina')
-  static Future<String> getRepo() async {
+  /// Checks local cache, then Supabase Cloud, then defaultRepo
+  static Future<String> getRepo({bool forceRemote = false}) async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_repoPrefKey) ?? defaultRepo;
+
+    if (!forceRemote && prefs.containsKey(_repoPrefKey)) {
+      final userRepo = prefs.getString(_repoPrefKey);
+      if (userRepo != null && userRepo.trim().isNotEmpty) {
+        return userRepo.trim();
+      }
+    }
+
+    try {
+      final remoteRepo = await SupabaseService.getAdminSetting('github_repo');
+      if (remoteRepo != null && remoteRepo.trim().isNotEmpty) {
+        final cleanRepo = remoteRepo.trim();
+        await prefs.setString(_repoPrefKey, cleanRepo);
+        return cleanRepo;
+      }
+    } catch (_) {}
+
+    return defaultRepo;
   }
 
   /// Save custom repository
-  static Future<void> setRepo(String repo) async {
+  /// Persists locally and automatically synchronizes to Supabase Cloud
+  static Future<void> setRepo(String repo, {bool syncSupabase = true}) async {
+    final clean = repo.trim();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_repoPrefKey, repo.trim());
+    await prefs.setString(_repoPrefKey, clean);
+
+    if (syncSupabase && clean.isNotEmpty) {
+      try {
+        await SupabaseService.saveAdminSetting(
+          'github_repo',
+          clean,
+          description: 'Dépôt GitHub cible pour les workflows',
+        );
+      } catch (e) {
+        debugPrint('GitHubActionsService: Erreur sauvegarde repo Supabase: $e');
+      }
+    }
+  }
+
+  /// Explicitly synchronize PAT and Repo from Supabase Cloud to local storage
+  static Future<Map<String, String?>> syncFromSupabase() async {
+    final token = await getGitHubToken(forceRemote: true);
+    final repo = await getRepo(forceRemote: true);
+    return {
+      'token': token,
+      'repo': repo,
+    };
   }
 
   /// Check whether GitHub is configured

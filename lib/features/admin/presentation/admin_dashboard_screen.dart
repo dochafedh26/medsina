@@ -2761,7 +2761,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   }
 
   Future<void> _checkGitHubConfigAndLoadRuns() async {
-    final configured = await GitHubActionsService.isConfigured();
+    var configured = await GitHubActionsService.isConfigured();
+    // Auto-recover from Supabase Cloud if local preferences are empty (e.g. after reinstall/update)
+    if (!configured) {
+      final syncRes = await GitHubActionsService.syncFromSupabase();
+      configured = syncRes['token'] != null && syncRes['token']!.isNotEmpty;
+    }
     if (mounted) {
       setState(() => _isGitHubConfigured = configured);
     }
@@ -3337,6 +3342,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     final tokenCtrl = TextEditingController(text: currentToken);
     final repoCtrl = TextEditingController(text: currentRepo);
     bool obscureToken = true;
+    bool isSyncing = false;
+    bool isSaving = false;
 
     showDialog(
       context: context,
@@ -3361,6 +3368,28 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               const Text(
                 'Pour permettre le déclenchement des agents depuis l\'application, renseignez un Personal Access Token (PAT) avec la permission "workflow" ou "actions:write" :',
                 style: TextStyle(fontSize: 12.5),
+              ),
+              const SizedBox(height: 12),
+              // Cloud Persistence Notice
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF6366F1).withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF6366F1).withValues(alpha: 0.2)),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.cloud_done_rounded, color: Color(0xFF6366F1), size: 18),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Sauvegarde Cloud Supabase (RLS Admin) : Le token et le dépôt sont conservés sur votre base. En cas de désinstallation ou mise à jour, ils sont récupérés automatiquement !',
+                        style: TextStyle(fontSize: 11, height: 1.3),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -3388,19 +3417,44 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 ),
               ),
               const SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-                  icon: const Icon(Icons.open_in_new_rounded, size: 14),
-                  label: const Text('Générer un Token sur GitHub', style: TextStyle(fontSize: 12)),
-                  onPressed: () async {
-                    final uri = Uri.parse('https://github.com/settings/tokens/new?scopes=repo,workflow');
-                    if (await canLaunchUrl(uri)) {
-                      await launchUrl(uri, mode: LaunchMode.externalApplication);
-                    }
-                  },
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton.icon(
+                    style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                    icon: const Icon(Icons.open_in_new_rounded, size: 14),
+                    label: const Text('Générer sur GitHub', style: TextStyle(fontSize: 11.5)),
+                    onPressed: () async {
+                      final uri = Uri.parse('https://github.com/settings/tokens/new?scopes=repo,workflow');
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                  ),
+                  TextButton.icon(
+                    style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                    icon: isSyncing
+                        ? const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2))
+                        : const Icon(Icons.cloud_download_rounded, size: 14, color: Color(0xFF10B981)),
+                    label: Text(
+                      isSyncing ? 'Récupération...' : 'Récupérer depuis Cloud ☁️',
+                      style: const TextStyle(fontSize: 11.5, color: Color(0xFF10B981), fontWeight: FontWeight.w600),
+                    ),
+                    onPressed: isSyncing
+                        ? null
+                        : () async {
+                            setDialogState(() => isSyncing = true);
+                            final syncRes = await GitHubActionsService.syncFromSupabase();
+                            if (syncRes['token'] != null && syncRes['token']!.isNotEmpty) {
+                              tokenCtrl.text = syncRes['token']!;
+                            }
+                            if (syncRes['repo'] != null && syncRes['repo']!.isNotEmpty) {
+                              repoCtrl.text = syncRes['repo']!;
+                            }
+                            setDialogState(() => isSyncing = false);
+                          },
+                  ),
+                ],
               ),
             ],
           ),
@@ -3414,20 +3468,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 backgroundColor: const Color(0xFF6366F1),
                 foregroundColor: Colors.white,
               ),
-              onPressed: () async {
-                await GitHubActionsService.setGitHubToken(tokenCtrl.text.trim());
-                await GitHubActionsService.setRepo(repoCtrl.text.trim());
-                if (ctx.mounted) Navigator.pop(ctx);
-                if (!mounted) return;
-                _checkGitHubConfigAndLoadRuns();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    backgroundColor: Color(0xFF10B981),
-                    content: Text('Configuration GitHub Actions enregistrée avec succès !'),
-                  ),
-                );
-              },
-              child: const Text('Enregistrer'),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setDialogState(() => isSaving = true);
+                      await GitHubActionsService.setGitHubToken(tokenCtrl.text.trim(), syncSupabase: true);
+                      await GitHubActionsService.setRepo(repoCtrl.text.trim(), syncSupabase: true);
+                      if (ctx.mounted) Navigator.pop(ctx);
+                      if (!mounted) return;
+                      _checkGitHubConfigAndLoadRuns();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Color(0xFF10B981),
+                          content: Text('Configuration enregistrée localement et synchronisée sur Supabase Cloud ☁️ !'),
+                        ),
+                      );
+                    },
+              child: isSaving
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  : const Text('Enregistrer & Sauvegarder Cloud'),
             ),
           ],
         ),
