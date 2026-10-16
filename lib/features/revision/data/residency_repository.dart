@@ -207,4 +207,38 @@ class ResidencyRepository {
     }
     return null;
   }
+
+  /// Finds a CourseModel by ID or fuzzy name match across all modules
+  static Future<CourseModel?> findCourseByNameOrId(String query) async {
+    final modules = await loadModulesAsync();
+    final cleanQuery = _normalize(query);
+    if (cleanQuery.isEmpty) return null;
+
+    // 1. Exact ID
+    for (final m in modules) {
+      for (final c in m.courses) {
+        if (c.id.toLowerCase() == query.toLowerCase()) return c;
+      }
+    }
+
+    // 2. Exact normalized name
+    for (final m in modules) {
+      for (final c in m.courses) {
+        if (_normalize(c.name) == cleanQuery) return c;
+      }
+    }
+
+    // 3. Substring containment
+    for (final m in modules) {
+      for (final c in m.courses) {
+        final cNorm = _normalize(c.name);
+        if (cNorm.contains(cleanQuery) || cleanQuery.contains(cNorm)) {
+          return c;
+        }
+      }
+    }
+
+    return null;
+  }
 }
+

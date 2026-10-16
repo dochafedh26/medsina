@@ -17,6 +17,7 @@ import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../notifications/models/medical_notification.dart';
 import '../../notifications/presentation/notifications_modal_sheet.dart';
+import '../../notifications/services/notification_navigation_service.dart';
 import '../../notifications/services/realtime_notification_service.dart';
 import '../../../core/services/ota_update_service.dart';
 import 'ota_update_dialog.dart';
@@ -90,7 +91,9 @@ class _MainScaffoldState extends State<MainScaffold> {
             action: SnackBarAction(
               label: 'Voir',
               textColor: Colors.white,
-              onPressed: () => NotificationsModalSheet.show(context),
+              onPressed: () {
+                NotificationNavigationService.handleNotificationTap(context, notif);
+              },
             ),
             duration: const Duration(seconds: 4),
           ),

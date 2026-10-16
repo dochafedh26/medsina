@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../models/medical_notification.dart';
+import '../services/notification_navigation_service.dart';
 import '../services/realtime_notification_service.dart';
 
 class NotificationsModalSheet extends StatelessWidget {
@@ -142,7 +143,11 @@ class _NotificationTile extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: () {
-        RealtimeNotificationService.instance.markAsRead(item.id);
+        NotificationNavigationService.handleNotificationTap(
+          context,
+          item,
+          closeCurrentModal: true,
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(14),

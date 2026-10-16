@@ -121,4 +121,55 @@ void main() {
     expect(service.unreadCount, 1);
     expect(service.notifications.first.title, contains('SCA ST+'));
   });
+
+  test('Notification alert detection and extended types classify properly', () {
+    final alertQuota = MedicalNotification(
+      id: 'q1',
+      title: 'Quota Journalier Épuisé (5/5)',
+      message: 'Vous avez utilisé toutes vos requêtes IA gratuites du jour.',
+      type: NotificationType.quota,
+      createdAt: DateTime.now(),
+    );
+    expect(alertQuota.isAlert, true);
+    expect(alertQuota.type.label, contains('Quota'));
+
+    final alertSub = MedicalNotification(
+      id: 's1',
+      title: 'Votre abonnement Medsina expire dans 3 jours',
+      message: 'Pensez à renouveler pour conserver votre accès illimité.',
+      type: NotificationType.subscription,
+      createdAt: DateTime.now(),
+    );
+    expect(alertSub.isAlert, true);
+    expect(alertSub.type.label, contains('Abonnement'));
+
+    final contentCat = MedicalNotification(
+      id: 'c1',
+      title: 'Nouvelle CAT Urgence : État de mal épileptique',
+      message: 'Protocole complet révisé.',
+      type: NotificationType.cat,
+      createdAt: DateTime.now(),
+    );
+    expect(contentCat.isAlert, false);
+
+    final contentDrug = MedicalNotification(
+      id: 'd1',
+      title: 'Médicament : Adrénaline injectable',
+      message: 'Fiche urgence mise à jour.',
+      type: NotificationType.drug,
+      createdAt: DateTime.now(),
+    );
+    expect(contentDrug.isAlert, false);
+    expect(contentDrug.type.label, contains('Médicament'));
+
+    final contentMemento = MedicalNotification(
+      id: 'm1',
+      title: 'Mémento de Garde : Score de Glasgow',
+      message: 'Fiche réflexe ajoutée.',
+      type: NotificationType.memento,
+      createdAt: DateTime.now(),
+    );
+    expect(contentMemento.isAlert, false);
+    expect(contentMemento.type.label, contains('Mémento'));
+  });
 }

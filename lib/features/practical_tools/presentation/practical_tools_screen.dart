@@ -4,7 +4,8 @@ import '../../lab_analysis/presentation/lab_analysis_screen.dart';
 import '../models/lab_value_model.dart';
 
 class PracticalToolsScreen extends StatefulWidget {
-  const PracticalToolsScreen({super.key});
+  final int initialTabIndex;
+  const PracticalToolsScreen({super.key, this.initialTabIndex = 0});
 
   @override
   State<PracticalToolsScreen> createState() => _PracticalToolsScreenState();
@@ -22,7 +23,10 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    final initialIdx = (widget.initialTabIndex >= 0 && widget.initialTabIndex < 3)
+        ? widget.initialTabIndex
+        : 0;
+    _tabController = TabController(length: 3, vsync: this, initialIndex: initialIdx);
     _loadData();
   }
 

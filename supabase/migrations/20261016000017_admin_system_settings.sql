@@ -140,3 +140,4 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.get_admin_setting(TEXT) TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.save_admin_setting(TEXT, TEXT, TEXT) TO authenticated, service_role;
+
