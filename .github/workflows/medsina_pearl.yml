@@ -2,8 +2,8 @@ name: 💡 Medsina - Perle du Jour & Pièges
 
 on:
   schedule:
-    # Déclenché toutes les 6 heures (00:27, 06:27, 12:27, 18:27 UTC = 4 perles et pièges par 24h)
-    - cron: '27 */6 * * *'
+    # Déclenché une fois par jour à 03:53 UTC (Perle du Jour unique quotidienne)
+    - cron: '53 3 * * *'
   workflow_dispatch:
     inputs:
       course_id:

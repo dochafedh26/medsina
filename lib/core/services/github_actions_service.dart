@@ -134,7 +134,7 @@ class GitHubActionsService {
       description: 'Règle clinique vitale en garde et question piège de QCM typique pour le concours.',
       icon: Icons.tips_and_updates_rounded,
       color: Color(0xFFF59E0B),
-      defaultCadence: 'Toutes les 6 heures (Autonome)',
+      defaultCadence: 'Tous les jours à 03h53 (Autonome)',
       inputFieldKey: 'course_id',
       inputFieldLabel: 'ID du Cours Cible (optionnel)',
       inputFieldHint: 'ex: Blida_PNEUMOLOGIE_ASTHME (laisser vide pour auto)',

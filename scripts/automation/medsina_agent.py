@@ -156,64 +156,77 @@ def send_broadcast_notification(
     print(f"📢 Broadcast Notification Sent: '{title}'")
 
 
-def call_gemini_api(prompt: str, system_prompt: str, enable_search: bool = True) -> str:
-    """Calls Gemini API with cascading models and optional Google Search Grounding."""
+def call_gemini_api(prompt: str, system_prompt: str, enable_search: bool = True, max_rounds: int = 3) -> str:
+    """Calls Gemini API with cascading models, exponential backoff on 429/503, and multi-round retries."""
     if not GEMINI_API_KEY:
         raise ValueError("Missing GEMINI_API_KEY")
 
     # Attempt with search first, fallback to standard if search tool hits quota limit
     search_options = [True, False] if enable_search else [False]
 
-    for use_search in search_options:
-        for model in GEMINI_MODELS:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
-            
-            request_body: Dict[str, Any] = {
-                "systemInstruction": {
-                    "parts": [{"text": system_prompt}]
-                },
-                "contents": [
-                    {
-                        "parts": [{"text": prompt}]
+    for round_num in range(1, max_rounds + 1):
+        if round_num > 1:
+            backoff_delay = 5.0 * (round_num - 1)
+            print(f"🔄 Retrying Gemini cascade (Round {round_num}/{max_rounds}) after {backoff_delay:.0f}s cooldown...")
+            time.sleep(backoff_delay)
+
+        for use_search in search_options:
+            for model in GEMINI_MODELS:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+                
+                request_body: Dict[str, Any] = {
+                    "systemInstruction": {
+                        "parts": [{"text": system_prompt}]
+                    },
+                    "contents": [
+                        {
+                            "parts": [{"text": prompt}]
+                        }
+                    ],
+                    "generationConfig": {
+                        "temperature": 0.2,
+                        "maxOutputTokens": 8192,
                     }
-                ],
-                "generationConfig": {
-                    "temperature": 0.2,
-                    "maxOutputTokens": 8192,
                 }
-            }
 
-            if use_search:
-                request_body["tools"] = [{"googleSearch": {}}]
+                if use_search:
+                    request_body["tools"] = [{"googleSearch": {}}]
 
-            try:
-                resp = requests.post(url, json=request_body, headers={"Content-Type": "application/json"}, timeout=45)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    candidates = data.get("candidates", [])
-                    if candidates:
-                        parts = candidates[0].get("content", {}).get("parts", [])
-                        if parts and "text" in parts[0]:
-                            return parts[0]["text"]
-                elif resp.status_code == 429 and use_search:
-                    # Search quota exhausted, break model loop to switch to use_search=False immediately
-                    print(f"Search tool quota exhausted on {model}, falling back to built-in medical knowledge...")
+                try:
+                    resp = requests.post(url, json=request_body, headers={"Content-Type": "application/json"}, timeout=45)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        candidates = data.get("candidates", [])
+                        if candidates:
+                            parts = candidates[0].get("content", {}).get("parts", [])
+                            if parts and "text" in parts[0]:
+                                return parts[0]["text"]
+                    elif resp.status_code == 429 and use_search:
+                        # Search quota exhausted, break model loop to switch to use_search=False immediately
+                        print(f"Search tool quota exhausted on {model}, falling back to built-in medical knowledge...")
+                        time.sleep(2.0)
+                        break
+                    elif resp.status_code == 429:
+                        retry_after = int(resp.headers.get("Retry-After", 4))
+                        pause = max(3.0, min(float(retry_after), 8.0))
+                        print(f"Notice: Rate limit (429) hit on {model}, pausing {pause:.0f}s before fallback...")
+                        time.sleep(pause)
+                        continue
+                    elif resp.status_code == 503:
+                        # 503 Service Unavailable / High Demand: transient spike on Google infrastructure
+                        print(f"Notice: Gemini {model} experiencing high demand (503). Pausing 4s before fallback...")
+                        time.sleep(4.0)
+                        continue
+                    else:
+                        print(f"Notice: Gemini {model} (search={use_search}) returned status {resp.status_code}: {resp.text[:120]}")
+                        time.sleep(1.5)
+                        continue
+                except Exception as e:
+                    print(f"Gemini {model} exception: {e}")
                     time.sleep(1.5)
-                    break
-                elif resp.status_code == 429:
-                    print(f"Notice: Rate limit (429) hit on {model}, pausing 2s before fallback...")
-                    time.sleep(2.0)
                     continue
-                else:
-                    print(f"Notice: Gemini {model} (search={use_search}) returned status {resp.status_code}: {resp.text[:120]}")
-                    time.sleep(1.0)
-                    continue
-            except Exception as e:
-                print(f"Gemini {model} exception: {e}")
-                time.sleep(1.0)
-                continue
 
-    raise RuntimeError("Failed to generate response across all Gemini models.")
+    raise RuntimeError("Failed to generate response across all Gemini models after multiple retry rounds.")
 
 
 def load_courses_catalog(supabase: SupabaseClient) -> List[Dict[str, Any]]:
@@ -356,7 +369,12 @@ SCHEMA DU JSON :
 Recherche sur le web les consensus officiels et recommandations les plus récentes (2024-2026) pour cette pathologie.
 Génère le JSON complet et structuré."""
 
-    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    except Exception as e:
+        print(f"❌ Erreur appel Gemini protocole CAT ({course['name']}): {e}")
+        return None
+
     try:
         data = extract_clean_json(raw_response)
     except Exception as e:
@@ -444,7 +462,12 @@ SCHEMA JSON :
 Recherche les dernières recommandations pour garantir une précision absolue.
 Génère le JSON complet."""
 
-    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    except Exception as e:
+        print(f"❌ Erreur appel Gemini perle ({course['name']}): {e}")
+        return None
+
     try:
         data = extract_clean_json(raw_response)
     except Exception as e:
@@ -688,7 +711,12 @@ N'utilise AUCUNE balise Markdown dans ta réponse brute, juste le JSON pur.
 Recherche les noms de marques déposées et laboratoires présents en Algérie (Saidal, IPA, PCH, etc.).
 Détaille les posologies exactes de titration pour l'adulte et l'enfant en situation d'urgence."""
 
-    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    except Exception as e:
+        print(f"❌ Erreur appel Gemini médicament ({dci_name}): {e}")
+        return None
+
     try:
         data = extract_clean_json(raw_response)
     except Exception as e:
@@ -890,7 +918,11 @@ N'utilise AUCUNE balise Markdown dans ta réponse brute, juste le JSON pur.
     prompt = f"""Rédige la fiche de référence biologique complète pour l'examen : {lab_name}.
 Fournis les normes usuelles exactes, les causes et seuils critiques d'urgence pour les valeurs hautes et basses, ainsi que 2 à 3 perles cliniques ou pièges fréquents du concours de résidanat."""
 
-    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    except Exception as e:
+        print(f"❌ Erreur appel Gemini norme biologique ({lab_name}): {e}")
+        return None
     try:
         data = extract_clean_json(raw_response)
     except Exception as e:
@@ -1057,7 +1089,11 @@ N'utilise AUCUNE balise Markdown dans ta réponse brute, juste le JSON pur.
     prompt = f"""Rédige la fiche réflexe de garde d'urgence pour : {memento_title}.
 Rédige entre 4 et 6 points réflexes numérotés ou ordonnés par ordre chronologique d'intervention, avec les posologies exactes adaptées à la pratique hospitalière en Algérie."""
 
-    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    except Exception as e:
+        print(f"❌ Erreur appel Gemini mémento ({memento_title}): {e}")
+        return None
     try:
         data = extract_clean_json(raw_response)
     except Exception as e:
@@ -1225,7 +1261,11 @@ Réponds UNIQUEMENT par le JSON pur sans texte avant ni après.
 
 Fournis une fiche médicale approfondie d'au moins 5 sections avec des points clés à haut rendement pour réussir les QCM du résidanat."""
 
-    raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    try:
+        raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    except Exception as e:
+        print(f"❌ Erreur appel Gemini résumé cours ({course['name']}): {e}")
+        return None
     try:
         data = extract_clean_json(raw_response)
     except Exception as e:
@@ -1320,6 +1360,14 @@ def main():
                     "title": cat_data.get("title"),
                     "status": "Succès ✅",
                 })
+            else:
+                summary_results.append({
+                    "type": "Conduite à Tenir (CAT)",
+                    "course": cat_course["name"],
+                    "specialty": cat_course["module_name"],
+                    "title": "Non généré",
+                    "status": "Échec temporaire (Gemini saturé) ⚠️",
+                })
 
     # 2. Daily Pearl (Perle du Jour)
     if args.action in ("pearl", "both", "all"):
@@ -1333,6 +1381,14 @@ def main():
                     "specialty": pearl_course["module_name"],
                     "title": pearl_data.get("title"),
                     "status": "Succès ✅",
+                })
+            else:
+                summary_results.append({
+                    "type": "Perle du Jour & Piège",
+                    "course": pearl_course["name"],
+                    "specialty": pearl_course["module_name"],
+                    "title": "Non généré",
+                    "status": "Échec temporaire (Gemini saturé) ⚠️",
                 })
 
     # 3. Emergency Drug Monograph (Urgences & DCI Algérie)
@@ -1348,6 +1404,14 @@ def main():
                     "title": drug_data.get("dci", drug_dci),
                     "status": "Succès ✅",
                 })
+            else:
+                summary_results.append({
+                    "type": "Médicament d'Urgence & DCI",
+                    "course": drug_dci,
+                    "specialty": "Urgences",
+                    "title": drug_dci,
+                    "status": "Échec temporaire (Gemini saturé) ⚠️",
+                })
 
     # 4. Biological Reference Values (Normes Biologiques)
     if args.action in ("lab", "all"):
@@ -1361,6 +1425,14 @@ def main():
                     "specialty": lab_data.get("category", "Biologie"),
                     "title": lab_data.get("name", lab_candidate),
                     "status": "Succès ✅",
+                })
+            else:
+                summary_results.append({
+                    "type": "Normes Biologiques",
+                    "course": lab_candidate,
+                    "specialty": "Biologie",
+                    "title": lab_candidate,
+                    "status": "Échec temporaire (Gemini saturé) ⚠️",
                 })
 
     # 5. On-Call Hospital Memento (Mémento de Garde)
@@ -1376,6 +1448,14 @@ def main():
                     "title": memento_data.get("title", memento_candidate),
                     "status": "Succès ✅",
                 })
+            else:
+                summary_results.append({
+                    "type": "Mémento de Garde",
+                    "course": memento_candidate,
+                    "specialty": "Garde Hospitalière",
+                    "title": memento_candidate,
+                    "status": "Échec temporaire (Gemini saturé) ⚠️",
+                })
 
     # 6. Official Residency Course Summary (Fiche Résumé Concours)
     if args.action in ("summary", "all"):
@@ -1389,6 +1469,14 @@ def main():
                     "specialty": summary_course["module_name"],
                     "title": summary_data.get("course_name"),
                     "status": "Succès ✅",
+                })
+            else:
+                summary_results.append({
+                    "type": "Fiche Résumé Cours",
+                    "course": summary_course["name"],
+                    "specialty": summary_course["module_name"],
+                    "title": "Non généré",
+                    "status": "Échec temporaire (Gemini saturé) ⚠️",
                 })
 
     # Print GitHub Actions step summary if available
