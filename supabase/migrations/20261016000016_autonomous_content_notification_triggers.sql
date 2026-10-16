@@ -181,3 +181,4 @@ SELECT
   s.updated_at
 FROM public.course_summaries s
 ON CONFLICT (id) DO NOTHING;
+

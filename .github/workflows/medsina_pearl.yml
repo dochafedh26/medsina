@@ -2,8 +2,8 @@ name: 💡 Medsina - Perle du Jour & Pièges
 
 on:
   schedule:
-    # Déclenché chaque matin à 05:15 UTC (= 06:15 heure d'Algérie)
-    - cron: '15 5 * * *'
+    # Déclenché toutes les 6 heures (00:27, 06:27, 12:27, 18:27 UTC = 4 perles et pièges par 24h)
+    - cron: '27 */6 * * *'
   workflow_dispatch:
     inputs:
       course_id:

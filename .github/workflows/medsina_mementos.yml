@@ -1,0 +1,67 @@
+name: 🌙 Medsina - Mémentos de Garde Hospitalière
+
+on:
+  schedule:
+    # Déclenché toutes les 8 heures (02:47, 10:47, 18:47 UTC = 3 mémentos réflexes de garde par 24h)
+    - cron: '47 */8 * * *'
+  workflow_dispatch:
+    inputs:
+      memento:
+        description: 'Thème réflexe de garde spécifique optionnel (ex: Coma Toxique, Choc Anaphylactique)'
+        required: false
+        default: ''
+        type: string
+
+concurrency:
+  group: medsina-mementos-automation
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  generate-memento:
+    name: 📋 Génération Fiche Mémento de Garde
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Récupérer le code Medsina
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurer l environnement Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'scripts/automation/requirements.txt'
+
+      - name: 📦 Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/automation/requirements.txt
+
+      - name: 🩺 Exécuter l Agent Médical MedsinaPilot (Mémentos de Garde)
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          CMD="python scripts/automation/medsina_agent.py --action memento"
+          if [ -n "${{ inputs.memento }}" ]; then
+            CMD="$CMD --memento '${{ inputs.memento }}'"
+          fi
+          echo "🚀 Exécution : $CMD"
+          eval $CMD
+
+      - name: 💾 Synchroniser le cache local des assets hors-ligne
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/data/*.json
+          if git diff --staged --quiet; then
+            echo "Aucune modification de fichier JSON à valider."
+          else
+            git commit -m "chore(automation): sync autonomous mementos cache [skip ci]"
+            git push
+          fi

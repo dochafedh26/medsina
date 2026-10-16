@@ -17,6 +17,7 @@ import random
 import re
 import argparse
 import datetime
+import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
@@ -81,9 +82,11 @@ COURSE_SUMMARIES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" 
 GEMINI_MODELS = [
     "gemini-3.5-flash-lite",
     "gemini-3.5-flash",
+    "gemini-2.5-flash",
     "gemini-3.1-flash-lite",
     "gemini-3.8-flash",
     "gemini-flash-latest",
+    "gemini-2.5-pro",
 ]
 
 
@@ -198,12 +201,19 @@ def call_gemini_api(prompt: str, system_prompt: str, enable_search: bool = True)
                 elif resp.status_code == 429 and use_search:
                     # Search quota exhausted, break model loop to switch to use_search=False immediately
                     print(f"Search tool quota exhausted on {model}, falling back to built-in medical knowledge...")
+                    time.sleep(1.5)
                     break
+                elif resp.status_code == 429:
+                    print(f"Notice: Rate limit (429) hit on {model}, pausing 2s before fallback...")
+                    time.sleep(2.0)
+                    continue
                 else:
-                    # Try next model in cascade
+                    print(f"Notice: Gemini {model} (search={use_search}) returned status {resp.status_code}: {resp.text[:120]}")
+                    time.sleep(1.0)
                     continue
             except Exception as e:
                 print(f"Gemini {model} exception: {e}")
+                time.sleep(1.0)
                 continue
 
     raise RuntimeError("Failed to generate response across all Gemini models.")

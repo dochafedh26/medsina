@@ -2,8 +2,8 @@ name: 🩺 Medsina - Conduites à Tenir (CAT)
 
 on:
   schedule:
-    # Déclenché quotidiennement à 02:15 UTC (= 03:15 heure d'Algérie)
-    - cron: '15 2 * * *'
+    # Déclenché toutes les 6 heures (00:17, 06:17, 12:17, 18:17 UTC = 4 CATs officielles par 24h)
+    - cron: '17 */6 * * *'
   workflow_dispatch:
     inputs:
       course_id:
