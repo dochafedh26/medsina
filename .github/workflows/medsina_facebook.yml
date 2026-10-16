@@ -1,0 +1,63 @@
+name: 📢 MedevSync - Publications Facebook & Infographies
+
+on:
+  schedule:
+    # Déclenché 2 fois par semaine : Lundi et Jeudi à 17:30 UTC
+    - cron: '30 17 * * 1,4'
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: 'Thème optionnel du post (ex: OAP, Analyseur ordonnance, ou laisser vide)'
+        required: false
+        default: ''
+        type: string
+      dry_run:
+        description: 'Mode test sans publication réelle sur Facebook'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: medsina-facebook-automation
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish-facebook-post:
+    name: 🎨 Génération & Publication Visuelle Facebook
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Récupérer le code Medsina
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurer l environnement Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Installer les dépendances (Pillow, requests)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pillow requests
+
+      - name: 🎨 Générer le visuel et publier sur Facebook
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          CMD="python scripts/automation/facebook_post_generator.py"
+          if [ -n "${{ github.event.inputs.topic }}" ]; then
+            CMD="$CMD --topic '${{ github.event.inputs.topic }}'"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            CMD="$CMD --dry-run"
+          fi
+          echo "🚀 Exécution : $CMD"
+          eval $CMD
+

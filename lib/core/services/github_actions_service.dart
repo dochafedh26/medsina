@@ -175,6 +175,18 @@ class GitHubActionsService {
       inputFieldLabel: 'Action cible (optionnel)',
       inputFieldHint: 'all, both, cat, pearl, drugs, summary...',
     ),
+    GitHubAgentDefinition(
+      id: 'facebook',
+      workflowFile: 'medsina_facebook.yml',
+      title: 'Publications Facebook & Visuels',
+      description: 'Génère et publie automatiquement une infographie médicale moderne (1080x1080) avec légende sur la page MedevSync.',
+      icon: Icons.campaign_rounded,
+      color: Color(0xFF1877F2),
+      defaultCadence: 'Lundi & Jeudi à 17h30 (Autonome)',
+      inputFieldKey: 'topic',
+      inputFieldLabel: 'Thème Médical / Promotionnel (optionnel)',
+      inputFieldHint: 'ex: OAP, Analyseur ordonnance (laisser vide pour auto)',
+    ),
   ];
 
   /// Get configured Personal Access Token
