@@ -54,9 +54,22 @@ OFFICIAL_WEB_URL = "https://medsina.medevsync.com"
 OFFICIAL_APK_URL = "https://medsina.medevsync.com/download/medsina.apk"
 OFFICIAL_WIN_URL = "https://medsina.medevsync.com/download/medsina-setup.exe"
 
+def get_current_app_version() -> str:
+    try:
+        pubspec = Path(__file__).resolve().parents[2] / "pubspec.yaml"
+        if pubspec.exists():
+            for line in pubspec.read_text(encoding="utf-8").splitlines():
+                if line.startswith("version:"):
+                    return line.split(":")[1].strip().split("+")[0]
+    except Exception:
+        pass
+    return "1.0.8"
+
+APP_VERSION = get_current_app_version()
+
 OFFICIAL_FOOTER = f"""
 ━━━━━━━━━━━━━━━━━━━━
-📲 TESTEZ ET TÉLÉCHARGEZ MEDSINA (v1.0.7) :
+📲 TESTEZ ET TÉLÉCHARGEZ MEDSINA (v{APP_VERSION}) :
 🌐 Version Web Directe : {OFFICIAL_WEB_URL}
 📱 Télécharger sur Android (.apk) : {OFFICIAL_APK_URL}
 💻 Télécharger sur PC Windows (.exe) : {OFFICIAL_WIN_URL}
