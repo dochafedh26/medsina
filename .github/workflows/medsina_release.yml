@@ -59,14 +59,15 @@ jobs:
       - name: 🔑 Configure App Secrets
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_PAT: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p lib/core/config
           if [ -n "$GEMINI_API_KEY" ]; then
-            echo "class AppSecrets { static const String geminiApiKey = '$GEMINI_API_KEY'; }" > lib/core/config/app_secrets.dart
+            echo "class AppSecrets { static const String geminiApiKey = '$GEMINI_API_KEY'; static const String githubPat = '$GITHUB_PAT'; }" > lib/core/config/app_secrets.dart
           elif [ -f lib/core/config/app_secrets.dart.example ]; then
             cp lib/core/config/app_secrets.dart.example lib/core/config/app_secrets.dart
           else
-            echo "class AppSecrets { static const String geminiApiKey = ''; }" > lib/core/config/app_secrets.dart
+            echo "class AppSecrets { static const String geminiApiKey = ''; static const String githubPat = ''; }" > lib/core/config/app_secrets.dart
           fi
 
       - name: 🔑 Configure Android Release Signing Key
@@ -131,14 +132,15 @@ jobs:
         shell: pwsh
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_PAT: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           New-Item -ItemType Directory -Force -Path "lib/core/config"
           if ($env:GEMINI_KEY) {
-            "class AppSecrets { static const String geminiApiKey = '$($env:GEMINI_KEY)'; }" | Out-File -FilePath "lib/core/config/app_secrets.dart" -Encoding utf8
+            "class AppSecrets { static const String geminiApiKey = '$($env:GEMINI_KEY)'; static const String githubPat = '$($env:GITHUB_PAT)'; }" | Out-File -FilePath "lib/core/config/app_secrets.dart" -Encoding utf8
           } elseif (Test-Path "lib/core/config/app_secrets.dart.example") {
             Copy-Item -Path "lib/core/config/app_secrets.dart.example" -Destination "lib/core/config/app_secrets.dart" -Force
           } else {
-            "class AppSecrets { static const String geminiApiKey = ''; }" | Out-File -FilePath "lib/core/config/app_secrets.dart" -Encoding utf8
+            "class AppSecrets { static const String geminiApiKey = ''; static const String githubPat = ''; }" | Out-File -FilePath "lib/core/config/app_secrets.dart" -Encoding utf8
           }
 
       - name: 📦 Install dependencies
@@ -196,14 +198,15 @@ jobs:
       - name: 🔑 Configure App Secrets
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_PAT: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p lib/core/config
           if [ -n "$GEMINI_API_KEY" ]; then
-            echo "class AppSecrets { static const String geminiApiKey = '$GEMINI_API_KEY'; }" > lib/core/config/app_secrets.dart
+            echo "class AppSecrets { static const String geminiApiKey = '$GEMINI_API_KEY'; static const String githubPat = '$GITHUB_PAT'; }" > lib/core/config/app_secrets.dart
           elif [ -f lib/core/config/app_secrets.dart.example ]; then
             cp lib/core/config/app_secrets.dart.example lib/core/config/app_secrets.dart
           else
-            echo "class AppSecrets { static const String geminiApiKey = ''; }" > lib/core/config/app_secrets.dart
+            echo "class AppSecrets { static const String geminiApiKey = ''; static const String githubPat = ''; }" > lib/core/config/app_secrets.dart
           fi
 
       - name: 📦 Install dependencies
