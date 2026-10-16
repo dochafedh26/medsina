@@ -290,7 +290,13 @@ jobs:
             ${{ inputs.release_notes || '### Nouveautés de Medsina ✨\n- Améliorations de performance et stabilité.' }}
 
             ---
-            ### 📦 Téléchargements Directs
+            ### ⚡ Téléchargements Directs Officiels (Serveur Rapide MedevSync / Octenium)
+            - 📱 **Android APK** : [Télécharger Medsina v${{ steps.vars.outputs.version }} (.apk)](https://medsina.medevsync.com/releases/Medsina_v${{ steps.vars.outputs.version }}_Android.apk) — [Lien Direct Permanent](https://medsina.medevsync.com/download/medsina.apk)
+            - 💻 **Windows Setup (.exe)** : [Télécharger l'Installateur PC](https://medsina.medevsync.com/releases/Medsina_v${{ steps.vars.outputs.version }}_Windows_Setup.exe) — [Lien Direct Permanent](https://medsina.medevsync.com/download/medsina-setup.exe)
+            - 🌐 **Version Web en Ligne** : [https://medsina.medevsync.com](https://medsina.medevsync.com)
+
+            ---
+            ### 📦 Miroirs GitHub
             - **Android APK** : [Medsina_v${{ steps.vars.outputs.version }}_Android.apk](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_Android.apk)
             - **Google Play AAB** : [Medsina_v${{ steps.vars.outputs.version }}_GooglePlay.aab](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_GooglePlay.aab)
             - **Windows Installateur (.exe)** : [Medsina_v${{ steps.vars.outputs.version }}_Windows_Setup.exe](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.tag }}/Medsina_v${{ steps.vars.outputs.version }}_Windows_Setup.exe)
@@ -299,24 +305,23 @@ jobs:
           files: |
             dist-release/*
 
-      - name: 📡 Register New OTA Release into Supabase
+      - name: 🚀 Upload Releases to Octenium Hosting & Update OTA Links
         env:
           SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "ℹ️ SUPABASE_SERVICE_ROLE_KEY is not set. Skipping Supabase OTA registration."
+            echo "ℹ️ SUPABASE_SERVICE_ROLE_KEY is not set. Skipping Octenium upload."
             exit 0
           fi
           TAG="${{ steps.vars.outputs.tag }}"
           VERSION="${{ steps.vars.outputs.version }}"
           BUILD="${{ steps.vars.outputs.build }}"
           REPO="${{ github.repository }}"
-          APK_URL="https://github.com/$REPO/releases/download/$TAG/Medsina_v${VERSION}_Android.apk"
-          WIN_URL="https://github.com/$REPO/releases/download/$TAG/Medsina_v${VERSION}_Windows_Setup.exe"
 
           python -c "
-          import os, requests, json
+          import os, requests, json, ftplib
+          from pathlib import Path
 
           url = os.environ['SUPABASE_URL'].rstrip('/')
           key = os.environ['SUPABASE_SERVICE_ROLE_KEY']
@@ -327,6 +332,60 @@ jobs:
               'Prefer': 'return=minimal'
           }
 
+          # 1. Fetch Octenium FTP credentials from Supabase admin_system_settings
+          ftp_host = 'medevsync.com'
+          ftp_user = None
+          ftp_pass = None
+          try:
+              r = requests.get(f'{url}/rest/v1/admin_system_settings?select=setting_key,setting_value', headers=headers)
+              for row in r.json():
+                  k, v = row.get('setting_key'), row.get('setting_value')
+                  if k == 'octenium_ftp_host': ftp_host = v
+                  elif k == 'octenium_ftp_user': ftp_user = v
+                  elif k == 'octenium_ftp_password': ftp_pass = v
+          except Exception as e:
+              print(f'Warning fetching FTP settings: {e}')
+
+          # Default URLs (fallback to GitHub if FTP upload fails)
+          apk_url = f'https://github.com/{os.environ.get(\"REPO\")}/releases/download/{os.environ.get(\"TAG\")}/Medsina_v{os.environ.get(\"VERSION\")}_Android.apk'
+          win_url = f'https://github.com/{os.environ.get(\"REPO\")}/releases/download/{os.environ.get(\"TAG\")}/Medsina_v{os.environ.get(\"VERSION\")}_Windows_Setup.exe'
+
+          if ftp_user and ftp_pass:
+              try:
+                  print(f'Connecting to FTP {ftp_host}...')
+                  ftp = ftplib.FTP(ftp_host, timeout=60)
+                  ftp.login(ftp_user, ftp_pass)
+                  ftp.cwd('medsina.medevsync.com')
+
+                  for d in ['releases', 'download']:
+                      try: ftp.mkd(d)
+                      except Exception: pass
+
+                  apk_file = Path(f'dist-release/Medsina_v{os.environ.get(\"VERSION\")}_Android.apk')
+                  if apk_file.exists():
+                      print('Uploading Android APK to Octenium...')
+                      with open(apk_file, 'rb') as f:
+                          ftp.storbinary(f'STOR releases/{apk_file.name}', f)
+                      with open(apk_file, 'rb') as f:
+                          ftp.storbinary('STOR download/medsina.apk', f)
+                      apk_url = f'https://medsina.medevsync.com/releases/{apk_file.name}'
+                      print(f'✅ Android APK live at: {apk_url}')
+
+                  win_file = Path(f'dist-release/Medsina_v{os.environ.get(\"VERSION\")}_Windows_Setup.exe')
+                  if win_file.exists():
+                      print('Uploading Windows Setup to Octenium...')
+                      with open(win_file, 'rb') as f:
+                          ftp.storbinary(f'STOR releases/{win_file.name}', f)
+                      with open(win_file, 'rb') as f:
+                          ftp.storbinary('STOR download/medsina-setup.exe', f)
+                      win_url = f'https://medsina.medevsync.com/releases/{win_file.name}'
+                      print(f'✅ Windows Setup live at: {win_url}')
+
+                  ftp.quit()
+              except Exception as e:
+                  print(f'FTP upload error (falling back to GitHub URLs): {e}')
+
+          # 2. Register release into Supabase
           notes = '''${{ inputs.release_notes || 'Mise à jour officielle de Medsina.' }}'''
           is_mandatory = '${{ inputs.is_mandatory }}'.lower() == 'true'
 
@@ -336,7 +395,7 @@ jobs:
                   'version_name': '$VERSION',
                   'build_number': int('$BUILD'),
                   'release_notes': notes,
-                  'download_url': '$APK_URL',
+                  'download_url': apk_url,
                   'is_mandatory': is_mandatory,
                   'min_supported_build': int('$BUILD') if is_mandatory else 1,
                   'is_active': True
@@ -346,7 +405,7 @@ jobs:
                   'version_name': '$VERSION',
                   'build_number': int('$BUILD'),
                   'release_notes': notes,
-                  'download_url': '$WIN_URL',
+                  'download_url': win_url,
                   'is_mandatory': is_mandatory,
                   'min_supported_build': int('$BUILD') if is_mandatory else 1,
                   'is_active': True
