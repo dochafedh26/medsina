@@ -6,7 +6,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'medsina_github_pat_token': ''});
   });
 
   group('GitHubActionsService Tests', () {
@@ -89,3 +89,4 @@ void main() {
     });
   });
 }
+

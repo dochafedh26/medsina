@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../config/app_secrets.dart';
 
 class GitHubAgentDefinition {
   final String id;
@@ -178,7 +179,17 @@ class GitHubActionsService {
   /// Get configured Personal Access Token
   static Future<String?> getGitHubToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_tokenPrefKey);
+    if (prefs.containsKey(_tokenPrefKey)) {
+      final userToken = prefs.getString(_tokenPrefKey);
+      if (userToken != null && userToken.trim().isNotEmpty) {
+        return userToken.trim();
+      }
+      return null;
+    }
+    if (AppSecrets.githubPat.isNotEmpty) {
+      return AppSecrets.githubPat;
+    }
+    return null;
   }
 
   /// Save Personal Access Token
@@ -315,3 +326,4 @@ class GitHubActionsService {
     }
   }
 }
+
