@@ -627,5 +627,19 @@
     "alert": "• Contre-indications absolues : Hypersensibilité aux fluoroquinolones, association avec la tizanidine, antécédent de tendinopathie avec les fluoroquinolones, épilepsie non contrôlée, grossesse et allaitement (sauf indication vitale pédiatrique).\n• Pièges létaux : Risque de tendinite et de rupture tendineuse (notamment tendon d'Achille), allongement de l'intervalle QT (attention aux associations avec les arythmigènes), troubles neuropsychiques (convulsions, confusion), toxicité rénale.\n• Surveillance : Fonction rénale (créatininémie, diurèse), ECG (QT) en cas de co-prescription, surveillance neurologique et ostéo-articulaire.",
     "algerian_availability": "Disponible en milieu hospitalier (UMC, services de réanimation, PCH, pharmacies hospitalières) et officines (formes orales et injectables).",
     "created_at": "2026-10-14T16:52:32.805545+00:00"
+  },
+  {
+    "id": "drug_fibrinogene_humain",
+    "dci": "Fibrinogène humain",
+    "brand": "Clottafact (LFB), RiaSTAP (CSL Behring), Haemocompeltan",
+    "category": "Hémostase & Anticoagulants",
+    "route": "Perfusion IV stricte (reconstitution préalable selon les instructions du fabricant)",
+    "indication": "Traitement curatif des déficits en fibrinogène congénitaux ou acquis (hémorragie massive, CIVD, traumatisme grave avec coagulopathie, chirurgie cardiaque ou obstétricale majeure avec hypofibrinogénémie < 1,5-2 g/L)",
+    "dose": "• Posologie adulte (en situation d'urgence/hémorragie massive) : Dose initiale de 3 g à 4 g (ou 50 à 70 mg/kg) en IV lente (vitesse maximale 5 ml/min). Contrôle biologique (fibrométrie / méthode de Clauss) et adaptation selon la cible (> 2 g/L). Réitération possible selon l'évolution clinique et biologique.\n• Posologie pédiatrique : 20 à 30 mg/kg en dose initiale, à ajuster en fonction du taux cible de fibrinogène et de la clinique.",
+    "alert": "Contre-indications : Hypersensibilité connue à la substance active ou à l'un des excipients. Pièges létaux : Risque thromboembolique accru (surveiller l'apparition de signes de thrombose ou d'embolie, en particulier chez les patients coronariens ou ayant des antécédents thromboemboliques). Risque théorique de transmission d'agents infectieux (produit dérivé du sang). Surveillance : Surveillance étroite de la volémie, de la tension artérielle, de l'ECG et du bilan d'hémostase (TCA, TP, Fibrinogène, Numération plaquettaire).",
+    "algerian_availability": "Disponible en PCH (Pharmacie Centrale des Hôpitaux), services de réanimation, UMC et blocs opératoires de référence (produit dérivé du sang labile ou stable soumis à des conditions de dispensation hospitalière strictes).",
+    "created_at": "2026-10-16T19:40:30.901392+00:00",
+    "updated_at": "2026-10-16T19:40:30.901405+00:00",
+    "algerianAvailability": "Disponible en PCH (Pharmacie Centrale des Hôpitaux), services de réanimation, UMC et blocs opératoires de référence (produit dérivé du sang labile ou stable soumis à des conditions de dispensation hospitalière strictes)."
   }
 ]
