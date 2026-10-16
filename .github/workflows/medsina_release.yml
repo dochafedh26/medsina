@@ -213,7 +213,21 @@ jobs:
         run: flutter pub get
 
       - name: 🛠️ Build Web
-        run: flutter build web --release
+        run: |
+          RAW_TAG="${{ inputs.version || github.ref_name }}"
+          TAG="${RAW_TAG#v}"
+          BUILD_NUM="${{ inputs.build_number || github.run_number }}"
+          flutter build web --release --base-href / --build-name=$TAG --build-number=$BUILD_NUM
+          cat << 'EOF' > build/web/.htaccess
+          <IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteBase /
+            RewriteRule ^index\.html$ - [L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule . /index.html [L]
+          </IfModule>
+          EOF
 
       - name: 🗜️ Archive Web
         run: |
@@ -380,6 +394,42 @@ jobs:
                           ftp.storbinary('STOR download/medsina-setup.exe', f)
                       win_url = f'https://medsina.medevsync.com/releases/{win_file.name}'
                       print(f'✅ Windows Setup live at: {win_url}')
+
+                  web_zips = list(Path('dist-release').glob('*Web*.zip'))
+                  if web_zips:
+                      web_zip = web_zips[0]
+                      import zipfile
+                      print(f'Extracting {web_zip.name} for Web deployment to Octenium...')
+                      extract_dir = Path('web_extracted')
+                      extract_dir.mkdir(exist_ok=True)
+                      with zipfile.ZipFile(web_zip, 'r') as zf:
+                          zf.extractall(extract_dir)
+
+                      htaccess_file = extract_dir / '.htaccess'
+                      if not htaccess_file.exists():
+                          htaccess_file.write_text('<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase /\nRewriteRule ^index\\.html$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . /index.html [L]\n</IfModule>\n')
+
+                      print('Deploying Medsina Web app files to https://medsina.medevsync.com ...')
+                      uploaded_count = 0
+                      for root, dirs, files in os.walk(extract_dir):
+                          rel = Path(root).relative_to(extract_dir).as_posix()
+                          remote_dir = '' if rel == '.' else rel
+
+                          if remote_dir:
+                              curr = ''
+                              for part in remote_dir.split('/'):
+                                  curr = f'{curr}/{part}'.strip('/')
+                                  try: ftp.mkd(curr)
+                                  except Exception: pass
+
+                          for file in files:
+                              local_filepath = Path(root) / file
+                              target_remote = f'{remote_dir}/{file}'.strip('/')
+                              with open(local_filepath, 'rb') as f:
+                                  ftp.storbinary(f'STOR {target_remote}', f)
+                              uploaded_count += 1
+
+                      print(f'✅ Medsina Web successfully deployed to Octenium ({uploaded_count} files)!')
 
                   ftp.quit()
               except Exception as e:
