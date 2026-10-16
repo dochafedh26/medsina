@@ -1,13 +1,24 @@
-name: 📢 MedevSync - Publications Facebook & Infographies
+name: 📢 MedevSync - Publications Facebook & Infographies (2x/Jour)
 
 on:
   schedule:
-    # Déclenché 2 fois par semaine : Lundi et Jeudi à 17:30 UTC
-    - cron: '30 17 * * 1,4'
+    # Déclenché 2 fois par jour tous les jours :
+    # 08:00 UTC (~09h00 Algérie) : Post Médical / Extrait Clinique
+    # 17:00 UTC (~18h00 Algérie) : Post Commercial / Promotionnel & Téléchargement
+    - cron: '0 8,17 * * *'
   workflow_dispatch:
     inputs:
+      type:
+        description: 'Visée du post : auto (selon heure), commercial (téléchargement), medical (extrait clinique)'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - commercial
+          - medical
       topic:
-        description: 'Thème optionnel du post (ex: OAP, Analyseur ordonnance, ou laisser vide)'
+        description: 'Thème optionnel spécifique (ex: OAP, Analyseur ordonnance, ou laisser vide)'
         required: false
         default: ''
         type: string
@@ -52,6 +63,9 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           CMD="python scripts/automation/facebook_post_generator.py"
+          if [ -n "${{ github.event.inputs.type }}" ]; then
+            CMD="$CMD --type '${{ github.event.inputs.type }}'"
+          fi
           if [ -n "${{ github.event.inputs.topic }}" ]; then
             CMD="$CMD --topic '${{ github.event.inputs.topic }}'"
           fi
@@ -60,4 +74,3 @@ jobs:
           fi
           echo "🚀 Exécution : $CMD"
           eval $CMD
-

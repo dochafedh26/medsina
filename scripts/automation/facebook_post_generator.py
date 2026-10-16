@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 """
-Medsina & MedevSync AI Facebook Automated Visual Post Generator
-- Uses Gemini AI or Medsina Clinical Knowledge Base (Mementos, CATs, Urgences, Résumés).
-- Generates high-definition branded 1080x1080 visual infographics with Pillow.
-- Publishes native Photo Posts to the MedevSync Facebook Page via Meta Graph API.
-- Retrieves credentials securely from Supabase admin_system_settings.
+Medsina & MedevSync AI Facebook Automated Visual Post Generator (v2.0)
+- Deux axes de publication automatisés :
+    A) Commercial & Promotionnel : met en avant les fonctionnalités phares (Analyseur d'ordonnance,
+       Mode hors-ligne, Annales Résidanat, Codex Urgences, Assistant IA) avec fort appel au téléchargement.
+    B) Médical & Pédagogique : extraits concrets de l'application (Fiches réflexes de garde, CATs,
+       Pièges de concours, Posologies d'urgence).
+- Infographies visuelles modernes haute définition 1080x1080 générées avec Pillow.
+- Publication en photo native sur la page Facebook MedevSync via l'API Meta Graph.
+- Toujours enrichi des 3 liens officiels :
+    * Version Web : https://medsina.medevsync.com
+    * Téléchargement APK Android : https://medsina.medevsync.com/download/medsina.apk
+    * Téléchargement Installateur PC : https://medsina.medevsync.com/download/medsina-setup.exe
 """
 
 import os
@@ -14,6 +21,7 @@ import json
 import time
 import random
 import argparse
+import datetime
 import urllib.request
 import urllib.parse
 from pathlib import Path
@@ -40,6 +48,21 @@ GEMINI_MODELS = [
     "gemini-3.1-pro-preview",
     "gemini-4-argon",
 ]
+
+# Liens permanents officiels Octenium & Web MedevSync
+OFFICIAL_WEB_URL = "https://medsina.medevsync.com"
+OFFICIAL_APK_URL = "https://medsina.medevsync.com/download/medsina.apk"
+OFFICIAL_WIN_URL = "https://medsina.medevsync.com/download/medsina-setup.exe"
+
+OFFICIAL_FOOTER = f"""
+━━━━━━━━━━━━━━━━━━━━
+📲 TESTEZ ET TÉLÉCHARGEZ MEDSINA (v1.0.7) :
+🌐 Version Web Directe : {OFFICIAL_WEB_URL}
+📱 Télécharger sur Android (.apk) : {OFFICIAL_APK_URL}
+💻 Télécharger sur PC Windows (.exe) : {OFFICIAL_WIN_URL}
+
+🇩🇿 Conçu par MedevSync pour les médecins, résidents, internes et candidats au concours en Algérie.
+#MedevSync #Medsina #MedecineAlgerie #Residanat2027 #PratiqueClinique #SanteNumerique #UrgencesMedicales #Internat"""
 
 
 def load_gemini_api_key() -> Optional[str]:
@@ -100,15 +123,156 @@ def get_facebook_credentials() -> Dict[str, str]:
 
 
 def strip_emojis_for_image(text: str) -> str:
-    """Replaces math/medical symbols and removes emojis to avoid missing font glyph boxes."""
-    text = text.replace("≥", ">=").replace("≤", "<=").replace("±", "+/-").replace("→", "->").replace("•", "-")
+    """Remplace les symboles mathématiques/médicaux et retire les émojis pour éviter les glyphes manquants."""
+    text = (
+        text.replace("≥", ">=")
+        .replace("≤", "<=")
+        .replace("±", "+/-")
+        .replace("→", "->")
+        .replace("•", "-")
+        .replace("’", "'")
+    )
     clean = re.sub(r'[\U00010000-\U0010ffff]', '', text)
     clean = re.sub(r'[^\x00-\x7F\u00C0-\u017F]', ' ', clean)
     return re.sub(r'\s+', ' ', clean).strip()
 
 
+# -------------------------------------------------------------
+# POSTS COMMERCIAUX / PROMOTIONNELS (AXE A)
+# -------------------------------------------------------------
+
+COMMERCIAL_SHOWCASES: List[Dict[str, Any]] = [
+    {
+        "id": "promo_vidal_ordonnance",
+        "badge": "SÉCURITÉ • VIDAL ALGÉRIE",
+        "title": "Sécurisez Vos Prescriptions en Garde",
+        "subtitle": "Vidal Algérien & Analyseur d'Ordonnance Intelligent",
+        "theme": "amber",
+        "points": [
+            "Détection instantanée des interactions médicamenteuses sévères.",
+            "Contrôle automatique des contre-indications de terrain (rein, diabète).",
+            "Nomenclature pharmaceutique complète (Saidal, IPA, PCH).",
+            "Calculateur de clairance et adaptation posologique intégrée."
+        ],
+        "lead": """🚨 MÉDECINS & INTERNES DE GARDE : NE LAISSEZ PLUS PASSER UNE INTERACTION MÉDICAMENTEUSE ! 💊
+
+Combien de fois avez-vous hésité au lit du malade sur l'association de deux molécules en urgence ?
+Une interaction médicamenteuse méconnue peut virer au drame (hémorragie sous Sintrom, aplasie sous Colchicine, récidive d'infarctus sous Plavix).
+
+Avec l'application Medsina, vous disposez d'un Analyseur d'Ordonnance de nouvelle génération spécialement calibré sur le marché pharmaceutique algérien :
+✨ Analysez une ordonnance complète en 3 secondes.
+✨ Détectez les interactions de niveau 1 (Contre-indication absolue) et niveau 2 (Association déconseillée).
+✨ Vérifiez les contre-indications selon le terrain du patient (grossesse, HTA, ulcère, hépatite)."""
+    },
+    {
+        "id": "promo_offline_hospital",
+        "badge": "TECHNOLOGIE • 100% HORS-LIGNE",
+        "title": "Toute la Médecine dans Votre Poche Sans Internet",
+        "subtitle": "Mode Hors-Ligne Total • Pratique Hospitalière",
+        "theme": "emerald",
+        "points": [
+            "Accès immédiat à toutes vos fiches cliniques au fond des urgences.",
+            "Protocoles de réanimation et CATs disponibles en zone blanche.",
+            "Aucun temps de chargement au lit du malade.",
+            "Base de données locale optimisée et ultra-rapide."
+        ],
+        "lead": """📶 PAS DE RÉSEAU DANS LES SOUS-SOLS DU C.H.U ? AUCUN PROBLÈME AVEC MEDSINA ! 🏥
+
+Les urgences médicales et les salles de garde sont souvent situées dans des zones où la 4G ne passe pas. Or, c'est précisément là que vous avez un besoin vital de consulter un protocole de dilution ou une CAT d'urgence.
+
+Medsina a été pensée dès le premier jour pour fonctionner à 100% HORS-LIGNE :
+✨ L'intégralité des CATs, mémentos et valeurs biologiques reste accessible partout.
+✨ Consultez vos fiches à toute vitesse, sans dépendre d'une connexion internet.
+✨ Vos révisions de QCM et fiches de synthèse vous accompagnent dans les transports et à l'hôpital."""
+    },
+    {
+        "id": "promo_residanat_2027",
+        "badge": "CONCOURS • RÉSIDANAT 2027",
+        "title": "Préparez le Concours Comme un Major",
+        "subtitle": "Fiches Synthèses & QCMs Corrigés de Concours",
+        "theme": "purple",
+        "points": [
+            "Fiches officielles couvrant les 47 modules du résidanat.",
+            "Pièges typiques d'examen et points clés à haut rendement.",
+            "Banque de QCMs des facultés algériennes (Blida, Alger, Oran...).",
+            "Moteur de révision intelligent pour cibler vos lacunes."
+        ],
+        "lead": """🎯 OBJECTIF RÉSIDANAT 2027 : RÉVISEZ AVEC LES MEILLEURES FICHES ET ÉVITEZ LES PIÈGES ! 📚
+
+Le concours de résidanat ne récompense pas ceux qui lisent le plus de pages, mais ceux qui maîtrisent les points discriminants et déjouent les questions pièges.
+
+Dans Medsina, chaque cours est distillé pour aller droit au but :
+✨ Les points clés indispensables à retenir pour répondre aux QCMs.
+✨ La section exclusive « Pièges Fréquents du Concours » rédigée selon les anales officielles.
+✨ Des milliers de questions d'entraînement corrigées et commentées.
+✨ Disponible sur mobile pour réviser partout, ou sur grand écran avec notre version Web !"""
+    },
+    {
+        "id": "promo_codex_urgences",
+        "badge": "PRATIQUE • CODEX D'URGENCE",
+        "title": "DCI & Spécialités Disponibles en Algérie",
+        "subtitle": "Guide Posologique & Dilutions Hospitalières",
+        "theme": "blue",
+        "points": [
+            "Correspondance DCI <-> Noms commerciaux algériens (Saidal, IPA).",
+            "Posologies exactes d'urgence adulte et pédiatrique en mg/kg.",
+            "Protocoles de titration et débits de perfusion IVSE.",
+            "Recommandations récentes des sociétés savantes validées."
+        ],
+        "lead": """💉 PROTOCOLES D'URGENCE : LES BONNES DOSES, AVEC LES MÉDICAMENTS DU SERVICE ! ⚡
+
+Adrénaline, Loxen, Dobutamine, Lasilix, Cordarone... En situation critique, vous n'avez pas le temps de chercher les règles de dilution sur Google.
+
+Le Codex des Urgences de Medsina vous donne instantanément :
+✨ Le protocole de dilution pas-à-pas (combien d'ampoules dans combien de soluté G5% ou SSI).
+✨ La vitesse de démarrage au PSE et les paliers d'adaptation selon la pression artérielle.
+✨ Les noms de spécialités commerciales réellement disponibles dans les pharmacies hospitalières algériennes."""
+    },
+    {
+        "id": "promo_ai_medsinapilot",
+        "badge": "IA MÉDICALE • MEDSINAPILOT",
+        "title": "Votre Assistant IA Médical Dédié 24h/24",
+        "subtitle": "MedsinaPilot • Intelligence Artificielle Clinique",
+        "theme": "blue",
+        "points": [
+            "Posez n'importe quelle question clinique en langage naturel.",
+            "Aide au diagnostic différentiel et orientation thérapeutique.",
+            "Synthèse de consensus médicaux 2024-2026 en quelques secondes.",
+            "Conçu spécifiquement pour la médecine et le résidanat en Algérie."
+        ],
+        "lead": """🤖 UN COPILOTE MÉDICAL INTELLIGENT TOUJOURS À VOS CÔTÉS EN GARDE ET EN RÉVISION ! 💡
+
+Bloqué sur un cas clinique atypique ? Besoin d'une synthèse rapide entre deux démarches étiologiques ?
+MedsinaPilot est l'assistant IA médical propulsé au cœur de l'application Medsina :
+✨ Formulé pour respecter la rigueur et le vocabulaire médical hospitalier.
+✨ Vous aide à structurer vos réflexions cliniques et à vérifier les consensus.
+✨ Un gain de temps inestimable pour les étudiants et praticiens connectés."""
+    }
+]
+
+
+def build_commercial_post(showcase: Dict[str, Any]) -> Dict[str, Any]:
+    caption = f"""{showcase['lead']}
+
+🎯 Retrouvez dès aujourd'hui cette fonctionnalité et bien plus encore sur votre plateforme médicale officielle !
+{OFFICIAL_FOOTER}"""
+
+    return {
+        "caption": caption,
+        "badge": showcase["badge"],
+        "title": showcase["title"],
+        "subtitle": showcase["subtitle"],
+        "points": showcase["points"],
+        "theme": showcase["theme"],
+    }
+
+
+# -------------------------------------------------------------
+# POSTS MÉDICAUX / EXTRAITS CLINIQUES (AXE B)
+# -------------------------------------------------------------
+
 def build_from_memento(memento: Dict[str, Any]) -> Dict[str, Any]:
-    """Builds post data from a Medsina on-call memento."""
+    """Construit une publication Facebook à partir d'un mémento réflexe de garde."""
     title = memento.get("title", "Mémento de Garde Hospitalière")
     category = memento.get("category", "Garde & Urgence")
     points = memento.get("points", [])[:4]
@@ -120,13 +284,14 @@ def build_from_memento(memento: Dict[str, Any]) -> Dict[str, Any]:
         "Neurologie & Psychiatrie": "purple",
         "Pneumologie & Réanimation": "emerald",
         "Bonne Pratique Médicale": "blue",
+        "Gynécologie-Obstétrique": "blue",
     }
     theme = theme_map.get(category, "blue")
 
-    caption = f"""📋 MÉMENTO DE GARDE : {title}
+    caption = f"""📋 [EXTRAIT CLINIQUE MEDSINA] : {title}
 Spécialité : {category} 🏥
 
-Chers confrères, internes et praticiens de garde, voici les points réflexes essentiels à maîtriser immédiatement au lit du malade :
+Chers confrères, internes et praticiens de garde, voici les réflexes indispensables extraits directement de la bibliothèque Medsina :
 
 """
     for i, p in enumerate(points, 1):
@@ -134,24 +299,20 @@ Chers confrères, internes et praticiens de garde, voici les points réflexes es
 
     caption += f"""
 💡 Référence clinique : {memento.get('scientific_references', 'Recommandations & Consensus Pratique Médicale')}
-
-📲 Retrouvez l'intégralité des fiches réflexes, l'analyseur d'ordonnance et les résumés du résidanat dans l'application Medsina (v1.0.7) !
-Lien de téléchargement : Disponible pour tous les résidents et candidats au concours.
-
-#MedevSync #Medsina #MedecineAlgerie #PratiqueHospitaliere #GardeMedicale #Residanat2027 #InternatMedecine"""
+{OFFICIAL_FOOTER}"""
 
     return {
         "caption": caption,
         "badge": f"MÉMENTO • {category.upper()}",
         "title": title,
-        "subtitle": f"{category} • Fiche Réflexe de Garde",
+        "subtitle": f"{category} • Extrait Pratique Medsina",
         "points": points,
         "theme": theme,
     }
 
 
 def build_from_course_summary(summary: Dict[str, Any]) -> Dict[str, Any]:
-    """Builds post data from a high-yield residency course summary."""
+    """Construit une publication Facebook à partir d'une fiche synthèse de cours du résidanat."""
     course_name = summary.get("course_name", "Fiche de Révision")
     module_name = summary.get("module_name", "Module Médical")
     traps = summary.get("exam_traps", [])
@@ -159,21 +320,18 @@ def build_from_course_summary(summary: Dict[str, Any]) -> Dict[str, Any]:
 
     points = (traps if traps else takeaways)[:4]
 
-    caption = f"""📖 RÉVISION RÉSIDANAT 2027 : {course_name}
+    caption = f"""📖 [FICHE CONCOURS MEDSINA] : {course_name}
 Module : {module_name} 🎯
 
-Pour maximiser vos points et déjouer les pièges fréquents du concours, voici les points incontournables à retenir pour ce cours :
+Voici un extrait direct des points clés et pièges de concours disponibles dans la fiche officielle Medsina pour réviser efficacement :
 
 """
     for i, p in enumerate(points, 1):
         caption += f"⚠️ {p}\n"
 
     caption += f"""
-🎯 Synthétisé selon les consensus officiels et anales du concours de résidanat en Algérie (Blida, Alger, Constantine, Oran).
-
-📲 Révisez plus intelligemment avec Medsina v1.0.7 : Fiches synthèses, QCMs corrigés et protocoles cliniques dans votre poche !
-
-#MedevSync #Medsina #Residanat2027 #MedecineAlgerie #QCMConcours #RevisionMedicale #BlidaMed"""
+🎯 Synthèse conforme aux consensus officiels et anales du concours de résidanat en Algérie (Blida, Alger, Constantine, Oran).
+{OFFICIAL_FOOTER}"""
 
     return {
         "caption": caption,
@@ -185,14 +343,21 @@ Pour maximiser vos points et déjouer les pièges fréquents du concours, voici 
     }
 
 
-def generate_post_content_gemini(topic: str, gemini_key: str) -> Dict[str, Any]:
-    system_prompt = """Tu es le Directeur Médical & Marketing de MedevSync, la startup algérienne éditrice de l'application mobile "Medsina" (Plateforme médicale globale pour étudiants, internes et candidats au concours de Résidanat 2027 en Algérie).
-Ton rôle est de créer des publications Facebook modernes, captivantes, hautement pédagogiques et attractives.
+def generate_post_content_gemini(topic: str, gemini_key: str, post_type: str = "commercial") -> Dict[str, Any]:
+    angle = (
+        "Mets l'accent sur les fonctionnalités innovantes de l'application Medsina et donne envie aux médecins de la télécharger."
+        if post_type == "commercial"
+        else "Partage un extrait médical clinique concret et ultra-pédagogique (protocole d'urgence, perle ou piège de concours) issu de l'application."
+    )
+
+    system_prompt = f"""Tu es le Directeur Médical & Marketing de MedevSync, la startup algérienne éditrice de l'application mobile et web "Medsina" (Plateforme médicale globale pour étudiants, internes et candidats au concours de Résidanat 2027 en Algérie).
+Ton rôle est de créer des publications Facebook modernes, percutantes et attractives.
+{angle}
 
 Tu dois répondre UNIQUEMENT par un objet JSON valide avec la structure suivante :
-{
-  "caption": "Texte complet du post Facebook avec émojis, mise en page aérée, accroche percutante, 4 points médicaux clés, appel à l'action pour télécharger Medsina v1.0.7 et hashtags ciblés (#MedevSync #Medsina #MedecineAlgerie #Residanat2027 #PratiqueClinique)",
-  "badge": "TITRE DU BADGE (ex: PROTOCOLE D'URGENCE, PERLE DU JOUR, VIDAL ALGÉRIE, PIÈGE DE CONCOURS)",
+{{
+  "caption": "Texte complet du post Facebook avec émojis, mise en page aérée, accroche percutante et 4 points médicaux clés (SANS les liens finaux car ils seront ajoutés automatiquement)",
+  "badge": "TITRE DU BADGE (ex: PROTOCOLE D'URGENCE, VIDAL ALGÉRIE, PIÈGE DE CONCOURS, APPLICATION MEDSINA)",
   "title": "Titre choc et court pour l'image (max 50 caractères)",
   "subtitle": "Spécialité & Thème (ex: Cardiologie & Urgences Médicales • Medsina)",
   "points": [
@@ -202,9 +367,9 @@ Tu dois répondre UNIQUEMENT par un objet JSON valide avec la structure suivante
     "Point 4 court et percutant (max 15 mots)"
   ],
   "theme": "blue | emerald | amber | purple"
-}"""
+}}"""
 
-    prompt = f"""Génère une publication Facebook médicale complète, ultra-attractive et éducative pour l'application Medsina sur le thème : "{topic}".
+    prompt = f"""Rédige une publication Facebook médicale et attractive pour l'application Medsina sur le thème : "{topic}".
 Le contenu doit cibler les médecins généralistes, résidents, internes et candidats au concours de résidanat en Algérie."""
 
     for model in GEMINI_MODELS:
@@ -226,7 +391,9 @@ Le contenu doit cibler les médecins généralistes, résidents, internes et can
                 if parts and "text" in parts[0]:
                     clean = re.sub(r"^```json\s*", "", parts[0]["text"].strip())
                     clean = re.sub(r"\s*```$", "", clean)
-                    return json.loads(clean)
+                    parsed = json.loads(clean)
+                    parsed["caption"] = parsed.get("caption", "").strip() + "\n" + OFFICIAL_FOOTER
+                    return parsed
         except Exception as e:
             print(f"Gemini {model} error: {e}")
             continue
@@ -234,30 +401,50 @@ Le contenu doit cibler les médecins généralistes, résidents, internes et can
     raise RuntimeError("Failed to generate response across all Gemini models.")
 
 
-def get_curated_or_ai_post(topic: Optional[str] = None) -> Dict[str, Any]:
-    assets_dir = Path(__file__).resolve().parents[2] / "assets" / "data"
-    mementos_file = assets_dir / "on_call_mementos.json"
-    summaries_file = assets_dir / "course_summaries.json"
+def get_post_data(topic: Optional[str] = None, post_type: str = "auto") -> Dict[str, Any]:
+    """Sélectionne ou génère le contenu du post selon le type (commercial vs médical)."""
+    # Résolution automatique selon l'heure si post_type == "auto"
+    # Matin (5h - 13h UTC) : Visée Médicale (Extrait clinique / Perle)
+    # Après-midi / Soir (13h - 23h UTC) : Visée Commerciale (Promo de l'application)
+    resolved_type = post_type
+    if post_type == "auto":
+        cur_hour = datetime.datetime.now(datetime.timezone.utc).hour
+        resolved_type = "medical" if 5 <= cur_hour < 13 else "commercial"
+        print(f"⏰ Mode Auto (Heure UTC : {cur_hour}h) -> Sélection du type : {resolved_type.upper()}")
 
     gemini_key = load_gemini_api_key()
     if topic and gemini_key:
         try:
-            print(f"🧠 Utilisation de Gemini AI pour le thème : '{topic}'")
-            return generate_post_content_gemini(topic, gemini_key)
+            print(f"🧠 Utilisation de Gemini AI ({resolved_type.upper()}) pour : '{topic}'")
+            return generate_post_content_gemini(topic, gemini_key, post_type=resolved_type)
         except Exception as e:
-            print(f"Notice Gemini indisponible ({e}), bascule sur la base médicale interne Medsina...")
+            print(f"Notice Gemini indisponible ({e}), bascule sur la base locale Medsina...")
 
-    # Load from curated clinical database
-    if mementos_file.exists():
+    # Axe A : Commercial / Promotionnel
+    if resolved_type == "commercial":
+        showcase = random.choice(COMMERCIAL_SHOWCASES)
+        print(f"📢 Post Commercial sélectionné : {showcase['title']}")
+        return build_commercial_post(showcase)
+
+    # Axe B : Médical / Extraits Cliniques
+    assets_dir = Path(__file__).resolve().parents[2] / "assets" / "data"
+    mementos_file = assets_dir / "on_call_mementos.json"
+    summaries_file = assets_dir / "course_summaries.json"
+
+    # Alternance aléatoire entre mémentos de garde et fiches de révision de concours
+    pick_memento = random.choice([True, False])
+
+    if pick_memento and mementos_file.exists():
         try:
             mementos = json.loads(mementos_file.read_text(encoding="utf-8"))
             if topic:
                 filtered = [m for m in mementos if topic.lower() in m.get("title", "").lower() or topic.lower() in m.get("category", "").lower()]
                 if filtered:
                     return build_from_memento(random.choice(filtered))
-            # Pick a rich memento (e.g. Hypoglycemia, Checklist, or Choc)
             if mementos:
-                return build_from_memento(random.choice(mementos))
+                m = random.choice(mementos)
+                print(f"🩺 Extrait Mémento sélectionné : {m.get('title')}")
+                return build_from_memento(m)
         except Exception as e:
             print(f"Warning reading mementos: {e}")
 
@@ -265,40 +452,21 @@ def get_curated_or_ai_post(topic: Optional[str] = None) -> Dict[str, Any]:
         try:
             summaries = json.loads(summaries_file.read_text(encoding="utf-8"))
             if summaries:
-                return build_from_course_summary(random.choice(summaries))
+                s = random.choice(summaries)
+                print(f"📖 Extrait Cours sélectionné : {s.get('course_name')}")
+                return build_from_course_summary(s)
         except Exception as e:
-            print(f"Warning reading course summaries: {e}")
+            print(f"Warning reading summaries: {e}")
 
-    # Ultimate fallback template: Analyseur d'ordonnance & Vidal Algérie
-    return {
-        "caption": """🚨 SÉCURITÉ DE PRESCRIPTION : LES INTERACTIONS MÉDICAMENTEUSES GRAVES EN GARDE ! 💊
-
-L'analyse d'ordonnance est un acte médical critique au lit du malade. En garde ou en consultation, certaines associations médicamenteuses exposent à des risques vitaux immédiats :
-
-1️⃣ Sintrom (Acénocoumarol) + Rifampicine : Induction enzymatique majeure du CYP2C9 entraînant une baisse drastique de l'INR et un risque thrombotique fatal.
-2️⃣ Colchicine + Clarithromycine : Inhibition du CYP3A4 et de la P-glycoprotéine avec surdosage mortel en colchicine (Aplasie médullaire, choc).
-3️⃣ Double AINS (ex. Kétoprofène + Aspirine) : Majoration drastique du risque d'ulcère hémorragique digestif sans bénéfice antalgique supplémentaire.
-4️⃣ Plavix (Clopidogrel) + Oméprazole : Perte d'efficacité antiagrégante par blocage du CYP2C19 → Risque d'infarctus ou de thrombose de stent.
-
-🔍 Avec l'Analyseur d'Ordonnance intelligent de Medsina, ces interactions et contre-indications de terrain (diabète, HTA, insuffisance rénale) sont détectées instantanément selon la nomenclature officielle algérienne !
-
-📲 Téléchargez Medsina v1.0.7 et sécurisez chaque prescription.
-
-#MedevSync #Medsina #VidalAlgerie #SecuriteDuPatient #PrescriptionMedicale #MedecineAlgerie #Residanat2027 #Internat""",
-        "badge": "SÉCURITÉ • VIDAL ALGÉRIE",
-        "title": "Interactions Mortelles : 4 Pièges en Garde",
-        "subtitle": "Pharmacologie Clinique & Urgences Médicales",
-        "points": [
-            "Sintrom + Rifampicine : Inefficacité anticoagulante et thrombose.",
-            "Colchicine + Clarithromycine : Toxicité médullaire mortelle.",
-            "Double AINS (Kétoprofène + Aspirine) : Hémorragie digestive haute.",
-            "Plavix + Oméprazole : Perte d'efficacité et récidive d'IDM."
-        ],
-        "theme": "amber",
-    }
+    # Fallback par défaut vers un showcase commercial
+    return build_commercial_post(COMMERCIAL_SHOWCASES[0])
 
 
-def render_banner_image(data: Dict[str, Any], output_path: str):
+# -------------------------------------------------------------
+# MOTEUR DE RENDU GRAPHIQUE HAUTE DÉFINITION 1080x1080 (PILLOW)
+# -------------------------------------------------------------
+
+def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
     width, height = 1080, 1080
     theme = data.get("theme", "blue")
 
@@ -343,7 +511,7 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
 
     t = themes.get(theme, themes["blue"])
 
-    # 1. Base gradient
+    # 1. Fond dégradé vertical
     base = Image.new("RGBA", (width, height), t["bg_bottom"])
     draw = ImageDraw.Draw(base)
 
@@ -354,7 +522,7 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
         b = int(t["bg_top"][2] * (1 - ratio) + t["bg_bottom"][2] * ratio)
         draw.line([(0, y), (width, y)], fill=(r, g, b, 255))
 
-    # 2. Ambient glow
+    # 2. Halos lumineux d'ambiance
     glow = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     glow_draw = ImageDraw.Draw(glow)
     glow_draw.ellipse([(-100, -100), (450, 450)], fill=(*t["accent"], 45))
@@ -363,7 +531,7 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
     base = Image.alpha_composite(base, glow)
     draw = ImageDraw.Draw(base)
 
-    # 3. Fonts
+    # 3. Polices de caractères
     def get_font(size: int, bold: bool = False):
         font_paths = [
             "C:/Windows/Fonts/segoeuib.ttf" if bold else "C:/Windows/Fonts/segoeui.ttf",
@@ -384,9 +552,9 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
     font_title = get_font(44, bold=True)
     font_subtitle = get_font(24, bold=False)
     font_point = get_font(27, bold=False)
-    font_footer = get_font(22, bold=True)
+    font_footer = get_font(21, bold=True)
 
-    # 4. Header with logo
+    # 4. En-tête avec logo officiel Medsina
     assets_dir = Path(__file__).resolve().parents[2] / "assets"
     logo_path = assets_dir / "medsina-icon.png"
     header_x = 70
@@ -400,13 +568,13 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
             pass
 
     draw.text((header_x, 70), "MEDEVSYNC", font=font_brand, fill=(255, 255, 255, 255))
-    draw.text((header_x, 102), "Medsina • Plateforme Médicale Officielle", font=font_brand_sub, fill=(148, 163, 184, 255))
+    draw.text((header_x, 102), "Medsina • Plateforme Médicale Globale", font=font_brand_sub, fill=(148, 163, 184, 255))
 
-    # Version pill
-    draw.rounded_rectangle([(width - 240, 75), (width - 70, 120)], radius=12, fill=(30, 41, 59, 200), outline=t["accent"], width=1)
-    draw.text((width - 222, 85), "Version 1.0.7", font=font_brand_sub, fill=(255, 255, 255, 230))
+    # Badge de version & Web
+    draw.rounded_rectangle([(width - 250, 75), (width - 70, 120)], radius=12, fill=(30, 41, 59, 200), outline=t["accent"], width=1)
+    draw.text((width - 232, 85), "Version 1.0.7", font=font_brand_sub, fill=(255, 255, 255, 230))
 
-    # 5. Badge
+    # 5. Badge thématique
     raw_badge = strip_emojis_for_image(data.get("badge", "MÉDECINE & CLINIQUE"))
     badge_text = f"  {raw_badge.upper()}  "
     bbox = font_badge.getbbox(badge_text)
@@ -415,7 +583,7 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
     draw.rounded_rectangle([(70, 185), (70 + bw, 185 + bh)], radius=10, fill=t["badge_bg"], outline=t["accent"], width=2)
     draw.text((82, 194), badge_text.strip(), font=font_badge, fill=t["accent_glow"])
 
-    # 6. Title
+    # 6. Titre de l'infographie
     raw_title = strip_emojis_for_image(data.get("title", "Perle Clinique & Concours"))
     words = raw_title.split()
     lines = []
@@ -435,12 +603,12 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
         draw.text((70, y_text), l, font=font_title, fill=(255, 255, 255, 255))
         y_text += 56
 
-    # Subtitle
+    # Sous-titre
     raw_sub = strip_emojis_for_image(data.get("subtitle", "Pratique Médicale & Résidanat 2027"))
     draw.text((70, y_text + 4), raw_sub, font=font_subtitle, fill=(148, 163, 184, 255))
     y_text += 52
 
-    # 7. Card container
+    # 7. Conteneur central en verre dépoli (Glassmorphism)
     card_y = y_text + 15
     card_h = 880 - card_y
     card_layer = Image.new("RGBA", (width, height), (0, 0, 0, 0))
@@ -449,16 +617,14 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
     base = Image.alpha_composite(base, card_layer)
     draw = ImageDraw.Draw(base)
 
-    # 8. Bullet points
+    # 8. Puces clés de contenu
     py = card_y + 35
     points = data.get("points", [])
     for i, pt in enumerate(points[:4]):
         clean_pt = strip_emojis_for_image(pt)
-        # Bullet circle
         draw.ellipse([(105, py + 8), (127, py + 30)], fill=t["accent"])
         draw.text((113, py + 7), str(i + 1), font=font_brand_sub, fill=(15, 23, 42, 255))
 
-        # Wrapped point text
         pt_words = clean_pt.split()
         p_lines = []
         p_cur = []
@@ -477,10 +643,10 @@ def render_banner_image(data: Dict[str, Any], output_path: str):
             py += 38
         py += 22
 
-    # 9. Bottom Footer
+    # 9. Pied de page avec URL officielle
     footer_y = 930
     draw.line([(70, footer_y), (width - 70, footer_y)], fill=(51, 65, 85, 200), width=1)
-    draw.text((70, footer_y + 26), "Medsina App • Pratique Clinique & Résidanat", font=font_footer, fill=t["accent_glow"])
+    draw.text((70, footer_y + 26), "medsina.medevsync.com  •  Web, Android & PC", font=font_footer, fill=t["accent_glow"])
     draw.text((width - 320, footer_y + 28), "MedevSync HealthTech", font=font_brand_sub, fill=(148, 163, 184, 255))
 
     dir_name = os.path.dirname(output_path)
@@ -514,20 +680,22 @@ def publish_photo_to_facebook(image_path: str, caption: str) -> Dict[str, Any]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate and publish an AI/medical visual post to Facebook")
-    parser.add_argument("--topic", type=str, default=None, help="Medical topic to generate")
+    parser = argparse.ArgumentParser(description="Generate and publish an AI/medical visual post to Facebook (2x/day)")
+    parser.add_argument("--topic", type=str, default=None, help="Specific medical or promotional topic to generate")
+    parser.add_argument("--type", choices=["auto", "commercial", "medical"], default="auto", help="Post objective: commercial (download CTA) or medical (clinical extract)")
     parser.add_argument("--dry-run", action="store_true", help="Generate content and image without publishing to Facebook")
     parser.add_argument("--output-image", type=str, default="output_banner.png", help="Path to save generated image")
     args = parser.parse_args()
 
     print("=" * 65)
-    print("🎨 MEDEVSYNC & MEDSINA FACEBOOK VISUAL POST GENERATOR")
-    print(f"📌 Thème   : {args.topic or 'Automatique (Base Clinique Medsina)'}")
+    print("🎨 MEDEVSYNC & MEDSINA FACEBOOK VISUAL PUBLISHER (2x/JOUR)")
+    print(f"📌 Thème   : {args.topic or 'Automatique'}")
+    print(f"🎯 Visée   : {args.type.upper()}")
     print(f"⚙️ Mode    : {'DRY RUN (Aperçu local)' if args.dry_run else 'PUBLICATION EN DIRECT'}")
     print("=" * 65)
 
-    print("\n🧠 1. Sélection & génération du contenu médical...")
-    post_data = get_curated_or_ai_post(args.topic)
+    print("\n🧠 1. Sélection & génération du contenu adapté...")
+    post_data = get_post_data(topic=args.topic, post_type=args.type)
     print(f"Titre   : {post_data.get('title')}")
     print(f"Badge   : {post_data.get('badge')}")
     print(f"Thème   : {post_data.get('theme')}")
@@ -536,10 +704,10 @@ def main():
     img_path = render_banner_image(post_data, args.output_image)
     print(f"Image générée avec succès : {img_path}")
 
-    print("\n📝 3. Légende du Post Facebook :")
-    print("-" * 50)
+    print("\n📝 3. Légende du Post Facebook (avec liens officiels Octenium) :")
+    print("-" * 55)
     print(post_data.get("caption"))
-    print("-" * 50)
+    print("-" * 55)
 
     if args.dry_run:
         print("\n[DRY RUN] Publication ignorée. Image prête pour inspection.")
