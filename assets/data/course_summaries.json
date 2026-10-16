@@ -182,5 +182,28 @@
     "treatment_summary": "Antibiothérapie prolongée (4-6 sem) + Drainage percutané pour le pyogénique ; Nitro-imidazolés suivis d'un amœbicide de contact pour l'amibien.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-16T04:20:42.248888+00:00"
+  },
+  {
+    "course_id": "Blida_HEPATO_GASTRO_ENTEROLOGIE_Foie_et_médicaments",
+    "course_name": "Foie et médicaments",
+    "module_id": "Blida_HEPATO_GASTRO_ENTEROLOGIE",
+    "module_name": "Hépato-Gastro-Entérologie",
+    "summary_markdown": "## 1. Définition et Physiopathologie essentielle\nLes hépatopathies médicamenteuses (DILI : Drug-Induced Liver Injury) représentent une cause majeure de pathologie hépatique aiguë et chronique. On distingue :\n- Les **hépatotoxicités intrinsèques (ou prévisibles)** : dose-dépendantes, reproductibles chez l'animal, délai court (ex : **Paracétamol**).\n- Les **hépatotoxicités idiosyncrasiques (imprévisibles)** : indépendantes de la dose, immunologiques ou métaboliques, délai variable de quelques jours à plusieurs mois (ex : **Amoxicilline-acide clavulanique**).\n\n## 2. Démarche Diagnostique\nLe diagnostic repose sur la chronologie et l'élimination des autres causes (virales, auto-immunes, biliaires).\n- **Critères R (Ratio R)** calculé selon l'ALT et les Phosphatases Alkalines (PAL) rapportées à leur limite supérieure de la normale (LSN) :\n  - **R = (ALT / LSN) / (PAL / LSN)**\n  - **R ≥ 5** : Profil hépatocellulaire.\n  - **R ≤ 2** : Profil cholestatique.\n  - **2 < R < 5** : Profil mixte.\n- **Imputabilité** : Évaluation par les scores de causalité (échelle française de Roussel Uclaf Causality Assessment Method - **RUCAM**).\n\n## 3. Diagnostic Différentiel et Formes Cliniques\n- Éliminer systématiquement : Hépatites virales aiguës A, B, C, E, hépatite auto-immune, obstruction biliaire (échographie hépatique Doppler indispensable).\n- Formes cliniques majeures :\n  - **Cytolyse aiguë** (mimant une hépatite fulminante)\n  - **Cholestase pure ou mixte** (mimant une angiocholite ou une lithiase)\n  - **Hépatite chronique / Fibrose / Cirrhose** (ex : Méthotrexate, Amiodarone)\n  - **Maladie Veno-Occlusive (MVO) / Sinusoidal Obstruction Syndrome (SOS)** (ex : Alcaloïdes de la pyrrolizidine, chimiothérapies)\n\n## 4. Stratégie Thérapeutique\n- **Mesures générales** : Arrêt immédiat et définitif du médicament suspecté (cornerstone de la prise en charge).\n- **Traitement spécifique** :\n  - Intoxication au **Paracétamol** : **N-acétylcystéine (NAC)** par voie IV ou per os selon le nomogramme de Rumack-Matthew.\n- **Contre-indications absolues** : Ne jamais réadministrer le médicament en cause (risque de récidive immédiate et fulminante).\n\n## 5. Évolution, Pronostic et Complications\n- **Critères de King's College** pour la transplantation hépatique en urgence dans l'insuffisance hépatocellulaire aiguë sur paracétamol :\n  - pH artériel < 7,30 (après réanimation) OU\n  - Présence combinée de : TP > 100 secondes (INR > 6.5), Créatinine > 300 µmol/L, et encéphalopathie hépatique de stade III ou IV.",
+    "key_takeaways": [
+      "Le ratio R permet de classer le DILI en hépatocellulaire (R ≥ 5), cholestatique (R ≤ 2) ou mixte.",
+      "L'amoxicilline-acide clavulanique est la cause la plus fréquente d'hépatotoxicité idiosyncrasique de type cholestatique/mixte.",
+      "L'arrêt du médicament suspect est la seule mesure thérapeutique indispensable initiale.",
+      "Le surdosage en paracétamol provoque une cytolyse aiguë massive traitée par la N-acétylcystéine.",
+      "L'échelle RUCAM est l'outil standardisé d'imputabilité médicamenteuse."
+    ],
+    "exam_traps": [
+      "Piège Annales : Penser que l'hépatotoxicité de l'amoxicilline-acide clavulanique est dose-dépendante (Faux, elle est idiosyncrasique).",
+      "Piège Traitement : Réintroduire à faible dose un médicament ayant provoqué une hépatite immuno-allergique (Contre-indication absolue).",
+      "Piège Diagnostic : Oublier de calculer le ratio R (ALT/PAL) devant une élévation des enzymes hépatiques."
+    ],
+    "diagnostic_criteria": "Imputabilité médicamenteuse chronologique et sémiologique (score RUCAM positif) après élimination rigoureuse des causes virales, auto-immunes et biliaires.",
+    "treatment_summary": "Arrêt immédiat du médicament incriminé, surveillance rapprochée du bilan hépatique et du TP, et administration de N-acétylcystéine si cause paracétamol.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-16T13:11:47.519733+00:00"
   }
 ]
