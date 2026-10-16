@@ -329,5 +329,24 @@
     "is_active": true,
     "created_at": "2026-10-14T20:49:29.417790+00:00",
     "updated_at": "2026-10-14T20:49:29.417803+00:00"
+  },
+  {
+    "id": "memento_hemorragie_digestive_rvo",
+    "title": "🩸 Hémorragie Digestive par RVO",
+    "category": "Gastro-entérologie & Urgences",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#DC2626",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Conditionnement immédiat au déchoquage, 2 VVP de grand calibre, oxygénothérapie, monitorage multiparamétrique et évaluation hémodynamique (choc hémorragique ?).",
+      "Étape 2 : Bilan biologique urgent (NFS, groupage-rhesus, RAI, TP, TCK, ionogramme, urée, créatinine) et commande de CGR en urgence vitale.",
+      "Étape 3 : Thérapie vasoactive précoce avant l'endoscopie : Terlipressine (Glypressin®) IV 2 mg en bolus puis 1 mg/4h OU Somatostatine IV (bolus 250 µg puis 250 µg/h), associée à une Antibioprophylaxie par Ceftriaxone 1g/24h IV.",
+      "Étape 4 : Remplissage prudent restrictif (objectif PAM ≥ 65 mmHg, transfusion prudente si Hb < 7 g/dL) et appel urgent du gastro-entérologue de garde pour endoscopie hémostatique dans les 12 heures.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Éviter le remplissage massif par sérum salé isotonique (aggrave l'ascite et l'hypertension portale) et attention au risque d'inhalation bronchique si trouble de la conscience."
+    ],
+    "scientific_references": "Consensus Baveno VII / SFMU / Société Algérienne de Gastro-Entérologie (SAGE)",
+    "is_active": true,
+    "created_at": "2026-10-16T13:33:49.585097+00:00",
+    "updated_at": "2026-10-16T13:33:49.585112+00:00"
   }
 ]
