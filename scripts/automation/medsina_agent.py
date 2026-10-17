@@ -39,19 +39,35 @@ DEFAULT_SUPABASE_URL = "https://qzfssrhhuorljftpdvjm.supabase.co"
 
 def _resolve_gemini_key() -> str:
     key = os.environ.get("GEMINI_API_KEY")
-    if key:
-        return key
+    if key and not key.strip().startswith("AQ."):
+        return key.strip()
+
+    # Attempt to load from Supabase admin_system_settings (centralized cloud config)
+    sub_key = _resolve_supabase_key()
+    if sub_key:
+        try:
+            url = f"{SUPABASE_URL}/rest/v1/admin_system_settings?setting_key=eq.gemini_api_key&select=setting_value"
+            r = requests.get(url, headers={"apikey": sub_key, "Authorization": f"Bearer {sub_key}"}, timeout=8)
+            if r.status_code == 200:
+                rows = r.json()
+                if rows and rows[0].get("setting_value"):
+                    val = rows[0]["setting_value"].strip()
+                    if not val.startswith("AQ."):
+                        return val
+        except Exception:
+            pass
+
     secrets_file = Path(__file__).resolve().parents[2] / "lib" / "core" / "config" / "app_secrets.dart"
     if secrets_file.exists():
         try:
             import re
             content = secrets_file.read_text(encoding="utf-8")
             m = re.search(r"geminiApiKey\s*=\s*['\"]([^'\"]+)['\"]", content)
-            if m:
-                return m.group(1)
+            if m and not m.group(1).startswith("AQ."):
+                return m.group(1).strip()
         except Exception:
             pass
-    return ""
+    return key.strip() if key else ""
 
 def _resolve_supabase_key() -> str:
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
