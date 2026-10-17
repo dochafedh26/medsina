@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/medsina_notification_dispatcher.dart';
@@ -1542,6 +1543,87 @@ class SupabaseService {
     }
 
     return defaultSettings;
+  }
+
+  /// Initiate a Chargily Pay v2 Checkout Session (EDAHABIA & CIB)
+  static Future<Map<String, dynamic>> createChargilyCheckout({
+    required double amount,
+    required String tier,
+    required int durationDays,
+    required String userId,
+    required String userEmail,
+    required String userName,
+  }) async {
+    try {
+      final settings = await fetchPaymentSettings();
+      final secretKey = settings['chargily_secret_key'] ?? 'test_sk_6p4nWfgUpfDa01BqQZQafxyFHMbKVHLZfJbKNQ1X';
+      final mode = settings['chargily_mode'] ?? 'test';
+      final appUrl = settings['chargily_app_url'] ?? 'https://medsina.medevsync.com';
+
+      final endpoint = mode == 'live'
+          ? 'https://pay.chargily.net/api/v2/checkouts'
+          : 'https://pay.chargily.net/test/api/v2/checkouts';
+
+      final dio = Dio();
+      final response = await dio.post(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $secretKey',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {
+          'amount': amount.toInt(),
+          'currency': 'dzd',
+          'success_url': '$appUrl?payment=success&tier=$tier',
+          'failure_url': '$appUrl?payment=failure',
+          'metadata': {
+            'user_id': userId,
+            'user_email': userEmail,
+            'user_name': userName,
+            'tier': tier,
+            'duration_days': durationDays,
+            'app': 'Medsina Résidanat 2027',
+          },
+        },
+      );
+
+      if (response.statusCode == 200 && response.data is Map) {
+        final data = Map<String, dynamic>.from(response.data);
+        final checkoutUrl = data['checkout_url']?.toString();
+
+        // Also record a pending transaction in Supabase payments table
+        try {
+          await client.from('payments').insert({
+            'user_id': userId,
+            'user_email': userEmail,
+            'user_name': userName,
+            'tier': tier,
+            'duration_days': durationDays,
+            'amount': amount,
+            'currency': 'DZD',
+            'payment_method': 'chargily_cib',
+            'receipt_reference': data['id']?.toString() ?? 'CHARGILY-${DateTime.now().millisecondsSinceEpoch}',
+            'status': 'pending',
+            'admin_notes': 'Session Chargily Pay initiée (ID: ${data['id']})',
+          });
+        } catch (_) {}
+
+        return {
+          'success': true,
+          'checkout_url': checkoutUrl,
+          'checkout_id': data['id'],
+        };
+      }
+    } catch (e) {
+      debugPrint('Error creating Chargily checkout: $e');
+    }
+
+    return {
+      'success': false,
+      'message': 'Impossible d\'initier le paiement en ligne. Veuillez contacter le support WhatsApp.',
+    };
   }
 }
 

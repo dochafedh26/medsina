@@ -209,3 +209,4 @@ VALUES
   ('ccp_account', '258412 Clé 34', 'Official CCP Postal Account for in-office wire'),
   ('support_whatsapp', '+213770000000', 'Official Support WhatsApp for instant payment receipt submission')
 ON CONFLICT (setting_key) DO NOTHING;
+

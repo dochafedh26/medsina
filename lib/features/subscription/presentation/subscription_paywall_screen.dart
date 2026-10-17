@@ -1222,6 +1222,8 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
       }
     }
 
+    bool isProcessingChargily = false;
+
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
@@ -1330,7 +1332,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                   ),
                   const SizedBox(height: 14),
                   const Text(
-                    'En cliquant sur "Confirmer le Paiement", vous serez redirigé vers la page de règlement par carte EDAHABIA ou CIB.',
+                    'En cliquant sur "Confirmer le Paiement", vous serez redirigé vers la page sécurisée de paiement par carte EDAHABIA ou CIB.',
                     style: TextStyle(fontSize: 11, color: Colors.grey),
                   ),
                 ],
@@ -1338,7 +1340,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(ctx),
+                onPressed: isProcessingChargily ? null : () => Navigator.pop(ctx),
                 child: const Text('Annuler'),
               ),
               ElevatedButton.icon(
@@ -1346,26 +1348,48 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                   backgroundColor: const Color(0xFF0284C7),
                   foregroundColor: Colors.white,
                 ),
-                icon: const Icon(Icons.lock_rounded, size: 16),
-                label: const Text('Payer par EDAHABIA / CIB'),
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  final chargilyKey = _paymentSettings['chargily_public_key'] ?? '';
-                  if (chargilyKey.isNotEmpty) {
-                    final checkoutUrl = 'https://pay.chargily.net/checkout?key=$chargilyKey&amount=${amount.toInt()}&plan=$selectedTier';
-                    launchUrl(Uri.parse(checkoutUrl), mode: LaunchMode.externalApplication);
-                  } else {
-                    final text = Uri.encodeComponent(
-                      'Salam ! Je souhaite régler mon abonnement Medsina par carte EDAHABIA / CIB.\n'
-                      'Formule : ${plan.name} (${selectedDuration.label})\n'
-                      'Montant : ${amount.toStringAsFixed(0)} DZD\n'
-                      'Email : ${user?.email ?? ""}\n'
-                      'Merci de m\'envoyer le lien de paiement direct !',
-                    );
-                    final waUrl = 'https://wa.me/${whatsapp.replaceAll(RegExp(r"[^0-9]"), "")}?text=$text';
-                    launchUrl(Uri.parse(waUrl), mode: LaunchMode.externalApplication);
-                  }
-                },
+                icon: isProcessingChargily
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : const Icon(Icons.lock_rounded, size: 16),
+                label: Text(isProcessingChargily ? 'Connexion SATIM...' : 'Payer par EDAHABIA / CIB'),
+                onPressed: isProcessingChargily
+                    ? null
+                    : () async {
+                        setDlgState(() => isProcessingChargily = true);
+                        final res = await SupabaseService.createChargilyCheckout(
+                          amount: amount,
+                          tier: selectedTier,
+                          durationDays: selectedDuration.days,
+                          userId: user?.id ?? 'guest',
+                          userEmail: user?.email ?? 'resident@medsina.com',
+                          userName: user?.fullName ?? 'Médecin Résident',
+                        );
+
+                        if (context.mounted) {
+                          setDlgState(() => isProcessingChargily = false);
+                          Navigator.pop(ctx);
+                          if (res['success'] == true && res['checkout_url'] != null) {
+                            launchUrl(
+                              Uri.parse(res['checkout_url']!),
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            final text = Uri.encodeComponent(
+                              'Salam ! Je souhaite régler mon abonnement Medsina par carte EDAHABIA / CIB.\n'
+                              'Formule : ${plan.name} (${selectedDuration.label})\n'
+                              'Montant : ${amount.toStringAsFixed(0)} DZD\n'
+                              'Email : ${user?.email ?? ""}\n'
+                              'Merci de m\'envoyer le lien de paiement direct !',
+                            );
+                            final waUrl = 'https://wa.me/${whatsapp.replaceAll(RegExp(r"[^0-9]"), "")}?text=$text';
+                            launchUrl(Uri.parse(waUrl), mode: LaunchMode.externalApplication);
+                          }
+                        }
+                      },
               ),
             ],
           );
