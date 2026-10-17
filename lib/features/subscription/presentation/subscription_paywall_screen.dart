@@ -829,7 +829,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              '📱 RIP BaridiMob : ${_paymentSettings['baridimob_rip'] ?? '007999990025841234 56'}',
+                              '📱 RIP BaridiMob : ${_paymentSettings['baridimob_rip'] ?? '007999990009171614 93'}',
                               style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
                             ),
                           ),
@@ -838,7 +838,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                             visualDensity: VisualDensity.compact,
                             tooltip: 'Copier le RIP',
                             onPressed: () {
-                              final rip = _paymentSettings['baridimob_rip'] ?? '007999990025841234 56';
+                              final rip = _paymentSettings['baridimob_rip'] ?? '007999990009171614 93';
                               Clipboard.setData(ClipboardData(text: rip.replaceAll(' ', '')));
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('RIP BaridiMob copié : $rip')),
@@ -851,7 +851,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              '🏛️ Compte CCP : ${_paymentSettings['ccp_account'] ?? '258412 Clé 34'}',
+                              '🏛️ Compte CCP : ${_paymentSettings['ccp_account'] ?? '9171614 Clé 19'}',
                               style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
                             ),
                           ),
@@ -860,7 +860,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                             visualDensity: VisualDensity.compact,
                             tooltip: 'Copier le CCP',
                             onPressed: () {
-                              final ccp = _paymentSettings['ccp_account'] ?? '258412 Clé 34';
+                              final ccp = _paymentSettings['ccp_account'] ?? '9171614 Clé 19';
                               Clipboard.setData(ClipboardData(text: ccp));
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Compte CCP copié : $ccp')),
@@ -870,8 +870,8 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         ],
                       ),
                       Text(
-                        '👤 Titulaire : ${_paymentSettings['ccp_holder'] ?? 'Dr. Medsina Algérie (Octenium / MedevSync)'}',
-                        style: const TextStyle(fontSize: 11),
+                        '👤 Titulaire : ${_paymentSettings['ccp_holder'] ?? 'CHIKH TOUHAMI HAFED'}',
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),

@@ -1518,11 +1518,11 @@ class SupabaseService {
   /// Fetch payment coordinates (BaridiMob RIP, CCP, Support WhatsApp, Chargily settings)
   static Future<Map<String, String>> fetchPaymentSettings() async {
     final defaultSettings = {
-      'baridimob_rip': '007999990025841234 56',
-      'ccp_account': '258412 Clé 34',
-      'ccp_holder': 'Dr. Medsina Algérie (Octenium / MedevSync)',
+      'baridimob_rip': '007999990009171614 93',
+      'ccp_account': '9171614 Clé 19',
+      'ccp_holder': 'CHIKH TOUHAMI HAFED',
       'support_whatsapp': '+213770000000',
-      'chargily_public_key': '',
+      'chargily_public_key': 'test_pk_rqlUVsQu2nc0l1aUf5sHAI4A9yJuK7sucTZOe8eD',
       'chargily_mode': 'test',
     };
 

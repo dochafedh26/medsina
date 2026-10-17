@@ -204,9 +204,10 @@ VALUES
   ('chargily_public_key', '', 'Chargily Pay v2 Public Key for EDAHABIA/CIB checkout'),
   ('chargily_secret_key', '', 'Chargily Pay v2 Secret Key for payment webhooks/verification'),
   ('chargily_app_url', 'https://medsina.medevsync.com', 'Base URL for Chargily return/cancel redirects'),
-  ('chargily_mode', 'test', 'Chargily mode: test or live'),
-  ('baridimob_rip', '007999990025841234 56', 'Official BaridiMob RIP displayed to Algerian doctors'),
-  ('ccp_account', '258412 Clé 34', 'Official CCP Postal Account for in-office wire'),
+  ('baridimob_rip', '007999990009171614 93', 'Official BaridiMob RIP displayed to Algerian doctors (CHIKH TOUHAMI HAFED)'),
+  ('ccp_account', '9171614 Clé 19', 'Official CCP Postal Account for in-office wire'),
+  ('ccp_holder', 'CHIKH TOUHAMI HAFED', 'Official CCP Account Holder Name'),
   ('support_whatsapp', '+213770000000', 'Official Support WhatsApp for instant payment receipt submission')
 ON CONFLICT (setting_key) DO NOTHING;
+
 

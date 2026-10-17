@@ -28,9 +28,10 @@ class _AiPackPurchaseModalState extends State<AiPackPurchaseModal> {
   AiQuotaPack _selectedPack = AiQuotaPack.availablePacks[1]; // Pack Pro (+150) by default
   String _paymentMethod = 'baridimob'; // 'baridimob' or 'ccp'
 
-  static const String _baridimobRip = '007999990025841234 56';
-  static const String _ccpAccount = '258412';
-  static const String _ccpKey = '34';
+  static const String _baridimobRip = '007999990009171614 93';
+  static const String _ccpAccount = '9171614';
+  static const String _ccpKey = '19';
+  static const String _accountHolder = 'CHIKH TOUHAMI HAFED';
 
   final TextEditingController _refController = TextEditingController();
   PlatformFile? _pickedFile;
@@ -399,6 +400,11 @@ class _AiPackPurchaseModalState extends State<AiPackPurchaseModal> {
                       ],
                     ),
                   ],
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Titulaire : $_accountHolder',
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey),
+                  ),
                 ],
               ),
             ),
