@@ -15,6 +15,7 @@ import '../../practical_tools/presentation/practical_tools_screen.dart';
 import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
+import '../../subscription/presentation/referral_screen.dart';
 import '../../notifications/models/medical_notification.dart';
 import '../../notifications/presentation/notifications_modal_sheet.dart';
 import '../../notifications/services/notification_navigation_service.dart';
@@ -976,6 +977,26 @@ class _MainScaffoldState extends State<MainScaffold> {
                           );
                         },
                         child: const Text('Voir toutes les formules et tarifs ➔', style: TextStyle(fontSize: 12)),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0D9488),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 9),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        icon: const Icon(Icons.group_add_rounded, size: 16),
+                        label: const Text('Parrainer un confrère (+7j VIP offerts) 🤝', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                          );
+                        },
                       ),
                     ),
                   ],

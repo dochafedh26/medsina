@@ -8,6 +8,7 @@ import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
+import '../../subscription/presentation/referral_screen.dart';
 import 'daily_pearls_archive_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -41,6 +42,10 @@ class DashboardScreen extends StatelessWidget {
 
               // Clinical Tip of the Day
               ClinicalTipCard(tier: tier, isSubscriptionActive: user?.isSubscriptionActive ?? true),
+              const SizedBox(height: 24),
+
+              // Ambassador & Referral Viral Card
+              _buildReferralPromoCard(context),
               const SizedBox(height: 28),
 
               // Quick Actions / Modules En Cours
@@ -58,6 +63,70 @@ class DashboardScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildReferralPromoCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F766E), Color(0xFF14B8A6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0D9488).withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 24),
+          ),
+          const SizedBox(width: 14),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Gagnez des Mois VIP Gratuits ! 🤝',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5, color: Colors.white),
+                ),
+                SizedBox(height: 3),
+                Text(
+                  'Invitez un confrère sur Medsina : +7 jours VIP & 50 requêtes IA offerts à chacun.',
+                  style: TextStyle(fontSize: 11.5, color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: const Color(0xFF0F766E),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ReferralScreen()),
+              );
+            },
+            child: const Text('Parrainer ➔', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+          ),
+        ],
+      ),
     );
   }
 

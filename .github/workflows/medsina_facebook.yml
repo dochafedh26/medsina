@@ -56,11 +56,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install pillow requests
 
-      - name: 🎨 Générer le visuel et publier sur Facebook
+      - name: 🎨 Générer le visuel et publier sur Facebook & Telegram
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: |
           CMD="python scripts/automation/facebook_post_generator.py"
           if [ -n "${{ github.event.inputs.type }}" ]; then

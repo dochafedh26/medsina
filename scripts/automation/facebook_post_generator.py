@@ -756,17 +756,47 @@ def main():
     print("-" * 55)
 
     if args.dry_run:
-        print("\n[DRY RUN] Publication ignorée. Image prête pour inspection.")
+        print("\n[DRY RUN] Publication Facebook/Telegram ignorée. Image prête pour inspection.")
+        try:
+            from telegram_publisher import format_telegram_caption, send_telegram_broadcast
+            tg_caption = format_telegram_caption(
+                title=post_data.get("title", ""),
+                badge=post_data.get("badge", ""),
+                points=post_data.get("points", []),
+                reference=post_data.get("reference", ""),
+                app_version=APP_VERSION
+            )
+            send_telegram_broadcast(message_text=tg_caption, image_path=img_path, dry_run=True)
+        except Exception as e:
+            print(f"Notice Telegram dry-run: {e}")
         return
 
     print("\n🚀 4. Publication de la photo et du texte sur la page Facebook Medevsync...")
-    res = publish_photo_to_facebook(img_path, post_data.get("caption", ""))
-    photo_id = res.get("id")
-    post_id = res.get("post_id")
-    print(f"🎉 SUCCÈS ! Photo ID: {photo_id} | Post ID: {post_id}")
-    if post_id:
-        print(f"🔗 Lien : https://www.facebook.com/{post_id}")
+    try:
+        res = publish_photo_to_facebook(img_path, post_data.get("caption", ""))
+        photo_id = res.get("id")
+        post_id = res.get("post_id")
+        print(f"🎉 SUCCÈS FACEBOOK ! Photo ID: {photo_id} | Post ID: {post_id}")
+        if post_id:
+            print(f"🔗 Lien : https://www.facebook.com/{post_id}")
+    except Exception as e:
+        print(f"❌ Erreur lors de la publication Facebook: {e}")
+
+    print("\n✈️ 5. Diffusion automatique sur le Canal Officiel Telegram...")
+    try:
+        from telegram_publisher import format_telegram_caption, send_telegram_broadcast
+        tg_caption = format_telegram_caption(
+            title=post_data.get("title", ""),
+            badge=post_data.get("badge", ""),
+            points=post_data.get("points", []),
+            reference=post_data.get("reference", ""),
+            app_version=APP_VERSION
+        )
+        send_telegram_broadcast(message_text=tg_caption, image_path=img_path, dry_run=False)
+    except Exception as e:
+        print(f"⚠️ Information Telegram: {e}")
 
 
 if __name__ == "__main__":
     main()
+

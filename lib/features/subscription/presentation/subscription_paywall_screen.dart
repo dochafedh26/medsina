@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
@@ -15,6 +17,7 @@ import '../../auth/bloc/auth_event.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/models/user_model.dart';
 import '../models/subscription_duration.dart';
+import 'referral_screen.dart';
 
 class SubscriptionPaywallScreen extends StatefulWidget {
   const SubscriptionPaywallScreen({super.key});
@@ -27,6 +30,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
   final TextEditingController _licenseController = TextEditingController();
   List<SubscriptionPlanItem> _fetchedPlans = [];
   SubscriptionDuration _selectedDuration = SubscriptionDuration.oneYear;
+  Map<String, String> _paymentSettings = {};
 
   @override
   void initState() {
@@ -37,9 +41,13 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
   Future<void> _loadPlans() async {
     try {
       final raw = await SupabaseService.fetchSubscriptionPlans();
-      if (mounted && raw.isNotEmpty) {
+      final settings = await SupabaseService.fetchPaymentSettings();
+      if (mounted) {
         setState(() {
-          _fetchedPlans = raw.map((m) => SubscriptionPlanItem.fromJson(m)).toList();
+          if (raw.isNotEmpty) {
+            _fetchedPlans = raw.map((m) => SubscriptionPlanItem.fromJson(m)).toList();
+          }
+          _paymentSettings = settings;
         });
       }
     } catch (e) {
@@ -198,6 +206,119 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // Ambassador & Referral Gamification Banner
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF0F766E), Color(0xFF0D9488)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF0D9488).withValues(alpha: 0.25),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.group_add_rounded, color: Colors.white, size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Programme Parrainage Confrères 🤝',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Obtenez du VIP gratuit (+7 jours & 50 requêtes IA par confrère invité) !',
+                            style: TextStyle(fontSize: 11, color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF0F766E),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        minimumSize: const Size(0, 32),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                        );
+                      },
+                      child: const Text('Parrainer ➔', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ),
+
+              // EDAHABIA & CIB (Chargily Pay) Instant Option Card
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0284C7).withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFF0284C7).withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0284C7).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.credit_card_rounded, color: Color(0xFF0284C7), size: 24),
+                    ),
+                    const SizedBox(width: 14),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text('Carte EDAHABIA & CIB', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5)),
+                              SizedBox(width: 6),
+                              Text('⚡ Instantané', style: TextStyle(color: Color(0xFF0284C7), fontSize: 10, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                          SizedBox(height: 3),
+                          Text('Paiement sécurisé en ligne via Chargily Pay sans déplacement.', style: TextStyle(fontSize: 11.5, color: Colors.grey)),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0284C7),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      ),
+                      onPressed: () => _showChargilyPayDialog(context, state.user, initialDuration: _selectedDuration),
+                      child: const Text('Payer par Carte ➔', style: TextStyle(fontSize: 12)),
+                    ),
+                  ],
+                ),
+              ),
 
               // BaridiMob & CCP Payment Option Card
               Container(
@@ -699,14 +820,59 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: const Color(0xFFBBF7D0)),
                   ),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Coordonnées de Règlement :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF166534))),
-                      SizedBox(height: 6),
-                      Text('📱 RIP BaridiMob : 007999990025841234 56', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600)),
-                      Text('🏛️ Compte CCP : 258412 Clé 34', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600)),
-                      Text('👤 Titulaire : Dr. Medsina Algérie', style: TextStyle(fontSize: 11.5)),
+                      const Text('Coordonnées Officielles de Règlement :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF166534))),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '📱 RIP BaridiMob : ${_paymentSettings['baridimob_rip'] ?? '007999990025841234 56'}',
+                              style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.copy_rounded, size: 16, color: Color(0xFF166534)),
+                            visualDensity: VisualDensity.compact,
+                            tooltip: 'Copier le RIP',
+                            onPressed: () {
+                              final rip = _paymentSettings['baridimob_rip'] ?? '007999990025841234 56';
+                              Clipboard.setData(ClipboardData(text: rip.replaceAll(' ', '')));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('RIP BaridiMob copié : $rip')),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '🏛️ Compte CCP : ${_paymentSettings['ccp_account'] ?? '258412 Clé 34'}',
+                              style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.copy_rounded, size: 16, color: Color(0xFF166534)),
+                            visualDensity: VisualDensity.compact,
+                            tooltip: 'Copier le CCP',
+                            onPressed: () {
+                              final ccp = _paymentSettings['ccp_account'] ?? '258412 Clé 34';
+                              Clipboard.setData(ClipboardData(text: ccp));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Compte CCP copié : $ccp')),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '👤 Titulaire : ${_paymentSettings['ccp_holder'] ?? 'Dr. Medsina Algérie (Octenium / MedevSync)'}',
+                        style: const TextStyle(fontSize: 11),
+                      ),
                     ],
                   ),
                 ),
@@ -1030,4 +1196,182 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
       ),
     );
   }
+
+  void _showChargilyPayDialog(
+    BuildContext context,
+    UserModel? user, {
+    String initialTier = 'all_access',
+    SubscriptionDuration initialDuration = SubscriptionDuration.oneYear,
+  }) {
+    final availablePlans = (_fetchedPlans.isNotEmpty
+            ? _fetchedPlans
+            : SupabaseService.defaultPlans.map((m) => SubscriptionPlanItem.fromJson(m)).toList())
+        .where((p) => p.id != 'free')
+        .toList();
+
+    String selectedTier = availablePlans.any((p) => p.id == initialTier)
+        ? initialTier
+        : (availablePlans.isNotEmpty ? availablePlans.first.id : 'all_access');
+    SubscriptionDuration selectedDuration = initialDuration;
+
+    SubscriptionPlanItem getSelectedPlanObj() {
+      try {
+        return availablePlans.firstWhere((p) => p.id == selectedTier);
+      } catch (_) {
+        return availablePlans.first;
+      }
+    }
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) {
+          final plan = getSelectedPlanObj();
+          final amount = selectedDuration.calculatePrice(plan);
+          final whatsapp = _paymentSettings['support_whatsapp'] ?? '+213770000000';
+
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: const Row(
+              children: [
+                Icon(Icons.credit_card_rounded, color: Color(0xFF0284C7)),
+                SizedBox(width: 8),
+                Text('Paiement Carte EDAHABIA / CIB', style: TextStyle(fontSize: 15.5)),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0284C7).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF0284C7).withValues(alpha: 0.3)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.verified_user_rounded, color: Color(0xFF0284C7), size: 22),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Paiement direct sécurisé par SATIM & GIE Monétique via la passerelle Chargily Pay v2.',
+                            style: TextStyle(fontSize: 11.5, color: Color(0xFF0369A1), fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  const Text('Formule Choisie :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
+                  const SizedBox(height: 6),
+                  DropdownButtonFormField<String>(
+                    initialValue: selectedTier,
+                    isExpanded: true,
+                    decoration: const InputDecoration(isDense: true),
+                    items: availablePlans.map((p) {
+                      return DropdownMenuItem<String>(
+                        value: p.id,
+                        child: Text(p.name, overflow: TextOverflow.ellipsis),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setDlgState(() => selectedTier = val);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+
+                  const Text('Durée d\'Abonnement :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
+                  const SizedBox(height: 6),
+                  DropdownButtonFormField<SubscriptionDuration>(
+                    initialValue: selectedDuration,
+                    isExpanded: true,
+                    decoration: const InputDecoration(isDense: true),
+                    items: SubscriptionDuration.values.map((d) {
+                      return DropdownMenuItem<SubscriptionDuration>(
+                        value: d,
+                        child: Text(d.label, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setDlgState(() => selectedDuration = val);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Total à régler :', style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                          '${amount.toStringAsFixed(0)} DZD',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF0284C7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  const Text(
+                    'En cliquant sur "Confirmer le Paiement", vous serez redirigé vers la page de règlement par carte EDAHABIA ou CIB.',
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0284C7),
+                  foregroundColor: Colors.white,
+                ),
+                icon: const Icon(Icons.lock_rounded, size: 16),
+                label: const Text('Payer par EDAHABIA / CIB'),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  final chargilyKey = _paymentSettings['chargily_public_key'] ?? '';
+                  if (chargilyKey.isNotEmpty) {
+                    final checkoutUrl = 'https://pay.chargily.net/checkout?key=$chargilyKey&amount=${amount.toInt()}&plan=$selectedTier';
+                    launchUrl(Uri.parse(checkoutUrl), mode: LaunchMode.externalApplication);
+                  } else {
+                    final text = Uri.encodeComponent(
+                      'Salam ! Je souhaite régler mon abonnement Medsina par carte EDAHABIA / CIB.\n'
+                      'Formule : ${plan.name} (${selectedDuration.label})\n'
+                      'Montant : ${amount.toStringAsFixed(0)} DZD\n'
+                      'Email : ${user?.email ?? ""}\n'
+                      'Merci de m\'envoyer le lien de paiement direct !',
+                    );
+                    final waUrl = 'https://wa.me/${whatsapp.replaceAll(RegExp(r"[^0-9]"), "")}?text=$text';
+                    launchUrl(Uri.parse(waUrl), mode: LaunchMode.externalApplication);
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
 }
+

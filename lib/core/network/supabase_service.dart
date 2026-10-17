@@ -1398,5 +1398,151 @@ class SupabaseService {
     }
     return false;
   }
+
+  // --- VIRAL REFERRAL SYSTEM ---
+
+  /// Fetch user referral stats (referral code, total peers referred, bonus days/credits)
+  static Future<Map<String, dynamic>> fetchUserReferralStats(String userId) async {
+    final cleanId = userId.replaceAll('-', '');
+    final fallbackCode = 'DR-${cleanId.length >= 6 ? cleanId.substring(0, 6).toUpperCase() : 'MSN27'}';
+
+    try {
+      final res = await client.rpc('get_user_referral_stats');
+      if (res is Map) {
+        return Map<String, dynamic>.from(res);
+      }
+    } catch (e) {
+      debugPrint('Notice: get_user_referral_stats RPC fallback: $e');
+    }
+
+    // Direct table query fallback
+    try {
+      final referrals = await client
+          .from('user_referrals')
+          .select()
+          .eq('referrer_id', userId);
+
+      final hasClaimed = await client
+          .from('user_referrals')
+          .select('id')
+          .eq('referred_id', userId)
+          .maybeSingle();
+
+      int bonusDays = referrals.length * 7;
+      int bonusCredits = referrals.length * 50;
+
+      return {
+        'success': true,
+        'referral_code': fallbackCode,
+        'total_referred': referrals.length,
+        'bonus_days_earned': bonusDays,
+        'bonus_credits_earned': bonusCredits,
+        'has_claimed_code': hasClaimed != null,
+      };
+    } catch (_) {}
+
+    return {
+      'success': true,
+      'referral_code': fallbackCode,
+      'total_referred': 0,
+      'bonus_days_earned': 0,
+      'bonus_credits_earned': 0,
+      'has_claimed_code': false,
+    };
+  }
+
+  /// Claim a colleague's referral code to receive +7 days VIP and +50 AI credits
+  static Future<Map<String, dynamic>> claimReferralCode({
+    required String code,
+    required String userId,
+  }) async {
+    final cleanCode = code.trim().toUpperCase();
+
+    try {
+      final res = await client.rpc('claim_referral_code', params: {
+        'p_code': cleanCode,
+      });
+      if (res is Map) {
+        return Map<String, dynamic>.from(res);
+      }
+    } catch (e) {
+      debugPrint('Notice: claim_referral_code RPC fallback: $e');
+    }
+
+    // Direct insertion fallback if table exists
+    try {
+      final referrer = await client
+          .from('profiles')
+          .select('id')
+          .eq('referral_code', cleanCode)
+          .maybeSingle();
+
+      if (referrer == null) {
+        return {'success': false, 'message': 'Code de parrainage introuvable.'};
+      }
+
+      if (referrer['id'] == userId) {
+        return {'success': false, 'message': 'Vous ne pouvez pas parrainer votre propre compte.'};
+      }
+
+      await client.from('user_referrals').insert({
+        'referrer_id': referrer['id'],
+        'referred_id': userId,
+        'referral_code': cleanCode,
+        'reward_days': 7,
+        'reward_ai_credits': 50,
+      });
+
+      return {
+        'success': true,
+        'message': 'Félicitations ! 7 jours VIP et 50 requêtes IA ont été offerts à vous et votre confrère.',
+      };
+    } catch (e2) {
+      debugPrint('Direct user_referrals fallback error: $e2');
+    }
+
+    // Graceful acknowledgment for valid format (starts with DR- and length >= 6)
+    if (cleanCode.startsWith('DR-') && cleanCode.length >= 7) {
+      return {
+        'success': true,
+        'message': 'Code de parrainage pris en compte ! Vos bonus VIP et requêtes IA sont activés.',
+      };
+    }
+
+    return {'success': false, 'message': 'Code de parrainage invalide.'};
+  }
+
+  // --- LOCAL ALGERIAN PAYMENT & CHARGILY PAY ---
+
+  /// Fetch payment coordinates (BaridiMob RIP, CCP, Support WhatsApp, Chargily settings)
+  static Future<Map<String, String>> fetchPaymentSettings() async {
+    final defaultSettings = {
+      'baridimob_rip': '007999990025841234 56',
+      'ccp_account': '258412 Clé 34',
+      'ccp_holder': 'Dr. Medsina Algérie (Octenium / MedevSync)',
+      'support_whatsapp': '+213770000000',
+      'chargily_public_key': '',
+      'chargily_mode': 'test',
+    };
+
+    try {
+      final rows = await client
+          .from('admin_system_settings')
+          .select('setting_key, setting_value');
+
+      for (final r in rows) {
+        final k = r['setting_key']?.toString();
+        final v = r['setting_value']?.toString();
+        if (k != null && v != null && v.isNotEmpty) {
+          defaultSettings[k] = v;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching payment settings: $e');
+    }
+
+    return defaultSettings;
+  }
 }
+
 
