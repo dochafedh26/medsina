@@ -38,12 +38,7 @@ except ImportError:
 DEFAULT_SUPABASE_URL = "https://qzfssrhhuorljftpdvjm.supabase.co"
 
 def _resolve_gemini_key() -> str:
-    # 1. Environment variable
-    key = os.environ.get("GEMINI_API_KEY")
-    if key and key.strip():
-        return key.strip()
-
-    # 2. Supabase admin_system_settings (centralized cloud config)
+    # 1. Supabase admin_system_settings (centralized cloud config - always primary & up-to-date)
     sub_key = _resolve_supabase_key()
     if sub_key:
         try:
@@ -58,17 +53,25 @@ def _resolve_gemini_key() -> str:
         except Exception:
             pass
 
+    # 2. Environment variable
+    key = os.environ.get("GEMINI_API_KEY")
+    if key and key.strip():
+        return key.strip()
+
+    # 3. app_secrets.dart fallback
     secrets_file = Path(__file__).resolve().parents[2] / "lib" / "core" / "config" / "app_secrets.dart"
     if secrets_file.exists():
         try:
             import re
             content = secrets_file.read_text(encoding="utf-8")
             m = re.search(r"geminiApiKey\s*=\s*['\"]([^'\"]+)['\"]", content)
-            if m and not m.group(1).startswith("AQ."):
+            if m and m.group(1).strip():
                 return m.group(1).strip()
         except Exception:
             pass
-    return key.strip() if key else ""
+
+    return ""
+
 
 def _resolve_supabase_key() -> str:
     key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
