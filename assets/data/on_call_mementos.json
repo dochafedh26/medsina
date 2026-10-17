@@ -388,5 +388,24 @@
     "is_active": true,
     "created_at": "2026-10-17T12:28:18.259398+00:00",
     "updated_at": "2026-10-17T12:28:18.259410+00:00"
+  },
+  {
+    "id": "memento_intoxication_medicamenteuse_aigue",
+    "title": "💊 Intoxication Médicamenteuse Aiguë (IMA) Poly-médicamenteuse",
+    "category": "Toxicologie / Urgences Vitales",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation sécuritaire immédiate (score de Glasgow, statut hémodynamique, voie aérienne) ; déchocage direct si coma, détresse respiratoire ou collapsus. Recherche de signes toxiques spécifiques (syndrome anticholinergique, sérotoninergique, extra-pyramidal).",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : Glycémie capillaire immédiate (éliminer une hypoglycémie), Gaz du sang (GDS), Ionogramme sanguin, Fonction rénale, Troponine, Bilan hépatique et Taux de Prothrombine (TP) / TCA.",
+      "Étape 3 : Prise en charge thérapeutique de 1ère intention : Décontamination digestive par Charbon Activé (50 g per os ou SNG) si ingestion < 1h et patient conscient ou intubé. Antidotes spécifiques si suspectés : Naloxone (0,4 mg IV) pour les opiacés, Flumazénil (0,2 mg IV titré) pour les benzodiazépines (si non épileptique), N-acétylcystéine IV si intoxication au paracétamol selon le nomogramme de Rumack-Matthew.",
+      "Étape 4 : Surveillance armée continue (Scope ECG, SpO2, PNI toutes les 15 min). Critères de transfert immédiat en Réanimation : Glasgow < 8, instabilité hémodynamique réfractaire, troubles du rythme ventriculaire, acidose métabolique sévère (pH < 7.20), ou nécessité de ventilation mécanique.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne JAMAIS faire vomir un patient intoxiqué (risque majeur de pneumopathie d'inhalation). Ne pas administrer de Flumazénil en aveugle dans les poly-intoxications ou chez l'épileptique (risque de convulsion fatale). Toujours demander un avis psychiatrique avant la sortie définitive de l'UMC."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Toxicologie / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-17T18:52:47.168083+00:00",
+    "updated_at": "2026-10-17T18:52:47.168097+00:00"
   }
 ]
