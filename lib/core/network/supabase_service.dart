@@ -1402,15 +1402,22 @@ class SupabaseService {
 
   // --- VIRAL REFERRAL SYSTEM ---
 
-  /// Fetch user referral stats (referral code, total peers referred, bonus days/credits)
+  /// Fetch user referral stats (referral code, strict milestones: Cas 01 (5 annual), Cas 02 (10 semestrials), free cap)
   static Future<Map<String, dynamic>> fetchUserReferralStats(String userId) async {
     final cleanId = userId.replaceAll('-', '');
     final fallbackCode = 'DR-${cleanId.length >= 6 ? cleanId.substring(0, 6).toUpperCase() : 'MSN27'}';
 
     try {
       final res = await client.rpc('get_user_referral_stats');
-      if (res is Map) {
-        return Map<String, dynamic>.from(res);
+      if (res is Map && res['success'] == true) {
+        final data = Map<String, dynamic>.from(res);
+        final freeCount = (data['free_count'] ?? 0) as int;
+        final totalPaidCount = (data['total_paid_count'] ?? 0) as int;
+
+        data['total_referred'] = totalPaidCount + freeCount;
+        data['bonus_days_earned'] = totalPaidCount * 7;
+        data['bonus_credits_earned'] = (freeCount * 10) + (totalPaidCount * 40);
+        return data;
       }
     } catch (e) {
       debugPrint('Notice: get_user_referral_stats RPC fallback: $e');
@@ -1429,27 +1436,183 @@ class SupabaseService {
           .eq('referred_id', userId)
           .maybeSingle();
 
-      int bonusDays = referrals.length * 7;
-      int bonusCredits = referrals.length * 50;
+      int freeCount = 0;
+      int annualPaidCount = 0;
+      int sixMonthsPaidCount = 0;
+      int totalPaidCount = 0;
+
+      for (final r in referrals) {
+        if (r['initial_credits_granted'] == true) freeCount++;
+        if (r['is_annual_paid'] == true || (r['paid_duration_days'] ?? 0) >= 365) {
+          annualPaidCount++;
+        }
+        if (r['is_six_months_paid'] == true || (r['paid_duration_days'] ?? 0) >= 180) {
+          sixMonthsPaidCount++;
+        }
+        if ((r['paid_duration_days'] ?? 0) >= 30) {
+          totalPaidCount++;
+        }
+      }
+
+      final cappedFree = freeCount > 5 ? 5 : freeCount;
+      final annualUnlocked = annualPaidCount >= 5;
+      final sixMonthsUnlocked = sixMonthsPaidCount >= 10;
 
       return {
         'success': true,
         'referral_code': fallbackCode,
-        'total_referred': referrals.length,
-        'bonus_days_earned': bonusDays,
-        'bonus_credits_earned': bonusCredits,
+        'free_count': cappedFree,
+        'free_cap': 5,
+        'free_ai_credits_earned': cappedFree * 10,
+        'annual_paid_count': annualPaidCount,
+        'annual_target': 5,
+        'annual_unlocked': annualUnlocked,
+        'six_months_paid_count': sixMonthsPaidCount,
+        'six_months_target': 10,
+        'six_months_unlocked': sixMonthsUnlocked,
+        'total_paid_count': totalPaidCount,
         'has_claimed_code': hasClaimed != null,
+        'total_referred': totalPaidCount + cappedFree,
+        'bonus_days_earned': totalPaidCount * 7,
+        'bonus_credits_earned': (cappedFree * 10) + (totalPaidCount * 40),
       };
     } catch (_) {}
 
     return {
       'success': true,
       'referral_code': fallbackCode,
+      'free_count': 0,
+      'free_cap': 5,
+      'free_ai_credits_earned': 0,
+      'annual_paid_count': 0,
+      'annual_target': 5,
+      'annual_unlocked': false,
+      'six_months_paid_count': 0,
+      'six_months_target': 10,
+      'six_months_unlocked': false,
+      'total_paid_count': 0,
       'total_referred': 0,
       'bonus_days_earned': 0,
       'bonus_credits_earned': 0,
       'has_claimed_code': false,
     };
+  }
+
+  /// Claim 1 Year Free Subscription milestone reward (Cas 01: 5 annuals, Cas 02: 10 semestrials)
+  static Future<Map<String, dynamic>> claimReferralFreeYear({
+    required String choiceTier,
+    required String userId,
+    String? userEmail,
+    String? userName,
+  }) async {
+    final cleanTier = choiceTier.trim().toLowerCase();
+    if (cleanTier != 'resident_elite' && cleanTier != 'clinical_pro') {
+      return {
+        'success': false,
+        'message': 'Veuillez choisir soit Résident Élite, soit Médecin Pro.',
+      };
+    }
+
+    try {
+      final res = await client.rpc('claim_referral_free_year', params: {
+        'p_choice_tier': cleanTier,
+      });
+      if (res is Map && res['success'] == true) {
+        return Map<String, dynamic>.from(res);
+      }
+    } catch (e) {
+      debugPrint('Notice: claim_referral_free_year RPC fallback: $e');
+    }
+
+    // Direct fallback execution
+    try {
+      final referrals = await client
+          .from('user_referrals')
+          .select()
+          .eq('referrer_id', userId);
+
+      int annualCount = 0;
+      int sixMonthsCount = 0;
+
+      for (final r in referrals) {
+        if (r['is_annual_paid'] == true || (r['paid_duration_days'] ?? 0) >= 365) {
+          annualCount++;
+        }
+        if (r['is_six_months_paid'] == true || (r['paid_duration_days'] ?? 0) >= 180) {
+          sixMonthsCount++;
+        }
+      }
+
+      if (annualCount < 5 && sixMonthsCount < 10) {
+        return {
+          'success': false,
+          'message': 'Paliers non atteints : il vous faut soit 5 filleuls abonnés 1 an ($annualCount/5), soit 10 abonnés 6 mois ($sixMonthsCount/10).',
+        };
+      }
+
+      final bonusAi = (annualCount >= 5) ? 250 : 150;
+      final now = DateTime.now().toUtc();
+      final oneYearLater = now.add(const Duration(days: 365));
+
+      // 1. Activate 365 days subscription
+      await client.from('subscriptions').upsert({
+        'user_id': userId,
+        'tier': cleanTier,
+        'status': 'active',
+        'starts_at': now.toIso8601String(),
+        'expires_at': oneYearLater.toIso8601String(),
+        'updated_at': now.toIso8601String(),
+      });
+
+      // 2. Grant AI bonus credits
+      try {
+        final existingQuotas = await client
+            .from('user_ai_quotas')
+            .select('bonus_credits_balance')
+            .eq('user_id', userId)
+            .maybeSingle();
+
+        final currentBalance = (existingQuotas?['bonus_credits_balance'] ?? 0) as int;
+        await client.from('user_ai_quotas').upsert({
+          'user_id': userId,
+          'bonus_credits_balance': currentBalance + bonusAi,
+          'daily_requests_used': 0,
+          'last_request_date': DateTime.now().toIso8601String().split('T')[0],
+          'updated_at': now.toIso8601String(),
+        });
+      } catch (_) {}
+
+      // 3. Record in payments table for audit
+      try {
+        await client.from('payments').insert({
+          'user_id': userId,
+          'user_email': userEmail ?? 'resident@medsina.com',
+          'user_name': userName ?? 'Dr. Ambassadeur',
+          'tier': cleanTier,
+          'duration_days': 365,
+          'amount': 0,
+          'currency': 'DZD',
+          'payment_method': 'referral_reward',
+          'receipt_reference': 'AMBASSADOR-1YEAR-AWARD',
+          'status': 'approved',
+          'admin_notes': 'Récompense parrainage strict validée : $annualCount annuel(s) / $sixMonthsCount semestriel(s). +$bonusAi IA',
+        });
+      } catch (_) {}
+
+      final planTitle = cleanTier == 'resident_elite' ? 'Pass Résident Élite' : 'Pack Médecin Pro';
+      return {
+        'success': true,
+        'tier': cleanTier,
+        'bonus_ai': bonusAi,
+        'message': 'Félicitations Confrère ! Votre abonnement 1 an gratuit ($planTitle) et +$bonusAi requêtes IA sont activés !',
+      };
+    } catch (e) {
+      debugPrint('Error claiming referral reward direct fallback: $e');
+      return {
+        'success': false,
+        'message': 'Erreur lors de l\'activation de la récompense : $e',
+      };
+    }
   }
 
   /// Claim a colleague's referral code to receive +7 days VIP and +50 AI credits
