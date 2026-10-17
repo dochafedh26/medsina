@@ -228,5 +228,28 @@
     "treatment_summary": "Traitement essentiellement symptomatique, préventif des complications orthopédiques et respiratoires, et spécifique étiologique (corticothérapie pour les formes inflammatoires).",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-16T19:31:13.690505+00:00"
+  },
+  {
+    "course_id": "Blida_URGENCES_UMC_MEDECINE_DE_CATASTROPHE",
+    "course_name": "Médecine de catastrophe",
+    "module_id": "Blida_URGENCES_UMC",
+    "module_name": "Urgences (UMC)",
+    "summary_markdown": "## 1. Définition et Principes Fondamentaux\n- **Catastrophe** : Événement brutal de grande ampleur provoquant de nombreuses victimes (impliqués) et dépassant les capacités de réponse habituelles (moyens locaux en personnel et matériel).\n- **Adéquation Offre / Demande** : Rupture totale de cet équilibre. Le nombre de victimes est supérieur aux capacités d'accueil et de soins.\n- **Principes d'action** : Le **PLUS GRAND NOMBRE**, au **PLUS MOINDRE COÛT**, dans le **TEMPS LE PLUS COURT**.\n\n## 2. Démarche Opérationnelle et Triage\n- **Triage (Ramassage, Conditionnement, Évacuation)** : Étape clé basée sur la gravité et le pronostic vital.\n- **Classification / Code couleur NATO (ICS)** :\n  - **URGENCES ABSOLUES (UA) - Rouge** : Pronostic vital engagé à court terme (détresse respiratoire aiguë, hémorragie cataclysmique, coma, choc). Nécessitent un geste immédiat.\n  - **URGENCES RELATIVES (UR) - Jaune/Vert** : Lésions ne mettant pas en jeu le pronostic vital immédiat (fractures simples, traumatismes fermés stables).\n  - **IMPITLOYABLES / DÉPASSÉS (D) - Noir** : Blessés ayant des lésions incompatibles avec la vie (arrêt cardiaque traumatique, brûlures plus de 90%, lésions cérébrales majeures avec score de Glasgow à 3 sans ventilation).\n  - **IMPLIQUÉS / EXEMPTS (VERTS) - Vert** : Urgences psychologiques ou blessés légers.\n\n## 3. Organisation des Secours (Plans de Secours)\n- **Chaîne des secours** :\n  - **Zone d'Exclusion (Zone Rouge)** : Zone de danger immédiat. Pas de soins médicaux, uniquement extraction rapide et sauvetage.\n  - **Zone Contrôlée (Zone Jaune / PMA - Poste Médical Avancé)** : Zone de tri, de médicalisation et de conditionnement. C'est le cœur du dispositif médical.\n  - **Zone Verte (RAM - Rassemblement des Ambulances)** : Zone de transit et d'évacuation vers les structures hospitalières adaptées.\n- **Commandement unique** : Direction des opérations de secours (DOS) sur le plan tactique et médical (médecin coordonnateur SAMU/Protection Civile).\n\n## 4. Stratégie Thérapeutique en Milieu Catastrophique\n- **Médecine de guerre / de catastrophe** : Gestes salvateurs de première urgence uniquement (**Life Saving Steps**).\n- **Protocoles simplifiés et standardisés** :\n  - **Hémorragies** : Pose de **garrot tactique** en zone rouge si hémorragie des membres non contrôlable par compression directe. Transfusion précoce si disponible (plasma/sang total).\n  - **Voies aériennes** : Désobstruction, position latérale de sécurité (PLS), pose de canule de Guedel ou intubation en urgence si nécessaire.\n  - **Ventilation** : Décompression à l'aiguille d'un pneumothorax suffocant en cas de détresse respiratoire aiguë.\n  - **Remplissage vasculaire** : Restreint, adapté au choc (éviter l'hyper-perfusion précoce si suspicion d'hémorragie non contrôlée).\n\n## 5. Évolution, Risques et Médecine Nucléaire/Radiologique/Biologique (NRBC)\n- **Risques spécifiques** : Risque chimique, radiologique, bactériologique (NRBC-E). Nécessite des équipements de protection individuelle (EPI) spécifiques.\n- **Gestion des flux de victimes (Surmortalité)** : L'organisation pyramidale des évacuations évite la saturation des centres hospitaliers universitaires (CHU).\n- **Débriefing et soutien psychologique** : Prévention du syndrome de stress post-traumatique (SSPT) tant pour les victimes que pour les équipes secouristes.",
+    "key_takeaways": [
+      "Une catastrophe se définit par l'inadéquation entre les ressources disponibles et les besoins instantanés des victimes.",
+      "Le triage en urgence utilise le code couleur international : Rouge (UA), Jaune/Vert (UR), Noir (Dépassés/Décédés).",
+      "Le Poste Médical Avancé (PMA) est implanté dans la zone jaune (contrôlée) pour le tri et le conditionnement.",
+      "En zone rouge (exclusion), aucun acte médical prolongé n'est réalisé : seule l'extraction et l'arrêt des hémorragies majeures (garrot) priment.",
+      "Le principe directeur est de faire le maximum de bien au plus grand nombre de victimes avec les ressources disponibles."
+    ],
+    "exam_traps": [
+      "Piège Annales : Un blessé en arrêt cardio-respiratoire traumatique ou brûlé à 90% est classé en 'Urgence Absolue (Rouge)' (FAUX : il est classé en 'Dépassé/Noir' pour ne pas gaspiller les ressources rares).",
+      "Piège Traitement : Poser un garrot sans noter l'heure exacte de la pose ou le laisser indéfiniment sans surveillance (risque d'ischémie définitive).",
+      "Piège Organisationnel : Réaliser des actes chirurgicaux lourds au sein du PMA (FAUX : le PMA est une zone de triage, de stabilisation et d'orientation, pas un bloc opératoire)."
+    ],
+    "diagnostic_criteria": "Identification rapide d'une rupture d'adéquation entre l'offre de soins et la demande de victimes, validant le déclenchement des plans d'urgence (Plan ORSEC / Plan Blanc).",
+    "treatment_summary": "Application des 'Life Saving Steps' en zone d'exclusion (garrot, désobstruction des VAS, levée de pneumothorax suffocant) puis stabilisation au PMA avant une évacuation orientée.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-17T12:08:03.816019+00:00"
   }
 ]
