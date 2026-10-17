@@ -55,14 +55,44 @@ OFFICIAL_APK_URL = "https://medsina.medevsync.com/download/medsina.apk"
 OFFICIAL_WIN_URL = "https://medsina.medevsync.com/download/medsina-setup.exe"
 
 def get_current_app_version() -> str:
+    """Detects the latest official Medsina release version automatically.
+    1. Checks Supabase app_releases table (latest active release).
+    2. Checks live Octenium web version.json.
+    3. Checks local pubspec.yaml.
+    """
+    # 1. Supabase app_releases
+    try:
+        url = f"{SUPABASE_URL}/rest/v1/app_releases?select=version_name&is_active=eq.true&order=build_number.desc&limit=1"
+        req = urllib.request.Request(
+            url,
+            headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+        )
+        with urllib.request.urlopen(req, timeout=6) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data and data[0].get("version_name"):
+                return str(data[0]["version_name"]).strip().lstrip("v")
+    except Exception:
+        pass
+
+    # 2. Live Octenium version.json
+    try:
+        with urllib.request.urlopen(f"{OFFICIAL_WEB_URL}/version.json", timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data.get("version"):
+                return str(data["version"]).strip().lstrip("v")
+    except Exception:
+        pass
+
+    # 3. Local pubspec.yaml
     try:
         pubspec = Path(__file__).resolve().parents[2] / "pubspec.yaml"
         if pubspec.exists():
             for line in pubspec.read_text(encoding="utf-8").splitlines():
                 if line.startswith("version:"):
-                    return line.split(":")[1].strip().split("+")[0]
+                    return line.split(":")[1].strip().split("+")[0].lstrip("v")
     except Exception:
         pass
+
     return "1.0.8"
 
 APP_VERSION = get_current_app_version()
@@ -584,8 +614,11 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
     draw.text((header_x, 102), "Medsina • Plateforme Médicale Globale", font=font_brand_sub, fill=(148, 163, 184, 255))
 
     # Badge de version & Web
-    draw.rounded_rectangle([(width - 250, 75), (width - 70, 120)], radius=12, fill=(30, 41, 59, 200), outline=t["accent"], width=1)
-    draw.text((width - 232, 85), "Version 1.0.7", font=font_brand_sub, fill=(255, 255, 255, 230))
+    version_label = f"Version {APP_VERSION}"
+    bbox_v = font_brand_sub.getbbox(version_label)
+    vw = (bbox_v[2] - bbox_v[0]) + 32
+    draw.rounded_rectangle([(width - 70 - vw, 75), (width - 70, 120)], radius=12, fill=(30, 41, 59, 200), outline=t["accent"], width=1)
+    draw.text((width - 70 - vw + 16, 85), version_label, font=font_brand_sub, fill=(255, 255, 255, 230))
 
     # 5. Badge thématique
     raw_badge = strip_emojis_for_image(data.get("badge", "MÉDECINE & CLINIQUE"))
