@@ -38,11 +38,12 @@ except ImportError:
 DEFAULT_SUPABASE_URL = "https://qzfssrhhuorljftpdvjm.supabase.co"
 
 def _resolve_gemini_key() -> str:
+    # 1. Environment variable
     key = os.environ.get("GEMINI_API_KEY")
-    if key and not key.strip().startswith("AQ."):
+    if key and key.strip():
         return key.strip()
 
-    # Attempt to load from Supabase admin_system_settings (centralized cloud config)
+    # 2. Supabase admin_system_settings (centralized cloud config)
     sub_key = _resolve_supabase_key()
     if sub_key:
         try:
@@ -52,7 +53,7 @@ def _resolve_gemini_key() -> str:
                 rows = r.json()
                 if rows and rows[0].get("setting_value"):
                     val = rows[0]["setting_value"].strip()
-                    if not val.startswith("AQ."):
+                    if val:
                         return val
         except Exception:
             pass

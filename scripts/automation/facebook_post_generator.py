@@ -80,15 +80,8 @@ OFFICIAL_FOOTER = f"""
 
 def load_gemini_api_key() -> Optional[str]:
     key = os.environ.get("GEMINI_API_KEY")
-    if key and not key.startswith("AQ."):
+    if key and key.strip():
         return key.strip()
-
-    secrets_file = Path(__file__).resolve().parents[2] / "lib" / "core" / "config" / "app_secrets.dart"
-    if secrets_file.exists():
-        content = secrets_file.read_text(encoding="utf-8")
-        m = re.search(r"geminiApiKey\s*=\s*['\"]([^'\"]+)['\"]", content)
-        if m and m.group(1).strip() and not m.group(1).startswith("AQ."):
-            return m.group(1).strip()
 
     try:
         url = f"{SUPABASE_URL}/rest/v1/admin_system_settings?setting_key=eq.gemini_api_key&select=setting_value"
@@ -100,10 +93,17 @@ def load_gemini_api_key() -> Optional[str]:
             rows = json.loads(resp.read().decode("utf-8"))
             if rows and rows[0].get("setting_value"):
                 val = rows[0]["setting_value"].strip()
-                if not val.startswith("AQ."):
+                if val:
                     return val
     except Exception:
         pass
+
+    secrets_file = Path(__file__).resolve().parents[2] / "lib" / "core" / "config" / "app_secrets.dart"
+    if secrets_file.exists():
+        content = secrets_file.read_text(encoding="utf-8")
+        m = re.search(r"geminiApiKey\s*=\s*['\"]([^'\"]+)['\"]", content)
+        if m and m.group(1).strip():
+            return m.group(1).strip()
 
     return None
 
