@@ -407,5 +407,24 @@
     "is_active": true,
     "created_at": "2026-10-17T18:52:47.168083+00:00",
     "updated_at": "2026-10-17T18:52:47.168097+00:00"
+  },
+  {
+    "id": "memento_traumatisme_cranien",
+    "title": "🧠 Traumatisme Crânien : Scanner & Urgences",
+    "category": "Neurologie / UMC",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation immédiate de la conscience (Glasgow GCS), recherche de signes de focalisation, d'engagement, d'otorragie ou de rhinorrhée. Maintenir l'axe crânio-cervical et oxygéner (SaO2 > 94%).",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, Groupage-Rhéus, Iono sanguin, Urée, Créatinine, Glycémie capillaire, Bilan d'hémostase (TP, TCA, Fibrinogène) et Troponine.",
+      "Étape 3 : Indication absolue de TDM cérébrale sans injection en urgence : GCS < 15 à H2, suspicion de fracture de crâne (déprimée ou base), vomissements répétés (> 2 épisodes), âge > 65 ans, amnésie rétrograde > 30 min, ou patient sous anticoagulant / anti-plaquettaire.",
+      "Étape 4 : Surveillance armée (paramètres toutes les 30 min) : réévaluation du GCS, pupilles, PA, pouls. Critères de transfert en réanimation : altération secondaire de la conscience (chute du GCS de 2 points), crises convulsives, ou lésion neuro-chirurgicale au scanner.",
+      "Étape 5 : Piège médico-légal et contre-indication : Ne JAMAIS administrer de sédative lourde avant l'évaluation neurologique complète ou le scanner (sauf indication d'intubation pour détresse respiratoire ou GCS < 8). Traitement anti-hypertenseur proscrit en urgence sauf si HTA maligne menaçante."
+    ],
+    "scientific_references": "SFMU / Recommandations Françaises de Neuroradiologie / Collège de Réanimation / Référentiel MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-18T05:12:01.494418+00:00",
+    "updated_at": "2026-10-18T05:12:01.494434+00:00"
   }
 ]
