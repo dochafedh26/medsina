@@ -135,6 +135,15 @@ class OtaUpdateService {
     required void Function(double progress) onProgress,
     required void Function(String statusMessage) onStatusChange,
   }) async {
+    // Record download telemetry on Supabase
+    try {
+      SupabaseService.recordOcteniumDownload(
+        platform: currentPlatform,
+        source: 'in_app_ota',
+        version: release.versionName,
+      );
+    } catch (_) {}
+
     if (kIsWeb || !Platform.isAndroid) {
       // Windows / Web / Desktop: open official download or web release page
       final uri = Uri.parse(release.downloadUrl);

@@ -9,6 +9,11 @@ class AdminMetrics extends Equatable {
   final int totalLicenses;
   final int redeemedLicenses;
   final int availableLicenses;
+  final int octeniumTotalDownloads;
+  final int octeniumApkDownloads;
+  final int octeniumWindowsDownloads;
+  final int octeniumWebVisits;
+  final DateTime? octeniumLastDownloadAt;
 
   const AdminMetrics({
     required this.totalUsers,
@@ -19,6 +24,11 @@ class AdminMetrics extends Equatable {
     required this.totalLicenses,
     required this.redeemedLicenses,
     required this.availableLicenses,
+    this.octeniumTotalDownloads = 0,
+    this.octeniumApkDownloads = 0,
+    this.octeniumWindowsDownloads = 0,
+    this.octeniumWebVisits = 0,
+    this.octeniumLastDownloadAt,
   });
 
   factory AdminMetrics.fromJson(Map<String, dynamic> json) {
@@ -31,6 +41,13 @@ class AdminMetrics extends Equatable {
       totalLicenses: json['total_licenses'] ?? 0,
       redeemedLicenses: json['redeemed_licenses'] ?? 0,
       availableLicenses: json['available_licenses'] ?? 0,
+      octeniumTotalDownloads: (json['octenium_total_downloads'] as num?)?.toInt() ?? 0,
+      octeniumApkDownloads: (json['octenium_apk_downloads'] as num?)?.toInt() ?? 0,
+      octeniumWindowsDownloads: (json['octenium_windows_downloads'] as num?)?.toInt() ?? 0,
+      octeniumWebVisits: (json['octenium_web_visits'] as num?)?.toInt() ?? 0,
+      octeniumLastDownloadAt: json['octenium_last_download_at'] != null
+          ? DateTime.tryParse(json['octenium_last_download_at'].toString())
+          : null,
     );
   }
 
@@ -44,6 +61,11 @@ class AdminMetrics extends Equatable {
         totalLicenses,
         redeemedLicenses,
         availableLicenses,
+        octeniumTotalDownloads,
+        octeniumApkDownloads,
+        octeniumWindowsDownloads,
+        octeniumWebVisits,
+        octeniumLastDownloadAt,
       ];
 }
 
@@ -112,6 +134,12 @@ class AdminLicenseItem extends Equatable {
   final String? redeemedBy;
   final DateTime? redeemedAt;
   final DateTime? createdAt;
+  final String? redeemedUserName;
+  final String? redeemedUserEmail;
+  final String? redeemedUserRole;
+  final DateTime? expiresAt;
+  final bool isExpired;
+  final int daysRemaining;
 
   const AdminLicenseItem({
     required this.keyCode,
@@ -121,22 +149,72 @@ class AdminLicenseItem extends Equatable {
     this.redeemedBy,
     this.redeemedAt,
     this.createdAt,
+    this.redeemedUserName,
+    this.redeemedUserEmail,
+    this.redeemedUserRole,
+    this.expiresAt,
+    this.isExpired = false,
+    this.daysRemaining = 0,
   });
 
   factory AdminLicenseItem.fromJson(Map<String, dynamic> json) {
+    final redeemedAtDate = json['redeemed_at'] != null ? DateTime.tryParse(json['redeemed_at'].toString()) : null;
+    final createdAtDate = json['created_at'] != null ? DateTime.tryParse(json['created_at'].toString()) : null;
+    final duration = (json['duration_days'] as num?)?.toInt() ?? 365;
+    final isRedeemed = json['is_redeemed'] == true;
+
+    // Compute expiration date if not provided directly
+    DateTime? expDate;
+    if (json['expires_at'] != null) {
+      expDate = DateTime.tryParse(json['expires_at'].toString());
+    } else if (isRedeemed && redeemedAtDate != null) {
+      expDate = redeemedAtDate.add(Duration(days: duration));
+    }
+
+    final isExp = json['is_expired'] == true || (expDate != null && DateTime.now().isAfter(expDate));
+    int remaining = 0;
+    if (json['days_remaining'] != null) {
+      remaining = (json['days_remaining'] as num).toInt();
+    } else if (expDate != null) {
+      final diff = expDate.difference(DateTime.now()).inDays;
+      remaining = diff > 0 ? diff : 0;
+    } else {
+      remaining = duration;
+    }
+
     return AdminLicenseItem(
       keyCode: json['key_code'] ?? '',
       tier: json['tier'] ?? 'all_access',
-      durationDays: json['duration_days'] ?? 365,
-      isRedeemed: json['is_redeemed'] == true,
-      redeemedBy: json['redeemed_by'],
-      redeemedAt: json['redeemed_at'] != null ? DateTime.tryParse(json['redeemed_at']) : null,
-      createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
+      durationDays: duration,
+      isRedeemed: isRedeemed,
+      redeemedBy: json['redeemed_by']?.toString(),
+      redeemedAt: redeemedAtDate,
+      createdAt: createdAtDate,
+      redeemedUserName: json['redeemed_user_name'] ?? json['user_full_name'] ?? json['full_name'],
+      redeemedUserEmail: json['redeemed_user_email'] ?? json['user_email'] ?? json['email'],
+      redeemedUserRole: json['redeemed_user_role'] ?? json['medical_role'],
+      expiresAt: expDate,
+      isExpired: isExp,
+      daysRemaining: remaining,
     );
   }
 
   @override
-  List<Object?> get props => [keyCode, tier, durationDays, isRedeemed, redeemedBy, redeemedAt, createdAt];
+  List<Object?> get props => [
+        keyCode,
+        tier,
+        durationDays,
+        isRedeemed,
+        redeemedBy,
+        redeemedAt,
+        createdAt,
+        redeemedUserName,
+        redeemedUserEmail,
+        redeemedUserRole,
+        expiresAt,
+        isExpired,
+        daysRemaining,
+      ];
 }
 
 class SubscriptionPlanItem extends Equatable {
