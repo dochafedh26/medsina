@@ -45,7 +45,7 @@ VALUES
   ('octenium_apk_downloads', '0', 'Nombre de téléchargements du package APK Android'),
   ('octenium_windows_downloads', '0', 'Nombre de téléchargements de l''installateur PC Windows (.exe)'),
   ('octenium_web_visits', '0', 'Nombre d''accès à la version Web en ligne Octenium'),
-  ('octenium_last_download_at', null, 'Date et heure du dernier téléchargement enregistré')
+  ('octenium_last_download_at', '', 'Date et heure du dernier téléchargement enregistré')
 ON CONFLICT (setting_key) DO NOTHING;
 
 -- -----------------------------------------------------------------------------
@@ -139,7 +139,7 @@ BEGIN
   SELECT coalesce(nullif(setting_value, '')::int, 0) INTO v_apk FROM public.admin_system_settings WHERE setting_key = 'octenium_apk_downloads';
   SELECT coalesce(nullif(setting_value, '')::int, 0) INTO v_win FROM public.admin_system_settings WHERE setting_key = 'octenium_windows_downloads';
   SELECT coalesce(nullif(setting_value, '')::int, 0) INTO v_web FROM public.admin_system_settings WHERE setting_key = 'octenium_web_visits';
-  SELECT setting_value INTO v_last FROM public.admin_system_settings WHERE setting_key = 'octenium_last_download_at';
+  SELECT nullif(setting_value, '') INTO v_last FROM public.admin_system_settings WHERE setting_key = 'octenium_last_download_at';
 
   -- Today's count from app_downloads
   SELECT count(*)::int INTO v_today 
@@ -225,9 +225,16 @@ BEGIN
     end as days_remaining
   FROM public.license_keys l
   LEFT JOIN public.profiles p ON p.id = l.redeemed_by
-  LEFT JOIN public.subscriptions s ON s.user_id = l.redeemed_by
+  LEFT JOIN LATERAL (
+    SELECT sub.expires_at 
+    FROM public.subscriptions sub 
+    WHERE sub.user_id = l.redeemed_by 
+    ORDER BY sub.expires_at DESC NULLS LAST 
+    LIMIT 1
+  ) s ON true
   ORDER BY l.created_at DESC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 GRANT EXECUTE ON FUNCTION public.admin_list_license_keys TO authenticated, service_role;
+
