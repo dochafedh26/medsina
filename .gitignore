@@ -9,6 +9,8 @@
 lib/core/config/app_secrets.dart
 credentials.json
 token.json
+output_banner.png
+test_*.png
 .atom/
 .build/
 .buildlog/
