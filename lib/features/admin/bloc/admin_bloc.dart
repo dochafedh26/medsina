@@ -22,6 +22,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<DeleteAnnouncementEvent>(_onDeleteAnnouncement);
     on<UnbanUserEvent>(_onUnbanUser);
     on<ArchiveEligibleReceiptsEvent>(_onArchiveEligibleReceipts);
+    on<RevokeLicenseKeyEvent>(_onRevokeLicenseKey);
+    on<UnrevokeLicenseKeyEvent>(_onUnrevokeLicenseKey);
   }
 
   void _onClearAdminMessage(ClearAdminMessageEvent event, Emitter<AdminState> emit) {
@@ -422,6 +424,83 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       emit(state.copyWith(
         status: AdminStatus.loaded,
         errorMessage: 'Erreur lors de l\'archivage sur Google Drive : $e',
+      ));
+    }
+  }
+
+  Future<void> _onRevokeLicenseKey(RevokeLicenseKeyEvent event, Emitter<AdminState> emit) async {
+    emit(state.copyWith(status: AdminStatus.loading, clearMessages: true));
+    try {
+      final result = await SupabaseService.revokeLicenseKey(
+        keyCode: event.keyCode,
+        reason: event.reason,
+      );
+
+      if (result['success'] == true) {
+        final licensesData = await SupabaseService.fetchAdminLicenseKeys();
+        final usersData = await SupabaseService.fetchAdminUsers();
+        final metricsData = await SupabaseService.fetchAdminMetrics();
+
+        final licenses = licensesData.map((l) => AdminLicenseItem.fromJson(l)).toList();
+        final users = usersData.map((u) => AdminUserItem.fromJson(u)).toList();
+        final metrics = AdminMetrics.fromJson(metricsData);
+
+        emit(state.copyWith(
+          status: AdminStatus.loaded,
+          licenses: licenses,
+          users: users,
+          filteredUsers: users,
+          metrics: metrics,
+          successMessage: result['message'] ?? 'Clé ${event.keyCode} révoquée avec succès !',
+        ));
+      } else {
+        emit(state.copyWith(
+          status: AdminStatus.loaded,
+          errorMessage: result['message'] ?? 'Échec de la révocation de la clé.',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        errorMessage: 'Erreur lors de la révocation : $e',
+      ));
+    }
+  }
+
+  Future<void> _onUnrevokeLicenseKey(UnrevokeLicenseKeyEvent event, Emitter<AdminState> emit) async {
+    emit(state.copyWith(status: AdminStatus.loading, clearMessages: true));
+    try {
+      final result = await SupabaseService.unrevokeLicenseKey(
+        keyCode: event.keyCode,
+      );
+
+      if (result['success'] == true) {
+        final licensesData = await SupabaseService.fetchAdminLicenseKeys();
+        final usersData = await SupabaseService.fetchAdminUsers();
+        final metricsData = await SupabaseService.fetchAdminMetrics();
+
+        final licenses = licensesData.map((l) => AdminLicenseItem.fromJson(l)).toList();
+        final users = usersData.map((u) => AdminUserItem.fromJson(u)).toList();
+        final metrics = AdminMetrics.fromJson(metricsData);
+
+        emit(state.copyWith(
+          status: AdminStatus.loaded,
+          licenses: licenses,
+          users: users,
+          filteredUsers: users,
+          metrics: metrics,
+          successMessage: result['message'] ?? 'Clé ${event.keyCode} rétablie avec succès !',
+        ));
+      } else {
+        emit(state.copyWith(
+          status: AdminStatus.loaded,
+          errorMessage: result['message'] ?? 'Échec du rétablissement de la clé.',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        errorMessage: 'Erreur lors du rétablissement : $e',
       ));
     }
   }

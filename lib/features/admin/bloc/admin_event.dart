@@ -205,3 +205,26 @@ class ArchiveEligibleReceiptsEvent extends AdminEvent {
   List<Object?> get props => [retentionDays];
 }
 
+class RevokeLicenseKeyEvent extends AdminEvent {
+  final String keyCode;
+  final String? reason;
+
+  const RevokeLicenseKeyEvent({
+    required this.keyCode,
+    this.reason,
+  });
+
+  @override
+  List<Object?> get props => [keyCode, reason];
+}
+
+class UnrevokeLicenseKeyEvent extends AdminEvent {
+  final String keyCode;
+
+  const UnrevokeLicenseKeyEvent({required this.keyCode});
+
+  @override
+  List<Object?> get props => [keyCode];
+}
+
+

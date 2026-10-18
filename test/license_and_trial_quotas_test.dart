@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:medsina/core/constants/app_constants.dart';
 import 'package:medsina/core/services/free_trial_quota_service.dart';
 import 'package:medsina/core/utils/license_key_formatter.dart';
+import 'package:medsina/features/admin/models/admin_models.dart';
 import 'package:medsina/features/auth/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -119,4 +120,58 @@ void main() {
       expect(quotaService.canUseCopilot(vipUser), isTrue);
     });
   });
+
+  group('License Revocation & Audit Tests', () {
+    test('AdminLicenseItem correctly deserializes revoked license with reason and dates', () {
+      final json = {
+        'key_code': 'MSN27-ABCDE-FGHIJ-KLMNO-PQRST',
+        'tier': 'all_access',
+        'duration_days': 365,
+        'is_redeemed': true,
+        'redeemed_by': 'user_123',
+        'redeemed_at': '2026-10-15T10:00:00Z',
+        'created_at': '2026-10-10T08:00:00Z',
+        'redeemed_user_name': 'Dr. Amine',
+        'redeemed_user_email': 'amine@medsina.dz',
+        'is_revoked': true,
+        'revoked_at': '2026-10-18T06:30:00Z',
+        'revocation_reason': 'Paiement contesté par la banque',
+      };
+
+      final item = AdminLicenseItem.fromJson(json);
+
+      expect(item.keyCode, equals('MSN27-ABCDE-FGHIJ-KLMNO-PQRST'));
+      expect(item.isRevoked, isTrue);
+      expect(item.revocationReason, equals('Paiement contesté par la banque'));
+      expect(item.revokedAt, isNotNull);
+      expect(item.isExpired, isTrue); // Revoked keys are considered expired/invalid
+      expect(item.daysRemaining, equals(0)); // No days remaining for revoked keys
+      expect(item.redeemedUserName, equals('Dr. Amine'));
+      expect(item.redeemedUserEmail, equals('amine@medsina.dz'));
+    });
+
+    test('AdminLicenseItem for unrevoked active license retains remaining days', () {
+      final futureExpiry = DateTime.now().add(const Duration(days: 120)).toIso8601String();
+      final json = {
+        'key_code': 'MSN27-VALID-KEY27-ABCDE-12345',
+        'tier': 'resident_elite',
+        'duration_days': 365,
+        'is_redeemed': true,
+        'redeemed_by': 'user_456',
+        'redeemed_at': '2026-06-01T12:00:00Z',
+        'created_at': '2026-05-01T10:00:00Z',
+        'expires_at': futureExpiry,
+        'is_revoked': false,
+      };
+
+      final item = AdminLicenseItem.fromJson(json);
+
+      expect(item.isRevoked, isFalse);
+      expect(item.revocationReason, isNull);
+      expect(item.revokedAt, isNull);
+      expect(item.isExpired, isFalse);
+      expect(item.daysRemaining, greaterThan(100));
+    });
+  });
 }
+

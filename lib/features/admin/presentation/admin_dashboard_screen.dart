@@ -1032,18 +1032,21 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
       }
 
       if (_licenseFilterStatus == 'available') {
-        return !lic.isRedeemed;
+        return !lic.isRedeemed && !lic.isRevoked;
       } else if (_licenseFilterStatus == 'active') {
-        return lic.isRedeemed && !lic.isExpired;
+        return lic.isRedeemed && !lic.isExpired && !lic.isRevoked;
       } else if (_licenseFilterStatus == 'expired') {
-        return lic.isRedeemed && lic.isExpired;
+        return lic.isRedeemed && lic.isExpired && !lic.isRevoked;
+      } else if (_licenseFilterStatus == 'revoked') {
+        return lic.isRevoked;
       }
       return true;
     }).toList();
 
-    final availableCount = allLicenses.where((l) => !l.isRedeemed).length;
-    final activeCount = allLicenses.where((l) => l.isRedeemed && !l.isExpired).length;
-    final expiredCount = allLicenses.where((l) => l.isRedeemed && l.isExpired).length;
+    final availableCount = allLicenses.where((l) => !l.isRedeemed && !l.isRevoked).length;
+    final activeCount = allLicenses.where((l) => l.isRedeemed && !l.isExpired && !l.isRevoked).length;
+    final expiredCount = allLicenses.where((l) => l.isRedeemed && l.isExpired && !l.isRevoked).length;
+    final revokedCount = allLicenses.where((l) => l.isRevoked).length;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -1093,6 +1096,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       _buildLicenseFilterChip('Actives ($activeCount)', 'active', isDark, color: const Color(0xFF0284C7)),
                       const SizedBox(width: 8),
                       _buildLicenseFilterChip('Expirées ($expiredCount)', 'expired', isDark, color: const Color(0xFFDC2626)),
+                      const SizedBox(width: 8),
+                      _buildLicenseFilterChip('Révoquées ($revokedCount)', 'revoked', isDark, color: const Color(0xFFE11D48)),
                     ],
                   ),
                 ),
@@ -1169,14 +1174,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   }
 
   Widget _buildLicenseCard(BuildContext context, AdminLicenseItem lic, bool isDark) {
-    final isAvailable = !lic.isRedeemed;
-    final isExpired = lic.isExpired;
+    final isRevoked = lic.isRevoked;
+    final isAvailable = !lic.isRedeemed && !isRevoked;
+    final isExpired = lic.isExpired && !isRevoked;
 
     Color statusColor;
     String statusText;
     IconData statusIcon;
 
-    if (isAvailable) {
+    if (isRevoked) {
+      statusColor = const Color(0xFFDC2626);
+      statusText = 'RÉVOQUÉE';
+      statusIcon = Icons.block_rounded;
+    } else if (isAvailable) {
       statusColor = const Color(0xFF16A34A);
       statusText = 'DISPONIBLE';
       statusIcon = Icons.vpn_key_rounded;
@@ -1195,8 +1205,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: statusColor.withValues(alpha: isDark ? 0.4 : 0.25),
-          width: 1.5,
+          color: statusColor.withValues(alpha: isDark ? (isRevoked ? 0.6 : 0.4) : (isRevoked ? 0.4 : 0.25)),
+          width: isRevoked ? 2.0 : 1.5,
         ),
       ),
       child: Padding(
@@ -1204,7 +1214,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Row 1: Key Code & Status Badges & Copy Button
+            // Row 1: Key Code & Status Badges & Action Buttons
             Row(
               children: [
                 Container(
@@ -1222,11 +1232,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     children: [
                       SelectableText(
                         lic.keyCode,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'monospace',
                           fontWeight: FontWeight.w900,
                           fontSize: 14,
                           letterSpacing: 0.8,
+                          decoration: isRevoked ? TextDecoration.lineThrough : null,
+                          decorationColor: const Color(0xFFDC2626),
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -1284,6 +1296,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     ],
                   ),
                 ),
+                // Action Buttons: Copy & Revoke/Restore
                 IconButton.filledTonal(
                   icon: const Icon(Icons.copy_rounded, size: 18),
                   tooltip: 'Copier la clé',
@@ -1298,13 +1311,26 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     );
                   },
                 ),
+                const SizedBox(width: 4),
+                if (isRevoked)
+                  IconButton.filledTonal(
+                    icon: const Icon(Icons.restore_rounded, size: 18, color: Color(0xFF16A34A)),
+                    tooltip: 'Rétablir cette clé',
+                    onPressed: () => _confirmUnrevokeKey(context, lic),
+                  )
+                else
+                  IconButton.filledTonal(
+                    icon: const Icon(Icons.block_rounded, size: 18, color: Color(0xFFDC2626)),
+                    tooltip: 'Révoquer cette clé',
+                    onPressed: () => _showRevokeKeyModal(context, lic),
+                  ),
               ],
             ),
             const SizedBox(height: 14),
             const Divider(height: 1),
             const SizedBox(height: 12),
 
-            // Detailed Audit Grid (The 4 core requested requirements)
+            // Detailed Audit Grid (Génération, Activation, Utilisateur, Expiration, Révocation)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -1332,7 +1358,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     color: isAvailable ? Colors.grey : const Color(0xFF10B981),
                     title: 'Activation :',
                     value: isAvailable ? 'Non activée (Clé disponible)' : _formatDateTime(lic.redeemedAt),
-                    isHighlight: !isAvailable,
+                    isHighlight: !isAvailable && !isRevoked,
                     isDark: isDark,
                   ),
                   const SizedBox(height: 8),
@@ -1353,19 +1379,39 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   // Detail 4: Délais / Datetime de l'Expiration
                   _buildLicenseDetailRow(
                     icon: Icons.timer_outlined,
-                    color: isAvailable ? const Color(0xFFD97706) : (isExpired ? const Color(0xFFDC2626) : const Color(0xFF16A34A)),
+                    color: isRevoked
+                        ? const Color(0xFFDC2626)
+                        : (isAvailable
+                            ? const Color(0xFFD97706)
+                            : (isExpired ? const Color(0xFFDC2626) : const Color(0xFF16A34A))),
                     title: 'Expiration :',
                     value: isAvailable
                         ? '${lic.durationDays} jours de validité (dès activation)'
                         : _formatDateTime(lic.expiresAt),
-                    badge: !isAvailable
-                        ? (isExpired
-                            ? 'EXPIRÉE'
-                            : '${lic.daysRemaining} jour(s) restants')
-                        : null,
-                    badgeColor: isExpired ? const Color(0xFFDC2626) : const Color(0xFF16A34A),
+                    badge: isRevoked
+                        ? 'ANNULÉE'
+                        : (!isAvailable
+                            ? (isExpired ? 'EXPIRÉE' : '${lic.daysRemaining} jour(s) restants')
+                            : null),
+                    badgeColor: (isRevoked || isExpired) ? const Color(0xFFDC2626) : const Color(0xFF16A34A),
                     isDark: isDark,
                   ),
+
+                  // Detail 5: Revocation audit details (if revoked)
+                  if (isRevoked) ...[
+                    const SizedBox(height: 8),
+                    _buildLicenseDetailRow(
+                      icon: Icons.block_rounded,
+                      color: const Color(0xFFDC2626),
+                      title: 'Révocation :',
+                      value: _formatDateTime(lic.revokedAt),
+                      subtitle: 'Motif: ${lic.revocationReason ?? "Révoquée par l'administrateur"}',
+                      badge: 'RÉVOQUÉE',
+                      badgeColor: const Color(0xFFDC2626),
+                      isHighlight: true,
+                      isDark: isDark,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -1451,6 +1497,224 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           ),
         ),
       ],
+    );
+  }
+
+  void _showRevokeKeyModal(BuildContext context, AdminLicenseItem lic) {
+    final reasonCtrl = TextEditingController(text: 'Paiement contesté ou non honoré');
+    final reasons = [
+      'Paiement contesté ou non honoré',
+      'Usage frauduleux / partagé',
+      'Erreur d\'attribution de formule',
+      'Demande explicite du médecin',
+      'Autre motif administratif',
+    ];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (dialogCtx, setDialogState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.block_rounded, color: Color(0xFFDC2626)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Révoquer la Clé VIP',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Key badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.vpn_key_rounded, size: 16, color: Colors.grey),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          lic.keyCode,
+                          style: const TextStyle(
+                            fontFamily: 'monospace',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Warning if redeemed
+                if (lic.isRedeemed)
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDC2626).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFDC2626).withValues(alpha: 0.3)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFDC2626)),
+                            SizedBox(width: 6),
+                            Text(
+                              'ATTENTION : Clé déjà activée !',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFDC2626),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Activée par : ${lic.redeemedUserName ?? "Dr. Inconnu"}${lic.redeemedUserEmail != null ? ' (${lic.redeemedUserEmail})' : ''}\n'
+                          'La souscription active de cet utilisateur sera IMMÉDIATEMENT ANNULÉE et son accès VIP coupé.',
+                          style: const TextStyle(fontSize: 11, height: 1.3),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD97706).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFD97706).withValues(alpha: 0.3)),
+                    ),
+                    child: const Text(
+                      'Cette clé n\'a pas encore été activée. Sa révocation bloquera toute tentative d\'utilisation future.',
+                      style: TextStyle(fontSize: 11, height: 1.3),
+                    ),
+                  ),
+                const SizedBox(height: 14),
+
+                const Text('Motif de la révocation :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                const SizedBox(height: 8),
+
+                // Preset reason chips
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: reasons.map((r) {
+                    final isSel = reasonCtrl.text == r;
+                    return ChoiceChip(
+                      label: Text(r, style: TextStyle(fontSize: 11, color: isSel ? Colors.white : null)),
+                      selected: isSel,
+                      selectedColor: const Color(0xFFDC2626),
+                      onSelected: (val) {
+                        if (val) {
+                          setDialogState(() {
+                            reasonCtrl.text = r;
+                          });
+                        }
+                      },
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 10),
+
+                TextField(
+                  controller: reasonCtrl,
+                  maxLines: 2,
+                  decoration: const InputDecoration(
+                    labelText: 'Précision / Commentaire',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFDC2626),
+                foregroundColor: Colors.white,
+              ),
+              icon: const Icon(Icons.block_rounded, size: 16),
+              label: const Text('Confirmer la Révocation', style: TextStyle(fontWeight: FontWeight.bold)),
+              onPressed: () {
+                final reason = reasonCtrl.text.trim();
+                Navigator.pop(ctx);
+                context.read<AdminBloc>().add(
+                      RevokeLicenseKeyEvent(
+                        keyCode: lic.keyCode,
+                        reason: reason.isNotEmpty ? reason : null,
+                      ),
+                    );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmUnrevokeKey(BuildContext context, AdminLicenseItem lic) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.restore_rounded, color: Color(0xFF16A34A)),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Rétablir la Clé VIP',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Voulez-vous rétablir la validité de la clé ${lic.keyCode} ?\n\n'
+          '${lic.isRedeemed ? "L'accès et la souscription du médecin (${lic.redeemedUserEmail ?? ''}) seront réactivés." : "La clé redeviendra utilisable par n'importe quel médecin."}',
+          style: const TextStyle(fontSize: 13, height: 1.4),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF16A34A),
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.check_circle_outline_rounded, size: 16),
+            label: const Text('Rétablir la clé', style: TextStyle(fontWeight: FontWeight.bold)),
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AdminBloc>().add(
+                    UnrevokeLicenseKeyEvent(keyCode: lic.keyCode),
+                  );
+            },
+          ),
+        ],
+      ),
     );
   }
 

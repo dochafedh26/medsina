@@ -756,6 +756,140 @@ class SupabaseService {
     }
   }
 
+  /// Revoke an existing License Key (and cancel redeemed user subscription immediately)
+  static Future<Map<String, dynamic>> revokeLicenseKey({
+    required String keyCode,
+    String? reason,
+  }) async {
+    final cleanCode = keyCode.trim().toUpperCase();
+    final cleanReason = (reason != null && reason.trim().isNotEmpty)
+        ? reason.trim()
+        : 'Révoquée par l\'administrateur';
+
+    // 1. Try RPC first
+    try {
+      final response = await client.rpc('admin_revoke_license_key', params: {
+        'p_key_code': cleanCode,
+        'p_reason': cleanReason,
+      });
+      if (response != null && response is Map) {
+        return Map<String, dynamic>.from(response);
+      }
+    } catch (e) {
+      debugPrint('Notice: admin_revoke_license_key RPC fallback: $e');
+    }
+
+    // 2. Direct database fallback
+    try {
+      final nowStr = DateTime.now().toUtc().toIso8601String();
+      
+      // Look up key to know if it was redeemed
+      final keyRows = await client
+          .from('license_keys')
+          .select()
+          .eq('key_code', cleanCode)
+          .limit(1);
+
+      if (keyRows.isEmpty) {
+        return {'success': false, 'message': 'Clé de licence introuvable.'};
+      }
+
+      final keyData = keyRows.first;
+      final redeemedBy = keyData['redeemed_by'];
+      final isRedeemed = keyData['is_redeemed'] == true;
+
+      // Update license key
+      await client.from('license_keys').update({
+        'is_revoked': true,
+        'revoked_at': nowStr,
+        'revocation_reason': cleanReason,
+      }).eq('key_code', cleanCode);
+
+      // If user had redeemed this key, cancel active subscription immediately
+      if (isRedeemed && redeemedBy != null) {
+        await client.from('subscriptions').update({
+          'status': 'revoked',
+          'expires_at': nowStr,
+          'updated_at': nowStr,
+        }).eq('user_id', redeemedBy);
+      }
+
+      return {
+        'success': true,
+        'message': 'Clé $cleanCode révoquée avec succès.',
+        'key_code': cleanCode,
+        'was_redeemed': isRedeemed,
+        'redeemed_by': redeemedBy,
+        'revocation_reason': cleanReason,
+      };
+    } catch (e2) {
+      debugPrint('Error revoking license key fallback: $e2');
+      return {'success': false, 'message': 'Échec de la révocation: $e2'};
+    }
+  }
+
+  /// Restore / Unrevoke a previously revoked License Key
+  static Future<Map<String, dynamic>> unrevokeLicenseKey({
+    required String keyCode,
+  }) async {
+    final cleanCode = keyCode.trim().toUpperCase();
+
+    // 1. Try RPC first
+    try {
+      final response = await client.rpc('admin_unrevoke_license_key', params: {
+        'p_key_code': cleanCode,
+      });
+      if (response != null && response is Map) {
+        return Map<String, dynamic>.from(response);
+      }
+    } catch (e) {
+      debugPrint('Notice: admin_unrevoke_license_key RPC fallback: $e');
+    }
+
+    // 2. Direct database fallback
+    try {
+      final keyRows = await client
+          .from('license_keys')
+          .select()
+          .eq('key_code', cleanCode)
+          .limit(1);
+
+      if (keyRows.isEmpty) {
+        return {'success': false, 'message': 'Clé de licence introuvable.'};
+      }
+
+      final keyData = keyRows.first;
+      final redeemedBy = keyData['redeemed_by'];
+      final isRedeemed = keyData['is_redeemed'] == true;
+      final duration = (keyData['duration_days'] as num?)?.toInt() ?? 365;
+      final redeemedAt = keyData['redeemed_at'] != null ? DateTime.tryParse(keyData['redeemed_at']) : null;
+
+      await client.from('license_keys').update({
+        'is_revoked': false,
+        'revoked_at': null,
+        'revocation_reason': null,
+      }).eq('key_code', cleanCode);
+
+      if (isRedeemed && redeemedBy != null) {
+        final newExpiry = (redeemedAt ?? DateTime.now()).add(Duration(days: duration)).toIso8601String();
+        await client.from('subscriptions').update({
+          'status': 'active',
+          'expires_at': newExpiry,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('user_id', redeemedBy);
+      }
+
+      return {
+        'success': true,
+        'message': 'Clé $cleanCode rétablie avec succès.',
+        'key_code': cleanCode,
+      };
+    } catch (e2) {
+      debugPrint('Error unrevoking license key fallback: $e2');
+      return {'success': false, 'message': 'Échec du rétablissement: $e2'};
+    }
+  }
+
   /// Update User Subscription
   static Future<Map<String, dynamic>> updateUserSubscription({
     required String userId,

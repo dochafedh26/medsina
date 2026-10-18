@@ -140,6 +140,9 @@ class AdminLicenseItem extends Equatable {
   final DateTime? expiresAt;
   final bool isExpired;
   final int daysRemaining;
+  final bool isRevoked;
+  final DateTime? revokedAt;
+  final String? revocationReason;
 
   const AdminLicenseItem({
     required this.keyCode,
@@ -155,13 +158,19 @@ class AdminLicenseItem extends Equatable {
     this.expiresAt,
     this.isExpired = false,
     this.daysRemaining = 0,
+    this.isRevoked = false,
+    this.revokedAt,
+    this.revocationReason,
   });
 
   factory AdminLicenseItem.fromJson(Map<String, dynamic> json) {
     final redeemedAtDate = json['redeemed_at'] != null ? DateTime.tryParse(json['redeemed_at'].toString()) : null;
     final createdAtDate = json['created_at'] != null ? DateTime.tryParse(json['created_at'].toString()) : null;
+    final revokedAtDate = json['revoked_at'] != null ? DateTime.tryParse(json['revoked_at'].toString()) : null;
     final duration = (json['duration_days'] as num?)?.toInt() ?? 365;
     final isRedeemed = json['is_redeemed'] == true;
+    final isRevoked = json['is_revoked'] == true;
+    final reason = json['revocation_reason']?.toString();
 
     // Compute expiration date if not provided directly
     DateTime? expDate;
@@ -171,9 +180,11 @@ class AdminLicenseItem extends Equatable {
       expDate = redeemedAtDate.add(Duration(days: duration));
     }
 
-    final isExp = json['is_expired'] == true || (expDate != null && DateTime.now().isAfter(expDate));
+    final isExp = isRevoked || json['is_expired'] == true || (expDate != null && DateTime.now().isAfter(expDate));
     int remaining = 0;
-    if (json['days_remaining'] != null) {
+    if (isRevoked) {
+      remaining = 0;
+    } else if (json['days_remaining'] != null) {
       remaining = (json['days_remaining'] as num).toInt();
     } else if (expDate != null) {
       final diff = expDate.difference(DateTime.now()).inDays;
@@ -196,6 +207,9 @@ class AdminLicenseItem extends Equatable {
       expiresAt: expDate,
       isExpired: isExp,
       daysRemaining: remaining,
+      isRevoked: isRevoked,
+      revokedAt: revokedAtDate,
+      revocationReason: reason,
     );
   }
 
@@ -214,6 +228,9 @@ class AdminLicenseItem extends Equatable {
         expiresAt,
         isExpired,
         daysRemaining,
+        isRevoked,
+        revokedAt,
+        revocationReason,
       ];
 }
 
