@@ -426,5 +426,24 @@
     "is_active": true,
     "created_at": "2026-10-18T05:12:01.494418+00:00",
     "updated_at": "2026-10-18T05:12:01.494434+00:00"
+  },
+  {
+    "id": "memento_arret_cardio_respiratoire",
+    "title": "⚡ Arrêt Cardio-Respiratoire (ACR) Adulte",
+    "category": "Réanimation & Urgences Vitales",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Sécuriser la zone, confirmer l'absence de pouls et de respiration, débuter immédiatement la RCP (30 compressions thoraciques / 2 ventilations au BAVU sous oxygène 15L/min) et poser les pâles du défibrillateur (DAI/Choc asynchrone si FV/TV sans pouls).",
+      "Étape 2 : Conditionnement d'urgence au déchoquage : pose de 2 VVP de gros calibre, monitorage ECG continu, et réalisation d'un GDS, glycémie capillaire et bilan biologique de base (NFS, ionogramme, urée, créatinine, troponine).",
+      "Étape 3 : Adrénaline 1 mg IV direct toutes les 3 à 5 minutes (dès le 3ème choc pour FV/TV, immédiatement pour Asystolie/AESP) associée à l'Amiodarone 300 mg IV diluée dans 20 ml de SG5% au 3ème choc inefficace en cas de FV/TV.",
+      "Étape 4 : Rechercher et traiter les 4H et 4T (Hypoxie, Hypovolémie, H+, Hypo/Hyperkaliémie, Hypothermie / Tamponnade, Toxiques, Thrombose coronaire/EP, Pneumothorax suffocant).",
+      "Étape 5 : Surveillance armée post-ROSC (Return of Spontaneous Circulation) : contrôle de la SpO2 (94-98%), maintien d'une PAM > 65 mmHg (Noradrénaline si besoin), sédation, recherche de cause et préparation du transfert en réanimation."
+    ],
+    "scientific_references": "Recommandations ERC / SRLF / Consensus Algérien de Réanimation",
+    "is_active": true,
+    "created_at": "2026-10-18T12:48:41.219029+00:00",
+    "updated_at": "2026-10-18T12:48:41.219042+00:00"
   }
 ]
