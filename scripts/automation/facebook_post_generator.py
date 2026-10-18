@@ -455,6 +455,23 @@ Le contenu doit cibler les médecins généralistes, résidents, internes et can
                     clean = re.sub(r"\s*```$", "", clean)
                     parsed = json.loads(clean)
                     parsed["caption"] = parsed.get("caption", "").strip() + "\n" + OFFICIAL_FOOTER
+
+                    # Attribution intelligente des captures d'écran et maquettes selon le contexte
+                    t_lower = (parsed.get("title", "") + " " + parsed.get("subtitle", "") + " " + parsed.get("badge", "") + " " + topic).lower()
+                    if any(k in t_lower for k in ["vidal", "ordonnance", "médicament", "posologie", "interaction", "prescription"]):
+                        parsed["mockup_type"] = "desktop"
+                        parsed["screenshot_desktop"] = "assets/screenshots/desktop/prescription_audit_pc.png"
+                    elif any(k in t_lower for k in ["concours", "résidanat", "qcm", "anales", "révision", "module"]):
+                        parsed["mockup_type"] = "desktop"
+                        parsed["screenshot_desktop"] = "assets/screenshots/desktop/revision_qcm_pc.png"
+                    elif any(k in t_lower for k in ["urgence", "garde", "cat", "protocole", "réanimation", "ecg"]):
+                        parsed["mockup_type"] = "phone"
+                        parsed["screenshot_mobile"] = "assets/screenshots/mobile/clinical_copilot_mobile.png"
+                    else:
+                        parsed["mockup_type"] = "duo"
+                        parsed["screenshot_desktop"] = "assets/screenshots/desktop/clinical_copilot_pc.png"
+                        parsed["screenshot_mobile"] = "assets/screenshots/mobile/ai_copilot_mobile.png"
+
                     return parsed
         except Exception as e:
             print(f"Gemini {model} error: {e}")

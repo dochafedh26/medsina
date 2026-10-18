@@ -233,3 +233,4 @@ if __name__ == "__main__":
         filename = f"test_bg_{p}.png"
         bg.save(filename)
         print(f"Saved {filename} with pattern {p}")
+
