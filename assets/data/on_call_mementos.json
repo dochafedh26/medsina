@@ -445,5 +445,24 @@
     "is_active": true,
     "created_at": "2026-10-18T12:48:41.219029+00:00",
     "updated_at": "2026-10-18T12:48:41.219042+00:00"
+  },
+  {
+    "id": "memento_pediatrie_deshydratation_aigue",
+    "title": "👶 Déshydratation Aiguë du Nourrisson & Réhydratation IV",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluer immédiatement le degré de déshydratation (légère <5%, modérée 5-9%, sévère ≥10%) et chercher des signes de choc (marbrures, TRC > 3 sec, tachycardie extrême, pouls filiformes).",
+      "Étape 2 : Poser une voie veineuse périphérique (VVP) ou une voie intra-osseuse (IO) en < 90 secondes si échec. Bilan urgent : GDS, ionogramme sanguin, urée, créatinine, glycémo-capillaire.",
+      "Étape 3 : En cas de choc hypovolémique (Dasévère), bolus de NaCl 0,9% : 20 mL/kg en 20 minutes (répétable 1 fois si persistance du choc). Puis réhydratation de maintenance + déficit sur 24h avec du Sérum Salé 0,45% ou G5% + NaCl 2g/L + KCl 1g/L selon iono.",
+      "Étape 4 : Surveillance armée (diurèse horaire ≥ 1 mL/kg/h, conscience, poids de contrôle). Critères d'admission en Réanimation Pédiatrique : échec des bolus, choc réfractaire, troubles neurologiques profonds, acidose sévère (pH < 7,15).",
+      "Étape 5 : PIÈGE MAJEUR : Ne jamais corriger une hyponatrémie ou une hypernatrémie trop rapidement (risque d'œdème cérébral ou de myélinolyse centropontine). Jamais de bolus de KCl pur !"
+    ],
+    "scientific_references": "Recommandations ESPGHAN / SFMU / Consensus Nationaux Algériens de Pédiatrie",
+    "is_active": true,
+    "created_at": "2026-10-18T18:59:20.504370+00:00",
+    "updated_at": "2026-10-18T18:59:20.504388+00:00"
   }
 ]
