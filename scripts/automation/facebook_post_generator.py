@@ -191,6 +191,8 @@ COMMERCIAL_SHOWCASES: List[Dict[str, Any]] = [
         "title": "Sécurisez Vos Prescriptions en Garde",
         "subtitle": "Vidal Algérien & Analyseur d'Ordonnance Intelligent",
         "theme": "amber",
+        "mockup_type": "desktop",
+        "screenshot_desktop": "assets/screenshots/desktop/prescription_audit_pc.png",
         "points": [
             "Détection instantanée des interactions médicamenteuses sévères.",
             "Contrôle automatique des contre-indications de terrain (rein, diabète).",
@@ -213,6 +215,9 @@ Avec l'application Medsina, vous disposez d'un Analyseur d'Ordonnance de nouvell
         "title": "Toute la Médecine dans Votre Poche Sans Internet",
         "subtitle": "Mode Hors-Ligne Total • Pratique Hospitalière",
         "theme": "emerald",
+        "mockup_type": "duo",
+        "screenshot_desktop": "assets/screenshots/desktop/clinical_copilot_pc.png",
+        "screenshot_mobile": "assets/screenshots/mobile/clinical_copilot_mobile.png",
         "points": [
             "Accès immédiat à toutes vos fiches cliniques au fond des urgences.",
             "Protocoles de réanimation et CATs disponibles en zone blanche.",
@@ -234,6 +239,8 @@ Medsina a été pensée dès le premier jour pour fonctionner à 100% HORS-LIGNE
         "title": "Préparez le Concours Comme un Major",
         "subtitle": "Fiches Synthèses & QCMs Corrigés de Concours",
         "theme": "purple",
+        "mockup_type": "desktop",
+        "screenshot_desktop": "assets/screenshots/desktop/revision_qcm_pc.png",
         "points": [
             "Fiches officielles couvrant les 47 modules du résidanat.",
             "Pièges typiques d'examen et points clés à haut rendement.",
@@ -256,6 +263,8 @@ Dans Medsina, chaque cours est distillé pour aller droit au but :
         "title": "DCI & Spécialités Disponibles en Algérie",
         "subtitle": "Guide Posologique & Dilutions Hospitalières",
         "theme": "blue",
+        "mockup_type": "phone",
+        "screenshot_mobile": "assets/screenshots/mobile/clinical_copilot_mobile.png",
         "points": [
             "Correspondance DCI <-> Noms commerciaux algériens (Saidal, IPA).",
             "Posologies exactes d'urgence adulte et pédiatrique en mg/kg.",
@@ -277,6 +286,9 @@ Le Codex des Urgences de Medsina vous donne instantanément :
         "title": "Votre Assistant IA Médical Dédié 24h/24",
         "subtitle": "MedsinaPilot • Intelligence Artificielle Clinique",
         "theme": "blue",
+        "mockup_type": "duo",
+        "screenshot_desktop": "assets/screenshots/desktop/clinical_copilot_pc.png",
+        "screenshot_mobile": "assets/screenshots/mobile/ai_copilot_mobile.png",
         "points": [
             "Posez n'importe quelle question clinique en langage naturel.",
             "Aide au diagnostic différentiel et orientation thérapeutique.",
@@ -307,6 +319,9 @@ def build_commercial_post(showcase: Dict[str, Any]) -> Dict[str, Any]:
         "subtitle": showcase["subtitle"],
         "points": showcase["points"],
         "theme": showcase["theme"],
+        "mockup_type": showcase.get("mockup_type"),
+        "screenshot_desktop": showcase.get("screenshot_desktop"),
+        "screenshot_mobile": showcase.get("screenshot_mobile"),
     }
 
 
@@ -351,6 +366,8 @@ Chers confrères, internes et praticiens de garde, voici les réflexes indispens
         "subtitle": f"{category} • Extrait Pratique Medsina",
         "points": points,
         "theme": theme,
+        "mockup_type": "phone",
+        "screenshot_mobile": "assets/screenshots/mobile/clinical_copilot_mobile.png",
     }
 
 
@@ -383,6 +400,8 @@ Voici un extrait direct des points clés et pièges de concours disponibles dans
         "subtitle": f"Module {module_name} • Concours Résidanat",
         "points": points,
         "theme": "purple",
+        "mockup_type": "desktop",
+        "screenshot_desktop": "assets/screenshots/desktop/revision_qcm_pc.png",
     }
 
 
@@ -509,6 +528,216 @@ def get_post_data(topic: Optional[str] = None, post_type: str = "auto") -> Dict[
 # MOTEUR DE RENDU GRAPHIQUE HAUTE DÉFINITION 1080x1080 (PILLOW)
 # -------------------------------------------------------------
 
+def resolve_asset_path(path_str: Optional[str]) -> Optional[Path]:
+    """Résout le chemin d'un asset en testant localement et par rapport à la racine du projet."""
+    if not path_str:
+        return None
+    candidates = [
+        Path(path_str),
+        Path(__file__).resolve().parents[2] / path_str,
+        Path(__file__).resolve().parent / path_str,
+        Path(__file__).resolve().parents[1] / path_str,
+    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    return None
+
+
+def get_font(size: int, bold: bool = False):
+    font_paths = [
+        "C:/Windows/Fonts/segoeuib.ttf" if bold else "C:/Windows/Fonts/segoeui.ttf",
+        "C:/Windows/Fonts/arialbd.ttf" if bold else "C:/Windows/Fonts/arial.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+    ]
+    for p in font_paths:
+        if os.path.exists(p):
+            try:
+                return ImageFont.truetype(p, size)
+            except Exception:
+                pass
+    return ImageFont.load_default()
+
+
+def create_rounded_mask(size, radius):
+    """Creates an antialiased supersampled rounded corner mask."""
+    w, h = size
+    scale = 4
+    mask = Image.new("L", (w * scale, h * scale), 0)
+    draw = ImageDraw.Draw(mask)
+    draw.rounded_rectangle([(0, 0), (w * scale - 1, h * scale - 1)], radius=radius * scale, fill=255)
+    return mask.resize((w, h), Image.Resampling.LANCZOS)
+
+
+def create_shadow(image_size, radius=24, offset=(0, 16), shadow_color=(0, 0, 0, 140)):
+    """Creates a soft realistic shadow behind a device mockup."""
+    w, h = image_size
+    pad = radius * 2
+    shadow = Image.new("RGBA", (w + pad * 2, h + pad * 2), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(shadow)
+    draw.rounded_rectangle(
+        [(pad + offset[0], pad + offset[1]), (pad + w + offset[0], pad + h + offset[1])],
+        radius=radius,
+        fill=shadow_color
+    )
+    return shadow.filter(ImageFilter.GaussianBlur(radius)), pad
+
+
+def render_phone_mockup(screen_img: Image.Image, target_width: int = 380) -> Image.Image:
+    """Renders a sleek smartphone mockup with titanium chassis, status bar, and drop shadow."""
+    aspect_ratio = 19.5 / 9.0
+    bezel = 10
+    screen_w = target_width - bezel * 2
+    screen_h = int(screen_w * aspect_ratio)
+    phone_w = target_width
+    phone_h = screen_h + bezel * 2
+    corner_radius = 36
+
+    # 1. Scale with cover (fill entire phone screen)
+    scale = max(screen_w / screen_img.width, screen_h / screen_img.height)
+    new_w = int(screen_img.width * scale)
+    new_h = int(screen_img.height * scale)
+    scaled = screen_img.convert("RGBA").resize((new_w, new_h), Image.Resampling.LANCZOS)
+
+    crop_x = (new_w - screen_w) // 2
+    crop_y = 0  # keep top header visible
+    screen_canvas = scaled.crop((crop_x, crop_y, crop_x + screen_w, crop_y + screen_h))
+
+    # 2. Add realistic Mobile Status Bar (Time, Wifi, Battery) with top scrim
+    scrim = Image.new("RGBA", (screen_w, 40), (0, 0, 0, 0))
+    scrim_draw = ImageDraw.Draw(scrim)
+    for y in range(40):
+        a = int(120 * (1.0 - y / 40.0))
+        scrim_draw.line([(0, y), (screen_w, y)], fill=(0, 0, 0, a))
+    screen_canvas.alpha_composite(scrim, (0, 0))
+
+    font_status = get_font(13, bold=True)
+    status_draw = ImageDraw.Draw(screen_canvas)
+    status_draw.text((22, 11), "09:41", font=font_status, fill=(255, 255, 255, 240))
+
+    # Battery icon at top right
+    bx = screen_w - 44
+    status_draw.rounded_rectangle([(bx, 13), (bx + 24, 24)], radius=3, outline=(255, 255, 255, 220), width=1)
+    status_draw.rounded_rectangle([(bx + 2, 15), (bx + 18, 22)], radius=2, fill=(16, 185, 129, 255))
+    status_draw.rectangle([(bx + 24, 16), (bx + 26, 21)], fill=(255, 255, 255, 220))
+
+    # 3. Add bottom Home Indicator bar with scrim
+    bottom_scrim = Image.new("RGBA", (screen_w, 28), (0, 0, 0, 0))
+    b_draw = ImageDraw.Draw(bottom_scrim)
+    for y in range(28):
+        a = int(100 * (y / 28.0))
+        b_draw.line([(0, y), (screen_w, y)], fill=(0, 0, 0, a))
+    screen_canvas.alpha_composite(bottom_scrim, (0, screen_h - 28))
+
+    bar_w = 110
+    bar_h = 4
+    bar_x = (screen_w - bar_w) // 2
+    bar_y = screen_h - 12
+    status_draw.rounded_rectangle([(bar_x, bar_y), (bar_x + bar_w, bar_y + bar_h)], radius=2, fill=(255, 255, 255, 200))
+
+    # Mask screen to rounded corners
+    screen_mask = create_rounded_mask((screen_w, screen_h), radius=corner_radius - 8)
+    screen_canvas.putalpha(screen_mask)
+
+    # 4. Build Phone Frame
+    frame = Image.new("RGBA", (phone_w, phone_h), (0, 0, 0, 0))
+    frame_draw = ImageDraw.Draw(frame)
+
+    frame_draw.rounded_rectangle([(0, 0), (phone_w - 1, phone_h - 1)], radius=corner_radius, fill=(15, 23, 42, 255), outline=(71, 85, 105, 255), width=2)
+    frame_draw.rounded_rectangle([(bezel - 2, bezel - 2), (phone_w - bezel + 1, phone_h - bezel + 1)], radius=corner_radius - 6, outline=(30, 41, 59, 255), width=1)
+
+    frame.paste(screen_canvas, (bezel, bezel), screen_canvas)
+
+    # Dynamic Island Pill at top
+    pill_w = 76
+    pill_h = 16
+    pill_x = (phone_w - pill_w) // 2
+    pill_y = bezel + 6
+    pill_draw = ImageDraw.Draw(frame)
+    pill_draw.rounded_rectangle([(pill_x, pill_y), (pill_x + pill_w, pill_y + pill_h)], radius=pill_h // 2, fill=(0, 0, 0, 255))
+    pill_draw.ellipse([(pill_x + 12, pill_y + 3), (pill_x + 22, pill_y + 13)], fill=(15, 25, 45, 255))
+
+    # 5. Drop shadow
+    shadow, pad = create_shadow((phone_w, phone_h), radius=28, offset=(0, 18), shadow_color=(0, 0, 0, 160))
+    canvas = Image.new("RGBA", (phone_w + pad * 2, phone_h + pad * 2), (0, 0, 0, 0))
+    canvas.paste(shadow, (0, 0), shadow)
+    canvas.paste(frame, (pad, pad), frame)
+
+    return canvas
+
+
+def render_desktop_mockup(screen_img: Image.Image, target_width: int = 510) -> Image.Image:
+    """Renders a sleek browser window mockup with traffic lights, URL bar, and drop shadow."""
+    aspect_ratio = 16.0 / 10.0
+    header_h = 36
+    window_w = target_width
+    screen_w = window_w
+    screen_h = int(screen_w / aspect_ratio)
+    window_h = screen_h + header_h
+    corner_radius = 16
+
+    screen_aspect = screen_img.width / screen_img.height
+    if screen_aspect > aspect_ratio:
+        new_h = screen_h
+        new_w = int(new_h * screen_aspect)
+        resized_screen = screen_img.convert("RGBA").resize((new_w, new_h), Image.Resampling.LANCZOS)
+        left = (new_w - screen_w) // 2
+        cropped_screen = resized_screen.crop((left, 0, left + screen_w, screen_h))
+    else:
+        new_w = screen_w
+        new_h = int(new_w / screen_aspect)
+        resized_screen = screen_img.convert("RGBA").resize((new_w, new_h), Image.Resampling.LANCZOS)
+        top = (new_h - screen_h) // 2
+        cropped_screen = resized_screen.crop((0, top, screen_w, top + screen_h))
+
+    mask = Image.new("L", (window_w, window_h), 0)
+    mask_draw = ImageDraw.Draw(mask)
+    mask_draw.rounded_rectangle([(0, 0), (window_w - 1, window_h - 1)], radius=corner_radius, fill=255)
+
+    window = Image.new("RGBA", (window_w, window_h), (15, 23, 42, 255))
+    w_draw = ImageDraw.Draw(window)
+
+    w_draw.rounded_rectangle([(0, 0), (window_w - 1, window_h - 1)], radius=corner_radius, fill=(24, 32, 50, 255), outline=(71, 85, 105, 180), width=1)
+    w_draw.rounded_rectangle([(0, 0), (window_w - 1, header_h + 10)], radius=corner_radius, fill=(30, 41, 59, 255))
+    w_draw.rectangle([(0, header_h - 2), (window_w - 1, header_h)], fill=(51, 65, 85, 200))
+
+    # Traffic light buttons
+    w_draw.ellipse([(14, 12), (24, 22)], fill=(239, 68, 68, 255))
+    w_draw.ellipse([(32, 12), (42, 22)], fill=(245, 158, 11, 255))
+    w_draw.ellipse([(50, 12), (60, 22)], fill=(16, 185, 129, 255))
+
+    # URL bar
+    url_w = 260
+    url_h = 22
+    url_x = (window_w - url_w) // 2
+    url_y = 7
+    w_draw.rounded_rectangle([(url_x, url_y), (url_x + url_w, url_y + url_h)], radius=6, fill=(15, 23, 42, 220), outline=(51, 65, 85, 200), width=1)
+    font_url = get_font(11, bold=False)
+    w_draw.text((url_x + 14, url_y + 3), "medsina.medevsync.com", font=font_url, fill=(148, 163, 184, 255))
+
+    window.paste(cropped_screen, (0, header_h))
+    window.putalpha(mask)
+
+    shadow, pad = create_shadow((window_w, window_h), radius=28, offset=(0, 18), shadow_color=(0, 0, 0, 170))
+    canvas = Image.new("RGBA", (window_w + pad * 2, window_h + pad * 2), (0, 0, 0, 0))
+    canvas.paste(shadow, (0, 0), shadow)
+    canvas.paste(window, (pad, pad), window)
+
+    return canvas
+
+
+def render_duo_mockup(desktop_img: Image.Image, mobile_img: Image.Image, canvas_w: int = 540, canvas_h: int = 560) -> Image.Image:
+    """Renders both Desktop and Mobile in an aesthetic cross-platform arrangement."""
+    duo = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
+    desktop_mock = render_desktop_mockup(desktop_img, target_width=440)
+    duo.paste(desktop_mock, (0, 25), desktop_mock)
+
+    phone_mock = render_phone_mockup(mobile_img, target_width=220)
+    duo.paste(phone_mock, (canvas_w - phone_mock.width + 10, canvas_h - phone_mock.height + 25), phone_mock)
+    return duo
+
+
 def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
     width, height = 1080, 1080
     theme = data.get("theme", "blue")
@@ -575,125 +804,195 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
     draw = ImageDraw.Draw(base)
 
     # 3. Polices de caractères
-    def get_font(size: int, bold: bool = False):
-        font_paths = [
-            "C:/Windows/Fonts/segoeuib.ttf" if bold else "C:/Windows/Fonts/segoeui.ttf",
-            "C:/Windows/Fonts/arialbd.ttf" if bold else "C:/Windows/Fonts/arial.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        ]
-        for p in font_paths:
-            if os.path.exists(p):
-                try:
-                    return ImageFont.truetype(p, size)
-                except Exception:
-                    pass
-        return ImageFont.load_default()
-
     font_brand = get_font(26, bold=True)
     font_brand_sub = get_font(18, bold=False)
-    font_badge = get_font(20, bold=True)
-    font_title = get_font(44, bold=True)
-    font_subtitle = get_font(24, bold=False)
-    font_point = get_font(27, bold=False)
-    font_footer = get_font(21, bold=True)
+    font_badge = get_font(18, bold=True)
+    font_title = get_font(38, bold=True)
+    font_subtitle = get_font(22, bold=False)
+    font_point = get_font(22, bold=False)
+    font_footer = get_font(20, bold=True)
 
     # 4. En-tête avec logo officiel Medsina
-    assets_dir = Path(__file__).resolve().parents[2] / "assets"
-    logo_path = assets_dir / "medsina-icon.png"
-    header_x = 70
-    if logo_path.exists():
+    logo_path = resolve_asset_path("assets/medsina-icon.png")
+    header_x = 65
+    if logo_path and logo_path.exists():
         try:
             logo_img = Image.open(logo_path).convert("RGBA")
-            logo_img.thumbnail((72, 72), Image.Resampling.LANCZOS)
-            base.paste(logo_img, (header_x, 65), logo_img)
-            header_x += 88
+            logo_img.thumbnail((68, 68), Image.Resampling.LANCZOS)
+            base.paste(logo_img, (header_x, 55), logo_img)
+            header_x += 80
         except Exception:
             pass
 
-    draw.text((header_x, 70), "MEDEVSYNC", font=font_brand, fill=(255, 255, 255, 255))
-    draw.text((header_x, 102), "Medsina • Plateforme Médicale Globale", font=font_brand_sub, fill=(148, 163, 184, 255))
+    draw.text((header_x, 58), "MEDEVSYNC", font=font_brand, fill=(255, 255, 255, 255))
+    draw.text((header_x, 90), "Medsina • Plateforme Médicale Globale", font=font_brand_sub, fill=(148, 163, 184, 255))
 
     # Badge de version & Web
     version_label = f"Version {APP_VERSION}"
     bbox_v = font_brand_sub.getbbox(version_label)
-    vw = (bbox_v[2] - bbox_v[0]) + 32
-    draw.rounded_rectangle([(width - 70 - vw, 75), (width - 70, 120)], radius=12, fill=(30, 41, 59, 200), outline=t["accent"], width=1)
-    draw.text((width - 70 - vw + 16, 85), version_label, font=font_brand_sub, fill=(255, 255, 255, 230))
+    vw = (bbox_v[2] - bbox_v[0]) + 30
+    draw.rounded_rectangle([(width - 65 - vw, 65), (width - 65, 108)], radius=10, fill=(30, 41, 59, 200), outline=t["accent"], width=1)
+    draw.text((width - 65 - vw + 15, 75), version_label, font=font_brand_sub, fill=(255, 255, 255, 230))
+
+    # Ligne de séparation en-tête
+    draw.line([(65, 140), (width - 65, 140)], fill=(51, 65, 85, 180), width=1)
 
     # 5. Badge thématique
     raw_badge = strip_emojis_for_image(data.get("badge", "MÉDECINE & CLINIQUE"))
     badge_text = f"  {raw_badge.upper()}  "
     bbox = font_badge.getbbox(badge_text)
-    bw = (bbox[2] - bbox[0]) + 24
-    bh = 42
-    draw.rounded_rectangle([(70, 185), (70 + bw, 185 + bh)], radius=10, fill=t["badge_bg"], outline=t["accent"], width=2)
-    draw.text((82, 194), badge_text.strip(), font=font_badge, fill=t["accent_glow"])
+    bw = (bbox[2] - bbox[0]) + 20
+    bh = 36
+    draw.rounded_rectangle([(65, 165), (65 + bw, 165 + bh)], radius=8, fill=t["badge_bg"], outline=t["accent"], width=2)
+    draw.text((75, 172), badge_text.strip(), font=font_badge, fill=t["accent_glow"])
 
     # 6. Titre de l'infographie
     raw_title = strip_emojis_for_image(data.get("title", "Perle Clinique & Concours"))
-    words = raw_title.split()
-    lines = []
-    cur = []
-    for w in words:
-        test_line = " ".join(cur + [w])
-        if font_title.getbbox(test_line)[2] > 920:
-            lines.append(" ".join(cur))
-            cur = [w]
-        else:
-            cur.append(w)
-    if cur:
-        lines.append(" ".join(cur))
-
-    y_text = 252
-    for l in lines[:2]:
-        draw.text((70, y_text), l, font=font_title, fill=(255, 255, 255, 255))
-        y_text += 56
+    draw.text((65, 215), raw_title, font=font_title, fill=(255, 255, 255, 255))
 
     # Sous-titre
     raw_sub = strip_emojis_for_image(data.get("subtitle", "Pratique Médicale & Résidanat 2027"))
-    draw.text((70, y_text + 4), raw_sub, font=font_subtitle, fill=(148, 163, 184, 255))
-    y_text += 52
+    draw.text((65, 265), raw_sub, font=font_subtitle, fill=(148, 163, 184, 255))
 
-    # 7. Conteneur central en verre dépoli (Glassmorphism)
-    card_y = y_text + 15
-    card_h = 880 - card_y
-    card_layer = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    card_draw = ImageDraw.Draw(card_layer)
-    card_draw.rounded_rectangle([(70, card_y), (width - 70, card_y + card_h)], radius=24, fill=t["card_bg"], outline=t["card_border"], width=2)
-    base = Image.alpha_composite(base, card_layer)
-    draw = ImageDraw.Draw(base)
+    # 7. Vérification de la disponibilité des mockups (Split Layout)
+    mockup_type = data.get("mockup_type")
+    path_desk = resolve_asset_path(data.get("screenshot_desktop"))
+    path_mob = resolve_asset_path(data.get("screenshot_mobile"))
 
-    # 8. Puces clés de contenu
-    py = card_y + 35
-    points = data.get("points", [])
-    for i, pt in enumerate(points[:4]):
-        clean_pt = strip_emojis_for_image(pt)
-        draw.ellipse([(105, py + 8), (127, py + 30)], fill=t["accent"])
-        draw.text((113, py + 7), str(i + 1), font=font_brand_sub, fill=(15, 23, 42, 255))
+    can_render_mockup = False
+    if mockup_type == "desktop" and path_desk:
+        can_render_mockup = True
+    elif mockup_type == "phone" and path_mob:
+        can_render_mockup = True
+    elif mockup_type == "duo" and (path_desk or path_mob):
+        can_render_mockup = True
 
-        pt_words = clean_pt.split()
-        p_lines = []
-        p_cur = []
-        for pw in pt_words:
-            test_p = " ".join(p_cur + [pw])
-            if font_point.getbbox(test_p)[2] > 740:
+    content_y = 315
+
+    if can_render_mockup:
+        # === A. LAYOUT SPLIT AVEC MOCKUP RÉEL ===
+        # A.1 Rendu du mockup à droite
+        if mockup_type == "desktop" and path_desk:
+            im_desk = Image.open(path_desk)
+            mockup = render_desktop_mockup(im_desk, target_width=510)
+            base.paste(mockup, (505, content_y - 20), mockup)
+        elif mockup_type == "phone" and path_mob:
+            im_mob = Image.open(path_mob)
+            mockup = render_phone_mockup(im_mob, target_width=320)
+            base.paste(mockup, (620, content_y - 20), mockup)
+        elif mockup_type == "duo":
+            im_desk = Image.open(path_desk) if path_desk else None
+            im_mob = Image.open(path_mob) if path_mob else None
+            if im_desk and im_mob:
+                duo = render_duo_mockup(im_desk, im_mob, 540, 560)
+                base.paste(duo, (495, content_y - 20), duo)
+            elif im_desk:
+                mockup = render_desktop_mockup(im_desk, target_width=510)
+                base.paste(mockup, (505, content_y - 20), mockup)
+            elif im_mob:
+                mockup = render_phone_mockup(im_mob, target_width=320)
+                base.paste(mockup, (620, content_y - 20), mockup)
+
+        # A.2 Conteneur des fonctionnalités à gauche (largeur 425)
+        card_w = 425
+        card_h = 560
+        card_layer = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        card_draw = ImageDraw.Draw(card_layer)
+        card_draw.rounded_rectangle(
+            [(65, content_y), (65 + card_w, content_y + card_h)],
+            radius=20,
+            fill=t["card_bg"],
+            outline=t["card_border"],
+            width=2
+        )
+        base = Image.alpha_composite(base, card_layer)
+        draw = ImageDraw.Draw(base)
+
+        # Points clés
+        py = content_y + 25
+        points = data.get("points", [])
+        for i, pt in enumerate(points[:4]):
+            clean_pt = strip_emojis_for_image(pt)
+            draw.ellipse([(85, py + 4), (105, py + 24)], fill=t["accent"])
+            draw.text((92, py + 3), str(i + 1), font=font_brand_sub, fill=(15, 23, 42, 255))
+
+            words = clean_pt.split()
+            lines = []
+            cur = []
+            for w in words:
+                test = " ".join(cur + [w])
+                if font_point.getbbox(test)[2] > 310:
+                    lines.append(" ".join(cur))
+                    cur = [w]
+                else:
+                    cur.append(w)
+            if cur:
+                lines.append(" ".join(cur))
+
+            for l in lines[:2]:
+                draw.text((118, py), l, font=font_point, fill=(241, 245, 249, 255))
+                py += 30
+            py += 22
+
+        # Bannière CTA de téléchargement intégrée
+        cta_y = content_y + card_h - 95
+        draw.rounded_rectangle(
+            [(85, cta_y), (65 + card_w - 20, cta_y + 72)],
+            radius=12,
+            fill=(30, 41, 59, 240),
+            outline=t["accent"],
+            width=1
+        )
+        draw.text((100, cta_y + 12), "DISPONIBLE DÈS MAINTENANT", font=font_badge, fill=t["accent_glow"])
+        draw.text((100, cta_y + 40), "Android APK  •  Windows PC  •  Version Web", font=font_brand_sub, fill=(255, 255, 255, 230))
+
+    else:
+        # === B. FALLBACK : LAYOUT PLEINE LARGEUR STANDARD ===
+        card_y = content_y
+        card_h = 880 - card_y
+        card_layer = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        card_draw = ImageDraw.Draw(card_layer)
+        card_draw.rounded_rectangle(
+            [(65, card_y), (width - 65, card_y + card_h)],
+            radius=24,
+            fill=t["card_bg"],
+            outline=t["card_border"],
+            width=2
+        )
+        base = Image.alpha_composite(base, card_layer)
+        draw = ImageDraw.Draw(base)
+
+        py = card_y + 35
+        points = data.get("points", [])
+        font_point_full = get_font(26, bold=False)
+        for i, pt in enumerate(points[:4]):
+            clean_pt = strip_emojis_for_image(pt)
+            draw.ellipse([(100, py + 6), (124, py + 30)], fill=t["accent"])
+            draw.text((109, py + 6), str(i + 1), font=font_brand_sub, fill=(15, 23, 42, 255))
+
+            pt_words = clean_pt.split()
+            p_lines = []
+            p_cur = []
+            for pw in pt_words:
+                test_p = " ".join(p_cur + [pw])
+                if font_point_full.getbbox(test_p)[2] > 740:
+                    p_lines.append(" ".join(p_cur))
+                    p_cur = [pw]
+                else:
+                    p_cur.append(pw)
+            if p_cur:
                 p_lines.append(" ".join(p_cur))
-                p_cur = [pw]
-            else:
-                p_cur.append(pw)
-        if p_cur:
-            p_lines.append(" ".join(p_cur))
 
-        for pl in p_lines[:2]:
-            draw.text((148, py), pl, font=font_point, fill=(241, 245, 249, 255))
-            py += 38
-        py += 22
+            for pl in p_lines[:2]:
+                draw.text((144, py), pl, font=font_point_full, fill=(241, 245, 249, 255))
+                py += 36
+            py += 22
 
-    # 9. Pied de page avec URL officielle
-    footer_y = 930
-    draw.line([(70, footer_y), (width - 70, footer_y)], fill=(51, 65, 85, 200), width=1)
-    draw.text((70, footer_y + 26), "medsina.medevsync.com  •  Web, Android & PC", font=font_footer, fill=t["accent_glow"])
-    draw.text((width - 320, footer_y + 28), "MedevSync HealthTech", font=font_brand_sub, fill=(148, 163, 184, 255))
+    # 8. Pied de page
+    footer_y = 945
+    draw.line([(65, footer_y), (width - 65, footer_y)], fill=(51, 65, 85, 180), width=1)
+    draw.text((65, footer_y + 24), "medsina.medevsync.com  •  Portail Officiel MedevSync", font=font_footer, fill=t["accent_glow"])
+    draw.text((width - 310, footer_y + 26), "Algérie • Résidanat 2027", font=font_brand_sub, fill=(148, 163, 184, 255))
 
     dir_name = os.path.dirname(output_path)
     if dir_name:
