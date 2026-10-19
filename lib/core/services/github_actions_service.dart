@@ -328,21 +328,21 @@ class GitHubActionsService {
     final repo = await getRepo();
     final url = 'https://api.github.com/repos/$repo/actions/workflows/$workflowFileName/dispatches';
 
+    final cleanInputs = <String, dynamic>{};
+    if (inputs != null) {
+      inputs.forEach((k, v) {
+        if (v != null && v.toString().trim().isNotEmpty) {
+          cleanInputs[k] = v.toString().trim();
+        }
+      });
+    }
+
+    final payload = {
+      'ref': ref,
+      if (cleanInputs.isNotEmpty) 'inputs': cleanInputs,
+    };
+
     try {
-      final cleanInputs = <String, dynamic>{};
-      if (inputs != null) {
-        inputs.forEach((k, v) {
-          if (v != null && v.toString().trim().isNotEmpty) {
-            cleanInputs[k] = v.toString().trim();
-          }
-        });
-      }
-
-      final payload = {
-        'ref': ref,
-        if (cleanInputs.isNotEmpty) 'inputs': cleanInputs,
-      };
-
       final response = await _dio.post(
         url,
         data: payload,
@@ -378,7 +378,56 @@ class GitHubActionsService {
       } else if (status == 404) {
         err = 'Erreur 404 : Workflow "$workflowFileName" ou dépôt "$repo" introuvable.';
       } else if (status == 422) {
-        err = 'Erreur 422 : Entrées de workflow invalides ou branche inexistante.';
+        String? serverMsg;
+        if (e.response?.data is Map) {
+          serverMsg = (e.response?.data as Map)['message']?.toString();
+        } else if (e.response?.data is String) {
+          serverMsg = e.response?.data.toString();
+        }
+
+        if (serverMsg != null && serverMsg.toLowerCase().contains('disabled')) {
+          try {
+            // Tentative de réactivation automatique du workflow sur GitHub
+            final enableUrl = 'https://api.github.com/repos/$repo/actions/workflows/$workflowFileName/enable';
+            await _dio.put(
+              enableUrl,
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                  'Accept': 'application/vnd.github.v3+json',
+                },
+              ),
+            );
+
+            // Nouvelle tentative de déclenchement
+            final retryResponse = await _dio.post(
+              url,
+              data: payload,
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                  'Accept': 'application/vnd.github.v3+json',
+                  'X-GitHub-Api-Version': '2022-11-28',
+                },
+              ),
+            );
+
+            if (retryResponse.statusCode == 204) {
+              return const GitHubDispatchResult(
+                isSuccess: true,
+                message: 'Le workflow était désactivé sur GitHub. Il a été réactivé automatiquement et lancé avec succès ! 🚀',
+                statusCode: 204,
+              );
+            }
+          } catch (retryErr) {
+            debugPrint('GitHubActionsService: Réactivation auto échouée: $retryErr');
+          }
+          err = 'Le workflow "$workflowFileName" est actuellement désactivé sur GitHub ($serverMsg).';
+        } else {
+          err = serverMsg != null
+              ? 'Erreur 422 : $serverMsg'
+              : 'Erreur 422 : Entrées de workflow invalides ou branche inexistante.';
+        }
       } else {
         err = 'Erreur réseau GitHub Actions : ${e.message}';
       }
