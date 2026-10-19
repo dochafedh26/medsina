@@ -371,23 +371,22 @@
   },
   {
     "id": "memento_pancreatite_aigue",
-    "title": "🩸 Prise en Charge Initiale de la Pancréatite Aiguë",
-    "category": "Gastro-entérologie / Urgences",
-    "icon_name": "emergency_rounded",
-    "color_hex": "#EF4444",
+    "title": "⚡ Pancréatite Aiguë : Tri & Réanimation Initiale",
+    "category": "Urgences Abdominales & Réanimation",
+    "icon_name": "local_fire_department_rounded",
+    "color_hex": "#EA580C",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation initiale et conditionnement. Pose de 2 VVP de bon calibre, monitorage continu (ECG, SpO2, PNI). Remplissage vasculaire précoce par Cristalloïdes (NaCl 0.9% ou Ringer Lactate) 10 à 20 mL/kg les 2 premières heures, puis adapté à la diurèse (> 0.5 mL/kg/h).",
-      "Étape 2 : Antalgie agressive par voie IV. Échelle Visuelle Analogique (EVA) > 6 : Paracétamol 1g IV + Nefopam (Acupan) 20mg dans 100ml de serum salé ou Titration morphinique IV (Morphine 0.1 mg/kg toutes les 5-10 min jusqu'à soulagement). Éviter les AINS.",
-      "Étape 3 : Bilan biologique d'urgence au déchoquage : NFS, Ionogramme sanguin, Urée, Créatinine, CRP, Calcémie, Glycémie, Bilan hépatique complet (ASAT, ALAT, Bilirubine totale et conjuguée, PAL, GGT), Lipasémie (ou Amylasémie) et Gaz du sang (GDS).",
-      "Étape 4 : Imagerie diagnostique et étiologique. Échographie abdominale en urgence (recherche de lithiase biliaire) au lit du malade. TDM abdomino-pelvienne avec injection de produits de contraste iodés (temps portal) indiquée à partir de la 48-72ème heure en cas de doute diagnostique ou de formes graves.",
-      "Étape 5 : Surveillance armée et critères de transfert en réanimation (Score de Ranson ≥ 3, Glasgow > 2, APACHE II > 8, défaillance d'organe persistante, syndrome du compartiment abdominal, nécrose infectée). Mise en place d'une sonde nasogastrique uniquement en cas d'iléus ou de vomissements incoercibles.",
-      "Étape 6 : Piège médico-légal et contre-indications : Ne pas débuter d'antibiothérapie probabiliste systématique (réservée aux nécroses infectées prouvées ou foyers extra-pancréatiques associés). Ne jamais administrer d'inhibiteurs de la pompe à protons en prévention de l'ulcère de stress sans indication formelle."
+      "1. Diagnostic immédiat & Tri gravité : Douleur épigastrique transfixiante + Lipasémie > 3N (3 fois la normale). Ne pas attendre l'imagerie pour affirmer le diagnostic. Poser 2 VVP (16-18G), scope, diurèse horaire (sonde urinaire si instabilité). Évaluer le SIRS (Fc > 90, Fr > 20, T° < 36 ou > 38, Leucocytes) et le score de Marshall modifié.",
+      "2. Bilan biologique urgent au lit du malade : Lipasémie, NFS, Hématocrite (hémoconcentration = sévérité), Ionogramme, Urée, Créatinine, Gaz du sang + Lactates, Glycémie, Calcémie, Bilan hépatique complet (ALAT > 3N oriente vers l'origine biliaire à 95%), CRP. Échographie abdominale précoce au déchoquage (recherche lithiase vésiculaire et dilatation de la VBP).",
+      "3. Remplissage vasculaire ciblé & Analgésie IV : Soluté de choix = Ringer Lactate. Si état de choc ou déshydratation sévère : bolus de 10 à 20 mL/kg sur 1h, puis entretien modéré de 200 à 250 mL/h (environ 3 mL/kg/h). Objectifs : Diurèse > 0,5 mL/kg/h, PAM ≥ 65 mmHg, baisse de l'hématocrite et normalisation de l'urée. Analgésie multimodale forte : Paracétamol 1 g IVL / 6h + Titration Morphine IV (2 à 3 mg toutes les 10 min jusqu'à EVA < 4, pas de restriction liée au sphincter d'Oddi).",
+      "4. Rythme de l'imagerie & Nutrition : SCANNER ABDOMINO-PELVIEN INJECTÉ CONTRE-INDIQUÉ À H0-H24 (sauf doute diagnostique majeur avec perforation/ischémie mésentérique) ; TDM de référence à réaliser impérativement entre H72 et H96 pour quantifier la nécrose (score de Balthazar/CTSI). Diète absolue initiale courte, mais reprise de l'alimentation orale ou entérale précoce dès 24-48h dès régression de la douleur et de l'iléus.",
+      "5. Pièges & Critères de transfert immédiat en Réanimation : ANTIBIOPROPHYLAXIE STRICTEMENT PROSCRITE (inutile même si nécrose présente). Angiocholite aiguë associée (ictère fébrile) = CPRE en urgence < 24h avec sphinctérotomie. Indication de transfert direct en Réanimation : Défaillance d'organe (Marshall ≥ 2 : choc, PaO2/FiO2 < 300, Créat > 170 µmol/L), choc septique/hypovolémique persistant malgré remplissage, acidose lactique ou décompensation de tare."
     ],
-    "scientific_references": "Recommandations SFMU / SRLF /ACG / Consensus National Algérien de Gastro-entérologie",
+    "scientific_references": "Consensus IAP/APA 2013 - Recommandations SNFGE/SFED/SFAR 2021 - Conférence d'experts SFMU/SRLF 2018",
     "is_active": true,
-    "created_at": "2026-10-17T12:28:18.259398+00:00",
-    "updated_at": "2026-10-17T12:28:18.259410+00:00"
+    "created_at": "2026-10-19T05:24:12.805517+00:00",
+    "updated_at": "2026-10-19T05:24:12.805530+00:00"
   },
   {
     "id": "memento_intoxication_medicamenteuse_aigue",
