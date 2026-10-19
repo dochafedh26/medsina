@@ -463,5 +463,24 @@
     "is_active": true,
     "created_at": "2026-10-18T18:59:20.504370+00:00",
     "updated_at": "2026-10-18T18:59:20.504388+00:00"
+  },
+  {
+    "id": "memento_transfusion_choc_hemorragique",
+    "title": "🩸 Transfusion d'Urgence & Choc Hémorragique",
+    "category": "Urgences Vitales & Réanimation",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Appel immédiat au dépôt de sang pour Protocole de Transfusion Massive (PTM) avec culots globulaires O- (ou isogroupe si connu), Plasma Frais Congelé (PFC) et Plaquettes, tout en assurant 2 VVP de grand calibre (14G/16G) et remplissage cristalloïdes restreint (garder PAM >= 65 mmHg).",
+      "Étape 2 : Bilan d'urgence au lit : NFS, Groupage ABO-Rh (2 déterminations distinctes), Test de Compatibilité Directe, Hémostase (TP, TCA, Fibrinogène), Lactates, Gaz du sang, Bilan hépatique et rénal, et Calcémie ionisée.",
+      "Étape 3 : Thérapie ciblée de l'hémorragie massive : Acide Tranexamique (Exacyl) 1g IV en 10 min puis 1g sur 8h (si < 3h du traumatisme/hémorragie). Transfusion 1 PFC pour 1 CGR. Objectif Fibrinogène > 1.5-2 g/L (Transfusion de cryoprécipités ou Fibrinogène si besoin). Calcium 1g IV direct si hypocalcémie post-transfusionnelle.",
+      "Étape 4 : Surveillance armée (toutes les 15-30 min au déchoquage) : conscience, SpO2, FC, PA, diurèse horaire (sonde vésicale impérative, objectif > 0.5 mL/kg/h). Critères de transfert immédiat en réanimation : persistance du choc malgré 4 CGR, coagulopathie sévère non corrigée, acidose lactique majeure ou nécessité de chirurgie hémostatique/embolisation.",
+      "Étape 5 : Piège médico-légal et transfusionnel : Ne jamais réchauffer le sang au micro-ondes (risque d'hémolyse fatale, utiliser un réchauffeur agréé). Vérification croisée ultime au lit du malade obligatoire (identité du patient et des PSL) par le médecin sénior/interne avant chaque culot."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / European Guidelines on management of major bleeding and coagulopathy following trauma / Ministère de la Santé (MSPRH Algérie)",
+    "is_active": true,
+    "created_at": "2026-10-19T15:53:59.186215+00:00",
+    "updated_at": "2026-10-19T15:53:59.186229+00:00"
   }
 ]
