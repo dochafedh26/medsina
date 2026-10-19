@@ -174,9 +174,12 @@ def strip_emojis_for_image(text: str) -> str:
         .replace("→", "->")
         .replace("•", "-")
         .replace("’", "'")
+        .replace("‘", "'")
+        .replace("«", '"')
+        .replace("»", '"')
     )
     clean = re.sub(r'[\U00010000-\U0010ffff]', '', text)
-    clean = re.sub(r'[^\x00-\x7F\u00C0-\u017F]', ' ', clean)
+    clean = re.sub(r'[^\x00-\x7F\u00C0-\u024F]', ' ', clean)
     return re.sub(r'\s+', ' ', clean).strip()
 
 
@@ -416,17 +419,23 @@ def generate_post_content_gemini(topic: str, gemini_key: str, post_type: str = "
 Ton rôle est de créer des publications Facebook modernes, percutantes et attractives.
 {angle}
 
+RÈGLES IMPÉRATIVES DE RÉDACTION :
+1. "points" : Doit contenir exactement 4 points.
+2. Chaque point DOIT être une phrase complète, autonome, bien formulée et terminée (8 à 12 mots maximum, avec ponctuation finale). Ne JAMAIS couper une phrase à mi-chemin.
+3. Le texte doit être en français irréprochable et adapté au contexte médical algérien (CHU, gardes, concours résidanat).
+4. Plateformes : Medsina est disponible sur Android (APK), PC Windows et Web (NE JAMAIS mentionner iOS ou iPhone).
+
 Tu dois répondre UNIQUEMENT par un objet JSON valide avec la structure suivante :
 {{
-  "caption": "Texte complet du post Facebook avec émojis, mise en page aérée, accroche percutante et 4 points médicaux clés (SANS les liens finaux car ils seront ajoutés automatiquement)",
+  "caption": "Texte complet du post Facebook avec émojis, mise en page aérée, accroche percutante et points médicaux clés (SANS les liens finaux car ils seront ajoutés automatiquement)",
   "badge": "TITRE DU BADGE (ex: PROTOCOLE D'URGENCE, VIDAL ALGÉRIE, PIÈGE DE CONCOURS, APPLICATION MEDSINA)",
   "title": "Titre choc et court pour l'image (max 50 caractères)",
   "subtitle": "Spécialité & Thème (ex: Cardiologie & Urgences Médicales • Medsina)",
   "points": [
-    "Point 1 court et percutant (max 15 mots)",
-    "Point 2 court et percutant (max 15 mots)",
-    "Point 3 court et percutant (max 15 mots)",
-    "Point 4 court et percutant (max 15 mots)"
+    "Phrase 1 complète et percutante (8 à 12 mots).",
+    "Phrase 2 complète et percutante (8 à 12 mots).",
+    "Phrase 3 complète et percutante (8 à 12 mots).",
+    "Phrase 4 complète et percutante (8 à 12 mots)."
   ],
   "theme": "blue | emerald | amber | purple"
 }}"""
@@ -454,7 +463,9 @@ Le contenu doit cibler les médecins généralistes, résidents, internes et can
                     clean = re.sub(r"^```json\s*", "", parts[0]["text"].strip())
                     clean = re.sub(r"\s*```$", "", clean)
                     parsed = json.loads(clean)
-                    parsed["caption"] = parsed.get("caption", "").strip() + "\n" + OFFICIAL_FOOTER
+                    caption_raw = parsed.get("caption", "").strip()
+                    caption_raw = re.sub(r'\s*(et\s+)?(sur\s+)?iOS\b', '', caption_raw, flags=re.IGNORECASE)
+                    parsed["caption"] = caption_raw + "\n" + OFFICIAL_FOOTER
 
                     # Attribution intelligente des captures d'écran et maquettes selon le contexte
                     t_lower = (parsed.get("title", "") + " " + parsed.get("subtitle", "") + " " + parsed.get("badge", "") + " " + topic).lower()
@@ -967,7 +978,7 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
     font_badge = get_font(18, bold=True)
     font_title = get_font(38, bold=True)
     font_subtitle = get_font(22, bold=False)
-    font_point = get_font(22, bold=False)
+    font_point = get_font(19, bold=False)
     font_footer = get_font(20, bold=True)
 
     # 4. En-tête avec logo officiel Medsina
@@ -1032,27 +1043,27 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
         # A.1 Rendu du mockup à droite
         if mockup_type == "desktop" and path_desk:
             im_desk = Image.open(path_desk)
-            mockup = render_desktop_mockup(im_desk, target_width=510)
-            base.paste(mockup, (505, content_y - 20), mockup)
+            mockup = render_desktop_mockup(im_desk, target_width=490)
+            base.paste(mockup, (505, content_y - 15), mockup)
         elif mockup_type == "phone" and path_mob:
             im_mob = Image.open(path_mob)
             mockup = render_phone_mockup(im_mob, target_width=320)
-            base.paste(mockup, (620, content_y - 20), mockup)
+            base.paste(mockup, (625, content_y - 15), mockup)
         elif mockup_type == "duo":
             im_desk = Image.open(path_desk) if path_desk else None
             im_mob = Image.open(path_mob) if path_mob else None
             if im_desk and im_mob:
-                duo = render_duo_mockup(im_desk, im_mob, 540, 560)
-                base.paste(duo, (495, content_y - 20), duo)
+                duo = render_duo_mockup(im_desk, im_mob, 530, 560)
+                base.paste(duo, (495, content_y - 15), duo)
             elif im_desk:
-                mockup = render_desktop_mockup(im_desk, target_width=510)
-                base.paste(mockup, (505, content_y - 20), mockup)
+                mockup = render_desktop_mockup(im_desk, target_width=490)
+                base.paste(mockup, (505, content_y - 15), mockup)
             elif im_mob:
                 mockup = render_phone_mockup(im_mob, target_width=320)
-                base.paste(mockup, (620, content_y - 20), mockup)
+                base.paste(mockup, (625, content_y - 15), mockup)
 
-        # A.2 Conteneur des fonctionnalités à gauche (largeur 425)
-        card_w = 425
+        # A.2 Conteneur des fonctionnalités à gauche (largeur 440)
+        card_w = 440
         card_h = 560
         card_layer = Image.new("RGBA", (width, height), (0, 0, 0, 0))
         card_draw = ImageDraw.Draw(card_layer)
@@ -1071,15 +1082,15 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
         points = data.get("points", [])
         for i, pt in enumerate(points[:4]):
             clean_pt = strip_emojis_for_image(pt)
-            draw.ellipse([(85, py + 4), (105, py + 24)], fill=t["accent"])
-            draw.text((92, py + 3), str(i + 1), font=font_brand_sub, fill=(15, 23, 42, 255))
+            draw.ellipse([(85, py + 3), (107, py + 25)], fill=t["accent"])
+            draw.text((93, py + 3), str(i + 1), font=font_brand_sub, fill=(15, 23, 42, 255))
 
             words = clean_pt.split()
             lines = []
             cur = []
             for w in words:
                 test = " ".join(cur + [w])
-                if font_point.getbbox(test)[2] > 310:
+                if font_point.getbbox(test)[2] > 355:
                     lines.append(" ".join(cur))
                     cur = [w]
                 else:
@@ -1087,22 +1098,22 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
             if cur:
                 lines.append(" ".join(cur))
 
-            for l in lines[:2]:
+            for l in lines:
                 draw.text((118, py), l, font=font_point, fill=(241, 245, 249, 255))
-                py += 30
-            py += 22
+                py += 26
+            py += 14
 
         # Bannière CTA de téléchargement intégrée
-        cta_y = content_y + card_h - 95
+        cta_y = content_y + card_h - 90
         draw.rounded_rectangle(
-            [(85, cta_y), (65 + card_w - 20, cta_y + 72)],
+            [(85, cta_y), (65 + card_w - 20, cta_y + 70)],
             radius=12,
             fill=(30, 41, 59, 240),
             outline=t["accent"],
             width=1
         )
         draw.text((100, cta_y + 12), "DISPONIBLE DÈS MAINTENANT", font=font_badge, fill=t["accent_glow"])
-        draw.text((100, cta_y + 40), "Android APK  •  Windows PC  •  Version Web", font=font_brand_sub, fill=(255, 255, 255, 230))
+        draw.text((100, cta_y + 38), "Android APK  •  Windows PC  •  Version Web", font=font_brand_sub, fill=(255, 255, 255, 230))
 
     else:
         # === B. FALLBACK : LAYOUT PLEINE LARGEUR STANDARD ===
@@ -1122,18 +1133,18 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
 
         py = card_y + 35
         points = data.get("points", [])
-        font_point_full = get_font(26, bold=False)
+        font_point_full = get_font(24, bold=False)
         for i, pt in enumerate(points[:4]):
             clean_pt = strip_emojis_for_image(pt)
-            draw.ellipse([(100, py + 6), (124, py + 30)], fill=t["accent"])
-            draw.text((109, py + 6), str(i + 1), font=font_brand_sub, fill=(15, 23, 42, 255))
+            draw.ellipse([(100, py + 5), (124, py + 29)], fill=t["accent"])
+            draw.text((109, py + 5), str(i + 1), font=font_brand_sub, fill=(15, 23, 42, 255))
 
             pt_words = clean_pt.split()
             p_lines = []
             p_cur = []
             for pw in pt_words:
                 test_p = " ".join(p_cur + [pw])
-                if font_point_full.getbbox(test_p)[2] > 740:
+                if font_point_full.getbbox(test_p)[2] > 760:
                     p_lines.append(" ".join(p_cur))
                     p_cur = [pw]
                 else:
@@ -1141,10 +1152,10 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
             if p_cur:
                 p_lines.append(" ".join(p_cur))
 
-            for pl in p_lines[:2]:
+            for pl in p_lines:
                 draw.text((144, py), pl, font=font_point_full, fill=(241, 245, 249, 255))
-                py += 36
-            py += 22
+                py += 34
+            py += 16
 
     # 8. Pied de page
     footer_y = 945
