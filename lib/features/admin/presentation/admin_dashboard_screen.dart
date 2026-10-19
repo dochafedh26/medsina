@@ -161,7 +161,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     _buildPricingPlansTab(context, state, isDark),
                     _buildLicensesTab(context, state, isDark),
                     _buildSystemAndAnnouncementsTab(context, state, isDark),
-                    _buildGitHubAgentsTab(context, isDark),
+                    _buildGitHubAgentsTab(context, state, isDark),
                   ],
                 ),
         );
@@ -3591,10 +3591,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   }
 
   // --- TAB 7 : AGENTS IA & GITHUB ACTIONS AUTOMATION ---
-  Widget _buildGitHubAgentsTab(BuildContext context, bool isDark) {
+  Widget _buildGitHubAgentsTab(BuildContext context, AdminState state, bool isDark) {
     return RefreshIndicator(
       onRefresh: () async {
         await _checkGitHubConfigAndLoadRuns();
+        if (context.mounted) {
+          context.read<AdminBloc>().add(LoadAdminDataEvent());
+        }
       },
       child: ListView(
         padding: const EdgeInsets.all(20),
@@ -3698,7 +3701,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                                 child: CircularProgressIndicator(strokeWidth: 2),
                               )
                             : const Icon(Icons.refresh_rounded),
-                        onPressed: _refreshRecentWorkflowRuns,
+                        onPressed: () {
+                          _refreshRecentWorkflowRuns();
+                          context.read<AdminBloc>().add(LoadAdminDataEvent());
+                        },
                       ),
                     ],
                   ),
@@ -3707,6 +3713,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             ),
           ),
           const SizedBox(height: 24),
+
+          // 1.5. Facebook AI Prompts Section (New)
+          _buildFacebookPromptsSection(context, state, isDark),
+          const SizedBox(height: 28),
 
           // 2. Agents List Section Title
           const Row(
@@ -4294,4 +4304,479 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
       ),
     );
   }
+
+  // --- SECTION : PROMPTS IA FACEBOOK (Avertissements, Historique et Copie 1-Clic) ---
+  Widget _buildFacebookPromptsSection(BuildContext context, AdminState state, bool isDark) {
+    final prompts = state.facebookPrompts;
+    final latestPrompt = prompts.isNotEmpty ? prompts.first : null;
+
+    return Card(
+      elevation: isDark ? 0 : 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: const Color(0xFF1877F2).withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+      ),
+      color: isDark ? const Color(0xFF111827) : const Color(0xFFF0F5FF),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1877F2).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.campaign_rounded, color: Color(0xFF1877F2), size: 26),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Flexible(
+                            child: Text(
+                              'Prompts IA pour Publications Facebook',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              'Contrôle Manuel',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF10B981),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'L\'agent génère le prompt complet sans publier directement. Copiez-le en un clic pour l\'injecter dans Gemini ou ChatGPT.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (latestPrompt == null) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1F2937) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade300),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600, size: 22),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Aucun prompt enregistré pour le moment. Cliquez sur "Générer Prompt Facebook" dans la liste ci-dessous pour créer le premier prompt avec les dernières statistiques.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ] else ...[
+              // Carte du dernier prompt généré
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1F2937) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF1877F2).withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1877F2).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'DERNIER PROMPT',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF1877F2),
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: latestPrompt.isCommercial
+                                ? const Color(0xFF8B5CF6).withValues(alpha: 0.15)
+                                : const Color(0xFF0D9488).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            latestPrompt.postType.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: latestPrompt.isCommercial
+                                  ? const Color(0xFF8B5CF6)
+                                  : const Color(0xFF0D9488),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                latestPrompt.suggestedMockup == 'mobile'
+                                    ? Icons.phone_android_rounded
+                                    : Icons.laptop_chromebook_rounded,
+                                size: 12,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                latestPrompt.suggestedMockup == 'mobile' ? 'Mobile App' : 'Desktop / Web',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          latestPrompt.formattedCreatedAt,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      latestPrompt.topic.isNotEmpty ? latestPrompt.topic : latestPrompt.title,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (latestPrompt.summary.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        latestPrompt.summary,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    // Aperçu Monospace du prompt
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade300),
+                      ),
+                      child: Text(
+                        latestPrompt.fullPrompt.length > 280
+                            ? '${latestPrompt.fullPrompt.substring(0, 280)}...\n[Cliquez pour voir ou copier le prompt complet]'
+                            : latestPrompt.fullPrompt,
+                        style: TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 11,
+                          color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    // Boutons d'action
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.copy_rounded, size: 16),
+                            label: const Text('Copier le Prompt Complet 📋'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1877F2),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            onPressed: () {
+                              Clipboard.setData(ClipboardData(text: latestPrompt.fullPrompt));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  backgroundColor: Color(0xFF10B981),
+                                  content: Text('✅ Prompt IA complet copié ! Collez-le dans Gemini ou ChatGPT pour générer votre publication.'),
+                                  duration: Duration(seconds: 4),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        OutlinedButton.icon(
+                          icon: const Icon(Icons.visibility_rounded, size: 16),
+                          label: const Text('Inspecter & Gemini'),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                            foregroundColor: isDark ? Colors.white : Colors.black87,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          ),
+                          onPressed: () => _showFacebookPromptDialog(context, latestPrompt, isDark),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Historique des prompts si > 1
+              if (prompts.length > 1) ...[
+                const SizedBox(height: 12),
+                Theme(
+                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    title: Text(
+                      'Historique des prompts précédents (${prompts.length - 1})',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+                      ),
+                    ),
+                    children: prompts.skip(1).map((prompt) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1F2937) : Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: prompt.isCommercial
+                                    ? const Color(0xFF8B5CF6).withValues(alpha: 0.15)
+                                    : const Color(0xFF0D9488).withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                prompt.postType.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  color: prompt.isCommercial
+                                      ? const Color(0xFF8B5CF6)
+                                      : const Color(0xFF0D9488),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    prompt.topic.isNotEmpty ? prompt.topic : prompt.title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    prompt.formattedCreatedAt,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.copy_rounded, size: 18),
+                              tooltip: 'Copier le prompt',
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(text: prompt.fullPrompt));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Color(0xFF10B981),
+                                    content: Text('Prompt copié dans le presse-papier !'),
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                              tooltip: 'Voir les détails',
+                              onPressed: () => _showFacebookPromptDialog(context, prompt, isDark),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showFacebookPromptDialog(BuildContext context, AdminFacebookPrompt prompt, bool isDark) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1877F2).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.campaign_rounded, color: Color(0xFF1877F2), size: 22),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Prompt IA Facebook', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(
+                    '${prompt.postType.toUpperCase()} • ${prompt.formattedCreatedAt}',
+                    style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: 650,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Sujet : ${prompt.topic}',
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 380),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade300),
+                ),
+                child: SingleChildScrollView(
+                  child: SelectableText(
+                    prompt.fullPrompt,
+                    style: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 12,
+                      color: isDark ? Colors.grey.shade200 : Colors.grey.shade900,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          OutlinedButton.icon(
+            icon: const Icon(Icons.open_in_browser_rounded, size: 16),
+            label: const Text('Ouvrir Gemini'),
+            onPressed: () => launchUrl(
+              Uri.parse('https://gemini.google.com/app'),
+              mode: LaunchMode.externalApplication,
+            ),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1877F2),
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.copy_rounded, size: 16),
+            label: const Text('Copier le Prompt'),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: prompt.fullPrompt));
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  backgroundColor: Color(0xFF10B981),
+                  content: Text('✅ Prompt copié ! Collez-le dans votre modèle d\'IA préféré.'),
+                ),
+              );
+            },
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Fermer'),
+          ),
+        ],
+      ),
+    );
+  }
 }
+

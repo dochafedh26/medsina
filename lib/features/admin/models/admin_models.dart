@@ -561,3 +561,78 @@ class AnnouncementItem extends Equatable {
   List<Object?> get props => [id, title, message, type, isActive, createdAt];
 }
 
+class AdminFacebookPrompt extends Equatable {
+  final String id;
+  final String topic;
+  final String postType; // 'commercial', 'medical', 'auto'
+  final String title;
+  final String summary;
+  final String fullPrompt;
+  final String suggestedMockup;
+  final String theme;
+  final String status;
+  final DateTime createdAt;
+  final Map<String, dynamic> metadata;
+
+  const AdminFacebookPrompt({
+    required this.id,
+    required this.topic,
+    required this.postType,
+    required this.title,
+    required this.summary,
+    required this.fullPrompt,
+    this.suggestedMockup = 'desktop',
+    this.theme = 'blue',
+    this.status = 'pending',
+    required this.createdAt,
+    this.metadata = const {},
+  });
+
+  bool get isCommercial => postType.toLowerCase() == 'commercial';
+  bool get isMedical => postType.toLowerCase() == 'medical';
+
+  String get formattedCreatedAt {
+    final d = createdAt.day.toString().padLeft(2, '0');
+    final m = createdAt.month.toString().padLeft(2, '0');
+    final y = createdAt.year.toString();
+    final h = createdAt.hour.toString().padLeft(2, '0');
+    final min = createdAt.minute.toString().padLeft(2, '0');
+    return '$d/$m/$y à $h:$min';
+  }
+
+  factory AdminFacebookPrompt.fromJson(Map<String, dynamic> json) {
+    return AdminFacebookPrompt(
+      id: json['id']?.toString() ?? '',
+      topic: json['topic']?.toString() ?? '',
+      postType: json['post_type']?.toString() ?? json['type']?.toString() ?? 'auto',
+      title: json['title']?.toString() ?? '',
+      summary: json['summary']?.toString() ?? '',
+      fullPrompt: json['full_prompt']?.toString() ?? json['prompt']?.toString() ?? '',
+      suggestedMockup: json['suggested_mockup']?.toString() ?? 'desktop',
+      theme: json['theme']?.toString() ?? 'blue',
+      status: json['status']?.toString() ?? 'pending',
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      metadata: json['metadata'] is Map<String, dynamic>
+          ? Map<String, dynamic>.from(json['metadata'])
+          : const {},
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
+        topic,
+        postType,
+        title,
+        summary,
+        fullPrompt,
+        suggestedMockup,
+        theme,
+        status,
+        createdAt,
+        metadata,
+      ];
+}
+

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -423,6 +424,55 @@ class SupabaseService {
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       debugPrint('Notice: fetchCloudMedicalNotifications: $e');
+      return [];
+    }
+  }
+
+  /// Fetch AI prompts generated for social media marketing (Facebook / Telegram)
+  static Future<List<Map<String, dynamic>>> fetchAdminFacebookPrompts() async {
+    try {
+      // 1. Try dedicated table admin_facebook_prompts
+      try {
+        final rows = await client
+            .from('admin_facebook_prompts')
+            .select()
+            .order('created_at', ascending: false)
+            .limit(25);
+        if (rows.isNotEmpty) {
+          return List<Map<String, dynamic>>.from(rows);
+        }
+      } catch (e) {
+        // Fallback if table not migrated yet
+      }
+
+      // 2. Fallback to admin_system_settings
+      final res = await client
+          .from('admin_system_settings')
+          .select('setting_key, setting_value, updated_at')
+          .inFilter('setting_key', ['latest_facebook_ai_prompt', 'facebook_ai_prompts_history']);
+
+      final List<Map<String, dynamic>> items = [];
+      for (final r in res) {
+        final key = r['setting_key']?.toString();
+        final rawVal = r['setting_value']?.toString();
+        if (rawVal != null && rawVal.isNotEmpty) {
+          try {
+            final decoded = jsonDecode(rawVal);
+            if (key == 'latest_facebook_ai_prompt' && decoded is Map<String, dynamic>) {
+              items.add(decoded);
+            } else if (key == 'facebook_ai_prompts_history' && decoded is List) {
+              for (final entry in decoded) {
+                if (entry is Map<String, dynamic> && !items.any((x) => x['id'] == entry['id'])) {
+                  items.add(entry);
+                }
+              }
+            }
+          } catch (_) {}
+        }
+      }
+      return items;
+    } catch (e) {
+      debugPrint('Notice fetchAdminFacebookPrompts: $e');
       return [];
     }
   }

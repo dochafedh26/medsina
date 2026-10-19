@@ -39,6 +39,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       final plansData = await SupabaseService.fetchSubscriptionPlans();
       final paymentsData = await SupabaseService.fetchPayments();
       final announcementsData = await SupabaseService.fetchAnnouncements();
+      final promptsData = await SupabaseService.fetchAdminFacebookPrompts();
 
       final metrics = AdminMetrics.fromJson(metricsData);
       final users = usersData.map((u) => AdminUserItem.fromJson(u)).toList();
@@ -47,6 +48,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       final payments = paymentsData.map((p) => PaymentItem.fromJson(p)).toList();
       final financialMetrics = FinancialMetrics.fromPayments(payments);
       final announcements = announcementsData.map((a) => AnnouncementItem.fromJson(a)).toList();
+      final facebookPrompts = promptsData.map((p) => AdminFacebookPrompt.fromJson(p)).toList();
 
       emit(state.copyWith(
         status: AdminStatus.loaded,
@@ -59,6 +61,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         filteredPayments: payments,
         financialMetrics: financialMetrics,
         announcements: announcements,
+        facebookPrompts: facebookPrompts,
       ));
     } catch (e) {
       emit(state.copyWith(

@@ -178,8 +178,8 @@ class GitHubActionsService {
     GitHubAgentDefinition(
       id: 'facebook',
       workflowFile: 'medsina_facebook.yml',
-      title: 'Publications Facebook (2x/Jour)',
-      description: 'Génère et publie automatiquement 2 fois par jour une infographie médicale moderne (1080x1080) à double visée commerciale et médicale avec liens de téléchargement Octenium.',
+      title: 'Générateur de Prompts IA Facebook (2x/Jour)',
+      description: 'Génère le prompt d\'ingénierie IA complet pour Gemini/Claude/ChatGPT et notifie l\'Admin Dashboard avec bouton de copie en 1 clic (sans publication directe).',
       icon: Icons.campaign_rounded,
       color: Color(0xFF1877F2),
       defaultCadence: '2 fois par jour (08h00 & 17h00 UTC)',

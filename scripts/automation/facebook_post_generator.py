@@ -19,6 +19,7 @@ import re
 import sys
 import json
 import time
+import uuid
 import random
 import argparse
 import datetime
@@ -550,6 +551,302 @@ def get_post_data(topic: Optional[str] = None, post_type: str = "auto") -> Dict[
 
     # Fallback par défaut vers un showcase commercial
     return build_commercial_post(COMMERCIAL_SHOWCASES[0])
+
+
+def build_full_ai_prompt(topic: Optional[str] = None, post_type: str = "auto") -> Dict[str, Any]:
+    """Génère le prompt d'ingénierie IA complet destiné à être copié par l'administrateur
+    pour alimenter Gemini, Claude ou ChatGPT afin de concevoir la publication Facebook."""
+    resolved_type = post_type
+    if post_type == "auto":
+        cur_hour = datetime.datetime.now(datetime.timezone.utc).hour
+        resolved_type = "medical" if 5 <= cur_hour < 13 else "commercial"
+
+    theme = "blue"
+    suggested_mockup = "desktop"
+    context_details = ""
+    target_title = ""
+    target_badge = ""
+    resolved_topic = topic or ""
+
+    if resolved_type == "commercial":
+        if topic:
+            target_title = f"Medsina : {topic}"
+            target_badge = "APPLICATION MEDSINA"
+            context_details = (
+                f"- Thème mis en avant : {topic}\n"
+                "- Valeur ajoutée : Outil médical complet multiplateforme pour la pratique hospitalière et la réussite au concours de résidanat en Algérie."
+            )
+            suggested_mockup = "desktop"
+            theme = "purple"
+        else:
+            showcase = random.choice(COMMERCIAL_SHOWCASES)
+            resolved_topic = showcase["title"]
+            target_title = showcase["title"]
+            target_badge = showcase["badge"]
+            theme = showcase.get("theme", "blue")
+            suggested_mockup = showcase.get("mockup_type", "desktop")
+            context_details = (
+                f"- Fonctionnalité clé : {showcase['title']}\n"
+                f"- Sous-titre : {showcase['subtitle']}\n"
+                "- Points de valeur ajoutée :\n" + "\n".join([f"  * {p}" for p in showcase.get("points", [])])
+            )
+    else:
+        assets_dir = Path(__file__).resolve().parents[2] / "assets" / "data"
+        mementos_file = assets_dir / "on_call_mementos.json"
+        summaries_file = assets_dir / "course_summaries.json"
+
+        chosen_memento = None
+        chosen_summary = None
+
+        if mementos_file.exists():
+            try:
+                mems = json.loads(mementos_file.read_text(encoding="utf-8"))
+                if topic:
+                    filtered = [m for m in mems if topic.lower() in m.get("title", "").lower() or topic.lower() in m.get("category", "").lower()]
+                    if filtered:
+                        chosen_memento = random.choice(filtered)
+                if not chosen_memento and mems and not topic:
+                    chosen_memento = random.choice(mems)
+            except Exception:
+                pass
+
+        if not chosen_memento and summaries_file.exists():
+            try:
+                sums = json.loads(summaries_file.read_text(encoding="utf-8"))
+                if topic:
+                    filtered = [s for s in sums if topic.lower() in s.get("course_name", "").lower() or topic.lower() in s.get("module_name", "").lower()]
+                    if filtered:
+                        chosen_summary = random.choice(filtered)
+                if not chosen_summary and sums and not topic:
+                    chosen_summary = random.choice(sums)
+            except Exception:
+                pass
+
+        if chosen_memento:
+            resolved_topic = chosen_memento.get("title", topic or "Urgence Médicale")
+            target_title = chosen_memento.get("title", "")
+            target_badge = f"MÉMENTO • {chosen_memento.get('category', 'GARDE').upper()}"
+            suggested_mockup = "phone"
+            theme = "emerald"
+            points_txt = "\n".join([f"  * {p}" for p in chosen_memento.get("points", [])[:4]])
+            context_details = (
+                f"- Extrait Mémento : {target_title}\n"
+                f"- Catégorie : {chosen_memento.get('category', 'Urgences')}\n"
+                f"- Référence clinique : {chosen_memento.get('scientific_references', 'Recommandations & Consensus')}\n"
+                f"- Points réflexes extraits de la base :\n{points_txt}"
+            )
+        elif chosen_summary:
+            c_name = chosen_summary.get("course_name", topic or "Cours Médical")
+            m_name = chosen_summary.get("module_name", "Module Résidanat")
+            resolved_topic = f"{c_name} ({m_name})"
+            target_title = f"Pièges & Clés : {c_name}"
+            target_badge = f"CONCOURS 2027 • {m_name.upper()}"
+            suggested_mockup = "desktop"
+            theme = "purple"
+            traps = chosen_summary.get("exam_traps", [])
+            takeaways = chosen_summary.get("key_takeaways", [])
+            items = (traps if traps else takeaways)[:4]
+            points_txt = "\n".join([f"  * {p}" for p in items])
+            context_details = (
+                f"- Cours : {c_name}\n"
+                f"- Module : {m_name}\n"
+                f"- Points clés & Pièges concours issus de l'application :\n{points_txt}"
+            )
+        else:
+            resolved_topic = topic or "Conduite à tenir en Urgence"
+            target_title = f"Prise en charge : {resolved_topic}"
+            target_badge = "CLINIQUE & URGENCES"
+            suggested_mockup = "phone"
+            theme = "blue"
+            context_details = f"- Thème médical : {resolved_topic}\n- Objectif : Partager une conduite à tenir ou un piège diagnostique typique des gardes hospitalières en Algérie."
+
+    angle_instruction = (
+        "Mets l'accent sur les fonctionnalités innovantes de Medsina et incite vivement les médecins, résidents et étudiants à tester l'application sur le Web ou à télécharger l'APK Android / PC."
+        if resolved_type == "commercial"
+        else "Partage un extrait médical clinique concret, rigoureux et pédagogique (protocole d'urgence, perle ou piège de concours) issu directement de la bibliothèque Medsina."
+    )
+
+    full_prompt = f"""# MISSION : RÉDACTION D'UNE PUBLICATION FACEBOOK HAUTE PERFORMANCE POUR MEDSINA
+
+Tu es le Directeur Médical & Stratégiste Marketing de MedevSync, la startup algérienne éditrice de la plateforme médicale "Medsina" (application Web, Windows Desktop et Android APK) dédiée aux étudiants en médecine, internes, médecins généralistes et candidats au Concours de Résidanat 2027 en Algérie (Blida, Alger, Oran, Constantine, etc.).
+
+Ton rôle est de créer une publication Facebook moderne, percutante, élégante et attractive pour notre page officielle.
+
+---
+## 🎯 OBJECTIFS ET CONSIGNES DU POST
+- Type de publication : {resolved_type.upper()} ({'Promotionnelle / Téléchargement SaaS' if resolved_type == 'commercial' else 'Pédagogique / Clinique & Concours'})
+- Thème / Sujet : "{resolved_topic}"
+- Orientation : {angle_instruction}
+
+---
+## 📋 CONTEXTE & DONNÉES CLÉS DU SUJET
+{context_details}
+
+---
+## 📱 DISPONIBILITÉ & IDENTITÉ MULTIPLATEFORME
+- Portail Web direct : {OFFICIAL_WEB_URL}
+- Télécharger sur Android (APK) : {OFFICIAL_APK_URL}
+- Télécharger sur PC Windows (.exe) : {OFFICIAL_WIN_URL}
+- ⚠️ RÈGLE STRICTE : Ne JAMAIS mentionner iOS, iPhone ou l'App Store. Medsina est actuellement disponible sur Android (APK), PC Windows et Web.
+
+---
+## ✍️ RÈGLES DE RÉDACTION IMPÉRATIVES
+1. Légende Facebook ("caption") :
+   - Accroche percutante avec émojis médicaux adaptés.
+   - Texte aéré, bien structuré avec retours à la ligne.
+   - Présentation des bénéfices concrets ou de la démarche clinique.
+   - Termine par un appel clair à l'action et les 3 liens officiels :
+     • Version Web Directe : {OFFICIAL_WEB_URL}
+     • Version Android APK : {OFFICIAL_APK_URL}
+     • Version Windows PC : {OFFICIAL_WIN_URL}
+   - Hashtags à inclure à la fin : #MedevSync #Medsina #MedecineAlgerie #Residanat2027 #PratiqueClinique #SanteNumerique #UrgencesMedicales #Internat
+
+2. Éléments pour l'Infographie Visuelle (Image 1080x1080) :
+   - "badge" : Titre court en majuscules (ex: {target_badge})
+   - "title" : Titre choc et concis (max 50 caractères)
+   - "subtitle" : Spécialité & Thème (ex: Pratique Médicale & Résidanat 2027)
+   - "points" : EXACTEMENT 4 phrases complètes.
+     * Chaque point DOIT être une phrase autonome, grammaticalement finie, de 8 à 12 mots maximum, terminée par un point.
+     * Ne JAMAIS couper une phrase en plein milieu.
+   - "theme" : "{theme}" (blue | emerald | amber | purple)
+   - "mockup_type" : "{suggested_mockup}" (desktop | phone | duo)
+
+---
+## 📤 FORMAT DE SORTIE OBLIGATOIRE (JSON STRICT)
+Réponds UNIQUEMENT avec un objet JSON valide, sans texte additionnel ni markdown superflu en dehors du bloc JSON :
+```json
+{{
+  "caption": "Texte complet du post Facebook...",
+  "badge": "{target_badge}",
+  "title": "{target_title}",
+  "subtitle": "Spécialité & Concours • Medsina",
+  "points": [
+    "Phrase 1 complète et autonome terminée par un point.",
+    "Phrase 2 complète et autonome terminée par un point.",
+    "Phrase 3 complète et autonome terminée par un point.",
+    "Phrase 4 complète et autonome terminée par un point."
+  ],
+  "theme": "{theme}",
+  "mockup_type": "{suggested_mockup}"
+}}
+```"""
+
+    prompt_id = str(uuid.uuid4())
+    summary = f"Prompt pour publication {resolved_type.upper()} sur '{resolved_topic}' (Maquette: {suggested_mockup}, Thème: {theme})."
+
+    return {
+        "id": prompt_id,
+        "topic": resolved_topic,
+        "post_type": resolved_type,
+        "title": target_title or resolved_topic,
+        "summary": summary,
+        "full_prompt": full_prompt,
+        "suggested_mockup": suggested_mockup,
+        "theme": theme,
+        "status": "pending",
+        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "metadata": {
+            "target_badge": target_badge,
+            "target_title": target_title,
+            "context_details": context_details,
+        }
+    }
+
+
+def dispatch_prompt_to_admin_dashboard(prompt_data: Dict[str, Any]) -> bool:
+    """Enregistre le prompt complet dans Supabase et déclenche la notification temps-réel pour l'Admin Dashboard."""
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates"
+    }
+
+    success = False
+
+    # 1. Sauvegarde dans admin_system_settings (latest_facebook_ai_prompt)
+    try:
+        url_setting = f"{SUPABASE_URL}/rest/v1/admin_system_settings"
+        payload_setting = {
+            "setting_key": "latest_facebook_ai_prompt",
+            "setting_value": json.dumps(prompt_data, ensure_ascii=False),
+            "description": f"Dernier prompt IA Facebook généré ({prompt_data.get('topic')})",
+            "updated_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }
+        r1 = requests.post(url_setting, headers=headers, json=payload_setting, timeout=15)
+        if r1.status_code in (200, 201, 204):
+            success = True
+            print("✅ Prompt enregistré dans admin_system_settings (latest_facebook_ai_prompt)")
+        else:
+            print(f"Notice admin_system_settings: {r1.status_code} {r1.text[:100]}")
+    except Exception as e:
+        print(f"Warning admin_system_settings: {e}")
+
+    # 2. Sauvegarde dans l'historique des prompts admin_system_settings (facebook_ai_prompts_history)
+    try:
+        url_hist = f"{SUPABASE_URL}/rest/v1/admin_system_settings?setting_key=eq.facebook_ai_prompts_history&select=setting_value"
+        r_h = requests.get(url_hist, headers=headers, timeout=10)
+        history = []
+        if r_h.status_code == 200 and r_h.json():
+            try:
+                history = json.loads(r_h.json()[0].get("setting_value", "[]"))
+            except Exception:
+                history = []
+        
+        # Ajout en tête et conservation des 15 derniers
+        history = [prompt_data] + [p for p in history if p.get("id") != prompt_data.get("id")]
+        history = history[:15]
+
+        payload_hist = {
+            "setting_key": "facebook_ai_prompts_history",
+            "setting_value": json.dumps(history, ensure_ascii=False),
+            "description": "Historique des 15 derniers prompts IA Facebook",
+            "updated_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }
+        requests.post(f"{SUPABASE_URL}/rest/v1/admin_system_settings", headers=headers, json=payload_hist, timeout=15)
+    except Exception as e:
+        print(f"Notice history update: {e}")
+
+    # 3. Notification en direct dans medical_notifications pour l'Admin Dashboard
+    try:
+        notif_id = f"fb_prompt_{int(time.time())}"
+        notif_payload = {
+            "id": notif_id,
+            "title": f"📢 Prompt IA Facebook : {prompt_data.get('title')}",
+            "message": f"Nouveau prompt prêt ({prompt_data.get('post_type', 'AUTO').upper()}) pour \"{prompt_data.get('topic')}\". Cliquez pour le copier.",
+            "type": "announcement",
+            "target_id": prompt_data.get("id"),
+            "metadata": {
+                "full_prompt": prompt_data.get("full_prompt"),
+                "topic": prompt_data.get("topic"),
+                "post_type": prompt_data.get("post_type"),
+                "suggested_mockup": prompt_data.get("suggested_mockup"),
+                "theme": prompt_data.get("theme"),
+            },
+            "is_broadcast": True,
+            "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }
+        r_notif = requests.post(f"{SUPABASE_URL}/rest/v1/medical_notifications", headers=headers, json=notif_payload, timeout=15)
+        if r_notif.status_code in (200, 201, 204):
+            print(f"🔔 Notification diffusée avec succès vers l'Admin Dashboard (ID: {notif_id})")
+            success = True
+    except Exception as e:
+        print(f"Warning medical_notifications: {e}")
+
+    # 4. Tentative d'insertion dans la table dédiée admin_facebook_prompts (si créée)
+    try:
+        r_table = requests.post(
+            f"{SUPABASE_URL}/rest/v1/admin_facebook_prompts",
+            headers=headers,
+            json=prompt_data,
+            timeout=10
+        )
+        if r_table.status_code in (200, 201, 204):
+            print("💾 Prompt archivé dans la table dédiée public.admin_facebook_prompts")
+    except Exception:
+        pass
+
+    return success
 
 
 # -------------------------------------------------------------
@@ -1194,77 +1491,86 @@ def publish_photo_to_facebook(image_path: str, caption: str) -> Dict[str, Any]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate and publish an AI/medical visual post to Facebook (2x/day)")
+    parser = argparse.ArgumentParser(description="Medsina Facebook AI Prompt Generator & Publisher")
     parser.add_argument("--topic", type=str, default=None, help="Specific medical or promotional topic to generate")
     parser.add_argument("--type", choices=["auto", "commercial", "medical"], default="auto", help="Post objective: commercial (download CTA) or medical (clinical extract)")
-    parser.add_argument("--dry-run", action="store_true", help="Generate content and image without publishing to Facebook")
-    parser.add_argument("--output-image", type=str, default="output_banner.png", help="Path to save generated image")
+    parser.add_argument("--publish", action="store_true", default=False, help="Explicitly publish directly to Facebook (Disabled by default)")
+    parser.add_argument("--dry-run", action="store_true", default=False, help="Run locally without updating Supabase notifications or settings")
+    parser.add_argument("--generate-banner", action="store_true", default=False, help="Also render a graphic banner image locally")
+    parser.add_argument("--output-image", type=str, default="output_banner.png", help="Path to save generated banner image")
     args = parser.parse_args()
 
     print("=" * 65)
-    print("🎨 MEDEVSYNC & MEDSINA FACEBOOK VISUAL PUBLISHER (2x/JOUR)")
+    print("🎨 MEDEVSYNC & MEDSINA FACEBOOK AI PROMPT GENERATOR (2x/JOUR)")
     print(f"📌 Thème   : {args.topic or 'Automatique'}")
     print(f"🎯 Visée   : {args.type.upper()}")
-    print(f"⚙️ Mode    : {'DRY RUN (Aperçu local)' if args.dry_run else 'PUBLICATION EN DIRECT'}")
+    print(f"⚙️ Mode    : {'PUBLICATION DIRECTE (--publish)' if args.publish else 'GÉNÉRATION DU PROMPT IA (ADMIN DASHBOARD)'}")
     print("=" * 65)
 
-    print("\n🧠 1. Sélection & génération du contenu adapté...")
-    post_data = get_post_data(topic=args.topic, post_type=args.type)
-    print(f"Titre   : {post_data.get('title')}")
-    print(f"Badge   : {post_data.get('badge')}")
-    print(f"Thème   : {post_data.get('theme')}")
+    print("\n🧠 1. Génération du prompt IA complet et contextuel...")
+    prompt_info = build_full_ai_prompt(topic=args.topic, post_type=args.type)
+    
+    print(f"Titre suggéré   : {prompt_info.get('title')}")
+    print(f"Thème résolu    : {prompt_info.get('topic')}")
+    print(f"Visée           : {prompt_info.get('post_type').upper()}")
+    print(f"Maquette        : {prompt_info.get('suggested_mockup')}")
+    print(f"Palette         : {prompt_info.get('theme')}")
 
-    print("\n🖼️ 2. Création de l'infographie haute résolution (1080x1080)...")
-    img_path = render_banner_image(post_data, args.output_image)
-    print(f"Image générée avec succès : {img_path}")
+    if not args.dry_run:
+        print("\n📡 2. Transmission du prompt au tableau de bord administrateur...")
+        dispatched = dispatch_prompt_to_admin_dashboard(prompt_info)
+        if dispatched:
+            print("🎉 SUCCÈS : Le prompt est disponible sur l'Admin Dashboard Medsina avec bouton de copie en 1 clic !")
+        else:
+            print("⚠️ Attention : La transmission cloud a échoué mais le prompt reste disponible ci-dessous.")
+    else:
+        print("\n[DRY RUN] Transmission Supabase désactivée.")
 
-    print("\n📝 3. Légende du Post Facebook (avec liens officiels Octenium) :")
-    print("-" * 55)
-    print(post_data.get("caption"))
-    print("-" * 55)
+    print("\n" + "=" * 65)
+    print("📋 PROMPT IA COMPLET PRÊT À COPIER POUR GEMINI / CLAUDE / CHATGPT :")
+    print("=" * 65)
+    print(prompt_info.get("full_prompt"))
+    print("=" * 65)
 
-    if args.dry_run:
-        print("\n[DRY RUN] Publication Facebook/Telegram ignorée. Image prête pour inspection.")
-        try:
-            from telegram_publisher import format_telegram_caption, send_telegram_broadcast
-            tg_caption = format_telegram_caption(
-                title=post_data.get("title", ""),
-                badge=post_data.get("badge", ""),
-                points=post_data.get("points", []),
-                reference=post_data.get("reference", ""),
-                app_version=APP_VERSION
-            )
-            send_telegram_broadcast(message_text=tg_caption, image_path=img_path, dry_run=True)
-        except Exception as e:
-            print(f"Notice Telegram dry-run: {e}")
-        return
+    # Si l'administrateur souhaite également générer une bannière ou publier directement
+    if args.generate_banner or args.publish:
+        print("\n🖼️ 3. Création de l'infographie haute résolution (1080x1080)...")
+        post_data = get_post_data(topic=args.topic or prompt_info.get("topic"), post_type=prompt_info.get("post_type"))
+        img_path = render_banner_image(post_data, args.output_image)
+        print(f"Image générée avec succès : {img_path}")
 
-    print("\n🚀 4. Publication de la photo et du texte sur la page Facebook Medevsync...")
-    try:
-        res = publish_photo_to_facebook(img_path, post_data.get("caption", ""))
-        photo_id = res.get("id")
-        post_id = res.get("post_id")
-        print(f"🎉 SUCCÈS FACEBOOK ! Photo ID: {photo_id} | Post ID: {post_id}")
-        if post_id:
-            print(f"🔗 Lien : https://www.facebook.com/{post_id}")
-    except Exception as e:
-        print(f"❌ Erreur lors de la publication Facebook: {e}")
+        if args.publish:
+            print("\n🚀 4. Publication de la photo et du texte sur la page Facebook Medevsync...")
+            try:
+                res = publish_photo_to_facebook(img_path, post_data.get("caption", ""))
+                photo_id = res.get("id")
+                post_id = res.get("post_id")
+                print(f"🎉 SUCCÈS FACEBOOK ! Photo ID: {photo_id} | Post ID: {post_id}")
+                if post_id:
+                    print(f"🔗 Lien : https://www.facebook.com/{post_id}")
+            except Exception as e:
+                print(f"❌ Erreur lors de la publication Facebook: {e}")
 
-    print("\n✈️ 5. Diffusion automatique sur le Canal Officiel Telegram...")
-    try:
-        from telegram_publisher import format_telegram_caption, send_telegram_broadcast
-        tg_caption = format_telegram_caption(
-            title=post_data.get("title", ""),
-            badge=post_data.get("badge", ""),
-            points=post_data.get("points", []),
-            reference=post_data.get("reference", ""),
-            app_version=APP_VERSION
-        )
-        send_telegram_broadcast(message_text=tg_caption, image_path=img_path, dry_run=False)
-    except Exception as e:
-        print(f"⚠️ Information Telegram: {e}")
+            print("\n✈️ 5. Diffusion automatique sur le Canal Officiel Telegram...")
+            try:
+                from telegram_publisher import format_telegram_caption, send_telegram_broadcast
+                tg_caption = format_telegram_caption(
+                    title=post_data.get("title", ""),
+                    badge=post_data.get("badge", ""),
+                    points=post_data.get("points", []),
+                    reference=post_data.get("reference", ""),
+                    app_version=APP_VERSION
+                )
+                send_telegram_broadcast(message_text=tg_caption, image_path=img_path, dry_run=False)
+            except Exception as e:
+                print(f"⚠️ Information Telegram: {e}")
+        else:
+            print("\nℹ️ Publication directe sur Facebook ignorée (--publish non spécifié).")
+    else:
+        print("\nℹ️ Publication directe désactivée. L'administrateur peut copier le prompt et l'exécuter dans Gemini ou Claude.")
 
 
 if __name__ == "__main__":
     main()
+
 

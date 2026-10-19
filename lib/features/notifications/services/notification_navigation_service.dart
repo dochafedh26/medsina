@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../clinical/presentation/clinical_screen.dart';
 import '../../dashboard/presentation/daily_pearls_archive_screen.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
@@ -27,6 +28,13 @@ class NotificationNavigationService {
     }
 
     if (!context.mounted) return;
+
+    // Check if notification contains an AI prompt for Facebook
+    final fullPrompt = notification.metadata?['full_prompt']?.toString();
+    if (fullPrompt != null && fullPrompt.isNotEmpty) {
+      await showFacebookPromptDialog(context, notification);
+      return;
+    }
 
     // 3. If notification is an Alert / Subscription / Quota / Announcement -> Open Alert Dialog
     if (notification.isAlert) {
@@ -350,5 +358,136 @@ class NotificationNavigationService {
 
   static String _formatDateTime(DateTime dt) {
     return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year} à ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
+  static Future<void> showFacebookPromptDialog(
+    BuildContext context,
+    MedicalNotification notif,
+  ) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fullPrompt = notif.metadata?['full_prompt']?.toString() ?? notif.message;
+    final topic = notif.metadata?['topic']?.toString() ?? notif.title;
+    final postType = notif.metadata?['post_type']?.toString() ?? 'auto';
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1877F2).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.campaign_rounded, color: Color(0xFF1877F2), size: 22),
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Prompt IA pour Post Facebook',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                  ),
+                  Text(
+                    'À copier dans Gemini, Claude ou ChatGPT',
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: 580,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1877F2).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'THÈME : $topic',
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF1877F2)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      postType.toUpperCase(),
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.purple),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 340),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE2E8F0)),
+                ),
+                child: SingleChildScrollView(
+                  child: SelectableText(
+                    fullPrompt,
+                    style: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 11.5,
+                      height: 1.45,
+                      color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Fermer'),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1877F2),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            ),
+            icon: const Icon(Icons.copy_rounded, size: 16),
+            label: const Text('Copier le Prompt IA 📋', style: TextStyle(fontWeight: FontWeight.bold)),
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: fullPrompt));
+              if (ctx.mounted) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Color(0xFF16A34A),
+                    content: Text('✅ Prompt IA complet copié dans le presse-papiers ! Collez-le dans Gemini, Claude ou ChatGPT.'),
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

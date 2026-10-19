@@ -15,6 +15,7 @@ class AdminState extends Equatable {
   final String paymentStatusFilter;
   final FinancialMetrics? financialMetrics;
   final List<AnnouncementItem> announcements;
+  final List<AdminFacebookPrompt> facebookPrompts;
   final String searchQuery;
   final String? errorMessage;
   final String? successMessage;
@@ -31,6 +32,7 @@ class AdminState extends Equatable {
     this.paymentStatusFilter = 'all',
     this.financialMetrics,
     this.announcements = const [],
+    this.facebookPrompts = const [],
     this.searchQuery = '',
     this.errorMessage,
     this.successMessage,
@@ -48,6 +50,7 @@ class AdminState extends Equatable {
     String? paymentStatusFilter,
     FinancialMetrics? financialMetrics,
     List<AnnouncementItem>? announcements,
+    List<AdminFacebookPrompt>? facebookPrompts,
     String? searchQuery,
     String? errorMessage,
     String? successMessage,
@@ -65,6 +68,7 @@ class AdminState extends Equatable {
       paymentStatusFilter: paymentStatusFilter ?? this.paymentStatusFilter,
       financialMetrics: financialMetrics ?? this.financialMetrics,
       announcements: announcements ?? this.announcements,
+      facebookPrompts: facebookPrompts ?? this.facebookPrompts,
       searchQuery: searchQuery ?? this.searchQuery,
       errorMessage: clearMessages ? null : (errorMessage ?? this.errorMessage),
       successMessage: clearMessages ? null : (successMessage ?? this.successMessage),
@@ -84,6 +88,7 @@ class AdminState extends Equatable {
         paymentStatusFilter,
         financialMetrics,
         announcements,
+        facebookPrompts,
         searchQuery,
         errorMessage,
         successMessage,
