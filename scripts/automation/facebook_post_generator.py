@@ -849,6 +849,53 @@ def dispatch_prompt_to_admin_dashboard(prompt_data: Dict[str, Any]) -> bool:
     return success
 
 
+def record_publication_success(post_id: Optional[str], photo_id: Optional[str], post_data: Dict[str, Any]):
+    """Enregistre le succès de la publication directe dans Supabase pour l'Admin Dashboard."""
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates"
+    }
+    fb_url = f"https://www.facebook.com/{post_id}" if post_id else (f"https://www.facebook.com/{photo_id}" if photo_id else "https://www.facebook.com/medevsync")
+    published_info = {
+        "post_id": post_id,
+        "photo_id": photo_id,
+        "facebook_url": fb_url,
+        "title": post_data.get("title", ""),
+        "badge": post_data.get("badge", ""),
+        "published_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+    # 1. Sauvegarde dans admin_system_settings
+    try:
+        url_setting = f"{SUPABASE_URL}/rest/v1/admin_system_settings"
+        payload_setting = {
+            "setting_key": "latest_facebook_published_post",
+            "setting_value": json.dumps(published_info, ensure_ascii=False),
+            "description": f"Dernier post publié en direct sur Facebook ({published_info.get('title')})",
+            "updated_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }
+        requests.post(url_setting, headers=headers, json=payload_setting, timeout=15)
+        print("💾 Succès de publication enregistré dans admin_system_settings")
+    except Exception as e:
+        print(f"Notice latest_facebook_published_post: {e}")
+
+    # 2. Notification vers l'Admin Dashboard
+    try:
+        notif_payload = {
+            "id": f"fb_pub_{int(time.time())}",
+            "title": f"🎉 Post publié sur Facebook : {published_info.get('title')}",
+            "message": f"L'infographie et le texte ont été mis en ligne avec succès sur la page Facebook. Lien : {fb_url}",
+            "type": "announcement",
+            "target_id": post_id or photo_id or "facebook_post",
+            "metadata": published_info,
+        }
+        requests.post(f"{SUPABASE_URL}/rest/v1/medical_notifications", headers=headers, json=notif_payload, timeout=15)
+        print("🔔 Notification de publication Facebook envoyée au Dashboard !")
+    except Exception as e:
+        print(f"Notice publication notification: {e}")
+
+
 # -------------------------------------------------------------
 # MOTEUR DE RENDU GRAPHIQUE HAUTE DÉFINITION 1080x1080 (PILLOW)
 # -------------------------------------------------------------
@@ -1548,6 +1595,7 @@ def main():
                 print(f"🎉 SUCCÈS FACEBOOK ! Photo ID: {photo_id} | Post ID: {post_id}")
                 if post_id:
                     print(f"🔗 Lien : https://www.facebook.com/{post_id}")
+                record_publication_success(post_id, photo_id, post_data)
             except Exception as e:
                 print(f"❌ Erreur lors de la publication Facebook: {e}")
 

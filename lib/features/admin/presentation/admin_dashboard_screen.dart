@@ -4106,40 +4106,111 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Annuler'),
           ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: agent.color,
-              foregroundColor: Colors.white,
+          if (agent.id == 'facebook') ...[
+            OutlinedButton.icon(
+              icon: const Icon(Icons.psychology_rounded, size: 16),
+              label: const Text('Générer Prompt Seul'),
+              onPressed: () async {
+                Navigator.pop(ctx);
+                setState(() => _triggeringAgentId = agent.id);
+
+                final val = inputCtrl.text.trim();
+                final inputs = <String, String>{'publish': 'false'};
+                if (val.isNotEmpty) inputs['topic'] = val;
+
+                final result = await GitHubActionsService.triggerWorkflow(
+                  workflowFileName: agent.workflowFile,
+                  inputs: inputs,
+                );
+
+                if (!mounted) return;
+                setState(() => _triggeringAgentId = null);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                    content: Text(result.message),
+                    duration: const Duration(seconds: 4),
+                  ),
+                );
+
+                await Future.delayed(const Duration(seconds: 2));
+                if (mounted) _refreshRecentWorkflowRuns();
+              },
             ),
-            icon: const Icon(Icons.rocket_launch_rounded, size: 18),
-            label: const Text('Confirmer & Lancer'),
-            onPressed: () async {
-              Navigator.pop(ctx);
-              setState(() => _triggeringAgentId = agent.id);
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1877F2),
+                foregroundColor: Colors.white,
+              ),
+              icon: const Icon(Icons.rocket_launch_rounded, size: 16),
+              label: const Text('Tout Créer & Publier Directement 🚀'),
+              onPressed: () async {
+                Navigator.pop(ctx);
+                setState(() => _triggeringAgentId = agent.id);
 
-              final val = inputCtrl.text.trim();
-              final inputs = val.isNotEmpty && agent.inputFieldKey != null ? {agent.inputFieldKey!: val} : null;
+                final val = inputCtrl.text.trim();
+                final inputs = <String, String>{'publish': 'true'};
+                if (val.isNotEmpty) inputs['topic'] = val;
 
-              final result = await GitHubActionsService.triggerWorkflow(
-                workflowFileName: agent.workflowFile,
-                inputs: inputs,
-              );
+                final result = await GitHubActionsService.triggerWorkflow(
+                  workflowFileName: agent.workflowFile,
+                  inputs: inputs,
+                );
 
-              if (!mounted) return;
-              setState(() => _triggeringAgentId = null);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
-                  content: Text(result.message),
-                  duration: const Duration(seconds: 4),
-                ),
-              );
+                if (!mounted) return;
+                setState(() => _triggeringAgentId = null);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                    content: Text(
+                      result.isSuccess
+                          ? '🚀 Publication directe lancée ! L\'infographie et le texte seront en ligne sur Facebook sous peu.'
+                          : result.message,
+                    ),
+                    duration: const Duration(seconds: 5),
+                  ),
+                );
 
-              // Wait 2s and refresh runs so the queued run shows up
-              await Future.delayed(const Duration(seconds: 2));
-              if (mounted) _refreshRecentWorkflowRuns();
-            },
-          ),
+                await Future.delayed(const Duration(seconds: 2));
+                if (mounted) _refreshRecentWorkflowRuns();
+              },
+            ),
+          ] else ...[
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: agent.color,
+                foregroundColor: Colors.white,
+              ),
+              icon: const Icon(Icons.rocket_launch_rounded, size: 18),
+              label: const Text('Confirmer & Lancer'),
+              onPressed: () async {
+                Navigator.pop(ctx);
+                setState(() => _triggeringAgentId = agent.id);
+
+                final val = inputCtrl.text.trim();
+                final inputs = val.isNotEmpty && agent.inputFieldKey != null ? {agent.inputFieldKey!: val} : null;
+
+                final result = await GitHubActionsService.triggerWorkflow(
+                  workflowFileName: agent.workflowFile,
+                  inputs: inputs,
+                );
+
+                if (!mounted) return;
+                setState(() => _triggeringAgentId = null);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                    content: Text(result.message),
+                    duration: const Duration(seconds: 4),
+                  ),
+                );
+
+                // Wait 2s and refresh runs so the queued run shows up
+                await Future.delayed(const Duration(seconds: 2));
+                if (mounted) _refreshRecentWorkflowRuns();
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -4378,6 +4449,83 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+
+            // Bouton d'action directe : Tout créer et publier sur Facebook
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF1877F2).withValues(alpha: 0.35),
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF1877F2).withValues(alpha: isDark ? 0.1 : 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1877F2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.rocket_launch_rounded, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Publication 100% Automatique',
+                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Génère l\'infographie (1080x1080), rédige le texte et publie directement sur la page Facebook MedevSync & Telegram.',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1877F2),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 1,
+                    ),
+                    icon: _triggeringAgentId == 'facebook_direct'
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        : const Icon(Icons.send_rounded, size: 16),
+                    label: Text(
+                      _triggeringAgentId == 'facebook_direct' ? 'Publication...' : 'Tout Créer & Publier Directement 🚀',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    ),
+                    onPressed: _triggeringAgentId == 'facebook_direct'
+                        ? null
+                        : _showDirectPublishDialog,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             if (latestPrompt == null) ...[
@@ -4778,5 +4926,188 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
       ),
     );
   }
+
+  void _showDirectPublishDialog() async {
+    final configured = await GitHubActionsService.isConfigured();
+    if (!mounted) return;
+    if (!configured) {
+      _showConfigureGitHubTokenDialog();
+      return;
+    }
+
+    final topicCtrl = TextEditingController();
+    String selectedType = 'auto';
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDlgState) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1877F2).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.facebook_rounded, color: Color(0xFF1877F2), size: 24),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Tout Créer & Publier sur Facebook',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: 480,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Le robot MedsinaPilot va concevoir l\'infographie haute résolution (1080x1080) avec les captures réelles de l\'application, rédiger le texte et publier directement sur la page officielle MedevSync et le canal Telegram.',
+                  style: TextStyle(fontSize: 12.5, color: Colors.grey.shade700),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Type de publication :',
+                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 6),
+                DropdownButtonFormField<String>(
+                  initialValue: selectedType,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'auto',
+                      child: Text('Automatique (Médical matin / Promo soir)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'commercial',
+                      child: Text('Commercial (Promotion de l\'application Medsina)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'medical',
+                      child: Text('Médical (Protocole d\'urgence / Piège Concours)'),
+                    ),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) setDlgState(() => selectedType = val);
+                  },
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  'Thème ou sujet spécifique (optionnel) :',
+                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: topicCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'ex: OAP Flash, QCM Résidanat, Analyseur ordonnance...',
+                    hintStyle: TextStyle(fontSize: 12),
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Laissez vide pour laisser le robot choisir automatiquement le sujet prioritaire.',
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline_rounded, color: Color(0xFFF59E0B), size: 18),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Le post sera immédiatement public et visible par vos abonnés sur Facebook.',
+                          style: TextStyle(fontSize: 11.5, color: Color(0xFFB45309), fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1877F2),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              ),
+              icon: const Icon(Icons.rocket_launch_rounded, size: 16),
+              label: const Text('Confirmer & Publier Directement 🚀'),
+              onPressed: () {
+                Navigator.pop(ctx);
+                _triggerDirectFacebookPublish(
+                  topic: topicCtrl.text.trim(),
+                  type: selectedType,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _triggerDirectFacebookPublish({required String topic, required String type}) async {
+    setState(() => _triggeringAgentId = 'facebook_direct');
+
+    final inputs = <String, String>{
+      'publish': 'true',
+      'type': type,
+    };
+    if (topic.isNotEmpty) {
+      inputs['topic'] = topic;
+    }
+
+    final result = await GitHubActionsService.triggerWorkflow(
+      workflowFileName: 'medsina_facebook.yml',
+      inputs: inputs,
+    );
+
+    if (!mounted) return;
+    setState(() => _triggeringAgentId = null);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+        content: Text(
+          result.isSuccess
+              ? '🚀 Agent Facebook lancé en mode Publication Directe ! L\'infographie et le texte seront en ligne sur votre page Facebook dans quelques instants.'
+              : result.message,
+        ),
+        duration: const Duration(seconds: 5),
+      ),
+    );
+
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) _refreshRecentWorkflowRuns();
+  }
 }
+
 
