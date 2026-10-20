@@ -540,5 +540,24 @@
     "is_active": true,
     "created_at": "2026-10-20T20:09:41.921274+00:00",
     "updated_at": "2026-10-20T20:09:41.921289+00:00"
+  },
+  {
+    "id": "memento_im_anticoagulation",
+    "title": "💉 Contre-indication IM sous Anticoagulants",
+    "category": "Urgences Médico-Chirurgicales & Hémostase",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation clinique immédiate et recherche de tout antécédent de traitement anticoagulant (AVK, AOD) ou antiagrégant plaquettaire devant toute prescription d'injection intramusculaire (IM).",
+      "Étape 2 : Bilan d'hémostase en urgence au déchoquage : TP, TCA, INR et NFS-Plaquettes si le statut d'anticoagulation est incertain ou suspecté.",
+      "Étape 3 : Règle absolue : Proscrire formellement toute injection IM chez le patient sous anticoagulant efficace (risque majeur d'hématome compressif, de syndrome des loges ou de nécrose). Préférer systématiquement la voie IV stricte ou la voie SC selon le produit.",
+      "Étape 4 : Conduite à tenir en cas d'hématome post-IM survenu sous anticoagulant : Compression locale, arrêt ou neutralisation de l'anticoagulation (Vitamine K IV, PPSB ou antithidote spécifique selon l'AOD et le protocole SRLF/SFMU), et avis chirurgical urgent.",
+      "Étape 5 : Piège médico-légal et organisationnel majeur : Ne jamais déléguer la vérification du statut hémostatique aux équipes paramédicales avant un geste invasif ou une injection IM aux urgences."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / ANSM / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-20T22:22:34.816289+00:00",
+    "updated_at": "2026-10-20T22:22:34.816304+00:00"
   }
 ]
