@@ -357,17 +357,17 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation clinique immédiate (orthopnée, impossibilité de faire des phrases, silence thoracique, cyanose, collapsus) et mise sous O2 haut débit pour SpO2 > 92%.",
-      "Étape 2 : Nébulisations urgentes de Salbutamol (5 mg soit 1 ml dans 4 ml de NaCl 0,9%) + Ipratropium (500 µg) sur 15 min, renouvelables toutes les 20 min selon la tolérance.",
-      "Étape 3 : Corticothérapie systémique précoce par voie IV : Hémisuccinate d'Hydrocortisone (HSHC) 200 mg IVD ou Méthylprédnisolone (Solu-Medrol) 1 à 2 mg/kg IVD.",
-      "Étape 4 : En cas d'échec des nébulisations après 1h ou forme asphyxique : Sulfate de Magnésium 2 g IVL dans 100 ml de G5% ou NaCl 0,9% passé sur 20 minutes.",
-      "Étape 5 : Surveillance armée (FR, SpO2, DEP, gaz du sang). Critères de transfert en réanimation : épuisement respiratoire, acidose hypercapnique, troubles de la conscience ou arrêt cardio-respiratoire imminent.",
-      "Étape 6 : Piège médico-légal / CI absolue : Ne JAMAIS administrer de sédatifs ou d'anxiolytiques (risque d'hypoventilation fatale) et éviter l'intubation endotrachéale sans ventilation non invasive préalable sauf arrêt cardiaque."
+      "Étape 1 : Évaluation clinique immédiate (parler par phrases hachées, tachypnée > 30c/min, cyanose, sueurs, silence d'auscultation = piège mortel) et mise en position assise stricte.",
+      "Étape 2 : Oxygénothérapie haut débit au masque à haute concentration (FiO2 100%) pour maintenir SpO2 > 92-95%, pose immédiate d'une voie veineuse périphérique (VVP) et scope ECG.",
+      "Étape 3 : Nébulisations urgentes de Bêta-2 mimétiques (Salbutamol 5 mg) associées à un anticholinergique (Bromure d'ipratropium 0,5 mg) dans 4 mL de NaCl 0,9% sur 15 min, à renouveler si besoin.",
+      "Étape 4 : Corticothérapie systémique précoce IV indispensable : Hémisuccinate d'Hydrocortisone (HSHC) 200 mg IV direct ou Méthylprednisolone (Solu-Medrol) 1-2 mg/kg.",
+      "Étape 5 : En cas de résistance ou collapsus : Sulfate de Magnésium (2 g IV slow dans 100 mL G5% sur 20 min). Si arrêt respiratoire imminent : préparation intubation avec séquence rapide prudente (Kétamine) ou ventilation non invasive (VNI).",
+      "Étape 6 : Surveillance armée (FR, SpO2, DEP si réalisable) toutes les 15-30 min. Critères de transfert en Réanimation : épuisement respiratoire, silence auscultatoire, acidose respiratoire (PaCO2 normale ou élevée)."
     ],
-    "scientific_references": "Consensus SPLF / SFMU / SRLF / Collège de Médecine d'Urgence d'Algérie (CMUA)",
+    "scientific_references": "Consensus GINA / SRLF / SFMU / Recommandations MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-16T19:43:54.210257+00:00",
-    "updated_at": "2026-10-16T19:43:54.210272+00:00"
+    "created_at": "2026-10-20T13:53:02.500896+00:00",
+    "updated_at": "2026-10-20T13:53:02.500912+00:00"
   },
   {
     "id": "memento_pancreatite_aigue",
