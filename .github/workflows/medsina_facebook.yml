@@ -81,22 +81,9 @@ jobs:
           FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-        run: |
-          CMD="python scripts/automation/facebook_post_generator.py"
-          if [ -n "${{ github.event.inputs.type }}" ]; then
-            CMD="$CMD --type '${{ github.event.inputs.type }}'"
-          fi
-          if [ -n "${{ github.event.inputs.topic }}" ]; then
-            CMD="$CMD --topic '${{ github.event.inputs.topic }}'"
-          fi
-          if [ -n "${{ github.event.inputs.screenshot }}" ]; then
-            CMD="$CMD --screenshot '${{ github.event.inputs.screenshot }}'"
-          fi
-          if [ -n "${{ github.event.inputs.mockup_type }}" ]; then
-            CMD="$CMD --mockup-type '${{ github.event.inputs.mockup_type }}'"
-          fi
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            CMD="$CMD --dry-run"
-          fi
-          echo "🚀 Exécution : $CMD"
-          eval $CMD
+          INPUT_TYPE: ${{ github.event.inputs.type }}
+          INPUT_TOPIC: ${{ github.event.inputs.topic }}
+          INPUT_SCREENSHOT: ${{ github.event.inputs.screenshot }}
+          INPUT_MOCKUP_TYPE: ${{ github.event.inputs.mockup_type }}
+          INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: python scripts/automation/run_publisher_workflow.py
