@@ -178,9 +178,9 @@ class GitHubActionsService {
     GitHubAgentDefinition(
       id: 'facebook',
       workflowFile: 'medsina_facebook.yml',
-      title: 'Générateur de Prompts IA Facebook (2x/Jour)',
-      description: 'Génère le prompt d\'ingénierie IA complet pour Gemini/Claude/ChatGPT et notifie l\'Admin Dashboard avec bouton de copie en 1 clic (sans publication directe).',
-      icon: Icons.campaign_rounded,
+      title: 'Publication Facebook & Telegram Officielle (Auto/Manuel)',
+      description: 'Génère l\'infographie 1080x1080 avec votre capture d\'écran réelle et publie directement sur la page Facebook MedevSync et le canal Telegram.',
+      icon: Icons.facebook_rounded,
       color: Color(0xFF1877F2),
       defaultCadence: '2 fois par jour (08h00 & 17h00 UTC)',
       inputFieldKey: 'topic',

@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -3715,7 +3716,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           const SizedBox(height: 24),
 
           // 1.5. Facebook AI Prompts Section (New)
-          _buildFacebookPromptsSection(context, state, isDark),
+          _buildFacebookPublisherSection(context, isDark),
           const SizedBox(height: 28),
 
           // 2. Agents List Section Title
@@ -4019,6 +4020,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   }
 
   void _onTriggerAgentPressed(GitHubAgentDefinition agent) async {
+    if (agent.id == 'facebook') {
+      _showFacebookPublisherDialog();
+      return;
+    }
+
     final configured = await GitHubActionsService.isConfigured();
     if (!mounted) return;
     if (!configured) {
@@ -4376,17 +4382,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     );
   }
 
-  // --- SECTION : PROMPTS IA FACEBOOK (Avertissements, Historique et Copie 1-Clic) ---
-  Widget _buildFacebookPromptsSection(BuildContext context, AdminState state, bool isDark) {
-    final prompts = state.facebookPrompts;
-    final latestPrompt = prompts.isNotEmpty ? prompts.first : null;
-
+  // --- SECTION : PUBLICATION OFFICIELLE FACEBOOK & TELEGRAM ---
+  Widget _buildFacebookPublisherSection(BuildContext context, bool isDark) {
     return Card(
       elevation: isDark ? 0 : 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: const Color(0xFF1877F2).withValues(alpha: 0.3),
+          color: const Color(0xFF1877F2).withValues(alpha: 0.35),
           width: 1.5,
         ),
       ),
@@ -4404,9 +4407,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     color: const Color(0xFF1877F2).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.campaign_rounded, color: Color(0xFF1877F2), size: 26),
+                  child: const Icon(Icons.facebook_rounded, color: Color(0xFF1877F2), size: 28),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -4415,8 +4418,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                         children: [
                           const Flexible(
                             child: Text(
-                              'Prompts IA pour Publications Facebook',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                              'Publication Officielle Facebook & Telegram',
+                              style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -4427,7 +4430,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Text(
-                              'Contrôle Manuel',
+                              'Direct & Automatique',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
@@ -4437,11 +4440,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                           ),
                         ],
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 3),
                       Text(
-                        'L\'agent génère le prompt complet sans publier directement. Copiez-le en un clic pour l\'injecter dans Gemini ou ChatGPT.',
+                        'Concevez une infographie 1080x1080 avec votre capture d\'écran réelle, texte rédigé par IA et diffusion immédiate sur les réseaux sociaux.',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 12.5,
                           color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
                         ),
                       ),
@@ -4450,484 +4453,79 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-
-            // Bouton d'action directe : Tout créer et publier sur Facebook
+            const SizedBox(height: 18),
             Container(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF1877F2).withValues(alpha: 0.35),
+                  color: const Color(0xFF1877F2).withValues(alpha: 0.3),
                   width: 1.2,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF1877F2).withValues(alpha: isDark ? 0.1 : 0.06),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: const Color(0xFF1877F2),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.rocket_launch_rounded, color: Colors.white, size: 20),
+                    child: const Icon(Icons.add_photo_alternate_rounded, color: Colors.white, size: 22),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Publication 100% Automatique',
-                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+                          'Nouvelle Publication avec Capture d\'Écran',
+                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 3),
                         Text(
-                          'Génère l\'infographie (1080x1080), rédige le texte et publie directement sur la page Facebook MedevSync & Telegram.',
+                          'Sélectionnez une capture existante ou importez-en une nouvelle depuis votre appareil via le sélecteur de fichiers.',
                           style: TextStyle(
-                            fontSize: 11.5,
+                            fontSize: 12,
                             color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1877F2),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      elevation: 1,
+                      elevation: 2,
                     ),
-                    icon: _triggeringAgentId == 'facebook_direct'
+                    icon: _triggeringAgentId == 'facebook'
                         ? const SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : const Icon(Icons.send_rounded, size: 16),
+                        : const Icon(Icons.rocket_launch_rounded, size: 18),
                     label: Text(
-                      _triggeringAgentId == 'facebook_direct' ? 'Publication...' : 'Tout Créer & Publier Directement 🚀',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                      _triggeringAgentId == 'facebook' ? 'Publication...' : 'Créer une Publication 🚀',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                     ),
-                    onPressed: _triggeringAgentId == 'facebook_direct'
-                        ? null
-                        : _showDirectPublishDialog,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (latestPrompt == null) ...[
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1F2937) : Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade300),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline_rounded, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600, size: 22),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Aucun prompt enregistré pour le moment. Cliquez sur "Générer Prompt Facebook" dans la liste ci-dessous pour créer le premier prompt avec les dernières statistiques.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ] else ...[
-              // Carte du dernier prompt généré
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1F2937) : Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFF1877F2).withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1877F2).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Text(
-                            'DERNIER PROMPT',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: Color(0xFF1877F2),
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: latestPrompt.isCommercial
-                                ? const Color(0xFF8B5CF6).withValues(alpha: 0.15)
-                                : const Color(0xFF0D9488).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            latestPrompt.postType.toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              color: latestPrompt.isCommercial
-                                  ? const Color(0xFF8B5CF6)
-                                  : const Color(0xFF0D9488),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                latestPrompt.suggestedMockup == 'mobile'
-                                    ? Icons.phone_android_rounded
-                                    : Icons.laptop_chromebook_rounded,
-                                size: 12,
-                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                latestPrompt.suggestedMockup == 'mobile' ? 'Mobile App' : 'Desktop / Web',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          latestPrompt.formattedCreatedAt,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      latestPrompt.topic.isNotEmpty ? latestPrompt.topic : latestPrompt.title,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (latestPrompt.summary.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        latestPrompt.summary,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 12),
-                    // Aperçu Monospace du prompt
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade300),
-                      ),
-                      child: Text(
-                        latestPrompt.fullPrompt.length > 280
-                            ? '${latestPrompt.fullPrompt.substring(0, 280)}...\n[Cliquez pour voir ou copier le prompt complet]'
-                            : latestPrompt.fullPrompt,
-                        style: TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 11,
-                          color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    // Boutons d'action
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.copy_rounded, size: 16),
-                            label: const Text('Copier le Prompt Complet 📋'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF1877F2),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
-                            onPressed: () {
-                              Clipboard.setData(ClipboardData(text: latestPrompt.fullPrompt));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  backgroundColor: Color(0xFF10B981),
-                                  content: Text('✅ Prompt IA complet copié ! Collez-le dans Gemini ou ChatGPT pour générer votre publication.'),
-                                  duration: Duration(seconds: 4),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        OutlinedButton.icon(
-                          icon: const Icon(Icons.visibility_rounded, size: 16),
-                          label: const Text('Inspecter & Gemini'),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-                            foregroundColor: isDark ? Colors.white : Colors.black87,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                          onPressed: () => _showFacebookPromptDialog(context, latestPrompt, isDark),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              // Historique des prompts si > 1
-              if (prompts.length > 1) ...[
-                const SizedBox(height: 12),
-                Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                  child: ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    title: Text(
-                      'Historique des prompts précédents (${prompts.length - 1})',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-                      ),
-                    ),
-                    children: prompts.skip(1).map((prompt) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1F2937) : Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: prompt.isCommercial
-                                    ? const Color(0xFF8B5CF6).withValues(alpha: 0.15)
-                                    : const Color(0xFF0D9488).withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                prompt.postType.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w800,
-                                  color: prompt.isCommercial
-                                      ? const Color(0xFF8B5CF6)
-                                      : const Color(0xFF0D9488),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    prompt.topic.isNotEmpty ? prompt.topic : prompt.title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(
-                                    prompt.formattedCreatedAt,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.copy_rounded, size: 18),
-                              tooltip: 'Copier le prompt',
-                              onPressed: () {
-                                Clipboard.setData(ClipboardData(text: prompt.fullPrompt));
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    backgroundColor: Color(0xFF10B981),
-                                    content: Text('Prompt copié dans le presse-papier !'),
-                                  ),
-                                );
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.open_in_new_rounded, size: 18),
-                              tooltip: 'Voir les détails',
-                              onPressed: () => _showFacebookPromptDialog(context, prompt, isDark),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showFacebookPromptDialog(BuildContext context, AdminFacebookPrompt prompt, bool isDark) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1877F2).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(Icons.campaign_rounded, color: Color(0xFF1877F2), size: 22),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Prompt IA Facebook', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text(
-                    '${prompt.postType.toUpperCase()} • ${prompt.formattedCreatedAt}',
-                    style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                    onPressed: _triggeringAgentId == 'facebook' ? null : _showFacebookPublisherDialog,
                   ),
                 ],
               ),
             ),
           ],
         ),
-        content: SizedBox(
-          width: 650,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Sujet : ${prompt.topic}',
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                constraints: const BoxConstraints(maxHeight: 380),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade300),
-                ),
-                child: SingleChildScrollView(
-                  child: SelectableText(
-                    prompt.fullPrompt,
-                    style: TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 12,
-                      color: isDark ? Colors.grey.shade200 : Colors.grey.shade900,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          OutlinedButton.icon(
-            icon: const Icon(Icons.open_in_browser_rounded, size: 16),
-            label: const Text('Ouvrir Gemini'),
-            onPressed: () => launchUrl(
-              Uri.parse('https://gemini.google.com/app'),
-              mode: LaunchMode.externalApplication,
-            ),
-          ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1877F2),
-              foregroundColor: Colors.white,
-            ),
-            icon: const Icon(Icons.copy_rounded, size: 16),
-            label: const Text('Copier le Prompt'),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: prompt.fullPrompt));
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  backgroundColor: Color(0xFF10B981),
-                  content: Text('✅ Prompt copié ! Collez-le dans votre modèle d\'IA préféré.'),
-                ),
-              );
-            },
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Fermer'),
-          ),
-        ],
       ),
     );
   }
 
-  void _showDirectPublishDialog() async {
+  void _showFacebookPublisherDialog() async {
     final configured = await GitHubActionsService.isConfigured();
     if (!mounted) return;
     if (!configured) {
@@ -4937,11 +4535,30 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
     final topicCtrl = TextEditingController();
     String selectedType = 'auto';
+    String? selectedScreenshot;
+    String? pickedLocalPath;
+    String mockupType = 'auto';
+    bool isUploadingFile = false;
+
+    final Map<String, String> standardScreenshots = {
+      '': 'Sélection automatique / Assets standards',
+      'Screenshot 2026-10-20 175342_dashboard.png': 'Tableau de Bord Récent Medsina (Desktop)',
+      'desktop/prescription_audit_pc.png': 'Audit Ordonnance & Vidal PC',
+      'desktop/revision_qcm_pc.png': 'Révision QCM & Concours PC',
+      'desktop/clinical_copilot_pc.png': 'Copilote Clinique PC',
+      'desktop/admin_analytics_pc.png': 'Analytics Administrateur PC',
+      'mobile/clinical_copilot_mobile.png': 'Copilote Clinique Mobile',
+      'mobile/ai_copilot_mobile.png': 'Assistant IA Mobile',
+      'mobile/prescription_mobile.png': 'Prescription Mobile',
+      'mobile/qcm_session_mobile.png': 'Session QCM Mobile',
+    };
 
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (context, setDlgState) => AlertDialog(
+        builder: (context, setDlgState) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Row(
             children: [
@@ -4956,95 +4573,293 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               const SizedBox(width: 12),
               const Expanded(
                 child: Text(
-                  'Tout Créer & Publier sur Facebook',
+                  'Créer une Publication Facebook & Telegram',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                 ),
               ),
             ],
           ),
           content: SizedBox(
-            width: 480,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Le robot MedsinaPilot va concevoir l\'infographie haute résolution (1080x1080) avec les captures réelles de l\'application, rédiger le texte et publier directement sur la page officielle MedevSync et le canal Telegram.',
-                  style: TextStyle(fontSize: 12.5, color: Colors.grey.shade700),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Type de publication :',
-                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  initialValue: selectedType,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            width: 520,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Le robot Medsina génère l\'infographie haute définition 1080x1080 avec votre capture d\'écran réelle et diffuse le post directement sur la page Facebook et le canal Telegram.',
+                    style: TextStyle(fontSize: 12.5, height: 1.35),
                   ),
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'auto',
-                      child: Text('Automatique (Médical matin / Promo soir)'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'commercial',
-                      child: Text('Commercial (Promotion de l\'application Medsina)'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'medical',
-                      child: Text('Médical (Protocole d\'urgence / Piège Concours)'),
-                    ),
-                  ],
-                  onChanged: (val) {
-                    if (val != null) setDlgState(() => selectedType = val);
-                  },
-                ),
-                const SizedBox(height: 14),
-                const Text(
-                  'Thème ou sujet spécifique (optionnel) :',
-                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 6),
-                TextField(
-                  controller: topicCtrl,
-                  decoration: const InputDecoration(
-                    hintText: 'ex: OAP Flash, QCM Résidanat, Analyseur ordonnance...',
-                    hintStyle: TextStyle(fontSize: 12),
-                    border: OutlineInputBorder(),
-                    isDense: true,
+                  const SizedBox(height: 16),
+
+                  // 1. Type de publication
+                  const Text(
+                    'Type de publication :',
+                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Laissez vide pour laisser le robot choisir automatiquement le sujet prioritaire.',
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
+                  const SizedBox(height: 6),
+                  DropdownButtonFormField<String>(
+                    initialValue: selectedType,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'auto',
+                        child: Text('Automatique (Médical le matin / Promo le soir)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'commercial',
+                        child: Text('Promotion Commerciale (Téléchargement de Medsina)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'medical',
+                        child: Text('Médicale Clinique & Concours (Fiches, CAT, Pièges)'),
+                      ),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) setDlgState(() => selectedType = val);
+                    },
                   ),
-                  child: Row(
+                  const SizedBox(height: 14),
+
+                  // 2. Thème / Sujet
+                  const Text(
+                    'Thème ou sujet spécifique (optionnel) :',
+                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: topicCtrl,
+                    decoration: const InputDecoration(
+                      hintText: 'ex: Nouveau Tableau de Bord, Hémorragie digestive, Fiche OAP...',
+                      hintStyle: TextStyle(fontSize: 12),
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // 3. Capture d'écran
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.info_outline_rounded, color: Color(0xFFF59E0B), size: 18),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text(
-                          'Le post sera immédiatement public et visible par vos abonnés sur Facebook.',
-                          style: TextStyle(fontSize: 11.5, color: Color(0xFFB45309), fontWeight: FontWeight.w600),
+                      const Text(
+                        'Capture d\'écran de l\'application :',
+                        style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                      ),
+                      TextButton.icon(
+                        style: TextButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          foregroundColor: const Color(0xFF1877F2),
                         ),
+                        icon: isUploadingFile
+                            ? const SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(Icons.file_upload_rounded, size: 16),
+                        label: const Text('Importer une capture 📁'),
+                        onPressed: isUploadingFile
+                            ? null
+                            : () async {
+                                setDlgState(() => isUploadingFile = true);
+                                try {
+                                  final pickedFile = await FilePicker.pickFile(
+                                    type: FileType.custom,
+                                    allowedExtensions: ['png', 'jpg', 'jpeg', 'webp'],
+                                  );
+
+                                  if (pickedFile != null) {
+                                    final fileName = pickedFile.name;
+                                    final path = pickedFile.path;
+
+                                    if (path != null) {
+                                      // 1. Sauvegarde locale sur Windows
+                                      try {
+                                        final targetDir = Directory('assets/screenshots/desktop');
+                                        if (!targetDir.existsSync()) {
+                                          targetDir.createSync(recursive: true);
+                                        }
+                                        File(path).copySync('${targetDir.path}/$fileName');
+                                      } catch (e) {
+                                        debugPrint('Copie locale screenshot: $e');
+                                      }
+
+                                      // 2. Upload dans Supabase Storage 'facebook_assets'
+                                      final bytes = await pickedFile.readAsBytes();
+                                      await SupabaseService.uploadFacebookScreenshot(fileName, bytes);
+
+                                      setDlgState(() {
+                                        selectedScreenshot = fileName;
+                                        pickedLocalPath = path;
+                                        isUploadingFile = false;
+                                      });
+                                    }
+                                  } else {
+                                    setDlgState(() => isUploadingFile = false);
+                                  }
+                                } catch (e) {
+                                  debugPrint('File picker error: $e');
+                                  setDlgState(() => isUploadingFile = false);
+                                }
+                              },
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 6),
+
+                  DropdownButtonFormField<String>(
+                    initialValue: selectedScreenshot ?? '',
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    ),
+                    items: [
+                      ...standardScreenshots.entries.map((e) => DropdownMenuItem(
+                            value: e.key,
+                            child: Text(e.value, style: const TextStyle(fontSize: 12.5)),
+                          )),
+                      if (selectedScreenshot != null &&
+                          selectedScreenshot!.isNotEmpty &&
+                          !standardScreenshots.containsKey(selectedScreenshot))
+                        DropdownMenuItem(
+                          value: selectedScreenshot,
+                          child: Text('📁 $selectedScreenshot (Importé)', style: const TextStyle(fontSize: 12.5)),
+                        ),
+                    ],
+                    onChanged: (val) {
+                      setDlgState(() {
+                        selectedScreenshot = val;
+                        pickedLocalPath = null;
+                      });
+                    },
+                  ),
+
+                  if (selectedScreenshot != null && selectedScreenshot!.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFF1877F2).withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              color: Colors.black12,
+                              child: pickedLocalPath != null && File(pickedLocalPath!).existsSync()
+                                  ? Image.file(File(pickedLocalPath!), fit: BoxFit.cover)
+                                  : Image.asset(
+                                      'assets/screenshots/desktop/$selectedScreenshot',
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (ctx, err, stack) => const Icon(Icons.image_rounded, size: 28),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  selectedScreenshot!,
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                const Text(
+                                  'Sera intégrée dans la maquette graphique 1080x1080',
+                                  style: TextStyle(fontSize: 11, color: Color(0xFF10B981)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 18),
+                            tooltip: 'Retirer',
+                            onPressed: () {
+                              setDlgState(() {
+                                selectedScreenshot = '';
+                                pickedLocalPath = null;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 14),
+
+                  // 4. Format de la maquette
+                  const Text(
+                    'Format du cadre de la maquette :',
+                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 6),
+                  DropdownButtonFormField<String>(
+                    initialValue: mockupType,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'auto',
+                        child: Text('Automatique (Adapté selon l\'orientation de l\'image)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'desktop',
+                        child: Text('PC Desktop (Moniteur haute fidélité)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'phone',
+                        child: Text('Smartphone (Châssis mobile titanium)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'none',
+                        child: Text('Sans maquette (Infographie pleine largeur avec points clés)'),
+                      ),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) setDlgState(() => mockupType = val);
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1877F2).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFF1877F2).withValues(alpha: 0.3)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.check_circle_rounded, color: Color(0xFF1877F2), size: 18),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Le post et l\'image seront directement mis en ligne sur la page Facebook MedevSync et Telegram.',
+                            style: TextStyle(fontSize: 11.5, color: Color(0xFF1877F2), fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
@@ -5059,30 +4874,43 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               ),
               icon: const Icon(Icons.rocket_launch_rounded, size: 16),
-              label: const Text('Confirmer & Publier Directement 🚀'),
+              label: const Text('Tout Créer & Publier Directement 🚀'),
               onPressed: () {
                 Navigator.pop(ctx);
-                _triggerDirectFacebookPublish(
+                _triggerFacebookPublish(
                   topic: topicCtrl.text.trim(),
                   type: selectedType,
+                  screenshot: selectedScreenshot,
+                  mockupType: mockupType,
                 );
               },
             ),
           ],
-        ),
-      ),
-    );
+        );
+      },
+    ),
+  );
   }
 
-  void _triggerDirectFacebookPublish({required String topic, required String type}) async {
-    setState(() => _triggeringAgentId = 'facebook_direct');
+  void _triggerFacebookPublish({
+    required String topic,
+    required String type,
+    String? screenshot,
+    String? mockupType,
+  }) async {
+    setState(() => _triggeringAgentId = 'facebook');
 
     final inputs = <String, String>{
-      'publish': 'true',
       'type': type,
     };
     if (topic.isNotEmpty) {
       inputs['topic'] = topic;
+    }
+    if (screenshot != null && screenshot.isNotEmpty) {
+      inputs['screenshot'] = screenshot;
+    }
+    if (mockupType != null && mockupType != 'auto') {
+      inputs['mockup_type'] = mockupType;
     }
 
     final result = await GitHubActionsService.triggerWorkflow(
@@ -5098,7 +4926,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         backgroundColor: result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
         content: Text(
           result.isSuccess
-              ? '🚀 Agent Facebook lancé en mode Publication Directe ! L\'infographie et le texte seront en ligne sur votre page Facebook dans quelques instants.'
+              ? '🚀 Publication Facebook et Telegram lancée ! L\'infographie 1080x1080 et le texte seront en ligne dans ~1 minute.'
               : result.message,
         ),
         duration: const Duration(seconds: 5),
@@ -5109,5 +4937,3 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     if (mounted) _refreshRecentWorkflowRuns();
   }
 }
-
-

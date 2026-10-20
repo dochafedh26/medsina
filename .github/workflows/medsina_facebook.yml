@@ -1,4 +1,4 @@
-name: 📢 MedevSync - Générateur de Prompts IA Facebook & Notification Admin (2x/Jour)
+name: 📢 MedevSync - Publication Facebook & Telegram Officielle (2x/Jour)
 
 on:
   schedule:
@@ -22,13 +22,24 @@ on:
         required: false
         default: ''
         type: string
-      publish:
-        description: 'Publier directement le post et l image sur la page Facebook'
+      screenshot:
+        description: 'Nom de la capture d écran (ex: Screenshot 2026-10-20 175342_dashboard.png) ou URL'
         required: false
-        default: 'false'
+        default: ''
         type: string
+      mockup_type:
+        description: 'Format de maquette : auto, desktop, phone, duo, none'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - desktop
+          - phone
+          - duo
+          - none
       dry_run:
-        description: 'Mode test sans mise à jour des notifications'
+        description: 'Mode test sans publication sur les réseaux sociaux'
         required: false
         default: false
         type: boolean
@@ -42,7 +53,7 @@ permissions:
 
 jobs:
   publish-facebook-post:
-    name: 🧠 Génération et/ou Publication Facebook & Notification Admin
+    name: 🚀 Publication Directe Facebook & Telegram
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -61,7 +72,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pillow requests
 
-      - name: 📢 Exécuter le générateur de post / prompt Facebook MedevSync
+      - name: 📢 Exécuter la publication Facebook et Telegram
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -78,11 +89,14 @@ jobs:
           if [ -n "${{ github.event.inputs.topic }}" ]; then
             CMD="$CMD --topic '${{ github.event.inputs.topic }}'"
           fi
+          if [ -n "${{ github.event.inputs.screenshot }}" ]; then
+            CMD="$CMD --screenshot '${{ github.event.inputs.screenshot }}'"
+          fi
+          if [ -n "${{ github.event.inputs.mockup_type }}" ]; then
+            CMD="$CMD --mockup-type '${{ github.event.inputs.mockup_type }}'"
+          fi
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             CMD="$CMD --dry-run"
-          fi
-          if [ "${{ github.event.inputs.publish }}" = "true" ] || [ "${{ github.event.inputs.publish }}" = "1" ]; then
-            CMD="$CMD --publish"
           fi
           echo "🚀 Exécution : $CMD"
           eval $CMD

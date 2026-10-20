@@ -2157,6 +2157,20 @@ class SupabaseService {
       'message': 'Impossible d\'initier le paiement en ligne. Veuillez contacter le support WhatsApp.',
     };
   }
+
+  /// Upload a custom screenshot for Facebook publisher to the public 'facebook_assets' bucket.
+  static Future<String?> uploadFacebookScreenshot(String fileName, Uint8List bytes) async {
+    try {
+      final cleanName = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
+      await client.storage.from('facebook_assets').uploadBinary(
+        cleanName,
+        bytes,
+        fileOptions: const FileOptions(upsert: true),
+      );
+      return client.storage.from('facebook_assets').getPublicUrl(cleanName);
+    } catch (e) {
+      debugPrint('SupabaseService.uploadFacebookScreenshot error: ');
+      return null;
+    }
+  }
 }
-
-
