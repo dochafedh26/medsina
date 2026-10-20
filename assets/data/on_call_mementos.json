@@ -521,5 +521,24 @@
     "is_active": true,
     "created_at": "2026-10-20T05:24:02.289335+00:00",
     "updated_at": "2026-10-20T05:24:02.289348+00:00"
+  },
+  {
+    "id": "memento_hyperkalemie_aigue",
+    "title": "⚡ Hyperkaliémie Aiguë avec Menace ECG",
+    "category": "Urgences Métaboliques",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Monitorage continu immédiat, ECG 12 dérivations à la recherche de signes de gravité (ondes T amples et pointues, élargissement des QRS, disparition des onde P, aspect sine wave).",
+      "Étape 2 : Bilan biologique urgent : Ionogramme sérique, urée, créatininémie, gaz du sang (recherche d'une acidose associée), glycémie capillaire et ECG de contrôle.",
+      "Étape 3 : Traitement d'urgence de la menace (si signes ECG) : Gluconate de calcium 10% (1 à 2 ampoules de 10 ml en IV lente sur 5 min, répéter si besoin à 5-10 min) pour stabiliser la membrane myocardique, associé à l'insuline rapide (10 UI dans 500 ml de G10% en IV sur 1 h) et des nébulisations de Salbutamol (10 à 20 mg).",
+      "Étape 4 : Éliminer les causes iatrogènes et l'insuffisance rénale aiguë, discuter en urgence de l'épuration extra-rénale (hémodialyse) en cas de résistance aux traitements médicaux ou d'anurie.",
+      "Étape 5 : Surveillance armée en unité de soins intensifs ou déchoquage (répéter l'ECG et la kaliémie à H1, H2, H4) ; attention au risque de rebond hypoglycémique sous insuline et d'extravasation nécrotique du calcium."
+    ],
+    "scientific_references": "Recommandations SRLF / SFMU / ESC / Collège de Réanimation Médicale",
+    "is_active": true,
+    "created_at": "2026-10-20T20:09:41.921274+00:00",
+    "updated_at": "2026-10-20T20:09:41.921289+00:00"
   }
 ]
