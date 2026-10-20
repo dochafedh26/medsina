@@ -458,5 +458,28 @@
     "treatment_summary": "Urgence absolue : Antibiothérapie probabiliste IV (C3G + Amoxicilline/Ampicilline selon terrain) et Dexaméthasone pour les méningites, Aciclovir IV pour les encéphalites virales.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-19T21:00:17.977757+00:00"
+  },
+  {
+    "course_id": "Blida_CARDIOLOGIE_CARDIOPATHIE_CONGENITALE",
+    "course_name": "Dyslipidémie",
+    "module_id": "Blida_CARDIOLOGIE",
+    "module_name": "Cardiologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLes **dyslipidémies** regroupent les anomalies quantitatives et/ou qualitatives des lipides plasmatiques (cholestérol total, LDL-C, HDL-C, triglycérides). On distingue les hypercholestérolémies pures (augmentation des LDL), les hypertriglycéridémies pures (augmentation des VLDL/chylomicrons) et les dyslipidémies mixtes (athérogènes).\n\n## 2. Démarche Diagnostique (Clinique, Paraclinique de référence, Critères)\n- **Bilan lipidique de référence :** Dosage à jeun (12 heures minimum) du cholestérol total (**CT**), du HDL-cholestérol (**HDL-C**), des triglycérides (**TG**) et calcul du LDL-cholestérol (**LDL-C**) par la formule de Friedewald (si TG < 4,5 g/l ou 5,1 mmol/l).\n- **Formule de Friedewald :** LDL-C = CT - HDL-C - (TG / 5) en g/l (ou / 2,2 si mmol/l).\n- **Recherche de signes cliniques :** Xanthomes tendineux (pathognomoniques de l'hypercholestérolémie monogénique/familiale), xanthomes plan, xanthélesmes, arc cornéen précoce (< 45 ans).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Formes secondaires majeures à éliminer systématiquement :** Hypothyroïdie (dosage de la TSH), diabète (glycémie à jeun / HbA1c), insuffisance rénale chronique, syndrome néphrotique, cholestase hépatique, iatrogénie (diurétiques thiazidiques, bêta-bloquants, corticoïdes, rétinoïdes).\n- **Formes génétiques :** Hypercholestérolémie familiale (mutation du gène du récepteur au LDL), hyperlipidémie combinée familiale.\n\n## 4. Stratégie Thérapeutique\n- **Mesures hygiéno-diététiques (MHD) :** Base de la prise en charge, évaluées sur 3 à 6 mois (sauf en cas de risque cardiovasculaire très haut d'emblée).\n- **Traitement médicamenteux de 1ère ligne :** **Statines** (atorvastatine, rosuvastatine) en première intention pour cibler le LDL-C.\n- **Traitement de 2ème ligne / Association :** **Ezétimibe** (inhibiteur de l'absorption intestinale du cholestérol), et en cas de résistance ou formes sévères, les anticorps monoclonaux anti-PCSK9 (évolocumab, alirocumab).\n- **Hypertriglycéridémies majeures (> 5 g/l) :** Risque de pancréatite aiguë → fibrates, acides oméga-3 à forte dose, régime strict sans graisses et sans alcool.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Complication principale :** Maladie athéromateuse (coronaropathie, AVC, artériopathie oblitérante des membres inférieurs - AOMI).\n- **Pronostic :** Directement lié au niveau du LDL-C cumulé au long cours et à la présence d'autres facteurs de risque cardiovasculaire (tabagisme, HTA, diabète, âge, sexe, atcd familiaux).",
+    "key_takeaways": [
+      "Le bilan lipidique standard doit obligatoirement être réalisé après 12 heures de jeûne.",
+      "La formule de Friedewald est invalide si les triglycérides dépassent 4,5 g/l (ou 5,1 mmol/l).",
+      "Les xanthomes tendineux signent l'hypercholestérolémie familiale d'origine génétique.",
+      "L'objectif de LDL-C dépend strictement du niveau de risque cardiovasculaire global estimé (ex: < 0,55 g/l pour le très haut risque).",
+      "L'hypertriglycéridémie majeure expose au risque redoutable de pancréatite aiguë."
+    ],
+    "exam_traps": [
+      "Piège Annales : Oublier de doser la TSH devant toute dyslipidémie nouvellement découverte (éliminer une hypothyroïdie secondaire).",
+      "Piège Traitement : Associer statine et gemfibrozil (risque accru de rhabdomyolyse sévère, préférer le fénofibrate si association nécessaire avec une statine).",
+      "Piège Diagnostic : Calculer le LDL-C par la formule de Friedewald alors que les triglycérides sont > 5 mmol/l."
+    ],
+    "diagnostic_criteria": "Élévation isolée ou combinée des paramètres lipidiques (LDL-C, TG, CT) au-delà des seuils décisionnels définis selon le niveau de risque cardiovasculaire global du patient, après élimination des causes secondaires.",
+    "treatment_summary": "Combinaison de mesures hygiéno-diététiques et d'un traitement pharmacologique basé prioritairement sur les statines, ajusté selon l'objectif de LDL-C fixé par les recommandations internationales.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-20T04:38:47.571649+00:00"
   }
 ]
