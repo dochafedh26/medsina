@@ -75,11 +75,11 @@ def get_telegram_credentials() -> Dict[str, str]:
             headers = {"apikey": key, "Authorization": f"Bearer {key}"}
             r = requests.get(f"{SUPABASE_URL}/rest/v1/admin_system_settings?select=*", headers=headers, timeout=10)
             if r.status_code == 200 and r.json():
-                row = r.json()[0]
+                settings = {item.get("setting_key"): item.get("setting_value") for item in r.json() if isinstance(item, dict)}
                 if not token:
-                    token = (row.get("telegram_bot_token") or "").strip()
+                    token = (settings.get("telegram_bot_token") or "").strip()
                 if not channel:
-                    channel = (row.get("telegram_channel_id") or "").strip()
+                    channel = (settings.get("telegram_channel_id") or "").strip()
         except Exception as e:
             print(f"⚠️ Erreur lors de la lecture des réglages Telegram Supabase: {e}")
 
