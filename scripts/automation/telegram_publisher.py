@@ -108,7 +108,8 @@ def send_telegram_broadcast(
                 {"text": "📱 Télécharger APK Android", "url": OCTENIUM_APK_URL}
             ],
             [
-                {"text": "💻 Télécharger pour Windows (PC)", "url": OCTENIUM_EXE_URL}
+                {"text": "💻 Télécharger PC Windows", "url": OCTENIUM_EXE_URL},
+                {"text": "👥 Page Facebook", "url": "https://www.facebook.com/1329939320211198"}
             ]
         ]
     }

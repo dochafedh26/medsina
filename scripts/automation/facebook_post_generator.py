@@ -54,6 +54,7 @@ GEMINI_MODELS = [
 OFFICIAL_WEB_URL = "https://medsina.medevsync.com"
 OFFICIAL_APK_URL = "https://medsina.medevsync.com/download/medsina.apk"
 OFFICIAL_WIN_URL = "https://medsina.medevsync.com/download/medsina-setup.exe"
+OFFICIAL_TELEGRAM_URL = "https://t.me/medsina_officiel"
 
 def get_current_app_version() -> str:
     """Detects the latest official Medsina release version automatically.
@@ -104,6 +105,7 @@ OFFICIAL_FOOTER = f"""
 🌐 Version Web Directe : {OFFICIAL_WEB_URL}
 📱 Télécharger sur Android (.apk) : {OFFICIAL_APK_URL}
 💻 Télécharger sur PC Windows (.exe) : {OFFICIAL_WIN_URL}
+✈️ Rejoindre le Canal Telegram : {OFFICIAL_TELEGRAM_URL}
 
 🇩🇿 Conçu par MedevSync pour les médecins, résidents, internes et candidats au concours en Algérie.
 #MedevSync #Medsina #MedecineAlgerie #Residanat2027 #PratiqueClinique #SanteNumerique #UrgencesMedicales #Internat"""
