@@ -313,22 +313,23 @@
   },
   {
     "id": "memento_aes_exposition_sang",
-    "title": "💉 Accident d'Exposition au Sang (AES)",
-    "category": "Infectiologie & Urgences",
-    "icon_name": "health_and_safety_rounded",
+    "title": "🩸 Conduite à tenir devant un AES",
+    "category": "Urgences Infectieuses & Procédures",
+    "icon_name": "healing_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Nettoyage immédiat à l'eau et au savon puis antisepsie (Dakin ou Alcool à 70%) pendant 5 minutes. Ne jamais faire saigner, ne pas frotter.",
-      "Étape 2 : Évaluation du risque source (VIH, VHB, VHC) et statut vaccinal du soignant (Hépargyl / Rappel VHB / Ac anti-HBs).",
-      "Étape 3 : Consultation infectiologue de garde pour évaluation de la prophylaxie post-exposition (PPE) VIH dans les 4h (Trithérapie : Tenofovir/Emtricitabine + Dolutégravir).",
-      "Étape 4 : Bilan biologique urgent à H0 (Ag HBs, Ac anti-HCV, Sérologie VIH, Créatininémie, Transaminases, Bêta-HCG chez la femme).",
-      "Étape 5 : Déclaration obligatoire de l'accident au service de médecine du travail de l'établissement sous 24h et ouverture du dossier médico-légal."
+      "Étape 1 : Nettoyage immédiat de la plaie à l'eau et au savon, puis antisepsie au Dakin ou Polyvidone iodée (Dakin 5 min, ou alcool à 70° si projection muqueuse : rincer abondamment à l'eau stérile ou S.S.). Ne jamais faire saigner, ne pas frotter.",
+      "Étape 2 : Évaluation immédiate du risque (type de blessure : piqûre profonde vs égratignure, liquide en cause, statut sérologique du patient source : VIH, VHB, VHC). Déclarer l'accident au service de médecine du travail et enregistrer le dossier.",
+      "Étape 3 : Prophylaxie post-exposition (PPE) VIH si patient source VIH+ ou à haut risque : trithérapie antirétrovirale d'urgence à débuter dans les 4 heures idéales (max 48h) : ex. Ténofovir/Emtricitabine 1 cp/j + Dolutégravir 50 mg 1 cp/j pendant 28 jours.",
+      "Étape 4 : Gestion du risque VHB : vérifier la sérologie du soignant (Ac anti-HBs). Si soignant non vacciné ou non répondeur (< 10 UI/L) : injection d'immunoglobulines spécifiques anti-VHB (HBIg) + première dose de vaccin VHB dans les 24-48h sur un site séparé.",
+      "Étape 5 : Bilan biologique initial (J0) de référence pour le soignant : Ag HBs, Ac anti-HCV, Sérologie VIH, Créatininémie, transaminases, et test de grossesse (si femme en âge de procréer avant PPE). Suivi sérologique obligatoire à J0, 6 semaines, 3 mois et 6 mois.",
+      "Étape 6 : Piège médico-légal et éthique : le soignant ne peut exiger le dépistage forcé du patient source (consentement éclairé obligatoire). En cas de refus du patient source, considérer le risque comme réel et initier la PPE par précaution."
     ],
-    "scientific_references": "Consensus SFMU / Ministère de la Santé (MSPRH Algérie) / CCLIN",
+    "scientific_references": "Consensus SFMU / Ministère de la Santé Algérie / GERES / Haut Conseil de la Santé Publique",
     "is_active": true,
-    "created_at": "2026-10-14T20:49:29.417790+00:00",
-    "updated_at": "2026-10-14T20:49:29.417803+00:00"
+    "created_at": "2026-10-21T14:10:22.192685+00:00",
+    "updated_at": "2026-10-21T14:10:22.192702+00:00"
   },
   {
     "id": "memento_hemorragie_digestive_rvo",
