@@ -417,6 +417,42 @@ Voici un extrait direct des points clés et pièges de concours disponibles dans
 # EXTRACTION ET RENDU DES QCMS REELS DU CONCOURS
 # -------------------------------------------------------------
 
+
+def get_recent_qcm_ids() -> List[str]:
+    """Récupère la liste des identifiants des derniers QCMs publiés depuis Supabase pour éviter les doublons."""
+    try:
+        url = f"{SUPABASE_URL}/rest/v1/admin_system_settings?setting_key=eq.recent_published_qcm_ids&select=setting_value"
+        req = urllib.request.Request(url, headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"})
+        with urllib.request.urlopen(req, timeout=6) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data and data[0].get("setting_value"):
+                return json.loads(data[0]["setting_value"])
+    except Exception:
+        pass
+    return []
+
+
+def record_used_qcm_id(qcm_id: str):
+    """Enregistre l'ID du QCM publié dans Supabase pour garantir une rotation sans répétition."""
+    if not qcm_id:
+        return
+    recent = get_recent_qcm_ids()
+    if qcm_id not in recent:
+        recent.append(qcm_id)
+    recent = recent[-100:]
+    try:
+        headers = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}", "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates"}
+        payload = {
+            "setting_key": "recent_published_qcm_ids",
+            "setting_value": json.dumps(recent),
+            "description": "Historique des QCMs réels publiés pour éviter les répétitions",
+            "updated_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }
+        requests.post(f"{SUPABASE_URL}/rest/v1/admin_system_settings", headers=headers, json=payload, timeout=10)
+    except Exception:
+        pass
+
+
 def load_real_qcm(topic: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Charge un QCM réel depuis assets/data/qcms/*.json selon le sujet ou au hasard."""
     assets_dir = Path(__file__).resolve().parents[2] / "assets" / "data" / "qcms"
@@ -440,6 +476,7 @@ def load_real_qcm(topic: Optional[str] = None) -> Optional[Dict[str, Any]]:
     shuffled_files = list(target_files)
     random.shuffle(shuffled_files)
 
+    recent_ids = set(get_recent_qcm_ids())
     candidates = []
     for f in shuffled_files:
         try:
@@ -463,8 +500,12 @@ def load_real_qcm(topic: Optional[str] = None) -> Optional[Dict[str, Any]]:
                         continue
                     if topic and topic.lower() not in (q_text + " " + course + " " + module_name + " " + source).lower():
                         continue
+                    q_id = q.get("id") or (course + "_" + q_text[:30])
+                    if q_id in recent_ids:
+                        continue
                     q_copy = dict(q)
                     q_copy["moduleName"] = module_name
+                    q_copy["qcm_unique_id"] = q_id
                     candidates.append(q_copy)
                     if len(candidates) >= 30:
                         break
@@ -759,8 +800,16 @@ def get_post_data(
     resolved_type = post_type
     if post_type == "auto":
         cur_hour = datetime.datetime.now(datetime.timezone.utc).hour
-        resolved_type = "medical" if 5 <= cur_hour < 13 else "commercial"
-        print(f"⏰ Mode Auto (Heure UTC : {cur_hour}h) -> Sélection du type : {resolved_type.upper()}")
+        # 04h-10h UTC (05h-11h Algérie) : 🎯 QCM Annales Réelles du Concours
+        if 4 <= cur_hour < 10:
+            resolved_type = "qcm"
+        # 10h-16h UTC (11h-17h Algérie) : 🩺 Médical / Fiches CAT / Mémento
+        elif 10 <= cur_hour < 16:
+            resolved_type = "medical"
+        # 16h-23h UTC (17h-00h Algérie) : 🚀 Commercial / Découverte de l'application
+        else:
+            resolved_type = "commercial"
+        print(f"⏰ Mode Auto (Heure UTC : {cur_hour}h) -> Sélection automatique : {resolved_type.upper()}")
 
     # Gestion prioritaire du mode QCM Réel Annales
     if resolved_type in ("qcm", "annales"):
@@ -876,6 +925,11 @@ def record_publication_success(post_id: Optional[str], photo_id: Optional[str], 
         "badge": post_data.get("badge", ""),
         "published_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
     }
+    # Enregistrement de l'ID QCM pour la rotation automatique sans répétition
+    if post_data.get("is_quiz") and post_data.get("qcm"):
+        q_id = post_data["qcm"].get("qcm_unique_id") or post_data["qcm"].get("id")
+        if q_id:
+            record_used_qcm_id(q_id)
     # 1. Sauvegarde dans admin_system_settings
     try:
         url_setting = f"{SUPABASE_URL}/rest/v1/admin_system_settings"
