@@ -641,5 +641,19 @@
     "created_at": "2026-10-16T19:40:30.901392+00:00",
     "updated_at": "2026-10-16T19:40:30.901405+00:00",
     "algerianAvailability": "Disponible en PCH (Pharmacie Centrale des Hôpitaux), services de réanimation, UMC et blocs opératoires de référence (produit dérivé du sang labile ou stable soumis à des conditions de dispensation hospitalière strictes)."
+  },
+  {
+    "id": "drug_atracurium",
+    "dci": "Atracurium (Bésilate d'atracurium)",
+    "brand": "Tracrium (GSK), Atracurium Hameln, Biopharm, Frater-Razes",
+    "category": "Neurologie / Sédation",
+    "route": "IV directe (bolus), Perfusion IV continue (PSE)",
+    "indication": "Curarisation pour intubation trachéale en séquence rapide ou difficile, ventilation mécanique prolongée en réanimation, lutte contre les dyssynchronies patient-ventilateur réfractaires",
+    "dose": "• Adulte (Intubation) : 0,3 à 0,6 mg/kg en IV directe lente (effet en 2 à 3 min, durée 20 à 35 min).\n• Adulte (Entretien en réanimation/PSE) : 0,3 à 0,6 mg/kg/heure (5 à 10 µg/kg/min) après une dose de charge si nécessaire. Dilution possible dans NaCl 0,9% ou G5%.\n• Pédiatrie (> 1 mois) : 0,3 à 0,5 mg/kg en IV directe. Entretien en PSE : 0,5 à 1 mg/kg/heure.",
+    "alert": "• Contre-indications : Hypersensibilité connue aux curares, terrain atopique majeur.\n• Pièges létaux : Libération d'histamine dose-dépendante (risque de bronchospasme, hypotension sévère, flush cutané, surtout si injection rapide). Ne jamais administrer sans sédation et analgésie profondes préalables.\n• Surveillance : Monitorage de la neuromuscular transmission (TOF), plan sédatif, pression artérielle, fréquence cardiaque, ventilation.",
+    "algerian_availability": "Disponible aux UMC, blocs opératoires, services de réanimation et pharmacies hospitalières (PCH et laboratoires locaux).",
+    "created_at": "2026-10-21T20:20:36.596405+00:00",
+    "updated_at": "2026-10-21T20:20:36.596419+00:00",
+    "algerianAvailability": "Disponible aux UMC, blocs opératoires, services de réanimation et pharmacies hospitalières (PCH et laboratoires locaux)."
   }
 ]
