@@ -579,5 +579,25 @@
     "is_active": true,
     "created_at": "2026-10-21T05:22:18.047817+00:00",
     "updated_at": "2026-10-21T05:22:18.047830+00:00"
+  },
+  {
+    "id": "memento_colique_nephretique_febrile",
+    "title": "🚨 Colique Néphrétique Hyperalgique & Fébrile",
+    "category": "Urgences Urologiques & Infectieuses",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Urgence absolue médico-urologique (recherche d'une pyélonéphrite obstructive) : évaluation hémodynamique, élimination d'un choc septique, prise de la température et recherche de signes de gravité.",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : NFS, CRP, Ionogramme sanguin, Urée, Créatininémie, BU et ECBU, Hémocultures si frissons/fièvre, Bilan pré-opératoire (TP, TCA, Groupage).",
+      "Étape 3 : Antalgie majeure et antibiothérapie probabiliste immédiate après les prélèvements : Ketoprofène 100mg IV slow (si fonction rénale normale) ou Paracétamol 1g IV, associé à Nefopam 20mg IVSE. Antibiothérapie IV (Ceftriaxone 2g/j ou Céfotaxime 3g/j).",
+      "Étape 4 : Imagerie en urgence après stabilisation : Échographie rénale et des voies urinaires (recherche d'une urétéro-hydronéphrose) et/ou TDM abdominale sans injection (gold standard) selon l'état hémodynamique.",
+      "Étape 5 : Appel urgent du chirurgien urologue de garde pour drainage des voies urinaires (JJ ou néphrostomie percutanée) en salle d'opération en urgence (Urgences chirurgicales urologiques).",
+      "Étape 6 : Piège médico-légal et thérapeutique : Ne jamais se limiter aux antalgiques devant une forme fébrile ; le retard au drainage expose au choc septique mortel. Contre-indication absolue des AINS si insuffisance rénale aiguë ou déshydratation sévère."
+    ],
+    "scientific_references": "Recommandations AFU / SFMU / Consensus de Réanimation / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-21T20:23:11.361946+00:00",
+    "updated_at": "2026-10-21T20:23:11.361959+00:00"
   }
 ]
