@@ -559,5 +559,24 @@
     "is_active": true,
     "created_at": "2026-10-20T22:22:34.816289+00:00",
     "updated_at": "2026-10-20T22:22:34.816304+00:00"
+  },
+  {
+    "id": "memento_aes_garde",
+    "title": "🩸 Accident d'Exposition au Sang (AES)",
+    "category": "Infectiologie & Urgences",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Nettoyage immédiat de la plaie à l'eau et au savon, puis désinfection (Dakin ou Alcool à 70% ou Bétadine) pendant 5 minutes. En cas de projection muqueuse : rincer abondamment au sérum physiologique ou à l'eau.",
+      "Étape 2 : Évaluation du risque au déchoquage : nature du liquide, type de blessure (creuse > pleine), statut sérologique du patient source (VIH, VHB, VHC) et statut vaccinal VHB du Passant/Soignant.",
+      "Étape 3 : Prophylaxie post-exposition (PPE) anti-VIH urgente si source VIH+ ou à haut risque : quadrithérapie ou trithérapie (ex: Ténofovir/Emtricitabine 1 cp/j + Dolutégravir 50 mg 1 cp/j) à débuter idéalement dans les 4 heures (maximum 48h).",
+      "Étape 4 : Gestion VHB (Vaccin + Ig anti-VHB selon statut) et déclaration obligatoire de l'AES auprès de la médecine du travail et de l'Hôpital dans les 24-48 heures.",
+      "Étape 5 : Piège médico-légal absolu : ne jamais négliger un AES sous prétexte que le patient source est 'connu' ou 'asymptomatique', et réaliser les sérologies de référence (J0, M1, M3, M6)."
+    ],
+    "scientific_references": "Recommandations SPILF / Ministère de la Santé Algérie / CCLIN",
+    "is_active": true,
+    "created_at": "2026-10-21T05:22:18.047817+00:00",
+    "updated_at": "2026-10-21T05:22:18.047830+00:00"
   }
 ]
