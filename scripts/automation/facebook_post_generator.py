@@ -411,6 +411,260 @@ Voici un extrait direct des points clés et pièges de concours disponibles dans
     }
 
 
+
+
+# -------------------------------------------------------------
+# EXTRACTION ET RENDU DES QCMS REELS DU CONCOURS
+# -------------------------------------------------------------
+
+def load_real_qcm(topic: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """Charge un QCM réel depuis assets/data/qcms/*.json selon le sujet ou au hasard."""
+    assets_dir = Path(__file__).resolve().parents[2] / "assets" / "data" / "qcms"
+    if not assets_dir.exists():
+        assets_dir = Path("assets/data/qcms")
+    if not assets_dir.exists():
+        return None
+
+    all_files = list(assets_dir.glob("*.json"))
+    if not all_files:
+        return None
+
+    target_files = all_files
+    if topic:
+        topic_lower = topic.lower()
+        matched = [f for f in all_files if topic_lower in f.stem.lower()]
+        if matched:
+            target_files = matched
+
+    # Mélanger les fichiers pour avoir une diversité constante
+    shuffled_files = list(target_files)
+    random.shuffle(shuffled_files)
+
+    candidates = []
+    for f in shuffled_files:
+        try:
+            with open(f, "r", encoding="utf-8") as fp:
+                data = json.load(fp)
+                if not isinstance(data, list):
+                    continue
+                module_name = f.stem.replace("Blida_", "").replace(".json", "").replace("_", " ").title()
+                for q in data:
+                    q_text = q.get("questionText", "").strip()
+                    opts = q.get("options", [])
+                    source = q.get("source", "").strip()
+                    course = q.get("courseName", "").strip()
+                    if not (25 <= len(q_text) <= 180):
+                        continue
+                    if not (3 <= len(opts) <= 5):
+                        continue
+                    if not source or not course:
+                        continue
+                    if any(len(o.get("text", "")) > 95 or not o.get("text", "").strip() for o in opts):
+                        continue
+                    if topic and topic.lower() not in (q_text + " " + course + " " + module_name + " " + source).lower():
+                        continue
+                    q_copy = dict(q)
+                    q_copy["moduleName"] = module_name
+                    candidates.append(q_copy)
+                    if len(candidates) >= 30:
+                        break
+        except Exception:
+            continue
+        if len(candidates) >= 50:
+            break
+
+    if candidates:
+        return random.choice(candidates)
+    return None
+
+
+def build_from_real_qcm(qcm: Dict[str, Any]) -> Dict[str, Any]:
+    """Construit les données complètes et la légende d'un post Facebook pour un vrai QCM du concours."""
+    source = qcm.get("source", "Concours Officiel")
+    course = qcm.get("courseName", "Révision Médicale")
+    module = qcm.get("moduleName", "Médecine")
+    year = qcm.get("year", "2024")
+    q_text = qcm.get("questionText", "").strip()
+    options = qcm.get("options", [])
+
+    caption = f"""🎯 [QCM RÉEL • {source.upper()}] : {course}
+📚 Module : {module} • Session {year} 🏥
+
+Chers confrères, résidents et candidats au concours de Résidanat, sauriez-vous répondre sans hésiter à cette question réelle tombée aux examens officiels ?
+
+❓ QUESTION :
+« {q_text} »
+
+"""
+    for opt in options:
+        caption += f"🔹 {opt.get('key')} : {opt.get('text')}\n"
+
+    caption += f"""
+👇 QUELLE EST VOTRE RÉPONSE (A, B, C, D ou E) ?
+Partagez votre choix et vos arguments en commentaire ! 💬
+
+💡 La réponse officielle, les pièges du Pr. et l'explication détaillée de ce QCM sont disponibles en 1 clic dans l'application Medsina.
+{OFFICIAL_FOOTER}"""
+
+    return {
+        "is_quiz": True,
+        "qcm": qcm,
+        "badge": f"ANNALES • {source.upper()}",
+        "title": f"QCM : {course}",
+        "subtitle": f"Module {module} • Session {year}",
+        "caption": caption,
+        "theme": random.choice(["blue", "purple", "emerald", "cyan"]),
+        "points": [f"{opt.get('key')}: {opt.get('text')}" for opt in options[:4]],
+        "reference": f"{source} — Faculté de Médecine en Algérie",
+    }
+
+
+def render_qcm_banner_image(data: dict, output_path: str) -> str:
+    """Génère une infographie carrée 1080x1080 dédiée au format Quiz QCM d'annales réelles."""
+    width, height = 1080, 1080
+    qcm = data.get("qcm", {})
+
+    theme_key = data.get("theme")
+    if not theme_key or theme_key not in THEME_PALETTES:
+        theme_key = random.choice(["blue", "purple", "emerald", "cyan"])
+
+    base, t = generate_dynamic_background(width, height, theme_key=theme_key)
+    draw = ImageDraw.Draw(base)
+
+    font_brand = get_font(26, bold=True)
+    font_brand_sub = get_font(18, bold=False)
+    font_badge = get_font(18, bold=True)
+    font_title = get_font(34, bold=True)
+    font_subtitle = get_font(20, bold=False)
+    font_question = get_font(23, bold=True)
+    font_opt_letter = get_font(20, bold=True)
+    font_opt_text = get_font(19, bold=False)
+    font_footer = get_font(20, bold=True)
+
+    # 1. En-tête officiel Medsina
+    logo_path = resolve_asset_path("assets/medsina-icon.png")
+    header_x = 65
+    if logo_path and logo_path.exists():
+        try:
+            logo_img = Image.open(logo_path).convert("RGBA")
+            logo_img.thumbnail((68, 68), Image.Resampling.LANCZOS)
+            base.paste(logo_img, (header_x, 50), logo_img)
+            header_x += 80
+        except Exception:
+            pass
+
+    draw.text((header_x, 52), "MEDEVSYNC", font=font_brand, fill=(255, 255, 255, 255))
+    draw.text((header_x, 84), "Medsina • Archives & QCMs Officiels du Concours", font=font_brand_sub, fill=(148, 163, 184, 255))
+
+    # Badge de session à droite
+    source_year = str(qcm.get("year") or "2024")
+    badge_right = f"Session {source_year}"
+    bbox_v = font_brand_sub.getbbox(badge_right)
+    vw = (bbox_v[2] - bbox_v[0]) + 30
+    draw.rounded_rectangle([(width - 65 - vw, 58), (width - 65, 102)], radius=10, fill=(30, 41, 59, 200), outline=t["accent"], width=1)
+    draw.text((width - 65 - vw + 15, 68), badge_right, font=font_brand_sub, fill=(255, 255, 255, 230))
+
+    draw.line([(65, 130), (width - 65, 130)], fill=(51, 65, 85, 180), width=1)
+
+    # 2. Badge de source
+    raw_source = strip_emojis_for_image(qcm.get("source", "CONCOURS OFFICIEL")).upper()
+    badge_label = f"  ANNALES REELLES • {raw_source}  "
+    bbox_b = font_badge.getbbox(badge_label)
+    bw = (bbox_b[2] - bbox_b[0]) + 15
+    bh = 34
+    draw.rounded_rectangle([(65, 150), (65 + bw, 150 + bh)], radius=8, fill=t["badge_bg"], outline=t["accent"], width=2)
+    draw.text((72, 156), badge_label.strip(), font=font_badge, fill=t["accent_glow"])
+
+    # 3. Titre du Cours et Module
+    course_name = strip_emojis_for_image(qcm.get("courseName", "Question de Concours"))
+    module_name = strip_emojis_for_image(qcm.get("moduleName", "Module Médical"))
+    draw.text((65, 198), f"Cours : {course_name}", font=font_title, fill=(255, 255, 255, 255))
+    draw.text((65, 245), f"Module : {module_name} • Faculté de Médecine en Algérie", font=font_subtitle, fill=(203, 213, 225, 255))
+
+    # 4. Boîte d'énoncé de la question
+    q_box_y = 285
+    q_box_h = 160
+    draw.rounded_rectangle([(65, q_box_y), (width - 65, q_box_y + q_box_h)], radius=14, fill=(15, 23, 42, 235), outline=(51, 65, 85, 200), width=2)
+    draw.rounded_rectangle([(65, q_box_y), (75, q_box_y + q_box_h)], radius=6, fill=t["accent"])
+
+    raw_q_text = strip_emojis_for_image(qcm.get("questionText", "")).strip()
+    words = raw_q_text.split()
+    lines = []
+    cur_line = []
+    for w in words:
+        test_line = " ".join(cur_line + [w])
+        bbox = font_question.getbbox(test_line)
+        if bbox[2] - bbox[0] > (width - 210):
+            lines.append(" ".join(cur_line))
+            cur_line = [w]
+        else:
+            cur_line.append(w)
+    if cur_line:
+        lines.append(" ".join(cur_line))
+
+    qy = q_box_y + 25
+    for line in lines[:3]:
+        draw.text((95, qy), line, font=font_question, fill=(255, 255, 255, 255))
+        qy += 38
+
+    # 5. Options A, B, C, D, E
+    options = qcm.get("options", [])[:5]
+    opt_y = 465
+    opt_h = 74
+    gap = 14
+
+    for opt in options:
+        opt_key = opt.get("key", "A")
+        raw_opt_text = strip_emojis_for_image(opt.get("text", "")).strip()
+
+        # Carte d'option
+        draw.rounded_rectangle([(65, opt_y), (width - 65, opt_y + opt_h)], radius=12, fill=(30, 41, 59, 180), outline=(71, 85, 105, 140), width=1)
+
+        # Tuile de lettre
+        draw.rounded_rectangle([(80, opt_y + 14), (126, opt_y + opt_h - 14)], radius=8, fill=t["accent"], outline=t["accent_glow"], width=1)
+        draw.text((94, opt_y + 22), opt_key, font=font_opt_letter, fill=(255, 255, 255, 255))
+
+        # Texte de l'option
+        t_words = raw_opt_text.split()
+        t_lines = []
+        cur_t = []
+        for tw in t_words:
+            test_t = " ".join(cur_t + [tw])
+            if font_opt_text.getbbox(test_t)[2] - font_opt_text.getbbox(test_t)[0] > 780:
+                t_lines.append(" ".join(cur_t))
+                cur_t = [tw]
+            else:
+                cur_t.append(tw)
+        if cur_t:
+            t_lines.append(" ".join(cur_t))
+
+        if len(t_lines) == 1:
+            draw.text((145, opt_y + 24), t_lines[0], font=font_opt_text, fill=(241, 245, 249, 255))
+        else:
+            draw.text((145, opt_y + 14), t_lines[0], font=font_opt_text, fill=(241, 245, 249, 255))
+            if len(t_lines) > 1:
+                draw.text((145, opt_y + 40), t_lines[1], font=font_opt_text, fill=(241, 245, 249, 255))
+
+        opt_y += opt_h + gap
+
+    # 6. Bannière Call-to-action
+    cta_y = height - 130
+    draw.rounded_rectangle([(65, cta_y), (width - 65, cta_y + 75)], radius=14, fill=t["badge_bg"], outline=t["accent"], width=2)
+    cta_text = "Quelle est votre reponse ? Donnez A, B, C, D ou E en commentaire !"
+    bbox_cta = font_footer.getbbox(cta_text)
+    cta_w = bbox_cta[2] - bbox_cta[0]
+    draw.text(((width - cta_w) // 2, cta_y + 24), cta_text, font=font_footer, fill=(255, 255, 255, 255))
+
+    # Filigrane bas
+    sub_wm = "La correction officielle et les pieges du Pr. sont disponibles dans Medsina • medsina.medevsync.com"
+    bbox_wm = font_brand_sub.getbbox(sub_wm)
+    wm_w = bbox_wm[2] - bbox_wm[0]
+    draw.text(((width - wm_w) // 2, height - 42), sub_wm, font=font_brand_sub, fill=(148, 163, 184, 255))
+
+    base.save(output_path, "PNG", quality=95)
+    return output_path
+
+
 def generate_post_content_gemini(topic: str, gemini_key: str, post_type: str = "commercial") -> Dict[str, Any]:
     angle = (
         "Mets l'accent sur les fonctionnalités innovantes de l'application Medsina et donne envie aux médecins de la télécharger."
@@ -508,10 +762,19 @@ def get_post_data(
         resolved_type = "medical" if 5 <= cur_hour < 13 else "commercial"
         print(f"⏰ Mode Auto (Heure UTC : {cur_hour}h) -> Sélection du type : {resolved_type.upper()}")
 
+    # Gestion prioritaire du mode QCM Réel Annales
+    if resolved_type in ("qcm", "annales"):
+        real_qcm = load_real_qcm(topic)
+        if real_qcm:
+            print(f"🎯 QCM Réel trouvé : {real_qcm.get('courseName')} ({real_qcm.get('source')})")
+            return build_from_real_qcm(real_qcm)
+        else:
+            print("⚠️ Aucun QCM correspondant trouvé, repli sur génération classique...")
+
     gemini_key = load_gemini_api_key()
     post_data = None
 
-    if topic and gemini_key:
+    if topic and gemini_key and resolved_type != "qcm":
         try:
             print(f"🧠 Utilisation de Gemini AI ({resolved_type.upper()}) pour : '{topic}'")
             post_data = generate_post_content_gemini(topic, gemini_key, post_type=resolved_type)
@@ -1090,6 +1353,9 @@ def generate_dynamic_background(
 
 
 def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
+    if data.get("is_quiz") and data.get("qcm"):
+        return render_qcm_banner_image(data, output_path)
+
     width, height = 1080, 1080
 
     # 1. Sélection dynamique du thème pour assurer une variété permanente du fond
@@ -1326,7 +1592,7 @@ def publish_photo_to_facebook(image_path: str, caption: str) -> Dict[str, Any]:
 def main():
     parser = argparse.ArgumentParser(description="Medsina Facebook & Telegram Official Publisher")
     parser.add_argument("--topic", type=str, default=None, help="Specific medical or promotional topic to generate")
-    parser.add_argument("--type", choices=["auto", "commercial", "medical"], default="auto", help="Post objective")
+    parser.add_argument("--type", choices=["auto", "commercial", "medical", "qcm", "annales"], default="auto", help="Post objective")
     parser.add_argument("--screenshot", type=str, default=None, help="Custom screenshot filename or path from assets/screenshots or URL")
     parser.add_argument("--mockup-type", choices=["auto", "desktop", "phone", "duo", "none"], default="auto", help="Mockup frame style")
     parser.add_argument("--publish", action="store_true", default=True, help="Publish directly to Facebook & Telegram (Default: True)")
@@ -1377,14 +1643,17 @@ def main():
 
         print("\n✈️ 4. Diffusion automatique sur le Canal Officiel Telegram...")
         try:
-            from telegram_publisher import format_telegram_caption, send_telegram_broadcast
-            tg_caption = format_telegram_caption(
-                title=post_data.get("title", ""),
-                badge=post_data.get("badge", ""),
-                points=post_data.get("points", []),
-                reference=post_data.get("reference", ""),
-                app_version=APP_VERSION
-            )
+            from telegram_publisher import format_telegram_caption, format_telegram_quiz_caption, send_telegram_broadcast
+            if post_data.get("is_quiz") and post_data.get("qcm"):
+                tg_caption = format_telegram_quiz_caption(post_data.get("qcm"), app_version=APP_VERSION)
+            else:
+                tg_caption = format_telegram_caption(
+                    title=post_data.get("title", ""),
+                    badge=post_data.get("badge", ""),
+                    points=post_data.get("points", []),
+                    reference=post_data.get("reference", ""),
+                    app_version=APP_VERSION
+                )
             send_telegram_broadcast(message_text=tg_caption, image_path=img_path, dry_run=False)
         except Exception as e:
             print(f"⚠️ Information Telegram: {e}")

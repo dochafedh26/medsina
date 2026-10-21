@@ -4618,6 +4618,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                         value: 'medical',
                         child: Text('Médicale Clinique & Concours (Fiches, CAT, Pièges)'),
                       ),
+                      DropdownMenuItem(
+                        value: 'qcm',
+                        child: Text('🎯 QCM Annales Réelles (Source & Date Concours)'),
+                      ),
                     ],
                     onChanged: (val) {
                       if (val != null) setDlgState(() => selectedType = val);
@@ -4634,7 +4638,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   TextField(
                     controller: topicCtrl,
                     decoration: const InputDecoration(
-                      hintText: 'ex: Nouveau Tableau de Bord, Hémorragie digestive, Fiche OAP...',
+                      hintText: 'ex: Cardiologie, Pneumologie, Arrêt cardiaque, Blida 2023, Urgences...',
                       hintStyle: TextStyle(fontSize: 12),
                       border: OutlineInputBorder(),
                       isDense: true,

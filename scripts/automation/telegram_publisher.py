@@ -190,6 +190,34 @@ def format_telegram_caption(title: str, badge: str, points: list, reference: str
     return html
 
 
+
+
+def format_telegram_quiz_caption(qcm: dict, app_version: str = "1.0.8") -> str:
+    """
+    Formate une question d'annales QCM pour diffusion sur Telegram avec options et call to action.
+    """
+    source = qcm.get("source", "Concours Officiel")
+    course = qcm.get("courseName", "Révision Médicale")
+    module = qcm.get("moduleName", "Médecine")
+    year = qcm.get("year", "2024")
+    q_text = qcm.get("questionText", "").strip()
+    options = qcm.get("options", [])
+
+    html = f"🎯 <b>[QCM CONCOURS RÉEL • {source.upper()}]</b>\n"
+    html += f"📚 <b>Cours : {course}</b>\n"
+    html += f"🏥 <b>Module : {module}</b> (Session {year})\n\n"
+    html += f"❓ <b>Question :</b>\n<i>« {q_text} »</i>\n\n"
+
+    for opt in options:
+        html += f"🔹 <b>{opt.get('key')}</b> : {opt.get('text')}\n"
+
+    html += "\n💬 <b>Quelle est votre réponse (A, B, C, D ou E) ?</b>\n"
+    html += "<i>Commentez votre choix ! La correction détaillée du Pr. est disponible en 1 clic sur l'application Medsina.</i>\n\n"
+    html += "━━━━━━━━━━━━━━━━━━━━\n"
+    html += f"🇩🇿 <b>Medsina v{app_version}</b> — Préparez le Résidanat 2027 avec les vraies annales."
+    return html
+
+
 def main():
     parser = argparse.ArgumentParser(description="Medsina Official Telegram Channel Broadcaster")
     parser.add_argument("--image", type=str, default="output_banner.png", help="Path to infographic image")

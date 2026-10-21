@@ -17,6 +17,7 @@ on:
           - auto
           - commercial
           - medical
+          - qcm
       topic:
         description: 'Thème optionnel spécifique (ex: OAP, Analyseur ordonnance, ou laisser vide)'
         required: false
