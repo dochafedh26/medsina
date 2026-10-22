@@ -617,5 +617,25 @@
     "is_active": true,
     "created_at": "2026-10-22T05:26:37.825059+00:00",
     "updated_at": "2026-10-22T05:26:37.825075+00:00"
+  },
+  {
+    "id": "memento_convulsion_febrile_emp",
+    "title": "⚡ Convulsion Fébrile & État de Mal Pédiatrique",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Mettre en position latérale de sécurité (PLS), libérer les VAS, administrer O2 au masque (10L/min) et brancher une VVP ou voie intra-osseuse. Mesurer la glycémie capillaire immédiatement.",
+      "Étape 2 : Si la crise dure > 5 min, administrer du Diazépam intra-rectal (0,5 mg/kg, max 10 mg) ou du Midazolam intranasal/buccal (0,2 mg/kg). Répéter 1 fois à 5 min si échec.",
+      "Étape 3 : Si état de mal persistant (> 10-15 min), charger en phénobarbital (Loménal) IV lente : 20 mg/kg dans 50 ml de G5% sur 20 min sous monitorage cardiaque et respiratoire.",
+      "Étape 4 : Traiter la fièvre (Paracétamol IV 15 mg/kg si > 3 mois ou mesures physiques) et rechercher une méningo-encéphalite (PL indispensable après élimination des signes de focalisation et de HIC).",
+      "Étape 5 : Critères de transfert en réanimation pédiatrique : échec du phénobarbital, Glasgow < 8 persistant, détresse respiratoire ou hémodynamique, status convulsif réfractaire.",
+      "Étape 6 : Piège médico-légal : Ne jamais perfuser de Valproate de sodium chez le nourrisson < 2 ans (risque d'hépato-toxicité fatale) et éliminer formellement une hypoglycémie ou une méningite avant de banaliser une convulsion fébrile simple."
+    ],
+    "scientific_references": "Consensus SFMU / SFP / Recommandations Nationales Algériennes de Pédiatrie",
+    "is_active": true,
+    "created_at": "2026-10-22T20:19:56.029378+00:00",
+    "updated_at": "2026-10-22T20:19:56.029390+00:00"
   }
 ]
