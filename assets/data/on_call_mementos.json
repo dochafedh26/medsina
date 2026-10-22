@@ -599,5 +599,24 @@
     "is_active": true,
     "created_at": "2026-10-21T20:23:11.361946+00:00",
     "updated_at": "2026-10-21T20:23:11.361959+00:00"
+  },
+  {
+    "id": "memento_metrorragies_geu",
+    "title": "🚨 Métrorragies du 1er Trimestre & GEU",
+    "category": "Gynécologie-Obstétrique d'Urgence",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation hémodynamique immédiate (TA, Pouls), pose de 2 VVP de grand calibre (14G/16G), remplissage par NaCl 0.9% ou Ringer Lactate si choc, et appel urgent du gynécologue de garde et du réanimateur.",
+      "Étape 2 : Bilan pré-transfusionnel urgent en urgence absolue : Groupage ABO/Rh, RAI, NFS, Plaquettes, Fibrinogène, TP, TCA, et Test urinaire de grossesse (TUG) si doute, couplé à une ß-HCG plasmatique quantitative.",
+      "Étape 3 : Échographie pelvienne au lit du malade (sus-pubienne et endovaginale si formée) : recherche d'un sac gestationnel intra-utérin, d'une masse annexielle suspecte ou d'un épanchement dans le Douglas (hérapéritoine).",
+      "Étape 4 : PEC thérapeutique : Si GEU rompue ou instable = bloc opératoire en urgence (cœlioscopie ou laparotomie exploratrice). Si GEU non rompue et stable = protocole médical par Méthotrexate 50 mg/m² IM (après accord du gynécologue). Si fausse couche : évacuation utérine ou traitement médical (Misoprostol) selon la stabilité.",
+      "Étape 5 : Surveillance armée (pouls, TA, saignements toutes les 30 min au déchoquage) et administration systématique d'Immunoglobulines anti-D (300 µg IM) dans les 72h en cas de patiente Rhésus NÉGATIF."
+    ],
+    "scientific_references": "CNGOF / SFMU / Référentiel National Algérien de Gynécologie-Obstétrique",
+    "is_active": true,
+    "created_at": "2026-10-22T05:26:37.825059+00:00",
+    "updated_at": "2026-10-22T05:26:37.825075+00:00"
   }
 ]
