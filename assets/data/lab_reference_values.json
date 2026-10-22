@@ -321,5 +321,20 @@
     ],
     "created_at": "2026-10-14T20:49:21.655277+00:00",
     "updated_at": "2026-10-14T20:49:21.655288+00:00"
+  },
+  {
+    "id": "lab_troponine_ultrasensible",
+    "name": "Troponine ultrasensible (cTn-us / cTnT-us ou cTnI-us)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Variable selon le réactif et le sexe (généralement < 14 ng/L ou pg/mL pour le 99e percentile de la population saine)",
+    "unit": "ng/L (ou pg/mL)",
+    "high_interpretation": "Élévation : Infarctus du Myocarde (IDM) avec ou sans sus-décalage du ST (cinétique dynamique indispensable : variation > 20-50% à 1h ou 3h selon l'algorithme ESC). Causes non coronariennes (lésions myocardiques aiguës ou chroniques) : embolie pulmonaire grave, myocardite aiguë, insuffisance cardiaque aiguë ou chronique, dissection aortique, choc septique, contusion myocardique, insuffisance rénale chronique avancée, AVC, exercice physique intense.",
+    "low_interpretation": "Valeur normale ou indétectable (< seuil de décèlement du test) : Valeur normale excluant un IDM récent (valeur prédictive négative excellente après 3 heures de la douleur). Une valeur basse n'élimine pas une angine de poitrine stable ou un IDM très précoce (généralement < 1 à 3 heures après le début des symptômes).",
+    "clinical_notes": [
+      "Piège pré-analytique et interprétatif : Toute élévation de la troponine ne signe pas un IDM aigu (infarctus de type 2 ou atteinte myocardique non ischémique). Exiger une cinétique (variation temporelle) pour différencier une atteinte aiguë (variation significative) d'une cardiomyopathie chronique stable (élévation basale chronique).",
+      "Insuffisance rénale : L'insuffisance rénale chronique provoque souvent une élévation basale chronique de la troponine (due à une clairance rénale diminuée et/ou une micro-ischémie sous-jacente) ; dans ce cas, c'est la cinétique (variation) qui reste la clé diagnostique d'un syndrome coronarien aigu surajouté."
+    ],
+    "created_at": "2026-10-22T06:17:33.036401+00:00",
+    "updated_at": "2026-10-22T06:17:33.036419+00:00"
   }
 ]
