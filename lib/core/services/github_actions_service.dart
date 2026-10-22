@@ -164,6 +164,18 @@ class GitHubActionsService {
       inputFieldHint: 'ex: OAP Flash, Status Épileptique (laisser vide pour auto)',
     ),
     GitHubAgentDefinition(
+      id: 'lab',
+      workflowFile: 'medsina_lab.yml',
+      title: 'Normes Biologiques de Référence',
+      description: 'Monographie de biologie clinique : valeurs normales, seuils d\'urgence vitale, conduite à tenir et pièges de concours.',
+      icon: Icons.biotech_rounded,
+      color: Color(0xFF06B6D4),
+      defaultCadence: 'Toutes les 8 heures (Autonome)',
+      inputFieldKey: 'lab',
+      inputFieldLabel: 'Paramètre biologique (optionnel)',
+      inputFieldHint: 'ex: Troponine, D-Dimères, Lactates (laisser vide pour auto)',
+    ),
+    GitHubAgentDefinition(
       id: 'automation',
       workflowFile: 'medsina_automation.yml',
       title: 'Console Médicale Globale (Tout-en-un)',
