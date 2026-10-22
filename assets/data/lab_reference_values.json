@@ -336,5 +336,21 @@
     ],
     "created_at": "2026-10-22T06:17:33.036401+00:00",
     "updated_at": "2026-10-22T06:17:33.036419+00:00"
+  },
+  {
+    "id": "lab_proteinurie_24h_rac",
+    "name": "Protéinurie des 24h & Rapport Albuminurie/Créatininurie (RAC)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Protéinurie des 24h: < 0.15 g/24h (ou < 150 mg/24h) | RAC (spot urinaire): < 30 mg/g (ou < 3 mg/mmol)",
+    "unit": "g/24h (Protéinurie) et mg/g (RAC)",
+    "high_interpretation": "Protéinurie > 0.15 g/24h ou RAC > 30 mg/g (microalbuminurie 30-300 mg/g, macroalbuminurie > 300 mg/g). Causes: Glomérulopathies (néphropathie diabétique, glomérulonéphrite chronique), tubulopathies (protéinurie de faible poids moléculaire), protéinurie de surcharge (myélome multiple avec chaînes légères de Bence-Jones). Seuil néphrotique: > 3 g/24h (ou > 3.5 g/1.73m²/24h), constitutif du syndrome néphrotique pur ou impur associé à une hypoalbuminémie < 30 g/L et des œdèmes. Conduite à tenir: Évaluer la fonction rénale (créatininémie, DFG), rechercher une hématurie microscopique (ECBU), quantifier le RAC sur premier jet du matin, et orienter vers une ponction-biopsie rénale (PBR) selon le contexte.",
+    "low_interpretation": "Valeurs physiologiques normales (< 0.15 g/24h ou < 30 mg/g). Une valeur basse n'a pas de pathogénicité propre et reflète l'absence de lésion glomérulaire ou tubulaire significative.",
+    "clinical_notes": [
+      "Piège pré-analytique : La protéinurie des 24h souffre souvent d'erreurs de recueil (collecte incomplète ou excessive). Le recueil doit être rigoureux (vider la vessie le matin à J0, puis recueillir toutes les urines jusqu'au lendemain matin J1 inclus).",
+      "Le RAC (Rapport Albuminurie/Créatininurie) sur un échantillon urinaire matinal est recommandé par les guidelines KDIGO en première intention pour le dépistage de la maladie rénale chronique (notamment chez le diabétique et l'hypertendu), car il s'affranchit des erreurs de recueil des 24h.",
+      "Attention au test à la bandelette urinaire : Ne détecte bien que l'albumine (faible sensibilité pour les chaînes légères de Bence-Jones au cours du myélome multiple, nécessitant l'immunofixation des urines ou le test à l'acide sulfosalicylique)."
+    ],
+    "created_at": "2026-10-22T13:44:12.450754+00:00",
+    "updated_at": "2026-10-22T13:44:12.450767+00:00"
   }
 ]
