@@ -109,7 +109,7 @@ def send_telegram_broadcast(
             ],
             [
                 {"text": "💻 Télécharger PC Windows", "url": OCTENIUM_EXE_URL},
-                {"text": "👥 Page Facebook", "url": "https://www.facebook.com/1329939320211198"}
+                {"text": "👥 Page Facebook Residanat Blida", "url": "https://www.facebook.com/residanatblida2027"}
             ]
         ]
     }

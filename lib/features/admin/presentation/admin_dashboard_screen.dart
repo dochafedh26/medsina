@@ -4855,7 +4855,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Le post et l\'image seront directement mis en ligne sur la page Facebook MedevSync et Telegram.',
+                            'Le post et l\'image seront directement mis en ligne sur la page Facebook Residanat Blida 2027 et Telegram.',
                             style: TextStyle(fontSize: 11.5, color: Color(0xFF1877F2), fontWeight: FontWeight.w600),
                           ),
                         ),
