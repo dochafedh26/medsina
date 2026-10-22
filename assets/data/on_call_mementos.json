@@ -274,22 +274,21 @@
   {
     "id": "memento_morsures_vipere",
     "title": "🐍 Morsures de Vipère en Algérie : Urgence Antivenin",
-    "category": "Urgences Toxicologiques & Envenimations",
-    "icon_name": "bug_report_rounded",
+    "category": "Toxicologie / Urgences",
+    "icon_name": "warning_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Mettre le patient au repos strict, rassurer, immobiliser le membre mordu et retirer bagues/bracelets. NE PAS inciser, NE PAS sucer, NE PAS poser de garrot !",
-      "Étape 2 : Bilan biologique d'urgence au lit du malade : NFS, plaquettes, TP, TCK, fibrinogène, ionogramme, urée, créatinine, CPK et groupage-rhésus.",
-      "Étape 3 : Antibiothérapie prophylaxie antitétanique et antivenin (Sérum antivenimeux polyvalent disponible en Algérie) : 1 à 2 ampoules diluées dans 250 ml de NaCl 0,9% en IV lente sur 1 à 2 heures. Antihistaminique et Hydrocortisone (100 mg IV) en prévention d'une réaction anaphylactique.",
-      "Étape 4 : Traitement symptomatique : Remplissage vasculaire par cristalloïdes si choc, analgésiques (Paracétamol, éviter les AINS et l'aspirine), et correction des troubles de l'hémostase (plasma frais congelé si saignement actif ou CIVD).",
-      "Étape 5 : Surveillance armée (diurèse, tension artérielle, extension de l'œdème, paramètres de coagulation toutes les 6h). Critères de transfert en réanimation : instabilité hémodynamique, troubles de la conscience, syndrome compartimental ou troubles de la coagulation sévères.",
-      "Étape 6 : Piège médico-légal : Ne jamais libérer un patient mordu avant une observation hospitalière minimale de 24 heures, même en l'absence de signes initiaux de gravité (risque de décalage des manifestations systémiques)."
+      "Étape 1 : Mettre le patient au repos strict, rassurer, immobiliser le membre mordu. Ne JAMAIS inciser, aspirer, cautériser ni poser de garrot (risque de nécrose accrue et choc toxinique).",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : NFS, plaquettes, TP, TCK, fibrinogène, ionogramme sanguin, urée, créatinine, CPK et groupement sanguin avec Rhésus.",
+      "Étape 3 : Antibiothérapie prophylaxie antitétanique selon statut vaccinal et amoxicilline-acide clavulanique. Antivenin spécifique (Sérum antiviperin polyvalent disponible en Algérie) : 1 à 2 flacons dilués dans 250 mL de NaCl 0.9% à passer en 1 à 2 heures après test cutané préalable si indiqué par le laboratoire, sous surveillance stricte (réaction anaphylactique).",
+      "Étape 4 : Surveillance armée (pouls, TA, extension de l'œdème repérée au feutre toutes les heures, diurèse horaire). Critères de transfert en réanimation : instabilité hémodynamique, troubles de l'hémostase sévères, anurie, ou œdème progressant au-delà de la racine du membre.",
+      "Étape 5 : Piège médico-légal et thérapeutique : Ne jamais administrer de corticoïdes en prévention des réactions à l'antivenin de routine sans signe anaphylactique, et ne jamais sous-estimer la cinétique de l'envenimation (surveillance obligatoire de 24 heures minimum aux UMC)."
     ],
-    "scientific_references": "Protocole national MSPRH Algérie / SFMU / Consensus envenimations scorpioniques et vipérines",
+    "scientific_references": "Consensus SFMU / Société Algérienne de Toxicologie / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-14T12:37:59.557581+00:00",
-    "updated_at": "2026-10-14T12:37:59.557593+00:00"
+    "created_at": "2026-10-22T14:08:05.407678+00:00",
+    "updated_at": "2026-10-22T14:08:05.407695+00:00"
   },
   {
     "id": "memento_pediatrie_deshydratation_igue",
