@@ -383,5 +383,20 @@
     ],
     "created_at": "2026-10-23T04:38:43.038837+00:00",
     "updated_at": "2026-10-23T04:38:43.038855+00:00"
+  },
+  {
+    "id": "lab_osmolalite_plasmatique",
+    "name": "Osmolalité plasmatique & Trou osmotique",
+    "category": "Ionogramme & Rein",
+    "normal_range": "275 - 295",
+    "unit": "mOsm/kg H2O",
+    "high_interpretation": "Hyperosmolalité : Hypernatrémie majeure, Diabète sucré décompensé (hyperglycémie simple), Coma hyperosmolaire hyperglycémique non cétosique (> 320 mOsm/kg, urgence réanimatoire), Intoxications exogènes si trou osmotique élevé (méthanol, éthylène-glycol, éthanol). Conduite à tenir : Réhydratation adaptée, insulinothérapie prudente si hyperglycémie, recherche d'une substance osmotiquement active.",
+    "low_interpretation": "Hypoosmolalité : Hyponatrémie hypo-osmolaire (la plus fréquente), SIADH (Syndrome de sécrétion inappropriée d'ADH), Intoxication à l'eau, Insuffisance surrénalienne aiguë, Hypothyroïdie profonde. Seuil d'alerte < 250 mOsm/kg (risque d'œdème cérébral et de convulsions). Conduite à tenir : Restriction hydrique ou correction prudente selon la symptomatologie neurologique.",
+    "clinical_notes": [
+      "Formule de calcul : Osmolalité calculée = 2 x Na+ + Glycémie + Urée (en mmol/L). Pour les unités usuelles en g/L : 2 x Na+ + Glycémie(g/L)x5,55 + Urée(g/L)x16,7.",
+      "Le trou osmotique (différence entre osmolalité mesurée par cryoscopie et osmolalité calculée) est normalement < 10 mOsm/kg. Un trou osmotique > 10 mOsm/kg signe la présence d'un osmolyte circulant non pris en compte (alcool, éthylène-glycol, méthanol, mannitol)."
+    ],
+    "created_at": "2026-10-23T13:20:36.934839+00:00",
+    "updated_at": "2026-10-23T13:20:36.934853+00:00"
   }
 ]
