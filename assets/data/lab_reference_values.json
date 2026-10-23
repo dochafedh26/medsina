@@ -368,5 +368,20 @@
     ],
     "created_at": "2026-10-22T20:00:35.319000+00:00",
     "updated_at": "2026-10-22T20:00:35.319014+00:00"
+  },
+  {
+    "id": "lab_ammoniemie",
+    "name": "Ammoniémie (Ammoniaque plasmatique)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "11 - 32",
+    "unit": "µmol/L",
+    "high_interpretation": "Hyperammoniémie : Encéphalopathie hépatique (cirrhose, hépatite fulminante), insuffisance hépato-cellulaire sévère, shunt porto-systémique, erreurs innées du métabolisme du cycle de l'urée (déficit en ornithine transcarbamylase - OTC), intoxications aiguës (acide valproïque, salicylés), syndrome de Reye. Urgence vitale neurologique si > 100 µmol/L ou apparition de signes d'engagement cérébral (œdèmeglobulaire, coma). Conduite à tenir : Arrêt de tout apport protéique, éviction des sédatifs, épuration extrarénale en urgence si encéphalopathie grade III/IV réfractaire, administration de lactulose et rifaximine (si origine hépatique), L-ornithine-L-aspartate (LOLA), ou benzoate de sodium / phénylbutyrate (si anomalie du cycle de l'urée).",
+    "low_interpretation": "Hypoammoniémie : Rare en pratique clinique, observée parfois en cas de dénutrition sévère, ou sous traitement par certains antibiotiques ou lactulose au long cours. Pas de retentissement clinique direct aigu.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le prélèvement doit être fait sur tube sang total hépariné, transporté IMMEDIATEMENT dans la glace (glacée) et centrifugé dans les 15 à 30 minutes pour éviter la production ex-vivo d'ammoniac par désamination érythrocytaire, faussant grandement les résultats (fausse hyperammoniémie).",
+      "La corrélation clinique est imparfaite : le taux d'ammoniémie ne corrèle pas toujours linéairement avec le degré d'encéphalopathie hépatique chez le cirrhotique chronique, mais il est indispensable pour le suivi de la neurotoxicitée et le diagnostic des anomalies métaboliques congénitales chez le nouveau-né."
+    ],
+    "created_at": "2026-10-23T04:38:43.038837+00:00",
+    "updated_at": "2026-10-23T04:38:43.038855+00:00"
   }
 ]
