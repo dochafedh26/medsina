@@ -336,15 +336,15 @@ jobs:
         env:
           SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          TAG: ${{ steps.vars.outputs.tag }}
+          VERSION: ${{ steps.vars.outputs.version }}
+          BUILD: ${{ steps.vars.outputs.build }}
+          REPO: ${{ github.repository }}
         run: |
           if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
             echo "ℹ️ SUPABASE_SERVICE_ROLE_KEY is not set. Skipping Octenium upload."
             exit 0
           fi
-          TAG="${{ steps.vars.outputs.tag }}"
-          VERSION="${{ steps.vars.outputs.version }}"
-          BUILD="${{ steps.vars.outputs.build }}"
-          REPO="${{ github.repository }}"
 
           python -c "
           import os, requests, json, ftplib
@@ -358,6 +358,11 @@ jobs:
               'Content-Type': 'application/json',
               'Prefer': 'return=minimal'
           }
+
+          tag = os.environ.get('TAG') or 'v' + os.environ.get('VERSION', '1.0.0')
+          version = os.environ.get('VERSION', '1.0.0')
+          build = int(os.environ.get('BUILD', '1'))
+          repo = os.environ.get('REPO', 'dochafedh26/medsina')
 
           # 1. Fetch Octenium FTP credentials from Supabase admin_system_settings
           ftp_host = 'medevsync.com'
@@ -374,8 +379,8 @@ jobs:
               print(f'Warning fetching FTP settings: {e}')
 
           # Default URLs (fallback to GitHub if FTP upload fails)
-          apk_url = f'https://github.com/{os.environ.get(\"REPO\")}/releases/download/{os.environ.get(\"TAG\")}/Medsina_v{os.environ.get(\"VERSION\")}_Android.apk'
-          win_url = f'https://github.com/{os.environ.get(\"REPO\")}/releases/download/{os.environ.get(\"TAG\")}/Medsina_v{os.environ.get(\"VERSION\")}_Windows_Setup.exe'
+          apk_url = f'https://github.com/{repo}/releases/download/{tag}/Medsina_v{version}_Android.apk'
+          win_url = f'https://github.com/{repo}/releases/download/{tag}/Medsina_v{version}_Windows_Setup.exe'
 
           if ftp_user and ftp_pass:
               try:
@@ -455,12 +460,12 @@ jobs:
           records = [
               {
                   'platform': 'android',
-                  'version_name': '$VERSION',
-                  'build_number': int('$BUILD'),
+                  'version_name': version,
+                  'build_number': build,
                   'release_notes': notes,
                   'download_url': apk_url,
                   'is_mandatory': is_mandatory,
-                  'min_supported_build': int('$BUILD') if is_mandatory else 1,
+                  'min_supported_build': build if is_mandatory else 1,
                   'is_active': True
               },
               {

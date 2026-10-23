@@ -1,3 +1,4 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/models/app_release_model.dart';
@@ -72,10 +73,22 @@ class _OtaUpdateDialogState extends State<OtaUpdateDialog> {
     if (mounted) {
       setState(() => _isDownloading = false);
       if (!success && !widget.isMandatory) {
+        final fallbackUrl = OtaUpdateService.sanitizeDownloadUrl(widget.release);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Impossible d\'installer la mise à jour automatiquement.'),
-            backgroundColor: Colors.red,
+          SnackBar(
+            content: const Text('Installation automatique non supportée par votre appareil.'),
+            backgroundColor: const Color(0xFFC2410C),
+            duration: const Duration(seconds: 8),
+            action: SnackBarAction(
+              label: 'Navigateur',
+              textColor: Colors.white,
+              onPressed: () async {
+                final uri = Uri.parse(fallbackUrl);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
           ),
         );
       }
@@ -224,13 +237,30 @@ class _OtaUpdateDialogState extends State<OtaUpdateDialog> {
                   onPressed: _isDownloading ? null : _handleUpdate,
                 );
 
+                final fallbackUrl = OtaUpdateService.sanitizeDownloadUrl(widget.release);
+                final manualDownloadBtn = TextButton.icon(
+                  onPressed: () async {
+                    final uri = Uri.parse(fallbackUrl);
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                  icon: const Icon(Icons.open_in_browser_rounded, size: 16),
+                  label: const Text(
+                    'Télécharger via navigateur',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                );
+
                 if (isNarrow) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       downloadBtn,
+                      const SizedBox(height: 4),
+                      manualDownloadBtn,
                       if (!widget.isMandatory && !_isDownloading) ...[
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 4),
                         TextButton(
                           onPressed: () {
                             OtaUpdateService.dismissBuild(rel.buildNumber);
