@@ -913,9 +913,11 @@ class _ReferralScreenState extends State<ReferralScreen> {
                           children: [
                             Icon(Icons.lightbulb_outline_rounded, color: Color(0xFFD97706), size: 20),
                             SizedBox(width: 8),
-                            Text(
-                              'Comment atteindre les 5 ou 10 abonnés rapidement ?',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF92400E)),
+                            Expanded(
+                              child: Text(
+                                'Comment atteindre les 5 ou 10 abonnés rapidement ?',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF92400E)),
+                              ),
                             ),
                           ],
                         ),

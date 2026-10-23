@@ -178,8 +178,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 4,
                 children: [
                   Text(
                     '${filteredModules.length} modules affichés • $totalVisibleCourses cours officiels révisables',

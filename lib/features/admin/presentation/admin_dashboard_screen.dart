@@ -691,6 +691,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CircleAvatar(
                   radius: 18,
@@ -705,67 +706,68 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              u.fullName,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          if (u.isAdmin) ...[
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFDC2626).withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: const Text(
-                                'ADMIN',
-                                style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFFDC2626)),
-                              ),
-                            ),
-                          ],
-                          if (u.isBanned) ...[
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFDC2626).withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFDC2626)),
-                              ),
-                              child: const Text(
-                                'SUSPENDU (3 rejets) ⛔',
-                                style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFFDC2626)),
-                              ),
-                            ),
-                          ] else if (u.rejectedPaymentsCount > 0) ...[
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                '${u.rejectedPaymentsCount}/3 Rejets ⚠️',
-                                style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.orange),
-                              ),
-                            ),
-                          ],
-                        ],
+                      Text(
+                        u.fullName,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         u.email,
                         style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      if (u.isAdmin || u.isBanned || u.rejectedPaymentsCount > 0) ...[
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            if (u.isAdmin)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFDC2626).withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text(
+                                  'ADMIN',
+                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFFDC2626)),
+                                ),
+                              ),
+                            if (u.isBanned)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFDC2626).withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: const Color(0xFFDC2626)),
+                                ),
+                                child: const Text(
+                                  'SUSPENDU (3 rejets) ⛔',
+                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFFDC2626)),
+                                ),
+                              )
+                            else if (u.rejectedPaymentsCount > 0)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  '${u.rejectedPaymentsCount}/3 Rejets ⚠️',
+                                  style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.orange),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
                       if (u.isBanned && u.banReason != null) ...[
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 3),
                         Text(
                           'Motif : ${u.banReason}',
                           style: const TextStyle(fontSize: 10.5, color: Color(0xFFDC2626), fontStyle: FontStyle.italic),
@@ -774,6 +776,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
@@ -815,10 +818,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       : 'Durée illimitée',
                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    if (u.isBanned) ...[
+                    if (u.isBanned)
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           visualDensity: VisualDensity.compact,
@@ -830,8 +835,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                         label: const Text('Débannir', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
                         onPressed: () => _confirmUnbanUser(context, u),
                       ),
-                      const SizedBox(width: 8),
-                    ],
                     TextButton.icon(
                       style: TextButton.styleFrom(
                         visualDensity: VisualDensity.compact,
@@ -2138,7 +2141,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 4),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
                   isQuotaTopup
@@ -2146,10 +2152,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       : 'Formule : ${payment.tier.toUpperCase()} (${SubscriptionDuration.formatDays(payment.durationDays)})',
                   style: TextStyle(fontSize: 11.5, color: isQuotaTopup ? AppTheme.primaryTeal : Colors.grey.shade600, fontWeight: isQuotaTopup ? FontWeight.bold : FontWeight.normal),
                 ),
-                if (payment.receiptReference != null && payment.receiptReference!.isNotEmpty) ...[
-                  const SizedBox(width: 8),
+                if (payment.receiptReference != null && payment.receiptReference!.isNotEmpty)
                   Text('• Réf: ${payment.receiptReference}', style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
-                ],
               ],
             ),
             const SizedBox(height: 6),

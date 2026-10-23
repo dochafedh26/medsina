@@ -197,13 +197,15 @@ class _ClinicalCopilotSheetState extends State<ClinicalCopilotSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 4,
                         children: [
                           const Text(
                             'MedsinaPilot • Clinique & Urgences',
                             style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
                           ),
-                          const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
