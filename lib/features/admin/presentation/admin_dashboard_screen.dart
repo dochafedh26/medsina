@@ -3649,65 +3649,142 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   const SizedBox(height: 16),
                   const Divider(height: 1),
                   const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: _isGitHubConfigured
-                              ? const Color(0xFF10B981).withValues(alpha: 0.15)
-                              : const Color(0xFFF59E0B).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isNarrow = constraints.maxWidth < 520;
+                      if (isNarrow) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Icon(
-                              _isGitHubConfigured ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
-                              size: 14,
-                              color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: _isGitHubConfigured
+                                          ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                                          : const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          _isGitHubConfigured ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
+                                          size: 14,
+                                          color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Flexible(
+                                          child: Text(
+                                            _isGitHubConfigured ? 'GitHub PAT Connecté' : 'PAT GitHub Non Configuré',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  tooltip: 'Actualiser le statut et les exécutions',
+                                  icon: _isLoadingRuns
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                        )
+                                      : const Icon(Icons.refresh_rounded),
+                                  onPressed: () {
+                                    _refreshRecentWorkflowRuns();
+                                    context.read<AdminBloc>().add(LoadAdminDataEvent());
+                                  },
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              _isGitHubConfigured ? 'GitHub PAT Connecté' : 'PAT GitHub Non Configuré',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
+                            const SizedBox(height: 8),
+                            OutlinedButton.icon(
+                              icon: const Icon(Icons.settings_rounded, size: 16),
+                              label: const Text('Configurer Token PAT'),
+                              style: OutlinedButton.styleFrom(
+                                visualDensity: VisualDensity.compact,
+                                foregroundColor: isDark ? Colors.white : Colors.black87,
+                              ),
+                              onPressed: _showConfigureGitHubTokenDialog,
+                            ),
+                          ],
+                        );
+                      }
+                      return Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: _isGitHubConfigured
+                                  ? const Color(0xFF10B981).withValues(alpha: 0.15)
+                                  : const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
                                 color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.settings_rounded, size: 16),
-                        label: const Text('Configurer Token PAT'),
-                        style: OutlinedButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          foregroundColor: isDark ? Colors.white : Colors.black87,
-                        ),
-                        onPressed: _showConfigureGitHubTokenDialog,
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        tooltip: 'Actualiser le statut et les exécutions',
-                        icon: _isLoadingRuns
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Icon(Icons.refresh_rounded),
-                        onPressed: () {
-                          _refreshRecentWorkflowRuns();
-                          context.read<AdminBloc>().add(LoadAdminDataEvent());
-                        },
-                      ),
-                    ],
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _isGitHubConfigured ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
+                                  size: 14,
+                                  color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  _isGitHubConfigured ? 'GitHub PAT Connecté' : 'PAT GitHub Non Configuré',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: _isGitHubConfigured ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          OutlinedButton.icon(
+                            icon: const Icon(Icons.settings_rounded, size: 16),
+                            label: const Text('Configurer Token PAT'),
+                            style: OutlinedButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              foregroundColor: isDark ? Colors.white : Colors.black87,
+                            ),
+                            onPressed: _showConfigureGitHubTokenDialog,
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            tooltip: 'Actualiser le statut et les exécutions',
+                            icon: _isLoadingRuns
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.refresh_rounded),
+                            onPressed: () {
+                              _refreshRecentWorkflowRuns();
+                              context.read<AdminBloc>().add(LoadAdminDataEvent());
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -4414,15 +4491,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          const Flexible(
-                            child: Text(
-                              'Publication Officielle Facebook & Telegram',
-                              style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800),
-                            ),
+                          const Text(
+                            'Publication Officielle Facebook & Telegram',
+                            style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800),
                           ),
-                          const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
@@ -4464,38 +4541,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   width: 1.2,
                 ),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1877F2),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.add_photo_alternate_rounded, color: Colors.white, size: 22),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Nouvelle Publication avec Capture d\'Écran',
-                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          'Sélectionnez une capture existante ou importez-en une nouvelle depuis votre appareil via le sélecteur de fichiers.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  ElevatedButton.icon(
+              child: LayoutBuilder(
+                builder: (context, boxConstraints) {
+                  final isNarrow = boxConstraints.maxWidth < 540;
+                  final actionButton = ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1877F2),
                       foregroundColor: Colors.white,
@@ -4515,8 +4564,80 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                     ),
                     onPressed: _triggeringAgentId == 'facebook' ? null : _showFacebookPublisherDialog,
-                  ),
-                ],
+                  );
+
+                  if (isNarrow) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1877F2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.add_photo_alternate_rounded, color: Colors.white, size: 22),
+                            ),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Text(
+                                'Nouvelle Publication avec Capture d\'Écran',
+                                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Sélectionnez une capture existante ou importez-en une nouvelle depuis votre appareil via le sélecteur de fichiers.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        actionButton,
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1877F2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.add_photo_alternate_rounded, color: Colors.white, size: 22),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Nouvelle Publication avec Capture d\'Écran',
+                              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              'Sélectionnez une capture existante ou importez-en une nouvelle depuis votre appareil via le sélecteur de fichiers.',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      actionButton,
+                    ],
+                  );
+                },
               ),
             ),
           ],
@@ -4647,8 +4768,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   const SizedBox(height: 14),
 
                   // 3. Capture d'écran
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
                       const Text(
                         'Capture d\'écran de l\'application :',
