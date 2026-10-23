@@ -655,5 +655,19 @@
     "created_at": "2026-10-21T20:20:36.596405+00:00",
     "updated_at": "2026-10-21T20:20:36.596419+00:00",
     "algerianAvailability": "Disponible aux UMC, blocs opératoires, services de réanimation et pharmacies hospitalières (PCH et laboratoires locaux)."
+  },
+  {
+    "id": "drug_milrinone",
+    "dci": "Milrinone",
+    "brand": "Corotrop, Milrinone Aguettant, Génériques laboratoires internationaux (Disponibilité variable via PCH)",
+    "category": "Cardio / ACR / Choc",
+    "route": "Perfusion IV continue (PSE)",
+    "indication": "Insuffisance cardiaque aiguë décompensée, bas débit cardiaque post-chirurgie cardiaque, choc cardiogénique réfractaire (inodilatateur)",
+    "dose": "• Adulte : Charge (optionnelle en urgence absolue si risque d'hypotension majeure) : 50 µg/kg en 10 minutes dans G5% ou NaCl 0,9% (diluer l'ampoule pour obtenir 1 mg/ml). Entretien : 0,375 à 0,75 µg/kg/min (titration selon la TA et la diurèse).\n• Pédiatrie : Charge de 50 à 75 µg/kg sur 30 à 60 minutes, suivie d'une perfusion continue de 0,2 à 0,75 µg/kg/min.",
+    "alert": "• Contre-indications absolues : Hypovolémie sévère non corrigée, sténose aortique ou mitrale serrée (obstacle à l'éjection), IDM aigu étendu récent (risque d'ischémie par augmentation de la consommation en O2), troubles du rythme ventriculaire graves non contrôlés.\n• Pièges létaux : Chute tensionnelle brutale par vasodilatation systémique (nécessite souvent l'association à une amine vasoconstrictrice comme la noradrénaline).\n• Surveillance : PA invasive, FC, ECG continu (arythmies), fonction rénale et diurèse, ionogramme (hypokaliémie).",
+    "algerian_availability": "Disponible en réanimation, blocs opératoires et UMC (souvent via la PCH ou importation hospitalière spécifique)",
+    "created_at": "2026-10-23T20:03:20.001254+00:00",
+    "updated_at": "2026-10-23T20:03:20.001268+00:00",
+    "algerianAvailability": "Disponible en réanimation, blocs opératoires et UMC (souvent via la PCH ou importation hospitalière spécifique)"
   }
 ]
