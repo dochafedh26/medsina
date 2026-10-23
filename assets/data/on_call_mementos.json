@@ -637,5 +637,24 @@
     "is_active": true,
     "created_at": "2026-10-22T20:19:56.029378+00:00",
     "updated_at": "2026-10-22T20:19:56.029390+00:00"
+  },
+  {
+    "id": "memento_urgences_diabetiques",
+    "title": "⚡ Urgences Diabétiques : ACFA & Cétose",
+    "category": "Endocrinologie / Urgences",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : ABCDE immédiat, GDS capillaire, cétonémie capillaire (ou bandelette urinaire), éliminer un choc septique ou une acidose lactique.",
+      "Étape 2 : Bilan biologique d'urgence : Ionogramme sanguin (avec kaliémie corrigée), urée, créatinine, glycémie veineuse, NFS, CRP, ECBU, troponine et ECG.",
+      "Étape 3 : Acidocétose diabétique (ACD) : Remplissage NaCl 0.9% (1L la 1ère heure) + Insulinothérapie IV continue (Actrapid 0.1 UI/kg/h) dès que K+ > 3.3 mmol/L. Si Hyperosmolarité (AHG) : réhydratation prudente et insulinothérapie adaptée.",
+      "Étape 4 : Surveillance armée horaire (conscience, GDS, glycémie capillaire, diurèse via sonde urinaire). Critères de réa : pH < 7.00, trouble de la conscience persistant, défaillance hémodynamique.",
+      "Étape 5 : Piège mortel : Ne JAMAIS administrer d'insuline si la kaliémie est < 3.3 mmol/L (risque d'arythmie fatale et d'arrêt cardiorespiratoire)."
+    ],
+    "scientific_references": "SFMU / SRLF / Consensus International ISPAD & ADA / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-23T13:06:12.369997+00:00",
+    "updated_at": "2026-10-23T13:06:12.370014+00:00"
   }
 ]
