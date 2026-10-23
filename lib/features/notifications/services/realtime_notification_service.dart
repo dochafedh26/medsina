@@ -28,6 +28,7 @@ class RealtimeNotificationService {
   RealtimeChannel? _qcmChannel;
   RealtimeChannel? _notificationChannel;
   RealtimeChannel? _readsChannel;
+  RealtimeChannel? _announcementChannel;
 
   bool _initialized = false;
   String? _currentUserId;
@@ -145,6 +146,28 @@ class RealtimeNotificationService {
         }
       } catch (e) {
         debugPrint('Supabase cloud medical_notifications load notice: $e');
+      }
+
+      // 0b. Fetch active system announcements
+      try {
+        final announcements = await SupabaseService.fetchActiveAnnouncements();
+        for (final a in announcements) {
+          final id = 'announcement_${a['id']}';
+          if (!items.any((n) => n.id == id)) {
+            items.add(MedicalNotification(
+              id: id,
+              title: '📢 ${a['title'] ?? 'Annonce Système'}',
+              message: a['message'] ?? '',
+              type: NotificationType.announcement,
+              createdAt: DateTime.tryParse(a['created_at']?.toString() ?? '') ?? DateTime.now(),
+              targetId: a['id']?.toString(),
+              metadata: a,
+              isRead: _readIds.contains(id),
+            ));
+          }
+        }
+      } catch (e) {
+        debugPrint('Supabase system_announcements init load notice: $e');
       }
 
       // 1. Fetch recent daily pearls (last 3)
@@ -456,8 +479,56 @@ class RealtimeNotificationService {
             },
           )
           .subscribe();
+
+      // 7. Realtime on system_announcements (ALL events)
+      _announcementChannel = client
+          .channel('public:system_announcements')
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'system_announcements',
+            callback: (payload) {
+              final newRecord = payload.newRecord;
+              final oldRecord = payload.oldRecord;
+              if (payload.eventType == PostgresChangeEvent.delete) {
+                final deletedId = 'announcement_${oldRecord['id']}';
+                _removeNotification(deletedId);
+                return;
+              }
+              if (newRecord.isEmpty) return;
+              final isActive = newRecord['is_active'] == true;
+              final notifId = 'announcement_${newRecord['id'] ?? DateTime.now().millisecondsSinceEpoch}';
+
+              if (!isActive) {
+                _removeNotification(notifId);
+                return;
+              }
+
+              final notif = MedicalNotification(
+                id: notifId,
+                title: '📢 ${newRecord['title'] ?? 'Annonce Système'}',
+                message: newRecord['message'] ?? '',
+                type: NotificationType.announcement,
+                createdAt: DateTime.tryParse(newRecord['created_at']?.toString() ?? '') ?? DateTime.now(),
+                targetId: newRecord['id']?.toString(),
+                metadata: newRecord,
+                isRead: _readIds.contains(notifId),
+              );
+              _pushNewNotification(notif);
+            },
+          )
+          .subscribe();
     } catch (e) {
       debugPrint('Supabase realtime subscription notice: $e');
+    }
+  }
+
+  void _removeNotification(String id) {
+    final currentList = List<MedicalNotification>.from(notificationsNotifier.value);
+    final countBefore = currentList.length;
+    currentList.removeWhere((n) => n.id == id);
+    if (currentList.length != countBefore) {
+      _setNotifications(currentList);
     }
   }
 
@@ -533,6 +604,7 @@ class RealtimeNotificationService {
     _qcmChannel?.unsubscribe();
     _notificationChannel?.unsubscribe();
     _readsChannel?.unsubscribe();
+    _announcementChannel?.unsubscribe();
     _newNotificationController.close();
   }
 }

@@ -171,5 +171,16 @@ void main() {
     );
     expect(contentMemento.isAlert, false);
     expect(contentMemento.type.label, contains('Mémento'));
+
+    final announcement = MedicalNotification(
+      id: 'announcement_4a8d8f5e',
+      title: '📢 Accès gratuit',
+      message: 'Un accès gratuit est offert aux 20 premiers abonnés.',
+      type: NotificationType.announcement,
+      createdAt: DateTime.now(),
+      metadata: const {'type': 'success', 'is_active': true},
+    );
+    expect(announcement.isAlert, true);
+    expect(announcement.type.label, contains('Annonce Système'));
   });
 }

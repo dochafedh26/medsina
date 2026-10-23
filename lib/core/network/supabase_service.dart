@@ -1578,6 +1578,20 @@ class SupabaseService {
     }
   }
 
+  static Future<List<Map<String, dynamic>>> fetchActiveAnnouncements() async {
+    try {
+      final response = await client
+          .from('system_announcements')
+          .select()
+          .eq('is_active', true)
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching active announcements: $e');
+      return [];
+    }
+  }
+
   static Future<bool> createAnnouncement({
     required String title,
     required String message,

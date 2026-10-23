@@ -10,6 +10,10 @@ import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import 'daily_pearls_archive_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../notifications/models/medical_notification.dart';
+import '../../notifications/services/notification_navigation_service.dart';
+import '../../notifications/services/realtime_notification_service.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -26,6 +30,9 @@ class DashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Active System Announcement Banner
+              const ActiveAnnouncementsBanner(),
+
               // Welcome & Subscription Banner
               _buildWelcomeBanner(
                 context,
@@ -1112,6 +1119,232 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+}
+
+
+class ActiveAnnouncementsBanner extends StatefulWidget {
+  const ActiveAnnouncementsBanner({super.key});
+
+  @override
+  State<ActiveAnnouncementsBanner> createState() => _ActiveAnnouncementsBannerState();
+}
+
+class _ActiveAnnouncementsBannerState extends State<ActiveAnnouncementsBanner> {
+  static const String _dismissedPrefKey = 'medsina_dismissed_announcements';
+  Set<String> _dismissedIds = {};
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDismissed();
+  }
+
+  Future<void> _loadDismissed() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = prefs.getStringList(_dismissedPrefKey) ?? [];
+      if (mounted) {
+        setState(() {
+          _dismissedIds = list.toSet();
+          _loaded = true;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _loaded = true);
+    }
+  }
+
+  Future<void> _dismiss(String id) async {
+    setState(() {
+      _dismissedIds.add(id);
+    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_dismissedPrefKey, _dismissedIds.toList());
+    } catch (_) {}
+    RealtimeNotificationService.instance.markAsRead(id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded) return const SizedBox.shrink();
+
+    return ValueListenableBuilder<List<MedicalNotification>>(
+      valueListenable: RealtimeNotificationService.instance.notificationsNotifier,
+      builder: (context, notifications, _) {
+        final announcements = notifications
+            .where((n) => n.type == NotificationType.announcement && !_dismissedIds.contains(n.id))
+            .toList();
+
+        if (announcements.isEmpty) return const SizedBox.shrink();
+
+        return Column(
+          children: announcements.map((announcement) {
+            final typeStr = announcement.metadata?['type']?.toString().toLowerCase() ?? 'info';
+
+            // Determine gradient colors based on type
+            List<Color> gradientColors;
+            Color borderColor;
+            Color badgeBgColor;
+            String badgeText;
+            IconData iconData = Icons.campaign_rounded;
+
+            if (typeStr == 'success') {
+              gradientColors = const [Color(0xFF065F46), Color(0xFF047857)];
+              borderColor = const Color(0xFF10B981);
+              badgeBgColor = const Color(0xFF10B981).withValues(alpha: 0.3);
+              badgeText = 'OFFRE SPÉCIALE 🎁';
+            } else if (typeStr == 'warning') {
+              gradientColors = const [Color(0xFF78350F), Color(0xFFB45309)];
+              borderColor = const Color(0xFFF59E0B);
+              badgeBgColor = const Color(0xFFF59E0B).withValues(alpha: 0.3);
+              badgeText = 'IMPORTANT ⚠️';
+            } else if (typeStr == 'danger' || typeStr == 'error') {
+              gradientColors = const [Color(0xFF881337), Color(0xFFBE123C)];
+              borderColor = const Color(0xFFF43F5E);
+              badgeBgColor = const Color(0xFFF43F5E).withValues(alpha: 0.3);
+              badgeText = 'ALERTE 🚨';
+            } else {
+              gradientColors = const [Color(0xFF0F766E), Color(0xFF0D9488)];
+              borderColor = const Color(0xFF14B8A6);
+              badgeBgColor = const Color(0xFF14B8A6).withValues(alpha: 0.3);
+              badgeText = 'ANNONCE OFFICIELLE 📢';
+            }
+
+            final titleClean = announcement.title.replaceAll(RegExp(r'^[📢🚨⚠️💡]\s*'), '').trim();
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: gradientColors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: borderColor.withValues(alpha: 0.5), width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: gradientColors.last.withValues(alpha: 0.3),
+                    blurRadius: 14,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () => NotificationNavigationService.handleNotificationTap(context, announcement),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: badgeBgColor,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 0.8),
+                              ),
+                              child: Text(
+                                badgeText,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              icon: const Icon(Icons.close_rounded, color: Colors.white70, size: 20),
+                              tooltip: "Masquer l'annonce",
+                              onPressed: () => _dismiss(announcement.id),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.18),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(iconData, color: Colors.white, size: 24),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    titleClean,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      height: 1.25,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    announcement.message,
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(alpha: 0.92),
+                                      fontSize: 13,
+                                      height: 1.4,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Voir tous les détails',
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.95),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: Colors.white70,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 14),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
         );
       },
     );
