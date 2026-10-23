@@ -583,21 +583,21 @@
     "id": "memento_colique_nephretique_febrile",
     "title": "🚨 Colique Néphrétique Hyperalgique & Fébrile",
     "category": "Urgences Urologiques & Infectieuses",
-    "icon_name": "warning_rounded",
+    "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Urgence absolue médico-urologique (recherche d'une pyélonéphrite obstructive) : évaluation hémodynamique, élimination d'un choc septique, prise de la température et recherche de signes de gravité.",
-      "Étape 2 : Bilan biologique d'urgence au lit du malade : NFS, CRP, Ionogramme sanguin, Urée, Créatininémie, BU et ECBU, Hémocultures si frissons/fièvre, Bilan pré-opératoire (TP, TCA, Groupage).",
-      "Étape 3 : Antalgie majeure et antibiothérapie probabiliste immédiate après les prélèvements : Ketoprofène 100mg IV slow (si fonction rénale normale) ou Paracétamol 1g IV, associé à Nefopam 20mg IVSE. Antibiothérapie IV (Ceftriaxone 2g/j ou Céfotaxime 3g/j).",
-      "Étape 4 : Imagerie en urgence après stabilisation : Échographie rénale et des voies urinaires (recherche d'une urétéro-hydronéphrose) et/ou TDM abdominale sans injection (gold standard) selon l'état hémodynamique.",
-      "Étape 5 : Appel urgent du chirurgien urologue de garde pour drainage des voies urinaires (JJ ou néphrostomie percutanée) en salle d'opération en urgence (Urgences chirurgicales urologiques).",
-      "Étape 6 : Piège médico-légal et thérapeutique : Ne jamais se limiter aux antalgiques devant une forme fébrile ; le retard au drainage expose au choc septique mortel. Contre-indication absolue des AINS si insuffisance rénale aiguë ou déshydratation sévère."
+      "Étape 1 : Urgence absolue médico-chirurgicale (obstacle sur rein unique ou infecté) ! Pose de 2 VVP de gros calibre, monitoring (ECG, SpO2, PNI) et évaluation de la douleur (EVA/NRS).",
+      "Étape 2 : Bilan biologique d'urgence : NFS, Ionogramme sanguin, Urée, Créatininémie, CRP, Hémocultures (si frissons/fièvre), BHC, BU et ECBU.",
+      "Étape 3 : Imagerie en urgence après stabilisation : Échographie rénale et des voies urinaires (recherche d'une hydronéphrose) et/ou TDM hélicoïdale sans injection (gold standard) selon disponibilité.",
+      "Étape 4 : Antalgie multimodale immédiate : Kétoprofène 100 mg IV (si fonction rénale normale) + Nefopam 20 mg IV slow dans 100 ml de NaCl 0,9% + Tramadol 100 mg IV ou Morphine titration (0,1 mg/kg toutes les 5 min si échec).",
+      "Étape 5 : Antibiothérapie IV probabiliste urgente après hémocultures (Céfotaxime 1g x 3/j ou Ceftriaxone 2g/j IV) et appel URGENT de l'urologue de garde pour drainage des voies urinaires (sonde JJ ou nephrostomie percutanée).",
+      "Étape 6 : Piège médico-légal et CI : Ne JAMAIS administrer d'AINS en cas d'insuffisance rénale aiguë, de déshydratation sévère ou d'ulcère gastroduodénal actif. Toute CN fébrile est un choc septique potentiel."
     ],
-    "scientific_references": "Recommandations AFU / SFMU / Consensus de Réanimation / MSPRH Algérie",
+    "scientific_references": "Recommandations AFU / SFMU / Consensus National Algérien d'Urgences Urologiques",
     "is_active": true,
-    "created_at": "2026-10-21T20:23:11.361946+00:00",
-    "updated_at": "2026-10-21T20:23:11.361959+00:00"
+    "created_at": "2026-10-23T05:26:50.383977+00:00",
+    "updated_at": "2026-10-23T05:26:50.383990+00:00"
   },
   {
     "id": "memento_metrorragies_geu",
