@@ -3401,6 +3401,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               children: [
                 DropdownButtonFormField<String>(
                   initialValue: platform,
+                  isExpanded: true,
                   decoration: const InputDecoration(labelText: 'Plateforme Cible'),
                   items: const [
                     DropdownMenuItem(value: 'android', child: Text('Android (APK Direct)')),
@@ -4729,6 +4730,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
                     initialValue: selectedType,
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       isDense: true,
@@ -4737,19 +4739,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     items: const [
                       DropdownMenuItem(
                         value: 'auto',
-                        child: Text('Automatique (Médical le matin / Promo le soir)'),
+                        child: Text('Automatique (Médical le matin / Promo le soir)', overflow: TextOverflow.ellipsis),
                       ),
                       DropdownMenuItem(
                         value: 'commercial',
-                        child: Text('Promotion Commerciale (Téléchargement de Medsina)'),
+                        child: Text('Promotion Commerciale (Téléchargement de Medsina)', overflow: TextOverflow.ellipsis),
                       ),
                       DropdownMenuItem(
                         value: 'medical',
-                        child: Text('Médicale Clinique & Concours (Fiches, CAT, Pièges)'),
+                        child: Text('Médicale Clinique & Concours (Fiches, CAT, Pièges)', overflow: TextOverflow.ellipsis),
                       ),
                       DropdownMenuItem(
                         value: 'qcm',
-                        child: Text('🎯 QCM Annales Réelles (Source & Date Concours)'),
+                        child: Text('🎯 QCM Annales Réelles (Source & Date Concours)', overflow: TextOverflow.ellipsis),
                       ),
                     ],
                     onChanged: (val) {
@@ -4850,6 +4852,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
                   DropdownButtonFormField<String>(
                     initialValue: selectedScreenshot ?? '',
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       isDense: true,
@@ -4858,14 +4861,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     items: [
                       ...standardScreenshots.entries.map((e) => DropdownMenuItem(
                             value: e.key,
-                            child: Text(e.value, style: const TextStyle(fontSize: 12.5)),
+                            child: Text(e.value, style: const TextStyle(fontSize: 12.5), overflow: TextOverflow.ellipsis),
                           )),
                       if (selectedScreenshot != null &&
                           selectedScreenshot!.isNotEmpty &&
                           !standardScreenshots.containsKey(selectedScreenshot))
                         DropdownMenuItem(
                           value: selectedScreenshot,
-                          child: Text('📁 $selectedScreenshot (Importé)', style: const TextStyle(fontSize: 12.5)),
+                          child: Text('📁 $selectedScreenshot (Importé)', style: const TextStyle(fontSize: 12.5), overflow: TextOverflow.ellipsis),
                         ),
                     ],
                     onChanged: (val) {
@@ -4946,6 +4949,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
                     initialValue: mockupType,
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       isDense: true,
@@ -4954,19 +4958,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     items: const [
                       DropdownMenuItem(
                         value: 'auto',
-                        child: Text('Automatique (Adapté selon l\'orientation de l\'image)'),
+                        child: Text('Automatique (Adapté selon l\'orientation de l\'image)', overflow: TextOverflow.ellipsis),
                       ),
                       DropdownMenuItem(
                         value: 'desktop',
-                        child: Text('PC Desktop (Moniteur haute fidélité)'),
+                        child: Text('PC Desktop (Moniteur haute fidélité)', overflow: TextOverflow.ellipsis),
                       ),
                       DropdownMenuItem(
                         value: 'phone',
-                        child: Text('Smartphone (Châssis mobile titanium)'),
+                        child: Text('Smartphone (Châssis mobile titanium)', overflow: TextOverflow.ellipsis),
                       ),
                       DropdownMenuItem(
                         value: 'none',
-                        child: Text('Sans maquette (Infographie pleine largeur avec points clés)'),
+                        child: Text('Sans maquette (Infographie pleine largeur avec points clés)', overflow: TextOverflow.ellipsis),
                       ),
                     ],
                     onChanged: (val) {
