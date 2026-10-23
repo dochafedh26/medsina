@@ -3,9 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:medsina/core/constants/app_constants.dart';
 import 'package:medsina/core/theme/app_theme.dart';
-import 'package:medsina/features/auth/models/user_model.dart';
 import 'package:medsina/features/prescription/presentation/prescription_analysis_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

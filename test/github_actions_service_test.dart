@@ -10,9 +10,9 @@ void main() {
   });
 
   group('GitHubActionsService Tests', () {
-    test('All 7 autonomous agents are registered with valid workflow definitions', () {
+    test('All 8 autonomous agents are registered with valid workflow definitions', () {
       final agents = GitHubActionsService.availableAgents;
-      expect(agents.length, 7);
+      expect(agents.length, 8);
 
       final workflows = agents.map((a) => a.workflowFile).toList();
       expect(workflows, contains('medsina_summaries_4h.yml'));
@@ -22,6 +22,7 @@ void main() {
       expect(workflows, contains('medsina_mementos.yml'));
       expect(workflows, contains('medsina_automation.yml'));
       expect(workflows, contains('medsina_facebook.yml'));
+      expect(workflows, contains('medsina_lab.yml'));
 
       for (final agent in agents) {
         expect(agent.title.isNotEmpty, true);

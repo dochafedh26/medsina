@@ -606,7 +606,7 @@ class SupabaseService {
   }) async {
     final cleanPlat = platform.trim().toLowerCase();
     final cleanSrc = source.trim().toLowerCase();
-    final cleanVer = version?.trim() ?? '1.0.8';
+    final cleanVer = version?.trim() ?? '1.0.9';
 
     try {
       final res = await client.rpc('record_octenium_download', params: {
