@@ -504,23 +504,23 @@
     "updated_at": "2026-10-19T21:16:35.010706+00:00"
   },
   {
-    "id": "memento_syndrome_meninge_pl",
+    "id": "memento_syndrome_meninge_aigu",
     "title": "🧠 Syndrome Méningé Aigu & PL d'Urgence",
     "category": "Neurologie & Urgences Infectieuses",
-    "icon_name": "bolt_rounded",
+    "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation clinique immédiate (triade céphalées, vomissements, raideur de nuque + signes de Brudzinski/Kernig) et recherche absolue de signes de gravité (purpura fulminans, troubles de la conscience GCS < 12, signes de focalisation, crise convulsive).",
-      "Étape 2 : Si purpura fulminans ou sepsis sévère, antibiothérapie probabiliste immédiate sans attendre la PL (Ceftriaxone IV 2g à 4g en IV direct ou Céfotaxime 2g IV) après hémocultures, associée à la dexaméthasone (10 mg IV).",
-      "Étape 3 : Vérifier impérativement les contre-indications de la PL avant réalisation : instabilité hémodynamique, infection cutanée au site de ponction, troubles de l'hémostase (TP < 50%, TCA > 1.5 témoin, Plaquettes < 50 G/L), et tout signe neurologique focal ou engagement imminent justifiant une TDM cérébrale préalable.",
-      "Étape 4 : Réalisation de la Ponction Lombaire (PL) sous asepsie stricte au lit du malade (L3-L4 ou L4-L5), recueil en 3 tubes pour analyse biochimique (protéinorachie, glycorachie rapportée à la glycémie capillaire), cytologique (formule, nombre d'éléments) et bactériologique (examen direct Gram et culture).",
-      "Étape 5 : Piège médico-légal et thérapeutique : Ne jamais retarder l'antibiothérapie au-delà de 30-45 minutes si la PL est différée pour TDM ou si le patient est en choc septique, et surveiller l'apparition d'un engagement cérébral post-PL imposant un transfert immédiat en Réanimation."
+      "Étape 1 : Évaluation immédiate (Glasgow, TRC, purpura fulminans). Ne PAS retarder l'antibiothérapie par la TDM si purpura ou signes de sepsis sévère.",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, CRP, Ionogramme, Urée, Créat, Bilan d'hémostase (TP, TCA, Fibrinogène) avant toute PL.",
+      "Étape 3 : Antibiothérapie probabiliste en urgence absolue si délai de PL > 1h ou purpura : Cefotaxime 2g IV direct (ou Ceftriaxone 2g IV) + Aciclovir 10mg/kg/8h si suspicion d'encéphalite herpétique.",
+      "Étape 4 : Réaliser la TDM cérébrale en urgence absolue AVANT la PL devant tout signe de focalisation, crise convulsive, OMI, ou TRC altéré (< 11).",
+      "Étape 5 : Piège médico-légal et contre-indication : Ne jamais faire de PL en cas de troubles de l'hémostase non corrigés, instabilité hémodynamique, ou signes d'engagement cérébral à la TDM."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / SPILF / MSPRH Algérie",
+    "scientific_references": "Consensus SPILF / SRLF / Recommandations MSPRH Algérie pour la prise en charge des méningites",
     "is_active": true,
-    "created_at": "2026-10-20T05:24:02.289335+00:00",
-    "updated_at": "2026-10-20T05:24:02.289348+00:00"
+    "created_at": "2026-10-23T13:51:26.905505+00:00",
+    "updated_at": "2026-10-23T13:51:26.905518+00:00"
   },
   {
     "id": "memento_hyperkalemie_aigue",
