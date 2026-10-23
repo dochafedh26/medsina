@@ -3805,9 +3805,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
             children: [
               Icon(Icons.bolt_rounded, color: Color(0xFFF59E0B), size: 22),
               SizedBox(width: 8),
-              Text(
-                'Lancer un Agent Automatique (À la demande)',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              Expanded(
+                child: Text(
+                  'Lancer un Agent Automatique (À la demande)',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                ),
               ),
             ],
           ),
@@ -4053,7 +4055,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 6),
-                      child: Row(
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -4070,7 +4075,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
                           Text(
                             '#${run.runNumber} • ${run.createdAt.day.toString().padLeft(2, '0')}/${run.createdAt.month.toString().padLeft(2, '0')} à ${run.createdAt.hour.toString().padLeft(2, '0')}:${run.createdAt.minute.toString().padLeft(2, '0')}',
                             style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
