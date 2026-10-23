@@ -951,8 +951,10 @@ def record_publication_success(post_id: Optional[str], photo_id: Optional[str], 
             "title": f"🎉 Post publié sur Facebook : {published_info.get('title')}",
             "message": f"L'infographie et le texte ont été mis en ligne avec succès sur la page Facebook. Lien : {fb_url}",
             "type": "announcement",
+            "target_role": "admin",
+            "is_broadcast": False,
             "target_id": post_id or photo_id or "facebook_post",
-            "metadata": published_info,
+            "metadata": {**published_info, "is_admin_only": True},
         }
         requests.post(f"{SUPABASE_URL}/rest/v1/medical_notifications", headers=headers, json=notif_payload, timeout=15)
         print("🔔 Notification de publication Facebook envoyée au Dashboard !")

@@ -32,12 +32,15 @@ class RealtimeNotificationService {
 
   bool _initialized = false;
   String? _currentUserId;
+  bool _isAdmin = false;
+  bool get isAdmin => _isAdmin;
   Set<String> _readIds = {};
 
   String _getStorageKey(String? userId) => 'medsina_read_notifs_${userId ?? 'anonymous'}';
 
-  Future<void> initialize({String? userId}) async {
+  Future<void> initialize({String? userId, bool isAdmin = false}) async {
     _currentUserId = userId;
+    _isAdmin = isAdmin;
     await _loadUserReadIds();
 
     if (_initialized) {
@@ -54,10 +57,16 @@ class RealtimeNotificationService {
   }
 
   /// Changes the active user context and re-applies their specific read status
-  Future<void> setCurrentUser(String? userId) async {
+  Future<void> setCurrentUser(String? userId, {bool isAdmin = false}) async {
+    final bool adminStatusChanged = _isAdmin != isAdmin;
     _currentUserId = userId;
+    _isAdmin = isAdmin;
     await _loadUserReadIds();
-    _applyReadIds();
+    if (adminStatusChanged) {
+      await _loadInitialNotifications();
+    } else {
+      _applyReadIds();
+    }
   }
 
   Future<void> _loadUserReadIds() async {
@@ -141,7 +150,9 @@ class RealtimeNotificationService {
             final notif = MedicalNotification.fromJson(row).copyWith(
               isRead: _readIds.contains(id),
             );
-            items.add(notif);
+            if (!notif.isAdminOnly || _isAdmin) {
+              items.add(notif);
+            }
           }
         }
       } catch (e) {
@@ -308,7 +319,11 @@ class RealtimeNotificationService {
       ));
     }
 
-    _setNotifications(items);
+    final filtered = items.where((n) {
+      if (n.isAdminOnly && !_isAdmin) return false;
+      return true;
+    }).toList();
+    _setNotifications(filtered);
   }
 
   void _subscribeToRealtime() {
@@ -533,6 +548,10 @@ class RealtimeNotificationService {
   }
 
   void _pushNewNotification(MedicalNotification notification) {
+    if (notification.isAdminOnly && !_isAdmin) {
+      // Strictly prevent admin-only notifications from reaching non-admin users
+      return;
+    }
     final currentList = List<MedicalNotification>.from(notificationsNotifier.value);
     // Avoid duplicate IDs
     if (!currentList.any((n) => n.id == notification.id)) {
@@ -591,6 +610,7 @@ class RealtimeNotificationService {
   void resetForTesting() {
     _initialized = false;
     _currentUserId = null;
+    _isAdmin = false;
     _readIds = {};
     notificationsNotifier.value = [];
     unreadCountNotifier.value = 0;

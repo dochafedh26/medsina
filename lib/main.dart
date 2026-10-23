@@ -53,16 +53,21 @@ void main() async {
   // Initialize Realtime Medical Notifications (CAT, Courses, QCM, Pearl) with active user context
   try {
     String? activeUserId;
+    bool isAdmin = false;
     try {
       final prefs = await SharedPreferences.getInstance();
       final userJson = prefs.getString('medsina_active_user');
       if (userJson != null) {
         final data = jsonDecode(userJson);
         activeUserId = data['id']?.toString();
+        isAdmin = data['isAdmin'] == true || data['is_admin'] == true;
       }
     } catch (_) {}
     activeUserId ??= SupabaseService.currentSession?.user.id;
-    await RealtimeNotificationService.instance.initialize(userId: activeUserId);
+    await RealtimeNotificationService.instance.initialize(
+      userId: activeUserId,
+      isAdmin: isAdmin,
+    );
   } catch (e) {
     debugPrint('Realtime Notification initialization notice: $e');
   }

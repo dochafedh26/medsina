@@ -137,7 +137,9 @@ class _NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final color = item.type.color;
+    final color = item.isAdminOnly ? const Color(0xFF6366F1) : item.type.color;
+    final icon = item.isAdminOnly ? Icons.admin_panel_settings_rounded : item.type.icon;
+    final label = item.isAdminOnly ? 'ADMINISTRATION 🛡️' : item.type.label.toUpperCase();
     final isRead = item.isRead;
 
     return InkWell(
@@ -179,7 +181,7 @@ class _NotificationTile extends StatelessWidget {
                 color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(item.type.icon, color: color, size: 20),
+              child: Icon(icon, color: color, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -195,7 +197,7 @@ class _NotificationTile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          item.type.label.toUpperCase(),
+                          label,
                           style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: color),
                         ),
                       ),

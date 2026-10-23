@@ -40,7 +40,7 @@ class SupabaseService {
     required String medicalRole,
     required String faculty,
   }) async {
-    return await client.auth.signUp(
+    final res = await client.auth.signUp(
       email: email.trim(),
       password: password,
       data: {
@@ -49,6 +49,34 @@ class SupabaseService {
         'faculty': faculty.trim(),
       },
     );
+
+    // Notify Administrator in Realtime about new member registration
+    final newId = res.user?.id;
+    if (newId != null) {
+      try {
+        await client.from('medical_notifications').insert({
+          'id': 'new_user_${newId}_${DateTime.now().millisecondsSinceEpoch}',
+          'title': '👤 Nouveau Membre Inscrit : ${fullName.trim()}',
+          'message': '${fullName.trim()} (${email.trim()}) vient de créer un compte Medsina ($medicalRole - $faculty).',
+          'type': 'announcement',
+          'target_role': 'admin',
+          'is_broadcast': false,
+          'metadata': {
+            'is_admin_only': true,
+            'target_role': 'admin',
+            'user_id': newId,
+            'email': email.trim(),
+            'full_name': fullName.trim(),
+            'medical_role': medicalRole.trim(),
+            'faculty': faculty.trim(),
+          },
+        });
+      } catch (e) {
+        debugPrint('Admin new user notification notice: $e');
+      }
+    }
+
+    return res;
   }
 
   /// Sign Out

@@ -55,8 +55,11 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   void initState() {
     super.initState();
-    final initialUserId = context.read<AuthBloc>().state.user?.id;
-    RealtimeNotificationService.instance.setCurrentUser(initialUserId);
+    final initialUser = context.read<AuthBloc>().state.user;
+    RealtimeNotificationService.instance.setCurrentUser(
+      initialUser?.id,
+      isAdmin: initialUser?.isAdmin == true,
+    );
     _notificationSub = RealtimeNotificationService.instance.onNewNotification.listen((notif) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -266,7 +269,11 @@ class _MainScaffoldState extends State<MainScaffold> {
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (prev, current) => prev.user?.id != current.user?.id,
       listener: (context, authState) {
-        RealtimeNotificationService.instance.setCurrentUser(authState.user?.id);
+        final u = authState.user;
+        RealtimeNotificationService.instance.setCurrentUser(
+          u?.id,
+          isAdmin: u?.isAdmin == true,
+        );
       },
       builder: (context, authState) {
         final user = authState.user;

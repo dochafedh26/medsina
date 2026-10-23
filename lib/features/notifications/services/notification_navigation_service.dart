@@ -204,6 +204,11 @@ class NotificationNavigationService {
           MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
         );
       };
+    } else if (notif.isAdminOnly) {
+      dialogIcon = Icons.admin_panel_settings_rounded;
+      dialogColor = const Color(0xFF6366F1);
+      actionLabel = 'J\'ai compris';
+      onAction = () => Navigator.pop(context);
     } else {
       dialogIcon = Icons.campaign_rounded;
       dialogColor = const Color(0xFF14B8A6);
@@ -235,30 +240,37 @@ class NotificationNavigationService {
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              notif.message,
-              style: TextStyle(
-                fontSize: 13.5,
-                height: 1.45,
-                color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.55,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.access_time_rounded, size: 14, color: Colors.grey.shade500),
-                const SizedBox(width: 5),
-                Text(
-                  _formatDateTime(notif.createdAt),
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                SelectableText(
+                  notif.message,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    height: 1.5,
+                    color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Icon(Icons.access_time_rounded, size: 14, color: Colors.grey.shade500),
+                    const SizedBox(width: 5),
+                    Text(
+                      _formatDateTime(notif.createdAt),
+                      style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
         actions: [
           TextButton(

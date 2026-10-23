@@ -92,6 +92,7 @@ class MedicalNotification {
   final bool isRead;
   final String? targetId; // Course ID, Protocol ID, or Pearl ID
   final Map<String, dynamic>? metadata;
+  final String targetRole; // 'all', 'admin', 'user'
 
   const MedicalNotification({
     required this.id,
@@ -102,6 +103,7 @@ class MedicalNotification {
     this.isRead = false,
     this.targetId,
     this.metadata,
+    this.targetRole = 'all',
   });
 
   MedicalNotification copyWith({
@@ -113,6 +115,7 @@ class MedicalNotification {
     bool? isRead,
     String? targetId,
     Map<String, dynamic>? metadata,
+    String? targetRole,
   }) {
     return MedicalNotification(
       id: id ?? this.id,
@@ -123,13 +126,33 @@ class MedicalNotification {
       isRead: isRead ?? this.isRead,
       targetId: targetId ?? this.targetId,
       metadata: metadata ?? this.metadata,
+      targetRole: targetRole ?? this.targetRole,
     );
+  }
+
+  /// Determines if this notification should strictly be restricted to administrators
+  bool get isAdminOnly {
+    if (targetRole.toLowerCase() == 'admin') return true;
+    if (metadata != null) {
+      if (metadata!['is_admin_only'] == true) return true;
+      if (metadata!['target_role']?.toString().toLowerCase() == 'admin') return true;
+    }
+    final t = title.toLowerCase();
+    if (t.contains('post publié sur facebook') ||
+        t.contains('nouveau membre inscrit') ||
+        t.contains('nouvel inscrit') ||
+        t.contains('nouveau paiement soumis') ||
+        t.contains('prompt ia marketing')) {
+      return true;
+    }
+    return false;
   }
 
   bool get isAlert =>
       type == NotificationType.announcement ||
       type == NotificationType.quota ||
       type == NotificationType.subscription ||
+      isAdminOnly ||
       title.toLowerCase().contains('quota') ||
       title.toLowerCase().contains('abonnement') ||
       title.toLowerCase().contains('expiration') ||
@@ -146,6 +169,7 @@ class MedicalNotification {
         'is_read': isRead,
         'target_id': targetId,
         'metadata': metadata,
+        'target_role': targetRole,
       };
 
   factory MedicalNotification.fromJson(Map<String, dynamic> json) {
@@ -169,6 +193,9 @@ class MedicalNotification {
       parsedType = NotificationType.subscription;
     }
 
+    final role = json['target_role']?.toString() ??
+        (json['metadata'] is Map ? (json['metadata']['target_role']?.toString() ?? 'all') : 'all');
+
     return MedicalNotification(
       id: json['id']?.toString() ?? '',
       title: json['title'] ?? 'Notification Medsina',
@@ -180,6 +207,7 @@ class MedicalNotification {
       isRead: json['is_read'] == true,
       targetId: json['target_id']?.toString(),
       metadata: json['metadata'] as Map<String, dynamic>?,
+      targetRole: role,
     );
   }
 }

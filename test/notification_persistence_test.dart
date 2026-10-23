@@ -182,5 +182,26 @@ void main() {
     );
     expect(announcement.isAlert, true);
     expect(announcement.type.label, contains('Annonce Système'));
+    expect(announcement.isAdminOnly, false);
+
+    final adminPub = MedicalNotification(
+      id: 'fb_pub_1',
+      title: '🎉 Post publié sur Facebook : Titre',
+      message: 'Lien ...',
+      type: NotificationType.announcement,
+      createdAt: DateTime.now(),
+      targetRole: 'admin',
+    );
+    expect(adminPub.isAdminOnly, true);
+
+    final adminUser = MedicalNotification(
+      id: 'new_user_1',
+      title: '👤 Nouveau Membre Inscrit : Dr. Karim',
+      message: 'karim@gmail.com vient de créer son compte.',
+      type: NotificationType.announcement,
+      createdAt: DateTime.now(),
+      targetRole: 'admin',
+    );
+    expect(adminUser.isAdminOnly, true);
   });
 }
