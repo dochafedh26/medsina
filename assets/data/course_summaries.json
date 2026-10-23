@@ -734,5 +734,28 @@
     "treatment_summary": "Urgence médico-chirurgicale absolue : Réanimation hydro-électrolytique, antibiothérapie probabiliste IV immédiate, et prise en charge chirurgicale en urgence (lavage péritonéal et traitement de la lésion causale).",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-23T04:35:28.778709+00:00"
+  },
+  {
+    "course_id": "Blida_URO_NEPHROLOGIE_TD_EXPLORATIONS_EN_NEPHROLOGIE",
+    "course_name": "Explorations en Néphrologie",
+    "module_id": "Blida_URO_NEPHROLOGIE",
+    "module_name": "Uro-Néphrologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nL'évaluation de la fonction rénale repose principalement sur la mesure ou l'estimation du **Débit de Filtration Glomérulaire (DFG)** et l'analyse de la fonction tubulaire. Le DFG normal chez l'adulte jeune est d'environ **100 à 120 mL/min/1,73 m²**.\n- **Marqueurs endogènes du DFG :** La **créatininémie** (dépendante de la masse musculaire, de l'âge, du sexe) et la **cystatine C** (moins influencée par la masse musculaire).\n- **Clairance de la créatinine :** Mesurée par la collecte des urines de 24h, mais sujette aux erreurs de recueil. Les formules d'estimation (**MDRD** et **CKD-EPI**) sont privilégiées en routine.\n\n## 2. Démarche Diagnostique (Clinique, Paraclinique de référence, Critères diagnostiques)\n- **Formules d'estimation du DFG :**\n  - **CKD-EPI 2021 (recommandée) :** Intègre l'âge, le sexe, la créatininémie (sans correction ethnique).\n  - **MDRD :** Moins performante pour les DFG > 60 mL/min/1,73 m².\n  - **Cockcroft et Gault :** Estime la clairance de la créatinine (en mL/min), nécessite le poids, utile pour l'adaptation posologique des médicaments (nécessite une correction par la surface corporelle si poids ou taille extrêmes).\n- **Exploration de la protéinurie :**\n  - Bandelette urinaire (BU) : détecte principalement l'albumine (seuil à partir de 0,3 g/L ou 30 mg/mmol).\n  - **Protéinurie des 24 heures (P24h) :** Gold standard quantitatif (norme < 150 mg/24h).\n  - **Rapport Protéinurie/Créatininurie (RPC) ou Albuminurie/Créatininurie (RAC) sur échantillon urinaire** (idéalement 1ères urines du matin).\n- **Imagerie rénale :**\n  - **Échographie rénale et des voies urinaires :** Examen de 1ère intention (taille des reins, différenciation corticomédullaire, recherche d'obstacle ou de malformation).\n  - **Doppler des artères rénales :** Recherche de sténose (hypertension artérielle renovasculaire).\n  - **Uroscanner / IRM / Scintigraphie rénale** (MAG3, DMSA).\n- **Ponction-Biopsie Rénale (PBR) :** Examen clé pour le diagnostic histologique des glomérulopathies et néphropathies vasculaires/interstitielles (sous contrôle écho, après bilan d'hémostase strict).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Insuffisance rénale aiguë (IRA) vs Chronique (IRC) :**\n  - L'IRC se caractérise par des **reins de petite taille** (< 10 cm), une anémie normocytaire arégénérative (déficit en EPO), et une hypocalcémie (déficit en calcitriol), sauf exceptions (polykystose, diabète, amylose où les reins sont de taille normale ou augmentée).\n- **Protéinurie orthostatique :** Fréquente chez l'adolescent, absente sur les urines de première miction du matin.\n\n## 4. Stratégie Thérapeutique (Mesures générales, Traitement de 1ère et 2ème ligne)\n- L'évaluation néphrologique guide la néphroprotection :\n  - Contrôle strict de la PA (IEC ou ARA2 en 1ère intention si protéinurie).\n  - Correction des facteurs de risque cardiovasculaire.\n  - Éviction des médicaments néphrotoxiques (AINS, aminosides, produits de contraste iodés sans hydratation adéquate).\n\n## 5. Évolution, Pronostic & Complications majeures\n- Le stade de la Maladie Rénale Chronique (MRC) est classé de G1 à G5 selon le DFG (G1 : ≥ 90, G2 : 60-89, G3a : 45-59, G3b : 30-44, G4 : 15-29, G5 : < 15 mL/min/1,73 m²).\n- La présence d'une albuminurie (A1, A2, A3) majore considérablement le risque cardiovasculaire et la progression vers l'insuffisance rénale terminale.",
+    "key_takeaways": [
+      "Le DFG normal chez l'adulte jeune est de 100 à 120 mL/min/1,73 m².",
+      "La formule CKD-EPI est actuellement recommandée en routine pour l'estimation du DFG.",
+      "La formule de Cockcroft et Gault estime la clairance absolue (mL/min) et reste la référence pour l'adaptation posologique médicamenteuse.",
+      "Des reins de petite taille à l'échographie orientent formellement vers une origine chronique (IRC).",
+      "La ponction-biopsie rénale (PBR) est l'examen de certitude histologique, nécessitant un bilan d'hémostase rigoureux."
+    ],
+    "exam_traps": [
+      "Piège Annales : Utiliser la clairance de Cockcroft sans surface corporelle pour classer les stades de la MRC (le DFG des classifications KDIGO doit être rapporté à 1,73 m² via MDRD ou CKD-EPI).",
+      "Piège Traitement : Oublier que la créatininémie peut être normale alors que le DFG est déjà altéré chez les sujets âgés ou dénutris (fausse sécurité).",
+      "Piège Diagnostic : Penser que des gros reins éliminent l'IRC (attention à la polykystose rénale, au diabète ou à l'amylose)."
+    ],
+    "diagnostic_criteria": "Affirmation d'une atteinte rénale par des marqueurs de lésions (protéinurie, hématurie) ou une baisse du DFG (< 60 mL/min/1,73 m²) persistante depuis plus de 3 mois.",
+    "treatment_summary": "Stratégie axée sur la néphroprotection par le contrôle tensionnel strict (IEC/ARA2), la réduction de la protéinurie et l'éviction absolue des néphrotoxiques.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-23T13:19:55.634291+00:00"
   }
 ]
