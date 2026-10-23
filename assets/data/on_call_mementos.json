@@ -332,22 +332,22 @@
   },
   {
     "id": "memento_hemorragie_digestive_rvo",
-    "title": "🩸 Hémorragie Digestive par RVO",
-    "category": "Gastro-entérologie & Urgences",
+    "title": "🩸 Hémorragie Digestive par RVO (Varices Œsophagiennes)",
+    "category": "Urgences Médico-Chirurgicales (HGE)",
     "icon_name": "emergency_rounded",
     "color_hex": "#DC2626",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Conditionnement immédiat au déchoquage, 2 VVP de grand calibre, oxygénothérapie, monitorage multiparamétrique et évaluation hémodynamique (choc hémorragique ?).",
-      "Étape 2 : Bilan biologique urgent (NFS, groupage-rhesus, RAI, TP, TCK, ionogramme, urée, créatinine) et commande de CGR en urgence vitale.",
-      "Étape 3 : Thérapie vasoactive précoce avant l'endoscopie : Terlipressine (Glypressin®) IV 2 mg en bolus puis 1 mg/4h OU Somatostatine IV (bolus 250 µg puis 250 µg/h), associée à une Antibioprophylaxie par Ceftriaxone 1g/24h IV.",
-      "Étape 4 : Remplissage prudent restrictif (objectif PAM ≥ 65 mmHg, transfusion prudente si Hb < 7 g/dL) et appel urgent du gastro-entérologue de garde pour endoscopie hémostatique dans les 12 heures.",
-      "Étape 5 : Piège médico-légal et contre-indication absolue : Éviter le remplissage massif par sérum salé isotonique (aggrave l'ascite et l'hypertension portale) et attention au risque d'inhalation bronchique si trouble de la conscience."
+      "Étape 1 : Conditionnement immédiat au déchoquage (2 VVP gros calibre 16G-18G), oxygénothérapie, monitorage, pose d'une SNG (lavage à l'eau froide) et bilan pré-transfusionnel (NFS, groupement, rhésus, TP, TCA, ionogramme, urée, créatinine).",
+      "Étape 2 : Remplissage vasculaire prudent (Cristalloïdes type Ringer Lactate ou NaCl 0,9%) et transfusion de CGR si Hb < 7 g/dL (objectif cible Hb entre 7 et 8 g/dL). Correction des troubles de l'hémostase (PFC, plaquettes si thrombopénie < 50 G/L).",
+      "Étape 3 : Traitement vasoactif précoce et urgent avant l'endoscopie : Terlipressine (Glypressin) IV en bolus de 2 mg, puis 1 mg/4h, ou Somatostatine (bolus 250 µg puis 250 µg/h IVSE).",
+      "Étape 4 : Antibioprophylaxie systématique (Ceftriaxone 1g/24h IV ou Quinolones) et prévention de l'encéphalopathie hépatique (Lactulose en lavement ou per os), puis contacter l'hépato-gastro-entérologue de garde pour FOGD diagnostique et thérapeutique urgente (< 12h).",
+      "Étape 5 : En cas d'échec ou d'hémorragie massive incontrôlable : mise en place d'une sonde de tamponnement (Blakemore ou Linton) par un médecin sénior formé, avec surveillance rapprochée et transfert immédiat en Réanimation."
     ],
-    "scientific_references": "Consensus Baveno VII / SFMU / Société Algérienne de Gastro-Entérologie (SAGE)",
+    "scientific_references": "Consensus Baveno VII / SFMU / SRLF / Société Algérienne de Gastro-Entérologie (SAGE)",
     "is_active": true,
-    "created_at": "2026-10-16T13:33:49.585097+00:00",
-    "updated_at": "2026-10-16T13:33:49.585112+00:00"
+    "created_at": "2026-10-23T20:07:07.925272+00:00",
+    "updated_at": "2026-10-23T20:07:07.925284+00:00"
   },
   {
     "id": "memento_asthme_aigu_grave",
