@@ -5103,64 +5103,82 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header Top Row: Icon + Title + Badge + Tab button
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryTeal.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.person_add_alt_1_rounded, color: AppTheme.primaryTeal, size: 24),
+                  child: const Icon(Icons.person_add_alt_1_rounded, color: AppTheme.primaryTeal, size: 20),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 6,
+                    runSpacing: 4,
                     children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Dernières Inscriptions & Nouveaux Abonnés',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF10B981).withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Text(
-                              'EN DIRECT ⚡',
-                              style: TextStyle(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF059669),
-                              ),
-                            ),
-                          ),
-                        ],
+                      const Text(
+                        'Dernières Inscriptions',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.5),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Alertes temps réel sur les nouveaux comptes et abonnements actifs',
-                        style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          'EN DIRECT ⚡',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF059669),
+                            letterSpacing: 0.3,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                TextButton(
-                  onPressed: () => _tabController.animateTo(1),
-                  child: const Text('Voir tout (Tab 2) ➔', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                InkWell(
+                  onTap: () => _tabController.animateTo(1),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.darkSurfaceElevated : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: isDark ? AppTheme.darkBorder : Colors.grey.shade300),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Tab 2', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                        SizedBox(width: 2),
+                        Icon(Icons.arrow_forward_rounded, size: 13),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 6),
+            Text(
+              'Alertes temps réel sur les nouveaux comptes et abonnements actifs',
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+            ),
+            const SizedBox(height: 12),
+            const Divider(height: 1),
+            const SizedBox(height: 8),
+
             if (topUsers.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -5176,12 +5194,38 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: topUsers.length,
-                separatorBuilder: (_, __) => const Divider(height: 14),
+                separatorBuilder: (_, __) => const Divider(height: 12),
                 itemBuilder: (ctx, i) {
                   final u = topUsers[i];
                   return _buildRecentSubscriberRow(context, u, isDark);
                 },
               ),
+
+            const SizedBox(height: 10),
+            InkWell(
+              onTap: () => _tabController.animateTo(1),
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryTeal.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Gérer tous les comptes dans Médecins & Comptes',
+                      style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: AppTheme.primaryTeal),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(Icons.arrow_forward_rounded, size: 14, color: AppTheme.primaryTeal),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -5209,14 +5253,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         child: Row(
           children: [
             CircleAvatar(
-              radius: 19,
+              radius: 18,
               backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
               child: Text(
                 initials,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -5226,20 +5270,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       Flexible(
                         child: Text(
                           u.fullName,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (u.isAdmin) ...[
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 4),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                           decoration: BoxDecoration(
                             color: Colors.red.shade100,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text('ADMIN', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.red)),
+                          child: const Text('ADMIN', style: TextStyle(fontSize: 8.5, fontWeight: FontWeight.bold, color: Colors.red)),
                         ),
                       ],
                     ],
@@ -5247,39 +5291,40 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   const SizedBox(height: 1),
                   Text(
                     '${u.medicalRole} • ${u.faculty}',
-                    style: TextStyle(fontSize: 11, color: isDark ? Colors.white60 : Colors.grey.shade700),
+                    style: TextStyle(fontSize: 10.5, color: isDark ? Colors.white60 : Colors.grey.shade700),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     u.email,
-                    style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
+                    style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: tierColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: tierColor.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     tierLabel,
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: tierColor),
+                    style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: tierColor),
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 2),
                 Text(
                   _formatRelativeTime(u.createdAt),
-                  style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                  style: TextStyle(fontSize: 9.5, color: Colors.grey.shade500),
                 ),
               ],
             ),

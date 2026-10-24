@@ -348,6 +348,20 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       );
 
       if (result['success'] == true) {
+        // Send email confirmation to user
+        final targetUser = state.users.where((u) => u.id == event.userId).firstOrNull;
+        if (targetUser != null && targetUser.email.isNotEmpty) {
+          final expiryDate = DateTime.now().add(Duration(days: event.durationDays));
+          MedsinaNotificationDispatcher.sendCandidatePaymentApprovedEmail(
+            userEmail: targetUser.email,
+            userName: targetUser.fullName,
+            tierName: event.tier.toUpperCase(),
+            durationDays: event.durationDays,
+            expiryDate: expiryDate,
+            amount: 0.0,
+          );
+        }
+
         final usersData = await SupabaseService.fetchAdminUsers();
         final metricsData = await SupabaseService.fetchAdminMetrics();
 
