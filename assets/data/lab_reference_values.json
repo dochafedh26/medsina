@@ -398,5 +398,20 @@
     ],
     "created_at": "2026-10-23T13:20:36.934839+00:00",
     "updated_at": "2026-10-23T13:20:36.934853+00:00"
+  },
+  {
+    "id": "lab_acide_urique",
+    "name": "Acide urique (Uricémie)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Homme: 40 - 70 mg/L (240 - 420 µmol/L) | Femme: 30 - 60 mg/L (180 - 360 µmol/L)",
+    "unit": "mg/L (Conversion µmol/L = mg/L x 5.95)",
+    "high_interpretation": "Hyperuricémie (> 70 mg/L chez l'homme, > 60 mg/L chez la femme). Causes : Insuffisance rénale (diminution de l'excrétion), excès d'apport (purines, alcool), syndrome métabolique, médicaments (diurétiques thiazidiques ou de l'anse, aspirine à faible dose), lyse tumorale (chimio-induite), psoriasis étendu. Risques : Crise de goutte aiguë, néphropathie uratique aiguë, lithiase rénale urique. Conduite à tenir : Rechercher une atteinte articulaire ou rénale, hydratation, traiter la cause, et discuter d'un traitement hypouricémiant (allopurinol, febuxostat) en dehors de la crise aiguë.",
+    "low_interpretation": "Hypouricémie (< 30 mg/L). Causes : Déficit de réabsorption tubulaire proximale (syndrome de Fanconi, maladie de Wilson, diabète sucré), iatrogène (uricosuriques : benzbromarone, fortes doses de salicylés, losartan, œstrogènes), carence d'apport sévère / dénutrition, syndrome de SIADH (par augmentation de la clearance urique). Conduite à tenir : Rechercher une tubulopathie proximale (glycosurie sans hyperglycémie, aminoacidurie, phosphaturie) et explorer la fonction hépatique (Wilson).",
+    "clinical_notes": [
+      "Piège pré-analytique : L'uricémie peut être faussement abaissée en présence de fortes concentrations de bilirubine, d'acide ascorbique (vitamine C) ou de glucose selon la méthode enzymatique utilisée (uricase).",
+      "Syndrome de lyse tumorale : Urgence médico-chirurgicale en onco-hématologie où une hyperuricémie majeure (> 80-100 mg/L) s'associe à une hyperkaliémie, hyperphosphatémie et hypocalcémie, menaçant le pronostic rénal et vital (nécessité d'une diurèse forcée et de rasburicase)."
+    ],
+    "created_at": "2026-10-24T04:27:36.253748+00:00",
+    "updated_at": "2026-10-24T04:27:36.253766+00:00"
   }
 ]
