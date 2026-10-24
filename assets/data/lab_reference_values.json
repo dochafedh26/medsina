@@ -413,5 +413,21 @@
     ],
     "created_at": "2026-10-24T04:27:36.253748+00:00",
     "updated_at": "2026-10-24T04:27:36.253766+00:00"
+  },
+  {
+    "id": "lab_prolactine",
+    "name": "Prolactine sérique (PRL)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Homme: 2 - 18 ng/mL (40 - 380 mUI/L) | Femme non enceinte: 3 - 25 ng/mL (60 - 500 mUI/L) | Femme enceinte: 20 - 400 ng/mL",
+    "unit": "ng/mL (ou mUI/L, facteur de conversion approximatif 1 ng/mL ≈ 21,2 mUI/L)",
+    "high_interpretation": "Hyperprolactinémie : Causes physiologiques (grossesse, allaitement, stress, sommeil), iatrogènes (antipsychotiques, antidépresseurs, métoclopramide), pathologiques (macroprolactinome ou microprolactinome hypophysaire, hypothyroïdie primaire par TSH élevée, insuffisance rénale chronique, syndrome des ovaires polykystiques - SOPK). Clinique : gynécomastie, impuissance, troubles de la libido chez l'homme ; aménorrhée, galactorrhée, infertilité chez la femme. Seuil d'urgence : > 250 ng/mL oriente fortement vers un macroprolactinome (risque de compression chiasmatique avec troubles visuels, urgence neuro-ophtalmologique). Conduite à tenir : éliminer une cause iatrogène ou biologique (macroprolactine), doser TSH, vérifier la fonction rénale, et réaliser une IRM hypophysaire si persistance.",
+    "low_interpretation": "Hypoprolactinémie : Rare et généralement sans retentissement clinique majeur. Causes : hypopituitarisme global (insuffisance antéhypophysaire), iatrogène (agonistes dopaminergiques à forte dose, bromocriptine, cabergoline). Clinique : absence de retentissement spécifique, souvent masquée par les autres déficits endocriniens associés en cas d'atteinte hypophysaire globale. Conduite à tenir : exploration de l'axe thyréotrope, gonadotrope et corticotrope en cas de suspicion d'hypopituitarisme.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Effet crochet (hook effect) lors des dosages immunologiques en présence d'une macroprolactinémie massive (> 1000 ng/mL saturant les anticorps du réactif), donnant faussement des valeurs modérément élevées. Solution : demander une dilution de l'échantillon au laboratoire.",
+      "Recherche systématique de la macroprolactine : En présence d'une hyperprolactinémie asymptomatique, demander une précipitation au polyéthylène glycol (PEG) pour éliminer un complexe macroprolactine (molécule inactive biologiquement mais immunoréactive).",
+      "Conditions de prélèvement strictes : Le prélèvement doit être fait idéalement le matin, au repos, sans stress excessif et sans stimulation préalable des mamelons, la prolactine étant une hormone de stress très fluctuante."
+    ],
+    "created_at": "2026-10-24T12:37:56.669623+00:00",
+    "updated_at": "2026-10-24T12:37:56.669638+00:00"
   }
 ]
