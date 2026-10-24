@@ -18,6 +18,12 @@ class AppConstants {
 
   // API Configuration (Silent backend proxy)
   static const String defaultApiBaseUrl = 'https://api.medsina.com/v1';
+
+  // App Download Links
+  static const String androidDownloadUrl = 'https://medsina.medevsync.com/download/medsina.apk';
+  static const String windowsDownloadUrl = 'https://medsina.medevsync.com/download/medsina-setup.exe';
+  static const String webAppUrl = 'https://medsina.medevsync.com';
+  static const String releasesUrl = 'https://github.com/dochafedh26/medsina/releases/latest';
 }
 
 enum SubscriptionTier {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
@@ -203,6 +205,8 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                         ),
                       ),
 
+                      const SizedBox(height: 16),
+                      _buildDownloadSection(isDark),
                       const SizedBox(height: 18),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -578,5 +582,249 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       ),
     );
   }
-}
 
+  Widget _buildDownloadSection(bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : Colors.teal.shade100,
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.install_mobile_rounded, color: AppTheme.primaryTeal, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            'Installer l\'Application Medsina',
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.blueGrey.shade900,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'OFFLINE ⚡',
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF059669),
+                              letterSpacing: 0.4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Profitez de la révision hors-ligne complète et de la fluidité native.',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark ? Colors.white60 : Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 360;
+              final buttons = [
+                _buildDownloadButton(
+                  title: 'Android APK',
+                  subtitle: 'Mobile & Tablette',
+                  badge: 'v${AppConstants.appVersion}',
+                  icon: Icons.android_rounded,
+                  accentColor: const Color(0xFF10B981),
+                  isDark: isDark,
+                  onTap: () => _openUrl(AppConstants.androidDownloadUrl),
+                ),
+                if (!isNarrow) const SizedBox(width: 10) else const SizedBox(height: 8),
+                _buildDownloadButton(
+                  title: 'Windows PC',
+                  subtitle: 'Setup 64-bit Bureau',
+                  badge: 'v${AppConstants.appVersion}',
+                  icon: Icons.desktop_windows_rounded,
+                  accentColor: const Color(0xFF0284C7),
+                  isDark: isDark,
+                  onTap: () => _openUrl(AppConstants.windowsDownloadUrl),
+                ),
+              ];
+
+              if (isNarrow) {
+                return Column(children: buttons);
+              }
+              return Row(
+                children: [
+                  Expanded(child: buttons[0]),
+                  buttons[1],
+                  Expanded(child: buttons[2]),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          Center(
+            child: InkWell(
+              onTap: () => _openUrl(AppConstants.releasesUrl),
+              borderRadius: BorderRadius.circular(6),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.open_in_new_rounded, size: 12, color: Colors.grey.shade500),
+                    const SizedBox(width: 5),
+                    Text(
+                      'Toutes les versions et mises à jour sur GitHub Releases',
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w500,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDownloadButton({
+    required String title,
+    required String subtitle,
+    required String badge,
+    required IconData icon,
+    required Color accentColor,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+          decoration: BoxDecoration(
+            color: accentColor.withValues(alpha: isDark ? 0.12 : 0.08),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: accentColor.withValues(alpha: 0.35),
+              width: 1.1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.18),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 18, color: accentColor),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.blueGrey.shade900,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          badge,
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: accentColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 9.5,
+                        color: isDark ? Colors.white54 : Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.download_rounded, size: 16, color: accentColor),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openUrl(String urlStr) async {
+    try {
+      final uri = Uri.parse(urlStr);
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Impossible d\'ouvrir le lien : $e'),
+            backgroundColor: Colors.red.shade700,
+          ),
+        );
+      }
+    }
+  }
+}
