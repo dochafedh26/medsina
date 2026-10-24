@@ -683,5 +683,19 @@
     "created_at": "2026-10-24T04:57:41.232332+00:00",
     "updated_at": "2026-10-24T04:57:41.232345+00:00",
     "algerianAvailability": "Disponible en réanimation, blocs opératoires, UMC des grands CHU et via la PCH pour les services d'anesthésie-réanimation."
+  },
+  {
+    "id": "drug_cisatracurium",
+    "dci": "Cisatracurium",
+    "brand": "Nimbex (GlaxoSmithKline), génériques importés via PCH / cliniques privées",
+    "category": "Neurologie / Sédation",
+    "route": "IVD (bolus) ou Perfusion IV continue (PSE)",
+    "indication": "Curarisation pour intubation trachéale en séquence rapide ou maintien de la relaxation musculaire en ventilation mécanique prolongée (SDRA, état de mal convulsif, HIC)",
+    "dose": "• Posologie adulte : Intubation : 0,15 à 0,20 mg/kg IVD (délai d'action 2 min). Entretien en PSE : 1 à 3 mcg/kg/min (0,06 à 0,18 mg/kg/h) à adapter selon monitorage (TOF / train-of-four).\n• Posologie pédiatrique (> 1 mois) : Intubation : 0,15 mg/kg IVD. Entretien en PSE : 1 à 2 mcg/kg/min.",
+    "alert": "• Contre-indications absolues : Hypersensibilité connue au cisatracurium ou autres curares.\n• Pièges létaux : Ne jamais administrer sans sédation et analgésie préalables et profondes (risque de conscience per-opératoire paralysée). Absence de réversion par la néostigmine si le bloc est total (attendre la décurarisation spontanée ou utiliser le sugammadex si rocuronium, ici métabolisme de Hofmann indépendant foie/rein).\n• Surveillance : Monitorage neuromusculaire (TOF), signes d'histamino-libération (très faible comparé au atracurium mais possible), sédation continue.",
+    "algerian_availability": "Disponible en réanimation, blocs opératoires et UMC (souvent via la PCH ou importation directe, présence limitée dans le portefeuille Saidal).",
+    "created_at": "2026-10-24T12:53:51.178564+00:00",
+    "updated_at": "2026-10-24T12:53:51.178581+00:00",
+    "algerianAvailability": "Disponible en réanimation, blocs opératoires et UMC (souvent via la PCH ou importation directe, présence limitée dans le portefeuille Saidal)."
   }
 ]
