@@ -25,11 +25,12 @@ class SelectModuleEvent extends RevisionEvent {
 class OpenCourseQuestionsEvent extends RevisionEvent {
   final CourseModel course;
   final bool resume;
+  final bool filterForStudent;
 
-  const OpenCourseQuestionsEvent(this.course, {this.resume = false});
+  const OpenCourseQuestionsEvent(this.course, {this.resume = false, this.filterForStudent = false});
 
   @override
-  List<Object?> get props => [course, resume];
+  List<Object?> get props => [course, resume, filterForStudent];
 }
 
 class PauseCurrentSessionEvent extends RevisionEvent {}
@@ -37,11 +38,12 @@ class PauseCurrentSessionEvent extends RevisionEvent {}
 class StartCustomSessionEvent extends RevisionEvent {
   final CustomRevisionSession session;
   final bool resume;
+  final bool filterForStudent;
 
-  const StartCustomSessionEvent(this.session, {this.resume = false});
+  const StartCustomSessionEvent(this.session, {this.resume = false, this.filterForStudent = false});
 
   @override
-  List<Object?> get props => [session, resume];
+  List<Object?> get props => [session, resume, filterForStudent];
 }
 
 class DeleteCustomSessionEvent extends RevisionEvent {

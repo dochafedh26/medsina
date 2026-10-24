@@ -240,5 +240,109 @@ class ResidencyRepository {
 
     return null;
   }
-}
 
+  /// Returns the academic medical year (1 to 6) associated with a given module
+  static int getYearForModule(MedicalModuleModel module) {
+    final cat = module.category.toLowerCase();
+    final name = module.name.toLowerCase();
+
+    if (cat.contains('1ère') || cat.contains('1 ere') || cat.contains('1er') || name.contains('(1 ère)') || name.contains('(1ère)')) {
+      return 1;
+    }
+    if (cat.contains('2ème') || cat.contains('2 eme') || cat.contains('2e') || name.contains('(2 ère)') || name.contains('(2ème)') || name.contains('(2 ème)')) {
+      return 2;
+    }
+    if (cat.contains('3ème') || cat.contains('3 eme') || cat.contains('3e') || name.contains('(3 ère)') || name.contains('(3ème)') || name.contains('(3 ème)')) {
+      return 3;
+    }
+
+    // 4ème Année: Pathologies Majeures (Cardio, Pneumo, Gastro, Neuro, Infectieux, Hemato)
+    if (name.contains('cardio') ||
+        name.contains('pneumo') ||
+        name.contains('gastro') ||
+        name.contains('neuro') ||
+        name.contains('infectie') ||
+        name.contains('hemato') ||
+        name.contains('hémato')) {
+      return 4;
+    }
+
+    // 5ème Année: Pédiatrie, Gynéco, Locomoteur, Néphro, Endocrino, Psy
+    if (name.contains('pédiatr') ||
+        name.contains('pediatr') ||
+        name.contains('gyneco') ||
+        name.contains('gynéco') ||
+        name.contains('locomoteur') ||
+        name.contains('uro') ||
+        name.contains('néphro') ||
+        name.contains('nephro') ||
+        name.contains('endocrin') ||
+        name.contains('psychiatr')) {
+      return 5;
+    }
+
+    // 6ème Année: Spécialités & Urgences & Médecine Légale/Travail
+    if (name.contains('dermat') ||
+        name.contains('orl') ||
+        name.contains('ophtalm') ||
+        name.contains('épidémio') ||
+        name.contains('epidemio') ||
+        name.contains('légale') ||
+        name.contains('legale') ||
+        name.contains('travail') ||
+        name.contains('système') ||
+        name.contains('systeme') ||
+        name.contains('urgence') ||
+        name.contains('umc') ||
+        name.contains('gériatr') ||
+        name.contains('geriatr')) {
+      return 6;
+    }
+
+    // Default to 4th year if clinical
+    return 4;
+  }
+
+  /// Filters modules specifically for a medical student's study year (1 to 6)
+  static List<MedicalModuleModel> filterModulesForStudent(List<MedicalModuleModel> allModules, int studyYear) {
+    return allModules.where((m) => getYearForModule(m) == studyYear).toList();
+  }
+
+  /// Label for an academic year
+  static String getYearTitle(int year) {
+    switch (year) {
+      case 1:
+        return '1ère Année (Sciences Fondamentales I)';
+      case 2:
+        return '2ème Année (Sciences Fondamentales II)';
+      case 3:
+        return '3ème Année (Pré-clinique & Sémiologie)';
+      case 4:
+        return '4ème Année (Externat - Pathologie I)';
+      case 5:
+        return '5ème Année (Externat - Pathologie II)';
+      case 6:
+        return '6ème Année (Externat - Thérapeutique & Spécialités)';
+      default:
+        return 'e Année de Médecine';
+    }
+  }
+
+  /// Determines if a question is exclusively from a residanat competition
+  static bool isResidencyContestQuestion(QcmQuestion question) {
+    final src = question.source.toLowerCase();
+    return src.contains('résidanat') ||
+        src.contains('residanat') ||
+        src.contains('concours') ||
+        src.contains('national');
+  }
+
+  /// Filters out residency contest questions for student mode, keeping faculty/EMD/exams
+  static List<QcmQuestion> filterQuestionsForStudent(List<QcmQuestion> questions, {bool allowAllIfEmpty = true}) {
+    final filtered = questions.where((q) => !isResidencyContestQuestion(q)).toList();
+    if (filtered.isEmpty && allowAllIfEmpty) {
+      return questions;
+    }
+    return filtered;
+  }
+}

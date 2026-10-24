@@ -39,15 +39,21 @@ class SupabaseService {
     required String fullName,
     required String medicalRole,
     required String faculty,
+    int? studyYear,
   }) async {
+    final metaData = <String, dynamic>{
+      'full_name': fullName.trim(),
+      'medical_role': medicalRole.trim(),
+      'faculty': faculty.trim(),
+    };
+    if (studyYear != null) {
+      metaData['study_year'] = studyYear;
+    }
+
     final res = await client.auth.signUp(
       email: email.trim(),
       password: password,
-      data: {
-        'full_name': fullName.trim(),
-        'medical_role': medicalRole.trim(),
-        'faculty': faculty.trim(),
-      },
+      data: metaData,
     );
 
     // Notify Administrator in Realtime about new member registration
@@ -990,6 +996,23 @@ class SupabaseService {
 
   /// Default local plans in case cloud table is not yet created
   static List<Map<String, dynamic>> get defaultPlans => [
+        {
+          'id': 'etudiant',
+          'name': 'Pass Étudiant (1ère - 6ème)',
+          'badge': 'CURSUS UNIVERSITAIRE',
+          'price_yearly': 3500.0,
+          'price_monthly': 500.0,
+          'currency': 'DZD',
+          'discount_percent': 25,
+          'is_active': true,
+          'features': [
+            'Programme personnalisé selon votre année (1ère à 6ème)',
+            'Banque QCMs d\'examens ultérieurs & EMD de Faculté',
+            'Exclusion des pièges hors-programme du résidanat',
+            'Fiches de cours & résumés officiels de l\'année',
+            'Mode révision semestrielle & partiels',
+          ],
+        },
         {
           'id': 'free',
           'name': 'Pass Découverte',

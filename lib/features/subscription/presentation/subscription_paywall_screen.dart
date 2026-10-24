@@ -103,6 +103,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
         final allAccessPlan = getPlan('all_access');
         final residentElitePlan = getPlan('resident_elite');
         final clinicalProPlan = getPlan('clinical_pro');
+        final etudiantPlan = getPlan('etudiant');
 
         return Scaffold(
           appBar: AppBar(
@@ -576,6 +577,27 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
               ),
               const SizedBox(height: 16),
 
+              _buildPlanCard(
+                context,
+                user: state.user,
+                tier: SubscriptionTier.etudiant,
+                title: etudiantPlan?.name ?? 'Pass Étudiant (1ère - 6ème)',
+                badge: etudiantPlan?.badge ?? 'CURSUS UNIVERSITAIRE',
+                color: const Color(0xFF2563EB),
+                planItem: etudiantPlan,
+                duration: _selectedDuration,
+                features: etudiantPlan?.features.isNotEmpty == true
+                    ? etudiantPlan!.features
+                    : [
+                        'Programme personnalisé selon votre année d\'étude (1ère à 6ème)',
+                        'Banque QCMs d\'examens ultérieurs & EMD de Faculté',
+                        'Exclusion des pièges hors-programme du résidanat',
+                        'Fiches de cours & résumés officiels de l\'année',
+                        'Mode révision semestrielle & partiels',
+                      ],
+                isCurrent: currentTier == SubscriptionTier.etudiant,
+              ),
+              const SizedBox(height: 16),
               _buildPlanCard(
                 context,
                 user: state.user,

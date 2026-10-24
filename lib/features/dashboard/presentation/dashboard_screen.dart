@@ -162,6 +162,11 @@ class DashboardScreen extends StatelessWidget {
           badgeText = '🩺 PASS CLINIQUE PRO • PRATIQUE HOSPITALIÈRE & UMC';
           subtitleText = 'Accès clinique complet : CAT urgences, scores & pharmacopée ($daysRemaining jours restants)';
           break;
+        case SubscriptionTier.etudiant:
+          gradientColors = const [Color(0xFF1D4ED8), Color(0xFF2563EB), Color(0xFF60A5FA)];
+          badgeText = '🎓 PASS ÉTUDIANT • CURSUS UNIVERSITAIRE';
+          subtitleText = 'Programme personnalisé : cours & examens de faculté ($daysRemaining jours restants)';
+          break;
         case SubscriptionTier.free:
           gradientColors = const [Color(0xFF334155), Color(0xFF475569), Color(0xFF64748B)];
           badgeText = '⚡ PASS DÉCOUVERTE • PÉRIODE D\'ESSAI (14J)';
@@ -312,6 +317,35 @@ class DashboardScreen extends StatelessWidget {
           'Lecture sécurisée & exports Anki',
           Icons.menu_book_rounded,
           const Color(0xFF2563EB),
+        ),
+      );
+    } else if (tier == SubscriptionTier.etudiant && !isExpired) {
+      // Étudiant: Focused on academic year curriculum & faculty exams
+      cards.add(
+        _buildStatCard(
+          'Cursus Universitaire',
+          'Modules de votre Année',
+          'Cours officiels & fiches synthétiques',
+          Icons.school_rounded,
+          const Color(0xFF2563EB),
+        ),
+      );
+      cards.add(
+        _buildStatCard(
+          'Banque d\'Examens & EMD',
+          'Sujets & Partiels Faculté',
+          'Questions d\'évaluation semestrielles',
+          Icons.quiz_rounded,
+          const Color(0xFF0D9488),
+        ),
+      );
+      cards.add(
+        _buildStatCard(
+          'Révision Structurée',
+          'Examens Antérieurs',
+          'Sans pièges de concours résidanat',
+          Icons.menu_book_rounded,
+          const Color(0xFFF59E0B),
         ),
       );
     } else if (tier == SubscriptionTier.clinicalPro && !isExpired) {

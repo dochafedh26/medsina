@@ -78,7 +78,10 @@ class RevisionBloc extends Bloc<RevisionEvent, RevisionState> {
       revealedQuestions: {},
     ));
 
-    final questions = await ResidencyRepository.getQuestionsForCourseAsync(event.course);
+    var questions = await ResidencyRepository.getQuestionsForCourseAsync(event.course);
+    if (event.filterForStudent) {
+      questions = ResidencyRepository.filterQuestionsForStudent(questions);
+    }
 
     if (event.resume) {
       final saved = await _storage.getCourseProgress(event.course.id);

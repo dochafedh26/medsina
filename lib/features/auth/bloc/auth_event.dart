@@ -27,6 +27,7 @@ class RegisterSubmittedEvent extends AuthEvent {
   final String password;
   final String medicalRole;
   final String faculty;
+  final int? studyYear;
 
   const RegisterSubmittedEvent({
     required this.fullName,
@@ -34,10 +35,11 @@ class RegisterSubmittedEvent extends AuthEvent {
     required this.password,
     required this.medicalRole,
     required this.faculty,
+    this.studyYear,
   });
 
   @override
-  List<Object?> get props => [fullName, email, password, medicalRole, faculty];
+  List<Object?> get props => [fullName, email, password, medicalRole, faculty, studyYear];
 }
 
 class DemoLoginEvent extends AuthEvent {

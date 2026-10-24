@@ -1,3 +1,4 @@
+import '../../auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_theme.dart';
@@ -168,7 +169,8 @@ class ResumeSessionSheet extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: true));
+                final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+                context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: true, filterForStudent: isStudent));
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
                 );
@@ -192,7 +194,8 @@ class ResumeSessionSheet extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: false));
+                final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+                context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: false, filterForStudent: isStudent));
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
                 );

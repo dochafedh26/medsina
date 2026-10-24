@@ -1,3 +1,5 @@
+import '../../auth/bloc/auth_bloc.dart';
+import '../data/residency_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_theme.dart';
@@ -37,7 +39,10 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
   void initState() {
     super.initState();
     final dateStr = DateTime.now().toString().substring(0, 10);
-    _titleController = TextEditingController(text: 'Session Révision $dateStr');
+    final authUser = context.read<AuthBloc>().state.user;
+    final isStudent = authUser?.isStudent == true;
+    final defaultTitle = isStudent ? 'Session EMD $dateStr' : 'Session Révision $dateStr';
+    _titleController = TextEditingController(text: defaultTitle);
 
     // Pre-select first module if available
     if (widget.allModules.isNotEmpty) {
@@ -111,7 +116,8 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
     );
 
     Navigator.of(context).pop();
-    context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false));
+    final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+    context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false, filterForStudent: isStudent));
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
     );
@@ -120,7 +126,14 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final authUser = context.read<AuthBloc>().state.user;
+    final isStudent = authUser?.isStudent == true;
+    final studentYear = authUser?.studyYear ?? 1;
+
     final filteredModules = widget.allModules.where((m) {
+      if (isStudent && _moduleFilter.isEmpty) {
+        return ResidencyRepository.getYearForModule(m) == studentYear;
+      }
       if (_moduleFilter.isEmpty) return true;
       return m.name.toLowerCase().contains(_moduleFilter.toLowerCase());
     }).toList();

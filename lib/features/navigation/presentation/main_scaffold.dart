@@ -170,6 +170,24 @@ class _MainScaffoldState extends State<MainScaffold> {
       ));
     } else {
       switch (tier) {
+        case SubscriptionTier.etudiant:
+          // Étudiant en Médecine: Programme Ciblé de l'Année & EMD
+          items.add(const NavItemConfig(
+            label: 'Mon Année',
+            title: 'Cursus Universitaire & Examens',
+            icon: Icons.school_outlined,
+            selectedIcon: Icons.school_rounded,
+            page: RevisionCatalogScreen(),
+          ));
+          items.add(const NavItemConfig(
+            label: 'Outils & Normes',
+            title: 'Normes Biologiques & Calculateurs',
+            icon: Icons.calculate_outlined,
+            selectedIcon: Icons.calculate_rounded,
+            page: PracticalToolsScreen(),
+          ));
+          break;
+
         case SubscriptionTier.residentElite:
           // Dr. Amine: Uniquement Résidanat et ses outils de révision
           items.add(const NavItemConfig(

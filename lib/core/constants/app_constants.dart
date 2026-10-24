@@ -11,6 +11,7 @@ class AppConstants {
 
   // Subscription Tiers
   static const String tierFree = 'free';
+  static const String tierEtudiant = 'etudiant';
   static const String tierClinicalPro = 'clinical_pro';
   static const String tierResidentElite = 'resident_elite';
   static const String tierAllAccess = 'all_access';
@@ -21,6 +22,7 @@ class AppConstants {
 
 enum SubscriptionTier {
   free,
+  etudiant,
   clinicalPro,
   residentElite,
   allAccess,
@@ -31,6 +33,8 @@ extension SubscriptionTierExtension on SubscriptionTier {
     switch (this) {
       case SubscriptionTier.free:
         return AppConstants.tierFree;
+      case SubscriptionTier.etudiant:
+        return AppConstants.tierEtudiant;
       case SubscriptionTier.clinicalPro:
         return AppConstants.tierClinicalPro;
       case SubscriptionTier.residentElite:
@@ -44,6 +48,8 @@ extension SubscriptionTierExtension on SubscriptionTier {
     switch (this) {
       case SubscriptionTier.free:
         return 'Pass Découverte';
+      case SubscriptionTier.etudiant:
+        return 'Pass Étudiant';
       case SubscriptionTier.clinicalPro:
         return 'Pass Clinique Pro';
       case SubscriptionTier.residentElite:
@@ -57,6 +63,8 @@ extension SubscriptionTierExtension on SubscriptionTier {
     switch (this) {
       case SubscriptionTier.free:
         return 'GRATUIT';
+      case SubscriptionTier.etudiant:
+        return 'ÉTUDIANT';
       case SubscriptionTier.clinicalPro:
         return 'CLINIQUE PRO';
       case SubscriptionTier.residentElite:
@@ -70,6 +78,8 @@ extension SubscriptionTierExtension on SubscriptionTier {
     switch (this) {
       case SubscriptionTier.free:
         return const Color(0xFF64748B);
+      case SubscriptionTier.etudiant:
+        return const Color(0xFF2563EB); // Royal Blue for students
       case SubscriptionTier.clinicalPro:
         return const Color(0xFF0284C7);
       case SubscriptionTier.residentElite:
@@ -85,6 +95,10 @@ extension SubscriptionTierExtension on SubscriptionTier {
 
   bool canAccessResident() {
     return this == SubscriptionTier.residentElite || this == SubscriptionTier.allAccess;
+  }
+
+  bool canAccessEtudiant() {
+    return this == SubscriptionTier.etudiant || this == SubscriptionTier.residentElite || this == SubscriptionTier.allAccess;
   }
 
   bool hasUnlimitedExports() {

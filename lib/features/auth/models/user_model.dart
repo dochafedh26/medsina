@@ -14,6 +14,7 @@ class UserModel extends Equatable {
   final bool isBanned;
   final String? banReason;
   final int rejectedPaymentsCount;
+  final int? studyYear; // 1 à 6 pour les étudiants en médecine
 
   const UserModel({
     required this.id,
@@ -28,7 +29,33 @@ class UserModel extends Equatable {
     this.isBanned = false,
     this.banReason,
     this.rejectedPaymentsCount = 0,
+    this.studyYear,
   });
+
+  bool get isStudent {
+    final role = medicalRole.toLowerCase();
+    return role.contains('étudiant') ||
+        role.contains('etudiant') ||
+        role.contains('externe') ||
+        (studyYear != null && studyYear! >= 1 && studyYear! <= 6);
+  }
+
+  bool get isInternOrDoctor {
+    final role = medicalRole.toLowerCase();
+    return role.contains('interne') ||
+        role.contains('médecin') ||
+        role.contains('medecin') ||
+        role.contains('praticien') ||
+        role.contains('résident') ||
+        role.contains('resident');
+  }
+
+  bool get isResidencyCandidate {
+    final role = medicalRole.toLowerCase();
+    return role.contains('candidat') ||
+        role.contains('concours') ||
+        (role.contains('résidanat') && !role.contains('médecin résid'));
+  }
 
   bool get isSubscriptionActive {
     return !isBanned && DateTime.now().isBefore(subscriptionExpiry);
@@ -53,6 +80,7 @@ class UserModel extends Equatable {
     bool? isBanned,
     String? banReason,
     int? rejectedPaymentsCount,
+    int? studyYear,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -67,6 +95,7 @@ class UserModel extends Equatable {
       isBanned: isBanned ?? this.isBanned,
       banReason: banReason ?? this.banReason,
       rejectedPaymentsCount: rejectedPaymentsCount ?? this.rejectedPaymentsCount,
+      studyYear: studyYear ?? this.studyYear,
     );
   }
 
@@ -90,12 +119,16 @@ class UserModel extends Equatable {
       'ban_reason': banReason,
       'rejectedPaymentsCount': rejectedPaymentsCount,
       'rejected_payments_count': rejectedPaymentsCount,
+      'studyYear': studyYear,
+      'study_year': studyYear,
     };
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     SubscriptionTier parseTier(String? val) {
       switch (val) {
+        case AppConstants.tierEtudiant:
+          return SubscriptionTier.etudiant;
         case AppConstants.tierClinicalPro:
           return SubscriptionTier.clinicalPro;
         case AppConstants.tierResidentElite:
@@ -111,6 +144,16 @@ class UserModel extends Equatable {
     final isBan = json['isBanned'] == true || json['is_banned'] == true;
     final reason = json['banReason'] ?? json['ban_reason'];
     final rejections = (json['rejectedPaymentsCount'] ?? json['rejected_payments_count'] as num?)?.toInt() ?? 0;
+    
+    // Parse study year from direct property or derive from role
+    int? year = (json['studyYear'] ?? json['study_year'] as num?)?.toInt();
+    if (year == null) {
+      final role = (json['medicalRole'] ?? json['medical_role'] ?? '').toString();
+      final match = RegExp(r'([1-6])(?:[eè]re|[eè]me)?\s*ann[eé]e', caseSensitive: false).firstMatch(role);
+      if (match != null) {
+        year = int.tryParse(match.group(1) ?? '');
+      }
+    }
 
     return UserModel(
       id: json['id'] ?? '',
@@ -127,6 +170,7 @@ class UserModel extends Equatable {
       isBanned: isBan,
       banReason: reason,
       rejectedPaymentsCount: rejections,
+      studyYear: year,
     );
   }
 
@@ -144,5 +188,6 @@ class UserModel extends Equatable {
         isBanned,
         banReason,
         rejectedPaymentsCount,
+        studyYear,
       ];
 }

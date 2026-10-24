@@ -9,6 +9,7 @@ import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
+import '../data/residency_repository.dart';
 import '../models/module_model.dart';
 import '../models/revision_session_model.dart';
 import 'course_pdf_viewer_screen.dart';
@@ -27,8 +28,9 @@ class RevisionCatalogScreen extends StatefulWidget {
 class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
   String _searchQuery = '';
   String _selectedCategory = 'Tous';
+  bool _initializedCategory = false;
 
-  final List<String> _categories = [
+  final List<String> _defaultCategories = [
     'Tous',
     'Clinique & Concours Résidanat',
     '1ère Année',
@@ -45,13 +47,38 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final canPop = Navigator.of(context).canPop();
+    final authUser = context.watch<AuthBloc>().state.user;
+    final isStudent = authUser?.isStudent == true;
+    final studentYear = authUser?.studyYear ?? 1;
+
+    final categories = isStudent
+        ? [
+            'Mon Année (${studentYear}e)',
+            '1ère Année',
+            '2ème Année',
+            '3ème Année',
+            '4ème Année',
+            '5ème Année',
+            '6ème Année',
+            'Tous les Modules',
+          ]
+        : _defaultCategories;
+
+    if (!_initializedCategory) {
+      _selectedCategory = isStudent ? 'Mon Année (${studentYear}e)' : 'Tous';
+      _initializedCategory = true;
+    }
+
+    final screenTitle = isStudent
+        ? '🎓 Cursus Universitaire • ${studentYear}e Année'
+        : 'Catalogue & Révision Résidanat';
 
     return Scaffold(
       appBar: canPop
           ? AppBar(
-              title: const Text(
-                'Catalogue & Révision Résidanat',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              title: Text(
+                screenTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_rounded),
@@ -66,8 +93,27 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
           }
 
           final filteredModules = state.modules.where((m) {
-            final matchesCat = _selectedCategory == 'Tous' ||
-                m.category.toLowerCase().contains(_selectedCategory.toLowerCase());
+            bool matchesCat = true;
+            if (isStudent && _selectedCategory == 'Mon Année (${studentYear}e)') {
+              matchesCat = ResidencyRepository.getYearForModule(m) == studentYear;
+            } else if (_selectedCategory == 'Tous' || _selectedCategory == 'Tous les Modules') {
+              matchesCat = true;
+            } else if (_selectedCategory.contains('1ère')) {
+              matchesCat = ResidencyRepository.getYearForModule(m) == 1;
+            } else if (_selectedCategory.contains('2ème')) {
+              matchesCat = ResidencyRepository.getYearForModule(m) == 2;
+            } else if (_selectedCategory.contains('3ème')) {
+              matchesCat = ResidencyRepository.getYearForModule(m) == 3;
+            } else if (_selectedCategory.contains('4ème')) {
+              matchesCat = ResidencyRepository.getYearForModule(m) == 4;
+            } else if (_selectedCategory.contains('5ème')) {
+              matchesCat = ResidencyRepository.getYearForModule(m) == 5;
+            } else if (_selectedCategory.contains('6ème')) {
+              matchesCat = ResidencyRepository.getYearForModule(m) == 6;
+            } else {
+              matchesCat = m.category.toLowerCase().contains(_selectedCategory.toLowerCase());
+            }
+
             final matchesSearch = _searchQuery.isEmpty ||
                 m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
                 m.courses.any((c) => c.name.toLowerCase().contains(_searchQuery.toLowerCase()));
@@ -152,6 +198,38 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (user?.isStudent == true) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2563EB).withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFF2563EB).withOpacity(0.25)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.school_rounded, color: Color(0xFF2563EB), size: 24),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Programme Universitaire • ${ResidencyRepository.getYearTitle(user?.studyYear ?? 1)}',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1D4ED8)),
+                            ),
+                            const Text(
+                              'Affichage ciblé : cours de votre année & QCMs d\'examens (EMD/Faculté). Les concours de résidanat sont exclus.',
+                              style: TextStyle(fontSize: 11, color: Color(0xFF334155)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               TextField(
                 decoration: InputDecoration(
                   hintText: 'Rechercher parmi les 47 modules et 1 205 cours (ex: HTA, Asthme, ECG)...',
@@ -169,7 +247,18 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: _categories.map((cat) {
+                  children: (context.watch<AuthBloc>().state.user?.isStudent == true
+                      ? [
+                          'Mon Année (${context.watch<AuthBloc>().state.user?.studyYear ?? 1}e)',
+                          '1ère Année',
+                          '2ème Année',
+                          '3ème Année',
+                          '4ème Année',
+                          '5ème Année',
+                          '6ème Année',
+                          'Tous les Modules',
+                        ]
+                      : _defaultCategories).map((cat) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: _buildFilterChip(cat),
@@ -718,7 +807,8 @@ class _CustomSessionCard extends StatelessWidget {
                             }
                             FreeTrialQuotaService.instance.consumeQcmSession(user);
                           }
-                          context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false));
+                          final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+                          context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false, filterForStudent: isStudent));
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
                           );
@@ -751,7 +841,8 @@ class _CustomSessionCard extends StatelessWidget {
                           }
                           FreeTrialQuotaService.instance.consumeQcmSession(user);
                         }
-                        context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: isPaused));
+                        final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+                        context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: isPaused, filterForStudent: isStudent));
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
                         );
@@ -1124,7 +1215,8 @@ class _CourseTile extends StatelessWidget {
                   if (isPaused) {
                     ResumeSessionSheet.show(context, course: course, progress: progress!);
                   } else {
-                    context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: false));
+                    final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+                    context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: false, filterForStudent: isStudent));
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
                     );

@@ -30,6 +30,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   SubscriptionTier _mapTier(String? tierStr) {
     switch (tierStr?.toLowerCase()) {
+      case 'etudiant':
+        return SubscriptionTier.etudiant;
       case 'clinical_pro':
         return SubscriptionTier.clinicalPro;
       case 'resident_elite':
@@ -87,6 +89,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               isBanned: isBanned,
               banReason: profile['ban_reason'],
               rejectedPaymentsCount: (profile['rejected_payments_count'] as num?)?.toInt() ?? 0,
+              studyYear: (profile['study_year'] as num?)?.toInt() ?? (session.user.userMetadata?['study_year'] as num?)?.toInt(),
             );
 
             await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -202,6 +205,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           isBanned: isBanned,
           banReason: profileMap?['ban_reason'],
           rejectedPaymentsCount: (profileMap?['rejected_payments_count'] as num?)?.toInt() ?? 0,
+          studyYear: (profileMap?['study_year'] as num?)?.toInt() ?? (supaUser.userMetadata?['study_year'] as num?)?.toInt(),
         );
 
         await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -257,6 +261,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         fullName: fullName,
         medicalRole: event.medicalRole,
         faculty: event.faculty,
+        studyYear: event.studyYear,
       );
 
       final supaUser = authResponse.user;
@@ -273,6 +278,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           tier: SubscriptionTier.free,
           subscriptionExpiry: DateTime.now().add(const Duration(days: 14)),
           token: session?.accessToken ?? '',
+          studyYear: event.studyYear,
         );
 
         if (session != null) {

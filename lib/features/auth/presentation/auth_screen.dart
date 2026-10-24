@@ -28,17 +28,27 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   final _registerEmailController = TextEditingController();
   final _registerPasswordController = TextEditingController();
   bool _registerObscurePassword = true;
-  String _selectedRole = 'Candidat Résidanat';
+  String _selectedRole = 'Étudiant en Médecine';
+  int _selectedStudyYear = 1;
   String _selectedFaculty = 'Faculté de Médecine de Blida';
 
   final List<String> _medicalRoles = [
+    'Étudiant en Médecine',
     'Candidat Résidanat',
-    'Externe (4e - 6e année)',
     'Interne en Médecine',
     'Médecin Résident',
     'Médecin Généraliste',
     'Médecin Spécialiste',
   ];
+
+  final Map<int, String> _studyYears = {
+    1: '1ère Année (Sciences Fondamentales I)',
+    2: '2ème Année (Sciences Fondamentales II)',
+    3: '3ème Année (Pré-clinique & Sémiologie)',
+    4: '4ème Année (Externat - Pathologie I)',
+    5: '5ème Année (Externat - Pathologie II)',
+    6: '6ème Année (Externat - Thérapeutique & Spécialités)',
+  };
 
   final List<String> _faculties = [
     'Faculté de Médecine de Blida',
@@ -424,6 +434,23 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               .toList(),
           onChanged: (val) => setState(() => _selectedRole = val ?? _selectedRole),
         ),
+        if (_selectedRole == 'Étudiant en Médecine') ...[
+          const SizedBox(height: 12),
+          DropdownButtonFormField<int>(
+            initialValue: _selectedStudyYear,
+            decoration: const InputDecoration(
+              labelText: 'Année Universitaire d\'Étude',
+              prefixIcon: Icon(Icons.school_outlined, size: 20, color: Color(0xFF2563EB)),
+            ),
+            items: _studyYears.entries
+                .map((e) => DropdownMenuItem(
+                      value: e.key,
+                      child: Text(e.value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                    ))
+                .toList(),
+            onChanged: (val) => setState(() => _selectedStudyYear = val ?? _selectedStudyYear),
+          ),
+        ],
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           initialValue: _selectedFaculty,
@@ -472,13 +499,18 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       return;
     }
 
+    final roleToSend = _selectedRole == 'Étudiant en Médecine'
+        ? 'Étudiant (e Année)'
+        : _selectedRole;
+
     context.read<AuthBloc>().add(
           RegisterSubmittedEvent(
             fullName: name,
             email: email,
             password: password,
-            medicalRole: _selectedRole,
+            medicalRole: roleToSend,
             faculty: _selectedFaculty,
+            studyYear: _selectedRole == 'Étudiant en Médecine' ? _selectedStudyYear : null,
           ),
         );
   }
