@@ -15,16 +15,104 @@ class MedsinaNotificationDispatcher {
     ),
   );
 
-  /// Get configured Webhook URL from SharedPreferences
+  /// Get configured Webhook URL from SharedPreferences or Cloud Settings
   static Future<String?> getWebhookUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_webhookPrefKey);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString(_webhookPrefKey);
+      if (cached != null && cached.isNotEmpty) return cached;
+
+      // Cloud fallback from admin_system_settings
+      final cloudUrl = await SupabaseService.getAdminSetting('medsina_gdrive_email_webhook_url') ??
+          await SupabaseService.getAdminSetting('gdrive_webhook_url');
+      if (cloudUrl != null && cloudUrl.isNotEmpty) {
+        await prefs.setString(_webhookPrefKey, cloudUrl);
+        return cloudUrl;
+      }
+    } catch (e) {
+      debugPrint('Notice getting webhook URL: $e');
+    }
+    return null;
   }
 
   /// Save configured Webhook URL
   static Future<void> setWebhookUrl(String url) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_webhookPrefKey, url.trim());
+    try {
+      await SupabaseService.saveAdminSetting(
+        'medsina_gdrive_email_webhook_url',
+        url.trim(),
+        description: 'Google Apps Script Webhook URL for emails & Google Drive archival',
+      );
+    } catch (_) {}
+  }
+
+  /// 0a. NOTIFY CANDIDATE: Send Welcome Email when a new account is created
+  static Future<void> sendWelcomeEmail({
+    required String userEmail,
+    required String userName,
+    String? medicalRole,
+    String? faculty,
+    int? studyYear,
+  }) async {
+    final webhook = await getWebhookUrl();
+    if (webhook == null || webhook.isEmpty) {
+      debugPrint('MedsinaNotificationDispatcher: No webhook configured, skipping welcome email.');
+      return;
+    }
+
+    try {
+      await _dio.post(
+        webhook,
+        data: {
+          'secret': defaultSecret,
+          'action': 'send_email',
+          'email_type': 'welcome',
+          'recipient': userEmail,
+          'user_name': userName,
+          'medical_role': medicalRole ?? 'Médecin',
+          'faculty': faculty ?? 'Faculté de Médecine de Blida',
+          'study_year': studyYear,
+        },
+      );
+    } catch (e) {
+      debugPrint('Error sending welcome email via webhook: $e');
+    }
+  }
+
+  /// 0b. NOTIFY ADMIN: Send Alert Email when a new user registers on Medsina
+  static Future<void> notifyAdminNewSubscriber({
+    required String userEmail,
+    required String userName,
+    String? medicalRole,
+    String? faculty,
+    int? studyYear,
+  }) async {
+    final webhook = await getWebhookUrl();
+    if (webhook == null || webhook.isEmpty) {
+      debugPrint('MedsinaNotificationDispatcher: No webhook configured, skipping admin new subscriber email.');
+      return;
+    }
+
+    try {
+      await _dio.post(
+        webhook,
+        data: {
+          'secret': defaultSecret,
+          'action': 'send_email',
+          'email_type': 'admin_new_subscriber',
+          'user_name': userName,
+          'user_email': userEmail,
+          'medical_role': medicalRole ?? 'Médecin',
+          'faculty': faculty ?? 'Faculté de Médecine de Blida',
+          'study_year': studyYear,
+          'registered_at': DateTime.now().toLocal().toString().split('.').first,
+        },
+      );
+    } catch (e) {
+      debugPrint('Error notifying admin of new subscriber via webhook: $e');
+    }
   }
 
   /// 1. NOTIFY ADMIN: Send Admin Alert email when a new payment request is submitted

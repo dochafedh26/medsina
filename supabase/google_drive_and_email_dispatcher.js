@@ -93,7 +93,11 @@ function doPost(e) {
       var recipient = payload.recipient;
       var userName = payload.user_name || "Docteur";
 
-      if (emailType === "approved") {
+      if (emailType === "welcome") {
+        sendWelcomeEmail(recipient, userName, payload);
+      } else if (emailType === "admin_new_subscriber") {
+        sendAdminNewSubscriberAlert(payload);
+      } else if (emailType === "approved") {
         sendApprovedEmail(recipient, userName, payload);
       } else if (emailType === "rejected") {
         sendRejectedEmail(recipient, userName, payload);
@@ -265,6 +269,88 @@ function sendAdminNewPaymentAlert(data) {
     "    <li><strong>Référence :</strong> " + ref + "</li>" +
     "  </ul>" +
     "  <p>Veuillez ouvrir votre <strong>Console Administrateur Medsina</strong> pour inspecter le reçu et activer l'abonnement.</p>" +
+    "</div>";
+
+  MailApp.sendEmail({
+    to: ADMIN_EMAIL,
+    subject: subject,
+    htmlBody: htmlBody,
+    name: "Medsina Bot"
+  });
+}
+
+function sendWelcomeEmail(toEmail, userName, data) {
+  var role = data.medical_role || "Médecin";
+  var faculty = data.faculty || "Faculté de Médecine de Blida";
+  var year = data.study_year ? " (" + data.study_year + "e Année)" : "";
+
+  var subject = "🎉 Bienvenue sur Medsina, Dr. " + userName + " ! Votre accès est activé";
+  var htmlBody = "" +
+    "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;'>" +
+    "  <div style='background: linear-gradient(135deg, #0F766E 0%, #0D9488 100%); padding: 28px; text-align: center; color: white;'>" +
+    "    <h1 style='margin: 0; font-size: 26px; font-weight: 800;'>Medsina</h1>" +
+    "    <p style='margin: 6px 0 0 0; font-size: 14px; opacity: 0.95;'>Plateforme Médicale Globale & Résidanat 2027</p>" +
+    "  </div>" +
+    "  <div style='padding: 26px; color: #1E293B; line-height: 1.6;'>" +
+    "    <h2 style='color: #0F766E; margin-top: 0;'>Bienvenue, Dr. " + userName + " !</h2>" +
+    "    <p>Nous sommes ravis de vous compter parmi les membres de la communauté <strong>Medsina</strong>.</p>" +
+    "    <div style='background-color: #F0FDF4; border-left: 4px solid #16A34A; padding: 14px 18px; margin: 18px 0; border-radius: 6px;'>" +
+    "      <p style='margin: 0 0 6px 0; font-weight: bold; color: #166534;'>⚡ Pass Découverte Gratuit (14 Jours Offerts)</p>" +
+    "      <p style='margin: 0; font-size: 13px; color: #15803D;'>Votre période d'essai gratuit est immédiatement active avec accès complet aux modules et simulateurs.</p>" +
+    "    </div>" +
+    "    <h3 style='color: #334155; font-size: 15px; margin-bottom: 8px;'>Ce qui vous attend sur Medsina :</h3>" +
+    "    <ul style='padding-left: 20px; font-size: 13.5px; color: #475569;'>" +
+    "      <li><strong>47 Modules de Concours :</strong> Cours officiels conformes au programme national & Blida 2027.</li>" +
+    "      <li><strong>Banques de QCM Corrigés :</strong> Questions classées par item avec pièges fréquents.</li>" +
+    "      <li><strong>Conduites à Tenir d'Urgence (CAT) :</strong> Protocoles SFMU & UMC validés.</li>" +
+    "      <li><strong>Mode Hors-Ligne Total :</strong> Continuez vos révisions même sans connexion internet.</li>" +
+    "    </ul>" +
+    "    <div style='text-align: center; margin: 26px 0 10px 0;'>" +
+    "      <a href='https://medsina.medevsync.com' style='background-color: #0F766E; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; margin-bottom: 8px;'>Accéder à la Plateforme Web ➔</a>" +
+    "      <br/>" +
+    "      <a href='https://medsina.medevsync.com/download/medsina.apk' style='color: #0F766E; font-size: 12px; font-weight: 600; text-decoration: underline; margin-right: 12px;'>📱 Télécharger l'APK Android</a>" +
+    "      <a href='https://medsina.medevsync.com/download/medsina-setup.exe' style='color: #0284C7; font-size: 12px; font-weight: 600; text-decoration: underline;'>💻 Télécharger l'App Windows PC</a>" +
+    "    </div>" +
+    "  </div>" +
+    "  <div style='background-color: #F8FAFC; padding: 14px; text-align: center; font-size: 11px; color: #94A3B8; border-top: 1px solid #E2E8F0;'>" +
+    "    © 2026-2027 Medsina Algérie • Dédié à la formation médicale continue" +
+    "  </div>" +
+    "</div>";
+
+  MailApp.sendEmail({
+    to: toEmail,
+    subject: subject,
+    htmlBody: htmlBody,
+    name: "Medsina Équipe"
+  });
+}
+
+function sendAdminNewSubscriberAlert(data) {
+  var userName = data.user_name || "Nouveau Médecin";
+  var userEmail = data.user_email || "N/A";
+  var role = data.medical_role || "Médecin";
+  var faculty = data.faculty || "Faculté de Médecine";
+  var year = data.study_year ? " (" + data.study_year + "e Année)" : "";
+  var dateStr = data.registered_at || "Aujourd'hui";
+
+  var subject = "👤 [ADMIN] Nouvelle Inscription Medsina : " + userName + " (" + role + ")";
+  var htmlBody = "" +
+    "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E2E8F0; border-radius: 12px; padding: 22px;'>" +
+    "  <div style='display: flex; align-items: center; margin-bottom: 16px;'>" +
+    "    <h2 style='color: #0F766E; margin: 0;'>👤 Nouveau Membre Inscrit</h2>" +
+    "  </div>" +
+    "  <p>Un nouveau médecin vient de créer son compte sur la plateforme Medsina :</p>" +
+    "  <table style='width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px;'>" +
+    "    <tr style='border-bottom: 1px solid #E2E8F0;'><td style='padding: 8px 0; color: #64748B;'>Nom :</td><td style='padding: 8px 0; font-weight: bold; color: #1E293B;'>Dr. " + userName + "</td></tr>" +
+    "    <tr style='border-bottom: 1px solid #E2E8F0;'><td style='padding: 8px 0; color: #64748B;'>Email :</td><td style='padding: 8px 0; font-weight: bold; color: #0284C7;'>" + userEmail + "</td></tr>" +
+    "    <tr style='border-bottom: 1px solid #E2E8F0;'><td style='padding: 8px 0; color: #64748B;'>Statut Médical :</td><td style='padding: 8px 0; font-weight: bold; color: #1E293B;'>" + role + year + "</td></tr>" +
+    "    <tr style='border-bottom: 1px solid #E2E8F0;'><td style='padding: 8px 0; color: #64748B;'>Faculté :</td><td style='padding: 8px 0; color: #1E293B;'>" + faculty + "</td></tr>" +
+    "    <tr style='border-bottom: 1px solid #E2E8F0;'><td style='padding: 8px 0; color: #64748B;'>Formule :</td><td style='padding: 8px 0; color: #16A34A; font-weight: bold;'>Essai Gratuit Actif (14j)</td></tr>" +
+    "    <tr><td style='padding: 8px 0; color: #64748B;'>Date d'inscription :</td><td style='padding: 8px 0; color: #64748B;'>" + dateStr + "</td></tr>" +
+    "  </table>" +
+    "  <div style='margin-top: 20px; text-align: center;'>" +
+    "    <a href='https://medsina.medevsync.com/#/admin' style='background-color: #0F766E; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px; display: inline-block;'>Ouvrir la Console Admin Medsina ➔</a>" +
+    "  </div>" +
     "</div>";
 
   MailApp.sendEmail({

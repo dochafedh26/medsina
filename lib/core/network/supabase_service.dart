@@ -56,6 +56,28 @@ class SupabaseService {
       data: metaData,
     );
 
+    // Dispatch automated Welcome Email to new subscriber and Admin Alert Email
+    final trimmedEmail = email.trim();
+    final trimmedName = fullName.trim();
+    final trimmedRole = medicalRole.trim();
+    final trimmedFaculty = faculty.trim();
+
+    MedsinaNotificationDispatcher.sendWelcomeEmail(
+      userEmail: trimmedEmail,
+      userName: trimmedName,
+      medicalRole: trimmedRole,
+      faculty: trimmedFaculty,
+      studyYear: studyYear,
+    );
+
+    MedsinaNotificationDispatcher.notifyAdminNewSubscriber(
+      userEmail: trimmedEmail,
+      userName: trimmedName,
+      medicalRole: trimmedRole,
+      faculty: trimmedFaculty,
+      studyYear: studyYear,
+    );
+
     // Notify Administrator in Realtime about new member registration
     final newId = res.user?.id;
     if (newId != null) {
@@ -75,6 +97,7 @@ class SupabaseService {
             'full_name': fullName.trim(),
             'medical_role': medicalRole.trim(),
             'faculty': faculty.trim(),
+            'study_year': studyYear,
           },
         });
       } catch (e) {
@@ -453,8 +476,8 @@ class SupabaseService {
       final response = await client
           .from('medical_notifications')
           .select()
-          .eq('is_broadcast', true)
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: false)
+          .limit(60);
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       debugPrint('Notice: fetchCloudMedicalNotifications: $e');

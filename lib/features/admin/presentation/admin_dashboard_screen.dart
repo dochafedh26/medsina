@@ -291,6 +291,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ),
         const SizedBox(height: 18),
 
+        // Recent Subscribers & Member Activity Live Widget
+        _buildRecentSubscribersCard(context, state, isDark),
+        const SizedBox(height: 18),
+
         // Compteur de Téléchargements Octenium (Task 01)
         Card(
           elevation: isDark ? 0 : 2,
@@ -5075,5 +5079,226 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) _refreshRecentWorkflowRuns();
+  }
+
+  Widget _buildRecentSubscribersCard(BuildContext context, AdminState state, bool isDark) {
+    // Sort users by createdAt descending
+    final recentUsers = List<AdminUserItem>.from(state.users)
+      ..sort((a, b) {
+        if (a.createdAt == null && b.createdAt == null) return 0;
+        if (a.createdAt == null) return 1;
+        if (b.createdAt == null) return -1;
+        return b.createdAt!.compareTo(a.createdAt!);
+      });
+
+    final topUsers = recentUsers.take(6).toList();
+
+    return Card(
+      elevation: isDark ? 0 : 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: AppTheme.primaryTeal.withValues(alpha: 0.35),
+          width: 1.5,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.person_add_alt_1_rounded, color: AppTheme.primaryTeal, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            'Dernières Inscriptions & Nouveaux Abonnés',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              'EN DIRECT ⚡',
+                              style: TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF059669),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Alertes temps réel sur les nouveaux comptes et abonnements actifs',
+                        style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
+                      ),
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => _tabController.animateTo(1),
+                  child: const Text('Voir tout (Tab 2) ➔', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            if (topUsers.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Center(
+                  child: Text(
+                    'Aucune inscription enregistrée pour le moment.',
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+                  ),
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: topUsers.length,
+                separatorBuilder: (_, __) => const Divider(height: 14),
+                itemBuilder: (ctx, i) {
+                  final u = topUsers[i];
+                  return _buildRecentSubscriberRow(context, u, isDark);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentSubscriberRow(BuildContext context, AdminUserItem u, bool isDark) {
+    final initials = u.fullName.trim().isNotEmpty
+        ? u.fullName.trim().split(' ').map((e) => e.isNotEmpty ? e[0] : '').take(2).join().toUpperCase()
+        : 'DR';
+
+    final isPaid = u.tier != 'free';
+    final tierColor = isPaid ? const Color(0xFF10B981) : const Color(0xFF0284C7);
+    final tierLabel = isPaid ? u.tier.toUpperCase() : 'Essai Gratuit 14j';
+
+    return InkWell(
+      onTap: () {
+        _searchController.text = u.email;
+        context.read<AdminBloc>().add(SearchUsersEvent(u.email));
+        _tabController.animateTo(1);
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 19,
+              backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
+              child: Text(
+                initials,
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          u.fullName,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (u.isAdmin) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade100,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text('ADMIN', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.red)),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    '${u.medicalRole} • ${u.faculty}',
+                    style: TextStyle(fontSize: 11, color: isDark ? Colors.white60 : Colors.grey.shade700),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    u.email,
+                    style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: tierColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: tierColor.withValues(alpha: 0.3)),
+                  ),
+                  child: Text(
+                    tierLabel,
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: tierColor),
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  _formatRelativeTime(u.createdAt),
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatRelativeTime(DateTime? dt) {
+    if (dt == null) return 'Date inconnue';
+    final local = dt.toLocal();
+    final now = DateTime.now();
+    final diff = now.difference(local);
+
+    if (diff.inMinutes < 1) return 'À l\'instant';
+    if (diff.inMinutes < 60) return 'Il y a ${diff.inMinutes} min';
+    if (diff.inHours < 24) return 'Il y a ${diff.inHours}h';
+    if (diff.inDays < 7) return 'Il y a ${diff.inDays}j';
+    return '${local.day.toString().padLeft(2, '0')}/${local.month.toString().padLeft(2, '0')}/${local.year}';
   }
 }
