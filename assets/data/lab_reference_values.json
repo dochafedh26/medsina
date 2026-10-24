@@ -429,5 +429,20 @@
     ],
     "created_at": "2026-10-24T12:37:56.669623+00:00",
     "updated_at": "2026-10-24T12:37:56.669638+00:00"
+  },
+  {
+    "id": "lab_triglycerides",
+    "name": "Triglycérides sériques (TG)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "< 1.50 g/L (ou < 1.70 mmol/L) à jeun",
+    "unit": "g/L (facteur de conversion mmol/L = g/L x 1.14)",
+    "high_interpretation": "Hypertriglycéridémie : > 1.5 g/L (modérée), > 2.0 g/L (anormale), > 5.0 g/L (majeure, risque de pancréatite aiguë), > 10.0 g/L (risque vital imminent de pancréatite aiguë nécrosante et syndrome de chylomicronémie). Causes : diabète déséquilibré, alcoolisme, obésité, syndrome métabolique, insuffisance rénale chronique, hypothyroïdie, iatrogène (corticoïdes, rétinoïdes, bêta-bloquants, œstrogènes), dyslipidémies familiales (types I, IV, V). Conduite à tenir : si TG > 5 g/L, urgence médicale relative, régime strict sans graisses, arrêt de l'alcool, initiation rapide d'un fibrate et/ou acides gras oméga-3, avis spécialisé endocrinologie.",
+    "low_interpretation": "Hypotriglycéridémie : Rare cliniquement. Causes : malabsorption intestinale, malnutrition, hyperthyroïdie, insuffisance hépatocellulaire sévère, abêtalipoprotéinémie. Conduite à tenir : exploration d'une cause carentielle ou digestive sous-jacente.",
+    "clinical_notes": [
+      "Prélèvement impératif à jeun strict de 12 heures (risque de faux positif ou de lipémie post-prandiale majeure si non respecté).",
+      "Sérum lactescent ou chylomicronémique si les triglycérides dépassent 3 à 4 g/L, perturbant par interférence optique de nombreux dosages biochimiques (colorimétrie)."
+    ],
+    "created_at": "2026-10-24T18:45:04.106885+00:00",
+    "updated_at": "2026-10-24T18:45:04.106901+00:00"
   }
 ]
