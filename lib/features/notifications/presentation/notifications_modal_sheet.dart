@@ -131,7 +131,8 @@ class _NotificationTile extends StatelessWidget {
     if (diff.inHours < 24) {
       return 'Il y a ${diff.inHours}h';
     }
-    return '${dt.day}/${dt.month} à ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    final local = dt.toLocal();
+    return '${local.day}/${local.month} à ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
   }
 
   @override
