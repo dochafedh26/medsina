@@ -72,13 +72,20 @@ jobs:
 
       - name: 🔑 Configure Android Release Signing Key
         run: |
-          mkdir -p android
+          mkdir -p android/app
           cat << 'EOF' > android/key.properties
           storePassword=medsina2027
           keyPassword=medsina2027
           keyAlias=upload
           storeFile=upload-keystore.jks
           EOF
+          if [ -f android/app/upload-keystore.jks ]; then
+            cp android/app/upload-keystore.jks android/upload-keystore.jks
+            echo "✅ Verified upload-keystore.jks is present in android/app and copied to android/"
+          else
+            echo "❌ CRITICAL: upload-keystore.jks not found in android/app!"
+            exit 1
+          fi
 
       - name: 📦 Install dependencies
         run: flutter pub get

@@ -38,22 +38,31 @@ android {
         keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     }
 
+    val storeFilePath = keystoreProperties.getProperty("storeFile") ?: "upload-keystore.jks"
+    val resolvedKeystore = when {
+        file(storeFilePath).exists() -> file(storeFilePath)
+        file("upload-keystore.jks").exists() -> file("upload-keystore.jks")
+        rootProject.file(storeFilePath).exists() -> rootProject.file(storeFilePath)
+        rootProject.file("app/upload-keystore.jks").exists() -> rootProject.file("app/upload-keystore.jks")
+        else -> null
+    }
+
     signingConfigs {
         create("release") {
             keyAlias = keystoreProperties.getProperty("keyAlias") ?: "upload"
             keyPassword = keystoreProperties.getProperty("keyPassword") ?: "medsina2027"
-            val storeFilePath = keystoreProperties.getProperty("storeFile") ?: "upload-keystore.jks"
-            storeFile = file(storeFilePath)
+            storeFile = resolvedKeystore ?: file("upload-keystore.jks")
             storePassword = keystoreProperties.getProperty("storePassword") ?: "medsina2027"
         }
     }
 
     buildTypes {
         release {
-            val releaseKeystore = file(keystoreProperties.getProperty("storeFile") ?: "upload-keystore.jks")
-            if (releaseKeystore.exists()) {
+            if (resolvedKeystore != null && resolvedKeystore.exists()) {
+                println(">>> [GRADLE] Using official release keystore: " + resolvedKeystore.absolutePath)
                 signingConfig = signingConfigs.getByName("release")
             } else {
+                println(">>> [GRADLE WARNING] Release keystore not found! Falling back to debug signing.")
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
