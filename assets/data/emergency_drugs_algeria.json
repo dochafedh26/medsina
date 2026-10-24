@@ -669,5 +669,19 @@
     "created_at": "2026-10-23T20:03:20.001254+00:00",
     "updated_at": "2026-10-23T20:03:20.001268+00:00",
     "algerianAvailability": "Disponible en réanimation, blocs opératoires et UMC (souvent via la PCH ou importation hospitalière spécifique)"
+  },
+  {
+    "id": "drug_emulsion_lipidique",
+    "dci": "Emulsion lipidique 20%",
+    "brand": "Intralipid 20% (Fresenius Kabi), Lipofundin MCT/LCT (B. Braun), dispo PCH / Centrales d'achat privées (Biopharm)",
+    "category": "Antidotes & Sérums",
+    "route": "Voie IV stricte en perfusion rapide (PSE ou IVD)",
+    "indication": "Traitement d'urgence de la toxicité systémique aux anesthésiques locaux (LAST) et surdose aiguë en médicaments lipophiles (antidépresseurs tricycliques, inhibiteurs calciques)",
+    "dose": "• Posologie adulte : Bolus initial de 1,5 mL/kg d'émulsion lipidique à 20% sur 1 minute (soit ~100 mL pour un adulte de 70 kg). Répéter le bolus 1 à 2 fois si nécessaire toutes les 5 minutes en cas de persistance du choc ou des troubles du rythme. Suivi immédiat par une perfusion continue à 0,25 mL/kg/min (soit ~15-20 mL/min pour 70 kg), à doubler à 0,5 mL/kg/min si le collapsus persiste. Dose maximale cumulée recommandée : 12 mL/kg.\n• Posologie pédiatrique : Bolus initial de 1,5 mL/kg sur 1 minute. Perfusion continue à 0,25 mL/kg/min. Même protocole de réitération.",
+    "alert": "• Contre-indications absolues : Hypersensibilité avérée aux œufs, au soja ou aux protéines de cacahuète (sauf situation d'ACR réfractaire engageant le pronostic vital immédiat). Pièges létaux : Ne jamais utiliser de vasopressin-like ou de bêtabloquants/inhibiteurs calciques comme premier recours sans les lipides en cas de LAST. Ne pas dépasser la dose maximale pour éviter les pancréatites aiguës et le syndrome de surcharge lipidique. Surveillance : Monitorage ECG continu, PNI, SpO2, gaz du sang (risque d'interférence avec les dosages)",
+    "algerian_availability": "Disponible en réanimation, blocs opératoires, UMC des grands CHU et via la PCH pour les services d'anesthésie-réanimation.",
+    "created_at": "2026-10-24T04:57:41.232332+00:00",
+    "updated_at": "2026-10-24T04:57:41.232345+00:00",
+    "algerianAvailability": "Disponible en réanimation, blocs opératoires, UMC des grands CHU et via la PCH pour les services d'anesthésie-réanimation."
   }
 ]
