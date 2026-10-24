@@ -505,22 +505,22 @@
   },
   {
     "id": "memento_syndrome_meninge_aigu",
-    "title": "🧠 Syndrome Méningé Aigu & PL d'Urgence",
-    "category": "Neurologie & Urgences Infectieuses",
+    "title": "⚡ Syndrome Méningé Aigu & PL",
+    "category": "Infectiologie & Urgences Neurologiques",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation immédiate (Glasgow, TRC, purpura fulminans). Ne PAS retarder l'antibiothérapie par la TDM si purpura ou signes de sepsis sévère.",
-      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, CRP, Ionogramme, Urée, Créat, Bilan d'hémostase (TP, TCA, Fibrinogène) avant toute PL.",
-      "Étape 3 : Antibiothérapie probabiliste en urgence absolue si délai de PL > 1h ou purpura : Cefotaxime 2g IV direct (ou Ceftriaxone 2g IV) + Aciclovir 10mg/kg/8h si suspicion d'encéphalite herpétique.",
-      "Étape 4 : Réaliser la TDM cérébrale en urgence absolue AVANT la PL devant tout signe de focalisation, crise convulsive, OMI, ou TRC altéré (< 11).",
-      "Étape 5 : Piège médico-légal et contre-indication : Ne jamais faire de PL en cas de troubles de l'hémostase non corrigés, instabilité hémodynamique, ou signes d'engagement cérébral à la TDM."
+      "Étape 1 : Évaluer la triade (céphalées, vomissements, raideur de nuque). Rechercher des signes de choc, purpura fulminans ou signes de focalisation (risque d'engagement).",
+      "Étape 2 : Si purpura fulminans ou signes de gravité, administrer C3G IMMÉDIATEMENT avant tout examen. Si signes de focalisation ou trouble de conscience : TDM cérébrale en urgence AVANT la ponction lombaire.",
+      "Étape 3 : Réaliser la ponction lombaire (PL) en décubitus latéral aseptique, mesurer la pression d'ouverture, prélever 4 tubes (biochimie, bactério, cyto). Si méningite purulente : Céfotaxime 2g x 4/j IV ou Ceftriaxone 2g x 2/j IV + Dexaméthasone 10mg IV 15 min avant la 1ère dose.",
+      "Étape 4 : Hospitalisation immédiate en unité de soins intensifs si purpura, sepsis ou Glasgow < 13. Surveiller conscience (Glasgow), pupilles, TA, FC et diurèse toutes les heures.",
+      "Étape 5 : Piège médicolégal absolu : ne jamais retarder l'antibiothérapie en cas de purpura fulminans pour faire une PL ou une TDM. Contre-indication formelle de la PL si instabilité hémodynamique, infection cutanée au point de ponction ou engagement cérébral."
     ],
-    "scientific_references": "Consensus SPILF / SRLF / Recommandations MSPRH Algérie pour la prise en charge des méningites",
+    "scientific_references": "Consensus SPILF / SFMU / SRLF / Protocole National Algérien de Prise en Charge des Méningites",
     "is_active": true,
-    "created_at": "2026-10-23T13:51:26.905505+00:00",
-    "updated_at": "2026-10-23T13:51:26.905518+00:00"
+    "created_at": "2026-10-24T12:56:46.121722+00:00",
+    "updated_at": "2026-10-24T12:56:46.121735+00:00"
   },
   {
     "id": "memento_hyperkalemie_aigue",
