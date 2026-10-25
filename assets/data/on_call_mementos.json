@@ -755,5 +755,25 @@
     "is_active": true,
     "created_at": "2026-10-25T19:18:18.464389+00:00",
     "updated_at": "2026-10-25T19:18:18.464429+00:00"
+  },
+  {
+    "id": "memento_morsure_vipere",
+    "title": "🐍 Morsures de Vipère en Algérie",
+    "category": "Urgences Toxicologiques & Piqûres",
+    "icon_name": "warning_rounded",
+    "color_hex": "#DC2626",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Repos strict, rassurement, immobilisation du membre mordu, 2 voies veineuses périphériques, élimination de tout garrot ou incision (contre-indiqués).",
+      "Étape 2 : Bilan biologique urgent au déchoquage : NFS, plaquettes, TP, TCA, Fibrinogène, Ionogramme, Urée, Créatinine, CK, Troponine, Groupage-Rhésus.",
+      "Étape 3 : Antithérapie spécifique : Sérothérapie antivenimeuse (SAV polyvalente algérienne ou équivalent) : 1 à 2 ampoules diluées dans 250 mL de NaCl 0,9% à passer en 1 heure (après test cutané si indiqué selon labo, ou surveillance rapprochée du choc anaphylactique), associée à une antibioprophylaxie (Amoxicilline-Acide Clavulanique 1g x 3/j) et mise à jour de l'ATS/VAT.",
+      "Étape 4 : Traitement symptomatique : Remplissage vasculaire prudents par Cristalloïdes, analgésiques (Paracétamol, éviter AINS et aspirine), corticothérapie si choc anaphylactique ou réaction allergique sévère (Hydrocortisone 100-200 mg IV).",
+      "Étape 5 : Surveillance armée en réanimation ou déchoquage : Extension de l'œdème, troubles de la coagulation, diurèse horaire (risque d'IRA par rhabdomyolyse/choc), signes de choc. Critères de transfert en réanimation : troubles hémodynamiques, CIVD, détresse respiratoire ou œdème cervical/facial menaçant.",
+      "Étape 6 : Piège médico-légal et absolu : Ne JAMAIS inciser la plaie, ne JAMAIS poser de garrot (risque d'ischémie aggravée et de nécrose étendue), ne jamais aspirer le venin par la bouche."
+    ],
+    "scientific_references": "Consensus SFMU / Société Algérienne de Toxicologie / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-25T23:19:38.749292+00:00",
+    "updated_at": "2026-10-25T23:19:38.749306+00:00"
   }
 ]
