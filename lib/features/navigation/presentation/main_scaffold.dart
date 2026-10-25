@@ -22,6 +22,7 @@ import '../../notifications/services/notification_navigation_service.dart';
 import '../../notifications/services/realtime_notification_service.dart';
 import '../../../core/services/ota_update_service.dart';
 import 'ota_update_dialog.dart';
+import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 
 class NavItemConfig {
   final String label;
@@ -327,6 +328,15 @@ class _MainScaffoldState extends State<MainScaffold> {
             titleSpacing: 16,
             title: const MedsinaLogo(height: 26),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.menu_book_rounded, size: 20),
+                tooltip: 'Guide Medsina (PDF)',
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
+                  );
+                },
+              ),
               _buildNotificationBellAction(context),
               _buildTierBadge(context, tier, compact: true),
               const SizedBox(width: 4),
@@ -612,6 +622,15 @@ class _MainScaffoldState extends State<MainScaffold> {
                       ),
                     ],
                   ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.menu_book_rounded, size: 18),
+                  tooltip: 'Guide d\'utilisation (PDF)',
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
+                    );
+                  },
                 ),
                 IconButton(
                   icon: const Icon(Icons.system_update_rounded, size: 18),
