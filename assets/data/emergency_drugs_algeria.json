@@ -697,5 +697,19 @@
     "created_at": "2026-10-24T12:53:51.178564+00:00",
     "updated_at": "2026-10-24T12:53:51.178581+00:00",
     "algerianAvailability": "Disponible en réanimation, blocs opératoires et UMC (souvent via la PCH ou importation directe, présence limitée dans le portefeuille Saidal)."
+  },
+  {
+    "id": "drug_clonidine",
+    "dci": "Clonidine",
+    "brand": "Catapressan (Boehringer Ingelheim / importé), génériques selon approvisionnement PCH",
+    "category": "Cardio / ACR / Choc",
+    "route": "Voie IV stricte (diluée au PSE), Voie orale",
+    "indication": "Poussée hypertensive maligne, sédation en réanimation (co-analgésie), syndrome de sevrage (alcool, opiacés)",
+    "dose": "• Adulte (Urgence hypertensive / Titration) : 150 µg (1 ampoule) dilués dans 20 ml de NaCl 0,9% ou G5% en IV lente sur 5 à 10 minutes, renouvelable toutes les 15-30 min jusqu'à dose totale de 300-750 µg. En entretien au PSE : 0,3 à 1,5 µg/kg/h.\n• Pédiatrie : Réservé aux services spécialisés, titration sous monitoring strict (0,05 à 0,1 µg/kg/min au PSE selon protocole de réanimation pédiatrique).",
+    "alert": "• Contre-indications absolues : Bloc auriculo-ventriculaire (BAV) de haut degré non appareillé, choc cardiogénique, hypotension sévère.\n• Pièges létaux : Arrêt brutal du traitement (risque d'hypertension rebond catécholaminergique fatale). Bradycardie sévère et hypotension artérielle lors d'une administration trop rapide.\n• Surveillance : Monitorage ECG continu, pression artérielle invasive ou non invasive rapprochée, fréquence cardiaque et niveau de conscience.",
+    "algerian_availability": "Disponible en réanimation et UMC (souvent via les stocks de la PCH ou officine selon les tensions d'approvisionnement hospitalier)",
+    "created_at": "2026-10-25T22:50:05.292991+00:00",
+    "updated_at": "2026-10-25T22:50:05.293006+00:00",
+    "algerianAvailability": "Disponible en réanimation et UMC (souvent via les stocks de la PCH ou officine selon les tensions d'approvisionnement hospitalier)"
   }
 ]
