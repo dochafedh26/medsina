@@ -439,7 +439,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
     <div class="cover-meta-item">
       <strong>Version Système</strong>
-      <span>Medsina v1.0.15 (Build Stable 2027)</span>
+      <span>Medsina v1.0.16 (Build Stable 2027)</span>
     </div>
     <div class="cover-meta-item">
       <strong>Portail Officiel</strong>
