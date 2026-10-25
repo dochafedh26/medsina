@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 class AdminMetrics extends Equatable {
   final int totalUsers;
   final int freeTrials;
+  final int etudiant;
   final int clinicalPro;
   final int residentElite;
   final int allAccess;
@@ -18,6 +19,7 @@ class AdminMetrics extends Equatable {
   const AdminMetrics({
     required this.totalUsers,
     required this.freeTrials,
+    this.etudiant = 0,
     required this.clinicalPro,
     required this.residentElite,
     required this.allAccess,
@@ -35,6 +37,7 @@ class AdminMetrics extends Equatable {
     return AdminMetrics(
       totalUsers: json['total_users'] ?? 0,
       freeTrials: json['free_trials'] ?? 0,
+      etudiant: json['etudiant'] ?? 0,
       clinicalPro: json['clinical_pro'] ?? 0,
       residentElite: json['resident_elite'] ?? 0,
       allAccess: json['all_access'] ?? 0,
@@ -58,6 +61,7 @@ class AdminMetrics extends Equatable {
         clinicalPro,
         residentElite,
         allAccess,
+        etudiant,
         totalLicenses,
         redeemedLicenses,
         availableLicenses,

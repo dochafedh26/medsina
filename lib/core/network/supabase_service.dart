@@ -623,6 +623,7 @@ class SupabaseService {
     Map<String, dynamic> metrics = {
       'total_users': 142,
       'free_trials': 89,
+      'etudiant': 0,
       'clinical_pro': 24,
       'resident_elite': 21,
       'all_access': 8,
@@ -635,6 +636,14 @@ class SupabaseService {
       final response = await client.rpc('admin_get_metrics');
       if (response is Map) {
         metrics = Map<String, dynamic>.from(response);
+        if (!metrics.containsKey('etudiant')) {
+          try {
+            final res = await client.from('subscriptions').select('id').eq('tier', 'etudiant');
+            metrics['etudiant'] = (res as List).length;
+          } catch (_) {
+            metrics['etudiant'] = 0;
+          }
+        }
       }
     } catch (e) {
       debugPrint('Error fetching admin metrics: $e');

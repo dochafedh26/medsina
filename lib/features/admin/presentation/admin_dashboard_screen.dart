@@ -468,6 +468,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 const Divider(height: 20),
                 _buildTierRow('Clinical Pro (Pratique)', m.clinicalPro, const Color(0xFF0284C7), '5 000 DZD / an'),
                 const Divider(height: 20),
+                _buildTierRow('Pass Étudiant (1ère - 6ème)', m.etudiant, const Color(0xFF2563EB), '3 500 DZD / an'),
+                const Divider(height: 20),
                 _buildTierRow('Essai Gratuit (14 jours)', m.freeTrials, Colors.grey, 'Gratuit'),
               ],
             ),
@@ -678,6 +680,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         tierColor = const Color(0xFF0284C7);
         tierLabel = 'Clinical Pro';
         break;
+      case 'etudiant':
+        tierColor = const Color(0xFF2563EB);
+        tierLabel = 'Pass Étudiant';
+        break;
       default:
         tierColor = Colors.grey;
         tierLabel = 'Essai Gratuit';
@@ -859,7 +865,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   }
 
   void _showUpgradeUserModal(BuildContext context, AdminUserItem user) {
-    String selectedTier = 'all_access';
+    String selectedTier = ['all_access', 'resident_elite', 'clinical_pro', 'etudiant', 'free'].contains(user.tier.toLowerCase())
+        ? user.tier.toLowerCase()
+        : 'all_access';
     int durationDays = 365;
 
     showDialog(
@@ -889,6 +897,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP (Complet)', overflow: TextOverflow.ellipsis)),
                   DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite (47 Modules)', overflow: TextOverflow.ellipsis)),
                   DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro (Pratique)', overflow: TextOverflow.ellipsis)),
+                  DropdownMenuItem(value: 'etudiant', child: Text('Pass Étudiant (1ère - 6ème Année)', overflow: TextOverflow.ellipsis)),
                   DropdownMenuItem(value: 'free', child: Text('Essai Gratuit', overflow: TextOverflow.ellipsis)),
                 ],
                 onChanged: (val) => setDialogState(() => selectedTier = val ?? selectedTier),
@@ -1792,6 +1801,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP', overflow: TextOverflow.ellipsis)),
                   DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite', overflow: TextOverflow.ellipsis)),
                   DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro', overflow: TextOverflow.ellipsis)),
+                  DropdownMenuItem(value: 'etudiant', child: Text('Pass Étudiant', overflow: TextOverflow.ellipsis)),
                 ],
                 onChanged: (val) => setDialogState(() => targetTier = val ?? targetTier),
               ),
@@ -2507,6 +2517,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ? state.plans
         : [
             const SubscriptionPlanItem(id: 'free', name: 'Pass Découverte', badge: 'GRATUIT', priceYearly: 0, priceMonthly: 0),
+            const SubscriptionPlanItem(id: 'etudiant', name: 'Pass Étudiant', badge: 'CURSUS UNIVERSITAIRE', priceYearly: 3500, priceMonthly: 500, discountPercent: 25),
             const SubscriptionPlanItem(id: 'clinical_pro', name: 'Pass Clinique Pro', badge: 'INTERNES & PRATICIENS', priceYearly: 5000, priceMonthly: 850, discountPercent: 15),
             const SubscriptionPlanItem(id: 'resident_elite', name: 'Pass Résident Élite', badge: 'SPÉCIAL CONCOURS', priceYearly: 5600, priceMonthly: 750, discountPercent: 20),
             const SubscriptionPlanItem(id: 'all_access', name: 'Medsina All-Access (VIP)', badge: 'RECOMMANDÉ • SUITE COMPLÈTE', priceYearly: 6500, priceMonthly: 1200, discountPercent: 30),
@@ -2569,6 +2580,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         break;
       case 'clinical_pro':
         planColor = AppTheme.accentCyan;
+        break;
+      case 'etudiant':
+        planColor = const Color(0xFF2563EB);
         break;
       default:
         planColor = Colors.grey.shade600;
