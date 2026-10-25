@@ -420,6 +420,7 @@ html_content = f"""<!DOCTYPE html>
       <div class="cover-pill">📱 Application Android APK</div>
       <div class="cover-pill">🖥️ Application Windows 64-bit</div>
       <div class="cover-pill">⚡ 100% Hors-Ligne</div>
+      <div class="cover-pill" style="border-color:#F59E0B; color:#F59E0B;">🔍 Omnisearch Intégré (Ctrl+K)</div>
     </div>
   </div>
 
@@ -485,6 +486,29 @@ html_content = f"""<!DOCTYPE html>
         <strong>Téléchargement direct :</strong><br/>
         <code>medsina.medevsync.com/download/medsina-setup.exe</code><br/>
         Support du double écran et confort visuel de révision prolongée.
+      </div>
+    </div>
+  </div>
+
+  <h2>🔍 Medsina Omnisearch : Moteur de Recherche Médical Transversal (Ctrl+K)</h2>
+  <p>Medsina intègre un moteur de recherche unifié capable d'interroger instantanément et simultanément <strong>toutes les bases de données</strong> de l'application en moins de 100 millisecondes :</p>
+  <div class="grid-3" style="margin-bottom:10px;">
+    <div class="card card-teal">
+      <div class="card-title">📚 Cours & Fichiers PDF</div>
+      <div class="card-body">
+        Recherche plein texte dans les 47 modules. En cliquant sur un résultat, <strong>le PDF s'ouvre automatiquement avec le mot recherché surligné</strong> sur la bonne page.
+      </div>
+    </div>
+    <div class="card card-blue">
+      <div class="card-title">🚨 CAT & Mémentos de Garde</div>
+      <div class="card-body">
+        Localisez instantanément les conduites à tenir d'urgence, drapeaux rouges, étapes de réanimation et checklists réflexes d'astreinte hospitalière.
+      </div>
+    </div>
+    <div class="card card-purple">
+      <div class="card-title">🎯 QCMs, Doses & Scores</div>
+      <div class="card-body">
+        Retrouvez les questions d'annales de concours avec justifications, posologies d'urgence Saidal/IPA et calculateurs cliniques (Glasgow, Wells...).
       </div>
     </div>
   </div>

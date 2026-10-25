@@ -29,11 +29,13 @@ class PdfSearchOccurrence {
 class CoursePdfViewerScreen extends StatefulWidget {
   final CourseModel course;
   final String? moduleName;
+  final String? initialSearchQuery;
 
   const CoursePdfViewerScreen({
     super.key,
     required this.course,
     this.moduleName,
+    this.initialSearchQuery,
   });
 
   @override
@@ -713,6 +715,16 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
         setState(() {
           _pageCount = details.document.pages.count;
         });
+        if (widget.initialSearchQuery != null && widget.initialSearchQuery!.trim().isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              final q = widget.initialSearchQuery!.trim();
+              _searchController.text = q;
+              setState(() => _isSearching = true);
+              _executeSearch(q);
+            }
+          });
+        }
       },
       onPageChanged: (PdfPageChangedDetails details) {
         setState(() {

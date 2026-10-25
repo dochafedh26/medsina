@@ -10,6 +10,7 @@ import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
+import '../../search/presentation/global_search_screen.dart';
 import 'daily_pearls_archive_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -35,7 +36,11 @@ class DashboardScreen extends StatelessWidget {
                 user?.daysRemaining ?? 0,
                 user?.isSubscriptionActive == false,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+
+              // Medsina Omnisearch Universal Search Bar
+              _buildOmnisearchQuickBar(context),
+              const SizedBox(height: 20),
 
               // Overview Stats Grid
               _buildStatsGrid(context, tier, user?.isSubscriptionActive == false),
@@ -71,6 +76,97 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
+
+
+  Widget _buildOmnisearchQuickBar(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
+        );
+      },
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: AppTheme.primaryTeal.withValues(alpha: 0.35),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryTeal.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.search_rounded, color: AppTheme.primaryTeal, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Recherche Médicale Globale (Omnisearch)',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Recherchez dans tous les cours PDF, QCMs, CAT, mémentos, doses...',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF0F766E), Color(0xFF14B8A6)],
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.auto_awesome_rounded, size: 12, color: Colors.white),
+                  SizedBox(width: 4),
+                  Text(
+                    'SCANNER',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildUserGuidePromoCard(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

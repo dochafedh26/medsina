@@ -23,6 +23,8 @@ import '../../notifications/services/realtime_notification_service.dart';
 import '../../../core/services/ota_update_service.dart';
 import 'ota_update_dialog.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
+import '../../search/presentation/global_search_screen.dart';
+import 'package:flutter/services.dart';
 
 class NavItemConfig {
   final String label;
@@ -304,7 +306,14 @@ class _MainScaffoldState extends State<MainScaffold> {
         final currentItem = navItems[safeIndex];
 
         if (isDesktop) {
-          return Scaffold(
+          return CallbackShortcuts(
+            bindings: <ShortcutActivator, VoidCallback>{
+              const SingleActivator(LogicalKeyboardKey.keyK, control: true): () => _openOmnisearch(context),
+              const SingleActivator(LogicalKeyboardKey.keyK, meta: true): () => _openOmnisearch(context),
+            },
+            child: Focus(
+              autofocus: true,
+              child: Scaffold(
             body: Row(
               children: [
                 // Desktop Navigation Sidebar
@@ -319,8 +328,10 @@ class _MainScaffoldState extends State<MainScaffold> {
                 ),
               ],
             ),
-          );
-        }
+          ),
+        ),
+      );
+    }
 
         // Mobile Layout (Android APK & small screens)
         return Scaffold(
@@ -328,6 +339,11 @@ class _MainScaffoldState extends State<MainScaffold> {
             titleSpacing: 16,
             title: const MedsinaLogo(height: 26),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.search_rounded, size: 22, color: AppTheme.primaryTeal),
+                tooltip: 'Recherche Globale (Omnisearch)',
+                onPressed: () => _openOmnisearch(context),
+              ),
               IconButton(
                 icon: const Icon(Icons.menu_book_rounded, size: 20),
                 tooltip: 'Guide Medsina (PDF)',
@@ -651,6 +667,13 @@ class _MainScaffoldState extends State<MainScaffold> {
   );
 }
 
+
+  void _openOmnisearch(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
+    );
+  }
+
   Future<void> _manualCheckOtaUpdates(BuildContext context) async {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -723,6 +746,42 @@ class _MainScaffoldState extends State<MainScaffold> {
     return AppBar(
       title: Text(pageTitle),
       actions: [
+        InkWell(
+          onTap: () => _openOmnisearch(context),
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            width: 320,
+            height: 38,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.25)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.search_rounded, size: 18, color: AppTheme.primaryTeal),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Rechercher cours, QCMs, CAT, doses...',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text('Ctrl K', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey)),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 14),
         _buildNotificationBellAction(context),
         const SizedBox(width: 8),
         _buildTierBadge(context, tier),

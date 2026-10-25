@@ -9,7 +9,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class UserGuidePdfViewerScreen extends StatefulWidget {
-  const UserGuidePdfViewerScreen({super.key});
+  final int? initialPage;
+  final String? initialSearchQuery;
+
+  const UserGuidePdfViewerScreen({
+    super.key,
+    this.initialPage,
+    this.initialSearchQuery,
+  });
 
   static const String assetPath = 'assets/data/Medsina_Guide_Decouverte_Fonctionnalites.pdf';
 
@@ -407,6 +414,19 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen> {
         setState(() {
           _pageCount = details.document.pages.count;
         });
+        if (widget.initialPage != null && widget.initialPage! > 1) {
+          _pdfController.jumpToPage(widget.initialPage!);
+        }
+        if (widget.initialSearchQuery != null && widget.initialSearchQuery!.trim().isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              final q = widget.initialSearchQuery!.trim();
+              _searchController.text = q;
+              setState(() => _isSearching = true);
+              _executeSearch(q);
+            }
+          });
+        }
       },
       onPageChanged: (PdfPageChangedDetails details) {
         setState(() {
