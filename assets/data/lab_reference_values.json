@@ -474,5 +474,21 @@
     ],
     "created_at": "2026-10-25T13:09:19.666924+00:00",
     "updated_at": "2026-10-25T13:09:19.666938+00:00"
+  },
+  {
+    "id": "lab_lipase_serique",
+    "name": "Lipase sérique (LPS)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "13 - 60",
+    "unit": "UI/L",
+    "high_interpretation": "Hyperlipasémie > 3N : Pancréatite aiguë (diagnostic positif si associée à des douleurs évocatrices et/ou imagerie concordante). Autres causes : insuffisance rénale (diminution de l'élimination), occlusion ou perforation intestinale, cholécystite aiguë, infarctus mésentérique, cholangite. Conduite à tenir : Hydratation IV agressive, évaluation du score de Balthazar ou Ranson, élimination d'une origine biliaire ou métabolique (hypertriglycéridémie, hypercalcémie).",
+    "low_interpretation": "Hypolipasémie : Pas de signification pathologique univoque en pathologie aiguë. Peut témoigner d'une insuffisance pancréatique exocrine au stade très tardif ou avancé (destruction massive du parenchyme pancréatique, mucoviscidose), mais l'élastase fécales ou la stéatorrhée sont préférées pour cette exploration. Conduite à tenir : Corréler cliniquement, rechercher des signes de malabsorption.",
+    "clinical_notes": [
+      "La lipase est l'enzyme de choix par rapport à l'amylase pour le diagnostic de la pancréatite aiguë (plus sensible et plus spécifique, sa cinétique est plus tardive mais elle se normalise plus lentement).",
+      "Une élévation modérée (< 3N) n'est pas spécifique d'une pancréatite aiguë et peut être observée dans de nombreuses affections abdomino-pelviennes aiguës ou en cas d'insuffisance rénale modérée à sévère.",
+      "Piège pré-analytique : Le prélèvement doit être centrifugé rapidement pour éviter l'hémolyse qui peut interférer avec certaines techniques dosant l'activité enzymatique."
+    ],
+    "created_at": "2026-10-25T23:24:57.138035+00:00",
+    "updated_at": "2026-10-25T23:24:57.138051+00:00"
   }
 ]
