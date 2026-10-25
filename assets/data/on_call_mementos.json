@@ -735,5 +735,25 @@
     "is_active": true,
     "created_at": "2026-10-25T18:33:05.408400+00:00",
     "updated_at": "2026-10-25T18:33:05.408412+00:00"
+  },
+  {
+    "id": "memento_choc_anaphylactique",
+    "title": "⚡ Choc Anaphylactique : Adrénaline Immédiate et Surveillance",
+    "category": "Urgences Vitales & Réanimation",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Arrêt immédiat de l'antigène suspect (perfusion, antibiotique), décubitus strict, surélévation des membres inférieurs, oxygénothérapie haute concentration à 15 L/min au masque à haute concentration.",
+      "Étape 2 : ADRÉNALINE IM-N = 0,5 mg (0,5 mL à 1 mg/mL pur) en IM dans la cuisse (face antéro-externe), à renouveler toutes les 5 à 15 min si persistance du choc ou des signes de détresse respiratoire.",
+      "Étape 3 : Remplissage vasculaire immédiat par cristalloïdes (NaCl 0,9% ou Ringer Lactate) : bolus de 500 à 1000 mL chez l'adulte (20 mL/kg chez l'enfant) en 15-20 minutes, renouvelable selon l'état hémodynamique.",
+      "Étape 4 : Traitements adjuvants en seconde intention : Corticoïdes IV (Hydrocortisone 100-200 mg IVD ou Méthylprednisolone 1-2 mg/kg) et Antihistaminiques (Dexchlorphéniramine 5 mg IVL) pour prévenir la récurrence biphasique.",
+      "Étape 5 : Surveillance armée (scope, PA, SpO2, FR) pendant au moins 6 à 12 heures au déchoquage, et transfert immédiat en Réanimation en cas de collapsus réfractaire ou d'intubation difficile prévisible (œdème laryngé majeur).",
+      "Étape 6 : Piège mortel : NE JAMAIS injecter l'adrénaline en IV direct pur hors réanimation (risque d'arythmies fatales, FV/TV). En cas d'arrêt cardiaque, protocole ACR standard mais bolus d'adrénaline IV indispensable."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / EAACI / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-25T19:18:18.464389+00:00",
+    "updated_at": "2026-10-25T19:18:18.464429+00:00"
   }
 ]
