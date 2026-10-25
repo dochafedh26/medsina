@@ -696,5 +696,25 @@
     "is_active": true,
     "created_at": "2026-10-25T05:23:11.454197+00:00",
     "updated_at": "2026-10-25T05:23:11.454212+00:00"
+  },
+  {
+    "id": "memento_acidocetose_diabetique",
+    "title": "⚡ Acidocétose Diabétique : Réa & Urgences",
+    "category": "Métabolique / Endocrinologie",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Bilan biologique d'urgence (Glycémie capillaire, gaz du sang, ionogramme sanguin avec natrémie corrigée, urée, créatinine, BU corps cétoniques) et pose de 2 VVP de gros calibre.",
+      "Étape 2 : Expansion volémique immédiate par NaCl 0,9% (1000 mL en 1h, puis 500 mL/h les 2h suivantes), sauf si insuffisance cardiaque ou choc cardiogénique avéré.",
+      "Étape 3 : Insulinothérapie IV stricte à l'alte (Actrapid 0,1 UI/kg/h au pousse-seringue électrique sans bolus initial), après vérification d'une kaliémie > 3,3 mmol/L.",
+      "Étape 4 : Supplémentation potassique systématique dès que kaliémie < 5 mmol/L (20 à 40 mEq de KCl par litre de perfusion) pour éviter les troubles du rythme mortels.",
+      "Étape 5 : Surveillance armée (GDS et glycémie capillaire toutes les heures, ionogramme toutes les 4h) et critères de transfert en réanimation (pH < 7,00, trouble de la conscience, instabilité hémodynamique).",
+      "Étape 6 : Piège médico-légal / CI absolue : Ne jamais administrer de bicarbonate de sodium en routine (sauf acidémie extrême menaçante pH < 6,90 avec collapsus) et ne jamais arrêter l'insuline avant la correction complète de l'acidocétose (pH > 7,30 et bicarbonates > 18 mmol/L)."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / ALMS Algérie / ADA Standards of Care",
+    "is_active": true,
+    "created_at": "2026-10-25T13:23:26.888446+00:00",
+    "updated_at": "2026-10-25T13:23:26.888462+00:00"
   }
 ]
