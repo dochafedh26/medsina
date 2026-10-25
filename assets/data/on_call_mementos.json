@@ -676,5 +676,25 @@
     "is_active": true,
     "created_at": "2026-10-24T05:05:43.606906+00:00",
     "updated_at": "2026-10-24T05:05:43.606920+00:00"
+  },
+  {
+    "id": "memento_pneumothorax_compressif",
+    "title": "💨 Pneumothorax Spontané Compressif",
+    "category": "Urgences Vitales / Pneumologie",
+    "icon_name": "air_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Urgence vitale absolue ! Diagnostic clinique immédiat (détresse respiratoire aigue, asymétrie thoracique, abolition du murmure vésiculaire, tympanisme, collapsus hémodynamique). Ne PAS attendre la radio de thorax.",
+      "Étape 2 : Décompression d'urgence immédiate au lit du malade. Mandrin de thoracocentèse ou angiocathéter 14G ou 16G planté au 2e espace intercostal sur la ligne médio-claviculaire (ou 5e EIC ligne axillaire moyenne). Fuite d'air audible = diagnostic confirmé et soulagement instantané.",
+      "Étape 3 : Pose urgente d'un drain thoracique sous anesthésie locale (Xylocaïne 1 ou 2%) relié à un système de aspiration douce ou bulle à bulle (système de Heimlich ou bocal d'étanchéité stérile).",
+      "Étape 4 : Bilan paraclinique post-drainage : Radiographie pulmonaire de contrôle (vérifier l'expansion pulmonaire et le bon positionnement du drain) et gaz du sang (ABG).",
+      "Étape 5 : Surveillance armée en réanimation ou déchoquage (saturation, dyspnée, bullage du drain). Critères de transfert en chirurgie thoracique : fuite d'air persistante > 5 jours ou récidive.",
+      "Étape 6 : Piège médico-légal / CI absolue : Ne jamais administrer de protoxyde d'azote (N2O) et éviter la ventilation sous pression positive (VNI/IOT) avant d'avoir drainé le pneumothorax sous peine d'aggravation fatale."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Recommandations ESC / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-25T05:23:11.454197+00:00",
+    "updated_at": "2026-10-25T05:23:11.454212+00:00"
   }
 ]
