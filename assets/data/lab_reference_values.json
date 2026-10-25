@@ -459,5 +459,20 @@
     ],
     "created_at": "2026-10-25T04:31:33.889045+00:00",
     "updated_at": "2026-10-25T04:31:33.889058+00:00"
+  },
+  {
+    "id": "lab_t4_t3_libres",
+    "name": "T4 libre (FT4) et T3 libre (FT3)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "FT4: 12 - 22 pmol/L (0.9 - 1.7 ng/dL) | FT3: 3.5 - 6.5 pmol/L (2.3 - 4.2 pg/mL)",
+    "unit": "pmol/L (ou ng/dL / pg/mL)",
+    "high_interpretation": "FT4/FT3 élevées : Hyperthyroïdie (Maladie de Basedow, goitre multinodulaire toxique, adénome toxique). Thyroïdite subaiguë de De Quervain (phase initiale thyréotoxique). Surcharge iodée (amiodarone). Urgence vitale : Crise thyrotoxique (orage thyroïdien) associant hyperthermie majeure, tachycardie disproportionnée, troubles neuro-psychiques et défaillance multiviscérale. Conduite à tenir : Arrêt de l'iode, antithyroïdiens de synthèse (ATS), bêta-bloquants (propranolol), mesures de réanimation.",
+    "low_interpretation": "FT4/FT3 basses : Hypothyroïdie primaire (hashimoto, iatrogène post-chirurgie ou post-iode 131) ou centrale (hypophysaire/hypothalamique). Syndrome des T3 basses (Non-Thyroidal Illness Syndrome / Sick Euthyroid Syndrome) en réanimation (pathologie grave intercurrente). Urgence vitale : Coma myxœdémateux (hypothermie profonde, bradycardie, hypotension, hypoventilation alvéolaire avec hypercapnie, troubles de conscience). Conduite à tenir : Réanimation respiratoire, hormonothérapie substitutive en urgence (L-T4 IV ou liothyronine) associée à une corticothérapie préalable (hydrocortisone) pour éviter une insuffisance surrénalienne aiguë associée.",
+    "clinical_notes": [
+      "Toujours coupler l'interprétation des hormones thyroïdiennes (FT4, FT3) avec le dosage de la TSH ultrasensible (TSHuh) pour authentifier l'origine (centrale vs périphérique) et éviter les pièges du syndrome des T3/T4 basses de réanimation.",
+      "Piège pré-analytique majeur : Certaines variations des protéines porteuses (TBG) modifient la T4 totale mais ne modifient PAS les fractions libres (FT4 et FT3), d'où la supériorité des formes libres. Attention toutefois aux interférences analytiques (anticorps anti-streptavidine ou hétérophiles) et aux médicaments (amiodarone, corticoïdes, héparine) modifiant la liaison protéique."
+    ],
+    "created_at": "2026-10-25T13:09:19.666924+00:00",
+    "updated_at": "2026-10-25T13:09:19.666938+00:00"
   }
 ]
