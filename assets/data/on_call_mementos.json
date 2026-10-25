@@ -716,5 +716,24 @@
     "is_active": true,
     "created_at": "2026-10-25T13:23:26.888446+00:00",
     "updated_at": "2026-10-25T13:23:26.888462+00:00"
+  },
+  {
+    "id": "memento_chalazion",
+    "title": "👁️ Prise en charge du Chalazion aux UMC",
+    "category": "Ophtalmologie d'Urgence",
+    "icon_name": "healing_rounded",
+    "color_hex": "#0D9488",
+    "priority_level": 3,
+    "points": [
+      "Étape 1 : Examen clinique immédiat - Eliminer une cellulite orbitaire ou pré-septale (fièvre, douleur vive, œdème étendu, limitation de la motilité oculaire). Palper la paupière à la recherche d'un nodule ferme, indolore ou peu douloureux, situé dans le tarse.",
+      "Étape 2 : Bilan paraclinique - Aucun examen biologique ou radiologique n'est nécessaire en urgence pour un chalazion simple non compliqué.",
+      "Étape 3 : Thérapeutique de 1ère intention - Prescrire des compresses chaudes (10 min, 3 à 4 fois par jour) suivies d'un massage doux de la paupière vers le bord libre. Associer une pommade ophtalmique associant corticoïde et antibiotique (ex : Maxitrol pommade) 3 fois par jour pendant 7 jours.",
+      "Étape 4 : Surveillance et critères de gravité - Réévaluer à 48-72h. En cas d'extension de l'inflammation, de fièvre ou d'altération de l'état général, suspecter une cellulite et transférer en ophtalmologie ou orienter vers un avis spécialisé.",
+      "Étape 5 : Piège médico-légal et contre-indication - Ne jamais tenter une incision ou un curetage au lit du malade aux UMC (risque de cicatrice vicieuse ou de lésion du bord libre). Ne jamais prescrire de collyre corticoïde au long cours sans éliminer une kératite herpétique."
+    ],
+    "scientific_references": "Société Française d'Ophtalmologie (SFO) / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-25T18:33:05.408400+00:00",
+    "updated_at": "2026-10-25T18:33:05.408412+00:00"
   }
 ]
