@@ -2,8 +2,8 @@ name: 🩺 Medsina - Conduites à Tenir (CAT)
 
 on:
   schedule:
-    # Déclenché toutes les 6 heures (00:17, 06:17, 12:17, 18:17 UTC = 4 CATs officielles par 24h)
-    - cron: '17 */6 * * *'
+    # Déclenché chaque heure à la minute 10 (24 CATs officielles par 24h)
+    - cron: '10 * * * *'
   workflow_dispatch:
     inputs:
       course_id:
@@ -63,6 +63,7 @@ jobs:
             echo "Aucune modification de fichier JSON à valider."
           else
             git commit -m "chore(automation): sync autonomous CAT protocols [skip ci]"
-            git push
+            git pull --rebase origin main || true
+            git push origin main
           fi
 

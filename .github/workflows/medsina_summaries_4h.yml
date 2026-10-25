@@ -1,10 +1,9 @@
-name: 📚 Medsina - Résumés Automatiques de Cours (4h)
+name: 📚 Medsina - Résumés Automatiques de Cours (Horaire)
 
 on:
   schedule:
-    # Déclenché toutes les 4 heures (00h, 04h, 08h, 12h, 16h, 20h UTC = 6 fiches résumés complètes par 24h)
-    # Minute 7 choisie pour éviter la congestion GitHub au début d'heure (:00)
-    - cron: '7 */4 * * *'
+    # Déclenché chaque heure à la minute 40 (24 fiches résumés complètes par 24h)
+    - cron: '40 * * * *'
   workflow_dispatch:
     inputs:
       course_id:
@@ -64,6 +63,7 @@ jobs:
             echo "Aucune modification de fichier JSON à valider."
           else
             git commit -m "chore(automation): sync autonomous course summaries [skip ci]"
-            git push
+            git pull --rebase origin main || true
+            git push origin main
           fi
 

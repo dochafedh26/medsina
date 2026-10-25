@@ -2,8 +2,8 @@ name: 🧪 Medsina - Normes Biologiques de Référence
 
 on:
   schedule:
-    # Déclenché quotidiennement toutes les 8 heures (04:12, 12:12, 20:12 UTC = 3 normes biologiques par 24h)
-    - cron: '12 */8 * * *'
+    # Déclenché chaque heure à la minute 30 (24 normes biologiques par 24h)
+    - cron: '30 * * * *'
   workflow_dispatch:
     inputs:
       lab:
@@ -63,6 +63,7 @@ jobs:
             echo "Aucune modification de fichier JSON à valider."
           else
             git commit -m "chore(automation): sync autonomous lab reference values [skip ci]"
-            git push
+            git pull --rebase origin main || true
+            git push origin main
           fi
 

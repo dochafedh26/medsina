@@ -2,8 +2,8 @@ name: 🌙 Medsina - Mémentos de Garde Hospitalière
 
 on:
   schedule:
-    # Déclenché toutes les 8 heures (02:47, 10:47, 18:47 UTC = 3 mémentos réflexes de garde par 24h)
-    - cron: '47 */8 * * *'
+    # Déclenché chaque heure à la minute 20 (24 mémentos réflexes de garde par 24h)
+    - cron: '20 * * * *'
   workflow_dispatch:
     inputs:
       memento:
@@ -63,6 +63,7 @@ jobs:
             echo "Aucune modification de fichier JSON à valider."
           else
             git commit -m "chore(automation): sync autonomous mementos cache [skip ci]"
-            git push
+            git pull --rebase origin main || true
+            git push origin main
           fi
 

@@ -2,8 +2,8 @@ name: 💊 Medsina - Urgences & DCI Algérie
 
 on:
   schedule:
-    # Déclenché quotidiennement toutes les 8 heures (00:37, 08:37, 16:37 UTC = 3 fiches urgences/jour)
-    - cron: '37 */8 * * *'
+    # Déclenché chaque heure à la minute 50 (24 fiches urgences & DCI par 24h)
+    - cron: '50 * * * *'
   workflow_dispatch:
     inputs:
       dci:
@@ -63,6 +63,7 @@ jobs:
             echo "Aucune modification de fichier JSON à valider."
           else
             git commit -m "chore(automation): sync autonomous emergency drugs [skip ci]"
-            git push
+            git pull --rebase origin main || true
+            git push origin main
           fi
 
