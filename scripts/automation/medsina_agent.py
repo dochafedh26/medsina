@@ -21,6 +21,12 @@ import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
+# Ensure script directory is in sys.path
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+
 try:
     if sys.stdout.encoding.lower() != "utf-8":
         sys.stdout.reconfigure(encoding="utf-8")
@@ -415,6 +421,11 @@ Génère le JSON complet et structuré."""
     if dry_run:
         print("\n[DRY RUN] Generated data snippet:")
         print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        try:
+            from social_teaser_broadcaster import broadcast_content_teaser
+            broadcast_content_teaser("cat", data, supabase=supabase, dry_run=True)
+        except Exception as e:
+            print(f"⚠️ Avertissement teaser dry-run (cat): {e}")
         return data
 
     # Write to Supabase
@@ -437,6 +448,13 @@ Génère le JSON complet et structuré."""
         )
     else:
         print("Notice: Protocol generated locally (Supabase write skipped or pending).")
+
+    # Multichannel Social Teaser Broadcast (Facebook Blida, Facebook MedevSync, Telegram)
+    try:
+        from social_teaser_broadcaster import broadcast_content_teaser
+        broadcast_content_teaser("cat", data, supabase=supabase, dry_run=dry_run)
+    except Exception as e:
+        print(f"⚠️ Avertissement diffusion teaser réseaux sociaux (CAT): {e}")
 
     return data
 
@@ -508,6 +526,11 @@ Génère le JSON complet."""
     if dry_run:
         print("\n[DRY RUN] Generated Pearl snippet:")
         print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        try:
+            from social_teaser_broadcaster import broadcast_content_teaser
+            broadcast_content_teaser("pearl", data, supabase=supabase, dry_run=True)
+        except Exception as e:
+            print(f"⚠️ Avertissement teaser dry-run (pearl): {e}")
         return data
 
     res = supabase.post("daily_pearls", data, upsert=False)
@@ -529,6 +552,13 @@ Génère le JSON complet."""
         )
     else:
         print("Notice: Daily pearl generated locally (Supabase write skipped or pending).")
+
+    # Multichannel Social Teaser Broadcast (Facebook Blida, Facebook MedevSync, Telegram)
+    try:
+        from social_teaser_broadcaster import broadcast_content_teaser
+        broadcast_content_teaser("pearl", data, supabase=supabase, dry_run=dry_run)
+    except Exception as e:
+        print(f"⚠️ Avertissement diffusion teaser réseaux sociaux (Pearl): {e}")
 
     return data
 
@@ -762,6 +792,11 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
     if dry_run:
         print("\n[DRY RUN] Generated Drug snippet:")
         print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        try:
+            from social_teaser_broadcaster import broadcast_content_teaser
+            broadcast_content_teaser("drug", data, supabase=supabase, dry_run=True)
+        except Exception as e:
+            print(f"⚠️ Avertissement teaser dry-run (drug): {e}")
         return data
 
     # 1. Save to remote Supabase (only pass table columns)
@@ -812,6 +847,13 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
             EMERGENCY_DRUGS_FILE.write_text(json.dumps(local_list, indent=2, ensure_ascii=False), encoding="utf-8")
         except Exception as e:
             print(f"Warning updating local drugs file: {e}")
+
+    # Multichannel Social Teaser Broadcast (Facebook Blida, Facebook MedevSync, Telegram)
+    try:
+        from social_teaser_broadcaster import broadcast_content_teaser
+        broadcast_content_teaser("drug", data, supabase=supabase, dry_run=dry_run)
+    except Exception as e:
+        print(f"⚠️ Avertissement diffusion teaser réseaux sociaux (Drug): {e}")
 
     return data
 
@@ -962,6 +1004,11 @@ Fournis les normes usuelles exactes, les causes et seuils critiques d'urgence po
     if dry_run:
         print("\n[DRY RUN] Generated Lab snippet:")
         print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        try:
+            from social_teaser_broadcaster import broadcast_content_teaser
+            broadcast_content_teaser("lab", data, supabase=supabase, dry_run=True)
+        except Exception as e:
+            print(f"⚠️ Avertissement teaser dry-run (lab): {e}")
         return data
 
     # 1. Save to remote Supabase
@@ -984,6 +1031,13 @@ Fournis les normes usuelles exactes, les causes et seuils critiques d'urgence po
             print(f"Updated local {LAB_VALUES_FILE.name} ({len(local_list)} total lab values)!")
         except Exception as e:
             print(f"Warning updating local lab values file: {e}")
+
+    # Multichannel Social Teaser Broadcast (Facebook Blida, Facebook MedevSync, Telegram)
+    try:
+        from social_teaser_broadcaster import broadcast_content_teaser
+        broadcast_content_teaser("lab", data, supabase=supabase, dry_run=dry_run)
+    except Exception as e:
+        print(f"⚠️ Avertissement diffusion teaser réseaux sociaux (Lab): {e}")
 
     return data
 
@@ -1134,6 +1188,11 @@ Rédige entre 4 et 6 points réflexes numérotés ou ordonnés par ordre chronol
     if dry_run:
         print("\n[DRY RUN] Generated Memento snippet:")
         print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        try:
+            from social_teaser_broadcaster import broadcast_content_teaser
+            broadcast_content_teaser("memento", data, supabase=supabase, dry_run=True)
+        except Exception as e:
+            print(f"⚠️ Avertissement teaser dry-run (memento): {e}")
         return data
 
     # 1. Save to remote Supabase
@@ -1169,6 +1228,13 @@ Rédige entre 4 et 6 points réflexes numérotés ou ordonnés par ordre chronol
             print(f"Updated local {ON_CALL_MEMENTOS_FILE.name} ({len(local_list)} total on-call mementos)!")
         except Exception as e:
             print(f"Warning updating local mementos file: {e}")
+
+    # Multichannel Social Teaser Broadcast (Facebook Blida, Facebook MedevSync, Telegram)
+    try:
+        from social_teaser_broadcaster import broadcast_content_teaser
+        broadcast_content_teaser("memento", data, supabase=supabase, dry_run=dry_run)
+    except Exception as e:
+        print(f"⚠️ Avertissement diffusion teaser réseaux sociaux (Memento): {e}")
 
     return data
 
@@ -1306,6 +1372,11 @@ Fournis une fiche médicale approfondie d'au moins 5 sections avec des points cl
     if dry_run:
         print("\n[DRY RUN] Generated Course Summary snippet:")
         print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
+        try:
+            from social_teaser_broadcaster import broadcast_content_teaser
+            broadcast_content_teaser("summary", data, supabase=supabase, dry_run=True)
+        except Exception as e:
+            print(f"⚠️ Avertissement teaser dry-run (summary): {e}")
         return data
 
     # 1. Save to Supabase
@@ -1342,6 +1413,13 @@ Fournis une fiche médicale approfondie d'au moins 5 sections avec des points cl
             print(f"Updated local {COURSE_SUMMARIES_FILE.name} ({len(local_list)} total course summaries)!")
         except Exception as e:
             print(f"Warning updating local course summaries file: {e}")
+
+    # Multichannel Social Teaser Broadcast (Facebook Blida, Facebook MedevSync, Telegram)
+    try:
+        from social_teaser_broadcaster import broadcast_content_teaser
+        broadcast_content_teaser("summary", data, supabase=supabase, dry_run=dry_run)
+    except Exception as e:
+        print(f"⚠️ Avertissement diffusion teaser réseaux sociaux (Summary): {e}")
 
     return data
 
