@@ -739,5 +739,19 @@
     "created_at": "2026-10-26T11:34:32.085760+00:00",
     "updated_at": "2026-10-26T11:34:32.085773+00:00",
     "algerianAvailability": "Disponible UMC, maternités, blocs obstétricaux, PCH et pharmacies hospitalières"
+  },
+  {
+    "id": "drug_physostigmine",
+    "dci": "Physostigmine (Salicylate de physostigmine)",
+    "brand": "Antilirium (Princeps importé / Approvisionnement exceptionnel PCH), Formulations magistrales ou importation via la PCH pour les UMC",
+    "category": "Antidotes & Sérums",
+    "route": "Voie IV lente exclusive (sous monitorage ECG continu)",
+    "indication": "Syndrome anticholinergique central et périphérique grave menaçant le pronostic vital (intoxication aiguë par les atrophiniques, datura, antihistaminiques, tricycliques avec prudence extrême)",
+    "dose": "• Posologie adulte : Bolus IV lent de 1 à 2 mg (0,5 mg à 1 mg chez le sujet âgé), administré sur au moins 5 minutes. Répétable toutes les 10 à 30 minutes si réapparition des symptômes, sans dépasser 4 mg par heure ou 2 mg en dose initiale unique pour éviter une crise cholinergique.\n• Posologie pédiatrique : 0,02 mg/kg en IV lente (maximum 0,5 mg par dose), administrée très lentement. Répétable si nécessaire selon la réponse clinique sous contrôle électrocardiographique.",
+    "alert": "• Contre-indications absolues : Intoxication par les antidépresseurs tricycliques avec élargissement des QRS (> 100 ms) ou troubles du rythme ventriculaire (risque d'asystolie fatale), asthme sévère, occlusion mécanique intestinale ou urinaire, acidose.\n• Pièges létaux : Ne jamais injecter en IV rapide (risque de convulsions, bradycardie sévère, bronchospasme et arrêt cardiaque). Avoir impérativement de l'atropine prête à l'emploi en cas de surdosage iatrogène.\n• Surveillance : Monitorage ECG continu, PA, fréquence cardiaque, signes de crise cholinergique (bronchorrhée, hypersalivation).",
+    "algerian_availability": "Disponible via la PCH (Pharmacie Centrale des Hôpitaux) sur bon de commande exceptionnel pour les grands centres antipoison et services de réanimation / UMC universitaires.",
+    "created_at": "2026-10-26T17:40:22.402060+00:00",
+    "updated_at": "2026-10-26T17:40:22.402074+00:00",
+    "algerianAvailability": "Disponible via la PCH (Pharmacie Centrale des Hôpitaux) sur bon de commande exceptionnel pour les grands centres antipoison et services de réanimation / UMC universitaires."
   }
 ]
