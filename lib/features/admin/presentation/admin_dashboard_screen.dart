@@ -38,6 +38,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   String? _triggeringAgentId;
   bool _isGitHubConfigured = false;
 
+  bool _isLoadingBlidaQueue = false;
+  List<Map<String, dynamic>> _discoveredBlidaResources = [];
+  String _blidaQueueFilterStatus = 'pending';
+
   String _formatDateTime(DateTime? dt) {
     if (dt == null) return 'Non renseigné';
     final local = dt.toLocal();
@@ -3595,7 +3599,34 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     if (mounted) {
       setState(() => _isGitHubConfigured = configured);
     }
-    await _refreshRecentWorkflowRuns();
+    await Future.wait([
+      _refreshRecentWorkflowRuns(),
+      _loadDiscoveredBlidaResources(),
+    ]);
+  }
+
+  Future<void> _loadDiscoveredBlidaResources({String? status}) async {
+    if (_isLoadingBlidaQueue) return;
+    final targetStatus = status ?? _blidaQueueFilterStatus;
+    setState(() {
+      _isLoadingBlidaQueue = true;
+      _blidaQueueFilterStatus = targetStatus;
+    });
+    try {
+      final items = await SupabaseService.fetchDiscoveredBlidaResources(
+        status: targetStatus,
+      );
+      if (mounted) {
+        setState(() {
+          _discoveredBlidaResources = items;
+          _isLoadingBlidaQueue = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isLoadingBlidaQueue = false);
+      }
+    }
   }
 
   Future<void> _refreshRecentWorkflowRuns() async {
@@ -3817,6 +3848,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
           // 1.5. Facebook AI Prompts Section (New)
           _buildFacebookPublisherSection(context, isDark),
+          const SizedBox(height: 24),
+
+          // 1.6. Blida Telegram & Google Drive Validation Queue Section
+          _buildBlidaValidationQueueSection(context, isDark),
           const SizedBox(height: 28),
 
           // 2. Agents List Section Title
@@ -5359,5 +5394,535 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     if (diff.inHours < 24) return 'Il y a ${diff.inHours}h';
     if (diff.inDays < 7) return 'Il y a ${diff.inDays}j';
     return '${local.day.toString().padLeft(2, '0')}/${local.month.toString().padLeft(2, '0')}/${local.year}';
+  }
+
+  // --- BLIDA TELEGRAM & GOOGLE DRIVE VALIDATION QUEUE UI ---
+
+  Widget _buildBlidaValidationQueueSection(BuildContext context, bool isDark) {
+    const accentColor = Color(0xFF0EA5E9);
+
+    return Card(
+      elevation: isDark ? 0 : 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: accentColor.withValues(alpha: 0.35),
+          width: 1.5,
+        ),
+      ),
+      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.radar_rounded, color: accentColor, size: 26),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text(
+                            'File d\'Attente de Validation Blida (Telegram & Drive)',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: accentColor.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '${_discoveredBlidaResources.length} élément(s)',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: accentColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Ressources PDF, QCM, EMD et Drives détectés automatiquement sur les canaux Telegram et Google Drive de Médecine Blida. Aucune ressource n\'est publiée sans votre validation.',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Divider(height: 1),
+            const SizedBox(height: 12),
+
+            // Filter chips + Action buttons
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.spaceBetween,
+              children: [
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    _buildBlidaFilterChip('pending', 'En attente ⏳', const Color(0xFFF59E0B), isDark),
+                    _buildBlidaFilterChip('approved', 'Approuvés ✅', const Color(0xFF10B981), isDark),
+                    _buildBlidaFilterChip('rejected', 'Rejetés ❌', const Color(0xFFEF4444), isDark),
+                    _buildBlidaFilterChip('all', 'Tous', accentColor, isDark),
+                  ],
+                ),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.tune_rounded, size: 16),
+                      label: const Text('Sources Surveillées', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        foregroundColor: accentColor,
+                        side: BorderSide(color: accentColor.withValues(alpha: 0.5)),
+                      ),
+                      onPressed: () => _showConfigureBlidaSourcesDialog(context),
+                    ),
+                    ElevatedButton.icon(
+                      icon: _triggeringAgentId == 'blida_scanner'
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Icon(Icons.radar_rounded, size: 16),
+                      label: const Text('Scanner Maintenant', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: accentColor,
+                        foregroundColor: Colors.white,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: _triggeringAgentId == 'blida_scanner'
+                          ? null
+                          : () {
+                              final scannerAgent = GitHubActionsService.availableAgents
+                                  .where((a) => a.id == 'blida_scanner')
+                                  .firstOrNull;
+                              if (scannerAgent != null) {
+                                _onTriggerAgentPressed(scannerAgent);
+                              }
+                            },
+                    ),
+                    IconButton(
+                      tooltip: 'Actualiser la file d\'attente',
+                      visualDensity: VisualDensity.compact,
+                      icon: _isLoadingBlidaQueue
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.refresh_rounded, size: 20),
+                      onPressed: () => _loadDiscoveredBlidaResources(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            if (_isLoadingBlidaQueue && _discoveredBlidaResources.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 28),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (_discoveredBlidaResources.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
+                ),
+                child: Column(
+                  children: [
+                    Icon(Icons.inbox_rounded, size: 34, color: Colors.grey.shade400),
+                    const SizedBox(height: 8),
+                    Text(
+                      _blidaQueueFilterStatus == 'pending'
+                          ? 'Aucune ressource en attente de validation.'
+                          : 'Aucune ressource dans ce filtre.',
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Lancez le "Scanner Maintenant" ou configurez de nouveaux canaux Telegram / dossiers Google Drive.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                    ),
+                  ],
+                ),
+              )
+            else
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 460),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: _discoveredBlidaResources.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  itemBuilder: (ctx, index) {
+                    final item = _discoveredBlidaResources[index];
+                    return _buildDiscoveredBlidaResourceCard(context, item, isDark);
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBlidaFilterChip(String statusKey, String label, Color color, bool isDark) {
+    final isSelected = _blidaQueueFilterStatus == statusKey;
+    return ChoiceChip(
+      label: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11.5,
+          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+          color: isSelected ? color : (isDark ? Colors.white70 : Colors.grey.shade700),
+        ),
+      ),
+      selected: isSelected,
+      selectedColor: color.withValues(alpha: 0.18),
+      backgroundColor: isDark ? Colors.white10 : Colors.grey.shade100,
+      side: BorderSide(
+        color: isSelected ? color : Colors.transparent,
+      ),
+      visualDensity: VisualDensity.compact,
+      onSelected: (_) => _loadDiscoveredBlidaResources(status: statusKey),
+    );
+  }
+
+  Widget _buildDiscoveredBlidaResourceCard(
+    BuildContext context,
+    Map<String, dynamic> item,
+    bool isDark,
+  ) {
+    final idOrHash = (item['id'] ?? item['external_id_hash'] ?? '').toString();
+    final title = (item['title'] ?? 'Ressource sans titre').toString();
+    final sourceType = (item['source_type'] ?? 'telegram').toString();
+    final sourceChannel = (item['source_channel_or_folder'] ?? '').toString();
+    final resourceType = (item['resource_type'] ?? 'other').toString();
+    final url = (item['url'] ?? '').toString();
+    final module = (item['suggested_module'] ?? 'Médecine Blida').toString();
+    final year = (item['study_year'] ?? '').toString();
+    final summary = (item['ai_summary'] ?? item['description'] ?? '').toString();
+    final status = (item['status'] ?? 'pending').toString();
+
+    final isDrive = sourceType.contains('drive');
+    final sourceColor = isDrive ? const Color(0xFF10B981) : const Color(0xFF0EA5E9);
+    final sourceIcon = isDrive ? Icons.add_to_drive_rounded : Icons.telegram_rounded;
+    final sourceLabel = isDrive ? 'Google Drive' : 'Telegram';
+
+    String typeLabel = 'Ressource';
+    Color typeColor = const Color(0xFF6366F1);
+    if (resourceType == 'qcm_exam') {
+      typeLabel = 'QCM / EMD';
+      typeColor = const Color(0xFFF59E0B);
+    } else if (resourceType == 'pdf_course') {
+      typeLabel = 'Cours PDF';
+      typeColor = const Color(0xFFEC4899);
+    } else if (resourceType == 'drive_folder') {
+      typeLabel = 'Dossier Drive';
+      typeColor = const Color(0xFF10B981);
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.white12 : Colors.grey.shade200,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Top badges + Title
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: sourceColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(sourceIcon, size: 13, color: sourceColor),
+                    const SizedBox(width: 4),
+                    Text(
+                      sourceChannel.isNotEmpty ? '$sourceLabel • $sourceChannel' : sourceLabel,
+                      style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: sourceColor),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: typeColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  typeLabel,
+                  style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: typeColor),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  year.isNotEmpty ? '$module ($year)' : module,
+                  style: const TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.primaryTeal,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (summary.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              summary,
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.end,
+            children: [
+              if (url.isNotEmpty)
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.open_in_new_rounded, size: 15),
+                  label: const Text('Inspecter Lien', style: TextStyle(fontSize: 11.5)),
+                  style: OutlinedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  onPressed: () async {
+                    final uri = Uri.tryParse(url);
+                    if (uri != null && await canLaunchUrl(uri)) {
+                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                ),
+              if (status != 'approved')
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.check_rounded, size: 15),
+                  label: const Text('Approuver', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF10B981),
+                    foregroundColor: Colors.white,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  onPressed: () async {
+                    final ok = await SupabaseService.updateDiscoveredBlidaResourceStatus(
+                      idOrHash: idOrHash,
+                      newStatus: 'approved',
+                    );
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: ok ? const Color(0xFF10B981) : Colors.orange,
+                        content: Text(
+                          ok
+                              ? '✅ Ressource "$title" approuvée avec succès !'
+                              : 'Mise à jour locale effectuée.',
+                        ),
+                      ),
+                    );
+                    _loadDiscoveredBlidaResources();
+                  },
+                ),
+              if (status != 'rejected')
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.close_rounded, size: 15, color: Color(0xFFEF4444)),
+                  label: const Text(
+                    'Rejeter',
+                    style: TextStyle(fontSize: 11.5, color: Color(0xFFEF4444), fontWeight: FontWeight.w700),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    side: const BorderSide(color: Color(0xFFEF4444)),
+                  ),
+                  onPressed: () async {
+                    final ok = await SupabaseService.updateDiscoveredBlidaResourceStatus(
+                      idOrHash: idOrHash,
+                      newStatus: 'rejected',
+                    );
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: ok ? const Color(0xFF64748B) : Colors.orange,
+                        content: Text('Ressource "$title" écartée de la file.'),
+                      ),
+                    );
+                    _loadDiscoveredBlidaResources();
+                  },
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConfigureBlidaSourcesDialog(BuildContext context) async {
+    final currentConfig = await SupabaseService.getBlidaScannerSources();
+    if (!context.mounted) return;
+
+    final ctrl = TextEditingController(text: currentConfig);
+    bool isSaving = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.radar_rounded, color: Color(0xFF0EA5E9)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Sources Telegram & Google Drive (Médecine Blida)',
+                  style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: 520,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Configurez la liste JSON des canaux Telegram publics (@handle), des dossiers Google Drive partagés et des mots-clés surveillés par le robot GitHub Actions :',
+                    style: TextStyle(fontSize: 12.5),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: ctrl,
+                    maxLines: 14,
+                    style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: '{\n  "telegram_channels": ["fmb_blida"],\n  "google_drive_folders": ["https://drive.google.com/..."]\n}',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0EA5E9),
+                foregroundColor: Colors.white,
+              ),
+              icon: isSaving
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.save_rounded, size: 16),
+              label: const Text('Enregistrer sur Supabase Cloud'),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      final raw = ctrl.text.trim();
+                      try {
+                        jsonDecode(raw);
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.red,
+                            content: Text('Format JSON invalide : $e'),
+                          ),
+                        );
+                        return;
+                      }
+                      setDlgState(() => isSaving = true);
+                      final ok = await SupabaseService.saveBlidaScannerSources(raw);
+                      if (!ctx.mounted) return;
+                      Navigator.pop(ctx);
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: ok ? const Color(0xFF10B981) : Colors.red,
+                          content: Text(
+                            ok
+                                ? '✅ Sources Telegram & Google Drive sauvegardées sur Supabase Cloud !'
+                                : 'Erreur lors de la sauvegarde des sources.',
+                          ),
+                        ),
+                      );
+                    },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

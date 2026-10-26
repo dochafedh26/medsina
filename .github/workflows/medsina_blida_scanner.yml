@@ -1,0 +1,70 @@
+name: 🔍 Medsina - Scanner Telegram & Google Drive (Médecine Blida)
+
+on:
+  schedule:
+    # Exécution automatique toutes les 12 heures (07h15 et 19h15 UTC)
+    - cron: '15 7,19 * * *'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Canal Telegram (@nom), lien t.me/... ou lien Google Drive spécifique à scanner (optionnel)'
+        required: false
+        default: ''
+        type: string
+
+concurrency:
+  group: medsina-blida-scanner-automation
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  scan-blida-resources:
+    name: 📡 Scan Canaux Telegram & Dossiers Google Drive Blida
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Récupérer le code Medsina
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurer l'environnement Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'scripts/automation/requirements.txt'
+
+      - name: 📦 Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/automation/requirements.txt
+
+      - name: 🔍 Exécuter le Scanner Telegram & Google Drive (File d'attente Admin)
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          CMD="python scripts/automation/blida_resource_scanner.py"
+          if [ -n "${{ inputs.target }}" ]; then
+            CMD="$CMD --target '${{ inputs.target }}'"
+          fi
+          echo "🚀 Exécution : $CMD"
+          eval $CMD
+
+      - name: 💾 Synchroniser le cache JSON des découvertes Blida
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -f assets/data/discovered_blida_resources.json ]; then
+            git add assets/data/discovered_blida_resources.json
+          fi
+          if git diff --staged --quiet; then
+            echo "Aucune nouvelle ressource JSON à valider."
+          else
+            git commit -m "chore(automation): sync discovered blida telegram and drive resources [skip ci]"
+            git pull --rebase origin main || true
+            git push origin main
+          fi

@@ -2485,4 +2485,156 @@ class SupabaseService {
       return false;
     }
   }
+
+  // --- BLIDA RESOURCE SCANNER & ADMIN VALIDATION QUEUE ---
+
+  static const String _blidaQueueSettingKey = 'discovered_blida_resources_queue';
+  static const String _blidaSourcesSettingKey = 'blida_scanner_sources';
+
+  /// Default watched Telegram channels & Google Drive folders for Médecine Blida
+  static const String defaultBlidaScannerSources = '''
+{
+  "telegram_channels": [
+    "fmb_blida",
+    "medecine_blida",
+    "residanat_blida",
+    "medsina_dz",
+    "qcm_medecine_dz"
+  ],
+  "google_drive_folders": [
+    "https://drive.google.com/drive/folders/1D6p9Gbd9u39d0Hfn5h96y9kvyLBe34aC",
+    "https://drive.google.com/drive/folders/1c3bZ0d-N7n9F4R-5K9sX2vL6mP8qW1tY"
+  ],
+  "keywords": [
+    "Blida",
+    "FMB",
+    "QCM",
+    "EMD",
+    "Rattrapage",
+    "Résidanat",
+    "Corrigé",
+    "CHU Frantz Fanon"
+  ]
+}''';
+
+  /// Fetch discovered Blida resources filtered by status ('pending', 'approved', 'rejected', or 'all')
+  static Future<List<Map<String, dynamic>>> fetchDiscoveredBlidaResources({
+    String status = 'pending',
+  }) async {
+    // 1. Try dedicated table `discovered_blida_resources`
+    try {
+      var query = client.from('discovered_blida_resources').select();
+      if (status != 'all') {
+        query = query.eq('status', status);
+      }
+      final res = await query.order('discovered_at', ascending: false).limit(150);
+      final list = List<Map<String, dynamic>>.from(res);
+      if (list.isNotEmpty) {
+        return list;
+      }
+    } catch (e) {
+      debugPrint('Note: discovered_blida_resources table fallback to admin_system_settings: $e');
+    }
+
+    // 2. Fallback to `admin_system_settings` ('discovered_blida_resources_queue')
+    try {
+      final rawJson = await getAdminSetting(_blidaQueueSettingKey);
+      if (rawJson != null && rawJson.trim().isNotEmpty) {
+        final decoded = jsonDecode(rawJson);
+        if (decoded is List) {
+          final items = decoded
+              .whereType<Map>()
+              .map((m) => Map<String, dynamic>.from(m))
+              .where((m) {
+                if (status == 'all') return true;
+                return (m['status']?.toString() ?? 'pending') == status;
+              })
+              .toList();
+          return items;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error reading discovered_blida_resources_queue setting: $e');
+    }
+
+    return [];
+  }
+
+  /// Approve or reject a discovered Blida resource in the Admin Validation Queue
+  static Future<bool> updateDiscoveredBlidaResourceStatus({
+    required String idOrHash,
+    required String newStatus, // 'approved' or 'rejected'
+  }) async {
+    bool updatedTable = false;
+    bool updatedSetting = false;
+
+    // 1. Attempt update on dedicated table
+    try {
+      await client
+          .from('discovered_blida_resources')
+          .update({
+            'status': newStatus,
+            'reviewed_at': DateTime.now().toIso8601String(),
+          })
+          .or('id.eq.$idOrHash,external_id_hash.eq.$idOrHash');
+      updatedTable = true;
+    } catch (_) {}
+
+    // 2. Also update the JSON queue in `admin_system_settings` so both stay in sync
+    try {
+      final rawJson = await getAdminSetting(_blidaQueueSettingKey);
+      if (rawJson != null && rawJson.trim().isNotEmpty) {
+        final decoded = jsonDecode(rawJson);
+        if (decoded is List) {
+          bool changed = false;
+          final updatedList = decoded.map((item) {
+            if (item is Map) {
+              final map = Map<String, dynamic>.from(item);
+              final itemId = map['id']?.toString() ?? '';
+              final itemHash = map['external_id_hash']?.toString() ?? '';
+              if (itemId == idOrHash || itemHash == idOrHash) {
+                map['status'] = newStatus;
+                map['reviewed_at'] = DateTime.now().toIso8601String();
+                changed = true;
+              }
+              return map;
+            }
+            return item;
+          }).toList();
+
+          if (changed) {
+            updatedSetting = await saveAdminSetting(
+              _blidaQueueSettingKey,
+              jsonEncode(updatedList),
+              description:
+                  'File d\'attente de validation Admin des ressources Blida (Telegram & Google Drive)',
+            );
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error updating discovered_blida_resources_queue setting: $e');
+    }
+
+    return updatedTable || updatedSetting;
+  }
+
+  /// Retrieve the JSON configuration of watched Telegram channels & Google Drive folders
+  static Future<String> getBlidaScannerSources() async {
+    final val = await getAdminSetting(_blidaSourcesSettingKey);
+    if (val != null && val.trim().isNotEmpty) {
+      return val.trim();
+    }
+    return defaultBlidaScannerSources;
+  }
+
+  /// Save the JSON configuration of watched Telegram channels & Google Drive folders
+  static Future<bool> saveBlidaScannerSources(String jsonConfig) async {
+    return await saveAdminSetting(
+      _blidaSourcesSettingKey,
+      jsonConfig.trim(),
+      description:
+          'Sources Telegram et Google Drive surveillées par le scanner Médecine Blida',
+    );
+  }
 }

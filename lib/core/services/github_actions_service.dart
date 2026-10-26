@@ -199,6 +199,18 @@ class GitHubActionsService {
       inputFieldLabel: 'Thème Médical / Promotionnel (optionnel)',
       inputFieldHint: 'ex: OAP, Analyseur ordonnance (laisser vide pour auto)',
     ),
+    GitHubAgentDefinition(
+      id: 'blida_scanner',
+      workflowFile: 'medsina_blida_scanner.yml',
+      title: 'Scanner Telegram & Google Drive (Médecine Blida)',
+      description: 'Scanne les canaux Telegram publics et dossiers Google Drive partagés pour détecter de nouveaux PDF, QCM et sujets EMD de Médecine Blida et les place en file d\'attente Admin.',
+      icon: Icons.radar_rounded,
+      color: Color(0xFF0EA5E9),
+      defaultCadence: '2 fois par jour (07h15 & 19h15 UTC)',
+      inputFieldKey: 'target',
+      inputFieldLabel: 'Canal Telegram (@...) ou Lien Google Drive (optionnel)',
+      inputFieldHint: 'ex: @fmb_blida ou https://drive.google.com/... (vide = scan global)',
+    ),
   ];
 
   /// Get configured Personal Access Token
