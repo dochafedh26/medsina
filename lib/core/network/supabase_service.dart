@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../features/feedback/models/app_review_model.dart';
 import '../services/medsina_notification_dispatcher.dart';
 
 class SupabaseService {
@@ -2268,6 +2270,219 @@ class SupabaseService {
     } catch (e) {
       debugPrint('SupabaseService.uploadFacebookScreenshot error: ');
       return null;
+    }
+  }
+
+  // --- APP FEEDBACK & COMMUNITY REVIEWS ---
+
+  static const String _reviewsCacheKey = 'medsina_app_reviews_cache_v1';
+
+  /// Fetch all public (or admin) app reviews with local offline fallback
+  static Future<List<AppReviewModel>> fetchAppReviews({
+    bool includeUnapprovedForAdmin = false,
+  }) async {
+    try {
+      var query = client.from('app_reviews').select();
+      if (!includeUnapprovedForAdmin) {
+        query = query.eq('is_approved', true);
+      }
+
+      final response = await query
+          .order('is_featured', ascending: false)
+          .order('created_at', ascending: false);
+
+      final list = (response as List)
+          .map((row) => AppReviewModel.fromJson(Map<String, dynamic>.from(row)))
+          .toList();
+
+      if (list.isNotEmpty) {
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+            _reviewsCacheKey,
+            jsonEncode(list.map((r) => r.toJson()).toList()),
+          );
+        } catch (_) {}
+        return list;
+      }
+    } catch (e) {
+      debugPrint('Notice fetching app_reviews from Supabase: $e');
+    }
+
+    // Fallback to local cache
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_reviewsCacheKey);
+      if (raw != null && raw.isNotEmpty) {
+        final decoded = jsonDecode(raw) as List;
+        final cached = decoded
+            .map((e) => AppReviewModel.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        if (cached.isNotEmpty) return cached;
+      }
+    } catch (_) {}
+
+    return AppReviewModel.defaultSeedReviews;
+  }
+
+  /// Submit a new review or update the current user's existing review
+  static Future<AppReviewModel?> submitAppReview({
+    String? existingReviewId,
+    required String? userId,
+    required String userName,
+    required String userRole,
+    required String userFaculty,
+    required String userTier,
+    required int rating,
+    required ReviewCategory category,
+    required List<String> quickTags,
+    String? title,
+    required String comment,
+    String appVersion = '1.0.19',
+  }) async {
+    final nowIso = DateTime.now().toIso8601String();
+    final payload = <String, dynamic>{
+      if (userId != null && userId.isNotEmpty) 'user_id': userId,
+      'user_name': userName.trim().isEmpty ? 'Médecin Medsina' : userName.trim(),
+      'user_role': userRole.trim().isEmpty ? 'Candidat Résidanat' : userRole.trim(),
+      'user_faculty': userFaculty.trim().isEmpty ? 'Faculté de Médecine de Blida' : userFaculty.trim(),
+      'user_tier': userTier,
+      'rating': rating.clamp(1, 5),
+      'category': category.id,
+      'quick_tags': quickTags,
+      'title': (title != null && title.trim().isNotEmpty) ? title.trim() : null,
+      'comment': comment.trim(),
+      'app_version': appVersion,
+      'updated_at': nowIso,
+    };
+
+    try {
+      Map<String, dynamic> savedRow;
+      if (existingReviewId != null && existingReviewId.isNotEmpty) {
+        final res = await client
+            .from('app_reviews')
+            .update(payload)
+            .eq('id', existingReviewId)
+            .select()
+            .single();
+        savedRow = Map<String, dynamic>.from(res);
+      } else {
+        final res = await client
+            .from('app_reviews')
+            .insert(payload)
+            .select()
+            .single();
+        savedRow = Map<String, dynamic>.from(res);
+      }
+
+      // Notify Admin in Realtime via medical_notifications
+      final stars = '⭐' * rating.clamp(1, 5);
+      try {
+        await client.from('medical_notifications').insert({
+          'id': 'review_${DateTime.now().millisecondsSinceEpoch}',
+          'title': '$stars Nouvel Avis Medsina ($rating/5) — ${userName.trim()}',
+          'message': '[${category.shortLabel}] ${comment.trim()}',
+          'type': 'announcement',
+          'target_role': 'admin',
+          'is_broadcast': false,
+          'metadata': {
+            'is_admin_only': true,
+            'target_role': 'admin',
+            'review_id': savedRow['id'],
+            'rating': rating,
+            'category': category.id,
+            'user_name': userName.trim(),
+          },
+        });
+      } catch (_) {}
+
+      return AppReviewModel.fromJson(savedRow);
+    } catch (e) {
+      debugPrint('Error submitting review to Supabase (saving locally): $e');
+      final fallbackReview = AppReviewModel(
+        id: existingReviewId ?? 'local_${DateTime.now().millisecondsSinceEpoch}',
+        userId: userId,
+        userName: userName.trim().isEmpty ? 'Médecin Medsina' : userName.trim(),
+        userRole: userRole.trim(),
+        userFaculty: userFaculty.trim(),
+        userTier: userTier,
+        rating: rating.clamp(1, 5),
+        category: category,
+        quickTags: quickTags,
+        title: (title != null && title.trim().isNotEmpty) ? title.trim() : null,
+        comment: comment.trim(),
+        appVersion: appVersion,
+        createdAt: DateTime.now(),
+      );
+      try {
+        final current = await fetchAppReviews();
+        final updated = [
+          fallbackReview,
+          ...current.where((r) => r.id != fallbackReview.id),
+        ];
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+          _reviewsCacheKey,
+          jsonEncode(updated.map((r) => r.toJson()).toList()),
+        );
+      } catch (_) {}
+      return fallbackReview;
+    }
+  }
+
+  /// Increment the helpful counter on a review
+  static Future<bool> markReviewHelpful(String reviewId, int currentCount) async {
+    try {
+      await client
+          .from('app_reviews')
+          .update({'helpful_count': currentCount + 1})
+          .eq('id', reviewId);
+      return true;
+    } catch (e) {
+      debugPrint('Error incrementing helpful_count: $e');
+      return false;
+    }
+  }
+
+  /// Admin moderation: add official reply, toggle featured or approved status
+  static Future<bool> adminUpdateReview({
+    required String reviewId,
+    String? adminReply,
+    bool? isFeatured,
+    bool? isApproved,
+  }) async {
+    try {
+      final updates = <String, dynamic>{
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+      if (adminReply != null) {
+        updates['admin_reply'] = adminReply.trim().isEmpty ? null : adminReply.trim();
+        updates['admin_replied_at'] =
+            adminReply.trim().isEmpty ? null : DateTime.now().toIso8601String();
+      }
+      if (isFeatured != null) {
+        updates['is_featured'] = isFeatured;
+      }
+      if (isApproved != null) {
+        updates['is_approved'] = isApproved;
+      }
+
+      await client.from('app_reviews').update(updates).eq('id', reviewId);
+      return true;
+    } catch (e) {
+      debugPrint('Error in adminUpdateReview: $e');
+      return false;
+    }
+  }
+
+  /// Admin moderation: delete a review
+  static Future<bool> adminDeleteReview(String reviewId) async {
+    try {
+      await client.from('app_reviews').delete().eq('id', reviewId);
+      return true;
+    } catch (e) {
+      debugPrint('Error deleting review: $e');
+      return false;
     }
   }
 }

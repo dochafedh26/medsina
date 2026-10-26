@@ -10,6 +10,7 @@ import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
+import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
 import 'daily_pearls_archive_screen.dart';
 
@@ -56,6 +57,10 @@ class DashboardScreen extends StatelessWidget {
 
               // Official User Guide Promo Card
               _buildUserGuidePromoCard(context),
+              const SizedBox(height: 16),
+
+              // Community Reviews & Star Rating Card
+              _buildCommunityFeedbackCard(context),
               const SizedBox(height: 28),
 
               // Quick Actions / Modules En Cours
@@ -260,6 +265,106 @@ class DashboardScreen extends StatelessWidget {
               );
             },
             child: const Text('Ouvrir ➔', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommunityFeedbackCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.amber.withValues(alpha: 0.38),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.amber.withValues(alpha: 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(Icons.star_rounded, color: Colors.white, size: 24),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Flexible(
+                      child: Text(
+                        'Votre Avis sur Medsina ⭐',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        '4.9 ★ • COMMUNAUTÉ',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFFB45309),
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  'Notez l\'application de 1 à 5 étoiles, partagez vos suggestions et consultez les avis vérifiés.',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFF59E0B),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 0,
+            ),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const FeedbackReviewsScreen(),
+                ),
+              );
+            },
+            child: const Text('Noter ★', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
           ),
         ],
       ),

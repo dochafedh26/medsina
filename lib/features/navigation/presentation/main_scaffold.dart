@@ -22,6 +22,7 @@ import '../../notifications/services/notification_navigation_service.dart';
 import '../../notifications/services/realtime_notification_service.dart';
 import '../../../core/services/ota_update_service.dart';
 import 'ota_update_dialog.dart';
+import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
 import 'package:flutter/services.dart';
@@ -640,8 +641,19 @@ class _MainScaffoldState extends State<MainScaffold> {
                   ),
                 ),
                 IconButton(
+                  icon: const Icon(Icons.star_rounded, size: 19, color: Colors.amber),
+                  tooltip: 'Avis & Évaluations Medsina',
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const FeedbackReviewsScreen()),
+                    );
+                  },
+                ),
+                IconButton(
                   icon: const Icon(Icons.menu_book_rounded, size: 18),
                   tooltip: 'Guide d\'utilisation (PDF)',
+                  visualDensity: VisualDensity.compact,
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
@@ -651,11 +663,13 @@ class _MainScaffoldState extends State<MainScaffold> {
                 IconButton(
                   icon: const Icon(Icons.system_update_rounded, size: 18),
                   tooltip: 'Vérifier les mises à jour',
+                  visualDensity: VisualDensity.compact,
                   onPressed: () => _manualCheckOtaUpdates(context),
                 ),
                 IconButton(
                   icon: const Icon(Icons.logout_rounded, size: 18),
                   tooltip: 'Déconnexion',
+                  visualDensity: VisualDensity.compact,
                   onPressed: () => _confirmLogout(context),
                 ),
               ],
@@ -1098,6 +1112,29 @@ class _MainScaffoldState extends State<MainScaffold> {
                           Navigator.pop(ctx);
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFFD97706),
+                          side: const BorderSide(color: Color(0xFFF59E0B)),
+                          padding: const EdgeInsets.symmetric(vertical: 9),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        icon: const Icon(Icons.star_rounded, size: 17, color: Color(0xFFF59E0B)),
+                        label: const Text(
+                          'Noter Medsina & Voir les Avis ⭐',
+                          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const FeedbackReviewsScreen()),
                           );
                         },
                       ),
