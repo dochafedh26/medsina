@@ -711,5 +711,19 @@
     "created_at": "2026-10-25T22:50:05.292991+00:00",
     "updated_at": "2026-10-25T22:50:05.293006+00:00",
     "algerianAvailability": "Disponible en réanimation et UMC (souvent via les stocks de la PCH ou officine selon les tensions d'approvisionnement hospitalier)"
+  },
+  {
+    "id": "drug_suxamethonium",
+    "dci": "Suxaméthonium (Chlorure de suxaméthonium / Succinylcholine)",
+    "brand": "Celocurine (Princeps), génériques importés via la PCH / Pharmacies hospitalières en Algérie",
+    "category": "Neurologie / Sédation",
+    "route": "IVD (Intraveineuse directe stricte), IM (si impossibilité d'accès IV en pédiatrie d'extrême urgence)",
+    "indication": "Intubation séquentielle rapide (ISR) en urgence, déchoquage, anesthésie générale, levée de laryngospasme aigu",
+    "dose": "• Posologie adulte : 1 à 1.5 mg/kg en IVD (généralement 80 à 100 mg). Durée d'action brève : 3 à 5 minutes. Pas d'entretien (curare dépolarisant).\n• Posologie pédiatrique : 1.5 à 2 mg/kg en IVD chez le nouveau-né et l'enfant (jusqu'à 2 mg/kg chez le nourrisson). Si voie IM impossible d'accès IV : 4 mg/kg.",
+    "alert": "• Contre-indications absolues : Hyperkaliémie connue ou préexistante, ATCD d'hyperthermie maligne, myopathies (myopathie de Duchenne), brûlures graves de > 24-48h, crush syndrome, dénervation musculaire (1e à 6e mois après lésion médullaire).\n• Pièges létaux : Libération massive de potassium pouvant induire une FV/Asystolie. Ne jamais utiliser pour l'entretien (risque de bloc de phase II). Contre-indiqué en cas de globe oculaire ouvert (augmente la pression intra-oculaire).\n• Surveillance : Monitorage de la curarisation (TOF), SpO2, ECG continu, signes d'hyperthermie maligne.",
+    "algerian_availability": "Disponible en réanimation, blocs opératoires et structures d'urgences médico-chirurgicales (UMC) via la PCH et les circuits hospitaliers.",
+    "created_at": "2026-10-26T00:46:31.867460+00:00",
+    "updated_at": "2026-10-26T00:46:31.867476+00:00",
+    "algerianAvailability": "Disponible en réanimation, blocs opératoires et structures d'urgences médico-chirurgicales (UMC) via la PCH et les circuits hospitaliers."
   }
 ]
