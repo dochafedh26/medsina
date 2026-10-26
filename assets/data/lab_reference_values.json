@@ -490,5 +490,20 @@
     ],
     "created_at": "2026-10-25T23:24:57.138035+00:00",
     "updated_at": "2026-10-25T23:24:57.138051+00:00"
+  },
+  {
+    "id": "lab_anticorps_anti_nucleaires",
+    "name": "Anticorps Anti-Nucléaires (AAN / ANA)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Négatif (Titre < 1:80 ou ratio < 1.0 selon la technique)",
+    "unit": "Titre (dilution) ou Ratio U/mL",
+    "high_interpretation": "Positivité évocatrice de connectivite ou de maladie auto-immune systémique. Lupus Érythémateux Systémique (LES), Sclérodermie systémique, Syndrome de Sjögren, Myopathies inflammatoires (polymyosite/dermatomyosite), Connectivite mixtes (Sharp), Hépatite auto-immune. Urgence vitale : Atteinte viscérale menaçante (lupus grave avec glomérulonéphrite lupique, péricardite sévère, pneumopathie interstitielle diffuse ou hypertension artérielle pulmonaire). Conduite à tenir : Rechercher des signes de gravité systémique, caractériser l'aspect de fluorescence en IFI (homogène, moucheté, nucléolaire, centromérique) et réaliser le profil extractible des AAN (ENA : anti-DNA natif, anti-Sm, anti-SSA, anti-SSB, anti-Scl-70, anti-Jo1).",
+    "low_interpretation": "Négatif ou taux indétectable. Absence de connectivite à l'instant T (valeur prédictive négative élevée pour le LES > 95%). Conduite à tenir : Une négativité élimine presque un LES évolutif, mais n'exclut pas une connectivite débutante (refaire si forte suspicion clinique) ou une autre pathologie auto-immune spécifique à AAN négatifs (ex: vascularites à ANCA, myasthénie, polyarthrite rhumatoïde séronégative).",
+    "clinical_notes": [
+      "Piège pré-analytique : Jusqu'à 15-20% de la population générale saine (notamment les sujets âgés) peuvent avoir des AAN positifs à faible titre (1:80 ou 1:160) sans aucune maladie auto-immune. La spécificité clinique dépend du titre et du contexte.",
+      "Indication de la technique : L'immunofluorescence indirecte (IFI) sur cellules HEp-2 reste le gold standard du dépistage. Ne pas demander directement des sous-types d'anticorps sans un dépistage AAN positif, sauf suspicion clinique hautement spécifique (ex: anti-DNA natif pour le suivi du lupus)."
+    ],
+    "created_at": "2026-10-26T01:27:02.921934+00:00",
+    "updated_at": "2026-10-26T01:27:02.921947+00:00"
   }
 ]
