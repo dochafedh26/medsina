@@ -725,5 +725,19 @@
     "created_at": "2026-10-26T00:46:31.867460+00:00",
     "updated_at": "2026-10-26T00:46:31.867476+00:00",
     "algerianAvailability": "Disponible en réanimation, blocs opératoires et structures d'urgences médico-chirurgicales (UMC) via la PCH et les circuits hospitaliers."
+  },
+  {
+    "id": "drug_ocytocine",
+    "dci": "Ocytocine",
+    "brand": "Syntocinon (Novartis / Frater-Razes), Ocytocine Renaux, spécialités génériques disponibles via la PCH",
+    "category": "Gastro-entérologie",
+    "route": "IV lente stricte, Perfusion IV continue, IM",
+    "indication": "Prévention et traitement de l'hémorragie du du post-partum (HPP) par atonie utérine, déclenchement du travail (hors urgence vitale), délivrance artificielle",
+    "dose": "• Adulte (HPP - Urgence vitale) :\n- Bolus IV lent : 5 UI dans 10 mL de NaCl 0,9% ou G5% administré sur 1 à 2 minutes (renouvelable 1 fois si besoin).\n- Perfusion d'entretien : 10 à 20 UI (jusqu'à 40 UI) dans 500 mL de G5% ou NaCl 0,9% à débit rapide (100 à 150 mL/h) pour maintenir la contraction utérine.\n- Voie IM : 10 UI en cas d'absence de voie veineuse immédiate.\n• Pédiatrie : Non applicable (médicament réservé à l'obstétrique).",
+    "alert": "• Contre-indications absolues : Souffrance fœtale aiguë, disproportion foeto-pelvienne, présentation dystocique, placenta prævia occlusif, rupture utérine imminente, pré-éclampsie sévère ou éclampsie (en pré-partum), hypersensibilité connue.\n• Pièges létaux : Injection IV directe rapide strictement INTERDITE (risque d'hypotension artérielle sévère, collapsus cardiovasculaire, tachycardie réflexe et ischémie myocardique).\n• Surveillance : Tonus utérin, saignements vaginaux, pression artérielle, fréquence cardiaque maternelle, diurèse.",
+    "algerian_availability": "Disponible UMC, maternités, blocs obstétricaux, PCH et pharmacies hospitalières",
+    "created_at": "2026-10-26T11:34:32.085760+00:00",
+    "updated_at": "2026-10-26T11:34:32.085773+00:00",
+    "algerianAvailability": "Disponible UMC, maternités, blocs obstétricaux, PCH et pharmacies hospitalières"
   }
 ]
