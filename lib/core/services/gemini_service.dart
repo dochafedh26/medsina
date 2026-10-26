@@ -533,4 +533,93 @@ Si aucun risque n'existe, renvoie {"has_alert": false, "severity": "info", "titl
       return null;
     });
   }
+
+  static final Map<String, Map<String, dynamic>> _monographCache = {};
+
+  /// Generates a complete structured clinical drug monograph (Vidal / ANSM / MSPRH)
+  static Future<Map<String, dynamic>?> fetchDrugMonographWithAi({
+    required String drugName,
+    String? dci,
+    String? dosage,
+    String? form,
+  }) async {
+    final cacheKey = '${drugName.toUpperCase()}_${(dci ?? "").toUpperCase()}';
+    if (_monographCache.containsKey(cacheKey)) {
+      return _monographCache[cacheKey];
+    }
+
+    return _executeWithConcurrencyAndPacing(() async {
+      final prompt = '''
+Tu es le référentiel pharmacologique officiel Vidal, ANSM et Nomenclature Algérienne MSPRH de Medsina.
+Rédige une fiche monographie clinique complète, précise et pratique pour le médicament suivant :
+- Nom commercial / Médicament : $drugName
+- DCI (Molécule active) : ${dci != null && dci.isNotEmpty ? dci : 'À préciser'}
+- Dosage / Forme : ${[if (dosage != null && dosage.isNotEmpty) dosage, if (form != null && form.isNotEmpty) form].join(' ')}
+
+Réponds STRICTEMENT sous forme d'un objet JSON valide avec cette structure exacte (sans aucun bloc markdown, sans symboles LaTeX) :
+{
+  "pharmacological_class": "Classe pharmacothérapeutique précise (ex: Anticoagulant oral de type Anti-Vitamine K)",
+  "description": "Description claire de la molécule, de son mécanisme d'action pharmacologique et de son délai/durée d'action.",
+  "indications": [
+    "Indication thérapeutique principale 1",
+    "Indication thérapeutique 2",
+    "Indication thérapeutique 3"
+  ],
+  "posology_adult": "Posologie usuelle chez l'adulte, dose d'attaque/entretien, horaires et modalités pratiques d'administration.",
+  "posology_pediatric_or_special": "Posologie pédiatrique (mg/kg/j) et/ou adaptation chez le sujet âgé, insuffisant rénal (DFG/ClCr) ou hépatique.",
+  "contraindications": [
+    "Contre-indication absolue ou relative 1",
+    "Contre-indication 2"
+  ],
+  "side_effects_and_monitoring": "Effets indésirables principaux, signes de surdosage/toxicité et surveillance clinique/biologique recommandée (ex: INR, ionogramme, créatinine, ECG, bilan hépatique).",
+  "residanat_key_point": "Piège classique ou point-clé indispensable pour le concours de résidanat et la garde aux urgences."
+}
+''';
+
+      final requestData = {
+        'contents': [
+          {
+            'parts': [
+              {'text': prompt}
+            ]
+          }
+        ],
+        'generationConfig': {
+          'temperature': 0.15,
+          'responseMimeType': 'application/json',
+        }
+      };
+
+      for (final model in _modelCascade) {
+        try {
+          final url = '$_baseUrl/$model:generateContent?key=$apiKey';
+          final response = await _dio.post(
+            url,
+            options: Options(headers: {'Content-Type': 'application/json'}),
+            data: requestData,
+          );
+
+          if (response.statusCode == 200) {
+            final data = response.data is String ? jsonDecode(response.data) : response.data;
+            final candidates = data['candidates'] as List?;
+            if (candidates != null && candidates.isNotEmpty) {
+              final parts = candidates[0]['content']?['parts'] as List?;
+              if (parts != null && parts.isNotEmpty) {
+                final raw = parts[0]['text'] as String?;
+                if (raw != null) {
+                  final clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
+                  final parsed = jsonDecode(clean) as Map<String, dynamic>;
+                  _monographCache[cacheKey] = parsed;
+                  return parsed;
+                }
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Gemini monograph exception with $model: $e');
+        }
+      }
+      return null;
+    });
+  }
 }

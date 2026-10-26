@@ -7,6 +7,8 @@ import '../../../core/services/gemini_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
 import '../../auth/bloc/auth_bloc.dart';
+import '../../clinical/data/clinical_repository.dart';
+import '../../clinical/models/emergency_drug_model.dart';
 import '../../subscription/presentation/ai_quota_exhausted_dialog.dart';
 import '../data/algerian_nomenclature_repository.dart';
 import '../data/terrain_contraindication_repository.dart';
@@ -19,6 +21,10 @@ class PrescribedDrugItem {
   final String? dosage;
   final String? form;
   final String? lab;
+  final String? packaging;
+  final String? liste;
+  final String? pays;
+  final String? regNum;
 
   const PrescribedDrugItem({
     required this.name,
@@ -26,6 +32,10 @@ class PrescribedDrugItem {
     this.dosage,
     this.form,
     this.lab,
+    this.packaging,
+    this.liste,
+    this.pays,
+    this.regNum,
   });
 
   String get displayName {
@@ -49,6 +59,7 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
   final Set<String> _selectedTerrains = {};
 
   List<AlgerianDrugModel> _algerianCatalog = [];
+  List<EmergencyDrugModel> _emergencyDrugs = [];
   List<VidalInteractionRule> _vidalRules = [];
   bool _isLoading = true;
   List<AlgerianDrugModel> _searchResults = [];
@@ -134,11 +145,13 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
       final catalog = await AlgerianNomenclatureRepository.loadCatalog();
       final rules = await VidalInteractionRepository.loadRules();
       final terrainRules = await TerrainContraindicationRepository.loadRules();
+      final emergencyDrugs = await ClinicalRepository.fetchEmergencyDrugs();
       if (mounted) {
         setState(() {
           _algerianCatalog = catalog;
           _vidalRules = rules;
           _terrainRules = terrainRules;
+          _emergencyDrugs = emergencyDrugs;
           _isLoading = false;
         });
       }
@@ -180,6 +193,10 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
           dosage: drug.dosage,
           form: drug.form,
           lab: drug.lab,
+          packaging: drug.packaging,
+          liste: drug.liste,
+          pays: drug.pays,
+          regNum: drug.regNum,
         ));
         _customDrugController.clear();
         _showSuggestions = false;
@@ -193,12 +210,21 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
     if (clean.isEmpty) return;
 
     final resolvedDci = AlgerianNomenclatureRepository.resolveActiveDci(clean);
+    final matches = AlgerianNomenclatureRepository.search(clean, limit: 1);
+    final firstMatch = matches.isNotEmpty ? matches.first : null;
 
     if (!_prescribedDrugs.any((d) => d.name.toLowerCase() == clean.toLowerCase())) {
       setState(() {
         _prescribedDrugs.add(PrescribedDrugItem(
           name: clean,
           activeDci: resolvedDci,
+          dosage: firstMatch?.dosage,
+          form: firstMatch?.form,
+          lab: firstMatch?.lab,
+          packaging: firstMatch?.packaging,
+          liste: firstMatch?.liste,
+          pays: firstMatch?.pays,
+          regNum: firstMatch?.regNum,
         ));
         _customDrugController.clear();
         _showSuggestions = false;
@@ -889,6 +915,50 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                                     ),
                                   ),
                                   const SizedBox(width: 8),
+                                  Tooltip(
+                                    message: 'Voir la fiche médicament (Indications, Posologie...)',
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(8),
+                                      onTap: () => _showDrugMonographSheet(
+                                        context,
+                                        PrescribedDrugItem(
+                                          name: drug.brand,
+                                          activeDci: drug.dci,
+                                          dosage: drug.dosage,
+                                          form: drug.form,
+                                          lab: drug.lab,
+                                          packaging: drug.packaging,
+                                          liste: drug.liste,
+                                          pays: drug.pays,
+                                          regNum: drug.regNum,
+                                        ),
+                                      ),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(color: const Color(0xFF2563EB).withValues(alpha: 0.3)),
+                                        ),
+                                        child: const Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.menu_book_rounded, size: 13, color: Color(0xFF2563EB)),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              'Fiche',
+                                              style: TextStyle(
+                                                fontSize: 10.5,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF2563EB),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
                                   const Icon(
                                     Icons.add_circle_outline_rounded,
                                     size: 18,
@@ -907,26 +977,23 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                     const SizedBox(height: 14),
                     const Divider(height: 1),
                     const SizedBox(height: 10),
-                    const Text('Médicaments dans l\'ordonnance à analyser :',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Médicaments dans l\'ordonnance à analyser :',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Text(
+                          'Cliquez sur "Fiche & Posologie" pour les détails',
+                          style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500, fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 6,
-                      children: _prescribedDrugs.map((drug) {
-                        return Chip(
-                          avatar: const CircleAvatar(
-                            backgroundColor: Color(0xFF2563EB),
-                            child: Icon(Icons.check, size: 12, color: Colors.white),
-                          ),
-                          label: Text(
-                            drug.displayName,
-                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
-                          ),
-                          deleteIcon: const Icon(Icons.close_rounded, size: 16),
-                          onDeleted: () => _removeDrug(drug),
-                        );
-                      }).toList(),
+                    Column(
+                      children: _prescribedDrugs.map((drug) => _buildPrescribedDrugRow(context, drug, isDark)).toList(),
                     ),
                   ],
                 ],
@@ -1130,10 +1197,34 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 14),
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.tune_rounded, size: 16, color: Color(0xFFD97706)),
-                    label: const Text('Choisir un terrain patient', style: TextStyle(color: Color(0xFFD97706), fontSize: 12, fontWeight: FontWeight.bold)),
-                    onPressed: () => _showTerrainSelectionSheet(context),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 8,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2563EB),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        icon: const Icon(Icons.menu_book_rounded, size: 16),
+                        label: const Text(
+                          'Voir Fiche & Posologie',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () => _showDrugMonographSheet(context, _prescribedDrugs.first),
+                      ),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.tune_rounded, size: 16, color: Color(0xFFD97706)),
+                        label: const Text(
+                          'Choisir un terrain patient',
+                          style: TextStyle(color: Color(0xFFD97706), fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () => _showTerrainSelectionSheet(context),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -1775,6 +1866,1029 @@ En tant que pharmacologue clinicien MedsinaPilot :
     ClinicalCopilotSheet.show(
       context,
       initialSituation: prompt,
+    );
+  }
+
+  Widget _buildPrescribedDrugRow(BuildContext context, PrescribedDrugItem drug, bool isDark) {
+    final subtitleParts = <String>[
+      if (drug.dosage != null && drug.dosage!.isNotEmpty) drug.dosage!,
+      if (drug.form != null && drug.form!.isNotEmpty) drug.form!,
+      if (drug.lab != null && drug.lab!.isNotEmpty) drug.lab!,
+    ];
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFF2563EB).withValues(alpha: isDark ? 0.35 : 0.22),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: const Color(0xFF2563EB).withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.medication_rounded, size: 17, color: Color(0xFF2563EB)),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(6),
+              onTap: () => _showDrugMonographSheet(context, drug),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    drug.displayName,
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (subtitleParts.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitleParts.join(' • '),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Tooltip(
+            message: 'Voir description, indications, posologie & contre-indications',
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(9),
+                onTap: () => _showDrugMonographSheet(context, drug),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(9),
+                    border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.35)),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.menu_book_rounded, size: 14, color: AppTheme.primaryTeal),
+                      SizedBox(width: 5),
+                      Text(
+                        'Fiche & Posologie',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.primaryTeal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+            padding: EdgeInsets.zero,
+            tooltip: 'Retirer de l\'ordonnance',
+            icon: Icon(
+              Icons.close_rounded,
+              size: 18,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+            onPressed: () => _removeDrug(drug),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static const Map<String, Map<String, dynamic>> _curatedMonographs = {
+    'ACENOCOUMAROL': {
+      'pharmacological_class': 'Anticoagulant oral de type Anti-Vitamine K (AVK — dérivé coumarinique)',
+      'description': 'Inhibe la synthèse hépatique des facteurs de coagulation vitamine K-dépendants (II, VII, IX, X) et des protéines C et S. Délai d\'action de 36 à 72h, demi-vie courte (8-11h).',
+      'indications': [
+        'Prévention des complications thromboemboliques de la fibrillation atriale (FA) et des valvulopathies mitrale / prothèses valvulaires mécaniques.',
+        'Traitement curatif et prévention des récidives de thrombose veineuse profonde (TVP) et d\'embolie pulmonaire (EP).',
+      ],
+      'posology_adult': 'Dose initiale habituelle : 4 mg/j (1 cp) en 1 prise quotidienne à heure fixe (le soir), puis adaptation stricte par paliers de 1 mg selon l\'INR (cible 2 à 3 dans la FA/MTEV ; 2,5 à 3,5 sur prothèse mécanique mitrale).',
+      'posology_pediatric_or_special': 'Sujet âgé (> 75 ans), insuffisant hépatique ou dénutri : débuter à demi-dose (1 à 2 mg/j). Relais héparine-AVK : maintenir l\'HBPM/HNF jusqu\'à obtention de 2 INR consécutifs dans la cible à 24h d\'intervalle.',
+      'contraindications': [
+        'Grossesse (1er et 3e trimestres : tératogène et risque hémorragique fœtal majeur).',
+        'Insuffisance hépatique sévère, hémorragie active ou lésion organique susceptible de saigner (ulcère gastro-duodénal évolutif, varices œsophagiennes).',
+        'Association contre-indiquée : Aspirine à dose anti-inflammatoire, AINS, Miconazole (y compris gel buccal), Millepertuis.',
+      ],
+      'side_effects_and_monitoring': 'Risque majeur : accidents hémorragiques (digestifs, cérébraux, gingivorragies, hématurie). Surveillance biologique obligatoire : INR toutes les 48-72h en début de traitement puis 1 fois/mois à l\'équilibre. Antidote en cas de surdosage : Vitamine K1 (Phytoménadione) ± PPSB (Octaplex/Kaskadil) si hémorragie grave.',
+      'residanat_key_point': 'Piège Résidanat : Ne jamais arrêter l\'héparine avant 2 INR consécutifs dans la zone thérapeutique ! Le Miconazole gel buccal + Sintrom est une cause classique d\'hémorragie grave par surdosage.',
+    },
+    'RIFAMPICINE': {
+      'pharmacological_class': 'Antibiotique antituberculeux majeur & antibactérien (famille des Rifamycines)',
+      'description': 'Bactéricide intra- et extracellulaire par inhibition de l\'ARN polymérase ADN-dépendante bactérienne. Puissant inducteur enzymatique du cytochrome P450 (CYP3A4, CYP2C9, CYP2C19).',
+      'indications': [
+        'Tuberculose pulmonaire et extrapulmonaire (en polychimiothérapie RHZE selon le Programme National Algérien de Lutte Contre la Tuberculose).',
+        'Brucellose (en association à la Doxycycline), infections ostéo-articulaires sur matériel à staphylocoque, prophylaxie de la méningite à méningocoque.',
+      ],
+      'posology_adult': 'Tuberculose : 10 mg/kg/jour en prise unique quotidienne le matin à jeun (30 min avant le petit-déjeuner), soit habituellement 600 mg/j si poids ≥ 55 kg (450 mg/j si < 55 kg).',
+      'posology_pediatric_or_special': 'Pédiatrie (Tuberculose) : 10 à 20 mg/kg/jour en 1 prise à jeun (max 600 mg/j). Chimioprophylaxie méningocoque : 600 mg × 2/j pendant 2 jours chez l\'adulte (10 mg/kg × 2/j chez l\'enfant).',
+      'contraindications': [
+        'Porphyrie hépato-érythropoïétique, insuffisance hépatique sévère ou ictère.',
+        'Associations contre-indiquées (effet inducteur enzymatique puissant) : Inhibiteurs de protéase, certains anticoagulants directs, contraceptifs œstroprogestatifs (inefficacité -> contraception mécanique obligatoire).',
+      ],
+      'side_effects_and_monitoring': 'Coloration rouge-orangée normale des urines, larmes et crachats (prévenir le patient). Hépatotoxicité (cytolyse/cholestase, potentialisée par l\'Isoniazide), syndrome pseudo-grippal, thrombopénie immuno-allergique. Surveillance : Bilan hépatique (ASAT, ALAT, Bilirubine), NFS avant et pendant le traitement.',
+      'residanat_key_point': 'Inducteur enzymatique majeur : diminue drastiquement l\'efficacité des AVK (Sintrom), des corticoïdes, de la ciclosporine et de la pilule contraceptive !',
+    },
+    'KETOPROFENE': {
+      'pharmacological_class': 'Anti-inflammatoire non stéroïdien (AINS — groupe des propioniques)',
+      'description': 'Inhibiteur des cyclo-oxygénases COX-1 et COX-2 réduisant la synthèse des prostaglandines pro-inflammatoires, algogènes et pyrogènes.',
+      'indications': [
+        'Traitement symptomatique de courte durée des poussées aiguës d\'arthrose, polyarthrite rhumatoïde, spondylarthrite ankylosante, lombalgies aiguës et radiculalgies.',
+        'Colique néphrétique aiguë (forme IV).',
+      ],
+      'posology_adult': 'Voie orale : 100 à 200 mg/jour répartis en 1 à 2 prises au milieu des repas (durée la plus courte possible, ≤ 5 jours en aigu). Colique néphrétique (IV) : 100 mg en perfusion lente de 20 min, max 200 mg/j pendant 48h max.',
+      'posology_pediatric_or_special': 'Déconseillé chez le sujet âgé (> 75 ans) et en cas d\'hypovolémie ou de déshydratation (risque d\'insuffisance rénale aiguë fonctionnelle).',
+      'contraindications': [
+        'Grossesse à partir du début du 6e mois (24 SA) : risque de fermeture prématurée du canal artériel fœtal et d\'insuffisance rénale fœtale.',
+        'Ulcère gastro-duodénal évolutif ou antécédent d\'hémorragie/perforation digestive sous AINS.',
+        'Insuffisance rénale sévère, insuffisance cardiaque sévère, insuffisance hépatique sévère, asthme déclenché par les AINS (syndrome de Widal), infection cutanée ou varicelle (risque de fasciite nécrosante).',
+      ],
+      'side_effects_and_monitoring': 'Gastralgies, ulcère et hémorragie digestive haute, insuffisance rénale aiguë (surtout si associé aux IEC/ARA2 + diurétiques = "Triple Whammy"), poussée hypertensive, photosensibilisation (gel). Surveillance : fonction rénale (créatinine), TA.',
+      'residanat_key_point': 'Contre-indication absolue dès 24 SA de grossesse et en cas de suspicion d\'infection bactérienne sévère (phlegmon amygdalien, dermo-hypodermite, varicelle) !',
+    },
+    'ACIDE ACETYLSALICYLIQUE': {
+      'pharmacological_class': 'Antiagrégant plaquettaire (faible dose 75–300 mg) / Antipyrétique, Antalgique et AINS (forte dose ≥ 500 mg)',
+      'description': 'Acétylation irréversible de la COX-1 plaquettaire bloquant la synthèse du thromboxane A2 pendant toute la durée de vie de la plaquette (7 à 10 jours).',
+      'indications': [
+        'Prévention secondaire cardiovasculaire et cérébrovasculaire (IDM, angor, AVC ischémique, AOMI) à faible dose (75–160 mg/j).',
+        'Phase aiguë du Syndrome Coronarien Aigu (SCA) : dose de charge de 150 à 300 mg.',
+        'Douleurs et fièvre (doses de 500 mg à 1 g), maladie de Kawasaki.',
+      ],
+      'posology_adult': 'Antiagrégant au long cours : 75 à 100 mg/jour en 1 prise quotidienne au cours du repas. Urgence SCA : 150 à 300 mg PO (non gastro-résistant) ou IV directe.',
+      'posology_pediatric_or_special': 'Enfant (antipyrétique) : 60 mg/kg/j en 4 prises, mais éviter en cas de virose (varicelle, grippe) en raison du risque de syndrome de Reye (préférer le Paracétamol).',
+      'contraindications': [
+        'Ulcère gastro-duodénal évolutif, maladie hémorragique constitutionnelle ou acquise.',
+        'Allergie aux salicylés ou aux AINS (syndrome de Fernand-Widal : asthme + polypose naso-sinusienne + intolérance à l\'aspirine).',
+        'Grossesse à partir du 6e mois (24 SA) pour les doses ≥ 500 mg/j.',
+      ],
+      'side_effects_and_monitoring': 'Épigastralgies, hémorragies digestives occultes ou extériorisées, épistaxis, gingivorragies, bronchospasme. Associer un IPP chez les patients à haut risque ulcéreux (> 65 ans, bithérapie antiagrégante ou anticoagulant).',
+      'residanat_key_point': 'À dose antiagrégante (75–160 mg/j), l\'aspirine reste autorisée pendant toute la grossesse (ex: prévention de la pré-éclampsie), contrairement aux doses anti-inflammatoires (≥ 500 mg/j) !',
+    },
+    'ENOXAPARINE': {
+      'pharmacological_class': 'Anticoagulant parentéral — Héparine de Bas Poids Moléculaire (HBPM)',
+      'description': 'Potentialise l\'antithrombine III avec une activité anti-Xa prédominante sur l\'activité anti-IIa. Biodisponibilité sous-cutanée proche de 100%, élimination principalement rénale.',
+      'indications': [
+        'Prophylaxie de la maladie thromboembolique veineuse (MTEV) en chirurgie ou médecine aiguë avec alitement.',
+        'Traitement curatif des TVP, de l\'embolie pulmonaire (EP) non grave et des Syndromes Coronariens Aigus (SCA).',
+      ],
+      'posology_adult': 'Préventif : 4 000 UI anti-Xa (0,4 mL) en 1 injection SC/jour. Curatif : 100 UI anti-Xa/kg × 2/jour en SC toutes les 12h (soit 0,1 mL/10 kg × 2/j) ou 150 UI/kg × 1/j.',
+      'posology_pediatric_or_special': 'Insuffisance rénale sévère (ClCr < 30 mL/min) : CONTRE-INDICATION à dose curative (utiliser l\'Héparine Non Fractionnée : Calciparine SC ou HNF IVSE). Sujet > 75 ans dans le SCA ST+ : 75 UI/kg × 2/j sans bolus IV.',
+      'contraindications': [
+        'Antécédent de Thrombopénie Induite par l\'Héparine (TIH de type II).',
+        'Insuffisance rénale sévère (DFG / ClCr < 30 mL/min) à dose curative.',
+        'Hémorragie active ou lésion organique susceptible de saigner, endocardite infectieuse aiguë.',
+      ],
+      'side_effects_and_monitoring': 'Hématomes au point d\'injection, hémorragies, thrombopénie induite par l\'héparine (TIH entre J5 et J21), hyperkaliémie (hypoaldostéronisme). Surveillance : Clairance de la créatinine (Cockcroft) obligatoire avant prescription, NFS-plaquettes si facteur de risque de TIH.',
+      'residanat_key_point': 'En cas d\'insuffisance rénale sévère (ClCr < 30 mL/min), l\'Énoxaparine curative est contre-indiquée par risque d\'accumulation hémorragique -> remplacer par l\'HNF !',
+    },
+    'AMIODARONE': {
+      'pharmacological_class': 'Antiarythmique de classe III de Vaughan-Williams (iodé)',
+      'description': 'Allonge la durée du potentiel d\'action et la période réfractaire effective de toutes les fibres myocardiques sans déprimer la contractilité ventriculaire gauche. Contient 75 mg d\'iode par comprimé de 200 mg. Demi-vie très longue (20 à 100 jours).',
+      'indications': [
+        'Cardioversion pharmacologique et prévention des récidives de fibrillation atriale (FA) et flutter atrial (notamment sur cardiopathie sous-jacente).',
+        'Traitement et prévention des troubles du rythme ventriculaires graves (TV, FV, arrêt cardiaque réfractaire aux chocs).',
+      ],
+      'posology_adult': 'Voie orale : Dose de charge de 3 cp/j (600 mg/j) pendant 8 à 10 jours, puis dose d\'entretien de 1/2 à 1 cp/j (100 à 200 mg/j). Urgence ACR (FV/TV réfractaire) : 300 mg IVD après le 3e choc électrique.',
+      'posology_pediatric_or_special': 'En perfusion IV : toujours diluer exclusivement dans du Sérum Glucosé 5% (incompatible avec le NaCl 0,9%). Préférer une voie veineuse centrale si perfusion prolongée (veinotoxicité).',
+      'contraindications': [
+        'Bradycardie sinusale, bloc sino-atrial ou BAV de haut degré non appareillé.',
+        'Dysthyroïdie (hyperthyroïdie active), allergie à l\'iode, grossesse (à partir du 2e trimestre : risque d\'hypothyroïdie fœtale) et allaitement.',
+        'Association avec les médicaments donnant des torsades de pointes (Sotalol, Macrolides IV, Citalopram, Dompéridone...).',
+      ],
+      'side_effects_and_monitoring': 'Dysthyroïdies (hypo- ou hyperthyroïdie de type 1 et 2), pneumopathie interstitielle diffuse fibrosante, dépôts cornéens, photosensibilisation cutanée, hépatite médicamenteuse, bradycardie/allongement du QT. Surveillance : TSH, ECG, bilan hépatique, radiographie thoracique.',
+      'residanat_key_point': 'L\'Amiodarone IV se dilue UNIQUEMENT dans du Glucosé 5% (G5%) et jamais dans du sérum salé NaCl 0,9% ! C\'est l\'antiarythmique de choix en cas d\'insuffisance cardiaque à FEVG altérée.',
+    },
+    'COLCHICINE': {
+      'pharmacological_class': 'Antigoutteux & Anti-inflammatoire spécifique (poison du fuseau mitotique)',
+      'description': 'Inhibe la polymérisation des microtubules des polynucléaires neutrophiles, bloquant leur migration et la réaction inflammatoire induite par les cristaux d\'urate de sodium. Médicament à marge thérapeutique très étroite.',
+      'indications': [
+        'Accès aigu de goutte et prophylaxie des accès goutteux lors de l\'instauration d\'un traitement hypo-uricémiant (Allopurinol, Féboxostat).',
+        'Péricardite aiguë (en association à l\'Aspirine/AINS pour prévenir les récidives), Maladie périodique (Fièvre Méditerranéenne Familiale), Maladie de Behçet, Chondrocalcinose.',
+      ],
+      'posology_adult': 'Crise de goutte aiguë (schéma faible dose sécurisé) : 1 mg dès le début de la crise, suivi de 0,5 mg 1 heure plus tard (max 1,5 mg à J1), puis 0,5 mg × 2 à 3/j les jours suivants (ne jamais dépasser 1 mg par prise ni 3 mg/j). Péricardite : 0,5 mg × 2/j (ou × 1/j si < 70 kg) pendant 3 mois.',
+      'posology_pediatric_or_special': 'Réduire la posologie chez le sujet > 75 ans et en cas d\'insuffisance rénale modérée (ClCr 30-60 mL/min : max 0,5 mg/j).',
+      'contraindications': [
+        'Insuffisance rénale sévère (ClCr < 30 mL/min) et insuffisance hépatique sévère.',
+        'Association FORMELLEMENT CONTRE-INDIQUÉE avec les Macrolides (Clarithromycine, Érythromycine, Azithromycine), la Pristinamycine, la Ciclosporine et le Vérapamil (risque de surdosage mortel par inhibition du CYP3A4 et de la P-gp).',
+      ],
+      'side_effects_and_monitoring': 'Premier signe de surdosage (alarme clinique) : diarrhée, nausées, vomissements, douleurs abdominales -> imposer l\'arrêt ou la réduction immédiate de la dose ! Surdosage grave : pancytopénie/aplasie médullaire, rhabdomyolyse, défaillance multiviscérale mortelle.',
+      'residanat_key_point': 'Règle vitale : La diarrhée sous Colchicine est le premier signe constant d\'intoxication ! Association Colchicine + Macrolide (Clarithromycine) = Contre-indication absolue mortelle.',
+    },
+    'CLARITHROMYCINE': {
+      'pharmacological_class': 'Antibiotique antibactérien de la famille des Macrolides',
+      'description': 'Bactériostatique par fixation sur la sous-unité 50S du ribosome bactérien. Excellente diffusion intracellulaire. Puissant inhibiteur enzymatique du CYP3A4 et de la glycoprotéine P (P-gp) et allonge l\'intervalle QT.',
+      'indications': [
+        'Éradication d\'Helicobacter pylori (en trithérapie ou quadrithérapie concomitante avec IPP + Amoxicilline + Métronidazole).',
+        'Pneumopathies aiguës communautaires (germes intracellulaires : Mycoplasma, Chlamydia, Legionella), infections ORL et cutanées en cas d\'allergie aux bêta-lactamines.',
+      ],
+      'posology_adult': 'Infections respiratoires/ORL : 250 à 500 mg × 2/jour matin et soir pendant 5 à 10 jours. Éradication H. pylori : 500 mg × 2/jour pendant 10 à 14 jours.',
+      'posology_pediatric_or_special': 'Pédiatrie : 15 mg/kg/jour répartis en 2 prises (7,5 mg/kg × 2/j). Insuffisance rénale sévère (ClCr < 30 mL/min) : réduire la posologie de moitié (max 500 mg/j).',
+      'contraindications': [
+        'Association avec la Colchicine (contre-indication absolue mortelle), la Simvastatine/Atorvastatine (risque de rhabdomyolyse), l\'Ergotamine, le Ticagrélor.',
+        'Allongement congénital ou acquis de l\'intervalle QT, hypokaliémie non corrigée, association aux médicaments torsadogènes.',
+      ],
+      'side_effects_and_monitoring': 'Troubles digestifs (dysgueusie métallique, nausées, diarrhée), allongement du QT / torsades de pointes, hépatite cholestatique. Surveillance : ECG et kaliémie chez les sujets à risque.',
+      'residanat_key_point': 'Inhibiteur enzymatique puissant du CYP3A4 : ne jamais associer à la Colchicine, aux statines (Simvastatine/Atorvastatine) ni à la Carbamazépine !',
+    },
+    'PERINDOPRIL': {
+      'pharmacological_class': 'Antihypertenseur — Inhibiteur de l\'Enzyme de Conversion (IEC)',
+      'description': 'Inhibe la transformation de l\'angiotensine I en angiotensine II et bloque la dégradation de la bradykinine, entraînant une vasodilatation artérielle et veineuse, une baisse de l\'aldostérone et un effet néphroprotecteur (baisse de la pression intraglomérulaire).',
+      'indications': [
+        'Hypertension artérielle (HTA) essentielle.',
+        'Insuffisance cardiaque chronique à FEVG réduite, maladie coronarienne stable et post-infarctus du myocarde, néphropathie diabétique protéinurique.',
+      ],
+      'posology_adult': 'HTA : Débuter à 4 ou 5 mg en 1 prise le matin, pouvant être augmenté à 8 ou 10 mg/j après 1 mois. Insuffisance cardiaque : débuter à 2 mg ou 2,5 mg/j et titrer progressivement.',
+      'posology_pediatric_or_special': 'Insuffisance rénale ou sujet âgé : débuter à 2 mg ou 2,5 mg/j et adapter selon la clairance de la créatinine.',
+      'contraindications': [
+        'Grossesse (2e et 3e trimestres : fœtotoxicité rénale grave, oligoamnios, hypoplasie des os du crâne ; déconseillé au 1er trimestre).',
+        'Antécédent d\'angio-œdème (œdème de Quincke) bradykinique lié à un IEC ou héréditaire.',
+        'Sténose bilatérale des artères rénales ou sténose sur rein fonctionnellement unique, hyperkaliémie > 5,5 mmol/L.',
+      ],
+      'side_effects_and_monitoring': 'Toux sèche quinteuse persistante (liée à l\'accumulation de bradykinine -> remplacer par un ARA2), hyperkaliémie, insuffisance rénale aiguë fonctionnelle, hypotension orthostatique, angio-œdème. Surveillance : Ionogramme sanguin (K+) et Créatininémie avant traitement et 7 à 15 jours après instauration ou augmentation de dose.',
+      'residanat_key_point': 'Contrôler systématiquement Kaliémie + Créatininémie à J7–J15 ! Une hausse de créatinine > 30% sous IEC doit faire rechercher une sténose des artères rénales.',
+    },
+    'SPIRONOLACTONE': {
+      'pharmacological_class': 'Diurétique épargneur de potassium — Antagoniste compétitif des récepteurs aux minéralocorticoïdes (Anti-aldostérone)',
+      'description': 'Agit au niveau du tube contourné distal et du canal collecteur cortical en bloquant la réabsorption du sodium et l\'excrétion du potassium et des ions H+ induites par l\'aldostérone.',
+      'indications': [
+        'Insuffisance cardiaque chronique à FEVG réduite (≤ 35–40%) : réduit la mortalité cardiovasculaire.',
+        'Ascite cirrhotique et syndromes œdémateux secondaires à un hyperaldostéronisme secondaire.',
+        'Hyperaldostéronisme primaire (syndrome de Conn) et HTA résistante (en 4e ligne).',
+      ],
+      'posology_adult': 'Insuffisance cardiaque / HTA résistante : 25 mg/jour en 1 prise (max 50 mg/j). Ascite cirrhotique : 50 à 100 mg/j (jusqu\'à 200–400 mg/j selon la natriurèse).',
+      'posology_pediatric_or_special': 'Ne pas instaurer si Kaliémie > 5,0 mmol/L ou DFG < 30 mL/min.',
+      'contraindications': [
+        'Hyperkaliémie (> 5,0 mmol/L), insuffisance rénale sévère (ClCr < 30 mL/min) ou aiguë, anurie.',
+        'Stade terminal de l\'insuffisance hépatique, association aux autres diurétiques hyperkaliémiants (Amiloride, Éplérénone) ou aux sels de potassium.',
+      ],
+      'side_effects_and_monitoring': 'Hyperkaliémie potentiellement menaçante (surtout en association aux IEC/ARA2), insuffisance rénale fonctionnelle, gynécomastie douloureuse chez l\'homme, troubles menstruels chez la femme. Surveillance stricte : Kaliémie et Créatininémie à J7, M1 puis tous les 3 mois.',
+      'residanat_key_point': 'En cas de gynécomastie mal tolérée dans le post-infarctus ou l\'insuffisance cardiaque, remplacer la Spironolactone par l\'Éplérénone (plus sélective, sans effet anti-androgénique).',
+    },
+    'OMEPRAZOLE': {
+      'pharmacological_class': 'Anti-ulcéreux — Inhibiteur de la Pompe à Protons (IPP)',
+      'description': 'Inhibe de façon spécifique et irréversible l\'enzyme H+/K+-ATPase de la cellule pariétale gastrique, supprimant la sécrétion acide basale et stimulée. Inhibiteur du CYP2C19.',
+      'indications': [
+        'Reflux gastro-œsophagien (RGO) et œsophagite par reflux.',
+        'Ulcère gastrique et duodénal évolutif, éradication d\'Helicobacter pylori (en association aux antibiotiques).',
+        'Prévention et traitement des lésions gastro-duodénales induites par les AINS/Aspirine chez les sujets à risque (> 65 ans, antécédent d\'ulcère, bithérapie antiagrégante/anticoagulant), syndrome de Zollinger-Ellison.',
+      ],
+      'posology_adult': 'Traitement curatif (Ulcère, Œsophagite, H. pylori) : 20 mg × 1 à 2/jour (20 à 40 mg/j) pendant 4 à 8 semaines, à prendre 15-30 min avant le repas. Prévention sous AINS ou entretien RGO : 10 à 20 mg/jour.',
+      'posology_pediatric_or_special': 'Enfant > 1 an (≥ 10 kg) : 1 mg/kg/jour (10 à 20 mg/j).',
+      'contraindications': [
+        'Hypersensibilité aux benzimidazolés substitués.',
+        'Association déconseillée avec le Clopidogrel (l\'Oméprazole inhibe le CYP2C19 qui active le Clopidogrel -> préférer le Pantoprazole ou le Rabéprazole) et contre-indiquée avec le Nelfinavir.',
+      ],
+      'side_effects_and_monitoring': 'Céphalées, diarrhée, nausées. Au long cours : hypomagnésémie, carence en vitamine B12 et fer, augmentation modérée du risque d\'infections digestives (Clostridioides difficile) et de fractures ostéoporotiques.',
+      'residanat_key_point': 'Chez un patient coronarien sous Clopidogrel (Plavix), ne pas prescrire d\'Oméprazole ni d\'Ésoméprazole (inhibition du CYP2C19) : préférer le Pantoprazole !',
+    },
+    'FUROSEMIDE': {
+      'pharmacological_class': 'Diurétique de l\'anse d\'action rapide et puissante (hypokaliémiant)',
+      'description': 'Inhibe le co-transporteur Na+-K+-2Cl- de la branche ascendante large de l\'anse de Henle. Conserve son efficacité même en cas d\'insuffisance rénale sévère (DFG < 30 mL/min), contrairement aux thiazidiques.',
+      'indications': [
+        'Œdème Aigu du Poumon (OAP) cardiogénique et décompensation cardiaque congestive.',
+        'Syndromes œdémateux d\'origine cardiaque, rénale (syndrome néphrotique, IRC) ou hépatique.',
+        'Hypercalcémie aiguë sévère (après réhydratation) et HTA chez l\'insuffisant rénal chronique.',
+      ],
+      'posology_adult': 'Urgence OAP : 40 à 80 mg en IV directe lente, à répéter selon la diurèse. Traitement oral d\'entretien : 20 à 80 mg/jour le matin (jusqu\'à 250–500 mg/j dans l\'IRC sévère).',
+      'posology_pediatric_or_special': 'Pédiatrie : 1 à 2 mg/kg/jour PO ou 0,5 à 1 mg/kg IV.',
+      'contraindications': [
+        'Hypovolémie ou déshydratation extracellulaire, hypokaliémie sévère ou hyponatrémie sévère non corrigées.',
+        'Encéphalopathie hépatique, obstacle complet sur les voies urinaires, allergie aux sulfamides.',
+      ],
+      'side_effects_and_monitoring': 'Hypokaliémie (risque de torsades de pointes), hyponatrémie, déshydratation extracellulaire et insuffisance rénale fonctionnelle, hyperuricémie (crise de goutte), alcalose métabolique de contraction, ototoxicité à très forte dose IV rapide (surtout si associé aux aminosides). Surveillance : Poids, diurèse, ionogramme sanguin (Na+, K+), créatininémie.',
+      'residanat_key_point': 'Seul diurétique actif lorsque le DFG est < 30 mL/min (les thiazidiques deviennent inefficaces sous ce seuil). Attention à l\'ototoxicité irréversible si associé aux aminosides !',
+    },
+    'ATORVASTATINE': {
+      'pharmacological_class': 'Hypolipémiant — Inhibiteur de l\'HMG-CoA réductase (Statine puissante)',
+      'description': 'Inhibe de façon compétitive l\'HMG-CoA réductase hépatique, augmentant l\'expression des récepteurs aux LDL et réduisant le LDL-cholestérol de 35% à 55%, tout en stabilisant les plaques d\'athérome (effet pléiotrope). Métabolisé par le CYP3A4.',
+      'indications': [
+        'Prévention cardiovasculaire secondaire (post-SCA/IDM, AVC ischémique, AOMI) à forte intensité (40 à 80 mg/j) quel que soit le taux initial de LDL-c.',
+        'Hypercholestérolémies pures ou mixtes et prévention primaire chez les patients à haut ou très haut risque cardiovasculaire (diabète, SCORE2 élevé).',
+      ],
+      'posology_adult': 'Prévention primaire / Hypercholestérolémie : débuter à 10 ou 20 mg/j en 1 prise (à tout moment de la journée). Post-SCA / Très haut risque CV : 40 à 80 mg/jour d\'emblée (objectif LDL-c < 0,55 g/L).',
+      'posology_pediatric_or_special': 'Pas d\'adaptation nécessaire en cas d\'insuffisance rénale (élimination biliaire).',
+      'contraindications': [
+        'Affection hépatique évolutive ou élévation prolongée des transaminases > 3 × la normale.',
+        'Grossesse et allaitement.',
+        'Association aux inhibiteurs puissants du CYP3A4 (Macrolides : Clarithromycine/Érythromycine, Itraconazole, Acide fusidique systémique) en raison du risque majeur de rhabdomyolyse.',
+      ],
+      'side_effects_and_monitoring': 'Myalgies, crampes musculaires, élévation des CPK, exceptionnellement rhabdomyolyse avec insuffisance rénale aiguë ; cytolyse hépatique. Surveillance : Bilan lipidique à 4–12 semaines, transaminases (ALAT) avant traitement et à 3 mois, dosage des CPK uniquement en cas de symptômes musculaires ou de terrain à risque.',
+      'residanat_key_point': 'Toute douleur musculaire diffuse inexpliquée sous statine impose un dosage urgent des CPK : arrêter la statine si CPK > 5 × la normale !',
+    },
+  };
+
+  Map<String, dynamic>? _resolveLocalMonograph(PrescribedDrugItem drug) {
+    final normName = AlgerianNomenclatureRepository.normalize(drug.name);
+    final normDci = AlgerianNomenclatureRepository.normalize(drug.activeDci ?? '');
+
+    for (final entry in _curatedMonographs.entries) {
+      if (normName.contains(entry.key) || normDci.contains(entry.key)) {
+        return entry.value;
+      }
+    }
+    if (normName.contains('SINTROM')) return _curatedMonographs['ACENOCOUMAROL'];
+    if (normName.contains('ASPIRINE') || normName.contains('ASPEGIC') || normName.contains('KARDEGIC')) {
+      return _curatedMonographs['ACIDE ACETYLSALICYLIQUE'];
+    }
+    if (normName.contains('LOVENOX')) return _curatedMonographs['ENOXAPARINE'];
+    if (normName.contains('CORDARONE')) return _curatedMonographs['AMIODARONE'];
+    if (normName.contains('COVERSYL')) return _curatedMonographs['PERINDOPRIL'];
+    if (normName.contains('ALDACTONE')) return _curatedMonographs['SPIRONOLACTONE'];
+    if (normName.contains('MOPRAL') || normName.contains('INEXIUM') || normDci.contains('ESOMEPRAZOLE')) {
+      return _curatedMonographs['OMEPRAZOLE'];
+    }
+    if (normName.contains('LASILIX')) return _curatedMonographs['FUROSEMIDE'];
+    if (normName.contains('TAHOR')) return _curatedMonographs['ATORVASTATINE'];
+    if (normName.contains('PROFENID') || normName.contains('BI-PROFENID')) return _curatedMonographs['KETOPROFENE'];
+
+    // Check emergency drugs catalog if available
+    for (final em in _emergencyDrugs) {
+      final emDci = AlgerianNomenclatureRepository.normalize(em.dci);
+      final emBrand = AlgerianNomenclatureRepository.normalize(em.brand);
+      if ((emDci.isNotEmpty && (normName.contains(emDci) || normDci.contains(emDci))) ||
+          (emBrand.isNotEmpty && (normName.contains(emBrand) || normDci.contains(emBrand)))) {
+        return {
+          'pharmacological_class': '${em.category} (${em.route})',
+          'description': 'Médicament hospitalier et d\'urgence référencé en Algérie (${em.brand} — DCI : ${em.dci}).',
+          'indications': [em.indication],
+          'posology_adult': em.dose,
+          'posology_pediatric_or_special': em.algerianAvailability ?? 'Se référer au protocole de service UMC / Réanimation.',
+          'contraindications': [if (em.alert.isNotEmpty) em.alert],
+          'side_effects_and_monitoring': em.alert,
+          'residanat_key_point': em.alert,
+        };
+      }
+    }
+
+    return null;
+  }
+
+  void _showDrugMonographSheet(BuildContext context, PrescribedDrugItem drug) {
+    final normDci = AlgerianNomenclatureRepository.normalize(drug.activeDci ?? drug.name);
+    final normName = AlgerianNomenclatureRepository.normalize(drug.name);
+
+    // Find all matching specialties in the Algerian MSPRH nomenclature
+    final algerianEquivalents = _algerianCatalog.where((d) {
+      final cDci = AlgerianNomenclatureRepository.normalize(d.dci);
+      final cBrand = AlgerianNomenclatureRepository.normalize(d.brand);
+      return (normDci.isNotEmpty && cDci == normDci) || cBrand == normName;
+    }).take(15).toList();
+
+    // Find any terrain rules in our local repository that apply to this drug
+    final matchingTerrainRules = _terrainRules.where((r) {
+      return r.drugPatterns.any((p) =>
+          p.isNotEmpty && (normDci.toLowerCase().contains(p) || normName.toLowerCase().contains(p)));
+    }).toList();
+
+    Map<String, dynamic>? monograph = _resolveLocalMonograph(drug);
+    bool isFetchingAi = monograph == null;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        bool aiStarted = false;
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+
+            if (isFetchingAi && !aiStarted) {
+              aiStarted = true;
+              GeminiService.fetchDrugMonographWithAi(
+                drugName: drug.name,
+                dci: drug.activeDci,
+                dosage: drug.dosage,
+                form: drug.form,
+              ).then((res) {
+                if (ctx.mounted) {
+                  setSheetState(() {
+                    monograph = res;
+                    isFetchingAi = false;
+                  });
+                }
+              });
+            }
+
+            final pharmClass = monograph?['pharmacological_class']?.toString() ??
+                'Spécialité Pharmaceutique (Nomenclature Nationale MSPRH)';
+            final description = monograph?['description']?.toString() ?? '';
+            final indications = (monograph?['indications'] as List?)
+                    ?.map((e) => e.toString())
+                    .where((s) => s.isNotEmpty)
+                    .toList() ??
+                <String>[];
+            final posologyAdult = monograph?['posology_adult']?.toString() ?? '';
+            final posologySpecial = monograph?['posology_pediatric_or_special']?.toString() ?? '';
+            final contraindications = (monograph?['contraindications'] as List?)
+                    ?.map((e) => e.toString())
+                    .where((s) => s.isNotEmpty)
+                    .toList() ??
+                <String>[];
+            final sideEffects = monograph?['side_effects_and_monitoring']?.toString() ?? '';
+            final keyPoint = monograph?['residanat_key_point']?.toString() ?? '';
+
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.88,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: Column(
+                children: [
+                  // Drag handle + Header
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 16, 16),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                      border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 40,
+                            height: 4,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade400,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(11),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF0D9488), Color(0xFF2563EB)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: const Icon(Icons.medication_liquid_rounded, color: Colors.white, size: 24),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    drug.name,
+                                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    drug.activeDci != null && drug.activeDci!.isNotEmpty
+                                        ? 'DCI : ${drug.activeDci}'
+                                        : 'Monographie Clinique & Posologique',
+                                    style: const TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppTheme.primaryTeal,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: 4,
+                                    children: [
+                                      if (drug.dosage != null && drug.dosage!.isNotEmpty)
+                                        _buildMonographBadge(drug.dosage!, const Color(0xFF2563EB)),
+                                      if (drug.form != null && drug.form!.isNotEmpty)
+                                        _buildMonographBadge(drug.form!, const Color(0xFF0D9488)),
+                                      if (drug.liste != null && drug.liste!.isNotEmpty)
+                                        _buildMonographBadge(drug.liste!, const Color(0xFFD97706)),
+                                      if (drug.lab != null && drug.lab!.isNotEmpty)
+                                        _buildMonographBadge(drug.lab!, const Color(0xFF64748B)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close_rounded),
+                              onPressed: () => Navigator.pop(ctx),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Body
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        if (isFetchingAi)
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 14),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryTeal.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.3)),
+                            ),
+                            child: const Row(
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2.2),
+                                ),
+                                SizedBox(width: 14),
+                                Expanded(
+                                  child: Text(
+                                    'Génération de la monographie complète (Description, Indications, Posologie, Contre-indications) via MedsinaPilot Vidal IA...',
+                                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        if (monograph != null) ...[
+                          // 1. Classe & Description
+                          _buildMonographSectionCard(
+                            isDark: isDark,
+                            icon: Icons.science_rounded,
+                            accentColor: const Color(0xFF2563EB),
+                            title: 'Classe Pharmacologique & Mécanisme d\'Action',
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    pharmClass,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF2563EB),
+                                    ),
+                                  ),
+                                ),
+                                if (description.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    description,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      height: 1.45,
+                                      color: isDark ? Colors.white.withValues(alpha: 0.88) : const Color(0xFF334155),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+
+                          // 2. Indications Thérapeutiques
+                          if (indications.isNotEmpty)
+                            _buildMonographSectionCard(
+                              isDark: isDark,
+                              icon: Icons.check_circle_outline_rounded,
+                              accentColor: const Color(0xFF0D9488),
+                              title: 'Indications Thérapeutiques',
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: indications
+                                    .map(
+                                      (ind) => Padding(
+                                        padding: const EdgeInsets.only(bottom: 6),
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Padding(
+                                              padding: EdgeInsets.only(top: 4),
+                                              child: Icon(Icons.arrow_right_rounded, size: 18, color: Color(0xFF0D9488)),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Expanded(
+                                              child: Text(
+                                                ind,
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  height: 1.4,
+                                                  color: isDark ? Colors.white.withValues(alpha: 0.88) : const Color(0xFF1E293B),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+
+                          // 3. Posologie & Mode d'Administration
+                          if (posologyAdult.isNotEmpty || posologySpecial.isNotEmpty)
+                            _buildMonographSectionCard(
+                              isDark: isDark,
+                              icon: Icons.schedule_rounded,
+                              accentColor: const Color(0xFF7C3AED),
+                              title: 'Posologie & Adaptation Thérapeutique',
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (posologyAdult.isNotEmpty) ...[
+                                    const Text(
+                                      '• Posologie Adulte & Modalités :',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF7C3AED),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      posologyAdult,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        height: 1.45,
+                                        color: isDark ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF1E293B),
+                                      ),
+                                    ),
+                                  ],
+                                  if (posologySpecial.isNotEmpty) ...[
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      '• Pédiatrie / Sujet Âgé / Adaptation Rénale & Hépatique :',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF7C3AED),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      posologySpecial,
+                                      style: TextStyle(
+                                        fontSize: 12.5,
+                                        height: 1.4,
+                                        color: isDark ? Colors.white70 : const Color(0xFF334155),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+
+                          // 4. Contre-Indications & Terrains à Risque
+                          if (contraindications.isNotEmpty || matchingTerrainRules.isNotEmpty)
+                            _buildMonographSectionCard(
+                              isDark: isDark,
+                              icon: Icons.dangerous_rounded,
+                              accentColor: const Color(0xFFDC2626),
+                              title: 'Contre-Indications & Terrains à Risque',
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ...contraindications.map(
+                                    (ci) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 6),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.only(top: 3),
+                                            child: Icon(Icons.block_rounded, size: 14, color: Color(0xFFDC2626)),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              ci,
+                                              style: TextStyle(
+                                                fontSize: 12.5,
+                                                height: 1.4,
+                                                color: isDark ? Colors.white.withValues(alpha: 0.88) : const Color(0xFF1E293B),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  if (matchingTerrainRules.isNotEmpty) ...[
+                                    if (contraindications.isNotEmpty) const Divider(height: 16),
+                                    const Text(
+                                      'Alertes Terrains Référencées (Moteur Vidal Local) :',
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFFB45309),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    ...matchingTerrainRules.take(5).map(
+                                          (r) => Padding(
+                                            padding: const EdgeInsets.only(bottom: 6),
+                                            child: Text(
+                                              '• ${r.terrain} : ${r.title}',
+                                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                        ),
+                                  ],
+                                ],
+                              ),
+                            ),
+
+                          // 5. Effets Indésirables & Surveillance
+                          if (sideEffects.isNotEmpty)
+                            _buildMonographSectionCard(
+                              isDark: isDark,
+                              icon: Icons.monitor_heart_rounded,
+                              accentColor: const Color(0xFFD97706),
+                              title: 'Effets Indésirables & Surveillance Biologique',
+                              child: Text(
+                                sideEffects,
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  height: 1.45,
+                                  color: isDark ? Colors.white.withValues(alpha: 0.88) : const Color(0xFF334155),
+                                ),
+                              ),
+                            ),
+
+                          // 6. Point-Clé Résidanat & Garde
+                          if (keyPoint.isNotEmpty)
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 14),
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.lightbulb_rounded, color: Color(0xFFD97706), size: 20),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Point-Clé Résidanat Blida & Garde UMC',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900,
+                                            color: Color(0xFFB45309),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          keyPoint,
+                                          style: TextStyle(
+                                            fontSize: 12.5,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.4,
+                                            color: isDark ? Colors.white : const Color(0xFF78350F),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+
+                        // 7. Spécialités & Équivalents Algérie (MSPRH)
+                        if (algerianEquivalents.isNotEmpty)
+                          _buildMonographSectionCard(
+                            isDark: isDark,
+                            icon: Icons.local_pharmacy_rounded,
+                            accentColor: const Color(0xFF059669),
+                            title: 'Présentations & Équivalents en Algérie (${algerianEquivalents.length} MSPRH)',
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: algerianEquivalents.map((eq) {
+                                final sub = [
+                                  if (eq.dosage.isNotEmpty) eq.dosage,
+                                  if (eq.form.isNotEmpty) eq.form,
+                                  if (eq.packaging.isNotEmpty) eq.packaging,
+                                  if (eq.lab.isNotEmpty) eq.lab,
+                                  if (eq.pays.isNotEmpty) eq.pays,
+                                ].join(' • ');
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 6),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                                    borderRadius: BorderRadius.circular(9),
+                                    border: Border.all(color: Theme.of(context).dividerColor),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.verified_rounded, size: 15, color: Color(0xFF059669)),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${eq.brand} (${eq.dci})',
+                                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                            ),
+                                            if (sub.isNotEmpty)
+                                              Text(
+                                                sub,
+                                                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (eq.liste.isNotEmpty)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF059669).withValues(alpha: 0.12),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            eq.liste,
+                                            style: const TextStyle(
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF059669),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+
+                  // Bottom Action Bar: Ask MedsinaPilot AI about this specific drug
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
+                    ),
+                    child: Row(
+                      children: [
+                        if (!isFetchingAi && monograph == null)
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              icon: const Icon(Icons.refresh_rounded, size: 16),
+                              label: const Text('Générer la fiche IA Vidal'),
+                              onPressed: () {
+                                setSheetState(() {
+                                  isFetchingAi = true;
+                                  aiStarted = false;
+                                });
+                              },
+                            ),
+                          )
+                        else
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryTeal,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              icon: const Icon(Icons.psychology_rounded, size: 18),
+                              label: Text(
+                                'Interroger MedsinaPilot sur ${drug.name}',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                ClinicalCopilotSheet.show(
+                                  context,
+                                  initialSituation:
+                                      'MONOGRAPHIE & QUESTIONS CLINIQUES SUR LE MÉDICAMENT : ${drug.displayName} ${drug.dosage ?? ""} ${drug.form ?? ""}. Détaillez les règles de prescription pratique, les adaptations posologiques et la surveillance.',
+                                );
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMonographBadge(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: color),
+      ),
+    );
+  }
+
+  Widget _buildMonographSectionCard({
+    required bool isDark,
+    required IconData icon,
+    required Color accentColor,
+    required String title,
+    required Widget child,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: accentColor.withValues(alpha: 0.25)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, size: 16, color: accentColor),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          child,
+        ],
+      ),
     );
   }
 }

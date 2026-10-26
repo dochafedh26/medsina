@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class AppConstants {
   static const String appName = 'Medsina';
-  static const String appSubtitle = 'Plateforme Médicale Globale';
-  static const String appTagline = 'Pratique Clinique • Formation Résidanat • Applications Pratiques';
-  static String appVersion = '1.0.20';
+  static const String appSubtitle = 'Plateforme MÃ©dicale Globale';
+  static const String appTagline = 'Pratique Clinique â€¢ Formation RÃ©sidanat â€¢ Applications Pratiques';
+  static String appVersion = '1.0.23';
   static const String logoAsset = 'assets/medsina-logo.png';
   static const String logoDarkAsset = 'assets/medsina-logo-dark.png';
   static const String iconAsset = 'assets/medsina-icon.png';
@@ -53,13 +53,13 @@ extension SubscriptionTierExtension on SubscriptionTier {
   String get label {
     switch (this) {
       case SubscriptionTier.free:
-        return 'Pass Découverte';
+        return 'Pass DÃ©couverte';
       case SubscriptionTier.etudiant:
-        return 'Pass Étudiant';
+        return 'Pass Ã‰tudiant';
       case SubscriptionTier.clinicalPro:
         return 'Pass Clinique Pro';
       case SubscriptionTier.residentElite:
-        return 'Pass Résident Élite';
+        return 'Pass RÃ©sident Ã‰lite';
       case SubscriptionTier.allAccess:
         return 'Medsina All-Access';
     }
@@ -70,11 +70,11 @@ extension SubscriptionTierExtension on SubscriptionTier {
       case SubscriptionTier.free:
         return 'GRATUIT';
       case SubscriptionTier.etudiant:
-        return 'ÉTUDIANT';
+        return 'Ã‰TUDIANT';
       case SubscriptionTier.clinicalPro:
         return 'CLINIQUE PRO';
       case SubscriptionTier.residentElite:
-        return 'RÉSIDENT ÉLITE';
+        return 'RÃ‰SIDENT Ã‰LITE';
       case SubscriptionTier.allAccess:
         return 'ALL-ACCESS VIP';
     }

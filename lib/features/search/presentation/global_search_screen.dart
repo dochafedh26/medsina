@@ -466,16 +466,19 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               _buildHighlightedText(
                 item.title,
                 _currentQuery,
-                baseStyle: const TextStyle(
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.bold,
-                  height: 1.25,
+                baseStyle: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  height: 1.3,
                 ),
-                highlightStyle: const TextStyle(
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFD97706),
-                  backgroundColor: Color(0xFFFEF3C7),
+                highlightStyle: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? const Color(0xFFFEF08A) : const Color(0xFF78350F),
+                  backgroundColor: isDark
+                      ? const Color(0xFFD97706).withValues(alpha: 0.38)
+                      : const Color(0xFFFDE047).withValues(alpha: 0.65),
                 ),
               ),
               const SizedBox(height: 6),
@@ -487,15 +490,17 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                   _currentQuery,
                   maxLines: 2,
                   baseStyle: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.white70 : const Color(0xFF334155),
-                    height: 1.35,
+                    fontSize: 12.5,
+                    color: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF334155),
+                    height: 1.4,
                   ),
-                  highlightStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFB45309),
-                    backgroundColor: Color(0xFFFEF3C7),
+                  highlightStyle: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? const Color(0xFFFEF08A) : const Color(0xFF78350F),
+                    backgroundColor: isDark
+                        ? const Color(0xFFD97706).withValues(alpha: 0.32)
+                        : const Color(0xFFFDE047).withValues(alpha: 0.55),
                   ),
                 ),
 
@@ -524,6 +529,55 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     );
   }
 
+  /// Normalizes diacritics and case strictly 1-to-1 per UTF-16 code unit so
+  /// string length and indices remain 100% identical to [input] (even with emojis).
+  static String _foldDiacritics1To1(String input) {
+    final codeUnits = List<int>.filled(input.length, 0);
+    for (int i = 0; i < input.length; i++) {
+      int c = input.codeUnitAt(i);
+      // ASCII uppercase A-Z -> a-z
+      if (c >= 0x41 && c <= 0x5A) {
+        c += 0x20;
+      } else if (c >= 0xC0 && c <= 0x17F) {
+        switch (c) {
+          case 0xC0: case 0xC1: case 0xC2: case 0xC3: case 0xC4: case 0xC5:
+          case 0xE0: case 0xE1: case 0xE2: case 0xE3: case 0xE4: case 0xE5:
+          case 0xC6: case 0xE6:
+            c = 0x61; // 'a'
+            break;
+          case 0xC7: case 0xE7:
+            c = 0x63; // 'c'
+            break;
+          case 0xC8: case 0xC9: case 0xCA: case 0xCB:
+          case 0xE8: case 0xE9: case 0xEA: case 0xEB:
+            c = 0x65; // 'e'
+            break;
+          case 0xCC: case 0xCD: case 0xCE: case 0xCF:
+          case 0xEC: case 0xED: case 0xEE: case 0xEF:
+            c = 0x69; // 'i'
+            break;
+          case 0xD1: case 0xF1:
+            c = 0x6E; // 'n'
+            break;
+          case 0xD2: case 0xD3: case 0xD4: case 0xD5: case 0xD6:
+          case 0xF2: case 0xF3: case 0xF4: case 0xF5: case 0xF6:
+          case 0x152: case 0x153:
+            c = 0x6F; // 'o'
+            break;
+          case 0xD9: case 0xDA: case 0xDB: case 0xDC:
+          case 0xF9: case 0xFA: case 0xFB: case 0xFC:
+            c = 0x75; // 'u'
+            break;
+          case 0xDD: case 0xFD: case 0xFF: case 0x178:
+            c = 0x79; // 'y'
+            break;
+        }
+      }
+      codeUnits[i] = c;
+    }
+    return String.fromCharCodes(codeUnits);
+  }
+
   Widget _buildHighlightedText(
     String text,
     String query, {
@@ -531,34 +585,94 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
     required TextStyle highlightStyle,
     int? maxLines,
   }) {
-    if (query.isEmpty || !GlobalSearchService.normalize(text).contains(GlobalSearchService.normalize(query))) {
-      return Text(text, style: baseStyle, maxLines: maxLines, overflow: maxLines != null ? TextOverflow.ellipsis : null);
-    }
-
-    final normText = GlobalSearchService.normalize(text);
-    final normQuery = GlobalSearchService.normalize(query);
-    final startIdx = normText.indexOf(normQuery);
-
-    if (startIdx == -1) {
-      return Text(text, style: baseStyle, maxLines: maxLines, overflow: maxLines != null ? TextOverflow.ellipsis : null);
-    }
-
-    final matchLength = query.length.clamp(0, text.length - startIdx);
-    final before = text.substring(0, startIdx);
-    final match = text.substring(startIdx, startIdx + matchLength);
-    final after = text.substring(startIdx + matchLength);
-
-    return RichText(
-      maxLines: maxLines,
-      overflow: maxLines != null ? TextOverflow.ellipsis : TextOverflow.clip,
-      text: TextSpan(
+    final trimmedQuery = query.trim();
+    if (trimmedQuery.isEmpty || text.isEmpty) {
+      return Text(
+        text,
         style: baseStyle,
-        children: [
-          TextSpan(text: before),
-          TextSpan(text: match, style: highlightStyle),
-          TextSpan(text: after),
-        ],
+        maxLines: maxLines,
+        overflow: maxLines != null ? TextOverflow.ellipsis : null,
+      );
+    }
+
+    final normText = _foldDiacritics1To1(text);
+    final normQuery = _foldDiacritics1To1(trimmedQuery);
+
+    final highlighted = List<bool>.filled(text.length, false);
+    bool anyMatch = false;
+
+    void markOccurrences(String pattern) {
+      if (pattern.isEmpty) return;
+      int searchFrom = 0;
+      while (searchFrom <= normText.length - pattern.length) {
+        final idx = normText.indexOf(pattern, searchFrom);
+        if (idx == -1) break;
+        for (int k = idx; k < idx + pattern.length; k++) {
+          highlighted[k] = true;
+        }
+        anyMatch = true;
+        searchFrom = idx + pattern.length;
+      }
+    }
+
+    if (normText.contains(normQuery)) {
+      markOccurrences(normQuery);
+    } else {
+      final tokens = normQuery
+          .split(RegExp(r'\s+'))
+          .where((t) => t.length >= 2)
+          .toList();
+      for (final token in tokens) {
+        markOccurrences(token);
+      }
+    }
+
+    if (!anyMatch) {
+      return Text(
+        text,
+        style: baseStyle,
+        maxLines: maxLines,
+        overflow: maxLines != null ? TextOverflow.ellipsis : null,
+      );
+    }
+
+    // Build contiguous spans without ever splitting a UTF-16 surrogate pair
+    final spans = <TextSpan>[];
+    int runStart = 0;
+    bool currentHighlight = highlighted[0];
+
+    for (int i = 1; i < text.length; i++) {
+      final prevUnit = text.codeUnitAt(i - 1);
+      final isSurrogateContinuation = prevUnit >= 0xD800 && prevUnit <= 0xDBFF;
+      if (isSurrogateContinuation) {
+        highlighted[i] = currentHighlight;
+        continue;
+      }
+      if (highlighted[i] != currentHighlight) {
+        spans.add(
+          TextSpan(
+            text: text.substring(runStart, i),
+            style: currentHighlight ? highlightStyle : null,
+          ),
+        );
+        runStart = i;
+        currentHighlight = highlighted[i];
+      }
+    }
+    spans.add(
+      TextSpan(
+        text: text.substring(runStart),
+        style: currentHighlight ? highlightStyle : null,
       ),
+    );
+
+    return Text.rich(
+      TextSpan(
+        style: baseStyle,
+        children: spans,
+      ),
+      maxLines: maxLines,
+      overflow: maxLines != null ? TextOverflow.ellipsis : null,
     );
   }
 

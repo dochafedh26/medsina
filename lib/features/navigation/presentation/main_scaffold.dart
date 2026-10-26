@@ -336,31 +336,7 @@ class _MainScaffoldState extends State<MainScaffold> {
 
         // Mobile Layout (Android APK & small screens)
         return Scaffold(
-          appBar: AppBar(
-            titleSpacing: 16,
-            title: const MedsinaLogo(height: 26),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.search_rounded, size: 22, color: AppTheme.primaryTeal),
-                tooltip: 'Recherche Globale (Omnisearch)',
-                onPressed: () => _openOmnisearch(context),
-              ),
-              IconButton(
-                icon: const Icon(Icons.menu_book_rounded, size: 20),
-                tooltip: 'Guide Medsina (PDF)',
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
-                  );
-                },
-              ),
-              _buildNotificationBellAction(context),
-              _buildTierBadge(context, tier, compact: true),
-              const SizedBox(width: 4),
-              _buildUserAvatarAction(context, user),
-              const SizedBox(width: 8),
-            ],
-          ),
+          appBar: _buildMobileTopBar(context, tier, user),
           body: IndexedStack(
             index: safeIndex,
             children: navItems.map((item) => item.page).toList(),
@@ -751,6 +727,34 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
+  PreferredSizeWidget _buildMobileTopBar(
+    BuildContext context,
+    SubscriptionTier tier,
+    UserModel? user,
+  ) {
+    return AppBar(
+      titleSpacing: 12,
+      title: const MedsinaLogo(height: 23),
+      actions: [
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildModernActionDock(context, includeSearch: true),
+                const SizedBox(width: 6),
+                _buildModernProfileAndTierPill(context, tier, user),
+                const SizedBox(width: 10),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   PreferredSizeWidget _buildDesktopTopBar(
     BuildContext context,
     SubscriptionTier tier,
@@ -762,14 +766,14 @@ class _MainScaffoldState extends State<MainScaffold> {
       actions: [
         InkWell(
           onTap: () => _openOmnisearch(context),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
-            width: 320,
+            width: 300,
             height: 38,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey.withValues(alpha: 0.25)),
             ),
             child: Row(
@@ -795,9 +799,9 @@ class _MainScaffoldState extends State<MainScaffold> {
             ),
           ),
         ),
-        const SizedBox(width: 14),
-        _buildNotificationBellAction(context),
-        const SizedBox(width: 8),
+        const SizedBox(width: 10),
+        _buildModernActionDock(context, includeSearch: false),
+        const SizedBox(width: 10),
         _buildTierBadge(context, tier),
         const SizedBox(width: 8),
         _buildUserAvatarAction(context, user),
@@ -806,23 +810,284 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
-  Widget _buildNotificationBellAction(BuildContext context) {
+  Widget _buildModernActionDock(BuildContext context, {required bool includeSearch}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (includeSearch) ...[
+            _buildDockIconButton(
+              icon: Icons.search_rounded,
+              tooltip: 'Recherche Globale (Omnisearch)',
+              color: AppTheme.primaryTeal,
+              bgTint: AppTheme.primaryTeal.withValues(alpha: 0.12),
+              onTap: () => _openOmnisearch(context),
+            ),
+            _buildDockDivider(isDark),
+          ],
+          _buildDockIconButton(
+            icon: Icons.star_rounded,
+            tooltip: 'Avis & Évaluations Medsina (5★)',
+            color: const Color(0xFFF59E0B),
+            bgTint: const Color(0xFFF59E0B).withValues(alpha: 0.14),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const FeedbackReviewsScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 3),
+          _buildDockIconButton(
+            icon: Icons.menu_book_rounded,
+            tooltip: 'Guide d\'utilisation Medsina (PDF)',
+            color: isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
+            bgTint: const Color(0xFF6366F1).withValues(alpha: 0.11),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 3),
+          _buildDockIconButton(
+            icon: Icons.system_update_rounded,
+            tooltip: 'Vérifier les mises à jour',
+            color: const Color(0xFF0284C7),
+            bgTint: const Color(0xFF0284C7).withValues(alpha: 0.11),
+            onTap: () => _manualCheckOtaUpdates(context),
+          ),
+          _buildDockDivider(isDark),
+          _buildNotificationBellAction(context, compact: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDockDivider(bool isDark) {
+    return Container(
+      width: 1,
+      height: 18,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+    );
+  }
+
+  Widget _buildDockIconButton({
+    required IconData icon,
+    required String tooltip,
+    required Color color,
+    required Color bgTint,
+    required VoidCallback onTap,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: bgTint,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 17.5, color: color),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernProfileAndTierPill(
+    BuildContext context,
+    SubscriptionTier tier,
+    UserModel? user,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final userName = user?.fullName ?? 'M';
+    final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'M';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: tier.color.withValues(alpha: 0.45),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: tier.color.withValues(alpha: 0.12),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Tooltip(
+            message: 'Abonnement : ${tier.label}',
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                );
+              },
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+                decoration: BoxDecoration(
+                  color: tier.color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  Icons.workspace_premium_rounded,
+                  size: 15,
+                  color: tier.color,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Tooltip(
+            message: 'Mon Profil (${user?.fullName ?? "Médecin"})',
+            child: InkWell(
+              onTap: () => _showUserProfileModal(context, user),
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                width: 28,
+                height: 28,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF0D9488), Color(0xFF0F766E)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  initial,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 12.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotificationBellAction(BuildContext context, {bool compact = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ValueListenableBuilder<int>(
       valueListenable: RealtimeNotificationService.instance.unreadCountNotifier,
       builder: (context, unreadCount, _) {
+        final hasUnread = unreadCount > 0;
+        if (compact) {
+          return Tooltip(
+            message: 'Notifications & Mises à jour en direct',
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => NotificationsModalSheet.show(context),
+                borderRadius: BorderRadius.circular(10),
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: hasUnread
+                              ? AppTheme.primaryTeal.withValues(alpha: 0.15)
+                              : (isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          hasUnread ? Icons.notifications_active_rounded : Icons.notifications_outlined,
+                          color: hasUnread
+                              ? AppTheme.primaryTeal
+                              : (isDark ? Colors.grey.shade300 : const Color(0xFF475569)),
+                          size: 17.5,
+                        ),
+                      ),
+                      if (hasUnread)
+                        Positioned(
+                          top: 2,
+                          right: 2,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 3.5, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEF4444),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                                width: 1.2,
+                              ),
+                            ),
+                            constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                            child: Center(
+                              child: Text(
+                                '$unreadCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8.5,
+                                  fontWeight: FontWeight.w900,
+                                  height: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
         return Stack(
           alignment: Alignment.center,
           children: [
             IconButton(
               icon: Icon(
-                unreadCount > 0 ? Icons.notifications_active_rounded : Icons.notifications_outlined,
-                color: unreadCount > 0 ? AppTheme.primaryTeal : Colors.grey.shade600,
+                hasUnread ? Icons.notifications_active_rounded : Icons.notifications_outlined,
+                color: hasUnread ? AppTheme.primaryTeal : Colors.grey.shade600,
                 size: 22,
               ),
               tooltip: 'Notifications & Mises à jour en direct',
               onPressed: () => NotificationsModalSheet.show(context),
             ),
-            if (unreadCount > 0)
+            if (hasUnread)
               Positioned(
                 top: 8,
                 right: 8,
