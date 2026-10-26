@@ -186,15 +186,18 @@
   },
   {
     "id": "lab_bilirubine",
-    "name": "Bilirubine totale et conjuguée",
-    "category": "Gastroentérologie & Foie",
-    "normal_range": "Totale : < 17 µmol/L (10 mg/L) | Conjuguée : < 5 µmol/L",
+    "name": "Bilirubine (Totale, Conjuguée et Libre)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "Totale : 5 - 20 µmol/L (0.3 - 1.2 mg/dL) | Conjuguée (directe) : < 5 µmol/L (< 0.3 mg/dL) | Libre (indirecte) : < 15 µmol/L (< 0.9 mg/dL)",
     "unit": "µmol/L",
-    "high_interpretation": "Ictère clinique dès > 40-50 µmol/L. Bilirubine conjuguée prédominante : cholestase (lithiase biliaire, cancer du pancréas, cirrhose biliaire). Bilirubine libre non conjuguée prédominante : hémolyse intravasculaire ou maladie de Gilbert (bénigne).",
-    "low_interpretation": "Sans signification pathologique.",
+    "high_interpretation": "Hyperbilirubinémie. Si prédominance libre (>80%) : Hémolyse intravasculaire ou extravasculaire, érythropoïèse inefficace (anémie pernicieuse), syndromes de Gilbert et de Crigler-Najjar. Si prédominance conjuguée (>50%) : Cholestase intrahépatique (hépatites aiguës/chroniques, cirrhose, médicaments) ou extrahépatique (lithiase de la voie biliaire principale, cholangiocarcinome, tumeur de la tête du pancréas). Urgence vitale : Ictère à bilirubine conjuguée fébrile (angiocholite - triade de Charcot) nécessitant une décompression biliaire urgente (CPRE ou chirurgie) et antibiothérapie IV. Seuil d'ictère clinique visible : > 35-50 µmol/L.",
+    "low_interpretation": "Une valeur basse n'a généralement pas de signification pathologique clinique reconnue et ne constitue pas une urgence médicale. Elle peut être observée dans certaines situations physiologiques ou liées à l'alimentation.",
     "clinical_notes": [
-      "Devant un ictère fébrile douloureux (triade de Charcot : douleur, fièvre, ictère) : angiocholite aiguë, urgence médico-chirurgicale."
-    ]
+      "Piège pré-analytique : La bilirubine est photosensible. Le tube prélèvé (idéalement protégé de la lumière par de l'aluminium) doit être acheminé rapidement au laboratoire pour éviter une photodégradation faussement abaissante.",
+      "Règle clé : Bilirubine Totale = Bilirubine Conjuguée + Bilirubine Libre (non conjuguée). Une bilirubinémie conjuguée > 20% de la totale signe toujours une atteinte hépatique ou biliaire, orientant d'emblée la démarche diagnostique au concours."
+    ],
+    "created_at": "2026-10-26T06:41:50.888703+00:00",
+    "updated_at": "2026-10-26T06:41:50.888714+00:00"
   },
   {
     "id": "lab_lipase",
