@@ -508,5 +508,20 @@
     ],
     "created_at": "2026-10-26T01:27:02.921934+00:00",
     "updated_at": "2026-10-26T01:27:02.921947+00:00"
+  },
+  {
+    "id": "lab_troponine_hs",
+    "name": "Troponine Cardiaque Hautement Sensible (hs-cTnT / hs-cTnI)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Inférieure au 99e percentile de la limite supérieure de référence (LSR) de la population saine (généralement < 14 ng/L ou pg/mL selon les réactifs)",
+    "unit": "ng/L (ou pg/mL)",
+    "high_interpretation": "Élévation (myocrane): 1. Infarctus du Myocarde Aigu (IMA ST+ ou non ST) avec cinétique typique (ascension et/ou décroissance). 2. Causes non coronariennes (Infarctus de type 2) : Embolie pulmonaire grave, myocardite aiguë, insuffisance cardiaque aiguë, dissection aortique, choc septique, insuffisance rénale chronique sévère, contusion myocardique, tachyarythmie sévère. Seuil d'urgence : Toute élévation aiguë avec tableau clinique évocateur impose un ECG immédiat et une orientation en USIC.",
+    "low_interpretation": "Valeur normale (< 99e percentile) : Exclut un infarctus du myocarde aigu en cours si le dosage initial et le dosage séquentiel (à H1 ou H3 selon l'algorithme ESC 0h/1h ou 0h/3h) restent sous le seuil ou s'il s'est écoulé plus de 6 heures depuis le début de la douleur. Pas de seuil pathologique bas (une valeur indétectable est normale).",
+    "clinical_notes": [
+      "Piège pré-analytique : La troponine hs peut être faussement élevée en cas d'insuffisance rénale chronique (clairance abaissée, clairance rénale diminuée de la troponine libre) ou d'interférences analytiques (anticorps hétérophiles, macro-troponine).",
+      "Règle d'interprétation cinétique : Ne jamais interpréter une troponine isolée hors contexte. C'est la variation (delta) entre deux dosages (H0 et H1 ou H3) qui affirme la souffrance myocardique aigue (ischémique ou non)."
+    ],
+    "created_at": "2026-10-26T23:58:18.472974+00:00",
+    "updated_at": "2026-10-26T23:58:18.472988+00:00"
   }
 ]
