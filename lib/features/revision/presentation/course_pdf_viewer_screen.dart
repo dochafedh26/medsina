@@ -296,6 +296,9 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth >= 800;
+
     return Scaffold(
       backgroundColor: _isDarkMode ? const Color(0xFF121212) : const Color(0xFFF1F5F9),
       appBar: AppBar(
@@ -332,21 +335,53 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
                 tooltip: 'Rechercher dans le cours',
                 onPressed: () => setState(() => _isSearching = true),
               ),
-            IconButton(
-              icon: Icon(_isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
-              tooltip: _isDarkMode ? 'Mode Clair' : 'Mode Nuit',
-              onPressed: () => setState(() => _isDarkMode = !_isDarkMode),
-            ),
-            IconButton(
-              icon: const Icon(Icons.zoom_in_rounded),
-              tooltip: 'Zoom avant',
-              onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel + 0.25).clamp(1.0, 3.5),
-            ),
-            IconButton(
-              icon: const Icon(Icons.zoom_out_rounded),
-              tooltip: 'Zoom arrière',
-              onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel - 0.25).clamp(1.0, 3.5),
-            ),
+            if (screenWidth >= 500)
+              IconButton(
+                icon: Icon(_isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
+                tooltip: _isDarkMode ? 'Mode Clair' : 'Mode Nuit',
+                onPressed: () => setState(() => _isDarkMode = !_isDarkMode),
+              ),
+            if (isDesktop) ...[
+              IconButton(
+                icon: const Icon(Icons.zoom_in_rounded),
+                tooltip: 'Zoom avant',
+                onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel + 0.25).clamp(1.0, 3.5),
+              ),
+              IconButton(
+                icon: const Icon(Icons.zoom_out_rounded),
+                tooltip: 'Zoom arrière',
+                onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel - 0.25).clamp(1.0, 3.5),
+              ),
+            ],
+            if (screenWidth < 500)
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert_rounded),
+                tooltip: 'Plus d\'options',
+                onSelected: (val) {
+                  if (val == 'theme') {
+                    setState(() => _isDarkMode = !_isDarkMode);
+                  }
+                },
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'theme',
+                    child: Row(
+                      children: [
+                        Icon(
+                          _isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                          size: 20,
+                          color: _isDarkMode ? Colors.amber : const Color(0xFF0F172A),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          _isDarkMode ? 'Passer en Mode Clair' : 'Passer en Mode Nuit',
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
           ],
         ],
       ),
@@ -363,6 +398,7 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
   Widget _buildTitle() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           widget.course.name,
@@ -374,6 +410,8 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
           Text(
             widget.moduleName!,
             style: const TextStyle(fontSize: 11, color: AppTheme.primaryTeal, fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
       ],
     );

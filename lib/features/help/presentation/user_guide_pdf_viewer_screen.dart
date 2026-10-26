@@ -351,7 +351,8 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isDesktop = MediaQuery.of(context).size.width >= 800;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth >= 800;
 
     return Scaffold(
       backgroundColor: _isDarkMode
@@ -368,9 +369,10 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
           tooltip: 'Retour',
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: _isSearching ? _buildSearchBar(isDark) : _buildTitleBar(isDark),
+        title: _isSearching ? _buildSearchBar(isDark, screenWidth) : _buildTitleBar(isDark, screenWidth),
         actions: [
           if (!_isSearching) ...[
+            // Search button always visible
             IconButton(
               icon: const Icon(Icons.search_rounded),
               tooltip: 'Rechercher dans le document',
@@ -381,16 +383,21 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                 setState(() => _isSearching = true);
               },
             ),
-            IconButton(
-              icon: const Icon(Icons.toc_rounded),
-              tooltip: 'Sommaire',
-              onPressed: _showTableOfContents,
-            ),
-            IconButton(
-              icon: Icon(_isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
-              tooltip: _isDarkMode ? 'Mode clair' : 'Mode sombre',
-              onPressed: () => setState(() => _isDarkMode = !_isDarkMode),
-            ),
+            // On medium+ screens, show TOC icon directly
+            if (screenWidth >= 520)
+              IconButton(
+                icon: const Icon(Icons.toc_rounded),
+                tooltip: 'Sommaire',
+                onPressed: _showTableOfContents,
+              ),
+            // On larger screens (>= 700px), show dark mode toggle directly
+            if (screenWidth >= 700)
+              IconButton(
+                icon: Icon(_isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
+                tooltip: _isDarkMode ? 'Mode clair' : 'Mode sombre',
+                onPressed: () => setState(() => _isDarkMode = !_isDarkMode),
+              ),
+            // On desktop screens, show zoom buttons
             if (isDesktop) ...[
               IconButton(
                 icon: const Icon(Icons.zoom_in_rounded),
@@ -403,17 +410,82 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                 onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel - 0.25).clamp(1.0, 3.0),
               ),
             ],
-            IconButton(
-              icon: _isExporting
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primaryTeal),
-                    )
-                  : const Icon(Icons.open_in_new_rounded),
-              tooltip: 'Ouvrir en lecteur externe / Imprimer',
-              onPressed: _isExporting ? null : _openExternalPdf,
-            ),
+            // On larger screens (>= 700px), show export button directly
+            if (screenWidth >= 700)
+              IconButton(
+                icon: _isExporting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primaryTeal),
+                      )
+                    : const Icon(Icons.open_in_new_rounded),
+                tooltip: 'Ouvrir en lecteur externe / Imprimer',
+                onPressed: _isExporting ? null : _openExternalPdf,
+              )
+            else
+              // On small & medium screens (< 700px), use overflow popup menu to prevent superpositions
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert_rounded),
+                tooltip: 'Plus d\'options',
+                onSelected: (val) {
+                  if (val == 'toc') {
+                    _showTableOfContents();
+                  } else if (val == 'theme') {
+                    setState(() => _isDarkMode = !_isDarkMode);
+                  } else if (val == 'export') {
+                    if (!_isExporting) _openExternalPdf();
+                  }
+                },
+                itemBuilder: (ctx) => [
+                  if (screenWidth < 520)
+                    const PopupMenuItem(
+                      value: 'toc',
+                      child: Row(
+                        children: [
+                          Icon(Icons.toc_rounded, size: 20, color: AppTheme.primaryTeal),
+                          SizedBox(width: 12),
+                          Text('Sommaire du guide', style: TextStyle(fontSize: 13)),
+                        ],
+                      ),
+                    ),
+                  PopupMenuItem(
+                    value: 'theme',
+                    child: Row(
+                      children: [
+                        Icon(
+                          _isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                          size: 20,
+                          color: _isDarkMode ? Colors.amber : const Color(0xFF0F172A),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          _isDarkMode ? 'Passer en Mode clair' : 'Passer en Mode sombre',
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'export',
+                    enabled: !_isExporting,
+                    child: Row(
+                      children: [
+                        if (_isExporting)
+                          const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primaryTeal),
+                          )
+                        else
+                          const Icon(Icons.open_in_new_rounded, size: 20, color: AppTheme.primaryTeal),
+                        const SizedBox(width: 12),
+                        const Text('Lecteur externe / Imprimer', style: TextStyle(fontSize: 13)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             const SizedBox(width: 6),
           ],
         ],
@@ -423,9 +495,15 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
           unselectedLabelColor: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
           indicatorColor: AppTheme.primaryTeal,
           indicatorWeight: 3,
-          tabs: const [
-            Tab(icon: Icon(Icons.auto_stories_rounded, size: 18), text: 'Guide Découverte Interactif'),
-            Tab(icon: Icon(Icons.picture_as_pdf_rounded, size: 18), text: 'Document PDF Officiel (6 P.)'),
+          tabs: [
+            Tab(
+              icon: const Icon(Icons.auto_stories_rounded, size: 18),
+              text: screenWidth < 500 ? 'Guide Interactif' : 'Guide Découverte Interactif',
+            ),
+            Tab(
+              icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
+              text: screenWidth < 500 ? 'PDF Officiel (6 P.)' : 'Document PDF Officiel (6 P.)',
+            ),
           ],
         ),
       ),
@@ -442,39 +520,52 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
     );
   }
 
-  Widget _buildTitleBar(bool isDark) {
+  Widget _buildTitleBar(bool isDark, double screenWidth) {
+    final isNarrow = screenWidth < 460;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Documentation & Guide Medsina',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : const Color(0xFF0F172A),
+            Flexible(
+              child: Text(
+                'Documentation & Guide Medsina',
+                style: TextStyle(
+                  fontSize: isNarrow ? 14 : 15,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(width: 8),
-            const ContainerBadge(label: 'OFFICIEL'),
+            if (screenWidth >= 440) ...[
+              const SizedBox(width: 8),
+              const ContainerBadge(label: 'OFFICIEL'),
+            ],
           ],
         ),
         Text(
-          'Guide complet des fonctionnalités • Version 2026-2027',
+          isNarrow
+              ? 'Guide complet des fonctionnalités'
+              : 'Guide complet des fonctionnalités • Version 2026-2027',
           style: TextStyle(
             fontSize: 11,
             color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
   }
 
-  Widget _buildSearchBar(bool isDark) {
+  Widget _buildSearchBar(bool isDark, double screenWidth) {
     final totalCount = _searchResult?.totalInstanceCount ?? 0;
     final currentIndex = _searchResult?.currentInstanceIndex ?? 0;
+    final isCompact = screenWidth < 480;
 
     return Row(
       children: [
@@ -490,7 +581,9 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
               autofocus: true,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
-                hintText: 'Rechercher (ex: Omnisearch, QCM, Urgences, Prix)...',
+                hintText: isCompact
+                    ? 'Rechercher...'
+                    : 'Rechercher (ex: Omnisearch, QCM, Urgences, Prix)...',
                 hintStyle: const TextStyle(fontSize: 12, color: Colors.grey),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -513,16 +606,16 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
             ),
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 4),
         if (_searchResult != null)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             decoration: BoxDecoration(
               color: AppTheme.primaryTeal.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              totalCount > 0 ? '$currentIndex / $totalCount' : '0 trouvé',
+              totalCount > 0 ? '$currentIndex / $totalCount' : '0',
               style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
             ),
           ),
@@ -530,21 +623,21 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
           icon: const Icon(Icons.keyboard_arrow_up_rounded),
           tooltip: 'Précédent',
           padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
           onPressed: () => _searchResult?.previousInstance(),
         ),
         IconButton(
           icon: const Icon(Icons.keyboard_arrow_down_rounded),
           tooltip: 'Suivant',
           padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
           onPressed: () => _searchResult?.nextInstance(),
         ),
         IconButton(
           icon: const Icon(Icons.close_rounded),
           tooltip: 'Fermer la recherche',
           padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+          constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
           onPressed: _closeSearch,
         ),
       ],
