@@ -775,5 +775,24 @@
     "is_active": true,
     "created_at": "2026-10-25T23:19:38.749292+00:00",
     "updated_at": "2026-10-25T23:19:38.749306+00:00"
+  },
+  {
+    "id": "memento_aes",
+    "title": "💉 Accident d'Exposition au Sang (AES)",
+    "category": "Risque infectieux & Urgences médico-légales",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Nettoyage immédiat à l'eau et au savon ou Dakin/Désinfectant (Bétadine dermique ou Alcool à 70°). Ne jamais faire saigner, ne pas frotter. En cas de projection muqueuse : rincer abondamment au sérum physiologique ou à l'eau claire pendant au moins 15 minutes.",
+      "Étape 2 : Évaluation rapide du risque : nature du geste (piqûre profonde = haut risque, simple effraction = risque modéré), type de liquide biologique (sang > LCR > liquide pleural) et statut sérologique du patient source (VIH, VHB, VHC connus ou test rapide ag HBs/VIH en urgence).",
+      "Étape 3 : Déclaration immédiate de l'accident au médecin chef de garde et contact du référent de l'unité de prise en charge des AES ou du service des maladies infectieuses pour évaluation et prescription d'une prophylaxie post-exposition (PPE) si indiquée.",
+      "Étape 4 : Instauration de la trithérapie antirétrovirale préventive (ex: Ténofovir/Emtricitabine 1 cp/j + Dolutégravir 50 mg 1 cp/j) dans les 4 heures suivant l'accident (délai maximal absolu de 48h) si le patient source est VIH+ ou de statut inconnu à haut risque.",
+      "Étape 5 : Réalisation des sérologies de référence au lit du malade et pour la source (VIH, VHB, VHC) avec accord du patient source, et programmation des contrôles sérologiques à M1, M3 et M6. Piège médico-légal : l'absence de déclaration immédiate aux UMC compromet la prise en charge ATMP (Accident du Travail / Maladie Professionnelle)."
+    ],
+    "scientific_references": "Consensus SFMU / Ministère de la Santé (MSPRH Algérie) / CCLIN",
+    "is_active": true,
+    "created_at": "2026-10-26T15:17:16.887573+00:00",
+    "updated_at": "2026-10-26T15:17:16.887586+00:00"
   }
 ]
