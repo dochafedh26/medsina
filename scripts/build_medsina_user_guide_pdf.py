@@ -589,6 +589,28 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </div>
 
+  <h2>🚀 NOUVEAUTÉS MAJEURES « MEDSINA ULTRA » (v1.0.22)</h2>
+  <div class="grid-3">
+    <div class="card card-teal">
+      <div class="card-title">🎯 1. Moteur QCM Ultra</div>
+      <div class="card-body">
+        Filtres par historique (<em>Mes Erreurs, Jamais vues, Favoris ⭐, Avec mes Notes 📝, Haute Tombabilité 🔥</em>), alerte anti-piège sur les questions négatives, <strong>statistiques par option (% A-E)</strong> et mode Examen Blanc chronométré (Tout ou Rien / Partiel).
+      </div>
+    </div>
+    <div class="card card-purple">
+      <div class="card-title">🧠 2. Flashcards FSRS v4.5</div>
+      <div class="card-body">
+        Algorithme de <strong>Répétition Espacée FSRS</strong> calculant stabilité, difficulté et rétention mémorielle. Convertissez n'importe quel QCM en Flashcard Recto/Verso en <strong>1 seul clic</strong> !
+      </div>
+    </div>
+    <div class="card card-blue">
+      <div class="card-title">📅 3. Study Planner 3 Couches</div>
+      <div class="card-body">
+        Tableau de suivi <strong>Couche 1 / Couche 2 / Couche 3 + % QCM</strong>, compte à rebours avant l'EMD ou le Concours de Résidanat, et recommandation quotidienne des <strong>3 cours les plus rentables</strong>.
+      </div>
+    </div>
+  </div>
+
   <div class="page-footer">
     <span>Medsina 2027 • Guide Officiel</span>
     <span>Page 3</span>
