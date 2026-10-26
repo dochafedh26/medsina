@@ -583,22 +583,22 @@
   {
     "id": "memento_colique_nephretique_febrile",
     "title": "🚨 Colique Néphrétique Hyperalgique & Fébrile",
-    "category": "Urgences Urologiques & Infectieuses",
+    "category": "Urgences Néphro-Urologiques",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Urgence absolue médico-chirurgicale (obstacle sur rein unique ou infecté) ! Pose de 2 VVP de gros calibre, monitoring (ECG, SpO2, PNI) et évaluation de la douleur (EVA/NRS).",
-      "Étape 2 : Bilan biologique d'urgence : NFS, Ionogramme sanguin, Urée, Créatininémie, CRP, Hémocultures (si frissons/fièvre), BHC, BU et ECBU.",
-      "Étape 3 : Imagerie en urgence après stabilisation : Échographie rénale et des voies urinaires (recherche d'une hydronéphrose) et/ou TDM hélicoïdale sans injection (gold standard) selon disponibilité.",
-      "Étape 4 : Antalgie multimodale immédiate : Kétoprofène 100 mg IV (si fonction rénale normale) + Nefopam 20 mg IV slow dans 100 ml de NaCl 0,9% + Tramadol 100 mg IV ou Morphine titration (0,1 mg/kg toutes les 5 min si échec).",
-      "Étape 5 : Antibiothérapie IV probabiliste urgente après hémocultures (Céfotaxime 1g x 3/j ou Ceftriaxone 2g/j IV) et appel URGENT de l'urologue de garde pour drainage des voies urinaires (sonde JJ ou nephrostomie percutanée).",
-      "Étape 6 : Piège médico-légal et CI : Ne JAMAIS administrer d'AINS en cas d'insuffisance rénale aiguë, de déshydratation sévère ou d'ulcère gastroduodénal actif. Toute CN fébrile est un choc septique potentiel."
+      "Étape 1 : Urgence médico-chirurgicale absolue (syndrome de Leadbetter : obstacle sur rein unique ou infection sur rein obstrué) ; éliminer un sepsis sévère et poser une voie veineuse périphérique (VVP).",
+      "Étape 2 : Bilan biologique urgent : NFS, CRP, Ionogramme sanguin, Urée, Créatininémie, BU, ECBU (à prélever avant toute antibiothérapie) et Hémocultures si fièvre > 38.5°C.",
+      "Étape 3 : Antalgie agressive de 1ère intention : Kétoprofène 100 mg IV slow (si fonction rénale normale) associé à du Nefopam (Acupan) 20 mg dans 100 ml de NaCl 0,9% en 30 min, et titrage morphinique si échec (0,1 mg/kg IV toutes les 5 min).",
+      "Étape 4 : Antibiothérapie probabiliste immédiate après les prélèvements bactériologiques : Céfotaxime 1g à 2g IV direct ou Céftriaxone 2g/24h IV (selon disponibilité UMC).",
+      "Étape 5 : Appel urgent du réanimateur et de l'urologue de garde pour drainage des voies urinaires en urgence (sonde JJ ou néphrostomie percutanée) si sepsis ou anurie.",
+      "Étape 6 : Piège absolu : NE JAMAIS donner d'AINS (Kétoprofène) en cas d'insuffisance rénale aiguë avérée, de déshydratation sévère ou de grossesse ; contre-indication formelle au relais per os tant que l'obstacle n'est pas levé."
     ],
-    "scientific_references": "Recommandations AFU / SFMU / Consensus National Algérien d'Urgences Urologiques",
+    "scientific_references": "Consensus AFU / SFMU / SRLF / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-23T05:26:50.383977+00:00",
-    "updated_at": "2026-10-23T05:26:50.383990+00:00"
+    "created_at": "2026-10-26T01:21:55.800345+00:00",
+    "updated_at": "2026-10-26T01:21:55.800360+00:00"
   },
   {
     "id": "memento_metrorragies_geu",
