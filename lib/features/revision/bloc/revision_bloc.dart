@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/residency_repository.dart';
+import '../models/flashcard_fsrs_model.dart';
 import '../models/revision_session_model.dart';
 import '../services/revision_session_storage.dart';
+import '../services/user_qcm_annotation_service.dart';
 import 'revision_event.dart';
 import 'revision_state.dart';
 
@@ -26,6 +28,8 @@ class RevisionBloc extends Bloc<RevisionEvent, RevisionState> {
   Future<void> _onLoadModules(LoadModulesEvent event, Emitter<RevisionState> emit) async {
     emit(state.copyWith(status: RevisionStatus.loading));
     try {
+      await UserQcmAnnotationService.instance.ensureInitialized();
+      await FlashcardFsrsService.instance.ensureInitialized();
       final mods = await ResidencyRepository.loadModulesAsync();
       final progresses = await _storage.getAllCourseProgress();
       final customSessions = await _storage.getCustomSessions();
@@ -137,12 +141,54 @@ class RevisionBloc extends Bloc<RevisionEvent, RevisionState> {
       revealedQuestions: {},
     ));
 
-    final questions = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+    await UserQcmAnnotationService.instance.ensureInitialized();
+    final annService = UserQcmAnnotationService.instance;
+
+    // Fetch full pool first, then apply MBset+ advanced filters before limiting
+    final rawPool = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
       courseIds: event.session.courseIds,
       moduleIds: event.session.moduleIds,
-      limit: event.session.questionLimit,
+      limit: -1,
       shuffle: event.resume ? false : event.session.shuffleQuestions,
     );
+
+    final allowedSet = event.session.allowedTypes.map((e) => e.toLowerCase()).toSet();
+    var filtered = rawPool.where((q) {
+      if (allowedSet.isNotEmpty && !allowedSet.contains(q.type.name.toLowerCase())) {
+        return false;
+      }
+      if (event.session.minYear != null && q.year < event.session.minYear!) {
+        return false;
+      }
+      if (event.session.maxYear != null && q.year > event.session.maxYear!) {
+        return false;
+      }
+      final ann = annService.getAnnotation(q.id);
+      switch (event.session.historyFilter) {
+        case 'unseen':
+          return !ann.isConsulted;
+        case 'wrong':
+          return ann.isWrongLastTime;
+        case 'marked':
+          return ann.isMarked;
+        case 'withNotes':
+          return ann.hasNote;
+        case 'highYield':
+          return q.recurrenceCount > 1 || q.isInverse;
+        default:
+          return true;
+      }
+    }).toList();
+
+    // Graceful fallback if strict personal filter yielded 0 questions
+    if (filtered.isEmpty) {
+      filtered = rawPool;
+    }
+
+    final limit = event.session.questionLimit;
+    final questions = (limit > 0 && filtered.length > limit)
+        ? filtered.take(limit).toList()
+        : filtered;
 
     if (event.resume) {
       final safeIndex = (event.session.currentQuestionIndex >= 0 &&
@@ -230,6 +276,19 @@ class RevisionBloc extends Bloc<RevisionEvent, RevisionState> {
     final updatedRevealed = Set<String>.from(state.revealedQuestions);
     updatedRevealed.add(event.questionId);
     emit(state.copyWith(revealedQuestions: updatedRevealed));
+
+    final q = state.activeQuestion;
+    if (q != null && q.id == event.questionId) {
+      final selected = state.userAnswers[q.id] ?? const <String>{};
+      UserQcmAnnotationService.instance.recordQuestionAttempt(
+        questionId: q.id,
+        moduleId: q.moduleId,
+        courseId: q.courseId,
+        selectedOptions: selected,
+        correctAnswers: q.correctAnswers,
+      );
+    }
+
     _autoSaveProgress();
   }
 

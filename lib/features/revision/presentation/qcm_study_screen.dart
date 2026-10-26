@@ -7,7 +7,9 @@ import '../../ai_assistant/presentation/qcm_tutor_sheet.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
+import '../models/flashcard_fsrs_model.dart';
 import '../models/qcm_model.dart';
+import '../services/user_qcm_annotation_service.dart';
 
 class QcmStudyScreen extends StatelessWidget {
   const QcmStudyScreen({super.key});
@@ -189,8 +191,74 @@ class QcmStudyScreen extends StatelessWidget {
                               style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
                             ),
                           ),
+                          if (q.recurrenceCount > 1)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF59E0B).withValues(alpha: 0.16),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
+                              ),
+                              child: Text(
+                                '🔥 Tombée ${q.recurrenceCount}× (${q.allExamYears.join(", ")})',
+                                style: const TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFFB45309),
+                                ),
+                              ),
+                            ),
+                          if (isRevealed)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF6366F1).withValues(alpha: 0.13),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                '👥 ${q.optionStats['correctRate'] ?? 68}% de réussite étudiante',
+                                style: const TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF4F46E5),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
+                      const SizedBox(height: 10),
+
+                      // Personal Tools Bar: Bookmark ⭐, Personal Note 📝, 1-Click FSRS Flashcard 🧠
+                      _buildUltraQuestionToolsBar(context, q),
+
+                      // Anti-trap warning banner for negative / inverse questions ("Fausse", "Sauf une")
+                      if (q.isInverse) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFEF3C7),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFFF59E0B)),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.warning_amber_rounded, size: 18, color: Color(0xFFB45309)),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  '⚠️ Vigilance Piège : Question à formulation NÉGATIVE (cherchant la proposition FAUSSE / SAUF UNE).',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFF92400E),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 14),
 
                     // Clinical case card if available
@@ -392,10 +460,206 @@ class QcmStudyScreen extends StatelessWidget {
                   style: const TextStyle(fontSize: 14, height: 1.35),
                 ),
               ),
+              if (isRevealed) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: (isCorrect ? const Color(0xFF10B981) : Colors.grey).withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(
+                    '${q.optionStats[opt.key] ?? 12}%',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: isCorrect ? const Color(0xFF047857) : Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ],
               trailingIcon,
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildUltraQuestionToolsBar(BuildContext context, QcmQuestion q) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        UserQcmAnnotationService.instance,
+        FlashcardFsrsService.instance,
+      ]),
+      builder: (context, _) {
+        final ann = UserQcmAnnotationService.instance.getAnnotation(q.id);
+        final hasFlashcard = FlashcardFsrsService.instance.hasFlashcardForQuestion(q.id);
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: [
+                ActionChip(
+                  avatar: Icon(
+                    ann.isMarked ? Icons.star_rounded : Icons.star_border_rounded,
+                    size: 16,
+                    color: ann.isMarked ? const Color(0xFFF59E0B) : Colors.grey.shade600,
+                  ),
+                  label: Text(
+                    ann.isMarked ? 'Favori ⭐' : 'Marquer',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: ann.isMarked ? FontWeight.w800 : FontWeight.w600,
+                      color: ann.isMarked ? const Color(0xFFB45309) : null,
+                    ),
+                  ),
+                  visualDensity: VisualDensity.compact,
+                  backgroundColor: ann.isMarked ? const Color(0xFFFEF3C7) : null,
+                  onPressed: () {
+                    UserQcmAnnotationService.instance.toggleBookmark(
+                      questionId: q.id,
+                      moduleId: q.moduleId,
+                      courseId: q.courseId,
+                    );
+                  },
+                ),
+                ActionChip(
+                  avatar: Icon(
+                    ann.hasNote ? Icons.sticky_note_2_rounded : Icons.note_add_outlined,
+                    size: 16,
+                    color: ann.hasNote ? AppTheme.primaryTeal : Colors.grey.shade600,
+                  ),
+                  label: Text(
+                    ann.hasNote ? 'Ma Note 📝' : 'Ajouter Note',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: ann.hasNote ? FontWeight.w800 : FontWeight.w600,
+                      color: ann.hasNote ? AppTheme.primaryTeal : null,
+                    ),
+                  ),
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () => _showEditPersonalNoteDialog(context, q, ann.personalNote),
+                ),
+                ActionChip(
+                  avatar: Icon(
+                    hasFlashcard ? Icons.check_circle_rounded : Icons.style_rounded,
+                    size: 16,
+                    color: hasFlashcard ? const Color(0xFF10B981) : const Color(0xFF8B5CF6),
+                  ),
+                  label: Text(
+                    hasFlashcard ? 'En Flashcard FSRS ✅' : 'Créer Flashcard 🧠',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: hasFlashcard ? const Color(0xFF059669) : const Color(0xFF7C3AED),
+                    ),
+                  ),
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () async {
+                    await FlashcardFsrsService.instance.createFromQuestion(q);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Color(0xFF7C3AED),
+                          content: Text('🧠 Question ajoutée à vos Flashcards FSRS (Répétition Espacée) !'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+            if (ann.hasNote) ...[
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: () => _showEditPersonalNoteDialog(context, q, ann.personalNote),
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.sticky_note_2_rounded, size: 16, color: AppTheme.primaryTeal),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Ma Note : ${ann.personalNote}',
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      const Icon(Icons.edit_rounded, size: 14, color: AppTheme.primaryTeal),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditPersonalNoteDialog(BuildContext context, QcmQuestion q, String initialNote) {
+    final ctrl = TextEditingController(text: initialNote);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.sticky_note_2_rounded, color: AppTheme.primaryTeal),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Note Personnelle sur ce QCM',
+                style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800),
+              ),
+            ),
+          ],
+        ),
+        content: TextField(
+          controller: ctrl,
+          maxLines: 4,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Notez votre moyen mnémotechnique, piège à retenir ou référence de cours...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryTeal,
+              foregroundColor: Colors.white,
+            ),
+            icon: const Icon(Icons.save_rounded, size: 16),
+            label: const Text('Enregistrer'),
+            onPressed: () async {
+              await UserQcmAnnotationService.instance.savePersonalNote(
+                questionId: q.id,
+                note: ctrl.text,
+                moduleId: q.moduleId,
+                courseId: q.courseId,
+              );
+              if (ctx.mounted) Navigator.pop(ctx);
+            },
+          ),
+        ],
       ),
     );
   }

@@ -33,6 +33,11 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
   final Set<String> _selectedCourseIds = {};
   int _questionLimit = 20;
   bool _shuffle = true;
+  String _sessionMode = 'revision'; // 'revision' or 'exam'
+  String _correctionStyle = 'allOrNothing'; // 'allOrNothing' or 'partial'
+  int _durationMinutes = 30;
+  String _historyFilter = 'all'; // 'all', 'unseen', 'wrong', 'marked', 'withNotes', 'highYield'
+  final Set<String> _allowedTypes = {'qcs', 'qcm', 'casClinique'};
   String _moduleFilter = '';
 
   @override
@@ -110,6 +115,11 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
       courseNames: chosenCourses.map((c) => c.name).toList(),
       questionLimit: _questionLimit,
       shuffleQuestions: _shuffle,
+      sessionMode: _sessionMode,
+      correctionStyle: _correctionStyle,
+      durationMinutes: _sessionMode == 'exam' ? _durationMinutes : null,
+      historyFilter: _historyFilter,
+      allowedTypes: _allowedTypes.isEmpty ? const ['qcs', 'qcm', 'casClinique'] : _allowedTypes.toList(),
       totalQuestions: 0,
       createdAt: DateTime.now(),
       lastActiveAt: DateTime.now(),
@@ -246,13 +256,160 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
                   activeThumbColor: AppTheme.primaryTeal,
                   onChanged: (v) => setState(() => _shuffle = v),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
 
-                // 3. Selection of Modules and Courses
+                // 2.5 Mode Examen, Style de Correction & Filtres Intelligents (Medsina Ultra)
+                const Text(
+                  '3. Mode d\'Entraînement & Filtres Intelligents',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    ChoiceChip(
+                      label: const Text('📖 Mode Révision (Corrigé immédiat)'),
+                      selected: _sessionMode == 'revision',
+                      selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.16),
+                      labelStyle: TextStyle(
+                        fontSize: 12,
+                        fontWeight: _sessionMode == 'revision' ? FontWeight.bold : FontWeight.normal,
+                        color: _sessionMode == 'revision' ? AppTheme.primaryTeal : null,
+                      ),
+                      onSelected: (_) => setState(() => _sessionMode = 'revision'),
+                    ),
+                    ChoiceChip(
+                      label: const Text('⏱️ Mode Examen Blanc Chronométré'),
+                      selected: _sessionMode == 'exam',
+                      selectedColor: const Color(0xFFEA580C).withValues(alpha: 0.16),
+                      labelStyle: TextStyle(
+                        fontSize: 12,
+                        fontWeight: _sessionMode == 'exam' ? FontWeight.bold : FontWeight.normal,
+                        color: _sessionMode == 'exam' ? const Color(0xFFEA580C) : null,
+                      ),
+                      onSelected: (_) => setState(() => _sessionMode = 'exam'),
+                    ),
+                  ],
+                ),
+                if (_sessionMode == 'exam') ...[
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      const Text('Durée chrono :', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                      ...[15, 30, 45, 60, 120].map((mins) {
+                        final isSel = _durationMinutes == mins;
+                        return ChoiceChip(
+                          label: Text('$mins min', style: const TextStyle(fontSize: 11.5)),
+                          selected: isSel,
+                          visualDensity: VisualDensity.compact,
+                          onSelected: (_) => setState(() => _durationMinutes = mins),
+                        );
+                      }),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    ChoiceChip(
+                      label: const Text('⚖️ Tout ou Rien (Standard Concours)'),
+                      selected: _correctionStyle == 'allOrNothing',
+                      visualDensity: VisualDensity.compact,
+                      selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                      labelStyle: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: _correctionStyle == 'allOrNothing' ? FontWeight.bold : FontWeight.normal,
+                      ),
+                      onSelected: (_) => setState(() => _correctionStyle = 'allOrNothing'),
+                    ),
+                    ChoiceChip(
+                      label: const Text('📊 Notation Partielle Pondérée'),
+                      selected: _correctionStyle == 'partial',
+                      visualDensity: VisualDensity.compact,
+                      selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                      labelStyle: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: _correctionStyle == 'partial' ? FontWeight.bold : FontWeight.normal,
+                      ),
+                      onSelected: (_) => setState(() => _correctionStyle = 'partial'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Ciblage selon votre historique personnel :',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    ('all', 'Toutes les questions'),
+                    ('unseen', '🆕 Jamais consultées'),
+                    ('wrong', '❌ Mes Erreurs à retravailler'),
+                    ('marked', '⭐ Mes Favoris marqués'),
+                    ('withNotes', '📝 Avec mes Notes'),
+                    ('highYield', '🔥 Haute Tombabilité & Pièges'),
+                  ].map((entry) {
+                    final isSel = _historyFilter == entry.$1;
+                    return ChoiceChip(
+                      label: Text(entry.$2),
+                      selected: isSel,
+                      visualDensity: VisualDensity.compact,
+                      selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.18),
+                      labelStyle: TextStyle(
+                        fontSize: 11.5,
+                        color: isSel ? AppTheme.primaryTeal : null,
+                        fontWeight: isSel ? FontWeight.bold : FontWeight.normal,
+                      ),
+                      onSelected: (_) => setState(() => _historyFilter = entry.$1),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    const Text('Types :', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                    ...[
+                      ('qcs', 'QCS (Choix Unique)'),
+                      ('qcm', 'QCM (Choix Multiple)'),
+                      ('casClinique', 'Cas Cliniques'),
+                    ].map((t) {
+                      final isSel = _allowedTypes.contains(t.$1);
+                      return FilterChip(
+                        label: Text(t.$2, style: const TextStyle(fontSize: 11.5)),
+                        selected: isSel,
+                        visualDensity: VisualDensity.compact,
+                        selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.16),
+                        onSelected: (val) {
+                          setState(() {
+                            if (val) {
+                              _allowedTypes.add(t.$1);
+                            } else if (_allowedTypes.length > 1) {
+                              _allowedTypes.remove(t.$1);
+                            }
+                          });
+                        },
+                      );
+                    }),
+                  ],
+                ),
+                const SizedBox(height: 18),
+
+                // 4. Selection of Modules and Courses
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('3. Modules & Cours ciblés', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                    const Text('4. Modules & Cours ciblés', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
                     Text(
                       '${_selectedCourseIds.length} cours choisis',
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.primaryTeal),

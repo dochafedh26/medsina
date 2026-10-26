@@ -15,8 +15,10 @@ import '../models/revision_session_model.dart';
 import 'course_pdf_viewer_screen.dart';
 import 'course_summary_screen.dart';
 import 'custom_session_builder_dialog.dart';
+import 'flashcards_fsrs_screen.dart';
 import 'qcm_study_screen.dart';
 import 'resume_session_sheet.dart';
+import 'study_planner_screen.dart';
 
 class RevisionCatalogScreen extends StatefulWidget {
   const RevisionCatalogScreen({super.key});
@@ -123,10 +125,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
           final totalVisibleCourses = filteredModules.fold<int>(0, (sum, m) => sum + m.totalCourses);
 
           return DefaultTabController(
-            length: 2,
+            length: 4,
             child: Column(
               children: [
-                // Navigation TabBar: Catalogue vs Sessions Sur-Mesure
+                // Navigation TabBar: Catalogue vs Sessions Sur-Mesure vs Study Planner vs Flashcards FSRS
                 Container(
                   color: Theme.of(context).cardColor,
                   child: TabBar(
@@ -148,6 +150,14 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                             ? 'Sessions Sur-Mesure (${state.customSessions.length})'
                             : 'Sessions Sur-Mesure',
                       ),
+                      const Tab(
+                        icon: Icon(Icons.calendar_month_rounded, size: 20),
+                        text: 'Study Planner (3 Couches)',
+                      ),
+                      const Tab(
+                        icon: Icon(Icons.psychology_alt_rounded, size: 20),
+                        text: 'Flashcards FSRS 🧠',
+                      ),
                     ],
                   ),
                 ),
@@ -162,6 +172,12 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
 
                       // Tab 2: Custom Multi-Course Sessions
                       _buildCustomSessionsTab(context, state),
+
+                      // Tab 3: Study Planner par Couches & Analytics
+                      const StudyPlannerScreen(),
+
+                      // Tab 4: Répétition Espacée FSRS & Flashcards
+                      const FlashcardsFsrsScreen(),
                     ],
                   ),
                 ),

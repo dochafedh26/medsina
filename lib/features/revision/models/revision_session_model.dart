@@ -90,6 +90,13 @@ class CustomRevisionSession extends Equatable {
   final List<String> courseNames;
   final int questionLimit; // -1 for all
   final bool shuffleQuestions;
+  final String sessionMode; // 'revision' or 'exam'
+  final String correctionStyle; // 'allOrNothing' or 'partial'
+  final int? durationMinutes; // Timer duration for exam mode
+  final String historyFilter; // 'all', 'unseen', 'wrong', 'marked', 'withNotes', 'highYield'
+  final List<String> allowedTypes; // ['qcs', 'qcm', 'casClinique']
+  final int? minYear;
+  final int? maxYear;
   final int currentQuestionIndex;
   final int totalQuestions;
   final Map<String, Set<String>> userAnswers;
@@ -107,6 +114,13 @@ class CustomRevisionSession extends Equatable {
     this.courseNames = const [],
     this.questionLimit = 20,
     this.shuffleQuestions = true,
+    this.sessionMode = 'revision',
+    this.correctionStyle = 'allOrNothing',
+    this.durationMinutes,
+    this.historyFilter = 'all',
+    this.allowedTypes = const ['qcs', 'qcm', 'casClinique'],
+    this.minYear,
+    this.maxYear,
     this.currentQuestionIndex = 0,
     this.totalQuestions = 0,
     this.userAnswers = const {},
@@ -115,6 +129,8 @@ class CustomRevisionSession extends Equatable {
     required this.createdAt,
     required this.lastActiveAt,
   });
+
+  bool get isExamMode => sessionMode == 'exam';
 
   double get progressPercentage {
     if (totalQuestions <= 0) return 0.0;
@@ -130,6 +146,13 @@ class CustomRevisionSession extends Equatable {
     List<String>? courseNames,
     int? questionLimit,
     bool? shuffleQuestions,
+    String? sessionMode,
+    String? correctionStyle,
+    int? durationMinutes,
+    String? historyFilter,
+    List<String>? allowedTypes,
+    int? minYear,
+    int? maxYear,
     int? currentQuestionIndex,
     int? totalQuestions,
     Map<String, Set<String>>? userAnswers,
@@ -147,6 +170,13 @@ class CustomRevisionSession extends Equatable {
       courseNames: courseNames ?? this.courseNames,
       questionLimit: questionLimit ?? this.questionLimit,
       shuffleQuestions: shuffleQuestions ?? this.shuffleQuestions,
+      sessionMode: sessionMode ?? this.sessionMode,
+      correctionStyle: correctionStyle ?? this.correctionStyle,
+      durationMinutes: durationMinutes ?? this.durationMinutes,
+      historyFilter: historyFilter ?? this.historyFilter,
+      allowedTypes: allowedTypes ?? this.allowedTypes,
+      minYear: minYear ?? this.minYear,
+      maxYear: maxYear ?? this.maxYear,
       currentQuestionIndex: currentQuestionIndex ?? this.currentQuestionIndex,
       totalQuestions: totalQuestions ?? this.totalQuestions,
       userAnswers: userAnswers ?? this.userAnswers,
@@ -178,6 +208,16 @@ class CustomRevisionSession extends Equatable {
       courseNames: (json['courseNames'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
       questionLimit: (json['questionLimit'] as num?)?.toInt() ?? 20,
       shuffleQuestions: json['shuffleQuestions'] != false,
+      sessionMode: json['sessionMode']?.toString() ?? 'revision',
+      correctionStyle: json['correctionStyle']?.toString() ?? 'allOrNothing',
+      durationMinutes: (json['durationMinutes'] as num?)?.toInt(),
+      historyFilter: json['historyFilter']?.toString() ?? 'all',
+      allowedTypes: (json['allowedTypes'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          const ['qcs', 'qcm', 'casClinique'],
+      minYear: (json['minYear'] as num?)?.toInt(),
+      maxYear: (json['maxYear'] as num?)?.toInt(),
       currentQuestionIndex: (json['currentQuestionIndex'] as num?)?.toInt() ?? 0,
       totalQuestions: (json['totalQuestions'] as num?)?.toInt() ?? 0,
       userAnswers: parsedAnswers,
@@ -201,6 +241,13 @@ class CustomRevisionSession extends Equatable {
         'courseNames': courseNames,
         'questionLimit': questionLimit,
         'shuffleQuestions': shuffleQuestions,
+        'sessionMode': sessionMode,
+        'correctionStyle': correctionStyle,
+        if (durationMinutes != null) 'durationMinutes': durationMinutes,
+        'historyFilter': historyFilter,
+        'allowedTypes': allowedTypes,
+        if (minYear != null) 'minYear': minYear,
+        if (maxYear != null) 'maxYear': maxYear,
         'currentQuestionIndex': currentQuestionIndex,
         'totalQuestions': totalQuestions,
         'userAnswers': userAnswers.map((k, v) => MapEntry(k, v.toList())),
@@ -216,6 +263,13 @@ class CustomRevisionSession extends Equatable {
         title,
         moduleIds,
         courseIds,
+        sessionMode,
+        correctionStyle,
+        durationMinutes,
+        historyFilter,
+        allowedTypes,
+        minYear,
+        maxYear,
         currentQuestionIndex,
         totalQuestions,
         userAnswers,
