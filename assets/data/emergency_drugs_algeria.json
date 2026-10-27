@@ -753,5 +753,19 @@
     "created_at": "2026-10-26T17:40:22.402060+00:00",
     "updated_at": "2026-10-26T17:40:22.402074+00:00",
     "algerianAvailability": "Disponible via la PCH (Pharmacie Centrale des Hôpitaux) sur bon de commande exceptionnel pour les grands centres antipoison et services de réanimation / UMC universitaires."
+  },
+  {
+    "id": "drug_glucagon",
+    "dci": "Glucagon",
+    "brand": "Glucagon Novo Nordisk (Princeps), ou approvisionnement PCH",
+    "category": "Métabolisme & Endocrinologie",
+    "route": "Voie sous-cutanée (SC), intramusculaire (IM) ou intraveineuse (IV)",
+    "indication": "Hypoglycémie sévère avec impossibilité d'accès veineux ou échec du G30%, et antidote de référence en cas d'intoxication aiguë aux bêta-bloquants ou inhibiteurs calciques réfractaires aux catécholamines",
+    "dose": "• Posologie adulte : Hypoglycémie : 1 mg (1 flacon) en SC ou IM. Intoxication médicamenteuse (bêta-bloquants/IC) : 50 à 150 µg/kg (ou 3 à 10 mg) en IV lente sur 1 à 2 minutes, suivis d'une perfusion continue de 2 à 5 mg/heure dans du G5%.\n• Posologie pédiatrique : Enfant de moins de 25 kg ou de moins de 6-8 ans : 0,5 mg (ou 20 à 30 µg/kg) en SC ou IM. Enfant de plus de 25 kg : 1 mg en SC ou IM.",
+    "alert": "• Contre-indications absolues : Phéochromocytome (risque de crise hypertensive majeure), insulinome (risque d'hypoglycémie rebond paradoxale).\n• Pièges létaux : Inefficace en cas de déploiement des stocks de glycogène hépatique (dénutrition sévère, cirrhose, éthylisme chronique), penser impérativement à associer du glucose dès que possible.\n• Surveillance rapprochée : Glycémie capillaire rapprochée, conscience, voie aérienne (risque de vomissements post-injection à l'état comateux).",
+    "algerian_availability": "Disponible en PCH, UMC et services de réanimation (souvent sous tension d'approvisionnement, alternative principale : G30% IV direct)",
+    "created_at": "2026-10-27T01:38:23.716404+00:00",
+    "updated_at": "2026-10-27T01:38:23.716420+00:00",
+    "algerianAvailability": "Disponible en PCH, UMC et services de réanimation (souvent sous tension d'approvisionnement, alternative principale : G30% IV direct)"
   }
 ]
