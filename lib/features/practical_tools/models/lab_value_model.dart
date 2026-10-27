@@ -223,59 +223,85 @@ class PracticalToolsRepository {
     return _cachedMementos ?? _getInitialMementos();
   }
 
-  /// Asynchronous fetching: Cloud Supabase -> Local Assets -> Static Built-in
+  /// Asynchronous fetching: Merges Cloud Supabase + Local Assets + Static Built-in
   static Future<List<LabValue>> getLabValuesAsync({bool refresh = false}) async {
     if (!refresh && _cachedLabValues != null && _cachedLabValues!.isNotEmpty) {
       return _cachedLabValues!;
     }
 
-    // 1. Try Supabase Cloud
-    try {
-      final cloudData = await SupabaseService.fetchLabReferenceValues();
-      if (cloudData.isNotEmpty) {
-        _cachedLabValues = cloudData.map((e) => LabValue.fromJson(e)).toList();
-        return _cachedLabValues!;
-      }
-    } catch (_) {}
+    final Map<String, LabValue> mergedById = {};
 
-    // 2. Try Local Asset JSON
+    // 1. Seed with Built-in
+    for (final item in _getInitialLabValues()) {
+      mergedById[item.id] = item;
+    }
+
+    // 2. Merge Local Asset JSON
     try {
       final jsonStr = await rootBundle.loadString('assets/data/lab_reference_values.json');
       final List<dynamic> list = jsonDecode(jsonStr);
-      _cachedLabValues = list.map((e) => LabValue.fromJson(e as Map<String, dynamic>)).toList();
-      return _cachedLabValues!;
+      for (final raw in list) {
+        final item = LabValue.fromJson(raw as Map<String, dynamic>);
+        if (item.id.isNotEmpty) {
+          mergedById[item.id] = item;
+        }
+      }
     } catch (_) {}
 
-    // 3. Fallback to Built-in
-    _cachedLabValues = _getInitialLabValues();
+    // 3. Merge Supabase Cloud (highest priority & latest additions)
+    try {
+      final cloudData = await SupabaseService.fetchLabReferenceValues();
+      for (final raw in cloudData) {
+        final item = LabValue.fromJson(raw);
+        if (item.id.isNotEmpty) {
+          mergedById[item.id] = item;
+        }
+      }
+    } catch (_) {}
+
+    _cachedLabValues = mergedById.values.toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
     return _cachedLabValues!;
   }
 
-  /// Asynchronous fetching: Cloud Supabase -> Local Assets -> Static Built-in
+  /// Asynchronous fetching: Merges Cloud Supabase + Local Assets + Static Built-in
   static Future<List<OnCallMemento>> getOnCallMementosAsync({bool refresh = false}) async {
     if (!refresh && _cachedMementos != null && _cachedMementos!.isNotEmpty) {
       return _cachedMementos!;
     }
 
-    // 1. Try Supabase Cloud
-    try {
-      final cloudData = await SupabaseService.fetchOnCallMementos();
-      if (cloudData.isNotEmpty) {
-        _cachedMementos = cloudData.map((e) => OnCallMemento.fromJson(e)).toList();
-        return _cachedMementos!;
-      }
-    } catch (_) {}
+    final Map<String, OnCallMemento> mergedById = {};
 
-    // 2. Try Local Asset JSON
+    // 1. Seed with Built-in
+    for (final item in _getInitialMementos()) {
+      mergedById[item.id] = item;
+    }
+
+    // 2. Merge Local Asset JSON
     try {
       final jsonStr = await rootBundle.loadString('assets/data/on_call_mementos.json');
       final List<dynamic> list = jsonDecode(jsonStr);
-      _cachedMementos = list.map((e) => OnCallMemento.fromJson(e as Map<String, dynamic>)).toList();
-      return _cachedMementos!;
+      for (final raw in list) {
+        final item = OnCallMemento.fromJson(raw as Map<String, dynamic>);
+        if (item.id.isNotEmpty) {
+          mergedById[item.id] = item;
+        }
+      }
     } catch (_) {}
 
-    // 3. Fallback to Built-in
-    _cachedMementos = _getInitialMementos();
+    // 3. Merge Supabase Cloud (highest priority & latest additions)
+    try {
+      final cloudData = await SupabaseService.fetchOnCallMementos();
+      for (final raw in cloudData) {
+        final item = OnCallMemento.fromJson(raw);
+        if (item.id.isNotEmpty) {
+          mergedById[item.id] = item;
+        }
+      }
+    } catch (_) {}
+
+    _cachedMementos = mergedById.values.toList()
+      ..sort((a, b) => a.priorityLevel.compareTo(b.priorityLevel));
     return _cachedMementos!;
   }
 

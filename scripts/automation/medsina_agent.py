@@ -903,6 +903,56 @@ MASTER_LAB_POOL = [
     "Vitamines B12 et Folates (Vitamine B9)",
     "Vitamine D (25-OH-Vitamine D3)",
     "Osmolalité plasmatique & Trou osmotique",
+    "Analyse cytochimique du Liquide Céphalo-Rachidien (LCR)",
+    "Ponction et analyse du Liquide d'Ascite (Gradient SAAG & PNN)",
+    "Ponction pleurale : Critères de Light (Exsudat vs Transsudat)",
+    "Analyse du Liquide Articulaire (Synovial) : Mécanique, Inflammatoire, Septique, Microcristallin",
+    "Ionogramme urinaire (Natriurèse, Kaliurèse, Rapport Na/K urinaire)",
+    "Trou anionique plasmatique et Trou anionique urinaire",
+    "Haptoglobine, LDH et Bilirubine libre (Bilan d'hémolyse)",
+    "Numération des Réticulocytes (Anémie régénérative vs arégénérative)",
+    "Test de Coombs direct (Test direct à l'antiglobuline)",
+    "Frottis sanguin périphérique : Schizocytes et Microangiopathie Thrombotique (MAT)",
+    "Albumine sérique et Préalbumine (Bilan nutritionnel)",
+    "Parathormone intacte (PTH) et Bilan phosphocalcique",
+    "Aldostérone plasmatique, Rénine active et Rapport Aldostérone/Rénine",
+    "Métanéphrines et Normétanéphrines urinaires / plasmatiques (Phéochromocytome)",
+    "Cortisol libre urinaire des 24h (CLU) et Freinage minute à la Dexaméthasone",
+    "ACTH plasmatique (Corticotrophine)",
+    "Peptide C et Insulinémie à jeun (Indice HOMA-IR)",
+    "Anticorps anti-Transglutaminase IgA et IgG (Maladie cœliaque)",
+    "ANCA (Anti-PR3 et Anti-MPO) — Vascularites à ANCA",
+    "Anticorps Anti-Phospholipides (Lupus anticoagulant, Anti-Cardiolipine, Anti-Bêta2GP1)",
+    "Anticorps Anti-récepteurs de la TSH (TRAK) et Anti-TPO",
+    "Alpha-Fœtoprotéine (AFP) sérique",
+    "CA 125, CA 19-9, CA 15-3 et ACE (Antigène Carcino-Embryonnaire)",
+    "Bêta-2-Microglobuline sérique",
+    "Calcitonine sérique (Cancer médullaire de la thyroïde)",
+    "Fer sérique, Transferrine et Capacité Totale de Fixation de la Transferrine (CTFT)",
+    "G6PD érythrocytaire (Déficit en Glucose-6-Phosphate Déshydrogénase)",
+    "Électrophorèse de l'Hémoglobine (Drépanocytose et Thalassémies)",
+    "Facteurs de la coagulation (Facteur V, Facteur VIII, Facteur Willebrand)",
+    "Antithrombine III, Protéine C et Protéine S (Bilan de thrombophilie)",
+    "Dosage de la Digoxinémie (Suivi thérapeutique pharmacologique)",
+    "Dosage de la Lithiumémie (Suivi thérapeutique du Lithium)",
+    "Paracétamolémie et Nomogramme de Rumack-Matthew",
+    "Salicylémie (Intoxication à l'Aspirine)",
+    "Carboxyhémoglobine (HbCO — Intoxication au Monoxyde de Carbone)",
+    "Méthémoglobinémie (MetHb)",
+    "Cholinestérases plasmatiques et érythrocytaires (Intoxication aux Organophosphorés)",
+    "Calprotectine fécale (MICI vs Troubles fonctionnels intestinaux)",
+    "Clairance fécale de l'Alpha-1-Antitrypsine (Entéropathie exsudative)",
+    "Élastase fécale pancréatique (Insuffisance pancréatique exocrine)",
+    "Céruloplasmine et Cuprémie / Cuprurie des 24h (Maladie de Wilson)",
+    "Alpha-1-Antitrypsine sérique (Déficit en A1AT)",
+    "Enzyme de Conversion de l'Angiotensine (ECA sérique — Sarcoïdose)",
+    "Cryoglobulinémie (Recherche et typage des Cryoglobulines)",
+    "Quantiféron-TB Gold (IGRA — Tuberculose latente)",
+    "Sérologie Hépatite B complète (Ag HBs, Ac anti-HBs, Ac anti-HBc, Ag HBe, ADN VHB)",
+    "Pro-ADM et Interleukine-6 (IL-6) dans le Sepsis",
+    "Myoglobine sérique et urinaire (Rhabdomyolyse aiguë)",
+    "Troponine et NT-proBNP dans l'Embolie Pulmonaire (Stratification du risque ESC)",
+    "Gazométrie du sang veineux mêlé (SvO2) et sang veineux central (ScvO2)",
 ]
 
 
@@ -942,11 +992,26 @@ def pick_candidate_lab_value(supabase: SupabaseClient, target_lab: Optional[str]
         if _normalize(lab) not in normalized_existing and not any(_normalize(lab) in ex or ex in _normalize(lab) for ex in normalized_existing)
     ]
 
-    if not candidates:
-        print("All predefined lab values are already indexed! Picking random candidate for enrichment.")
-        return random.choice(MASTER_LAB_POOL)
+    print(f"Predefined lab reference value candidates remaining: {len(candidates)} / {len(MASTER_LAB_POOL)}.")
 
-    return random.choice(candidates)
+    if candidates:
+        return random.choice(candidates)
+
+    # Dynamic fallback: ask Gemini to propose a new unindexed biological parameter
+    print("All predefined lab values are already indexed! Dynamically querying Gemini for a new unindexed lab test...")
+    prompt = (
+        f"Donne le nom exact d'un examen biologique hospitalier, bilan d'urgence, marqueur spécialisé ou ponction de liquide biologique utile au concours de résidanat et en garde médicale qui ne figure PAS dans cette liste : {', '.join(sorted(list(existing_names))[:100])}.\n"
+        "Réponds UNIQUEMENT par le nom de l'examen biologique (2 à 6 mots maximum, sans aucun commentaire ni guillemets)."
+    )
+    try:
+        suggested = call_gemini_api(prompt, "Tu es biologiste médical hospitalier.", enable_search=False).strip().strip('"').strip("'")
+        if suggested and len(suggested) > 2 and _normalize(suggested) not in normalized_existing:
+            print(f"Gemini dynamically discovered new lab parameter: {suggested}")
+            return suggested
+    except Exception as e:
+        print(f"Notice querying Gemini for candidate lab value: {e}")
+
+    return random.choice(MASTER_LAB_POOL)
 
 
 def generate_lab_value(lab_name: str, supabase: SupabaseClient, dry_run: bool = False) -> Optional[Dict[str, Any]]:
@@ -1011,10 +1076,25 @@ Fournis les normes usuelles exactes, les causes et seuils critiques d'urgence po
             print(f"⚠️ Avertissement teaser dry-run (lab): {e}")
         return data
 
-    # 1. Save to remote Supabase
-    res = supabase.post("lab_reference_values", data, upsert=True)
+    # 1. Save to remote Supabase (only columns present in lab_reference_values table)
+    valid_lab_cols = {"id", "name", "category", "normal_range", "unit", "high_interpretation", "low_interpretation", "clinical_notes"}
+    db_lab_payload = {k: v for k, v in data.items() if k in valid_lab_cols}
+    res = supabase.post("lab_reference_values", db_lab_payload, upsert=True)
     if res:
         print("Successfully saved lab value to Supabase lab_reference_values table!")
+        send_broadcast_notification(
+            supabase=supabase,
+            notif_id=f"notif_lab_{data['id']}",
+            title=f"🧪 Normes Biologiques : {data.get('name', lab_name)}",
+            message=f"La fiche de référence biologique pour \"{data.get('name', lab_name)}\" ({data.get('normal_range', '')} {data.get('unit', '')}) est disponible sur Medsina !",
+            notif_type="announcement",
+            target_id=data["id"],
+            metadata={
+                "lab_id": data["id"],
+                "name": data.get("name", lab_name),
+                "category": data.get("category"),
+            },
+        )
     else:
         print("Notice: Lab value generated locally (Supabase write skipped or pending).")
 
@@ -1111,11 +1191,26 @@ def pick_candidate_on_call_memento(supabase: SupabaseClient, target_memento: Opt
         if _normalize(topic) not in normalized_existing and not any(_normalize(topic) in ex or ex in _normalize(topic) for ex in normalized_existing)
     ]
 
-    if not candidates:
-        print("All predefined on-call mementos are already indexed! Picking random candidate for enrichment.")
-        return random.choice(MASTER_MEMENTO_POOL)
+    print(f"Predefined on-call memento candidates remaining: {len(candidates)} / {len(MASTER_MEMENTO_POOL)}.")
 
-    return random.choice(candidates)
+    if candidates:
+        return random.choice(candidates)
+
+    # Dynamic fallback: ask Gemini to propose a new unindexed on-call clinical emergency topic
+    print("All predefined on-call mementos are already indexed! Dynamically querying Gemini for a new unindexed on-call topic...")
+    prompt = (
+        f"Donne le titre exact d'une situation d'urgence médicale ou chirurgicale de garde hospitalière (UMC, Réanimation, Pédiatrie, Gynécologie-Obstétrique, Cardiologie) qui ne figure PAS dans cette liste : {', '.join(sorted(list(existing_titles))[:100])}.\n"
+        "Réponds UNIQUEMENT par le titre concis de la situation clinique (3 à 8 mots, sans guillemets ni commentaires)."
+    )
+    try:
+        suggested = call_gemini_api(prompt, "Tu es chef de garde aux urgences médico-chirurgicales.", enable_search=False).strip().strip('"').strip("'")
+        if suggested and len(suggested) > 4 and _normalize(suggested) not in normalized_existing:
+            print(f"Gemini dynamically discovered new on-call memento topic: {suggested}")
+            return suggested
+    except Exception as e:
+        print(f"Notice querying Gemini for candidate memento: {e}")
+
+    return random.choice(MASTER_MEMENTO_POOL)
 
 
 def generate_on_call_memento(memento_title: str, supabase: SupabaseClient, dry_run: bool = False) -> Optional[Dict[str, Any]]:
