@@ -523,5 +523,21 @@
     ],
     "created_at": "2026-10-26T23:58:18.472974+00:00",
     "updated_at": "2026-10-26T23:58:18.472988+00:00"
+  },
+  {
+    "id": "lab_cortisol_8h",
+    "name": "Cortisol sérique à 8h",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "100 - 550 nmol/L (ou 50 - 250 µg/L) avec un pic matinal à 8h",
+    "unit": "nmol/L",
+    "high_interpretation": "Hypercortisolisme (Maladie de Cushing, syndrome de Cushing ACTH-dépendant ou indépendant, corticosurrénalome) ou états d'hypercortisolisme fonctionnel (stress aigu, sepsis, traumatisme, douleur intense, grossesse, alcoolisme chronique, dépression majeure). Pas de seuil d'urgence vitale immédiate, mais nécessite une enquête étiologique (freinage minute à la dexaméthasone).",
+    "low_interpretation": "Insuffisance surrénalienne (primaire / maladie d'Addison si associée à une ACTH effondrée ou très élevée selon l'origine, ou secondaire / hypophysaire si ACTH basse). SEUIL D'URGENCE VITALE : Cortisol < 100 nmol/L (ou < 3 µg/L) en situation de stress aigu (choc, sepsis) évoquant une insuffisance surrénalienne aiguë (crise addisonienne). CONDUITE À TENIR : Prélèvement pour ACTH/Cortisol (ne retarde pas le traitement), puis injection immédiate d'Hémisuccinate d'Hydrocortisone (HSHC) 100 mg IV + remplissage vasculaire.",
+    "clinical_notes": [
+      "Piège pré-analytique : Le prélèvement doit impérativement être réalisé à 8h00 du matin (respect du rythme circadien nycthéméral, nadir à minuit). Un cortisol isolé sans heure ni contexte clinique n'a aucune valeur.",
+      "Interférences médicamenteuses : Les œstrogènes (contraceptifs oraux, grossesse) augmentent la CBG (Cortisol-Binding Globulin) et donc le cortisol total sans qu'il y ait d'hypercortisolisme clinique (nécessite le dosage du cortisol libre ou salivaire).",
+      "Situation de stress : En réanimation, un cortisol basal élevé est la règle (réponse normale au stress). À l'inverse, un cortisol basal < 400 nmol/L chez un patient en choc septique vasoprésor-dépendant suspecte une insuffisance surrénalienne relative liée à la réanimation (ICAR)."
+    ],
+    "created_at": "2026-10-27T05:21:00.467422+00:00",
+    "updated_at": "2026-10-27T05:21:00.467435+00:00"
   }
 ]
