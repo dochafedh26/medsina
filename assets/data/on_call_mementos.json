@@ -814,5 +814,24 @@
     "is_active": true,
     "created_at": "2026-10-26T20:34:56.117618+00:00",
     "updated_at": "2026-10-26T20:34:56.117633+00:00"
+  },
+  {
+    "id": "memento_hemorroides",
+    "title": "🩸 Crise Hémorroïdaire & Thrombose aux UMC",
+    "category": "Proctologie d'Urgence",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#F59E0B",
+    "priority_level": 2,
+    "points": [
+      "Étape 1 : Examen proctologique immédiat en décubitus latéral (position de Sims) pour différencier thrombose hémorroïdaire externe (tuméfaction violacée, ferme, très douloureuse) et prolapsus hémorroïdaire incarcéré.",
+      "Étape 2 : Éliminer impérativement une urgence chirurgicale ou un diagnostic différentiel grave : rectorragies abondantes masquées, nécrose muqueuse, abcès péri-anal ou fissure anale surinfectée.",
+      "Étape 3 : Instaurer le traitement antalgique et anti-inflammatoire de première intention : AINS (Kétoprofène 100 mg IM ou IV si contre-indication absente) + antalgiques palier II (Tramadol ou Nefopam) + topiques locaux (crème ou suppositoire à base de corticoïdes/anesthésiques locaux).",
+      "Étape 4 : En cas de thrombose externe récente (< 72h) et hyperalgique, réaliser une excision chirurgicale de la thrombose (incision en ellipse sous anesthésie locale à la Xylocaïne 1%) au déchoquage.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : NE JAMAIS tenter de refouler un prolapsus thrombosé ancien et nécrosé au risque d'aggraver l'œdème et la ischémie ; privilégier l'avis spécialisé proctologique ou chirurgical au décours de la garde."
+    ],
+    "scientific_references": "Recommandations de la SNFCP / SFMU / Consensus National Algérien de Proctologie",
+    "is_active": true,
+    "created_at": "2026-10-27T05:44:31.214684+00:00",
+    "updated_at": "2026-10-27T05:44:31.214703+00:00"
   }
 ]
