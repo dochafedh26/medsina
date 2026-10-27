@@ -539,5 +539,20 @@
     ],
     "created_at": "2026-10-27T05:21:00.467422+00:00",
     "updated_at": "2026-10-27T05:21:00.467435+00:00"
+  },
+  {
+    "id": "lab_quantiferon_tb_gold",
+    "name": "Quantiféron-TB Gold (IGRA - Interferon-Gamma Release Assay)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "Négatif (Réponse aux antigènes insuffisante)",
+    "unit": "UI/mL d'interféron-gamma (ou IU/mL)",
+    "high_interpretation": "Positif (≥ 0,35 UI/mL et ≥ 25% du bruit de fond / témoin négatif) : Témoin d'une infection par Mycobacterium tuberculosis (tuberculose-infection latente ou maladie tuberculeuse active). Ne permet pas de différencier une infection latente (ITL) d'une tuberculose maladie. Conduite à tenir : Évaluation clinique et radiologique (radiographie thoracique) pour éliminer une tuberculose active avant toute prescription de traitement de l'ITL.",
+    "low_interpretation": "Négatif (< 0,35 UI/mL) : Absence de sensibilisation détectable aux antigènes de M. tuberculosis. Indéterminé : Témoin positif (mitogène) insuffisant (anergie, immunodépression profonde, erreur technique) ou témoin négatif trop élevé (fuite d'interféron spontanée). Conduite à tenir : Répéter le test ou recourir à l'IDR à la tuberculine selon le contexte clinique.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le prélèvement doit être réalisé directement dans les tubes spécifiques (Nil, TB Antigen, Mitogen) et agités vigoureusement (10 fois) immédiatement après le prélèvement, puis incubés rapidement à 37°C en laboratoire dans les 16 heures.",
+      "Avantage majeur par rapport à l'IDR : Absence de réaction croisée avec le BCG (Bacille de Calmette et Guérin) et les mycobactéries environnementales (M. avium, etc.), ce qui en fait l'examen de choix chez les sujets vaccinés par le BCG, très fréquent en Algérie."
+    ],
+    "created_at": "2026-10-27T10:45:33.243654+00:00",
+    "updated_at": "2026-10-27T10:45:33.243668+00:00"
   }
 ]
