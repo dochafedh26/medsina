@@ -427,23 +427,24 @@
     "updated_at": "2026-10-27T13:18:59.843749+00:00"
   },
   {
-    "id": "memento_arret_cardio_respiratoire",
+    "id": "memento_acr_adulte",
     "title": "⚡ Arrêt Cardio-Respiratoire (ACR) Adulte",
-    "category": "Urgences Vitales & Réanimation",
-    "icon_name": "emergency_rounded",
+    "category": "Réanimation & Urgences Vitales",
+    "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Sécuriser les lieux, confirmer l'inconscience et l'absence de respiration (gasps = ACR). Débuter immédiatement un MCE de haute qualité (100-120/min, profondeur 5-6 cm) et brancher le défibrillateur (DAE/Palette).",
-      "Étape 2 : Analyser le rythme (chocable FV/TV sans pouls vs non chocable AESP/Asystolie). Poser 2 VVP gros calibre, préparer l'intubation trachéale (ou VSAI/LMA si opérateur non rompu) sous oxygénation 100%.",
-      "Étape 3 : Administrer l'adrénaline 1 mg IV/IO toutes les 3 à 5 minutes (immédiat si non chocable, après le 3ème choc si FV/TV). En cas de FV/TV réfractaire : Amiodarone 300 mg IV diluée après le 3ème choc (puis 150 mg si besoin).",
-      "Étape 4 : Rechercher et traiter les causes réversibles (4 H / 4 T) : Hypoxie, Hypovolémie, H+, Hyper/Hypokaliémie, Hypothermie / Toxiques, Tamponnade, Pneumothorax suffocant, Thrombose (coronarienne ou embolie pulmonaire).",
-      "Étape 5 : Post-RCK (si reprise de l'activité cardiaque spontanée) : Sédation, ventilation protectrice, maintien de la PAM > 65 mmHg (Remplissage, puis Noradrénaline PSE), ECG 12 dérivations en urgence (coronarographie si STEMI), et orientation immédiate vers l'unité de réanimation médicale."
+      "Étape 1 : Sécuriser les lieux, vérifier l'absence de conscience et de respiration, débuter immédiatement la RCP (100-120/min, depth 5-6 cm, ratio 30:2) et brancher le défibrillateur (DAE/Pale).",
+      "Étape 2 : Analyser le rythme (chocable vs non chocable). Si FV/TV sans pouls : Coup depoing sternal si synchrone, puis CEE (150-200J biphasique). Si Asystolie/AESP : pas de choc, RCP exclusive.",
+      "Étape 3 : Abord vasculaire immédiat (IV périphérique gros calibre ou IO) et administration d'Adrénaline 1 mg IV0/IO (à répéter toutes les 3 à 5 minutes). En cas de FV/TV réfractaire : Amiodarone 300 mg IV direct après le 3ème choc.",
+      "Étape 4 : Sécuriser les voies aériennes supérieures (Intubation endotrachéale par opérateur entrainé ou pose de masques laryngés) avec ventilation au ballon (FiO2 100%) et capnographie (ETCO2 < 10 mmHg = pronostic sombre). Rechercher les 4H et 4T (Hypoxie, Hypovolémie, Hyper/Hypokaliémie, Hypothermie / Tamponnade, Tension pneumothorax, Toxiques, Thrombose coro/pulmonaire).",
+      "Étape 5 : Post-ROSC (Return of Spontaneous Circulation) : Monitorage invasif, contrôle de la température ciblée (32-36°C), maintien de la PAM > 65 mmHg (remplissage et noradrénaline), réalisation d'un ECG 12 dérivations et transfert urgent en réanimation.",
+      "Étape 6 : Piège médico-légal absolu : Ne jamais débuter d'adrénaline ou de réanimation si rigidité cadavérique, livores fixes ou décapitation, et consigner heure de constatation du décès et nom du médecin sur le registre des UMC."
     ],
-    "scientific_references": "Recommandations ERC / SRLF / SFMU & MSPRH Algérie",
+    "scientific_references": "ERC Guidelines 2021 / SRLF / Recommandations Officielles du MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-27T00:31:51.295875+00:00",
-    "updated_at": "2026-10-27T00:31:51.295890+00:00"
+    "created_at": "2026-10-27T18:46:33.267966+00:00",
+    "updated_at": "2026-10-27T18:46:33.267976+00:00"
   },
   {
     "id": "memento_pediatrie_deshydratation_aigue",
