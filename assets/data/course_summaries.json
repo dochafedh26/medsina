@@ -1125,5 +1125,28 @@
     "treatment_summary": "Mesures de réanimation symptomatiques, interdiction absolue de faire vomir ou de neutraliser, réalisation d'une EDH précoce (6-24h) classant les lésions (Zarger), et chirurgie en urgence uniquement en cas de complication (perforation, médiastinite).",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-27T10:54:05.828702+00:00"
+  },
+  {
+    "course_id": "Blida_PNEUMOLOGIE_TD_DISPOSITIFS_D_INHALATION_EN_PATHOLOGIE_PULMONAIRE",
+    "course_name": "TD: dispositifs d'inhalation en pathologie pulmonaire",
+    "module_id": "Blida_PNEUMOLOGIE",
+    "module_name": "Pneumologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\n- L'inhalation est la voie **princeps** en pneumologie (asthme, BPCO) permettant un ciblage direct des voies aériennes avec des doses minimes et une réduction des effets indésirables systémiques.\n- Le dépôt pulmonaire dépend de la taille des particules (diamètre aérodynamique) : \n  - **> 5 µm** : Dépôt oropharyngé (impact par inertie).\n  - **1 à 5 µm** : Dépôt trachéo-bronchique et alvéolaire (zone thérapeutique utile, par sédimentation).\n  - **< 1 µm** : Exhalation (mouvement brownien).\n- Facteurs influençant le dépôt : débit inspiratoire, géométrie de l'arbre bronchique, technique d'inhalation.\n\n## 2. Démarche Diagnostique et Évaluation du patient\n- L'évaluation du choix du dispositif doit précéder toute prescription.\n- **Règle d'or** : Ne jamais changer le dispositif d'un patient stabilisé sans raison valable.\n- Évaluation du **débit inspiratoire pic (PIF)** : indispensable pour les DPI (Inhalateurs de Poudre Sèche).\n- Vérification systématique de l'**illettrisme**, des **troubles cognitifs**, de l'**arthrite sévère** et de la **coordination main-poumon** (très difficile avec les MDI ou Aérosols Doseurs Pressurisés).\n\n## 3. Classification & Caractéristiques des Dispositifs\n- **Aérosors Doseurs Pressurisés (MDI - Metered Dose Inhaler)** :\n  - Nécessitent une **coordination parfaite** (déclenchement au début de l'inspiration lente).\n  - Vitesse de sortie du jet élevée, risque de dépôt oropharyngé majeur sans **chambre d'inhalation (Spacer)**.\n  - Contiennent des gaz propulseurs (HFA).\n- **Inhalateurs de Poudre Sèche (DPI - Dry Powder Inhaler)** :\n  - Unidose (ex: Breezhaler, Handihaler) ou Multidose (ex: Turbuhaler, Ellipta).\n  - **Flux-dépendants** : nécessitent un débit inspiratoire rapide et fort (PIF > 60 L/min généralement).\n  - Pas de chambre d'inhalation nécessaire.\n- **Nébulisateurs** (Pneumatiques ou Ultrasoniques) :\n  - Réservés aux **crises aiguës graves** (aux urgences/hôpital) ou aux patients incapables d'utiliser les autres dispositifs.\n\n## 4. Stratégie Thérapeutique & Éducation Thérapeutique (ETP)\n- **Étapes clés d'utilisation d'un MDI avec chambre d'inhalation** :\n  1. Agiter le flacon.\n  2. Retirer le capuchon et insérer le MDI dans la chambre.\n  3. Expiration profonde hors de la chambre.\n  4. Placer l'embout buccal entre les dents (sans mordre) et sceller les lèvres.\n  5. Presser **une seule fois** (1 bouffée).\n  6. Inspirer **lentement et profondément** (si sifflement de la chambre, l'inspiration est trop rapide).\n  7. Retenir sa respiration (apnée) pendant **10 secondes** (ou le plus longtemps possible).\n  8. Rincer la bouche à l'eau (surtout si corticoïde inhalé pour prévenir la candidose).\n- **Erreurs fréquentes** : Absence de rinçage buccopharyngé (CSI), double bouffée en une seule inspiration, absence d'apnée.\n\n## 5. Évolution & Complications majeures\n- Une mauvaise observance ou une mauvaise technique d'inhalation conduit à : \n  - Un **échec thérapeutique** apparent (surmédication injustifiée).\n  - Des exacerbations fréquentes.\n  - Des effets secondaires locaux (candidose buccale, dysphonie par dépôt de CSI).\n- Évaluation continue de la technique lors de **chaque consultation**.",
+    "key_takeaways": [
+      "Les particules de taille comprise entre 1 et 5 micromètres assurent le dépôt alvéolaire et trachéo-bronchique optimal.",
+      "L'utilisation d'une chambre d'inhalation est obligatoire avec les MDI pour s'affranchir du défaut de coordination main-poumon.",
+      "Les DPI (poudre sèche) sont flux-dépendants et nécessitent un débit inspiratoire rapide et puissant, contre-indiqué chez le petit enfant ou l'insuffisant respiratoire très sévère.",
+      "Le rinçage de la bouche après inhalation de Corticoïdes Inhalés (CSI) prévient la candidose oropharyngée et la dysphonie.",
+      "En cas de crise aiguë grave, le nébulisateur ou le MDI via chambre d'inhalation sont les méthodes de choix."
+    ],
+    "exam_traps": [
+      "Piège Annales : Affirmer qu'un DPI s'utilise avec une chambre d'inhalation (Faux, les DPI ne s'utilisent JAMAIS avec une chambre).",
+      "Piège Traitement : Oublier de prescrire une chambre d'inhalation avec un MDI chez un patient âgé ou un enfant, entraînant un échec thérapeutique.",
+      "Piège Diagnostic : Confondre la technique d'inhalation d'un MDI (inspiration LENTE et profonde) et celle d'un DPI (inspiration RAPIDE et forte)."
+    ],
+    "diagnostic_criteria": "Évaluation clinique de la maîtrise du dispositif par le patient via la check-list standardisée lors de chaque consultation de suivi.",
+    "treatment_summary": "Choix du dispositif adapté au profil cognitif et physique du patient, associé à une éducation thérapeutique rigoureuse (ETP) et vérification de la technique.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-27T21:28:09.716028+00:00"
   }
 ]
