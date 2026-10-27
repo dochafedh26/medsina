@@ -15,8 +15,9 @@ de la génération autonome de contenus médicaux :
 - Perles Cliniques & Pièges du Concours
 
 Canaux cibles :
-1. Facebook Page « Résidanat Blida 2027 » (ID: 1405719695953624)
-2. Facebook Page « MedevSync » (ID: 1329939320211198)
+1. Facebook Page Officielle « Medsina » (ID: 1449308354921826)
+2. Facebook Page Communauté « Résidanat Blida 2027 » (ID: 1405719695953624)
+3. Facebook Page Partenaire « MedevSync » (ID: 1329939320211198)
 3. Telegram Canal Officiel « @medsina_officiel »
 =============================================================================
 """
@@ -85,6 +86,8 @@ def get_social_credentials() -> Dict[str, str]:
     2. Table Supabase admin_system_settings
     """
     creds = {
+        "medsina_page_id": os.environ.get("FB_MEDSINA_PAGE_ID", "1449308354921826").strip(),
+        "medsina_token": os.environ.get("FB_MEDSINA_PAGE_ACCESS_TOKEN", "").strip(),
         "blida_page_id": os.environ.get("FB_BLIDA_PAGE_ID", "1405719695953624").strip(),
         "blida_token": os.environ.get("FB_BLIDA_PAGE_ACCESS_TOKEN", "").strip(),
         "medevsync_page_id": os.environ.get("FB_MEDEVSYNC_PAGE_ID", "1329939320211198").strip(),
@@ -101,8 +104,10 @@ def get_social_credentials() -> Dict[str, str]:
             r = requests.get(url, headers=headers, timeout=10)
             if r.status_code == 200:
                 settings = {x["setting_key"]: x["setting_value"] for x in r.json() if isinstance(x, dict)}
+                if not creds["medsina_token"]:
+                    creds["medsina_token"] = (settings.get("facebook_medsina_page_access_token") or "").strip()
                 if not creds["blida_token"]:
-                    creds["blida_token"] = (settings.get("facebook_page_access_token") or "").strip()
+                    creds["blida_token"] = (settings.get("facebook_blida_page_access_token") or settings.get("facebook_page_access_token") or "").strip()
                 if not creds["medevsync_token"]:
                     creds["medevsync_token"] = (settings.get("facebook_medevsync_page_access_token") or "").strip()
                 if not creds["telegram_token"]:
@@ -671,6 +676,7 @@ def broadcast_content_teaser(
         "content_type": content_type,
         "title": data.get("title") or data.get("name") or data.get("dci"),
         "banner_path": None,
+        "facebook_medsina_post_id": None,
         "facebook_blida_post_id": None,
         "facebook_medevsync_post_id": None,
         "telegram_success": False
@@ -695,7 +701,19 @@ def broadcast_content_teaser(
     # 3. Resolve credentials
     creds = get_social_credentials()
 
-    # 4. Publish to Facebook Page 1 : Résidanat Blida 2027
+    # 4a. Publish to Facebook Page Officielle : Medsina
+    print("   🚀 Diffusion sur Facebook : Medsina (Page Officielle)...")
+    p0_id = publish_to_facebook_page(
+        page_id=creds["medsina_page_id"],
+        token=creds["medsina_token"],
+        page_name="Medsina Officiel",
+        image_path=banner_path,
+        caption=caption,
+        dry_run=dry_run
+    )
+    results["facebook_medsina_post_id"] = p0_id
+
+    # 4b. Publish to Facebook Page Communauté : Résidanat Blida 2027
     print("   🚀 Diffusion sur Facebook : Résidanat Blida 2027...")
     p1_id = publish_to_facebook_page(
         page_id=creds["blida_page_id"],
@@ -731,7 +749,7 @@ def broadcast_content_teaser(
     results["telegram_success"] = tg_ok
 
     # 7. Update Supabase admin_system_settings with last post ID
-    last_post_id = p1_id or p2_id
+    last_post_id = p0_id or p1_id or p2_id
     if last_post_id and not dry_run and last_post_id != "dry_run_post_id":
         try:
             import datetime
