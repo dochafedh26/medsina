@@ -410,21 +410,21 @@
   {
     "id": "memento_traumatisme_cranien",
     "title": "🧠 Traumatisme Crânien : Scanner & Urgences",
-    "category": "Neurologie / UMC",
-    "icon_name": "bolt_rounded",
-    "color_hex": "#EF4444",
+    "category": "Neurologie / Traumatologie",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#DC2626",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation immédiate de la conscience (Glasgow GCS), recherche de signes de focalisation, d'engagement, d'otorragie ou de rhinorrhée. Maintenir l'axe crânio-cervical et oxygéner (SaO2 > 94%).",
-      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, Groupage-Rhéus, Iono sanguin, Urée, Créatinine, Glycémie capillaire, Bilan d'hémostase (TP, TCA, Fibrinogène) et Troponine.",
-      "Étape 3 : Indication absolue de TDM cérébrale sans injection en urgence : GCS < 15 à H2, suspicion de fracture de crâne (déprimée ou base), vomissements répétés (> 2 épisodes), âge > 65 ans, amnésie rétrograde > 30 min, ou patient sous anticoagulant / anti-plaquettaire.",
-      "Étape 4 : Surveillance armée (paramètres toutes les 30 min) : réévaluation du GCS, pupilles, PA, pouls. Critères de transfert en réanimation : altération secondaire de la conscience (chute du GCS de 2 points), crises convulsives, ou lésion neuro-chirurgicale au scanner.",
-      "Étape 5 : Piège médico-légal et contre-indication : Ne JAMAIS administrer de sédative lourde avant l'évaluation neurologique complète ou le scanner (sauf indication d'intubation pour détresse respiratoire ou GCS < 8). Traitement anti-hypertenseur proscrit en urgence sauf si HTA maligne menaçante."
+      "Étape 1 : Évaluation initiale rapide (Score de Glasgow GCS, réactivité pupillaire, amnésie, céphalées intenses, vomissements répétés ou crise convulsive post-traumatique).",
+      "Étape 2 : Indication formelle de TDM cérébrale sans injection en urgence (GCS < 15 à H2, suspicion de fracture du crâne, vomissements itératifs, âge > 65 ans, prise d'AVK/antiagragants, amnésie rétrograde > 30 min).",
+      "Étape 3 : Bilan pré-transfusionnel et biologique systématique au déchoquage : NFS, groupement-RH, Iono, Urée, Créat, TP-TCA, Glycémie capillaire (éliminer une hypoglycémie mimant un coma).",
+      "Étape 4 : Surveillance armée horaire (GCS, pupilles, PA, SpO2). Critères de transfert en Réanimation : baisse du GCS de 2 points ou plus, apparition d'un déficit focal ou d'une anisocorie.",
+      "Étape 5 : Piège médico-légal absolu : ne jamais laisser sortir un patient traumatisé crânien sans consignes écrites de surveillance confiées à un tiers responsable, et interdiction formelle de sédation profonde avant avis neurochirurgical ou réanimateur."
     ],
-    "scientific_references": "SFMU / Recommandations Françaises de Neuroradiologie / Collège de Réanimation / Référentiel MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / Société Française de Médecine d'Urgence / Recommandations Nationales MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-18T05:12:01.494418+00:00",
-    "updated_at": "2026-10-18T05:12:01.494434+00:00"
+    "created_at": "2026-10-27T13:18:59.843734+00:00",
+    "updated_at": "2026-10-27T13:18:59.843749+00:00"
   },
   {
     "id": "memento_arret_cardio_respiratoire",
