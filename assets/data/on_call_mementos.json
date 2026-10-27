@@ -623,22 +623,22 @@
   {
     "id": "memento_convulsion_febrile_emp",
     "title": "⚡ Convulsion Fébrile & État de Mal Pédiatrique",
-    "category": "Pédiatrie d'Urgence",
+    "category": "Pédiatrie & Urgences",
     "icon_name": "child_care_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Mettre en position latérale de sécurité (PLS), libérer les VAS, administrer O2 au masque (10L/min) et brancher une VVP ou voie intra-osseuse. Mesurer la glycémie capillaire immédiatement.",
-      "Étape 2 : Si la crise dure > 5 min, administrer du Diazépam intra-rectal (0,5 mg/kg, max 10 mg) ou du Midazolam intranasal/buccal (0,2 mg/kg). Répéter 1 fois à 5 min si échec.",
-      "Étape 3 : Si état de mal persistant (> 10-15 min), charger en phénobarbital (Loménal) IV lente : 20 mg/kg dans 50 ml de G5% sur 20 min sous monitorage cardiaque et respiratoire.",
-      "Étape 4 : Traiter la fièvre (Paracétamol IV 15 mg/kg si > 3 mois ou mesures physiques) et rechercher une méningo-encéphalite (PL indispensable après élimination des signes de focalisation et de HIC).",
-      "Étape 5 : Critères de transfert en réanimation pédiatrique : échec du phénobarbital, Glasgow < 8 persistant, détresse respiratoire ou hémodynamique, status convulsif réfractaire.",
-      "Étape 6 : Piège médico-légal : Ne jamais perfuser de Valproate de sodium chez le nourrisson < 2 ans (risque d'hépato-toxicité fatale) et éliminer formellement une hypoglycémie ou une méningite avant de banaliser une convulsion fébrile simple."
+      "Étape 1 : Libération des VAS, oxygénothérapie au masque à fort débit (10 L/min), mise en position latérale de sécurité (PLS) si inconscient, et mesure immédiate de la glycémie capillaire au déchoquage.",
+      "Étape 2 : Si la crise dure > 5 min, administrer du Valium (Diazépam) intra-rectal : 0,5 mg/kg (max 10 mg) ou du Rivotril (Clonazépam) IV slow : 0,05 à 0,1 mg/kg. Répéter 1 fois à 5 min si échec.",
+      "Étape 3 : Si état de mal persistant (> 10-15 min malgré les benzodiazépines), initier une perfusion de Phénobarbital (Gardénal) IV : 20 mg/kg en 15 min dans du G5% sous monitorage cardio-respiratoire.",
+      "Étape 4 : Recherche active de la cause : bilan infectieux (NFS, CRP, hémocultures), et PL systématique si méningite suspectée après stabilisation et vérification de l'absence de signe de localisation/HTIC.",
+      "Étape 5 : Traitement symptomatique de la fièvre (Paracétamol IV 15 mg/kg/6h si > 38,5°C) et physiques (découvrir l'enfant, gants tièdes - éviter l'eau glacée).",
+      "Étape 6 : Piège médico-légal : Ne jamais administrer de Diazépam en IV rapide (risque d'apnée cataclysmique) et tout état de mal réfractaire nécessite l'appel immédiat du réanimateur pédiatrique de garde pour intubation et ventilation."
     ],
-    "scientific_references": "Consensus SFMU / SFP / Recommandations Nationales Algériennes de Pédiatrie",
+    "scientific_references": "SFMU / Société Française de Pédiatrie (SFP) / Recommandations MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-22T20:19:56.029378+00:00",
-    "updated_at": "2026-10-22T20:19:56.029390+00:00"
+    "created_at": "2026-10-27T22:59:36.300265+00:00",
+    "updated_at": "2026-10-27T22:59:36.300278+00:00"
   },
   {
     "id": "memento_urgences_diabetiques",
