@@ -405,12 +405,25 @@ class VidalPrescriptionAnalyzer:
             vmp_select = soup.find("select", id="list_vmps") or soup.find("select", {"name": "vmp"})
             if prefer_injectable and vmp_select:
                 injectable_vmp_id = None
+                clean_q_base = self.strip_accents(query.lower()).strip()
+                # Prioritize standard solution injectable (sol inj / ampoule)
+                candidates = []
                 for opt in vmp_select.find_all("option"):
                     val = opt.get("value")
-                    txt = opt.get_text().lower()
-                    if val and any(k in txt for k in ["sol inj", "inj", "perf", "ampoule", "flacon", "iv"]):
-                        injectable_vmp_id = val
-                        break
+                    txt = self.strip_accents(opt.get_text().lower())
+                    if not val:
+                        continue
+                    # Prevent matching derivative molecules (e.g. dexketoprofene when querying ketoprofene)
+                    if "dex" in txt and "dex" not in clean_q_base:
+                        continue
+                    if any(k in txt for k in ["sol inj", "solution injectable", "ampoule", "inj"]):
+                        candidates.append((val, 1, txt)) # High priority
+                    elif any(k in txt for k in ["perf", "flacon", "iv"]):
+                        candidates.append((val, 2, txt)) # Medium priority
+
+                if candidates:
+                    candidates.sort(key=lambda x: x[1])
+                    injectable_vmp_id = candidates[0][0]
                 if injectable_vmp_id:
                     vmp_url = f"{url}?render=true&vmp={injectable_vmp_id}"
                     try:

@@ -723,18 +723,18 @@
     "algerianAvailability": "Disponible UMC / PCH / Blocs opératoires (Nomenclature MSPRH)"
   },
   {
-    "id": "drug_ketoprofene_iv",
+    "id": "drug_ketoprofene_im",
     "dci": "Kétoprofène",
-    "brand": "ENANTUM (MENARINI) / KETOMEX (KPMA BIOTIC) / PROFENID (SANOFI AVENTIS ALGERIE) / KETESSE 50 mg/2 ml sol inj/p perf",
+    "brand": "PROFENID 100 mg/2 ml sol inj IM (SANOFI AVENTIS ALGERIE) / KETOMEX (KPMA BIOTIC)",
     "category": "Antalgiques",
-    "route": "Le traitement doit être de courte durée",
-    "indication": "• Colique néphrétique\n• Douleur d'intensité modérée à intense\n• Douleur post-opératoire\n• Lombalgie, traitement des poussées (de)",
-    "dose": "• dexkétoprofène (trométamol) : 25 mg\n• Voie intramusculaire, voie intraveineuse, voie intraveineuse (en perfusion)\n• Le traitement doit être de courte durée\n• Patient à partir de 18 an(s)\n• Colique néphrétique - Douleur d'intensité modérée à intense - Douleur post-opératoire - Lombalgie, traitement des poussées (de)\n• Voie intramusculaire\n• Administrer immédiatement après ouverture du conditionnement\n• 50 mg toutes les 8 à 12 heures",
-    "alert": "Contre-indications absolues (Vidal) :\n• Contre-indication absolue\n• Allaitement\n• Antécédent de perforation gastro-intestinale\n• Déshydratation sévère\n• Dyspepsie",
+    "route": "Voie intramusculaire stricte (IM profonde fessière)\nL'administration intraveineuse (IV) est formellement proscrite !",
+    "indication": "• Colique néphrétique aiguë\n• Douleur intense aiguë\n• Lombalgie aiguë et radiculalgies\n• Arthrose et rhumatismes inflammatoires, poussées aiguës",
+    "dose": "• kétoprofène : 100 mg/2 ml (50 mg/ml)\n• Voie intramusculaire stricte uniquement\n• Administrer dans le quadrant supéro-externe de la fesse en alternant les côtés\n• Colique néphrétique : 100 à 300 mg/j en 2 à 3 prises IM (max 2 jours de traitement)\n• Poussées aiguës rhumatologiques : 100 à 200 mg/j en 1 à 2 prises IM (max 3 jours)\n• Relais oral possible : 100 à 200 mg/j en 1 à 2 prises au milieu des repas\n• Posologie maximale absolue : 300 mg par jour",
+    "alert": "Contre-indications absolues (Vidal) :\n• Voie intraveineuse (IV) : FORMELLEMENT PROSCRITE\n• Grossesse à partir du début du 6e mois (24 SA)\n• Ulcère gastro-duodénal évolutif ou antécédent d'hémorragie digestive sous AINS\n• Insuffisance hépatique, rénale ou cardiaque sévère\n• Antécédent d'asthme déclenché par les AINS (syndrome de Widal)\n\nSurveillances patient :\n• Surveillance de la fonction rénale et de la diurèse",
     "algerian_availability": "Disponible UMC / PCH / Blocs opératoires (Nomenclature MSPRH)",
     "source": "vidal.fr",
     "created_at": "2026-10-27T08:22:12.167127+00:00",
-    "updated_at": "2026-10-27T08:26:21.101926+00:00",
+    "updated_at": "2026-10-27T20:55:00.000000+00:00",
     "algerianAvailability": "Disponible UMC / PCH / Blocs opératoires (Nomenclature MSPRH)"
   },
   {

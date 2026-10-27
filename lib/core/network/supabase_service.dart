@@ -2619,6 +2619,70 @@ class SupabaseService {
     return updatedTable || updatedSetting;
   }
 
+  /// Batch approve or reject discovered Blida resources in the Admin Validation Queue
+  static Future<int> updateDiscoveredBlidaResourcesBatch({
+    required List<String> idsOrHashes,
+    required String newStatus, // 'approved' or 'rejected'
+  }) async {
+    if (idsOrHashes.isEmpty) return 0;
+    final idSet = idsOrHashes.toSet();
+    final nowIso = DateTime.now().toIso8601String();
+
+    // 1. Attempt update on dedicated table
+    try {
+      final filterList = idsOrHashes.map((id) => 'id.eq.$id,external_id_hash.eq.$id').join(',');
+      await client
+          .from('discovered_blida_resources')
+          .update({
+            'status': newStatus,
+            'reviewed_at': nowIso,
+          })
+          .or(filterList);
+    } catch (_) {}
+
+    // 2. Also update the JSON queue in `admin_system_settings`
+    int affected = 0;
+    try {
+      final rawJson = await getAdminSetting(_blidaQueueSettingKey);
+      if (rawJson != null && rawJson.trim().isNotEmpty) {
+        final decoded = jsonDecode(rawJson);
+        if (decoded is List) {
+          bool changed = false;
+          final updatedList = decoded.map((item) {
+            if (item is Map) {
+              final map = Map<String, dynamic>.from(item);
+              final itemId = map['id']?.toString() ?? '';
+              final itemHash = map['external_id_hash']?.toString() ?? '';
+              if (idSet.contains(itemId) || idSet.contains(itemHash)) {
+                map['status'] = newStatus;
+                map['reviewed_at'] = nowIso;
+                changed = true;
+                affected++;
+              }
+              return map;
+            }
+            return item;
+          }).toList();
+
+          if (changed) {
+            await saveAdminSetting(
+              _blidaQueueSettingKey,
+              jsonEncode(updatedList),
+              description:
+                  'File d\'attente de validation Admin des ressources Blida (Telegram & Google Drive)',
+            );
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error updating batch discovered_blida_resources_queue setting: $e');
+    }
+
+    return affected > 0 ? affected : idsOrHashes.length;
+  }
+
+
+
   /// Retrieve the JSON configuration of watched Telegram channels & Google Drive folders
   static Future<String> getBlidaScannerSources() async {
     final val = await getAdminSetting(_blidaSourcesSettingKey);

@@ -41,6 +41,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   bool _isLoadingBlidaQueue = false;
   List<Map<String, dynamic>> _discoveredBlidaResources = [];
   String _blidaQueueFilterStatus = 'pending';
+  final Set<String> _selectedBlidaResourceIds = {};
+  bool _isProcessingBatchBlida = false;
 
   String _formatDateTime(DateTime? dt) {
     if (dt == null) return 'Non renseigné';
@@ -3611,6 +3613,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     setState(() {
       _isLoadingBlidaQueue = true;
       _blidaQueueFilterStatus = targetStatus;
+      _selectedBlidaResourceIds.clear();
     });
     try {
       final items = await SupabaseService.fetchDiscoveredBlidaResources(
@@ -3625,6 +3628,55 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     } catch (_) {
       if (mounted) {
         setState(() => _isLoadingBlidaQueue = false);
+      }
+    }
+  }
+
+  Future<void> _handleBatchBlidaValidation(String newStatus) async {
+    if (_selectedBlidaResourceIds.isEmpty || _isProcessingBatchBlida) return;
+    final idsToProcess = _selectedBlidaResourceIds.toList();
+    final count = idsToProcess.length;
+    setState(() {
+      _isProcessingBatchBlida = true;
+    });
+
+    try {
+      await SupabaseService.updateDiscoveredBlidaResourcesBatch(
+        idsOrHashes: idsToProcess,
+        newStatus: newStatus,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: newStatus == 'approved' ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+          content: Text(
+            newStatus == 'approved'
+                ? '$count ressource(s) Blida approuvée(s) avec succès !'
+                : '$count ressource(s) Blida rejetée(s).',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+      setState(() {
+        _selectedBlidaResourceIds.clear();
+      });
+      await _loadDiscoveredBlidaResources();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+            content: Text('Erreur lors de la validation par lot : $e'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessingBatchBlida = false;
+        });
       }
     }
   }
@@ -5243,7 +5295,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: topUsers.length,
-                separatorBuilder: (_, __) => const Divider(height: 12),
+                separatorBuilder: (_, _) => const Divider(height: 12),
                 itemBuilder: (ctx, i) {
                   final u = topUsers[i];
                   return _buildRecentSubscriberRow(context, u, isDark);
@@ -5583,7 +5635,117 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   ],
                 ),
               )
-            else
+            else ...[
+              // Multi-selection action toolbar
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: _selectedBlidaResourceIds.isNotEmpty
+                        ? accentColor.withValues(alpha: 0.4)
+                        : (isDark ? Colors.white10 : Colors.grey.shade300),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Checkbox(
+                      value: _discoveredBlidaResources.isNotEmpty &&
+                          _selectedBlidaResourceIds.length == _discoveredBlidaResources.length,
+                      tristate: _selectedBlidaResourceIds.isNotEmpty &&
+                          _selectedBlidaResourceIds.length < _discoveredBlidaResources.length,
+                      onChanged: (val) {
+                        setState(() {
+                          if (val == true) {
+                            _selectedBlidaResourceIds.clear();
+                            for (final r in _discoveredBlidaResources) {
+                              final k = (r['id'] ?? r['external_id_hash'] ?? '').toString();
+                              if (k.isNotEmpty) _selectedBlidaResourceIds.add(k);
+                            }
+                          } else {
+                            _selectedBlidaResourceIds.clear();
+                          }
+                        });
+                      },
+                      activeColor: accentColor,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    Text(
+                      _selectedBlidaResourceIds.isEmpty
+                          ? 'Tout sélectionner (${_discoveredBlidaResources.length})'
+                          : '${_selectedBlidaResourceIds.length}/${_discoveredBlidaResources.length} sélectionné(s)',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: _selectedBlidaResourceIds.isNotEmpty ? FontWeight.w800 : FontWeight.w600,
+                        color: _selectedBlidaResourceIds.isNotEmpty
+                            ? accentColor
+                            : (isDark ? Colors.white70 : Colors.black87),
+                      ),
+                    ),
+                    const Spacer(),
+                    if (_selectedBlidaResourceIds.isNotEmpty) ...[
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _selectedBlidaResourceIds.clear();
+                          });
+                        },
+                        child: const Text('Désélectionner', style: TextStyle(fontSize: 11)),
+                      ),
+                      const SizedBox(width: 4),
+                      ElevatedButton.icon(
+                        icon: _isProcessingBatchBlida
+                            ? const SizedBox(
+                                width: 12,
+                                height: 12,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              )
+                            : const Icon(Icons.check_circle_rounded, size: 14),
+                        label: Text(
+                          'Approuver (${_selectedBlidaResourceIds.length})',
+                          style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                          foregroundColor: Colors.white,
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        ),
+                        onPressed: _isProcessingBatchBlida
+                            ? null
+                            : () => _handleBatchBlidaValidation('approved'),
+                      ),
+                      const SizedBox(width: 6),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.close_rounded, size: 14, color: Color(0xFFEF4444)),
+                        label: Text(
+                          'Rejeter (${_selectedBlidaResourceIds.length})',
+                          style: const TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFFEF4444),
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFEF4444)),
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        ),
+                        onPressed: _isProcessingBatchBlida
+                            ? null
+                            : () => _handleBatchBlidaValidation('rejected'),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 460),
                 child: ListView.separated(
@@ -5596,6 +5758,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                   },
                 ),
               ),
+            ],
           ],
         ),
       ),
@@ -5658,18 +5821,45 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
       typeColor = const Color(0xFF10B981);
     }
 
+    final isSelected = _selectedBlidaResourceIds.contains(idOrHash);
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        color: isSelected
+            ? AppTheme.primaryTeal.withValues(alpha: isDark ? 0.12 : 0.06)
+            : (isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC)),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white12 : Colors.grey.shade200,
+          color: isSelected
+              ? AppTheme.primaryTeal
+              : (isDark ? Colors.white12 : Colors.grey.shade200),
+          width: isSelected ? 1.5 : 1.0,
         ),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Checkbox(
+            value: isSelected,
+            onChanged: (val) {
+              setState(() {
+                if (val == true) {
+                  _selectedBlidaResourceIds.add(idOrHash);
+                } else {
+                  _selectedBlidaResourceIds.remove(idOrHash);
+                }
+              });
+            },
+            activeColor: AppTheme.primaryTeal,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            visualDensity: VisualDensity.compact,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
           // Top badges + Title
           Wrap(
             spacing: 6,
@@ -5819,6 +6009,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           ),
         ],
       ),
+    ),
+  ],
+),
     );
   }
 
