@@ -101,6 +101,7 @@ GEMINI_API_KEY = _resolve_gemini_key()
 
 CATALOG_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "modules_catalog_47.json"
 EMERGENCY_DRUGS_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "emergency_drugs_algeria.json"
+ALGERIAN_NOMENCLATURE_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "algerian_nomenclature.json"
 LAB_VALUES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "lab_reference_values.json"
 ON_CALL_MEMENTOS_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "on_call_mementos.json"
 COURSE_SUMMARIES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "course_summaries.json"
@@ -732,50 +733,41 @@ def pick_candidate_emergency_drug(supabase: SupabaseClient, target_dci: Optional
 
 
 def generate_emergency_drug(dci_name: str, supabase: SupabaseClient, dry_run: bool = False) -> Optional[Dict[str, Any]]:
-    """Generates an Algerian hospital emergency drug monograph using Gemini Grounding."""
-    print(f"\n=======================================================")
-    print(f"💊 GENERATING EMERGENCY DRUG MONOGRAPH: {dci_name}")
-    print(f"=======================================================")
-
-    system_prompt = """Tu es MedsinaPilot, pharmacologue hospitalier et réanimateur expert en médecine d'urgence en Algérie.
-Ton rôle est de créer une fiche médicamenteuse d'urgence hyper-précise et adaptée aux UMC, services de réanimation et pharmacies hospitalières algériennes (PCH / Saidal / Institut Pasteur d'Algérie).
-La fiche doit être claire, immédiatement actionnable au déchoquage, et scientifiquement irréprochable (SFMU, HAS, SRLF, MSPRH Algérie).
-
-Format JSON STRICT attendu :
-{
-  "id": "drug_nom_dci_sans_accents",
-  "dci": "Nom DCI exact",
-  "brand": "Marques commerciales courantes en Algérie (ex: Saidal, Biopharm, Frater-Razes, Aguettant, Princeps)",
-  "category": "Cardio / ACR / Choc",
-  "route": "Voies d'administration (ex: IVD, Perfusion IV (PSE), IM, Nébulisation)",
-  "indication": "Indications majeures en urgence vitale ou pratique hospitalière",
-  "dose": "• Posologie adulte précise (bolus, entretien, vitesse de titration, solvant de dilution G5% ou NaCl)\n• Posologie pédiatrique en mg/kg si applicable",
-  "alert": "Contre-indications absolues, pièges létaux et surveillance rapprochée (ECG, TA, diurèse)",
-  "algerian_availability": "Disponibilité typique (ex: Disponible UMC / PCH / Blocs opératoires / Saidal)"
-}
-Les catégories possibles sont : "Cardio / ACR / Choc", "Respiratoire", "Neurologie / Sédation", "Infectiologie", "Antidotes & Sérums", "Antalgiques", "Hémostase & Anticoagulants", "Métabolisme & Endocrinologie", "Gastro-entérologie".
-N'utilise AUCUNE balise Markdown dans ta réponse brute, juste le JSON pur.
-"""
-
-    prompt = f"""Rédige la fiche officielle d'urgence pour la molécule : {dci_name}.
-Recherche les noms de marques déposées et laboratoires présents en Algérie (Saidal, IPA, PCH, etc.).
-Détaille les posologies exactes de titration pour l'adulte et l'enfant en situation d'urgence."""
+    """Generates an Algerian hospital emergency drug monograph strictly and authentically using Vidal.fr + Algerian Nomenclature."""
+    print("=======================================================")
+    print(f"💊 GENERATING EMERGENCY DRUG MONOGRAPH (STRICT VIDAL PRO): {dci_name}")
+    print("=======================================================")
 
     try:
-        raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+        from vidal_prescription_analyzer import VidalPrescriptionAnalyzer
+        vidal_client = VidalPrescriptionAnalyzer()
     except Exception as e:
-        print(f"❌ Erreur appel Gemini médicament ({dci_name}): {e}")
+        print(f"⚠️ Erreur chargement VidalPrescriptionAnalyzer: {e}")
+        vidal_client = None
+
+    vidal_mono = None
+    if vidal_client:
+        vidal_mono = vidal_client.fetch_drug_monograph(dci_name, prefer_injectable=True)
+
+    if not vidal_mono:
+        print(f"❌ Refus de génération : Aucune monographie Vidal officielle trouvée pour '{dci_name}'.")
+        print("💡 Conformité stricte : Seules les molécules certifiées par Vidal.fr peuvent être indexées.")
         return None
 
-    try:
-        data = extract_clean_json(raw_response)
-    except Exception as e:
-        print(f"Error parsing JSON from Gemini: {e}\nRaw snippet:\n{raw_response[:400]}")
-        return None
+    # Load Algerian nomenclature for official MSPRH brands & laboratories
+    algerian_nomen = None
+    if ALGERIAN_NOMENCLATURE_FILE.exists():
+        try:
+            algerian_nomen = json.loads(ALGERIAN_NOMENCLATURE_FILE.read_text(encoding="utf-8"))
+        except Exception as e:
+            print(f"Notice reading algerian nomenclature: {e}")
 
-    if not data.get("id"):
-        clean_id = re.sub(r'[^a-zA-Z0-9]', '_', dci_name.lower()).strip('_')
-        data["id"] = f"drug_{clean_id}"
+    # Build drug record 100% strictly from Vidal data + Algerian Nomenclature
+    data = vidal_client.format_as_emergency_drug(
+        vidal_mono,
+        dci_display_name=dci_name,
+        algerian_nomenclature=algerian_nomen
+    )
 
     data["created_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
     data["updated_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -786,11 +778,11 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
     if "algerian_availability" in data:
         data["algerianAvailability"] = data["algerian_availability"]
 
-    print(f"Generated Drug: {data.get('dci')} ({data.get('brand')})")
+    print(f"Generated Drug (Vidal): {data.get('dci')} ({data.get('brand')})")
     print(f"Category: {data.get('category')} | Route: {data.get('route')}")
 
     if dry_run:
-        print("\n[DRY RUN] Generated Drug snippet:")
+        print("[DRY RUN] Generated Drug snippet (Vidal):")
         print(json.dumps(data, indent=2, ensure_ascii=False)[:800] + "...")
         try:
             from social_teaser_broadcaster import broadcast_content_teaser
@@ -820,7 +812,7 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
             supabase=supabase,
             notif_id=f"notif_drug_{data['id']}",
             title=f"💊 Médicament d'Urgence : {data.get('dci', dci_name)}",
-            message=f"La fiche posologique et vigilance pratique de \"{data.get('dci', dci_name)}\" a été ajoutée au Codex Urgences !",
+            message=f"La fiche posologique et vigilance pratique de \"{data.get('dci', dci_name)}\" (Vidal.fr) a été ajoutée au Codex Urgences !",
             notif_type="announcement",
             target_id=data["id"],
             metadata={
@@ -857,8 +849,6 @@ Détaille les posologies exactes de titration pour l'adulte et l'enfant en situa
 
     return data
 
-
-# =============================================================================
 # 4. BIOLOGICAL LAB REFERENCE VALUES (NORMES BIOLOGIQUES)
 # =============================================================================
 

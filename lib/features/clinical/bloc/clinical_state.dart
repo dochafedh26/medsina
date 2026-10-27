@@ -47,6 +47,7 @@ class ClinicalState extends Equatable {
       'Antidotes & Sérums',
       'Antalgiques',
       'Hémostase & Anticoagulants',
+      'Obstétrique & Gynécologie',
       'Métabolisme & Endocrinologie',
       'Gastro-entérologie',
     ];
