@@ -569,5 +569,20 @@
     ],
     "created_at": "2026-10-27T16:46:54.741082+00:00",
     "updated_at": "2026-10-27T16:46:54.741096+00:00"
+  },
+  {
+    "id": "lab_phosphoremie",
+    "name": "Phosphorémie (Phosphate inorganique)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "0.81 - 1.45",
+    "unit": "mmol/L",
+    "high_interpretation": "Hyperphosphorémie : Insuffisance rénale aiguë ou chronique (cause majeure), hypoparathyroïdie (primaire ou chirurgicale), lyse cellulaire massive (syndrome de lyse tumorale, rhabdomyolyse, brûlures étendues, hémolyse), acidose métabolique sévère, intoxication par la vitamine D ou laxatifs riches en phosphate. Seuil d'urgence vitale : > 2.5 mmol/L (risque de calcifications tissulaires métastatiques et d'hypocalcémie aiguë avec tétanie). Conduite à tenir : Arrêt des apports, hydratation, traitement de la cause, chélateurs du phosphore si IRC.",
+    "low_interpretation": "Hypophosphorémie : Hyperparathyroïdie primaire (fuite rénale), carence d'apport ou malabsorption (dénutrition, alcoolisme chronique), syndrome de re-nutrition inappropriée (refeeding syndrome chez le dénutri), alcalose respiratoire aiguë (passage intracellulaire du phosphate), acidose tubulaire rénale, diabète mal contrôlé (cétose). Seuil d'urgence vitale : < 0.32 mmol/L (hypophosphorémie sévère engageant le pronostic vital avec dysfonction diaphragmatique, encéphalopathie, insuffisance cardiaque, rhabdomyolyse et altération de la libération d'oxygène par diminution du 2,3-DPG). Conduite à tenir : Supplémentation IV prudente sous monitorage cardiaque et biologique strict.",
+    "clinical_notes": [
+      "Piège pré-analytique : L'hémolyse in vitro libère le phosphate intracellulaire et fausse la phosphorémie à la hausse (fausse hyperphosphorémie). Le prélèvement doit être centrifugé rapidement.",
+      "Le syndrome de re-nutrition (refeeding syndrome) en réanimation associe une hypophosphorémie, une hypokaliémie et une hypomagnésémie profondes lors de la reprise de l'alimentation chez un patient dénutri (attention au pic d'insuline intracellulaire)."
+    ],
+    "created_at": "2026-10-27T21:25:28.196807+00:00",
+    "updated_at": "2026-10-27T21:25:28.196821+00:00"
   }
 ]
