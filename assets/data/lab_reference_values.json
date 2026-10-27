@@ -554,5 +554,20 @@
     ],
     "created_at": "2026-10-27T10:45:33.243654+00:00",
     "updated_at": "2026-10-27T10:45:33.243668+00:00"
+  },
+  {
+    "id": "lab_ponction_pleurale_light",
+    "name": "Liquide Pleural : Critères de Light (Exsudat vs Transsudat)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "Transsudat si tous les critères de Light sont négatifs | Exsudat si au moins 1 critère positif",
+    "unit": "Rapport et g/L",
+    "high_interpretation": "Exsudat pleural (Légende de Light : Protéines pleurales/sériques > 0.5, LDH pleural/sérique > 0.6, LDH pleural > 2/3 de la limite supérieure de la normale sérique). Causes : Infections (pleurésie para-pneumonique, empyème - URGENCE si purulent), Tuberculose (très fréquente en Algérie, lymphocytaire), Néoplasies (mésothéliome, métastases), Embolie pulmonaire, Connectivites.",
+    "low_interpretation": "Transsudat pleural (Tous les critères de Light < 0.5 pour protides et < 0.6 pour LDH). Causes : Insuffisance cardiaque gauche (cause n°1), Cirrhose hépatique (hydrothorax), Syndrome néphrotique, Dialyse péritonéale, Atélectasie aiguë. Pas d'urgence immédiate liée au liquide lui-même, traiter la cause médicale sous-jacente.",
+    "clinical_notes": [
+      "Piège classique des critères de Light : Faux exsudat chez les patients cirrhotiques ou en syndrome néphrotique sous traitement diurétique au long cours (les protéines sanguines se concentrent, faisant basculer un transsudat en exsudat biochimique). Dans ce cas, utiliser le Gradient Albumine Sérum-Pl_pleural > 12 g/L pour confirmer le transsudat.",
+      "Devant tout épanchement pleural exsudatif en Algérie, éliminer systématiquement une tuberculose pleurale (adénosine désaminase - ADA pleurale > 40 UI/L, prédominance lymphocytaire) et une pleurésie infectieuse compliquée (pH < 7.20, glucose < 0.6 g/L ou < 2.2 mmol/L, LDH > 1000 UI/L imposant un drainage thoracique urgent)."
+    ],
+    "created_at": "2026-10-27T16:46:54.741082+00:00",
+    "updated_at": "2026-10-27T16:46:54.741096+00:00"
   }
 ]
