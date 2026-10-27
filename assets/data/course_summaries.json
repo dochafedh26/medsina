@@ -1079,5 +1079,28 @@
     "treatment_summary": "Surveillance active pour les formes indolentes, prostatectomie totale ou radiothérapie pour les formes localisées à curabilité, et castration (hormonothérapie) pour les stades métastatiques.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-27T00:03:11.406197+00:00"
+  },
+  {
+    "course_id": "Blida_CARDIOLOGIE_TD_LES_BI_MARQUEURS_CARDIAQUES",
+    "course_name": "TD: Biomarqueures cardiaque",
+    "module_id": "Blida_CARDIOLOGIE",
+    "module_name": "Cardiologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLes biomarqueurs cardiaques sont des molécules libérées dans la circulation sanguine lors d'une souffrance ou d'une nécrose myocardique. On distingue principalement :\n- **Les Troponines cardiaques (cTnI et cTnT)** : Marqueurs de référence (gold standard) de la nécrose myocardique, doués d'une quasi-spécificité cardiaque absolue. Elles s'élèvent en **3 à 4 heures** après le début de l'ischémie, avec un pic à **12-24 heures** et persistent jusqu'à **1 à 2 semaines**.\n- **Les Peptides Natriurétiques (BNP et NT-proBNP)** : Marqueurs de l'étirement et de la surcharge volémique myocardique (insuffisance cardiaque). Le **NT-proBNP** a une demi-vie plus longue que le **BNP** et sa clairance est rénale (attention à l'insuffisance rénale).\n\n## 2. Démarche Diagnostique\n- **Infarctus du Myocarde sans sus-décalage du ST (NSTEMI) / avec sus-décalage (STEMI)** : Dosage de la troponine ultrasensible (hs-cTn) à **H0** et **H1** (algorithme rapide ESC 0h/1h) ou **H0/H3**. Une cinétique positive (variation significative) est indispensable pour affirmer l'infarctus en l'absence de STEMI.\n- **Insuffisance Cardiaque (IC)** : Le dosage du **BNP** (seuil d'exclusion < 100 ng/L) ou du **NT-proBNP** (seuil d'exclusion < 300 ng/L, modulé par l'âge : < 450 si < 50 ans, < 900 si 50-75 ans, < 1800 si > 75 ans) est indiqué devant toute dyspnée aiguë.\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Causes d'élévation de la troponine HORS IDM (faux positifs / atteinte secondaire)** :\n  - Embolie pulmonaire grave (strain VD)\n  - Insuffisance rénale chronique (élévation basale chronique)\n  - Myocardite aiguë, péricardite\n  - Sepsis sévère / Choc septique\n  - AVC ou hémorragie méningée\n  - Contusion cardiaque\n- **Causes d'élévation des Peptides Natriurétiques HORS Insuffisance Cardiaque** :\n  - Insuffisance rénale\n  - Fibrillation auriculaire\n  - Âge avancé, sexe féminin\n  - Hypoxie aiguë (embolie pulmonaire, SDRA)\n\n## 4. Stratégie Thérapeutique & Impact Clinique\n- Les biomarqueurs n'ont pas de traitement direct mais guident la stratégie :\n  - **Troponine positive + sus-ST** : Urgence absolue de reperfusion coronaire (Coronarographie immédiate < 120 min).\n  - **Troponine positive + cinétique** : Stratification du risque ischémique (coronarographie < 24h si haut risque).\n  - **BNP/NT-proBNP élevé** : Initiation ou adaptation du traitement de l'insuffisance cardiaque (IEC/ARNI, bêtabloquants, ARM, iSGLT2, diurétiques de l'anse).\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Cinétique de la Troponine** : Utile pour le diagnostic rétrospectif et pour détecter une **extension d'infarctus** ou une **récidive ischémique** per-hospitalisation.\n- **Valeur pronostique des Peptides Natriurétiques** : Un taux élevé de NT-proBNP à l'état stable est un facteur prédictif indépendant de mortalité et de réhospitalisation pour insuffisance cardiaque.",
+    "key_takeaways": [
+      "La troponine ultrasensible (hs-cTn) est le gold standard absolu de la nécrose myocardique, débutant son ascension à H3-H4.",
+      "L'élévation de la troponine ne signifie pas systématiquement IDM : penser à l'embolie pulmonaire, la myocardite et l'insuffisance rénale.",
+      "Les seuils d'exclusion du NT-proBNP en urgence sont < 300 ng/L (et varient selon l'âge au-delà de 50 ans).",
+      "Le NT-proBNP a une clairance rénale, contrairement au BNP (qui est également clairé par les récepteurs natriurétiques et les endopeptidases neutres).",
+      "Une cinétique de la troponine (delta à 1h ou 3h) est indispensable pour différemment une atteinte aiguë d'une élévation chronique."
+    ],
+    "exam_traps": [
+      "Piège Annales : 'Une élévation de la troponine affirme formellement un IDM' -> FAUX, elle affirme une souffrance/nécrose myocardique (diagnostic différentiel : EP, insuffisance rénale, myocardite).",
+      "Piège Traitement : Attendre le résultat de la troponine pour déclencher une angioplastie primaire devant un STEMI -> FAUX, le STEMI est une urgence électro-clinique, la coronarographie ne doit pas attendre les troponines.",
+      "Piège Diagnostic : Oublier que le seuil du NT-proBNP s'élève avec l'âge pour le diagnostic d'insuffisance cardiaque."
+    ],
+    "diagnostic_criteria": "Confirmation d'un IDM par la mise en évidence d'une cinétique positive de la troponine ultrasensible associée à au moins un argument ischémique (clinique, ECG, imagerie). Exclusion d'une insuffisance cardiaque si NT-proBNP < 300 ng/L.",
+    "treatment_summary": "Urgence thérapeutique immédiate guidée par la clinique et les biomarqueurs : Reperfusion coronaire en urgence pour la troponine positive ischémique ; Optimisation du traitement médico-cardiovasculaire pour les peptides natriurétiques élevés.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-27T05:31:05.559607+00:00"
   }
 ]
