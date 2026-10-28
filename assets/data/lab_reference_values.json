@@ -599,5 +599,20 @@
     ],
     "created_at": "2026-10-28T00:37:42.424474+00:00",
     "updated_at": "2026-10-28T00:37:42.424488+00:00"
+  },
+  {
+    "id": "lab_myoglobine",
+    "name": "Myoglobine sérique et urinaire (Mb)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Sérique : < 70 µg/L (Homme) / < 50 µg/L (Femme) | Urinaire : Négative ou < 5 µg/L",
+    "unit": "µg/L",
+    "high_interpretation": "Sérique : Rhabdomyolyse aiguë (traumatisme, crush syndrome, ischémie, efforts intenses, toxiques, statines, infections), syndrome des loges, infarctus du myocarde (précoce mais non spécifique). Seuil d'urgence : Myoglobine sérique > 1000 µg/L ou myoglobinurie massive (urines rouge-brun sans hématies au sedim) menaçant le rein par nécrose tubulaire aiguë (IRA pigmentaire). Conduite à tenir : Hydratation IV agressive, alcalinisation des urines (bicarbonate de sodium), correction des ioniogrammes (K+), surveillance de la diurèse horaire.",
+    "low_interpretation": "Absence de signification pathologique particulière, témoigne de l'intégrité musculaire ou d'une cinétique dépassée (la myoglobine a une clairance et une demi-vie très courtes de 15 à 30 minutes).",
+    "clinical_notes": [
+      "Piège diagnostique majeur : Une bandelette urinaire positive au sang mais un sédiment urinaire sans hématies (hématurie 'fictive') signe une myoglobinurie ou une hemoglobinurie.",
+      "Cinétique : Marqueur très précoce (élévation en 1 à 3h, pic en 6 à 12h, normalisation en 24 à 48h), sa normalisation rapide ne doit pas éliminer une rhabdomyolyse si le prélèvement est tardif (préférer les CPK sériques dont la cinétique est plus étalée)."
+    ],
+    "created_at": "2026-10-28T07:01:44.573864+00:00",
+    "updated_at": "2026-10-28T07:01:44.573879+00:00"
   }
 ]
