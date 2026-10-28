@@ -97,7 +97,7 @@ def get_social_credentials() -> Dict[str, str]:
     }
 
     # Fetch missing from Supabase
-    if not (creds["blida_token"] and creds["medevsync_token"] and creds["telegram_token"]):
+    if not (creds["medsina_token"] and creds["blida_token"] and creds["medevsync_token"] and creds["telegram_token"]):
         try:
             url = f"{SUPABASE_URL}/rest/v1/admin_system_settings?select=setting_key,setting_value"
             headers = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}

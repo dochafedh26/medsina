@@ -141,31 +141,73 @@ def load_gemini_api_key() -> Optional[str]:
     return None
 
 
+def get_all_facebook_pages() -> List[Dict[str, str]]:
+    """
+    Récupère les identifiants pour les 3 pages Facebook officielles :
+    1. Medsina (ID: 1449308354921826)
+    2. MedevSync (ID: 1329939320211198)
+    3. Résidanat Blida 2027 (ID: 1405719695953624)
+    """
+    pages_config = [
+        {
+            "key": "medsina",
+            "name": "Medsina (Page Officielle)",
+            "page_id": (os.environ.get("FB_MEDSINA_PAGE_ID") or "1449308354921826").strip(),
+            "token": (os.environ.get("FB_MEDSINA_PAGE_ACCESS_TOKEN") or "").strip(),
+            "db_id_key": "facebook_medsina_page_id",
+            "db_token_key": "facebook_medsina_page_access_token",
+        },
+        {
+            "key": "medevsync",
+            "name": "MedevSync (Page Partenaire)",
+            "page_id": (os.environ.get("FB_MEDEVSYNC_PAGE_ID") or "1329939320211198").strip(),
+            "token": (os.environ.get("FB_MEDEVSYNC_PAGE_ACCESS_TOKEN") or "").strip(),
+            "db_id_key": "facebook_medevsync_page_id",
+            "db_token_key": "facebook_medevsync_page_access_token",
+        },
+        {
+            "key": "residanat_blida_2027",
+            "name": "Résidanat Blida 2027 (Page Communauté)",
+            "page_id": (os.environ.get("FB_BLIDA_PAGE_ID") or "1405719695953624").strip(),
+            "token": (os.environ.get("FB_BLIDA_PAGE_ACCESS_TOKEN") or "").strip(),
+            "db_id_key": "facebook_blida_page_id",
+            "db_token_key": "facebook_blida_page_access_token",
+        },
+    ]
+
+    try:
+        url = f"{SUPABASE_URL}/rest/v1/admin_system_settings?select=setting_key,setting_value"
+        req = urllib.request.Request(
+            url,
+            headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            rows = json.loads(resp.read().decode("utf-8"))
+            settings = {r.get("setting_key"): r.get("setting_value") for r in rows if isinstance(r, dict)}
+            for p in pages_config:
+                if not p["token"]:
+                    p["token"] = (settings.get(p["db_token_key"]) or "").strip()
+                if not p["page_id"]:
+                    p["page_id"] = (settings.get(p["db_id_key"]) or "").strip()
+            # Fallback for blida
+            if not pages_config[2]["token"]:
+                pages_config[2]["token"] = (settings.get("facebook_page_access_token") or "").strip()
+    except Exception as e:
+        print(f"Warning: Could not fetch Facebook credentials from Supabase: {e}", file=sys.stderr)
+
+    valid_pages = [p for p in pages_config if p["page_id"] and p["token"]]
+    return valid_pages
+
+
 def get_facebook_credentials() -> Dict[str, str]:
-    page_id = os.environ.get("FB_PAGE_ID")
-    page_token = os.environ.get("FB_PAGE_ACCESS_TOKEN")
-
-    if not page_id or not page_token:
-        try:
-            url = f"{SUPABASE_URL}/rest/v1/admin_system_settings?select=setting_key,setting_value"
-            req = urllib.request.Request(
-                url,
-                headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
-            )
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                rows = json.loads(resp.read().decode("utf-8"))
-                for row in rows:
-                    if row.get("setting_key") == "facebook_page_id" and not page_id:
-                        page_id = row.get("setting_value")
-                    elif row.get("setting_key") == "facebook_page_access_token" and not page_token:
-                        page_token = row.get("setting_value")
-        except Exception as e:
-            print(f"Warning: Could not fetch Facebook credentials from Supabase: {e}", file=sys.stderr)
-
-    if not page_id or not page_token:
-        raise ValueError("Missing Facebook credentials (facebook_page_id or facebook_page_access_token).")
-
-    return {"page_id": page_id.strip(), "page_token": page_token.strip()}
+    """Retourne la page principale (Medsina par défaut) pour compatibilité ascendante."""
+    pages = get_all_facebook_pages()
+    medsina = next((p for p in pages if p["key"] == "medsina"), None)
+    if medsina:
+        return {"page_id": medsina["page_id"], "page_token": medsina["token"]}
+    if pages:
+        return {"page_id": pages[0]["page_id"], "page_token": pages[0]["token"]}
+    raise ValueError("Missing Facebook credentials: no active Facebook page configured.")
 
 
 def strip_emojis_for_image(text: str) -> str:
@@ -1622,27 +1664,51 @@ def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
     return output_path
 
 
+def publish_photo_to_all_facebook_pages(image_path: str, caption: str) -> List[Dict[str, Any]]:
+    """Publie l'infographie simultanément sur les 3 pages Facebook officielles."""
+    pages = get_all_facebook_pages()
+    results = []
+    if not pages:
+        raise ValueError("Aucune page Facebook configurée avec des identifiants valides.")
+
+    for p in pages:
+        name = p["name"]
+        page_id = p["page_id"]
+        token = p["token"]
+        print(f"   🚀 Publication en cours sur {name} (ID: {page_id})...")
+        try:
+            url = f"https://graph.facebook.com/v21.0/{page_id}/photos"
+            with open(image_path, "rb") as img_file:
+                files = {"source": (os.path.basename(image_path), img_file, "image/png")}
+                data = {"caption": caption, "access_token": token}
+                resp = requests.post(url, data=data, files=files, timeout=60)
+            if resp.status_code == 200:
+                res = resp.json()
+                photo_id = res.get("id")
+                post_id = res.get("post_id")
+                print(f"   🎉 SUCCÈS sur {name} ! Photo ID: {photo_id} | Post ID: {post_id}")
+                if post_id:
+                    print(f"   🔗 Lien : https://www.facebook.com/{post_id}")
+                results.append({"page": p["key"], "name": name, "photo_id": photo_id, "post_id": post_id, "success": True})
+            else:
+                print(f"   ❌ Erreur sur {name} ({resp.status_code}): {resp.text}")
+                results.append({"page": p["key"], "name": name, "error": resp.text, "success": False})
+        except Exception as e:
+            print(f"   ❌ Exception sur {name}: {e}")
+            results.append({"page": p["key"], "name": name, "error": str(e), "success": False})
+    return results
+
+
 def publish_photo_to_facebook(image_path: str, caption: str) -> Dict[str, Any]:
-    creds = get_facebook_credentials()
-    page_id = creds["page_id"]
-    token = creds["page_token"]
-
-    url = f"https://graph.facebook.com/v21.0/{page_id}/photos"
-
-    with open(image_path, "rb") as img_file:
-        files = {
-            "source": (os.path.basename(image_path), img_file, "image/png"),
-        }
-        data = {
-            "caption": caption,
-            "access_token": token,
-        }
-        resp = requests.post(url, data=data, files=files, timeout=60)
-
-    if resp.status_code == 200:
-        return resp.json()
-    else:
-        raise RuntimeError(f"Facebook Graph API Error ({resp.status_code}): {resp.text}")
+    """Publie sur toutes les pages et retourne le résultat principal (Medsina en priorité)."""
+    results = publish_photo_to_all_facebook_pages(image_path, caption)
+    medsina_res = next((r for r in results if r.get("page") == "medsina" and r.get("success")), None)
+    if medsina_res:
+        return {"id": medsina_res.get("photo_id"), "post_id": medsina_res.get("post_id"), "all_results": results}
+    first_success = next((r for r in results if r.get("success")), None)
+    if first_success:
+        return {"id": first_success.get("photo_id"), "post_id": first_success.get("post_id"), "all_results": results}
+    raise RuntimeError(f"Échec de publication sur toutes les pages Facebook: {results}")
 
 
 def main():
@@ -1685,7 +1751,7 @@ def main():
     print(f"Image générée avec succès : {img_path}")
 
     if not args.dry_run and args.publish:
-        print("\n🚀 3. Publication de la photo et du texte sur la page Facebook Medevsync...")
+        print("\n🚀 3. Diffusion de l'infographie sur les 3 Pages Facebook Officielles (Medsina, MedevSync, Résidanat Blida 2027)...")
         try:
             res = publish_photo_to_facebook(img_path, post_data.get("caption", ""))
             photo_id = res.get("id")
