@@ -614,5 +614,20 @@
     ],
     "created_at": "2026-10-28T07:01:44.573864+00:00",
     "updated_at": "2026-10-28T07:01:44.573879+00:00"
+  },
+  {
+    "id": "lab_anticorps_antiphospholipides",
+    "name": "Anticorps Anti-Phospholipides (aPL : Lupus Anticoagulant, Anti-Cardiolipine, Anti-Bêta2GP1)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Lupus Anticoagulant (LA) : Négatif | Anti-Cardiolipine (aCL IgG/IgM) : < 10 UGPL/UMPL (ou UI/mL) | Anti-Bêta2 Glycoprotéine 1 (aB2GP1 IgG/IgM) : < 10 UI/mL",
+    "unit": "Qualitatif (Négatif/Positif) ou UI/mL (titres modérés à forts > 40 UI/mL)",
+    "high_interpretation": "Présence d'aPL : Évoque un syndrome des antiphospholipides (SAPL, primaire ou secondaire au LES). Manifestations cliniques : Thromboses vasculaires (artérielles, veineuses, microvasculaires) et/ou morbidité obstétricale (fausses couches à répétition, morts fœtales). Urgence vitale : SAPL catastrophique (Asherson) avec défaillances multiviscérales aiguës. Conduite à tenir : Anticoagulation curative immédiate si thrombose avérée, corticothérapie et échanges plasmatiques si SAPL catastrophique.",
+    "low_interpretation": "Négatif (Absence d'aPL significatifs) : N'exclut pas formellement le diagnostic si la clinique est fortement évocatrice (refaire le dosage à 12 semaines d'intervalle ou rechercher d'autres isotypes/cibles comme anti-phosphatidylserine/prothrombine). Une positivité isolée et faible sans critères cliniques (thrombose/obstétrique) n'a pas de valeur pathologique (faux positifs transitoires sous infection ou médicaments).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le test du Lupus Anticoagulant (LA) est basé sur la cohésion de tests de coagulation in vitro (comme le TCK). Une héparinothérapie ou une anticoagulation par antivitamine K (AVK) ou AOD perturbe complètement l'interprétation et donne de faux positifs ou fausses négativités, nécessitant des agents neutralisants ou l'arrêt des traitements.",
+      "Critère diagnostique indispensable : Pour poser le diagnostic biologique définitif d'un SAPL (classification de Sydney), la positivité des aPL (LA, aCL ou aB2GP1) doit être confirmée à deux reprises ou plus, à au moins 12 semaines d'intervalle."
+    ],
+    "created_at": "2026-10-28T14:15:03.740283+00:00",
+    "updated_at": "2026-10-28T14:15:03.740298+00:00"
   }
 ]
