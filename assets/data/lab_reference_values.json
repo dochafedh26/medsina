@@ -584,5 +584,20 @@
     ],
     "created_at": "2026-10-27T21:25:28.196807+00:00",
     "updated_at": "2026-10-27T21:25:28.196821+00:00"
+  },
+  {
+    "id": "lab_beta_2_microglobuline",
+    "name": "Bêta-2-Microglobuline sérique (β2M)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "0.8 - 2.2",
+    "unit": "mg/L",
+    "high_interpretation": "Élévation par augmentation de la synthèse cellulaire ou défaut d'élimination rénale. Causes majeures : Insuffisance rénale (diminution du DFG), Hémopathies malignes (Myélome multiple, LLC, lymphomes de Hodgkin et non hodgkiniens), Affections inflammatoires chroniques et auto-immunes (polyarthrite rhumatoïde, syndrome de Sjögren), Rejet de greffe rénale. Urgence vitale : N/A (valeur pronostique et diagnostique, non une urgence aiguë en soi, mais oriente vers une insuffisance rénale sévère ou une prolifération lymphocytaire massive). Conduite à tenir : Confrérer la valeur à la clairance de la créatinine (DFG) et aux explorations onco-hématologiques (EPP, immunofixation, myélogramme).",
+    "low_interpretation": "Rarement pathologique en soi. Peut se voir dans de rares cas de déficits de synthèse ou lors d'épuration extracorporelle spécifique. Urgence vitale : Aucune. Conduite à tenir : Contrôler le prélèvement si discordance clinique.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : La β2M est filtrée par les glomérules et réabsorbée/catabolisée par les cellules tubulaires proximales. Toute insuffisance rénale entraîne son accumulation sérique indépendamment d'une néoplasie.",
+      "Utilité pronostique majeure au concours de résidanat : Facteur pronostique international (ISS) dans le Myélome Multiple (reflète la charge tumorale et la fonction rénale) et marqueur de l'atteinte tubulaire rénale précoce."
+    ],
+    "created_at": "2026-10-28T00:37:42.424474+00:00",
+    "updated_at": "2026-10-28T00:37:42.424488+00:00"
   }
 ]
