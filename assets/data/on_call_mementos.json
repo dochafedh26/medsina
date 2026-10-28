@@ -292,23 +292,23 @@
   },
   {
     "id": "memento_pediatrie_deshydratation_igue",
-    "title": "💧 Déshydratation Aiguë de l'Enfant",
+    "title": "💧 Déshydratation Aiguë et Réhydratation IV en Pédiatrie",
     "category": "Pédiatrie d'Urgence",
     "icon_name": "child_care_rounded",
-    "color_hex": "#EF4444",
+    "color_hex": "#F59E0B",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluer immédiatement le degré de déshydratation (légère <5%, modérée 5-10%, sévère >10%) et chercher des signes de choc (marbrures, TRC > 3s, tachycardie, pouls filiformes).",
-      "Étape 2 : Poser une voie veineuse périphérique (VVP) de bon calibre ou une voie intra-osseuse (IO) en <90 secondes si échec, et prélever : GDS, ionogramme, urée, créatinine, glycémique capillaire.",
-      "Étape 3 : En cas de choc hypovolémique, administrer un bolus de Ringer Lactate ou NaCl 0,9% à 20 ml/kg en 20 minutes, renouvelable 1 fois si persistance du choc.",
-      "Étape 4 : Assurer la réhydratation de maintenance + déficit sur 24h avec du Sérum Salé 0,9% + KCl 20 mEq/L (après reprise des urines) + G10% selon les besoins hydriques pédiatriques.",
-      "Étape 5 : Instaurer une surveillance armée (diurèse horaire, conscience, poids/12h) et transférer en unité de réanimation pédiatrique en cas de troubles de la conscience ou d'échec du 2ème bolus.",
-      "Étape 6 : Piège : Ne jamais utiliser de solutions hypotoniques d'emblée (risque d'œdème cérébral) et corriger prudemment l'natrémie (vitesse < 0,5 mmol/L/h si hyponatrémie chronique)."
+      "Étape 1 : Évaluer la sévérité (score de Gorelick) : Perte de poids > 10% (DA sévère), marbrures, tachycardie, pli cutané persistant, fontanelle déprimée, troubles de la conscience.",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : Glycémie capillaire, Ionogramme Sanguin (Na+, K+, Cl-), Urée, Créatinine, Gaz du sang (recherche d'acidose métabolique).",
+      "Étape 3 : Conditionnement et expansion volémique immédiate si DA sévère : Pose de 2 VVP ou voie intra-osseuse. Bolus de NaCl 0,9% à 20 mL/kg en 20 minutes, renouvelable 1 fois si instabilité hémodynamique.",
+      "Étape 4 : Perfusion de réhydratation de maintenance + déficit : Utiliser du Sérum Glucosé 5% + NaCl 0,9% (ou G5% + 4g/L de NaCl + 2g/L de KCl si diurèse présente). Répartir le volume calculé (déficit + besoins de base) sur 24 heures.",
+      "Étape 5 : Surveillance armée et critères de transfert en Réanimation Pédiatrique : Diurèse horaire (> 1 mL/kg/h), contrôle ionique à H4 puis H12, persistance des troubles de la conscience ou acidose sévère malgré le remplissage.",
+      "Étape 6 : Piège médico-légal / CI absolue : Ne JAMAIS corriger une hyponatrémie ou une hypernatrémie de manière trop rapide (risque d'œdème cérébral ou de myélinolyse centro-pontique). Vitesse maximale de baisse/hausse de la natrémie : 0,5 à 1 mmol/L/heure."
     ],
-    "scientific_references": "Recommandations ESPGHAN / SFMU / Consensus National Périnatalité MSPRH Algérie",
+    "scientific_references": "Recommandations SFMU / Société Française de Pédiatrie / ESPGHAN / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-14T16:52:40.091468+00:00",
-    "updated_at": "2026-10-14T16:52:40.091487+00:00"
+    "created_at": "2026-10-28T02:21:50.684285+00:00",
+    "updated_at": "2026-10-28T02:21:50.684298+00:00"
   },
   {
     "id": "memento_aes_exposition_sang",
