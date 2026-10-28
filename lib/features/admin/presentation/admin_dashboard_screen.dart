@@ -17,6 +17,7 @@ import '../../../core/utils/license_key_formatter.dart';
 import '../bloc/admin_bloc.dart';
 import '../bloc/admin_event.dart';
 import '../bloc/admin_state.dart';
+import 'admin_national_exams_tab.dart';
 import '../models/admin_models.dart';
 import '../../subscription/models/subscription_duration.dart';
 
@@ -59,7 +60,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 7, vsync: this);
+    _tabController = TabController(length: 8, vsync: this);
     context.read<AdminBloc>().add(LoadAdminDataEvent());
     _checkGitHubConfigAndLoadRuns();
   }
@@ -153,6 +154,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 Tab(icon: Icon(Icons.sell_outlined), text: 'Tarifs & Formules 🏷️'),
                 Tab(icon: Icon(Icons.vpn_key_outlined), text: 'Clés de Licence VIP'),
                 Tab(icon: Icon(Icons.campaign_outlined), text: 'Annonces & Système 📢'),
+                Tab(icon: Icon(Icons.emoji_events_outlined), text: 'Concours Blancs & Examens 🏆'),
                 Tab(icon: Icon(Icons.smart_toy_rounded), text: 'Agents IA GitHub 🤖'),
               ],
             ),
@@ -168,6 +170,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     _buildPricingPlansTab(context, state, isDark),
                     _buildLicensesTab(context, state, isDark),
                     _buildSystemAndAnnouncementsTab(context, state, isDark),
+                    AdminNationalExamsTab(isDark: isDark),
                     _buildGitHubAgentsTab(context, state, isDark),
                   ],
                 ),

@@ -19,6 +19,8 @@ import 'flashcards_fsrs_screen.dart';
 import 'qcm_study_screen.dart';
 import 'resume_session_sheet.dart';
 import 'study_planner_screen.dart';
+import '../../national_exam/presentation/national_exams_list_screen.dart';
+import '../../group_revision/presentation/group_revision_hub_screen.dart';
 
 class RevisionCatalogScreen extends StatefulWidget {
   const RevisionCatalogScreen({super.key});
@@ -52,19 +54,6 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
     final authUser = context.watch<AuthBloc>().state.user;
     final isStudent = authUser?.isStudent == true;
     final studentYear = authUser?.studyYear ?? 1;
-
-    final categories = isStudent
-        ? [
-            'Mon Année (${studentYear}e)',
-            '1ère Année',
-            '2ème Année',
-            '3ème Année',
-            '4ème Année',
-            '5ème Année',
-            '6ème Année',
-            'Tous les Modules',
-          ]
-        : _defaultCategories;
 
     if (!_initializedCategory) {
       _selectedCategory = isStudent ? 'Mon Année (${studentYear}e)' : 'Tous';
@@ -125,7 +114,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
           final totalVisibleCourses = filteredModules.fold<int>(0, (sum, m) => sum + m.totalCourses);
 
           return DefaultTabController(
-            length: 4,
+            length: 6,
             child: Column(
               children: [
                 // Navigation TabBar: Catalogue vs Sessions Sur-Mesure vs Study Planner vs Flashcards FSRS
@@ -151,6 +140,14 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                             : 'Sessions Sur-Mesure',
                       ),
                       const Tab(
+                        icon: Icon(Icons.emoji_events_rounded, size: 20),
+                        text: 'Concours Blancs 🏆',
+                      ),
+                      const Tab(
+                        icon: Icon(Icons.groups_rounded, size: 20),
+                        text: 'Groupes de Révision 👥',
+                      ),
+                      const Tab(
                         icon: Icon(Icons.calendar_month_rounded, size: 20),
                         text: 'Study Planner (3 Couches)',
                       ),
@@ -173,7 +170,13 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                       // Tab 2: Custom Multi-Course Sessions
                       _buildCustomSessionsTab(context, state),
 
-                      // Tab 3: Study Planner par Couches & Analytics
+                      // Tab 3: Concours Blancs Nationaux & Palmarès
+                      const NationalExamsListScreen(),
+
+                      // Tab 4: Groupes de Révision & Défis
+                      const GroupRevisionHubScreen(),
+
+                      // Tab 5: Study Planner par Couches & Analytics
                       const StudyPlannerScreen(),
 
                       // Tab 4: Répétition Espacée FSRS & Flashcards
@@ -219,9 +222,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2563EB).withOpacity(0.08),
+                    color: const Color(0xFF2563EB).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFF2563EB).withOpacity(0.25)),
+                    border: Border.all(color: const Color(0xFF2563EB).withValues(alpha: 0.25)),
                   ),
                   child: Row(
                     children: [

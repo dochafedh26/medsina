@@ -1,4 +1,6 @@
 import '../../auth/bloc/auth_bloc.dart';
+import '../../exam/models/exam_session_model.dart';
+import '../../exam/presentation/exam_runner_screen.dart';
 import '../data/residency_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -92,7 +94,7 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
     });
   }
 
-  void _startSession() {
+  void _startSession() async {
     if (_selectedCourseIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Veuillez sélectionner au moins un cours pour cette session.')),
@@ -126,6 +128,34 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
     );
 
     Navigator.of(context).pop();
+
+    if (_sessionMode == 'exam') {
+      final rawPool = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+        courseIds: _selectedCourseIds.toList(),
+        moduleIds: _selectedModuleIds.toList(),
+        limit: _questionLimit,
+        shuffle: _shuffle,
+      );
+      if (rawPool.isNotEmpty && context.mounted) {
+        final examSession = ExamSessionModel(
+          id: session.id,
+          title: session.title,
+          questions: rawPool,
+          durationMinutes: _durationMinutes,
+          startedAt: DateTime.now(),
+        );
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ExamRunnerScreen(
+              session: examSession,
+              correctionStyle: _correctionStyle,
+            ),
+          ),
+        );
+        return;
+      }
+    }
+
     final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
     context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false, filterForStudent: isStudent));
     Navigator.of(context).push(

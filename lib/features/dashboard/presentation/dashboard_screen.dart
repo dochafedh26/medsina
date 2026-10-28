@@ -13,6 +13,8 @@ import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
 import 'daily_pearls_archive_screen.dart';
+import '../../national_exam/presentation/national_exams_list_screen.dart';
+import '../../group_revision/presentation/group_revision_hub_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -45,7 +47,11 @@ class DashboardScreen extends StatelessWidget {
 
               // Overview Stats Grid
               _buildStatsGrid(context, tier, user?.isSubscriptionActive == false),
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
+
+              // Collaborative Revision & National Exam Banners
+              _buildCollaborativeAndExamRow(context),
+              const SizedBox(height: 24),
 
               // Clinical Tip of the Day
               ClinicalTipCard(tier: tier, isSubscriptionActive: user?.isSubscriptionActive ?? true),
@@ -1136,6 +1142,145 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildCollaborativeAndExamRow(BuildContext context) {
+    return Row(
+      children: [
+        // Concours Blancs Nationaux
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.amber.shade700,
+                  Colors.amber.shade900,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.amber.withValues(alpha: 0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const NationalExamsListScreen()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Concours Blancs',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                            Text(
+                              'Classement National 🏆',
+                              style: TextStyle(color: Colors.white70, fontSize: 10.5),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+
+        // Groupes de Révision
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.primaryTeal,
+                  const Color(0xFF00695C),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryTeal.withValues(alpha: 0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const GroupRevisionHubScreen()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.groups_rounded, color: Colors.white, size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Groupes d\'Étude',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                            Text(
+                              'Défis & Révision Pairs 👥',
+                              style: TextStyle(color: Colors.white70, fontSize: 10.5),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class ClinicalTipCard extends StatefulWidget {
@@ -1456,4 +1601,3 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
     );
   }
 }
-
