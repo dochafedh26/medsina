@@ -1286,5 +1286,28 @@
     "treatment_summary": "Traitement symptomatique pour les hépatites aiguës A et E. Antiviraux à action directe (AAD) pour le VHC (12 semaines). Analogues nucléos(t)idiques (Ténofovir/Entecavir) au long cours pour le VHB chronique selon les critères d'indication (ADN, ALAT, Fibrose).",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-29T13:39:43.974094+00:00"
+  },
+  {
+    "course_id": "Blida_URGENCES_UMC_MEDECINE_PRE_HOSPITALIERE_ASPECTS_ORGANISATIONNELS",
+    "course_name": "Médecine préhospitalière aspects organisationnels",
+    "module_id": "Blida_URGENCES_UMC",
+    "module_name": "Urgences (UMC)",
+    "summary_markdown": "## 1. Définition & Principes Fondamentaux\nLa **médecine préhospitalière** (ou aide médicale urgente) englobe l'ensemble des moyens humains, matériels et organisationnels mis en oeuvre pour apporter une **réponse médicale adaptée** à toute détresse vitale survenant hors de l'hôpital, et ce, depuis le lieu de l'accident jusqu'à l'admission dans une structure de soins.\n- **Objectif principal :** Réduire la mortalité et la morbidité par la précocité et la qualité des soins (concept de la **Golden Hour** / Heure d'or en traumatologie).\n- **Principes directeurs :** Continuité des soins, médicalisation précoce sur place, triage des victimes, et transport médicalisé sécurisé.\n\n## 2. Organisation du Système de Santé Préhospitalier (Contexte Algérien)\nLe dispositif s'articule autour de plusieurs maillons clés réglementés par le MSPRH :\n- **La Réception et la Régulation Médicale (RRM) :** C'est le **cœur névralgique** du système. Basée au niveau des Centres de Régulation des Urgences Médicales (CRUM / SAMU). Assurée par un médecin régulateur qui qualifie l'appel, décide de la réponse (conseil médical, envoi d'une ambulance simple, d'une **SMUR** ou déclenchement d'un plan de secours).\n- **Les structures d'intervention mobile :**\n  - **SMUR (Structure Mobile d'Urgence et de Réanimation) :** Équipe médicale mobile (Médecin urgentiste, Infirmier Diplômé d'État, Ambulancier-chauffeur) assurant les transports inter-hospitaliers (TIH) et primaires à haut risque.\n  - **Ambulances sanitaires (Publiques/Privées) :** Transport simple ou médicalisé (VLM : Véhicule Léger Médicalisé).\n- **La Chaîne des Secours :** Alerte $\\rightarrow$ Premiers secours (Protection Civile) $\\rightarrow$ Secours médicalisés (SAMU/SMUR) $\\rightarrow$ Accueil hospitalier (UMC).\n\n## 3. Démarche Opérationnelle sur le Terrain (Triage & Prise en Charge)\nFace à une situation d'urgence ou de catastrophe, l'organisation repose sur des protocoles stricts :\n- **Bilan et Triage (Méthode START simple ou similaire) :** Classification des victimes en cas d'afflux massif (victimes absolues rouges, urgences relatives jaunes, valides verts, décédés noirs).\n- **Conditionnement :** Stabilisation hémodynamique et respiratoire avant tout transport.\n- **Orientation :** Choix de la structure d'accueil adaptée (CHU, EHS, EPH) selon le plateau technique requis (ex: USIC, Neurochirurgie, Bloc opératoire).\n\n## 4. Gestion des Situations Sanitaires Exceptionnelles (SSE) et Catastrophes\n- **Plan ORSEC (Organisation de la Réponse de Sécurité Civile) :** Volet sanitaire.\n- **PMA (Poste Médical Avancé) :** Structure fixe ou mobile installée à proximité immédiate de la zone de catastrophe pour trier, soigner et conditionner.\n- **Directeur des Secours Médicaux (DSM) :** Médecin coordonnant l'ensemble de l'activité médicale sur le terrain en lien avec le Poste de Commandement Opérationnel (PCO).\n\n## 5. Éthique, Législation et Traçabilité\n- **Fiche de Régulation et Dossier de Transport :** Outils médico-légaux indispensables.\n- **Consentement et Refus de Soins :** Procédure en cas de refus de transport par un patient lucide (décharge signée, information des risques).\n- **Transmission des informations :** Appel préalable indispensable (Hôpital-Receveur / SMUR) pour préparer le déchocage (Accueil des Urgences Vitales - AUV).",
+    "key_takeaways": [
+      "Le médecin régulateur est le seul habilité à déclencher et à orienter les moyens SMUR.",
+      "La 'Golden Hour' (Heure d'or) est la période critique conditionnant le pronostic vital et fonctionnel en traumatologie grave.",
+      "Le SMUR assure à la fois les interventions primaires sur le terrain et les transports inter-hospitaliers (TIH) médicalisés.",
+      "En situation de catastrophe, le Poste Médical Avancé (PMA) est le pivot de la prise en charge initiale avant l'évacuation.",
+      "La traçabilité de l'intervention préhospitalière repose obligatoirement sur la fiche de régulation médicale et le dossier de transport."
+    ],
+    "exam_traps": [
+      "Piège Annales : Affirmer que l'infirmier régulateur pose les indications médicales de sortie des vecteurs (Faux : c'est une prérogative exclusive du médecin régulateur).",
+      "Piège Traencement : Transporter un polytraumatisé instable sans conditionnement ni remplissage préalable (Erreur critique en préhospitalier).",
+      "Piège Organisationnel : Confondre le rôle du Médecin Chef de Salvage (PCO) et du Directeur des Secours Médicaux (DSM) qui gère le volet sanitaire au PMA."
+    ],
+    "diagnostic_criteria": "Évaluation immédiate de la détresse vitale (ABCDE) et qualification réglementaire de l'appel par la régulation médicale pour engager le vecteur adapté.",
+    "treatment_summary": "Réanimation préhospitalière immédiate axée sur la liberté des voies aériennes, la ventilation, le contrôle de l'hémorragie (protocoles de choc) et le transport médicalisé vers la structure adaptée.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-29T19:12:37.365535+00:00"
   }
 ]
