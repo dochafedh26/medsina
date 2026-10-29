@@ -211,6 +211,18 @@ class GitHubActionsService {
       inputFieldLabel: 'Canal Telegram (@...) ou Lien Google Drive (optionnel)',
       inputFieldHint: 'ex: @fmb_blida ou https://drive.google.com/... (vide = scan global)',
     ),
+    GitHubAgentDefinition(
+      id: 'telegram_promo_hunter',
+      workflowFile: 'medsina_promo_hunter.yml',
+      title: 'Chasseur Promo Telegram (Recherche & Réponses)',
+      description: 'Recherche les questions médicales sur Telegram et commentaires Facebook, et poste des réponses d entraide avec les liens Medsina (exclut MBset).',
+      icon: Icons.forum_rounded,
+      color: Color(0xFF0284C7),
+      defaultCadence: 'À la demande & Quotidien',
+      inputFieldKey: 'target',
+      inputFieldLabel: 'Mode d exécution (telegram / facebook / all)',
+      inputFieldHint: 'telegram, facebook, ou all (défaut: telegram)',
+    ),
   ];
 
   /// Get configured Personal Access Token

@@ -220,16 +220,36 @@ async def search_and_assist(client: TelegramClient, dry_run: bool = True, max_re
                 except Exception:
                     pass
 
-                # Strict competitor filter: ignore anything with 'mbset', 'zeemed', etc.
+                # Strict competitor filter: ignore anything with 'mbset'
                 if is_competitor(chat_title, uname, msg.message):
                     save_processed_id(unique_id)
                     continue
+
+                # Check if this chat allows comments / replies
+                is_broadcast = getattr(ent, "broadcast", False)
+                target_peer = msg.peer_id
+                target_reply_id = msg.id
+
+                if is_broadcast:
+                    try:
+                        disc = await client(functions.messages.GetDiscussionMessageRequest(peer=ent, msg_id=msg.id))
+                        if disc and disc.messages:
+                            target_peer = disc.messages[0].peer_id
+                            target_reply_id = disc.messages[0].id
+                        else:
+                            save_processed_id(unique_id)
+                            continue
+                    except Exception:
+                        save_processed_id(unique_id)
+                        continue
 
                 post_url = f"https://t.me/{uname}/{msg.id}" if uname else f"https://t.me/c/{getattr(msg.peer_id, 'channel_id', getattr(msg.peer_id, 'chat_id', ''))}/{msg.id}"
 
                 found_posts.append({
                     "unique_id": unique_id,
                     "peer_id": msg.peer_id,
+                    "target_peer": target_peer,
+                    "target_reply_id": target_reply_id,
                     "msg_id": msg.id,
                     "chat_title": chat_title,
                     "post_url": post_url,
@@ -261,29 +281,18 @@ async def search_and_assist(client: TelegramClient, dry_run: bool = True, max_re
         if dry_run:
             print("   [DRY-RUN] Réponse préparée :")
             print("   " + "\n   ".join(reply_text.splitlines()[:3]) + "...")
-            save_processed_id(post["unique_id"])
             replied_count += 1
         else:
             try:
                 print("   🚀 Envoi de la réponse contextuelle...")
-                try:
-                    # If it's a broadcast channel with discussion thread: comment_to
-                    await client.send_message(
-                        entity=post["peer_id"],
-                        message=reply_text,
-                        comment_to=post["msg_id"],
-                        link_preview=True
-                    )
-                except Exception:
-                    # Standard group / supergroup reply
-                    await client.send_message(
-                        entity=post["peer_id"],
-                        message=reply_text,
-                        reply_to=post["msg_id"],
-                        link_preview=True
-                    )
-
-                print("   ✅ Réponse publiée avec succès !")
+                await client.send_message(
+                    entity=post["target_peer"],
+                    message=reply_text,
+                    reply_to=post["target_reply_id"],
+                    link_preview=True
+                )
+                print(f"   ✅ Réponse publiée avec succès dans {post.get('chat_title')} !")
+                print(f"   🔗 Lien vérifiable : {post.get('post_url')}")
                 save_processed_id(post["unique_id"])
                 replied_count += 1
 

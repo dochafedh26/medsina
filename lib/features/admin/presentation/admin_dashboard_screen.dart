@@ -867,6 +867,72 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 ),
               ],
             ),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF0284C7).withValues(alpha: 0.3),
+                  width: 1.2,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0284C7),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.forum_rounded, color: Colors.white, size: 22),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Chasseur Promo Telegram & Assistant Réponses Facebook',
+                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'Scanne en temps réel les questions d étudiants (résidanat, QCMs, cours) et poste des réponses ciblées avec les liens Medsina (sans MBset).',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0284C7),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 2,
+                    ),
+                    icon: _triggeringAgentId == 'telegram_promo_hunter'
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        : const Icon(Icons.radar_rounded, size: 18),
+                    label: Text(
+                      _triggeringAgentId == 'telegram_promo_hunter' ? 'Recherche en cours...' : 'Lancer le Chasseur 🎯',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    onPressed: _triggeringAgentId != null ? null : () => _showPromoHunterDialog(),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -5175,6 +5241,150 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         content: Text(
           result.isSuccess
               ? '🚀 Publication Facebook et Telegram lancée ! L\'infographie 1080x1080 et le texte seront en ligne dans ~1 minute.'
+              : result.message,
+        ),
+        duration: const Duration(seconds: 5),
+      ),
+    );
+
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted) _refreshRecentWorkflowRuns();
+  }
+
+  void _showPromoHunterDialog({String initialTarget = 'telegram'}) async {
+    final configured = await GitHubActionsService.isConfigured();
+    if (!mounted) return;
+    if (!configured) {
+      _showConfigureGitHubTokenDialog();
+      return;
+    }
+
+    String selectedTarget = initialTarget;
+    int maxReplies = 2;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDlgState) {
+          return AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.forum_rounded, color: Color(0xFF0284C7)),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Chasseur Promo & Entraide (Telegram & FB)',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              width: 480,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Recherche en direct les questions d étudiants et concours sur Telegram (Résidanat, QCMs, annales, cours) et y répond poliment avec les liens officiels Medsina.',
+                      style: TextStyle(fontSize: 12.5, height: 1.4),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(Icons.shield_outlined, color: Color(0xFF10B981), size: 18),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Sécurité garantie : canaux MBset strictement exclus + temporisation anti-flood de 180s.',
+                              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFF10B981)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Cible de l exécution :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedTarget,
+                      decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
+                      items: const [
+                        DropdownMenuItem(value: 'telegram', child: Text('Telegram Option B (Discussions & Entraide)')),
+                        DropdownMenuItem(value: 'facebook', child: Text('Facebook Pages (Réponses aux Commentaires)')),
+                        DropdownMenuItem(value: 'all', child: Text('Tout Exécuter (Telegram + Facebook)')),
+                      ],
+                      onChanged: (val) => setDlgState(() => selectedTarget = val ?? 'telegram'),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Plafond de réponses Telegram :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<int>(
+                      initialValue: maxReplies,
+                      decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
+                      items: const [
+                        DropdownMenuItem(value: 1, child: Text('1 réponse ciblée')),
+                        DropdownMenuItem(value: 2, child: Text('2 réponses (Recommandé)')),
+                        DropdownMenuItem(value: 3, child: Text('3 réponses')),
+                        DropdownMenuItem(value: 5, child: Text('5 réponses maximum')),
+                      ],
+                      onChanged: (val) => setDlgState(() => maxReplies = val ?? 2),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0284C7),
+                  foregroundColor: Colors.white,
+                ),
+                icon: const Icon(Icons.rocket_launch_rounded, size: 16),
+                label: const Text('Lancer la Campagne 🚀'),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  _triggerPromoHunter(target: selectedTarget, maxReplies: maxReplies);
+                },
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _triggerPromoHunter({required String target, required int maxReplies}) async {
+    setState(() => _triggeringAgentId = 'telegram_promo_hunter');
+
+    final inputs = <String, String>{
+      'target': target,
+      'max_replies': maxReplies.toString(),
+    };
+
+    final result = await GitHubActionsService.triggerWorkflow(
+      workflowFileName: 'medsina_promo_hunter.yml',
+      inputs: inputs,
+    );
+
+    if (!mounted) return;
+    setState(() => _triggeringAgentId = null);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: result.isSuccess ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+        content: Text(
+          result.isSuccess
+              ? '🎯 Chasseur Promo déclenché ! Détection et réponses en cours.'
               : result.message,
         ),
         duration: const Duration(seconds: 5),
