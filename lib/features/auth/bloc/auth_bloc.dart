@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/supabase_service.dart';
+import '../../../../core/services/cloud_sync_service.dart';
 import '../models/demo_accounts.dart';
 import '../models/user_model.dart';
 import 'auth_event.dart';
@@ -94,6 +95,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
             await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
             emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+            CloudSyncService.instance.syncAll().catchError((e) {
+              debugPrint('[CloudSync] Startup sync error: $e');
+              return false;
+            });
             return;
           }
         } catch (e) {
@@ -116,6 +121,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
         if (session != null && session.user.id == user.id) {
           emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+          CloudSyncService.instance.syncAll().catchError((e) {
+            debugPrint('[CloudSync] Startup sync error: $e');
+            return false;
+          });
           return;
         } else if (user.id.startsWith('demo_')) {
           emit(state.copyWith(status: AuthStatus.authenticated, user: user));
@@ -214,6 +223,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user: user,
           successMessage: 'Bienvenue Docteur ! Connexion réussie à Medsina.',
         ));
+        CloudSyncService.instance.syncAll().catchError((e) {
+          debugPrint('[CloudSync] Login sync error: $e');
+          return false;
+        });
         return;
       }
     } on AuthException catch (e) {

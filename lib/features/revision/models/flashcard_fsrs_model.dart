@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/services/cloud_sync_service.dart';
 import 'qcm_model.dart';
 
 enum FsrsCardState { newCard, learning, review, relearning }
@@ -383,11 +384,27 @@ class FlashcardFsrsService extends ChangeNotifier {
     };
   }
 
+  bool _isImporting = false;
+
+  Future<void> importCards(List<FlashcardFsrsItem> cards) async {
+    _isImporting = true;
+    _cards = List<FlashcardFsrsItem>.from(cards);
+    await _persist();
+    _isImporting = false;
+    notifyListeners();
+  }
+
   Future<void> _persist() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final encoded = jsonEncode(_cards.map((c) => c.toJson()).toList());
       await prefs.setString(_prefKey, encoded);
+      if (!_isImporting) {
+        CloudSyncService.instance.notifyLocalChange(
+          'fsrs_flashcards',
+          _cards.map((c) => c.toJson()).toList(),
+        );
+      }
     } catch (e) {
       debugPrint('Error saving FSRS flashcards: $e');
     }

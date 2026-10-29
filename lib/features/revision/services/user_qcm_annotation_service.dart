@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/services/cloud_sync_service.dart';
 
 /// Represents a student's personal history, bookmark, and note on a single QCM question.
 class UserQuestionAnnotation {
@@ -229,6 +230,8 @@ class UserQcmAnnotationService extends ChangeNotifier {
     _initialized = true;
   }
 
+  Map<String, CourseStudyPlannerEntry> get studyPlannerEntries => Map.unmodifiable(_plannerEntries);
+
   UserQuestionAnnotation getAnnotation(String questionId) {
     return _annotations[questionId] ??
         UserQuestionAnnotation(questionId: questionId);
@@ -390,14 +393,38 @@ class UserQcmAnnotationService extends ChangeNotifier {
     };
   }
 
+  bool _isImporting = false;
+
   Future<void> _persistAnnotations() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final map = _annotations.map((k, v) => MapEntry(k, v.toJson()));
       await prefs.setString(_annotationsPrefKey, jsonEncode(map));
+      if (!_isImporting) {
+        CloudSyncService.instance.notifyLocalChange(
+          'qcm_annotations',
+          _annotations.values.map((a) => a.toJson()).toList(),
+        );
+      }
     } catch (e) {
       debugPrint('Error saving QCM annotations: $e');
     }
+  }
+
+  Future<void> importAnnotations(Map<String, UserQuestionAnnotation> map) async {
+    _isImporting = true;
+    _annotations = Map<String, UserQuestionAnnotation>.from(map);
+    await _persistAnnotations();
+    _isImporting = false;
+    notifyListeners();
+  }
+
+  Future<void> importStudyPlannerEntries(Map<String, CourseStudyPlannerEntry> map) async {
+    _isImporting = true;
+    _plannerEntries = Map<String, CourseStudyPlannerEntry>.from(map);
+    await _persistPlanner();
+    _isImporting = false;
+    notifyListeners();
   }
 
   Future<void> _persistPlanner() async {
@@ -405,6 +432,12 @@ class UserQcmAnnotationService extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final map = _plannerEntries.map((k, v) => MapEntry(k, v.toJson()));
       await prefs.setString(_plannerPrefKey, jsonEncode(map));
+      if (!_isImporting) {
+        CloudSyncService.instance.notifyLocalChange(
+          'study_planner',
+          _plannerEntries.values.map((p) => p.toJson()).toList(),
+        );
+      }
     } catch (e) {
       debugPrint('Error saving Study Planner entries: $e');
     }

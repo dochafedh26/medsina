@@ -23,6 +23,9 @@ import 'resume_session_sheet.dart';
 import 'study_planner_screen.dart';
 import '../../national_exam/presentation/national_exams_list_screen.dart';
 import '../../group_revision/presentation/group_revision_hub_screen.dart';
+import '../../../core/services/cloud_sync_service.dart';
+import '../services/offline_course_manager.dart';
+import 'offline_storage_screen.dart';
 
 class RevisionCatalogScreen extends StatefulWidget {
   const RevisionCatalogScreen({super.key});
@@ -123,40 +126,57 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                 // Navigation TabBar: Catalogue vs Sessions Sur-Mesure vs Study Planner vs Flashcards FSRS
                 Container(
                   color: Theme.of(context).cardColor,
-                  child: TabBar(
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    indicatorColor: AppTheme.primaryTeal,
-                    indicatorWeight: 3,
-                    labelColor: AppTheme.primaryTeal,
-                    unselectedLabelColor: Colors.grey.shade600,
-                    labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                    tabs: [
-                      const Tab(
-                        icon: Icon(Icons.menu_book_rounded, size: 20),
-                        text: 'Catalogue (47 Modules)',
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TabBar(
+                          isScrollable: true,
+                          tabAlignment: TabAlignment.start,
+                          indicatorColor: AppTheme.primaryTeal,
+                          indicatorWeight: 3,
+                          labelColor: AppTheme.primaryTeal,
+                          unselectedLabelColor: Colors.grey.shade600,
+                          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          tabs: [
+                            const Tab(
+                              icon: Icon(Icons.menu_book_rounded, size: 20),
+                              text: 'Catalogue (47 Modules)',
+                            ),
+                            Tab(
+                              icon: const Icon(Icons.dashboard_customize_rounded, size: 20),
+                              text: state.customSessions.isNotEmpty
+                                  ? 'Sessions Sur-Mesure (${state.customSessions.length})'
+                                  : 'Sessions Sur-Mesure',
+                            ),
+                            const Tab(
+                              icon: Icon(Icons.emoji_events_rounded, size: 20),
+                              text: 'Concours Blancs 🏆',
+                            ),
+                            const Tab(
+                              icon: Icon(Icons.groups_rounded, size: 20),
+                              text: 'Groupes de Révision 👥',
+                            ),
+                            const Tab(
+                              icon: Icon(Icons.calendar_month_rounded, size: 20),
+                              text: 'Study Planner (3 Couches)',
+                            ),
+                            const Tab(
+                              icon: Icon(Icons.psychology_alt_rounded, size: 20),
+                              text: 'Flashcards FSRS 🧠',
+                            ),
+                          ],
+                        ),
                       ),
-                      Tab(
-                        icon: const Icon(Icons.dashboard_customize_rounded, size: 20),
-                        text: state.customSessions.isNotEmpty
-                            ? 'Sessions Sur-Mesure (${state.customSessions.length})'
-                            : 'Sessions Sur-Mesure',
-                      ),
-                      const Tab(
-                        icon: Icon(Icons.emoji_events_rounded, size: 20),
-                        text: 'Concours Blancs 🏆',
-                      ),
-                      const Tab(
-                        icon: Icon(Icons.groups_rounded, size: 20),
-                        text: 'Groupes de Révision 👥',
-                      ),
-                      const Tab(
-                        icon: Icon(Icons.calendar_month_rounded, size: 20),
-                        text: 'Study Planner (3 Couches)',
-                      ),
-                      const Tab(
-                        icon: Icon(Icons.psychology_alt_rounded, size: 20),
-                        text: 'Flashcards FSRS 🧠',
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildCloudSyncPill(context),
+                            const SizedBox(width: 8),
+                            _buildOfflineStorageButton(context),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -192,6 +212,107 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildCloudSyncPill(BuildContext context) {
+    return AnimatedBuilder(
+      animation: CloudSyncService.instance,
+      builder: (context, _) {
+        final sync = CloudSyncService.instance;
+        final isSyncing = sync.isSyncing;
+
+        return Tooltip(
+          message: isSyncing
+              ? 'Synchronisation des données avec Supabase en cours...'
+              : (sync.lastSyncTime != null
+                  ? 'Cloud synchronisé (${sync.lastSyncTime!.hour.toString().padLeft(2, '0')}:${sync.lastSyncTime!.minute.toString().padLeft(2, '0')})\nCliquez pour forcer la synchronisation'
+                  : 'Double Sauvegarde Cloud active\nCliquez pour synchroniser'),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: isSyncing
+                ? null
+                : () async {
+                    final ok = await CloudSyncService.instance.syncAll(forceUpload: true);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(ok
+                              ? '☁️ Vos données sont 100% synchronisées sur le Cloud !'
+                              : 'Erreur de synchronisation Cloud. Vérifiez votre connexion.'),
+                          behavior: SnackBarBehavior.floating,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: isSyncing ? Colors.amber.shade50 : Colors.teal.shade50,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSyncing ? Colors.amber.shade300 : Colors.teal.shade200,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isSyncing)
+                    const SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.amber),
+                    )
+                  else
+                    const Icon(Icons.cloud_done_rounded, color: Colors.teal, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    isSyncing ? 'Synchro...' : 'Cloud OK',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: isSyncing ? Colors.amber.shade900 : Colors.teal.shade800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildOfflineStorageButton(BuildContext context) {
+    return AnimatedBuilder(
+      animation: OfflineCourseManager.instance,
+      builder: (context, _) {
+        return Tooltip(
+          message: 'Gérer les cours téléchargés et le stockage hors-ligne',
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.teal.shade700,
+              side: BorderSide(color: Colors.teal.shade200),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              minimumSize: const Size(0, 32),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            ),
+            icon: const Icon(Icons.offline_pin_rounded, size: 16, color: Colors.teal),
+            label: const Text(
+              'Mode Hors-Ligne',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const OfflineStorageScreen()),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -1012,6 +1133,45 @@ class _ModuleCardState extends State<_ModuleCard> {
                                 style: const TextStyle(fontSize: 10, color: Colors.blue, fontWeight: FontWeight.bold),
                               ),
                             ),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () async {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Téléchargement du pack "${m.name}" (${m.courses.length} cours) en cours...'),
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                                await OfflineCourseManager.instance.downloadEntireModule(m);
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Pack "${m.name}" disponible en mode hors-ligne !'),
+                                      backgroundColor: Colors.teal,
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.teal.shade50,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: Colors.teal.shade200),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.download_for_offline_rounded, size: 12, color: Colors.teal),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Pack Hors-Ligne',
+                                      style: TextStyle(fontSize: 10, color: Colors.teal, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -1240,6 +1400,97 @@ class _CourseTile extends StatelessWidget {
                   );
                 },
               ),
+              if (!isLocked && (course.hasPdf || (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty)))
+                AnimatedBuilder(
+                  animation: OfflineCourseManager.instance,
+                  builder: (context, _) {
+                    final mgr = OfflineCourseManager.instance;
+                    final progress = mgr.getProgress(course.id);
+                    final isDownloading = progress > 0;
+                    final isOffline = mgr.isCourseAvailableOfflineSync(course.id);
+
+                    if (isDownloading) {
+                      final pct = (progress * 100).toInt();
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade50,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.amber.shade300),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(
+                                value: progress,
+                                strokeWidth: 2,
+                                color: Colors.amber.shade800,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text('$pct%', style: TextStyle(fontSize: 10, color: Colors.amber.shade900, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (isOffline) {
+                      return Tooltip(
+                        message: 'Disponible 100% hors-ligne',
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade50,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.green.shade200),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.offline_pin_rounded, size: 14, color: Colors.green),
+                              SizedBox(width: 4),
+                              Text('Hors-ligne', style: TextStyle(fontSize: 10, color: Colors.green, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    return Tooltip(
+                      message: 'Télécharger pour consultation hors-ligne (sans internet)',
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.teal,
+                          side: BorderSide(color: Colors.teal.shade200),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                          minimumSize: const Size(0, 32),
+                        ),
+                        icon: const Icon(Icons.download_rounded, size: 14),
+                        label: const Text('Hors-ligne', style: TextStyle(fontSize: 11)),
+                        onPressed: () async {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Téléchargement de "${course.name}" lancé...'),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                          final ok = await mgr.downloadCourse(course);
+                          if (context.mounted && ok) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Cours "${course.name}" prêt pour le mode hors-ligne !'),
+                                backgroundColor: Colors.teal,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLocked

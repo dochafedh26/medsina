@@ -309,6 +309,42 @@ class SupabaseService {
     }
   }
 
+  /// Fetch all cross-device cloud sync records for the given user
+  static Future<List<Map<String, dynamic>>> fetchUserSyncData(String userId) async {
+    try {
+      final res = await client
+          .from('user_cloud_sync')
+          .select()
+          .eq('user_id', userId);
+      return List<Map<String, dynamic>>.from(res as List);
+    } catch (e) {
+      debugPrint('Error fetching user_cloud_sync: $e');
+      return [];
+    }
+  }
+
+  /// Upsert a specific sync data record for a user
+  static Future<bool> upsertUserSyncData({
+    required String userId,
+    required String dataType,
+    required dynamic payload,
+  }) async {
+    try {
+      final id = '${userId}_$dataType';
+      await client.from('user_cloud_sync').upsert({
+        'id': id,
+        'user_id': userId,
+        'data_type': dataType,
+        'payload': payload,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+      return true;
+    } catch (e) {
+      debugPrint('Error upserting user_cloud_sync ($dataType): $e');
+      return false;
+    }
+  }
+
   /// Insert a newly discovered Vidal terrain contraindication into Supabase
   static Future<bool> insertVidalTerrainContraindication(Map<String, dynamic> data) async {
     try {

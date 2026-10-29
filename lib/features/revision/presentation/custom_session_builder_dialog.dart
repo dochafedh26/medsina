@@ -10,6 +10,7 @@ import '../bloc/revision_event.dart';
 import '../models/module_model.dart';
 import '../models/revision_session_model.dart';
 import '../services/revision_session_storage.dart';
+import '../services/offline_course_manager.dart';
 import 'qcm_study_screen.dart';
 
 class CustomSessionBuilderDialog extends StatefulWidget {
@@ -42,6 +43,7 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
   String _historyFilter = 'all'; // 'all', 'unseen', 'wrong', 'marked', 'withNotes', 'highYield'
   final Set<String> _allowedTypes = {'qcs', 'qcm', 'casClinique'};
   String _moduleFilter = '';
+  bool _makeAvailableOffline = false;
 
   @override
   void initState() {
@@ -134,6 +136,12 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
     final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
 
     navigator.pop();
+
+    if (_makeAvailableOffline) {
+      for (final c in chosenCourses) {
+        OfflineCourseManager.instance.downloadCourse(c);
+      }
+    }
 
     final rawPool = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
       courseIds: _selectedCourseIds.toList(),
@@ -305,6 +313,24 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
                   value: _shuffle,
                   activeThumbColor: AppTheme.primaryTeal,
                   onChanged: (v) => setState(() => _shuffle = v),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: const Row(
+                    children: [
+                      Icon(Icons.offline_pin_rounded, size: 16, color: Colors.teal),
+                      SizedBox(width: 6),
+                      Text('Rendre cette session disponible hors-ligne',
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                  subtitle: const Text(
+                      'Télécharge automatiquement les supports de cours pour réviser sans internet',
+                      style: TextStyle(fontSize: 11)),
+                  value: _makeAvailableOffline,
+                  activeThumbColor: Colors.teal,
+                  onChanged: (v) => setState(() => _makeAvailableOffline = v),
                 ),
                 const SizedBox(height: 14),
 

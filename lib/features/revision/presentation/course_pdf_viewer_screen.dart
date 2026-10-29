@@ -1,13 +1,12 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart' as p;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../core/services/recent_activity_service.dart';
 import '../models/module_model.dart';
+import '../services/offline_course_manager.dart';
 import 'course_summary_screen.dart';
 
 class PdfSearchOccurrence {
@@ -111,15 +110,8 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
         throw Exception('Support PDF non disponible pour ce cours.');
       }
 
-      // Check local private app cache first for instant repeat opening
-      final dir = await getApplicationSupportDirectory();
-      final cacheDir = Directory('${dir.path}/medsina_secure_cache');
-      if (!await cacheDir.exists()) {
-        await cacheDir.create(recursive: true);
-      }
-
-      final cacheFile = File('${cacheDir.path}/c_${widget.course.id.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')}.dat');
-
+      // Check if course is already available offline in local sandbox
+      final cacheFile = await OfflineCourseManager.instance.getCourseFile(widget.course.id);
       if (await cacheFile.exists() && await cacheFile.length() > 1024) {
         final bytes = await cacheFile.readAsBytes();
         if (mounted) {
@@ -149,6 +141,9 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       );
 
       final bytes = Uint8List.fromList(response.data!);
+      if (!await cacheFile.parent.exists()) {
+        await cacheFile.parent.create(recursive: true);
+      }
       await cacheFile.writeAsBytes(bytes);
 
       if (mounted) {
@@ -313,6 +308,56 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
         ),
         title: _isSearching ? _buildSearchBar() : _buildTitle(),
         actions: [
+          AnimatedBuilder(
+            animation: OfflineCourseManager.instance,
+            builder: (context, _) {
+              final isOffline = OfflineCourseManager.instance.isCourseAvailableOfflineSync(widget.course.id);
+              if (isOffline) {
+                return Tooltip(
+                  message: 'Cours enregistré en local (100% accessible hors-ligne)',
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.offline_pin_rounded, color: Colors.green, size: 20),
+                        if (isDesktop) ...[
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Hors-ligne',
+                            style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return Tooltip(
+                message: 'Télécharger pour révision hors-ligne',
+                child: IconButton(
+                  icon: const Icon(Icons.download_for_offline_rounded, color: AppTheme.primaryTeal),
+                  onPressed: () async {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Enregistrement de "${widget.course.name}" pour le mode hors-ligne...'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                    final ok = await OfflineCourseManager.instance.downloadCourse(widget.course);
+                    if (context.mounted && ok) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Cours enregistré pour consultation hors-ligne !'),
+                          backgroundColor: Colors.teal,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.summarize_rounded, color: AppTheme.primaryTeal),
             tooltip: 'Fiche Synthétique du Cours',

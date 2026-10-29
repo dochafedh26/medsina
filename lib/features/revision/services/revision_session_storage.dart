@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/services/cloud_sync_service.dart';
 import '../models/revision_session_model.dart';
 
 class RevisionSessionStorage {
@@ -15,6 +16,15 @@ class RevisionSessionStorage {
     final prefs = await SharedPreferences.getInstance();
     final jsonStr = jsonEncode(progress.toJson());
     await prefs.setString('$_courseProgressPrefix${progress.courseId}', jsonStr);
+
+    try {
+      final all = await getAllCourseProgress();
+      all[progress.courseId] = progress;
+      CloudSyncService.instance.notifyLocalChange(
+        'course_progress',
+        all.values.map((p) => p.toJson()).toList(),
+      );
+    } catch (_) {}
   }
 
   Future<CourseRevisionProgress?> getCourseProgress(String courseId) async {
@@ -32,6 +42,15 @@ class RevisionSessionStorage {
   Future<void> clearCourseProgress(String courseId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('$_courseProgressPrefix$courseId');
+
+    try {
+      final all = await getAllCourseProgress();
+      all.remove(courseId);
+      CloudSyncService.instance.notifyLocalChange(
+        'course_progress',
+        all.values.map((p) => p.toJson()).toList(),
+      );
+    } catch (_) {}
   }
 
   /// Returns all active course progresses (to show badges in the catalog)
@@ -88,6 +107,13 @@ class RevisionSessionStorage {
     final prefs = await SharedPreferences.getInstance();
     final jsonStr = jsonEncode(sessions.map((s) => s.toJson()).toList());
     await prefs.setString(_customSessionsKey, jsonStr);
+
+    try {
+      CloudSyncService.instance.notifyLocalChange(
+        'custom_sessions',
+        sessions.map((s) => s.toJson()).toList(),
+      );
+    } catch (_) {}
   }
 
   Future<void> deleteCustomSession(String sessionId) async {
@@ -97,6 +123,13 @@ class RevisionSessionStorage {
     final prefs = await SharedPreferences.getInstance();
     final jsonStr = jsonEncode(sessions.map((s) => s.toJson()).toList());
     await prefs.setString(_customSessionsKey, jsonStr);
+
+    try {
+      CloudSyncService.instance.notifyLocalChange(
+        'custom_sessions',
+        sessions.map((s) => s.toJson()).toList(),
+      );
+    } catch (_) {}
   }
 }
 
