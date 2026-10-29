@@ -34,6 +34,9 @@ from telethon.errors import (
     PeerFloodError,
     UserDeactivatedBanError,
     SessionPasswordNeededError,
+    ChatWriteForbiddenError,
+    ChatAdminRequiredError,
+    UserBannedInChannelError,
 )
 
 # -------------------------------------------------------------
@@ -174,10 +177,23 @@ async def search_and_assist(client: TelegramClient, dry_run: bool = True, max_re
                 if unique_id in processed:
                     continue
 
+                uname = None
+                chat_title = "Discussion Médicale"
+                try:
+                    ent = await client.get_entity(msg.peer_id)
+                    chat_title = getattr(ent, "title", getattr(ent, "first_name", "Discussion"))
+                    uname = getattr(ent, "username", None)
+                except Exception:
+                    pass
+
+                post_url = f"https://t.me/{uname}/{msg.id}" if uname else f"https://t.me/c/{getattr(msg.peer_id, 'channel_id', getattr(msg.peer_id, 'chat_id', ''))}/{msg.id}"
+
                 found_posts.append({
                     "unique_id": unique_id,
                     "peer_id": msg.peer_id,
                     "msg_id": msg.id,
+                    "chat_title": chat_title,
+                    "post_url": post_url,
                     "text": msg.message[:150],
                     "full_text": msg.message,
                     "date": str(msg.date),
@@ -196,6 +212,8 @@ async def search_and_assist(client: TelegramClient, dry_run: bool = True, max_re
             break
 
         print(f"\n🎯 [Candidat #{replied_count+1}]")
+        print(f"   Canal / Groupe : {post.get('chat_title')}")
+        print(f"   Lien Direct : {post.get('post_url')}")
         print(f"   Date : {post['date']}")
         print(f"   Extrait : {post['text']}...")
 
@@ -209,13 +227,23 @@ async def search_and_assist(client: TelegramClient, dry_run: bool = True, max_re
         else:
             try:
                 print("   🚀 Envoi de la réponse contextuelle...")
-                # Reply to the specific message
-                await client.send_message(
-                    entity=post["peer_id"],
-                    message=reply_text,
-                    reply_to=post["msg_id"],
-                    link_preview=True
-                )
+                try:
+                    # If it's a broadcast channel with discussion thread: comment_to
+                    await client.send_message(
+                        entity=post["peer_id"],
+                        message=reply_text,
+                        comment_to=post["msg_id"],
+                        link_preview=True
+                    )
+                except Exception:
+                    # Standard group / supergroup reply
+                    await client.send_message(
+                        entity=post["peer_id"],
+                        message=reply_text,
+                        reply_to=post["msg_id"],
+                        link_preview=True
+                    )
+
                 print("   ✅ Réponse publiée avec succès !")
                 save_processed_id(post["unique_id"])
                 replied_count += 1
@@ -228,6 +256,9 @@ async def search_and_assist(client: TelegramClient, dry_run: bool = True, max_re
             except PeerFloodError:
                 print("❌ Attention: Telegram signale trop de requêtes (PeerFlood). Arrêt préventif du script.")
                 break
+            except (ChatWriteForbiddenError, ChatAdminRequiredError, UserBannedInChannelError) as e:
+                print(f"ℹ️ Écriture non autorisée dans ce canal/groupe ({e}), message ignoré.")
+                save_processed_id(post["unique_id"])
             except Exception as e:
                 print(f"⚠️ Échec lors de la réponse: {e}")
                 save_processed_id(post["unique_id"])
