@@ -488,23 +488,22 @@
   },
   {
     "id": "memento_oap_flash_hypertensif",
-    "title": "⚡ OAP Flash & Crise Aiguë Hypertensive",
-    "category": "Urgences Cardiovasculaires",
+    "title": "⚡ OAP Flash & Crise Hypertensive",
+    "category": "Urgences Cardio-Vasculaires & Déchoquage",
     "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Assise stricte, monitorage complet (SpO2, PNI, ECG 12 dérivations), pose de 2 VVP de bon calibre et oxygénothérapie à haut débit (Lunettes ou VNIV / CPAP en urgence si détresse respiratoire persistante).",
-      "Étape 2 : Bilan biologique d'urgence au lit (Ionogramme sanguin, urée, créatinine, troponine US, BNP / NT-proBNP, gaz du sang) et Rx Thorax de face si le patient est stabilisable.",
-      "Étape 3 : Traitement vasodilatateur immédiat : Nicardipine (Loxen) IVSE à débuter à 1 mg/h et titrer par paliers de 1 mg/h toutes les 5 min (ou Trinitrine IVSE 1 à 3 mg/h si syndrome coronaire aigu associé) pour baisser la PAS de 25% dans la 1ère heure.",
-      "Étape 4 : Diurétique de l'anse si surcharge volémique évidente : Furosémide (Lasilix) 40 à 80 mg IV direct (bolus réputable), couplé à une surveillance rapprochée de la diurèse horaire (sonde urinaire recommandée).",
-      "Étape 5 : Surveillance armée en unité de déchoquage ou transfert immédiat en Réanimation/USC en cas de persistance des râles crépitants, de l'asphyxie, de l'aggravation de la fonction rénale ou de troubles de la conscience.",
-      "Étape 6 : Piège médico-légal / CI absolue : Ne jamais chuter la pression artérielle de manière trop brutale ou totale (> 30-50% en quelques minutes) sous peine d'induire une ischémie cérébrale ou myocardique aiguë."
+      "Étape 1 : Position assise jambes pendantes, monitorage immédiat (SpO2, PNI, ECG 12 dérivations), pose de 2 VVP de bon calibre et oxygénothérapie haut débit (VNI ou lunettes haut débit si détresse respiratoire persistante).",
+      "Étape 2 : Bilan biologique d'urgence au lit (Ionogramme sanguin, Urée, Créatinine, Troponine ultrasensible, Gaz du sang si détresse) et réalisation d'une échographie cardiaque au lit (POCUS) pour évaluer la fonction VG et les signes d'hypersurcharge.",
+      "Étape 3 : Baisse tensionnelle agressive mais contrôlée : Nicardipine (Loxen) IVSE au pousse-seringue électrique (débuter à 1-2 mg/h et titrer par paliers de 1-2 mg/h toutes les 5 min pour réduire la PAM de 20-25% la première heure) + Furosémide (Lasilix) 40 à 80 mg IV direct si signes de surcharge volémique évidents.",
+      "Étape 4 : Surveillance armée (TA et conscience toutes les 5 min sous vasodiazépate, diurèse horaire via sonde urinaire). Critères de transfert immédiat en Réanimation : échec de la VNI, persistance d'une SpO2 < 90% malgré O2, score de Killip III/IV réfractaire ou nécessité d'intubation oro-trachéale.",
+      "Étape 5 : Piège médico-légal majeur : NE JAMAIS baisser la PA de plus de 25% dans la première heure au risque de provoquer une ischémie cérébrale ou myocardique aiguë (hypoperfusion d'organes cibles). Contre-indication absolue des bêtabloquants IV si OAP cardiogénique franc."
     ],
-    "scientific_references": "Consensus ESC 2023 / SFMU / SRLF / Recommandations Nationales Algériennes d'HTA",
+    "scientific_references": "ESC Guidelines on Acute Heart Failure & ESC Arterial Hypertension / SFMU / SRLF / Consensus National Algérien",
     "is_active": true,
-    "created_at": "2026-10-19T21:16:35.010695+00:00",
-    "updated_at": "2026-10-19T21:16:35.010706+00:00"
+    "created_at": "2026-10-29T21:12:53.351038+00:00",
+    "updated_at": "2026-10-29T21:12:53.351054+00:00"
   },
   {
     "id": "memento_syndrome_meninge_aigu",
