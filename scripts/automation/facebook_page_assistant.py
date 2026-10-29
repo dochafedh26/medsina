@@ -173,3 +173,4 @@ def process_page_comments(dry_run: bool = True):
 if __name__ == "__main__":
     is_live = "--live" in sys.argv
     process_page_comments(dry_run=not is_live)
+

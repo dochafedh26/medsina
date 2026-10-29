@@ -29,7 +29,12 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
         pass
 
 from telethon import TelegramClient, functions, types
-from telethon.errors import FloodWaitError, PeerFloodError, UserDeactivatedBanError
+from telethon.errors import (
+    FloodWaitError,
+    PeerFloodError,
+    UserDeactivatedBanError,
+    SessionPasswordNeededError,
+)
 
 # -------------------------------------------------------------
 # CONFIGURATION & CREDENTIALS
@@ -265,6 +270,12 @@ async def main():
                 try:
                     await client.sign_in(args.phone, args.code, phone_code_hash=phone_code_hash)
                     print("🎉 AUTHENTIFICATION TELEGRAM RÉUSSIE ! Session enregistrée.")
+                except SessionPasswordNeededError:
+                    if args.password:
+                        await client.sign_in(password=args.password)
+                        print("🎉 AUTHENTIFICATION 2FA RÉUSSIE ! Session enregistrée.")
+                    else:
+                        print("🔐 Mot de passe de double authentification (2FA) requis.")
                 except Exception as e:
                     if "password" in str(e).lower() and args.password:
                         await client.sign_in(password=args.password)
@@ -296,3 +307,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
