@@ -799,23 +799,23 @@
   },
   {
     "id": "memento_malaise_syncope",
-    "title": "⚡ Malaise et Syncope aux UMC",
-    "category": "Urgences Cardiovasculaires & Neurologiques",
+    "title": "⚡ Malaise et Syncope aux Urgences",
+    "category": "Urgences Cardio-Vasculaires",
     "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Bilan vital immédiat (ABCDE) - Vérifier pouls, tension artérielle, glycémie capillaire (HGT) et saturation en O2 au déchoquage.",
-      "Étape 2 : ECG 12 dérivations immédiat à la recherche d'une cause rythmique (trouble de conduction, BAV, QT long, Brugada) ou ischémique.",
-      "Étape 3 : Conditionnement - Pose de 2 VVP, bilan biologique d'urgence (NFS, Ionogramme, Urée, Créatinine, Troponine, Gaz du sang, Bêta-HCG chez la femme en âge de procréer).",
-      "Étape 4 : Traitement étiologique - Atropine 0,5 à 1 mg IV si bradycardie symptomatique, Remplissage vasculaire par NaCl 0,9% (250-500 mL) si hypotension, ou orientation selon orientation diagnostique (neurologique, métabolique).",
-      "Étape 5 : Critères d'hospitalisation ou réanimation - Syncope à l'effort, en position couchée, palpitations précédant le malaise, ATCD familiaux de mort subite, anomalies ECG de gravité.",
-      "Étape 6 : Piège médico-légal - Ne jamais libérer un patient sans avoir éliminé une embolie pulmonaire, une dissection aortique, un syndrome coronarien aigu ou une hémorragie interne."
+      "Étape 1 : Bilan initial au déchoquage — éliminer l'arrêt cardio-respiratoire (ACR), monitorage continu (ECG 12 dérivations immédiat < 10 min, SpO2, PNI), glycémie capillaire en urgence (Dextro) et prise de la PA aux deux bras.",
+      "Étape 2 : Biologie d'urgence — NFS, ionogramme sanguin, urée, créatininémie, troponine ultra-sensible, gaz du sang (GDS) si dyspnée associée, et bêta-HCG systématique chez toute femme en âge de procréer.",
+      "Étape 3 : Thérapeutique immédiate — Conditionnement (VVP gros calibre), remplissage prudent si hypotension (NaCl 0.9% 250-500 mL si origine hypovolémique), Atropine 0.5 mg IV direct si bradycardie symptomatique réfractaire.",
+      "Étape 4 : Recherche de critères de gravité (Score ROSE / San Francisco) — Syncope survenant à l'effort ou en décubitus, palpitations préalables, douleur thoracique, ATCD familiaux de mort subite, souffle cardiaque systolique, anomalie ECG (BVF, BAV, QT long).",
+      "Étape 5 : Piège médico-légal et contre-indication — Ne jamais banaliser une syncope chez le sujet âgé (éliminer embolie pulmonaire, dissection aortique, hémorragie interne occulte). Interdiction formelle de laisser sortir un patient avec anomalie ECG sans avis cardiologique et monitorage.",
+      "Étape 6 : Orientation — Admission en USIC ou Réanimation si critères de haut risque, surveillance simple en observation UMC si cause vasovagale typique bénigne et bilan négatif."
     ],
-    "scientific_references": "ESC Guidelines on Syncope 2018 / Consensus SFMU / Collège de Réanimation / MSPRH Algérie",
+    "scientific_references": "ESC Guidelines 2018 on Syncope / Consensus SFMU / Collège National de Réanimation / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-26T20:34:56.117618+00:00",
-    "updated_at": "2026-10-26T20:34:56.117633+00:00"
+    "created_at": "2026-10-29T01:51:06.848997+00:00",
+    "updated_at": "2026-10-29T01:51:06.849011+00:00"
   },
   {
     "id": "memento_hemorroides",
