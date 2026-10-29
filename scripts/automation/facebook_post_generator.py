@@ -37,6 +37,20 @@ if sys.stdout and hasattr(sys.stdout, "reconfigure"):
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import requests
 
+# Import Modern 2026 Light Infography Generator
+script_dir = Path(__file__).resolve().parent
+if str(script_dir) not in sys.path:
+    sys.path.insert(0, str(script_dir))
+
+try:
+    from generate_modern_light_banner import (
+        build_modern_light_banner,
+        build_modern_qcm_banner,
+    )
+except ImportError:
+    build_modern_light_banner = None
+    build_modern_qcm_banner = None
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://qzfssrhhuorljftpdvjm.supabase.co")
 SUPABASE_KEY = os.environ.get(
     "SUPABASE_SERVICE_ROLE_KEY",
@@ -603,6 +617,16 @@ Partagez votre choix et vos arguments en commentaire ! 💬
 
 
 def render_qcm_banner_image(data: dict, output_path: str) -> str:
+    """Génère l'infographie QCM 1080x1080 avec le moteur lumineux et moderne 2026."""
+    if build_modern_qcm_banner is not None:
+        try:
+            return build_modern_qcm_banner(data=data, output_path=output_path, app_version=APP_VERSION)
+        except Exception as e:
+            print(f"⚠️ Repli QCM classique: {e}")
+    return _render_legacy_dark_qcm_banner_image(data, output_path)
+
+
+def _render_legacy_dark_qcm_banner_image(data: dict, output_path: str) -> str:
     """Génère une infographie carrée 1080x1080 dédiée au format Quiz QCM d'annales réelles."""
     width, height = 1080, 1080
     qcm = data.get("qcm", {})
@@ -1451,6 +1475,19 @@ def generate_dynamic_background(
 
 
 def render_banner_image(data: Dict[str, Any], output_path: str) -> str:
+    """Génère l'infographie officielle 1080x1080 avec le moteur lumineux et moderne 2026."""
+    if data.get("is_quiz") and data.get("qcm"):
+        return render_qcm_banner_image(data, output_path)
+
+    if build_modern_light_banner is not None:
+        try:
+            return build_modern_light_banner(data=data, output_path=output_path, app_version=APP_VERSION)
+        except Exception as e:
+            print(f"⚠️ Repli bannière classique: {e}")
+    return _render_legacy_dark_banner_image(data, output_path)
+
+
+def _render_legacy_dark_banner_image(data: Dict[str, Any], output_path: str) -> str:
     if data.get("is_quiz") and data.get("qcm"):
         return render_qcm_banner_image(data, output_path)
 
