@@ -661,5 +661,21 @@
     ],
     "created_at": "2026-10-29T00:08:07.124606+00:00",
     "updated_at": "2026-10-29T00:08:07.124619+00:00"
+  },
+  {
+    "id": "lab_troponine_nt_probnp_ep",
+    "name": "Troponine I/T et NT-proBNP (Stratification EP)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Troponine I usuelle: < 0.04 ng/mL (hs-cTn selon fabricant) | NT-proBNP: < 300 pg/mL (< 125 si < 75 ans)",
+    "unit": "ng/mL ou pg/mL",
+    "high_interpretation": "Élévation (Troponine > seuil de nécrose/souffrance myocardique, NT-proBNP > 500-600 pg/mL) : Témoin d'une souffrance ou nécrose myocardique aiguë et de dysfonction ventriculaire droite. En cas d'Embolie Pulmonaire (EP), classe l'patient en EP à risque intermédiaire-haut (nécessitant une surveillance rapprochée en réanimation et readiness pour une thrombolyse de sauvetage en cas de dégradation). Urgence vitale : Risque de choc obstructif imminent.",
+    "low_interpretation": "Valeurs normales : En faveur d'une EP à faible risque (ou intermédiaire-faible si autres critères négatifs). Permet d'orienter vers une prise en charge ambulatoire (scores PESI simplifié = 0 ou HESTIA négatif) sous réserve des critères sociaux et hémodynamiques.",
+    "clinical_notes": [
+      "Piège pré-analytique/clinique : Une troponine ou un NT-proBNP élevé dans l'EP ne signe pas forcément un IDM aigu associé, mais reflète la contrainte mécanique aiguë exercée sur le ventricule droit (VD).",
+      "Règle ESC EP : Une EP à risque intermédiaire est définie par la présence conjointe d'un dysfonctionnement VD à l'ETT (ou CT) ET d'élévation des biomarqueurs cardiaques (Troponines ou NT-proBNP).",
+      "Piège de concours : Ne jamais éliminer une EP grave sur une seule troponine normale au tout début des symptômes (cinétique à respecter)."
+    ],
+    "created_at": "2026-10-29T06:07:54.405239+00:00",
+    "updated_at": "2026-10-29T06:07:54.405253+00:00"
   }
 ]
