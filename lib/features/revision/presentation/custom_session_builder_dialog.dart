@@ -127,7 +127,12 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
       lastActiveAt: DateTime.now(),
     );
 
-    Navigator.of(context).pop();
+    // Capture navigator & blocs before dismissing bottom sheet
+    final navigator = Navigator.of(context);
+    final revisionBloc = context.read<RevisionBloc>();
+    final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+
+    navigator.pop();
 
     if (_sessionMode == 'exam') {
       final rawPool = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
@@ -136,7 +141,7 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
         limit: _questionLimit,
         shuffle: _shuffle,
       );
-      if (rawPool.isNotEmpty && context.mounted) {
+      if (rawPool.isNotEmpty) {
         final examSession = ExamSessionModel(
           id: session.id,
           title: session.title,
@@ -144,7 +149,7 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
           durationMinutes: _durationMinutes,
           startedAt: DateTime.now(),
         );
-        Navigator.of(context).push(
+        navigator.push(
           MaterialPageRoute(
             builder: (_) => ExamRunnerScreen(
               session: examSession,
@@ -156,9 +161,8 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
       }
     }
 
-    final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
-    context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false, filterForStudent: isStudent));
-    Navigator.of(context).push(
+    revisionBloc.add(StartCustomSessionEvent(session, resume: false, filterForStudent: isStudent));
+    navigator.push(
       MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
     );
   }
