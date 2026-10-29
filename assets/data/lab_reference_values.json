@@ -708,5 +708,21 @@
     ],
     "created_at": "2026-10-29T19:07:02.692261+00:00",
     "updated_at": "2026-10-29T19:07:02.692278+00:00"
+  },
+  {
+    "id": "lab_serologie_hepatite_b",
+    "name": "Sérologie Hépatite B complète (Ag HBs, Ac anti-HBs, Ac anti-HBc, Ag HBe, ADN VHB)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "Ag HBs: Négatif | Ac anti-HBs: >= 10UI/L (immunité) | Ac anti-HBc: Négatif | Ag HBe: Négatif | ADN VHB: Seuil de détection (indétectable)",
+    "unit": "Qualitatif (Négatif/Positif) ou UI/mL pour l'ADN VHB",
+    "high_interpretation": "Ag HBs positif : Infection VHB (aiguë ou chronique). Ag HBe positif : Forte réplication virale et haute contagiosité. ADN VHB élevé (> 2000 UI/mL en chronique) : Activité virale significative nécessitant une évaluation pour traitement antiviral (notamment avant immunosuppression ou chimiothérapie). Ac anti-HBc total positif : Témoin d'un contact présent ou passé avec le VHB.",
+    "low_interpretation": "Ac anti-HBs < 10 UI/L : Absence d'immunité protectrice post-vaccinale ou post-infection. Ag HBs négatif couplé à Ac anti-HBs positif (> 10 UI/L) : Guérison d'une hépatite B ancienne ou vaccination efficace. Profil totalement négatif (Ag HBs -, Ac anti-HBs -, Ac anti-HBc -) : Sujet naïf, indications de la vaccination si facteurs de risque.",
+    "clinical_notes": [
+      "Piège du profil 'Anti-HBc isolé' (Ag HBs -, Ac anti-HBs -, Ac anti-HBc +) : Retrouvé en phase de fenêtre sérologique d'une hépatite aiguë, après perte des anti-HBs chez un ancien guéri, ou faux positif. Conduite à tenir : doser l'ADN VHB pour éliminer une infection occulte.",
+      "Mutations d'escape de l'Ag HBs : Des variants de l'Ag HBs peuvent induire une infection active avec Ag HBs indétectable par certains réactifs de laboratoire, nécessitant le recours à la PCR ADN VHB.",
+      "Dépistage pré-thérapeutique impératif : Le triptyque (Ag HBs, Ac anti-HBs, Ac anti-HBc) est obligatoire avant toute instauration d'une biothérapie, d'une chimiothérapie ou d'une immunosuppression pour prévenir une réactivation virale fatale (hépatite fulminante)."
+    ],
+    "created_at": "2026-10-29T23:27:37.734224+00:00",
+    "updated_at": "2026-10-29T23:27:37.734240+00:00"
   }
 ]
