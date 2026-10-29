@@ -71,6 +71,44 @@ MEDICAL_KEYWORDS = [
     "drive médecine",
 ]
 
+# -------------------------------------------------------------
+# BLACKLIST: COMPETING PLATFORMS & SELF CHANNELS
+# -------------------------------------------------------------
+COMPETITOR_BLACKLIST = [
+    "mbset",
+    "zeemed",
+    "hyperqcm",
+    "drqcm",
+    "dr_qcm",
+]
+
+SELF_CHANNELS = [
+    "medsina",
+    "medsina_officiel",
+    "medevsync",
+]
+
+
+def is_competitor(chat_title: str, username: Optional[str] = None, message_text: str = "") -> bool:
+    """Checks if a channel, username, or message text refers to a direct competitor or own official channel."""
+    t_lower = (chat_title or "").lower()
+    u_lower = (username or "").lower()
+    m_lower = (message_text or "").lower()
+
+    # Skip self channels
+    for self_c in SELF_CHANNELS:
+        if self_c in t_lower or self_c in u_lower:
+            return True
+
+    # Skip competitors
+    for comp in COMPETITOR_BLACKLIST:
+        if comp in t_lower or comp in u_lower:
+            return True
+        if comp in m_lower:
+            return True
+    return False
+
+
 TARGET_CHANNELS_GROUPS = [
     "residanat_algerie",
     "medecine_algerie",
@@ -185,6 +223,11 @@ async def search_and_assist(client: TelegramClient, dry_run: bool = True, max_re
                     uname = getattr(ent, "username", None)
                 except Exception:
                     pass
+
+                # Strict competitor filter: ignore anything with 'mbset', 'zeemed', etc.
+                if is_competitor(chat_title, uname, msg.message):
+                    save_processed_id(unique_id)
+                    continue
 
                 post_url = f"https://t.me/{uname}/{msg.id}" if uname else f"https://t.me/c/{getattr(msg.peer_id, 'channel_id', getattr(msg.peer_id, 'chat_id', ''))}/{msg.id}"
 
