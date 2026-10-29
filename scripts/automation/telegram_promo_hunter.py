@@ -76,10 +76,6 @@ MEDICAL_KEYWORDS = [
 # -------------------------------------------------------------
 COMPETITOR_BLACKLIST = [
     "mbset",
-    "zeemed",
-    "hyperqcm",
-    "drqcm",
-    "dr_qcm",
 ]
 
 SELF_CHANNELS = [
