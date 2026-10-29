@@ -119,96 +119,105 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
 
           final totalVisibleCourses = filteredModules.fold<int>(0, (sum, m) => sum + m.totalCourses);
 
-          return DefaultTabController(
-            length: 6,
-            child: Column(
-              children: [
-                // Navigation TabBar: Catalogue vs Sessions Sur-Mesure vs Study Planner vs Flashcards FSRS
-                Container(
-                  color: Theme.of(context).cardColor,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TabBar(
-                          isScrollable: true,
-                          tabAlignment: TabAlignment.start,
-                          indicatorColor: AppTheme.primaryTeal,
-                          indicatorWeight: 3,
-                          labelColor: AppTheme.primaryTeal,
-                          unselectedLabelColor: Colors.grey.shade600,
-                          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                          tabs: [
-                            const Tab(
-                              icon: Icon(Icons.menu_book_rounded, size: 20),
-                              text: 'Catalogue (47 Modules)',
-                            ),
-                            Tab(
-                              icon: const Icon(Icons.dashboard_customize_rounded, size: 20),
-                              text: state.customSessions.isNotEmpty
-                                  ? 'Sessions Sur-Mesure (${state.customSessions.length})'
-                                  : 'Sessions Sur-Mesure',
-                            ),
-                            const Tab(
-                              icon: Icon(Icons.emoji_events_rounded, size: 20),
-                              text: 'Concours Blancs 🏆',
-                            ),
-                            const Tab(
-                              icon: Icon(Icons.groups_rounded, size: 20),
-                              text: 'Groupes de Révision 👥',
-                            ),
-                            const Tab(
-                              icon: Icon(Icons.calendar_month_rounded, size: 20),
-                              text: 'Study Planner (3 Couches)',
-                            ),
-                            const Tab(
-                              icon: Icon(Icons.psychology_alt_rounded, size: 20),
-                              text: 'Flashcards FSRS 🧠',
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildCloudSyncPill(context),
-                            const SizedBox(width: 8),
-                            _buildOfflineStorageButton(context),
-                          ],
-                        ),
-                      ),
-                    ],
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktopWide = constraints.maxWidth >= 1050;
+
+              final tabBar = TabBar(
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                indicatorColor: AppTheme.primaryTeal,
+                indicatorWeight: 3,
+                labelColor: AppTheme.primaryTeal,
+                unselectedLabelColor: Colors.grey.shade600,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                tabs: [
+                  const Tab(
+                    icon: Icon(Icons.menu_book_rounded, size: 20),
+                    text: 'Catalogue (47 Modules)',
                   ),
-                ),
-                const Divider(height: 1),
-
-                // Tab Views
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      // Tab 1: Official Modules & Courses Catalogue
-                      _buildCatalogTab(context, state, filteredModules, totalVisibleCourses),
-
-                      // Tab 2: Custom Multi-Course Sessions
-                      _buildCustomSessionsTab(context, state),
-
-                      // Tab 3: Concours Blancs Nationaux & Palmarès
-                      const NationalExamsListScreen(),
-
-                      // Tab 4: Groupes de Révision & Défis
-                      const GroupRevisionHubScreen(),
-
-                      // Tab 5: Study Planner par Couches & Analytics
-                      const StudyPlannerScreen(),
-
-                      // Tab 4: Répétition Espacée FSRS & Flashcards
-                      const FlashcardsFsrsScreen(),
-                    ],
+                  Tab(
+                    icon: const Icon(Icons.dashboard_customize_rounded, size: 20),
+                    text: state.customSessions.isNotEmpty
+                        ? 'Sessions Sur-Mesure (${state.customSessions.length})'
+                        : 'Sessions Sur-Mesure',
                   ),
+                  const Tab(
+                    icon: Icon(Icons.emoji_events_rounded, size: 20),
+                    text: 'Concours Blancs 🏆',
+                  ),
+                  const Tab(
+                    icon: Icon(Icons.groups_rounded, size: 20),
+                    text: 'Groupes de Révision 👥',
+                  ),
+                  const Tab(
+                    icon: Icon(Icons.calendar_month_rounded, size: 20),
+                    text: 'Study Planner (3 Couches)',
+                  ),
+                  const Tab(
+                    icon: Icon(Icons.psychology_alt_rounded, size: 20),
+                    text: 'Flashcards FSRS 🧠',
+                  ),
+                ],
+              );
+
+              return DefaultTabController(
+                length: 6,
+                child: Column(
+                  children: [
+                    // Navigation TabBar: On mobile and tablet, TabBar has 100% full width to avoid squishing tabs!
+                    Container(
+                      color: Theme.of(context).cardColor,
+                      width: double.infinity,
+                      child: isDesktopWide
+                          ? Row(
+                              children: [
+                                Expanded(child: tabBar),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _buildCloudSyncPill(context),
+                                      const SizedBox(width: 8),
+                                      _buildOfflineStorageButton(context),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : tabBar,
+                    ),
+                    const Divider(height: 1),
+
+                    // Tab Views
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          // Tab 1: Official Modules & Courses Catalogue
+                          _buildCatalogTab(context, state, filteredModules, totalVisibleCourses, isDesktopWide: isDesktopWide),
+
+                          // Tab 2: Custom Multi-Course Sessions
+                          _buildCustomSessionsTab(context, state, isDesktopWide: isDesktopWide),
+
+                          // Tab 3: Concours Blancs Nationaux & Palmarès
+                          const NationalExamsListScreen(),
+
+                          // Tab 4: Groupes de Révision & Défis
+                          const GroupRevisionHubScreen(),
+
+                          // Tab 5: Study Planner par Couches & Analytics
+                          const StudyPlannerScreen(),
+
+                          // Tab 4: Répétition Espacée FSRS & Flashcards
+                          const FlashcardsFsrsScreen(),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       ),
@@ -320,8 +329,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
     BuildContext context,
     RevisionState state,
     List<MedicalModuleModel> filteredModules,
-    int totalVisibleCourses,
-  ) {
+    int totalVisibleCourses, {
+    bool isDesktopWide = true,
+  }) {
     final authState = context.watch<AuthBloc>().state;
     final user = authState.user;
     final isFree = user?.tier == SubscriptionTier.free;
@@ -414,28 +424,39 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                 alignment: WrapAlignment.spaceBetween,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 spacing: 8,
-                runSpacing: 4,
+                runSpacing: 8,
                 children: [
                   Text(
                     '${filteredModules.length} modules affichés • $totalVisibleCourses cours officiels révisables',
                     style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
                   ),
-                  if (state.activeCourseProgresses.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.shade100,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '${state.activeCourseProgresses.length} révision(s) en pause ⏸️',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.amber.shade900,
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (state.activeCourseProgresses.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade100,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '${state.activeCourseProgresses.length} révision(s) en pause ⏸️',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber.shade900,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      if (!isDesktopWide) ...[
+                        _buildCloudSyncPill(context),
+                        _buildOfflineStorageButton(context),
+                      ],
+                    ],
+                  ),
                 ],
               ),
             ],
@@ -533,7 +554,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
     );
   }
 
-  Widget _buildCustomSessionsTab(BuildContext context, RevisionState state) {
+  Widget _buildCustomSessionsTab(
+    BuildContext context,
+    RevisionState state, {
+    bool isDesktopWide = true,
+  }) {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -620,9 +645,18 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
               'Mes Sessions Enregistrées',
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
             ),
-            Text(
-              '${state.customSessions.length} session(s)',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!isDesktopWide) ...[
+                  _buildCloudSyncPill(context),
+                  const SizedBox(width: 8),
+                ],
+                Text(
+                  '${state.customSessions.length} session(s)',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ],
         ),

@@ -24,3 +24,4 @@ WITH CHECK (auth.uid() = user_id);
 -- Lookup index
 CREATE INDEX IF NOT EXISTS idx_user_cloud_sync_lookup 
 ON public.user_cloud_sync (user_id, data_type);
+
