@@ -5311,7 +5311,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               borderRadius: BorderRadius.circular(8),
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: AppTheme.primaryTeal.withValues(alpha: 0.08),
@@ -5319,10 +5319,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                 ),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'Gérer tous les comptes dans Médecins & Comptes',
-                      style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: AppTheme.primaryTeal),
+                    Flexible(
+                      child: Text(
+                        'Gérer tous les comptes dans Médecins & Comptes',
+                        style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: AppTheme.primaryTeal),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     SizedBox(width: 4),
                     Icon(Icons.arrow_forward_rounded, size: 14, color: AppTheme.primaryTeal),
