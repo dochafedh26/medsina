@@ -693,5 +693,20 @@
     ],
     "created_at": "2026-10-29T13:28:11.003020+00:00",
     "updated_at": "2026-10-29T13:28:11.003033+00:00"
+  },
+  {
+    "id": "lab_acth_plasmatique",
+    "name": "ACTH plasmatique (Corticotrophine)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "10 - 50 (Valeurs de référence à 8h du matin)",
+    "unit": "pg/mL",
+    "high_interpretation": "Valeur élevée (> 50 pg/mL) : Évoque une origine ACTH-dépendante. Causes principales : Maladie de Cushing (adénome hypophysaire corticotrope), Sécrétion ectopique d'ACTH (tumeur neuroendocrine, carcinome bronchique à petites cellules), ou Insuffisance surrénalienne primaire (Maladie d'Addison, avec rétrocontrôle négatif effondré du cortisol, ACTH > 100 pg/mL). Conduite à tenir : Rechercher des signes d'imprégnation cortisonique ou d'insuffisance surrénalienne aiguë (urgence vitale si Addison méconnue, risque de choc cardiométabolique et mélanodermie), réaliser une imagerie hypothalamo-hypophysaire ou thoraco-abdominale selon le contexte.",
+    "low_interpretation": "Valeur basse (< 10 pg/mL) ou effondrée (< 5 pg/mL) : Évoque une origine ACTH-indépendante. Causes principales : Corticosurrénalome malin, Adénome bénin sécrétant de cortisol (Syndrome de Cushing surrénalien), ou Iatrogénie (corticothérapie au long cours ayant inhibé l'axe corticotrope). Conduite à tenir : Évaluer le risque d'atrophie surrénalienne induite par les corticoïdes, se méfier d'un sevrage brutal en corticoïdes pouvant déclencher une insuffisance surrénalienne aiguë.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'ACTH est une molécule extrêmement fragile (très sensible aux protéases plasmatiques). Le prélèvement doit impérativement être réalisé sur tube EDTA réfrigéré, centrifugé immédiatement à froid (4°C), et le plasma congelé à -20°C ou -80°C dans l'heure qui suit.",
+      "Cycle nycthéméral indispensable : L'ACTH présente un rythme circadien avec un pic matinal (8h) et un nadir au coucher minuit. Les dosages doivent toujours être interprétés en fonction de l'heure du prélèvement et couplés systématiquement au dosage du cortisol plasmatique ou salivaire."
+    ],
+    "created_at": "2026-10-29T19:07:02.692261+00:00",
+    "updated_at": "2026-10-29T19:07:02.692278+00:00"
   }
 ]
