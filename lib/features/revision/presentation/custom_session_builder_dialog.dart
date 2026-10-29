@@ -9,6 +9,7 @@ import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../models/module_model.dart';
 import '../models/revision_session_model.dart';
+import '../services/revision_session_storage.dart';
 import 'qcm_study_screen.dart';
 
 class CustomSessionBuilderDialog extends StatefulWidget {
@@ -134,17 +135,28 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
 
     navigator.pop();
 
+    final rawPool = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+      courseIds: _selectedCourseIds.toList(),
+      moduleIds: _selectedModuleIds.toList(),
+      limit: _questionLimit,
+      shuffle: _shuffle,
+      allowedTypes: _allowedTypes.toList(),
+    );
+
+    final finalSession = session.copyWith(
+      totalQuestions: rawPool.length,
+    );
+
+    // Save session immediately so it appears in 'Mes Sessions Enregistrées'
+    final storage = RevisionSessionStorage.instance;
+    await storage.saveCustomSession(finalSession);
+    revisionBloc.add(LoadSavedSessionsEvent());
+
     if (_sessionMode == 'exam') {
-      final rawPool = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
-        courseIds: _selectedCourseIds.toList(),
-        moduleIds: _selectedModuleIds.toList(),
-        limit: _questionLimit,
-        shuffle: _shuffle,
-      );
       if (rawPool.isNotEmpty) {
         final examSession = ExamSessionModel(
-          id: session.id,
-          title: session.title,
+          id: finalSession.id,
+          title: finalSession.title,
           questions: rawPool,
           durationMinutes: _durationMinutes,
           startedAt: DateTime.now(),
@@ -156,15 +168,19 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
               correctionStyle: _correctionStyle,
             ),
           ),
-        );
+        ).then((_) {
+          revisionBloc.add(LoadSavedSessionsEvent());
+        });
         return;
       }
     }
 
-    revisionBloc.add(StartCustomSessionEvent(session, resume: false, filterForStudent: isStudent));
+    revisionBloc.add(StartCustomSessionEvent(finalSession, resume: false, filterForStudent: isStudent));
     navigator.push(
       MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-    );
+    ).then((_) {
+      revisionBloc.add(LoadSavedSessionsEvent());
+    });
   }
 
   @override

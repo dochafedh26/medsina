@@ -216,93 +216,97 @@ class _ExamRunnerScreenState extends State<ExamRunnerScreen> {
   void _showQuestionPalette() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Palette des Questions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text('${_session.answeredCount} / ${_session.totalQuestions} répondues', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-                ],
-              ),
-              const SizedBox(height: 12),
-              // Légende
-              Row(
-                children: [
-                  _buildLegendItem(AppTheme.primaryTeal, 'Répondue'),
-                  const SizedBox(width: 12),
-                  _buildLegendItem(Colors.amber, 'À revoir'),
-                  const SizedBox(width: 12),
-                  _buildLegendItem(Colors.grey.shade300, 'Non répondue'),
-                ],
-              ),
-              const SizedBox(height: 16),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.45),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 6,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    childAspectRatio: 1.1,
-                  ),
-                  itemCount: _session.totalQuestions,
-                  itemBuilder: (_, idx) {
-                    final q = _session.questions[idx];
-                    final isAnswered = (_session.userAnswers[q.id] ?? {}).isNotEmpty;
-                    final isFlagged = _session.flaggedQuestionIds.contains(q.id);
-                    final isCurrent = idx == _currentIndex;
+        return SafeArea(
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.70,
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Palette des Questions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text('${_session.answeredCount} / ${_session.totalQuestions} répondues', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Légende
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 6,
+                  children: [
+                    _buildLegendItem(AppTheme.primaryTeal, 'Répondue'),
+                    _buildLegendItem(Colors.amber, 'À revoir'),
+                    _buildLegendItem(Colors.grey.shade300, 'Non répondue'),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 6,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio: 1.1,
+                    ),
+                    itemCount: _session.totalQuestions,
+                    itemBuilder: (_, idx) {
+                      final q = _session.questions[idx];
+                      final isAnswered = (_session.userAnswers[q.id] ?? {}).isNotEmpty;
+                      final isFlagged = _session.flaggedQuestionIds.contains(q.id);
+                      final isCurrent = idx == _currentIndex;
 
-                    Color bg = Colors.grey.shade200;
-                    Color textCol = Colors.black87;
-                    if (isAnswered) {
-                      bg = AppTheme.primaryTeal;
-                      textCol = Colors.white;
-                    }
+                      Color bg = Colors.grey.shade200;
+                      Color textCol = Colors.black87;
+                      if (isAnswered) {
+                        bg = AppTheme.primaryTeal;
+                        textCol = Colors.white;
+                      }
 
-                    return InkWell(
-                      onTap: () {
-                        Navigator.of(ctx).pop();
-                        _goToQuestion(idx);
-                      },
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: bg,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isCurrent ? Colors.black : (isFlagged ? Colors.amber : Colors.transparent),
-                            width: isCurrent ? 2.5 : (isFlagged ? 2 : 1),
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(ctx).pop();
+                          _goToQuestion(idx);
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: bg,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isCurrent ? Colors.black : (isFlagged ? Colors.amber : Colors.transparent),
+                              width: isCurrent ? 2.5 : (isFlagged ? 2 : 1),
+                            ),
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text(
+                                '${idx + 1}',
+                                style: TextStyle(fontWeight: FontWeight.bold, color: textCol, fontSize: 13),
+                              ),
+                              if (isFlagged)
+                                const Positioned(
+                                  top: 2,
+                                  right: 2,
+                                  child: Icon(Icons.flag_rounded, size: 10, color: Colors.amber),
+                                ),
+                            ],
                           ),
                         ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Text(
-                              '${idx + 1}',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: textCol, fontSize: 13),
-                            ),
-                            if (isFlagged)
-                              const Positioned(
-                                top: 2,
-                                right: 2,
-                                child: Icon(Icons.flag_rounded, size: 10, color: Colors.amber),
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -429,7 +433,29 @@ class _ExamRunnerScreenState extends State<ExamRunnerScreen> {
                     ),
                     const SizedBox(height: 18),
 
-                    // Options
+                    // Options ou avertissement question ouverte
+                    if (currentQ.options.isEmpty)
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade50,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.amber.shade300),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_note_rounded, color: Colors.amber.shade900, size: 22),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Question à réponse ouverte (QROC). Les propositions ne s\'appliquent pas. Veuillez poursuivre votre examen.',
+                                style: TextStyle(fontSize: 12.5, color: Colors.amber.shade900, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
                     ...currentQ.options.map((opt) {
                       final optKey = opt.key.toUpperCase();
                       final isSelected = selectedKeys.contains(optKey);

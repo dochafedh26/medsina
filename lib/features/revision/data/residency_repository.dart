@@ -150,6 +150,7 @@ class ResidencyRepository {
     required List<String> moduleIds,
     int limit = -1,
     bool shuffle = true,
+    List<String>? allowedTypes,
   }) async {
     final allQuestions = <QcmQuestion>[];
     final courseIdSet = courseIds.toSet();
@@ -170,11 +171,27 @@ class ResidencyRepository {
         }
       }
 
-      if (courseIdSet.isEmpty) {
-        allQuestions.addAll(modQuestions);
-      } else {
-        allQuestions.addAll(modQuestions.where((q) => courseIdSet.contains(q.courseId)));
-      }
+      final filtered = modQuestions.where((q) {
+        final matchesCourse = courseIdSet.isEmpty || courseIdSet.contains(q.courseId);
+        if (!matchesCourse) return false;
+
+        // Exclure impérativement les questions sans propositions (ex: QROCs sans choix)
+        if (q.options.isEmpty) return false;
+
+        // Filtrer selon les types autorisés (ex: qcs, qcm, casClinique)
+        if (allowedTypes != null && allowedTypes.isNotEmpty) {
+          final typeName = q.type.name.toLowerCase();
+          final matchesType = allowedTypes.any((at) {
+            final normAt = at.toLowerCase();
+            return normAt == typeName || (normAt == 'casclinique' && typeName == 'casclinique');
+          });
+          if (!matchesType) return false;
+        }
+
+        return true;
+      });
+
+      allQuestions.addAll(filtered);
     }
 
     if (shuffle) {

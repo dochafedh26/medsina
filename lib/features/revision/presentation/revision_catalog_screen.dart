@@ -14,6 +14,8 @@ import '../models/module_model.dart';
 import '../models/revision_session_model.dart';
 import 'course_pdf_viewer_screen.dart';
 import 'course_summary_screen.dart';
+import '../../exam/models/exam_session_model.dart';
+import '../../exam/presentation/exam_runner_screen.dart';
 import 'custom_session_builder_dialog.dart';
 import 'flashcards_fsrs_screen.dart';
 import 'qcm_study_screen.dart';
@@ -46,6 +48,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
   void initState() {
     super.initState();
     context.read<RevisionBloc>().add(LoadModulesEvent());
+    context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
   }
 
   @override
@@ -475,7 +478,12 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                     'Nouvelle Session Personnalisée 🎯',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
-                  onPressed: () => CustomSessionBuilderDialog.show(context, state.modules),
+                  onPressed: () async {
+                    await CustomSessionBuilderDialog.show(context, state.modules);
+                    if (context.mounted) {
+                      context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
+                    }
+                  },
                 ),
               ),
             ],
@@ -860,11 +868,48 @@ class _CustomSessionCard extends StatelessWidget {
                           }
                           FreeTrialQuotaService.instance.consumeQcmSession(user);
                         }
+                        if (session.sessionMode == 'exam') {
+                          ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+                            courseIds: session.courseIds,
+                            moduleIds: session.moduleIds,
+                            limit: session.questionLimit,
+                            shuffle: session.shuffleQuestions,
+                            allowedTypes: session.allowedTypes,
+                          ).then((rawPool) {
+                            if (rawPool.isNotEmpty && context.mounted) {
+                              final examSession = ExamSessionModel(
+                                id: session.id,
+                                title: session.title,
+                                questions: rawPool,
+                                durationMinutes: session.durationMinutes ?? 60,
+                                startedAt: DateTime.now(),
+                              );
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ExamRunnerScreen(
+                                    session: examSession,
+                                    correctionStyle: session.correctionStyle,
+                                  ),
+                                ),
+                              ).then((_) {
+                                if (context.mounted) {
+                                  context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
+                                }
+                              });
+                            }
+                          });
+                          return;
+                        }
+
                         final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
                         context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: isPaused, filterForStudent: isStudent));
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-                        );
+                        ).then((_) {
+                          if (context.mounted) {
+                            context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
+                          }
+                        });
                       },
                     ),
                   ],
