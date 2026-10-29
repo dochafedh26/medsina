@@ -645,5 +645,21 @@
     ],
     "created_at": "2026-10-28T19:42:25.996695+00:00",
     "updated_at": "2026-10-28T19:42:25.996711+00:00"
+  },
+  {
+    "id": "lab_calcitonine",
+    "name": "Calcitonine sérique (CT)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Homme : < 10 ng/L (pg/mL) | Femme : < 5 ng/L (pg/mL)",
+    "unit": "ng/L (ou pg/mL)",
+    "high_interpretation": "Valeurs élevées (> 100 ng/L) : suspicion forte de Cancer Médullaire de la Thyroïde (CMT). Valeurs entre 10 et 100 ng/L : test de stimulation au pentagastrine ou au calcium (si disponible) ou test à l'effort. Causes non CMT (fausses élévations) : insuffisance rénale chronique (diminution de la clairance), hypergastrinémie (IPP au long cours, atrophie gastrique), neuroendocrinopathies, pathologie pulmonaire (BPCO, carcinome anaplasique ou à petites cellules), thyroïdite auto-immune (Hashimoto), grossesse.",
+    "low_interpretation": "Valeurs basses (< limite de détection ou normales) : pas de signification pathologique directe. Exclut pratiquement un CMT patent. Une calcitonine indétectable après chirurgie thyroïdienne pour CMT est le meilleur témoin de la rémission complète.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : prélèvement sur tube sec ou EDTA, centrifugation immédiate à froid (+4°C) et congélation rapide du sérum/plasma pour éviter la dégradation de la calcitonine par les protéases sériques.",
+      "Interférence médicamenteuse : les inhibiteurs de la pompe à protons (IPP) augmentent modérément la calcitonine par hypergastrinémie secondaire ; il est recommandé de les arrêter 2 semaines avant le dosage en cas de doute.",
+      "Corrélation anatomo-clinique : Le taux de calcitonine sérique basal est directement corrélé à la masse tumorale et au risque métastatique dans le CMT (valeurs > 500 ng/L associées à un risque élevé de metastases ganglionnaires et à distance)."
+    ],
+    "created_at": "2026-10-29T00:08:07.124606+00:00",
+    "updated_at": "2026-10-29T00:08:07.124619+00:00"
   }
 ]
