@@ -1309,5 +1309,28 @@
     "treatment_summary": "Réanimation préhospitalière immédiate axée sur la liberté des voies aériennes, la ventilation, le contrôle de l'hémorragie (protocoles de choc) et le transport médicalisé vers la structure adaptée.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-29T19:12:37.365535+00:00"
+  },
+  {
+    "course_id": "Blida_NEUROLOGIE_LES_SYNDROMES",
+    "course_name": "Syndromes topographiques",
+    "module_id": "Blida_NEUROLOGIE",
+    "module_name": "Neurologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nL'analyse sémiologique topographique en neurologie permet de localiser précisément la lésion sur le système nerveux central ou périphérique à partir de l'association de signes cliniques. \n- **Syndrome pyramidal (atteinte du 1er motoneurone)** : Abolition des réflexes cutanés abdominaux, **hypertonie élastique (spasticité)**, **réflexes ostéo-tendineux (ROT) vifs, polycinétiques et diffusés**, signe de Babinski positif.\n- **Syndrome neurogène périphérique (atteinte du 2ème motoneurone)** : Hypotonie, **abolition ou diminution des ROT**, **atrophie musculaire précoce**, fasciculations, déficit moteur systématisé à un nerf ou une racine.\n- **Syndrome cérébelleux** : Ataxie statique et cinétique, **hypotonie**, dysmétrie, adiadocinésie, asynergie, tremblement intentionnel, **dysarthrie scandée**.\n- **Syndrome extra-pyramidal** : **Akinésie/bradykinésie**, **hypertonie plastique (en roue dentée)**, **tremblement de repos**, troubles posturaux.\n- **Syndrome cordonal postérieur** : Ataxie proprioceptive (**aggravée par la fermeture des yeux = signe de Romberg positif**), abolition des sensibilités profondes (pallesthésie, bathyshthésie).\n\n## 2. Démarche Diagnostique\n- **Examen clinique rigoureux** : Test des paires crâniennes, force musculaire (cotation de 0 à 5), étude tonique, réflexe, sensitive et coordination.\n- **Imagerie de référence** : **IRM cérébrale et médullaire** avec séquences de diffusion et injection de gadolinium selon l'orientation clinique.\n- **Examens neurophysiologiques** : Électroneuromyogramme (ENMG) pour différencier atteinte neurogène périphérique et myogène, Potentiels Évoqués (PE) et Électroencéphalogramme (EEG).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Atteinte centrale vs périphérique** : Le piège classique réside dans l'hypotonie initiale d'un choc spinal (lésion médullaire aiguë mimant un syndrome périphérique avec abolition des ROT) avant l'installation de la spasticité.\n- **Syndromes alternes (tronc cérébral)** : Association d'une atteinte de **paire crânienne du côté de la lésion** et d'un **syndrome long (pyramidal ou sensitif) controlatéral**.\n  - *Weber* (pédoncule) : 3ème paire + hémiplégie controlatérale.\n  - *Millard-Gubler* (protubérance) : 6ème et 7ème paires + hémiplégie controlatérale.\n  - *Wallenberg* (bulbe latéral) : Syndrome vestibulaire, syndrome cérébelleux, syndrome sensitif croisé, syndrome de Claude Bernard-Horner, atteinte des 9ème et 10ème paires (dysphagie, dysphonie).\n\n## 4. Stratégie Thérapeutique\n- Le traitement dépend entièrement de l'étiologie (vasculaire, tumorale, inflammatoire, infectieuse).\n- **Prise en charge symptomatique** :\n  - Spasticité : Kinésithérapie, **Baclofène** en 1ère intention.\n  - Syndrome extra-pyramidal : **L-Dopa** / Agonistes dopaminergiques.\n  - Rééducation fonctionnelle précoce pour prévenir les complications de décubitus.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Complications de décubitus** : Thrombose veineuse profonde, embolie pulmonaire, escarres, infections urinaires.\n- Le pronostic fonctionnel et vital dépend de la rapidité du diagnostic étiologique et de la mise en place d'une prise en charge multidisciplinaire.",
+    "key_takeaways": [
+      "Le signe de Babinski est le témoin pathognomonique de l'atteinte du tractus corticospinal (syndrome pyramidal).",
+      "Dans le syndrome cordonal postérieur, l'ataxie est proprioceptive et s'aggrave à l'occlusion des yeux (Romberg positif), contrairement au syndrome cérébelleux.",
+      "Les syndromes alternes traduisent topographiquement une lésion du tronc cérébral (atteinte de nerfs crâniens homolatérale et voies longues controlatérales).",
+      "Une lésion médullaire aiguë (choc spinal) donne initialement une aréflexie et une flaccidité mimant le périphérique.",
+      "L'hypertonie pyramidale est élastique (ressort), alors que l'hypertonie extra-pyramidale est plastique (tuyau de plomb / roue dentée)."
+    ],
+    "exam_traps": [
+      "Piège Annales : Affirmer qu'un syndrome cérébelleux s'aggrave à la fermeture des yeux (Faux, c'est le signe de Romberg proprioceptif).",
+      "Piège Traitement : Utiliser des neuroleptiques devant un syndrome extra-pyramidal médicamenteux ou idiopathique (Contre-indication absolue).",
+      "Piège Diagnostic : Confondre une abolition des ROT d'origine centrale aiguë (choc spinal) avec une polyradiculonévrite."
+    ],
+    "diagnostic_criteria": "Corrélation anatomo-clinique rigoureuse associant les signes déficitaires et de libération à un territoire anatomique précis du système nerveux, confirmée par l'imagerie (IRM).",
+    "treatment_summary": "Traitement étiologique urgent (notamment en cas de compression médullaire ou d'AVC) associé à une prise en charge symptomatique et une rééducation adaptée.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-10-29T23:33:20.085809+00:00"
   }
 ]
