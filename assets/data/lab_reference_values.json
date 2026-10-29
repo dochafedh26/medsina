@@ -677,5 +677,21 @@
     ],
     "created_at": "2026-10-29T06:07:54.405239+00:00",
     "updated_at": "2026-10-29T06:07:54.405253+00:00"
+  },
+  {
+    "id": "lab_clairance_feccale_a1at",
+    "name": "Clairance fécale de l'Alpha-1-Antitrypsine (Clairance de l'A1AT)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "< 20 à 24 mL/24h (Normale basse, varie selon les techniques)",
+    "unit": "mL/24h",
+    "high_interpretation": "Élévation pathologique (> 27-30 mL/24h) témoignant d'une entéropathie exsudative (perte digestive de protéines plasmatiques). Causes majeures : Lymphangiectasies intestinales primitives ou secondaires (compression lymphatique, tuberculose péritonéale très fréquente en Algérie, sarcoïdose), maladies inflammatoires chroniques de l'intestin (MICI : Crohn, RCH), entéropathies ulcéro-érosives, et insuffisance cardiaque droite sévère ou périconstriction. Aucune urgence vitale immédiate au laboratoire, mais risque de bascule en anasarque, dénutrition sévère et immunodéficience (hypogammaglobulinémie par fuite lymphatique). Conduite à tenir : Enquêter sur l'étiologie (imagerie abdominale, échographie cardiaque, endoscopie digestive haute et basse avec biopsies), exploration de la dénutrition et correction volémique/nutritionnelle.",
+    "low_interpretation": "Valeur basse ou normale (< 20 mL/24h) : Exclusion d'une entéropathie exsudative. Si le patient présente un tableau d'hypoalbuminémie marquée, l'étiologie est extra-digestive : syndrome néphrotique (fuite rénale), insuffisance hépatocellulaire (défaut de synthèse) ou dénutrition sévère/kwashiorkor (carence d'apport). Pas de seuil d'urgence ni de valeur basse pathologique en soi.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'A1AT résiste aux protéases digestives, mais la diarrhée aqueuse massive ou une contamination urinaire des selles faussent les résultats. Nécessite impérativement le recueil concomitant des selles de 24 heures (ou sur 3-4 jours) ET d'un échantillon de sang (sérum) pour doser l'A1AT sérique et calculer la clairance.",
+      "Formule de calcul indispensable : Clairance (mL/24h) = [A1AT fécale (mg/g de selles) x Poids des selles des 24h (g)] / [A1AT sérique (mg/mL)]. Une attention particulière doit être portée sur la prise d'IPP ou de pansements gastriques qui peuvent modifier le transit.",
+      "Contexte épidémiologique algérien : Toujours éliminer une tuberculose péritonéale ou intestinale devant un tableau d'entéropathie exsudative avant de retenir une affection purement médicale ou rare."
+    ],
+    "created_at": "2026-10-29T13:28:11.003020+00:00",
+    "updated_at": "2026-10-29T13:28:11.003033+00:00"
   }
 ]
