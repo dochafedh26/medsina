@@ -856,5 +856,24 @@
     "is_active": true,
     "created_at": "2026-10-28T16:42:25.400826+00:00",
     "updated_at": "2026-10-28T16:42:25.400842+00:00"
+  },
+  {
+    "id": "memento_etat_de_mal_epileptique",
+    "title": "⚡ État de Mal Épileptique / Convulsions Aiguës",
+    "category": "Neurologie - Urgences Vitales",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Libération des VAS, oxygénation au masque haute concentration (15L/min), pose de 2 VVP, monitorage (SpO2, PNI, ECG) et administration systématique de 100 mg de Vitamine B1 (Thiamine) IV avant tout G80% (2ème flacon) pour prévenir l'encéphalopathie de Wernicke.",
+      "Étape 2 : Bilan biologique d'urgence au lit (Glycémie capillaire immédiate, ionogramme sanguin, urée, créatinine, calcémie, magnésémie, gaz du sang, NFS, hémostase) et recherche d'un toxic, d'une infection ou d'un arrêt de traitement anti-épileptique.",
+      "Étape 3 : Traitement de 1ère ligne (0-10 min) : Diazépam (Valium) 10 mg en IV lente (répétable 1 fois à 5 min) OU Clonazépam (Rivotril) 1 mg en IV lente. Si échec à 10 min : 2ème ligne par Acide Valproïque (Dépakine) 30 mg/kg en IVSE dans 100 ml de G5% sur 15-20 min OU Lévétiracétam (Keppra) 60 mg/kg (max 4,5g) dans 100 ml de NaCl 0,9% sur 15 min.",
+      "Étape 4 : Si échec à 30 min (EME réfractaire) : Transfert immédiat en Réanimation, Sédation par Propofol (1-2 mg/kg en bolus puis 2-10 mg/kg/h) ou Midazolam, intubation trachéale, ventilation mécanique et surveillance continue sous EEG.",
+      "Étape 5 : Piège médico-légal et thérapeutique : Ne jamais injecter de G80% sans couverture par la Thiamine chez l'éthylique ou le dénutri, et ne jamais injecter de Diazépam en IM (résorption aléatoire)."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Médecine d'Urgence (SAMU)",
+    "is_active": true,
+    "created_at": "2026-10-29T16:14:00.164687+00:00",
+    "updated_at": "2026-10-29T16:14:00.164700+00:00"
   }
 ]
