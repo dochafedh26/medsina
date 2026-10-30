@@ -724,5 +724,20 @@
     ],
     "created_at": "2026-10-29T23:27:37.734224+00:00",
     "updated_at": "2026-10-29T23:27:37.734240+00:00"
+  },
+  {
+    "id": "lab_gazometrie_arterielle",
+    "name": "Gazométrie artérielle / Équilibre acido-basique (pH, PaO2, PaCO2, HCO3-, SaO2)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "pH: 7.38 - 7.42 | PaO2: 80 - 100 mmHg | PaCO2: 35 - 45 mmHg | HCO3-: 22 - 26 mmol/L | SaO2: 95 - 98%",
+    "unit": "mmHg (gaz), mmol/L (bicarbonates), % (sat)",
+    "high_interpretation": "pH > 7.42 : Alcalose (métabolique par gain de HCO3-/perte de H+ ou respiratoire par hyperventilation/hypocapnie). PaCO2 > 45 mmHg : Hypoventilation alvéolaire (acidose respiratoire). HCO3- > 26 mmol/L : Alcalose métabolique ou compensation métabolique d'une acidose respiratoire chronique. PaO2 > 100 mmHg : Hyperoxie (risque de toxicité oxygénée, vasoconstriction cérébrale et coronaire).",
+    "low_interpretation": "pH < 7.38 : Acidose (métabolique par perte de HCO3-/accumulation d'acides ou respiratoire par hypoventilation/hypercapnie). Urgence vitale absolue si pH < 7.15 (risque de collapsus cardiovasculaire et d'arythmies fatales). PaCO2 < 35 mmHg : Hyperventilation alvéolaire (alcalose respiratoire). HCO3- < 22 mmol/L : Acidose métabolique (calculer le Trou Anionique Sérique). PaO2 < 80 mmHg (Hypoxémie) : Insuffisance respiratoire aiguë si < 60 mmHg (urgence vitale, oxygénothérapie requise).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Présence de bulles d'air dans la seringue (fausse augmentation de la PaO2 et baisse de la PaCO2), délai excessif avant analyse sans glace (consommation d'O2 et production de CO2 par les leucocytes/hématies, fausse hypoxémie et fausse acidose) et excès d'héparine liquide (fausse dilution et acidose métabolique artéfactuelle).",
+      "Calculs indispensables au concours et en réanimation : Calcul du Trou Anionique Sérique (TAS = Na+ + K+ - [Cl- + HCO3-], normal = 12 ± 2 mEq/L) pour orienter l'étiologie d'une acidose métabolique, et calcul de la règle de Winter pour vérifier la compensation respiratoire adéquate d'une acidose métabolique (PaCO2 attendue = 1.5 x [HCO3-] + 8 ± 2)."
+    ],
+    "created_at": "2026-10-30T02:47:36.313276+00:00",
+    "updated_at": "2026-10-30T02:47:36.313290+00:00"
   }
 ]
