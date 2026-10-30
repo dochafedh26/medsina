@@ -204,6 +204,30 @@ Le grand Hub Cursus Médical & Externat est officiellement disponible !
 Bonnes révisions à toutes et à tous ! 🩺💪"""
 
 
+def add_followers_comment(
+    target_id: str,
+    token: str,
+    comment_text: str = "@followers 🩺 Rejoignez notre canal officiel Telegram https://t.me/medsina_officiel pour activer votre réduction de -50% !",
+) -> Dict[str, Any]:
+    url = f"https://graph.facebook.com/v21.0/{target_id}/comments"
+    data = {
+        "message": comment_text,
+        "access_token": token,
+    }
+    try:
+        resp = requests.post(url, data=data, timeout=15)
+        res_json = resp.json()
+        if resp.status_code == 200 and "id" in res_json:
+            print(f"  💬 Commentaire @followers ajouté avec succès sous le post {target_id} ! ID: {res_json['id']}")
+            return {"success": True, "comment_id": res_json["id"]}
+        else:
+            print(f"  ℹ️ Notice commentaire @followers ({resp.status_code}) : {res_json}")
+            return {"success": False, "error": res_json}
+    except Exception as e:
+        print(f"  ℹ️ Notice commentaire @followers : {e}")
+        return {"success": False, "error": str(e)}
+
+
 # -----------------------------------------------------------------------------
 # 4. PUBLICATION FACEBOOK VIA META GRAPH API
 # -----------------------------------------------------------------------------
@@ -242,7 +266,15 @@ def publish_to_facebook_page(
             if resp.status_code == 200 and "id" in res_json:
                 post_id = res_json.get("post_id") or res_json.get("id")
                 print(f"  ✅ {name} : Post publié avec succès ! ID = {post_id}")
-                return {"success": True, "post_id": post_id}
+
+                # Ajout automatique du commentaire @followers
+                c_res = add_followers_comment(
+                    target_id=post_id,
+                    token=token,
+                    comment_text="@followers 🩺 Rejoignez notre canal officiel Telegram https://t.me/medsina_officiel pour activer votre réduction de -50% !",
+                )
+
+                return {"success": True, "post_id": post_id, "followers_comment": c_res}
             else:
                 print(f"  ⚠️ {name} Erreur ({resp.status_code}) : {res_json}")
                 return {"success": False, "error": res_json}

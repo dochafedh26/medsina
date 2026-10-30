@@ -91,7 +91,8 @@ def send_telegram_broadcast(
     image_path: Optional[str] = None,
     bot_token: Optional[str] = None,
     channel_id: Optional[str] = None,
-    dry_run: bool = False
+    dry_run: bool = False,
+    auto_pin: bool = True,
 ) -> Dict[str, Any]:
     """
     Envoie le post formaté avec photo et boutons inline sur Telegram.
@@ -164,7 +165,28 @@ def send_telegram_broadcast(
 
     if resp.status_code == 200:
         result = resp.json()
-        print(f"✅ Diffusion Telegram réussie sur {channel} ! Message ID: {result.get('result', {}).get('message_id')}")
+        msg_id = result.get('result', {}).get('message_id')
+        print(f"✅ Diffusion Telegram réussie sur {channel} ! Message ID: {msg_id}")
+
+        # Sur Telegram, l'équivalent natif de @followers pour alerter tous les abonnés
+        # est d'épingler le message avec notification sonore/push active.
+        if auto_pin and msg_id:
+            try:
+                pin_url = f"https://api.telegram.org/bot{token}/pinChatMessage"
+                pin_resp = requests.post(
+                    pin_url,
+                    json={
+                        "chat_id": channel,
+                        "message_id": msg_id,
+                        "disable_notification": False,
+                    },
+                    timeout=15,
+                )
+                if pin_resp.status_code == 200:
+                    print(f"📌 [Telegram] Message #{msg_id} épinglé avec notification push à tous les abonnés !")
+            except Exception as pin_err:
+                print(f"ℹ️ [Telegram] Notice épingle: {pin_err}")
+
         return result
     else:
         print(f"❌ Erreur Telegram ({resp.status_code}): {resp.text}")

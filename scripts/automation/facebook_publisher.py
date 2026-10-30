@@ -81,6 +81,42 @@ def get_facebook_credentials() -> Dict[str, str]:
     raise ValueError("Missing Facebook credentials (no active page found).")
 
 
+def add_followers_comment(
+    target_id: str,
+    token: str,
+    comment_text: str = "@followers 🩺 Partagez avec vos confrères et activez les notifications pour ne rien manquer !",
+) -> Dict[str, Any]:
+    """
+    Poste un commentaire sous la publication avec la mention @followers pour taguer tous les abonnés.
+    Si le jeton de page possède la permission pages_manage_engagement, le commentaire est publié en direct.
+    """
+    url = f"https://graph.facebook.com/v21.0/{target_id}/comments"
+    payload = {
+        "message": comment_text,
+        "access_token": token,
+    }
+    encoded_data = urllib.parse.urlencode(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=encoded_data,
+        method="POST",
+        headers={"User-Agent": "MedsinaPublisher/1.0"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            comment_id = data.get("id")
+            print(f"   💬 Commentaire @followers ajouté avec succès ! ID: {comment_id}")
+            return {"success": True, "comment_id": comment_id}
+    except urllib.error.HTTPError as e:
+        err_body = e.read().decode("utf-8")
+        print(f"   ℹ️ Notice commentaire @followers ({e.code}) : {err_body}")
+        return {"success": False, "error": err_body}
+    except Exception as e:
+        print(f"   ℹ️ Notice commentaire @followers : {e}")
+        return {"success": False, "error": str(e)}
+
+
 def publish_to_page_feed(page_id: str, token: str, message: str, link: Optional[str] = None) -> Dict[str, Any]:
     url = f"https://graph.facebook.com/v21.0/{page_id}/feed"
     payload = {
@@ -98,7 +134,15 @@ def publish_to_page_feed(page_id: str, token: str, message: str, link: Optional[
         headers={"User-Agent": "MedsinaPublisher/1.0"},
     )
     with urllib.request.urlopen(req, timeout=20) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+        res = json.loads(resp.read().decode("utf-8"))
+        post_id = res.get("id")
+        if post_id:
+            add_followers_comment(
+                target_id=post_id,
+                token=token,
+                comment_text="@followers 🩺 Partagez avec vos confrères et activez les notifications pour ne rien manquer !",
+            )
+        return res
 
 
 def publish_facebook_post(message: str, link: Optional[str] = None) -> Dict[str, Any]:
