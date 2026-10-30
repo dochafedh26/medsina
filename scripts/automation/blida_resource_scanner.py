@@ -46,6 +46,8 @@ DEFAULT_SOURCES = [
     "@medsina_officiel",
     "@residanat_blida",
     "@medecine_blida",
+    "@preprsdblida",
+    "https://t.me/preprsdblida",
     "https://drive.google.com/drive/folders/1___jg3oAyaBm-REwGb68q_XTN5dKWX2E",
 ]
 
@@ -201,10 +203,25 @@ def fetch_configured_sources(supabase_url: str, supabase_key: str) -> List[str]:
             if r.status_code == 200 and r.json():
                 raw = (r.json()[0].get("setting_value") or "").strip()
                 if raw:
-                    for part in re.split(r"[,;\n]+", raw):
-                        cleaned = part.strip()
-                        if cleaned:
-                            sources.append(cleaned)
+                    try:
+                        cfg = json.loads(raw)
+                        if isinstance(cfg, dict):
+                            for tc in cfg.get("telegram_channels", []):
+                                if tc:
+                                    tc_s = str(tc).strip()
+                                    sources.append(tc_s if (tc_s.startswith("@") or tc_s.startswith("http")) else f"@{tc_s}")
+                            for gd in cfg.get("google_drive_folders", []):
+                                if gd:
+                                    sources.append(str(gd).strip())
+                        elif isinstance(cfg, list):
+                            for item in cfg:
+                                if item:
+                                    sources.append(str(item).strip())
+                    except Exception:
+                        for part in re.split(r"[,;\n]+", raw):
+                            cleaned = part.strip()
+                            if cleaned:
+                                sources.append(cleaned)
         except Exception as e:
             print(f"⚠️ Lecture blida_scanner_sources ignorée: {e}")
 

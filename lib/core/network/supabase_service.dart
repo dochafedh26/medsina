@@ -2534,6 +2534,7 @@ class SupabaseService {
     "fmb_blida",
     "medecine_blida",
     "residanat_blida",
+    "preprsdblida",
     "medsina_dz",
     "qcm_medecine_dz"
   ],

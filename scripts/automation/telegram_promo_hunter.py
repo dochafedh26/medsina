@@ -109,6 +109,7 @@ TARGET_CHANNELS_GROUPS = [
     "residanat_algerie",
     "medecine_algerie",
     "residanat_blida",
+    "preprsdblida",
     "externat_medecine",
     "qcm_medecine",
 ]
