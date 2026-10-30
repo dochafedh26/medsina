@@ -371,23 +371,23 @@
   },
   {
     "id": "memento_pancreatite_aigue",
-    "title": "🩸 Prise en Charge Initiale de la Pancréatite Aiguë",
-    "category": "Gastro-entérologie / Réanimation",
+    "title": "🔥 Pancréatite Aiguë : Stratégie Initiale en UMC",
+    "category": "Gastro-entérologie / Urgences",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate, pose de 2 VVP de gros calibre, mise en place d'une sonde nasogastrique si vomissements incoercibles ou iléus marqué, et sondage urinaire avec horamètre pour suivi strict de la diurèse.",
-      "Étape 2 : Bilan biologique urgent au déchoquage : NFS, groupage-Rhéso, ionogramme sanguin, urée, créatinine, calcémie, CRP, bilan hépatique complet (ASAT, ALAT, GGT, PAL, bilirubine), lipasémie, et gaz du sang (GDS) avec lactates.",
-      "Étape 3 : Réanimation volémique agressive de première intention par Ringer Lactate (10 à 20 mL/kg/h les premières 6 à 12h, réévaluée par la diurèse > 0,5 mL/kg/h) et analgésie multimodale adaptée (Paracétamol 1g x4/j IV et Nefopam ou titration morphinique si douleur intense EVA > 6).",
-      "Étape 4 : Imagerie de première intention : Échographie abdominale aux urgences (recherche d'étiologie biliaire) et TDM abdominale injectée (scanokystographie) indiquée entre la 48e et la 72e heure pour évaluer le score de Balthazar et classifier la sévérité.",
-      "Étape 5 : Surveillance armée (pouls, PA, SpO2, diurèse horaire, conscience) en USI ou Réanimation en cas de score de Ranson > 3, score APACHE II > 8, ou présence de signes de défaillance d'organe (syndrome de réponse inflammatoire systémique - SIRS).",
-      "Étape 6 : Piège médico-légal et contre-indication absolue : Ne jamais administrer d'AINS (néphrotoxicité sur rein de choc) et éviter l'antibiothérapie prophylactique systématique (réservée uniquement aux infections documentées ou sur abcès/nécrose infectée prouvée)."
+      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate. Conditionnement (2 VVP gros calibre, SpO2, scope). Jeûne strict (zéro os) et pose d'une SNG si vomissements incoercibles ou iléus réflexe.",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, CRP, Ionogramme, Urée, Créatinine, Glycémie, Calcémie, Bilan hépatique (ASAT, ALAT, Bilirubine, GGT, Phosphatases alcalines), Lipasémie (si disponible, > 3N) et gaz du sang (GDS) avec lactates.",
+      "Étape 3 : Antalgie et Remplissage vasculaire guidé par l'écho-guidage (VCI) : Paracétamol 1g IV / 6h associé à de la Nefopam (Acupan) ou titration morphinique (Morphine IV 0,1 mg/kg). Remplissage par Cristalloïdes (NaCl 0,9% ou Ringer Lactate) 100-150 ml/h selon volémie, éviter les macromolécules.",
+      "Étape 4 : Imagerie de débrouillage : Échographie abdominale en salle (recherche de lithiase biliaire) et TDM abdomino-pelvienne avec injection de produit de contraste (temps portal) à réaliser idéalement entre la 48e et la 72e heure pour classer selon Balthazar (ou dès l'admission si doute diagnostique).",
+      "Étape 5 : Surveillance armée et critères de transfert en Réanimation : Score de Glasgow > 8, score de Ranson ≥ 3, SIRS persistant, défaillance organique (rénale, respiratoire, choc), score BISAP ≥ 3. Alerter le réanimateur de garde si anurie ou lactates élevés.",
+      "Étape 6 : Piège médico-légal / Erreur fréquente : Ne pas prescrire d'antibiotiques en prophylaxie (inutile en l'absence d'infection documentée) et ne pas administrer d'inhibiteurs de la pompe à protons (IPP) sans indication formelle d'ulcère."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / Collège National de Réanimation Médicale / MSPRH Algérie",
+    "scientific_references": "Recommandations SFMU / SRLF / IAP/APA evidence-based guidelines / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-28T21:43:07.412214+00:00",
-    "updated_at": "2026-10-28T21:43:07.412226+00:00"
+    "created_at": "2026-10-30T01:07:12.645772+00:00",
+    "updated_at": "2026-10-30T01:07:12.645785+00:00"
   },
   {
     "id": "memento_intoxication_medicamenteuse_aigue",
