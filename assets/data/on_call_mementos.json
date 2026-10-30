@@ -357,17 +357,17 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation clinique immédiate (parler par phrases hachées, tachypnée > 30c/min, cyanose, sueurs, silence d'auscultation = piège mortel) et mise en position assise stricte.",
-      "Étape 2 : Oxygénothérapie haut débit au masque à haute concentration (FiO2 100%) pour maintenir SpO2 > 92-95%, pose immédiate d'une voie veineuse périphérique (VVP) et scope ECG.",
-      "Étape 3 : Nébulisations urgentes de Bêta-2 mimétiques (Salbutamol 5 mg) associées à un anticholinergique (Bromure d'ipratropium 0,5 mg) dans 4 mL de NaCl 0,9% sur 15 min, à renouveler si besoin.",
-      "Étape 4 : Corticothérapie systémique précoce IV indispensable : Hémisuccinate d'Hydrocortisone (HSHC) 200 mg IV direct ou Méthylprednisolone (Solu-Medrol) 1-2 mg/kg.",
-      "Étape 5 : En cas de résistance ou collapsus : Sulfate de Magnésium (2 g IV slow dans 100 mL G5% sur 20 min). Si arrêt respiratoire imminent : préparation intubation avec séquence rapide prudente (Kétamine) ou ventilation non invasive (VNI).",
-      "Étape 6 : Surveillance armée (FR, SpO2, DEP si réalisable) toutes les 15-30 min. Critères de transfert en Réanimation : épuisement respiratoire, silence auscultatoire, acidose respiratoire (PaCO2 normale ou élevée)."
+      "Étape 1 : Évaluation immédiate de la gravité (incapacité à aligner les mots, FR > 30/min, FC > 120/min, SpO2 < 92% sous O2, silence auriculaire) et installation en position demi-assise.",
+      "Étape 2 : Oxygénothérapie à haut débit pour maintenir une SpO2 entre 93 et 98%, pose d'une voie veineuse périphérique (VVP) et réalisation d'un monitorage multiparamétrique (ECG, SpO2, PNI).",
+      "Étape 3 : Nébulisations urgentes associant Salbutamol (5 mg) + Ipratropium (0,5 mg) dans 4 mL de NaCl 0,9% sur 15 min, répétées toutes les 20 min si besoin, et Corticothérapie systémique IV précoce (Méthylprednisolone 1 à 2 mg/kg ou HHC 200 mg IV).",
+      "Étape 4 : En cas d'échec des nébulisations ou AAG menaçant : Adrénaline en nébulisation (2 mg) ou IVSE prudente, ou Sulfate de Magnésium IV (2 g dans 100 mL de G5% ou NaCl 0,9% en 20 min).",
+      "Étape 5 : Surveillance armée de la fatigue respiratoire, gaz du sang artériel (GSA) à la recherche d'une hypercapnie (signe d'épuisement imminent) et appel immédiat du réanimateur pour intubation orotrachéale si arrêt respiratoire ou encéphalopathie hypercapnique.",
+      "Étape 6 : Piège médico-légal absolu : NE JAMAIS administrer de sédatifs ou de morphiniques, et éviter la ventilation non invasive (VNI) en première intention hors réanimation (risque d'arrêt cardiaque par encombrement)."
     ],
-    "scientific_references": "Consensus GINA / SRLF / SFMU / Recommandations MSPRH Algérie",
+    "scientific_references": "SFMU / SRLF / GINA / Recommandations MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-20T13:53:02.500896+00:00",
-    "updated_at": "2026-10-20T13:53:02.500912+00:00"
+    "created_at": "2026-10-30T23:52:49.922361+00:00",
+    "updated_at": "2026-10-30T23:52:49.922374+00:00"
   },
   {
     "id": "memento_pancreatite_aigue",
