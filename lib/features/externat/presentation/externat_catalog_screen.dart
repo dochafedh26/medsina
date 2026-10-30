@@ -15,6 +15,10 @@ import '../../revision/presentation/course_pdf_viewer_screen.dart';
 import '../../revision/presentation/offline_storage_screen.dart';
 import '../../revision/presentation/qcm_study_screen.dart';
 import '../../revision/services/offline_course_manager.dart';
+import '../data/models/externat_module_info.dart';
+import 'widgets/externat_rotation_banner.dart';
+import 'externat_course_session_screen.dart';
+import 'externat_emd_simulation_screen.dart';
 
 class ExternatCatalogScreen extends StatefulWidget {
   final int? initialYear;
@@ -148,6 +152,20 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
                   ),
                 ),
 
+                // 2.5 Active Rotation & AI Year Tutor Banner
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
+                    child: ExternatRotationBanner(
+                      studyYear: _selectedYear,
+                      yearModules: yearModules,
+                      onRotationChanged: () {
+                        setState(() {});
+                      },
+                    ),
+                  ),
+                ),
+
                 // 3. Search Bar & EMD Toggle
                 SliverToBoxAdapter(
                   child: Padding(
@@ -223,6 +241,7 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
             children: [
               Row(
                 mainAxisSize: MainAxisSize.min,
+    
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -236,6 +255,7 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
+        
                     children: [
                       const Text(
                         'Cursus Externat & Université',
@@ -334,7 +354,7 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
                 border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.3)),
               ),
               child: const Row(
-                mainAxisSize: MainAxisSize.min,
+    
                 children: [
                   Icon(Icons.offline_pin_rounded, color: AppTheme.primaryTeal, size: 15),
                   SizedBox(width: 4),
@@ -486,7 +506,7 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
               onTap: () => setState(() => _onlyEmdQuestions = !_onlyEmdQuestions),
               borderRadius: BorderRadius.circular(8),
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+    
                 children: [
                   Switch.adaptive(
                     value: _onlyEmdQuestions,
@@ -533,6 +553,7 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
     UserModel? user,
     RevisionState state,
   ) {
+    final modInfo = ExternatCurriculumMatrix.findModuleInfo(mod.name, _selectedYear);
     final courses = mod.courses.where((c) {
       if (_searchQuery.isEmpty) return true;
       final q = _searchQuery.toLowerCase();
@@ -577,6 +598,7 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           mod.name,
@@ -584,7 +606,7 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          '${mod.courses.length} cours officiels révisables',
+                          '${mod.courses.length} cours officiels${modInfo != null ? ' • ${modInfo.durationWeeks} sem. (${modInfo.rotationType})' : ' révisables'}',
                           style: TextStyle(
                             fontSize: 12,
                             color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
@@ -606,6 +628,30 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
                     icon: const Icon(Icons.quiz_rounded, size: 14),
                     label: const Text('EMD', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                     onPressed: () => _startModuleEmdSession(context, mod, user),
+                  ),
+                  const SizedBox(width: 4),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFF59E0B),
+                      side: const BorderSide(color: Color(0xFFF59E0B)),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      minimumSize: const Size(0, 32),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.timer_rounded, size: 14),
+                    label: const Text('Blanc /20', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ExternatEmdSimulationScreen(
+                            moduleName: mod.name,
+                            studyYear: _selectedYear,
+                            allModules: state.modules,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(width: 4),
                   Icon(
@@ -669,8 +715,10 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
             ],
           );
 
-          final actionButtons = Row(
-            mainAxisSize: MainAxisSize.min,
+          final actionButtons = Wrap(
+            spacing: 6,
+            runSpacing: 6,
+
             children: [
               // PDF Reader Button
               ElevatedButton.icon(
@@ -709,6 +757,31 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
                 icon: const Icon(Icons.school_rounded, size: 14),
                 label: const Text('EMD QCM', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                 onPressed: () => _startCourseQcmSession(context, course, user),
+              ),
+              const SizedBox(width: 8),
+              // Interactive Teacher AI Button
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF8B5CF6),
+                  side: const BorderSide(color: Color(0xFF8B5CF6)),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  minimumSize: const Size(0, 32),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                icon: const Icon(Icons.psychology_rounded, size: 14),
+                label: const Text('Enseignant IA', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ExternatCourseSessionScreen(
+                        moduleName: mod.name,
+                        courseName: course.name,
+                        studyYear: _selectedYear,
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           );
