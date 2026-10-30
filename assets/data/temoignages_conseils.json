@@ -79,7 +79,7 @@
     "year": "2025",
     "faculty": "Faculté de Médecine de Blida",
     "is_recent_2026": false,
-    "document_type": "pdf_local",
+    "document_type": "pdf_local_and_drive",
     "pdf_file": "Temoignage_Dr_Ferhat.pdf",
     "extra_pdf_file": "Modules_Et_Sources_Dr_Ferhat.pdf",
     "summary": "Auteur du pack de référence 'Résidanat Dr Ferhat'. Guide ultra-détaillé module par module (47 modules) avec sources idéales et cahier de tours.",
@@ -88,7 +88,11 @@
       "Annoter ses propres cours ('Highlighted by me') pour une relecture ultra-rapide au dernier tour.",
       "Utiliser les fiches 'À ne pas oublier' dans les matières de par cœur (Biochimie, Microbio)."
     ],
-    "recommended_sources": "Pack Ferhat, Collection Mon Carnet, Fiches GMA, Drive Mahdaoui."
+    "recommended_sources": "Pack Ferhat, Collection Mon Carnet, Fiches GMA, Drive Mahdaoui.",
+    "gdrive_id": "1ojz7xCd2qBAMIzVul8tCyUPJ1kANjjIg",
+    "target_url": "https://drive.google.com/file/d/1ojz7xCd2qBAMIzVul8tCyUPJ1kANjjIg/view?usp=drivesdk",
+    "extra_gdrive_id": "14-xtTZHaJAPYZLPub6wYEkKGKqY6A_in",
+    "extra_gdrive_link": "https://drive.google.com/file/d/14-xtTZHaJAPYZLPub6wYEkKGKqY6A_in/view?usp=drivesdk"
   },
   {
     "id": "temoignage_boutiouta_2025",
@@ -98,7 +102,7 @@
     "year": "2025",
     "faculty": "Concours National de Résidanat",
     "is_recent_2026": false,
-    "document_type": "pdf_local",
+    "document_type": "pdf_local_and_drive",
     "pdf_file": "Dr_Boutiouta_1ere_2025.pdf",
     "summary": "Major Nationale au Concours de Résidanat 2025 (1ère place). Méthodologie d'excellence, discipline de fer et analyse approfondie des annales.",
     "key_advices": [
@@ -106,7 +110,9 @@
       "Comprendre la physiopathologie permet de répondre à n'importe quel QCM inédit.",
       "Refaire au moins 3 fois l'intégralité des annales des 10 dernières années."
     ],
-    "recommended_sources": "Cours officiels, annales nationales multi-facultés, synthèses cliniques."
+    "recommended_sources": "Cours officiels, annales nationales multi-facultés, synthèses cliniques.",
+    "gdrive_id": "1f850SbbIiUd_TRIPOsbupJVSO_9oUujc",
+    "target_url": "https://drive.google.com/file/d/1f850SbbIiUd_TRIPOsbupJVSO_9oUujc/view?usp=drivesdk"
   },
   {
     "id": "temoignage_dilmi_2025",
@@ -116,7 +122,7 @@
     "year": "2025",
     "faculty": "Concours National de Résidanat",
     "is_recent_2026": false,
-    "document_type": "pdf_local",
+    "document_type": "pdf_local_and_drive",
     "pdf_file": "Dr_Dilmi_5eme_2025.pdf",
     "summary": "Classé 5ème au concours national 2025. Stratégie de mémorisation espacée et gestion optimale du stress pré-concours.",
     "key_advices": [
@@ -124,7 +130,9 @@
       "Se concentrer sur les questions discriminantes et les pièges classiques du Pr.",
       "Privilégier la qualité de révision à la quantité brute de pages lues."
     ],
-    "recommended_sources": "Supports officiels, résumés concis, fiches d'urgences."
+    "recommended_sources": "Supports officiels, résumés concis, fiches d'urgences.",
+    "gdrive_id": "1sfIsxA7Z-JjfkdMrFoucITDpkai1GTRF",
+    "target_url": "https://drive.google.com/file/d/1sfIsxA7Z-JjfkdMrFoucITDpkai1GTRF/view?usp=drivesdk"
   },
   {
     "id": "temoignage_nouaret_2024",
@@ -134,7 +142,7 @@
     "year": "2024",
     "faculty": "Concours National de Résidanat",
     "is_recent_2026": false,
-    "document_type": "pdf_local",
+    "document_type": "pdf_local_and_drive",
     "pdf_file": "Dr_Nouaret_1ere_2024.pdf",
     "summary": "Major Nationale du Concours de Résidanat 2024. Créatrice des fiches réputées de pharmacologie et psychiatrie du concours.",
     "key_advices": [
@@ -142,7 +150,9 @@
       "Maîtriser les thérapeutiques et contre-indications de première intention.",
       "S'entraîner régulièrement en binôme ou petit groupe pour tester ses connaissances."
     ],
-    "recommended_sources": "Drive Dr Nouaret, fiches thérapeutiques, annales nationales."
+    "recommended_sources": "Drive Dr Nouaret, fiches thérapeutiques, annales nationales.",
+    "gdrive_id": "1TK4tmLU2fAcoABQLyBSP4zWsamfTBOZn",
+    "target_url": "https://drive.google.com/file/d/1TK4tmLU2fAcoABQLyBSP4zWsamfTBOZn/view?usp=drivesdk"
   },
   {
     "id": "temoignage_ali_bachir_2024",
@@ -152,7 +162,7 @@
     "year": "2024",
     "faculty": "Concours National de Résidanat",
     "is_recent_2026": false,
-    "document_type": "pdf_local",
+    "document_type": "pdf_local_and_drive",
     "pdf_file": "Dr_Ali_Bachir_9eme_2024.pdf",
     "summary": "Classé 9ème au concours de Résidanat 2024. Approche synthétique orientée QCM et gain de temps.",
     "key_advices": [
@@ -160,7 +170,9 @@
       "Ne pas perdre de temps sur des détails historiques ou non validés par le programme.",
       "Faire des examens blancs hebdomadaires dès le mois de juin."
     ],
-    "recommended_sources": "Annales classées, fiches flash, cours de synthèse."
+    "recommended_sources": "Annales classées, fiches flash, cours de synthèse.",
+    "gdrive_id": "1M-gdIOIXSq2jwrJimKdmlRW8NoZlv1X6",
+    "target_url": "https://drive.google.com/file/d/1M-gdIOIXSq2jwrJimKdmlRW8NoZlv1X6/view?usp=drivesdk"
   },
   {
     "id": "temoignage_megateli_2023",
@@ -170,7 +182,7 @@
     "year": "2023",
     "faculty": "Concours National de Résidanat",
     "is_recent_2026": false,
-    "document_type": "pdf_local",
+    "document_type": "pdf_local_and_drive",
     "pdf_file": "Dr_Megateli_1ere_2023.pdf",
     "summary": "Major Nationale du Concours de Résidanat 2023. Auteure du Drive Megateli regroupant l'ensemble des modules d'externat et de biologie.",
     "key_advices": [
@@ -178,7 +190,9 @@
       "Associer clinique et biologie pour une vision médicale intégrative.",
       "Répéter inlassablement les questions d'examens tombées les 15 dernières années."
     ],
-    "recommended_sources": "Drive Dr Megateli, annales complètes de toutes les facultés algériennes."
+    "recommended_sources": "Drive Dr Megateli, annales complètes de toutes les facultés algériennes.",
+    "gdrive_id": "1t5maiH6XXfjq1WZU-bb285nmTaWscP-a",
+    "target_url": "https://drive.google.com/file/d/1t5maiH6XXfjq1WZU-bb285nmTaWscP-a/view?usp=drivesdk"
   },
   {
     "id": "temoignage_aissaoui_2025",
@@ -188,7 +202,7 @@
     "year": "2025",
     "faculty": "Concours National de Résidanat",
     "is_recent_2026": false,
-    "document_type": "pdf_local",
+    "document_type": "pdf_local_and_drive",
     "pdf_file": "Dr_Aissaoui_44eme_2025.pdf",
     "summary": "Classé 44ème au concours 2025. Conseils sur la gestion du temps de révision, la concentration et le choix de spécialité.",
     "key_advices": [
@@ -196,6 +210,8 @@
       "Vérifier les consensus récents (notamment en cardiologie et diabétologie).",
       "Éviter les rumeurs et se concentrer uniquement sur les sources fiables."
     ],
-    "recommended_sources": "Cours actualisés, consensus récents, banques de QCMs vérifiées."
+    "recommended_sources": "Cours actualisés, consensus récents, banques de QCMs vérifiées.",
+    "gdrive_id": "1zP9nkr-JD8CE7uWO1iXLUGzdZOx5LD50",
+    "target_url": "https://drive.google.com/file/d/1zP9nkr-JD8CE7uWO1iXLUGzdZOx5LD50/view?usp=drivesdk"
   }
 ]

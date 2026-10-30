@@ -81,3 +81,4 @@ class TemoignageConseilItem extends Equatable {
   @override
   List<Object?> get props => [id, name, rankNumber, year, documentType];
 }
+

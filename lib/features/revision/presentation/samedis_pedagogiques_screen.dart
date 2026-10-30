@@ -1,3 +1,4 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -399,22 +400,49 @@ class _SamedisPedagogiquesScreenState extends State<SamedisPedagogiquesScreen> {
                 ),
               ),
               const SizedBox(width: 10),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryTeal,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryTeal,
+                      foregroundColor: Colors.white,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
+                    label: const Text(
+                      'Lire',
+                      style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () => _openPdfViewer(it),
                   ),
-                ),
-                icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
-                label: const Text(
-                  'Lire',
-                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () => _openPdfViewer(it),
+                  if (it.gdriveLink != null) ...[
+                    const SizedBox(height: 6),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppTheme.primaryTeal,
+                        side: const BorderSide(color: AppTheme.primaryTeal),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      icon: const Icon(Icons.cloud_download_rounded, size: 14),
+                      label: const Text('Drive', style: TextStyle(fontSize: 11)),
+                      onPressed: () async {
+                        final uri = Uri.parse(it.gdriveLink!);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                    ),
+                  ],
+                ],
               ),
             ],
           ),

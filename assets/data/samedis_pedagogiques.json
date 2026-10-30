@@ -10,7 +10,15 @@
     "pages_count": 5,
     "size_kb": 140.7,
     "description": "Prise en charge hémodynamique immédiate, antibiothérapie probabiliste, remplissage et catécholamines.",
-    "keywords": ["choc septique", "noradrenaline", "lactates", "reanimation", "urgence"]
+    "keywords": [
+      "choc septique",
+      "noradrenaline",
+      "lactates",
+      "reanimation",
+      "urgence"
+    ],
+    "gdrive_id": "1kjVAMf1rethApsodgTJCzXy0U4YtwPCw",
+    "gdrive_link": "https://drive.google.com/file/d/1kjVAMf1rethApsodgTJCzXy0U4YtwPCw/view?usp=drivesdk"
   },
   {
     "id": "sp_urgences_hemato",
@@ -23,7 +31,15 @@
     "pages_count": 8,
     "size_kb": 193.4,
     "description": "Syndrome de lyse tumorale, neutropénie fébrile, CIVD et défaillances hématologiques aiguës.",
-    "keywords": ["hematologie", "lyse tumorale", "neutropenie febrile", "civd", "transfusion"]
+    "keywords": [
+      "hematologie",
+      "lyse tumorale",
+      "neutropenie febrile",
+      "civd",
+      "transfusion"
+    ],
+    "gdrive_id": "1LhWvGpWrnKkyafuHLMi0SuBEA4y_6-q0",
+    "gdrive_link": "https://drive.google.com/file/d/1LhWvGpWrnKkyafuHLMi0SuBEA4y_6-q0/view?usp=drivesdk"
   },
   {
     "id": "sp_hemato_synthese",
@@ -36,7 +52,15 @@
     "pages_count": 12,
     "size_kb": 397.4,
     "description": "Synthèse intégrale des pathologies hématologiques clés tombant au concours et pièges classiques.",
-    "keywords": ["hematologie", "leucemie", "lymphome", "myelome", "anemie"]
+    "keywords": [
+      "hematologie",
+      "leucemie",
+      "lymphome",
+      "myelome",
+      "anemie"
+    ],
+    "gdrive_id": "1gBKEIplhg6-WX8sAfrqLKR9R-2cVb85i",
+    "gdrive_link": "https://drive.google.com/file/d/1gBKEIplhg6-WX8sAfrqLKR9R-2cVb85i/view?usp=drivesdk"
   },
   {
     "id": "sp_anemie_enfant",
@@ -49,7 +73,15 @@
     "pages_count": 16,
     "size_kb": 829.1,
     "description": "Diagnostic étiologique, anémies microcytaires/arégénératives, hémoglobinopathies pédiatriques et traitement.",
-    "keywords": ["pediatrie", "anemie", "thalassemie", "carence martiale", "drpanocytose"]
+    "keywords": [
+      "pediatrie",
+      "anemie",
+      "thalassemie",
+      "carence martiale",
+      "drpanocytose"
+    ],
+    "gdrive_id": "1PyMj0XdZ3pfVlhE5QXOkVimLK_0QZ5QG",
+    "gdrive_link": "https://drive.google.com/file/d/1PyMj0XdZ3pfVlhE5QXOkVimLK_0QZ5QG/view?usp=drivesdk"
   },
   {
     "id": "sp_cancer_colon",
@@ -62,7 +94,15 @@
     "pages_count": 6,
     "size_kb": 96.4,
     "description": "Dépistage, stadification TNM, chirurgie carcinologique, chimiothérapie adjuvante et surveillance.",
-    "keywords": ["cancer du colon", "rectum", "adenocarcinome", "tnm", "chirurgie"]
+    "keywords": [
+      "cancer du colon",
+      "rectum",
+      "adenocarcinome",
+      "tnm",
+      "chirurgie"
+    ],
+    "gdrive_id": "1ykduxxT5Mvwg0A9KobDExQgEbaJ1JZ0m",
+    "gdrive_link": "https://drive.google.com/file/d/1ykduxxT5Mvwg0A9KobDExQgEbaJ1JZ0m/view?usp=drivesdk"
   },
   {
     "id": "sp_cc_gastro",
@@ -75,7 +115,15 @@
     "pages_count": 14,
     "size_kb": 532.3,
     "description": "Cas cliniques progressifs réels avec argumentations diagnostiques et thérapeutiques de Gastro-Hépato.",
-    "keywords": ["cas cliniques", "gastro", "ulcere", "cirrhose", "pancreatite"]
+    "keywords": [
+      "cas cliniques",
+      "gastro",
+      "ulcere",
+      "cirrhose",
+      "pancreatite"
+    ],
+    "gdrive_id": "1PeW5vHbJl5DirFGEyl8ufHGcM60LqAC-",
+    "gdrive_link": "https://drive.google.com/file/d/1PeW5vHbJl5DirFGEyl8ufHGcM60LqAC-/view?usp=drivesdk"
   },
   {
     "id": "sp_cc_neuro",
@@ -88,7 +136,16 @@
     "pages_count": 18,
     "size_kb": 631.1,
     "description": "Série complète de cas cliniques neurologiques typiques du concours : AVC, SEP, épilepsie et comas.",
-    "keywords": ["neurologie", "avc", "sep", "epilepsie", "coma", "myasthenie"]
+    "keywords": [
+      "neurologie",
+      "avc",
+      "sep",
+      "epilepsie",
+      "coma",
+      "myasthenie"
+    ],
+    "gdrive_id": "1Pi0yTzX-oAET3r1yBJEdYDSqdv5YcM1N",
+    "gdrive_link": "https://drive.google.com/file/d/1Pi0yTzX-oAET3r1yBJEdYDSqdv5YcM1N/view?usp=drivesdk"
   },
   {
     "id": "sp_geu",
@@ -101,7 +158,15 @@
     "pages_count": 4,
     "size_kb": 73.2,
     "description": "Tableaux cliniques, critères échographiques, traitement médical par méthotrexate vs chirurgie coelioscopique.",
-    "keywords": ["geu", "beta hcg", "methotrexate", "coelioscopie", "gynco"]
+    "keywords": [
+      "geu",
+      "beta hcg",
+      "methotrexate",
+      "coelioscopie",
+      "gynco"
+    ],
+    "gdrive_id": "1DRuU6CIhKEL3OV52dIMgZ_rTbq12Nyp6",
+    "gdrive_link": "https://drive.google.com/file/d/1DRuU6CIhKEL3OV52dIMgZ_rTbq12Nyp6/view?usp=drivesdk"
   },
   {
     "id": "sp_tuberculose_latente",
@@ -114,7 +179,16 @@
     "pages_count": 5,
     "size_kb": 62.7,
     "description": "Indication des tests IGRA et IDR, schémas de chimioprophylaxie antituberculeuse en Algérie.",
-    "keywords": ["tuberculose latente", "itl", "idr", "quantiferon", "rifampicine", "isoniazide"]
+    "keywords": [
+      "tuberculose latente",
+      "itl",
+      "idr",
+      "quantiferon",
+      "rifampicine",
+      "isoniazide"
+    ],
+    "gdrive_id": "1i9C8IDWhuOk8_jV8Qhl0Uq0xcAu0_-uR",
+    "gdrive_link": "https://drive.google.com/file/d/1i9C8IDWhuOk8_jV8Qhl0Uq0xcAu0_-uR/view?usp=drivesdk"
   },
   {
     "id": "sp_infarctus_mesenterique",
@@ -127,7 +201,14 @@
     "pages_count": 4,
     "size_kb": 54.9,
     "description": "Diagnostic précoce au scanner injecté, réanimation métabolique et revascularisation en urgence.",
-    "keywords": ["infarctus mesenterique", "ischemie aigue", "angioscanner", "laparotomie"]
+    "keywords": [
+      "infarctus mesenterique",
+      "ischemie aigue",
+      "angioscanner",
+      "laparotomie"
+    ],
+    "gdrive_id": "110rEFnqZmddQd9X5t0CZyHz_dbH5qMtC",
+    "gdrive_link": "https://drive.google.com/file/d/110rEFnqZmddQd9X5t0CZyHz_dbH5qMtC/view?usp=drivesdk"
   },
   {
     "id": "sp_hyperuricemies",
@@ -140,7 +221,15 @@
     "pages_count": 7,
     "size_kb": 181.8,
     "description": "Physiopathologie de l'acide urique, traitement de la crise aiguë de goutte et hypouricémiants au long cours.",
-    "keywords": ["hyperuricemie", "goutte", "allopurinol", "colchicine", "rhumato"]
+    "keywords": [
+      "hyperuricemie",
+      "goutte",
+      "allopurinol",
+      "colchicine",
+      "rhumato"
+    ],
+    "gdrive_id": "1EvF2ohPFigk-_dj2D_qI_lJ_8QnRqE0u",
+    "gdrive_link": "https://drive.google.com/file/d/1EvF2ohPFigk-_dj2D_qI_lJ_8QnRqE0u/view?usp=drivesdk"
   },
   {
     "id": "sp_osteopathies",
@@ -153,7 +242,15 @@
     "pages_count": 9,
     "size_kb": 202.5,
     "description": "Ostéoporose, ostéomalacie, hyperparathyroïdie primitive : bilan biologique phosphocalcique et DMO.",
-    "keywords": ["osteoporose", "osteomalacie", "vitamine d", "biphosphonates", "dmo"]
+    "keywords": [
+      "osteoporose",
+      "osteomalacie",
+      "vitamine d",
+      "biphosphonates",
+      "dmo"
+    ],
+    "gdrive_id": "1VWLkexweOnzm_gUta9a0M9DQ2iUKbjhq",
+    "gdrive_link": "https://drive.google.com/file/d/1VWLkexweOnzm_gUta9a0M9DQ2iUKbjhq/view?usp=drivesdk"
   },
   {
     "id": "sp_qcs_vaccination",
@@ -166,7 +263,15 @@
     "pages_count": 8,
     "size_kb": 159.9,
     "description": "Banque de questions à choix simple et choix multiple sur le calendrier vaccinal algérien et contre-indications.",
-    "keywords": ["vaccination", "calendrier vaccinal", "qcs", "contre indications", "pediatrie"]
+    "keywords": [
+      "vaccination",
+      "calendrier vaccinal",
+      "qcs",
+      "contre indications",
+      "pediatrie"
+    ],
+    "gdrive_id": "1n2szJ1TM9SHHrFLdhpTE4UgJlIyEbmnY",
+    "gdrive_link": "https://drive.google.com/file/d/1n2szJ1TM9SHHrFLdhpTE4UgJlIyEbmnY/view?usp=drivesdk"
   },
   {
     "id": "sp_atlas_tnm",
@@ -179,7 +284,15 @@
     "pages_count": 45,
     "size_kb": 13556.5,
     "description": "Guide exhaustif des classifications TNM de toutes les tumeurs solides (poumon, sein, côlon, prostate, etc.).",
-    "keywords": ["tnm", "oncologie", "cancer", "stadification", "metastases"]
+    "keywords": [
+      "tnm",
+      "oncologie",
+      "cancer",
+      "stadification",
+      "metastases"
+    ],
+    "gdrive_id": "1MexGDXOCSo7UgmPr6LvRrKhWSPnU_GnZ",
+    "gdrive_link": "https://drive.google.com/file/d/1MexGDXOCSo7UgmPr6LvRrKhWSPnU_GnZ/view?usp=drivesdk"
   },
   {
     "id": "sp_programme_revision",
@@ -192,6 +305,14 @@
     "pages_count": 6,
     "size_kb": 133.0,
     "description": "Découpage chronologique par modules, couches de révision et répartition du volume de QCMs.",
-    "keywords": ["programme", "planning", "revision", "residanat", "methode"]
+    "keywords": [
+      "programme",
+      "planning",
+      "revision",
+      "residanat",
+      "methode"
+    ],
+    "gdrive_id": "1lXVcSFiGGQgXwstHFWv86kNvA-Syg2li",
+    "gdrive_link": "https://drive.google.com/file/d/1lXVcSFiGGQgXwstHFWv86kNvA-Syg2li/view?usp=drivesdk"
   }
 ]

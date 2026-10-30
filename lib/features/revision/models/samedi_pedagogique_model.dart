@@ -12,6 +12,8 @@ class SamediPedagogiqueItem extends Equatable {
   final double sizeKb;
   final String description;
   final List<String> keywords;
+  final String? gdriveId;
+  final String? gdriveLink;
 
   const SamediPedagogiqueItem({
     required this.id,
@@ -25,6 +27,8 @@ class SamediPedagogiqueItem extends Equatable {
     required this.sizeKb,
     required this.description,
     required this.keywords,
+    this.gdriveId,
+    this.gdriveLink,
   });
 
   String get assetPath => 'assets/data/samedis_pedagogiques/$pdfFile';
@@ -45,23 +49,43 @@ class SamediPedagogiqueItem extends Equatable {
               ?.map((e) => e.toString().toLowerCase())
               .toList() ??
           [],
+      gdriveId: json['gdrive_id'] as String?,
+      gdriveLink: json['gdrive_link'] as String?,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'specialty': specialty,
-        'module': module,
-        'type': type,
-        'type_label': typeLabel,
-        'pdf_file': pdfFile,
-        'pages_count': pagesCount,
-        'size_kb': sizeKb,
-        'description': description,
-        'keywords': keywords,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'specialty': specialty,
+      'module': module,
+      'type': type,
+      'type_label': typeLabel,
+      'pdf_file': pdfFile,
+      'pages_count': pagesCount,
+      'size_kb': sizeKb,
+      'description': description,
+      'keywords': keywords,
+      if (gdriveId != null) 'gdrive_id': gdriveId,
+      if (gdriveLink != null) 'gdrive_link': gdriveLink,
+    };
+  }
 
   @override
-  List<Object?> get props => [id, title, specialty, module, type, pdfFile];
+  List<Object?> get props => [
+        id,
+        title,
+        specialty,
+        module,
+        type,
+        typeLabel,
+        pdfFile,
+        pagesCount,
+        sizeKb,
+        description,
+        keywords,
+        gdriveId,
+        gdriveLink,
+      ];
 }
