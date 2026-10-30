@@ -93,6 +93,27 @@
     "recommended_sources": "Dossier complet Drive Dr Belhout, Annales résidanat, fiches Mon Carnet."
   },
   {
+    "id": "temoignage_zerouala_2026",
+    "name": "Dr Zerouala Soufyane",
+    "rank_badge": "TOP 90 • RÉSIDANAT 2026 🏆",
+    "rank_number": 90,
+    "year": "2026",
+    "faculty": "Faculté de Médecine de Blida",
+    "is_recent_2026": true,
+    "document_type": "pdf_local_and_drive",
+    "target_url": "https://drive.google.com/file/d/1jfxh41kzNgubpXcy1sntRoLdsbFQp9PP/view?usp=drivesdk",
+    "pdf_file": "Dr_Zerouala_Soufyane_90eme_Residanat_2026.pdf",
+    "summary": "Lauréat classé 90ème au Résidanat 2026 (cursus 112, internat avec gardes 1/5 à Blida et Douira). Stratégie fondée sur la régularité ('خير الأعمال أدومها و إن قل'), la méthode Pomodoro 50/10 min, un carnet d'astuces issu des QCMs (Scopio & Medspace Alger) et un investissement massif et décisif en biologie fondamentale.",
+    "key_advices": [
+      "Continuité et discipline (« خير الأعمال أدومها و إن قل ») : Démarrer progressivement puis maintenir une régularité quotidienne sans négliger l'équilibre personnel (sport, détente, séries).",
+      "Technique Pomodoro (50 min / 10 min) : Inspirée du Dr Zarouta pour éviter la lassitude et maximiser la concentration sur les longues sessions de travail.",
+      "Le Conseil en Or - La Biologie : Maîtriser impérativement les matières fondamentales (Anatomie, Embryologie, Histologie, Génétique, Physiologie) car c'est la biologie qui crée le gap décisif au classement final.",
+      "Saturation QCMs & Carnet d'astuces : Pratiquer un maximum de QCMs (Scopio, Medspace Alger pour ses explications détaillées, QCMs d'externat récents) et consigner toutes les pépites dans un carnet pour la dernière semaine."
+    ],
+    "recommended_sources": "Sources organisées Dr Bentegri (TOP 07) & Dr Mouaz (TOP 24), Plateformes Scopio + Medspace Alger, QCMs externat récents, Biologie fondamentale (Anat, Embryo, Histo, Génétique, Physio).",
+    "gdrive_id": "1jfxh41kzNgubpXcy1sntRoLdsbFQp9PP"
+  },
+  {
     "id": "temoignage_rouis_2026",
     "name": "Dr Rouis Nassima",
     "rank_badge": "TOP 97 • RÉSIDANAT 2026 🏆",
