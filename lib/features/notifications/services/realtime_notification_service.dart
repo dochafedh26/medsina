@@ -29,6 +29,7 @@ class RealtimeNotificationService {
   RealtimeChannel? _notificationChannel;
   RealtimeChannel? _readsChannel;
   RealtimeChannel? _announcementChannel;
+  RealtimeChannel? _discoveredChannel;
 
   bool _initialized = false;
   String? _currentUserId;
@@ -475,6 +476,35 @@ class RealtimeNotificationService {
           )
           .subscribe();
 
+      // 5b. Realtime on discovered_blida_resources (INSERT)
+      _discoveredChannel = client
+          .channel('public:discovered_blida_resources')
+          .onPostgresChanges(
+            event: PostgresChangeEvent.insert,
+            schema: 'public',
+            table: 'discovered_blida_resources',
+            callback: (payload) {
+              final newRecord = payload.newRecord;
+              if (newRecord.isEmpty) return;
+              final status = newRecord['status']?.toString();
+              if (status != 'approved') return;
+              final id = 'blida_res_${newRecord['id'] ?? DateTime.now().millisecondsSinceEpoch}';
+              final title = newRecord['title'] ?? 'Nouvelle ressource ajoutée';
+              final notif = MedicalNotification(
+                id: id,
+                title: '⚡ $title',
+                message: '${newRecord['ai_summary'] ?? newRecord['source_origin'] ?? 'Consultez la ressource dans le catalogue.'}',
+                type: NotificationType.course,
+                createdAt: DateTime.now(),
+                targetId: newRecord['id']?.toString(),
+                metadata: newRecord,
+                isRead: _readIds.contains(id),
+              );
+              _pushNewNotification(notif);
+            },
+          )
+          .subscribe();
+
       // 6. Realtime sync on user_notification_reads (cross-device read sync)
       _readsChannel = client
           .channel('public:user_notification_reads')
@@ -625,6 +655,7 @@ class RealtimeNotificationService {
     _notificationChannel?.unsubscribe();
     _readsChannel?.unsubscribe();
     _announcementChannel?.unsubscribe();
+    _discoveredChannel?.unsubscribe();
     _newNotificationController.close();
   }
 }
