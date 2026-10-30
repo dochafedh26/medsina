@@ -147,7 +147,10 @@ class _SamedisPedagogiquesScreenState extends State<SamedisPedagogiquesScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 4,
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
                                 const Text(
                                   'Samedis Pédagogiques (SP)',
@@ -156,7 +159,6 @@ class _SamedisPedagogiquesScreenState extends State<SamedisPedagogiquesScreen> {
                                     fontWeight: FontWeight.w800,
                                   ),
                                 ),
-                                const SizedBox(width: 10),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 3),
@@ -328,127 +330,213 @@ class _SamedisPedagogiquesScreenState extends State<SamedisPedagogiquesScreen> {
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: typeColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(typeIcon, color: typeColor, size: 26),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 480;
+
+              final chipsAndTitle = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2.5),
+                        decoration: BoxDecoration(
+                          color: typeColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          it.typeLabel.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            color: typeColor,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '• ${it.specialty}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                      Text(
+                        '• ${it.pagesCount} pages • ${(it.sizeKb > 1024) ? "${(it.sizeKb / 1024).toStringAsFixed(1)} Mo" : "${it.sizeKb.toStringAsFixed(0)} Ko"}',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    it.title,
+                    style: const TextStyle(
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    it.description,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              );
+
+              final actionButtons = isNarrow
+                  ? Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      alignment: WrapAlignment.end,
+                      children: [
+                        if (it.gdriveLink != null)
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppTheme.primaryTeal,
+                              side: const BorderSide(color: AppTheme.primaryTeal),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 6),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            icon: const Icon(Icons.cloud_download_rounded, size: 14),
+                            label: const Text('Drive', style: TextStyle(fontSize: 11)),
+                            onPressed: () async {
+                              final uri = Uri.parse(it.gdriveLink!);
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(uri,
+                                    mode: LaunchMode.externalApplication);
+                              }
+                            },
+                          ),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryTeal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
+                          label: const Text(
+                            'Lire',
+                            style: TextStyle(
+                                fontSize: 12.5, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () => _openPdfViewer(it),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryTeal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
+                          label: const Text(
+                            'Lire',
+                            style: TextStyle(
+                                fontSize: 12.5, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () => _openPdfViewer(it),
+                        ),
+                        if (it.gdriveLink != null) ...[
+                          const SizedBox(height: 6),
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppTheme.primaryTeal,
+                              side: const BorderSide(color: AppTheme.primaryTeal),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 6),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            icon: const Icon(Icons.cloud_download_rounded, size: 14),
+                            label: const Text('Drive', style: TextStyle(fontSize: 11)),
+                            onPressed: () async {
+                              final uri = Uri.parse(it.gdriveLink!);
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(uri,
+                                    mode: LaunchMode.externalApplication);
+                              }
+                            },
+                          ),
+                        ],
+                      ],
+                    );
+
+              if (isNarrow) {
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2.5),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: typeColor.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
+                            color: typeColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(
-                            it.typeLabel.toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.bold,
-                              color: typeColor,
-                            ),
-                          ),
+                          child: Icon(typeIcon, color: typeColor, size: 24),
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '• ${it.specialty}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade500,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          '${it.pagesCount} pages • ${(it.sizeKb > 1024) ? "${(it.sizeKb / 1024).toStringAsFixed(1)} Mo" : "${it.sizeKb.toStringAsFixed(0)} Ko"}',
-                          style: TextStyle(
-                            fontSize: 11.5,
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
+                        const SizedBox(width: 12),
+                        Expanded(child: chipsAndTitle),
                       ],
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      it.title,
-                      style: const TextStyle(
-                        fontSize: 15.5,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      it.description,
-                      style: TextStyle(
-                        fontSize: 12.5,
-                        color: isDark
-                            ? Colors.grey.shade400
-                            : Colors.grey.shade600,
-                        height: 1.35,
-                      ),
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: actionButtons,
                     ),
                   ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                mainAxisSize: MainAxisSize.min,
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryTeal,
-                      foregroundColor: Colors.white,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: typeColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
-                    label: const Text(
-                      'Lire',
-                      style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () => _openPdfViewer(it),
+                    child: Icon(typeIcon, color: typeColor, size: 26),
                   ),
-                  if (it.gdriveLink != null) ...[
-                    const SizedBox(height: 6),
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppTheme.primaryTeal,
-                        side: const BorderSide(color: AppTheme.primaryTeal),
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      icon: const Icon(Icons.cloud_download_rounded, size: 14),
-                      label: const Text('Drive', style: TextStyle(fontSize: 11)),
-                      onPressed: () async {
-                        final uri = Uri.parse(it.gdriveLink!);
-                        if (await canLaunchUrl(uri)) {
-                          await launchUrl(uri, mode: LaunchMode.externalApplication);
-                        }
-                      },
-                    ),
-                  ],
+                  const SizedBox(width: 14),
+                  Expanded(child: chipsAndTitle),
+                  const SizedBox(width: 10),
+                  actionButtons,
                 ],
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),

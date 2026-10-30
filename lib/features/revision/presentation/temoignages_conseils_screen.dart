@@ -455,15 +455,46 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        item.name,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            item.name,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: item.isRecent2026
+                                  ? Colors.amber.withAlpha(30)
+                                  : Colors.blue.withAlpha(25),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: item.isRecent2026
+                                    ? Colors.amber.withAlpha(150)
+                                    : Colors.blue.withAlpha(80),
+                              ),
+                            ),
+                            child: Text(
+                              item.rankBadge,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: item.isRecent2026
+                                    ? (isDark ? Colors.amber[300] : Colors.amber[900])
+                                    : (isDark ? Colors.blue[300] : Colors.blue[700]),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 3),
                       Text(
                         '${item.faculty} • Promotion ${item.year}',
                         style: TextStyle(
@@ -472,30 +503,6 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
                         ),
                       ),
                     ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: item.isRecent2026
-                        ? Colors.amber.withAlpha(30)
-                        : Colors.blue.withAlpha(25),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: item.isRecent2026
-                          ? Colors.amber.withAlpha(150)
-                          : Colors.blue.withAlpha(80),
-                    ),
-                  ),
-                  child: Text(
-                    item.rankBadge,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: item.isRecent2026
-                          ? (isDark ? Colors.amber[300] : Colors.amber[900])
-                          : (isDark ? Colors.blue[300] : Colors.blue[700]),
-                    ),
                   ),
                 ),
               ],
