@@ -604,22 +604,22 @@
   {
     "id": "memento_metrorragies_geu",
     "title": "🚨 Métrorragies du 1er Trimestre & GEU",
-    "category": "Gynéco-Obstétrique d'Urgence",
+    "category": "Gynécologie-Obstétrique d'Urgence",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation hémodynamique immédiate (TA, Pouls), pose de 2 VVP de gros calibre (18G), remplissage par Cristalloïdes (NaCl 0.9% ou Ringer Lactate) si état de choc, et monitorage continu au déchoquage.",
-      "Étape 2 : Bilan pré-transfusionnel urgent au lit du malade : NFS, Groupe Sanguin (l'épreuve de compatibilité s'impose), Rhésus, Test de Grossesse (β-hCG qualitatif/quantitatif), TP/TCA et Fibrinogène.",
-      "Étape 3 : Échographie pelvienne (sus-pubienne et endovaginale si disponible) en urgence : recherche d'une vacuité utérine, d'un sac gestationnel intra-utérin ou d'une masse annexielle/épanchement du Douglas.",
-      "Étape 4 : Prise en charge thérapeutique : si GEU rompue ou instable = appel immédiat du bloc opératoire pour laparotomie/cœlioscopie d'hémostase. Si GEU non rompue et stable = avis gynécologique pour protocole au Méthotrexate (1 mg/kg IM) après vérification des bilans hépatique et rénal. Si fausse couche spontanée hémorragique = Ocytociques (Syntocinon 5 à 10 UI en IVD lente ou GTT) et évacuation utérine.",
-      "Étape 5 : Administration systématique d'Immunoglobulines anti-D (300 µg IM ou 1500 UI) dans les 72 heures pour toute patiente de Rhésus NÉGATIF, quel que soit le statut du conjoint, pour prévenir l'allo-immunisation fœto-maternelle.",
-      "Étape 6 : Piège médico-légal absolu : toute femme en âge de procréer présentant des douleurs pelviennes ou des métrorragies a une GEU jusqu'à preuve du contraire (β-hCG et écho obligatoires avant tout renvoi à domicile)."
+      "Étape 1 : Évaluation hémodynamique immédiate (TA, Pouls). Si choc (PAS < 90 mmHg, tachycardie) : pose de 2 VVP de grand calibre (14-16G), remplissage par Cristalloïdes (NaCl 0.9% ou Ringer Lactate) et appel urgent du gynécologue de garde et du réanimateur.",
+      "Étape 2 : Bilan pré-transfusionnel en urgence au lit du malade : Groupe Sanguin (l'épreuve au lit par le clinicien reste la règle en Algérie), Rhésus, NFS, Hémoglobine, Bêta-HCG plasmatiques quantitatifs, Fonction rénale et Bilan d'hémostase (TP, TCA, Fibrinogène).",
+      "Étape 3 : Échographie pelvienne (sus-pubienne et endovaginale si disponible) en urgence à la recherche d'une vacuité utérine, d'un sac gestationnel intra-utérin ou d'une masse annexielle latéro-utérine avec épanchement du Douglas.",
+      "Étape 4 : Thérapeutique de 1ère intention : Si patiente de Rhésus négatif et de Rhésus inconnu chez le conjoint, administrer systématiquement 200 µg (1000 UI) d'Immunoglobulines anti-D IV/IM dans les 72h en l'absence de sensibilisation. Si GEU non compliquée hémodynamiquement stable : protocole médical par Méthotrexate (1 mg/kg ou 50 mg/m² en IM unique) selon les critères stricts (hCG < 5000 UI/L, pas d'activité cardiaque embryonnaire).",
+      "Étape 5 : Surveillance armée en unité de surveillance continue : diurèse horaire, contrôle répété de l'Hb. Critères absolus de transfert en bloc opératoire / réanimation : instabilité hémodynamique persistante malgré le remplissage, hémopéritoine massif à l'échographie, ou rupture de GEU symptomatique.",
+      "Étape 6 : Piège médicolégal absolu : Ne JAMAIS éliminer une GEU sur la seule base d'un test urinaire positif ou négatif, ni débuter un traitement par Méthotrexate sans avoir formellement éliminé une grossesse intra-utérine évolutive par l'échographie."
     ],
-    "scientific_references": "CNGOF / SFMU / Recommandations du MSPRH Algérie pour la prise en charge des urgences gynécologiques",
+    "scientific_references": "CNGOF / SFMU / Collège National des Gynécologues Obstétriciens Algériens (CNGOA) / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-29T08:37:18.525893+00:00",
-    "updated_at": "2026-10-29T08:37:18.525908+00:00"
+    "created_at": "2026-10-30T19:28:57.910445+00:00",
+    "updated_at": "2026-10-30T19:28:57.910461+00:00"
   },
   {
     "id": "memento_convulsion_febrile_emp",
