@@ -739,5 +739,21 @@
     ],
     "created_at": "2026-10-30T02:47:36.313276+00:00",
     "updated_at": "2026-10-30T02:47:36.313290+00:00"
+  },
+  {
+    "id": "lab_cortisol_uri_freinage_dexa",
+    "name": "Cortisol libre urinaire des 24h (CLU) & Test de freinage minute à la Dexaméthasone",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "CLU : 50 - 250 µg/24h (130 - 680 nmol/24h) | Freinage minute (1mg à minuit) : Cortisolemie post-test < 50 nmol/L (< 1.8 µg/dL)",
+    "unit": "µg/24h (CLU) et nmol/L ou µg/dL (Freinage)",
+    "high_interpretation": "Hypercortisolisme (Maladie de Cushing, Syndrome de Cushing ACTH-dépendant ou ACTH-indépendant, Pseudo-Cushing : alcoolisme, obésité morbide, dépression). Conduite à tenir : Éliminer une corticothérapie exogène (interrogatoire), confirmer par un 2ème test de première intention (CLU, freinage ou cortisol salivaire nocturne), puis doser l'ACTH plasmatique pour orienter l'enquête étiologique.",
+    "low_interpretation": "Insuffisance surrénalienne (primaire ou secondaire). Note : Le test de freinage minute ne sert pas à explorer l'hypocortisolisme (qui nécessite un test au Synacthène). Un CLU effondré plaide pour une insuffisance surrénalienne chronique ou une freinage iatrogène par les corticoïdes.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : s'assurer de la rigueur de la collecte des urines de 24h (vérifier la créatininurie des 24h pour valider la complétude de la miction).",
+      "Faux positifs du freinage minute : inducteurs enzymatiques (phénytoïne, carbamazépine, rifampicine accélérant la clairance de la dexaméthasone), estrogènes (augmentant la CBG), stress aigu, obésité, dépression.",
+      "Piège du concours : une insuffisance surrénalienne secondaire (hypophysaire) se traduit par une ACTH basse ou inadaptéement normale, un cortisol bas, mais un test au Synacthène pouvant être normal au tout début (atrophie surrénalienne non encore installée)."
+    ],
+    "created_at": "2026-10-30T10:18:49.939478+00:00",
+    "updated_at": "2026-10-30T10:18:49.939490+00:00"
   }
 ]
