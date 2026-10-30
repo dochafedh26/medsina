@@ -11,6 +11,8 @@ class TemoignageConseilItem extends Equatable {
   final String documentType; // 'pdf_local', 'gdrive_url', 'gdrive_folder', 'pdf_local_and_drive'
   final String? targetUrl;
   final String? gdriveFolderUrl;
+  final String? gdriveId;
+  final String? extraGdriveId;
   final String? pdfFile;
   final String? extraPdfFile;
   final String summary;
@@ -28,6 +30,8 @@ class TemoignageConseilItem extends Equatable {
     required this.documentType,
     this.targetUrl,
     this.gdriveFolderUrl,
+    this.gdriveId,
+    this.extraGdriveId,
     this.pdfFile,
     this.extraPdfFile,
     required this.summary,
@@ -53,6 +57,8 @@ class TemoignageConseilItem extends Equatable {
       documentType: json['document_type'] as String? ?? 'pdf_local',
       targetUrl: json['target_url'] as String?,
       gdriveFolderUrl: json['gdrive_folder_url'] as String?,
+      gdriveId: json['gdrive_id'] as String?,
+      extraGdriveId: json['extra_gdrive_id'] as String?,
       pdfFile: json['pdf_file'] as String?,
       extraPdfFile: json['extra_pdf_file'] as String?,
       summary: json['summary'] as String? ?? '',
@@ -75,6 +81,8 @@ class TemoignageConseilItem extends Equatable {
         'document_type': documentType,
         'target_url': targetUrl,
         if (gdriveFolderUrl != null) 'gdrive_folder_url': gdriveFolderUrl,
+        if (gdriveId != null) 'gdrive_id': gdriveId,
+        if (extraGdriveId != null) 'extra_gdrive_id': extraGdriveId,
         'pdf_file': pdfFile,
         'extra_pdf_file': extraPdfFile,
         'summary': summary,
@@ -91,6 +99,7 @@ class TemoignageConseilItem extends Equatable {
         documentType,
         targetUrl,
         gdriveFolderUrl,
+        gdriveId,
         pdfFile,
       ];
 }

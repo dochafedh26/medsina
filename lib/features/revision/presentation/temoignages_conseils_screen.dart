@@ -85,6 +85,7 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
     if (pdfPath == null) return;
 
     final titleSuffix = isExtra ? ' (Complément)' : '';
+    final driveId = isExtra ? item.extraGdriveId : item.gdriveId;
     final mockCourse = CourseModel(
       id: '${item.id}${isExtra ? "_extra" : ""}',
       moduleId: 'temoignages',
@@ -92,6 +93,7 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
       questionsCount: 0,
       hasPdf: true,
       pdfDownloadUrl: pdfPath,
+      pdfDriveId: driveId,
     );
 
     Navigator.push(
@@ -557,7 +559,7 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
                 ),
               ),
 
-            const Spacer(),
+            const SizedBox(height: 12),
 
             // Recommended sources if available
             if (item.recommendedSources.isNotEmpty) ...[

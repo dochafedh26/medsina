@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:dio/dio.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart' as p;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -105,12 +107,7 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
     });
 
     try {
-      final streamUrl = _getStreamUrl();
-      if (streamUrl.isEmpty) {
-        throw Exception('Support PDF non disponible pour ce cours.');
-      }
-
-      // Check if course is already available offline in local sandbox
+      // 1. Check if course is already available offline in local sandbox
       final cacheFile = await OfflineCourseManager.instance.getCourseFile(widget.course.id);
       if (await cacheFile.exists() && await cacheFile.length() > 1024) {
         final bytes = await cacheFile.readAsBytes();
@@ -121,6 +118,55 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
           });
         }
         return;
+      }
+
+      // 2. Check if the course is an in-app asset (e.g. assets/data/samedis_pedagogiques/...)
+      final rawDownloadUrl = widget.course.pdfDownloadUrl ?? '';
+      if (rawDownloadUrl.startsWith('assets/') || rawDownloadUrl.startsWith('packages/')) {
+        try {
+          final byteData = await rootBundle.load(rawDownloadUrl);
+          final bytes = byteData.buffer.asUint8List();
+          // Write to local cache for instant future retrieval
+          try {
+            if (!await cacheFile.parent.exists()) {
+              await cacheFile.parent.create(recursive: true);
+            }
+            await cacheFile.writeAsBytes(bytes);
+          } catch (_) {}
+
+          if (mounted) {
+            setState(() {
+              _pdfBytes = bytes;
+              _isLoading = false;
+            });
+          }
+          return;
+        } catch (assetErr) {
+          debugPrint('Notice: unable to load asset "$rawDownloadUrl", falling back to network: $assetErr');
+        }
+      }
+
+      // 3. Check if it is a local filesystem path on device
+      if (!rawDownloadUrl.startsWith('http://') &&
+          !rawDownloadUrl.startsWith('https://') &&
+          rawDownloadUrl.isNotEmpty) {
+        final localFile = File(rawDownloadUrl);
+        if (await localFile.exists()) {
+          final bytes = await localFile.readAsBytes();
+          if (mounted) {
+            setState(() {
+              _pdfBytes = bytes;
+              _isLoading = false;
+            });
+          }
+          return;
+        }
+      }
+
+      // 4. Fall back to secure remote streaming via Google Drive or HTTP
+      final streamUrl = _getStreamUrl();
+      if (streamUrl.isEmpty || (!streamUrl.startsWith('http://') && !streamUrl.startsWith('https://'))) {
+        throw Exception('Support PDF non disponible pour ce cours.');
       }
 
       // Download bytes privately into sandbox cache
