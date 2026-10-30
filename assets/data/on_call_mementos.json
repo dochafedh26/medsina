@@ -873,5 +873,24 @@
     "is_active": true,
     "created_at": "2026-10-29T16:14:00.164687+00:00",
     "updated_at": "2026-10-29T16:14:00.164700+00:00"
+  },
+  {
+    "id": "memento_retention_aigue_urine",
+    "title": "💧 Rétention Aiguë d'Urine & Globe Vésical",
+    "category": "Urgences Urologiques",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Diagnostic clinique immédiat (palpation/percussion d'un globe sus-pubien mat, douloureux, anxiété majeure) et élimination d'une anurie (toucher rectal et examen des OGE).",
+      "Étape 2 : Bilan biologique urgent au lit (Urée, Créatinine pour rechercher une insuffisance rénale aiguë obstructive, Ionogramme sanguin, NFS, ECBU si sepsis associé).",
+      "Étape 3 : Sondage vésical stérile en urgence (Sonde de Foley Ch 16-18 ou Ch 20-22 si hématurie avec caillots). En cas d'échec ou de traumatisme suspecté/sténose : pose d'un cathéter sus-pubien (CSP) sous anesthésie locale.",
+      "Étape 4 : Décompression progressive si globe volumineux (> 1000 ml) : clampage intermittent de la sonde toutes les 30 minutes (250-500 ml) pour éviter le syndrome de levée d'obstacle (chute tensionnelle et hématurie ex vacuo).",
+      "Étape 5 : Surveillance armée (diurèse horaire, aspect des urines, contrôle tensionnel) et relais étiologique (initiation d'un alpha-bloquant type Alfuzosine 10 mg/j si HBP après avis urologique avant toute tentative de clampage-ablation)."
+    ],
+    "scientific_references": "Recommandations AFU / SFMU / Consensus Urologie MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-30T14:17:03.597855+00:00",
+    "updated_at": "2026-10-30T14:17:03.597868+00:00"
   }
 ]
