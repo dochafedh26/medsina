@@ -1,0 +1,201 @@
+[
+  {
+    "id": "temoignage_bentegri_2026",
+    "name": "Dr Bentegri Zakaria",
+    "rank_badge": "TOP 07 • BLIDA 2026 🏆",
+    "rank_number": 7,
+    "year": "2026",
+    "faculty": "Faculté de Médecine de Blida",
+    "is_recent_2026": true,
+    "document_type": "gdrive_url",
+    "target_url": "https://drive.google.com/file/d/1GSsVtpR2H7dh_UO8aJ_zewg1UyikQqQp/view?usp=sharing",
+    "summary": "Major TOP 07 au Résidanat de Blida 2026. Stratégie d'apprentissage ciblée sur les cours officiels de Blida et saturation de QCMs d'annales corrigées.",
+    "key_advices": [
+      "Maîtriser en priorité le cours de la faculté de Blida avant d'ouvrir toute source annexe.",
+      "Réviser en double couche : compréhension active puis répétition immédiate sur annales.",
+      "Garder le moral et s'entraîner régulièrement en conditions réelles de temps."
+    ],
+    "recommended_sources": "Cours officiels Blida 2025-2026, Annales Alger & Blida 2015-2025, Fiches réflexes de garde."
+  },
+  {
+    "id": "temoignage_benkheira_2026",
+    "name": "Dr Benkheira Ikram",
+    "rank_badge": "TOP 20 • BLIDA 2026 🏆",
+    "rank_number": 20,
+    "year": "2026",
+    "faculty": "Faculté de Médecine de Blida",
+    "is_recent_2026": true,
+    "document_type": "gdrive_url",
+    "target_url": "https://drive.google.com/file/d/1qoIYIMS2HUDkFIBv0ntvkEWKD--CcwwX/view?usp=sharing",
+    "summary": "Classée TOP 20 au Résidanat de Blida 2026. Organisation rigoureuse pendant l'internat, conciliation des gardes hospitalières et révision intensive.",
+    "key_advices": [
+      "Optimiser chaque heure creuse pendant l'internat et les gardes.",
+      "Ne pas accumuler de sources dispersées : choisir un support unique et le maîtriser à fond.",
+      "Faire des flashcards ou des fiches mémos pour les posologies et pièges fréquents."
+    ],
+    "recommended_sources": "Support unique de cours, banques de QCMs officielles, résumés ciblés."
+  },
+  {
+    "id": "temoignage_mouaz_2026",
+    "name": "Dr MOUAZ Zakaria",
+    "rank_badge": "TOP 24 • BLIDA 2026 🏆",
+    "rank_number": 24,
+    "year": "2026",
+    "faculty": "Faculté de Médecine de Blida",
+    "is_recent_2026": true,
+    "document_type": "gdrive_url",
+    "target_url": "https://drive.google.com/file/d/16j_yOUSVreEeKAxzFjAOVQNnGvVCC94l/view?usp=sharing",
+    "summary": "Classé TOP 24 au Résidanat de Blida 2026. Méthode pragmatique et sélection fine des cours fondamentaux à haut coefficient de tombabilité.",
+    "key_advices": [
+      "Accorder une attention maximale aux modules lourds (Cardio, Gastro, Neuro, Pédiatrie).",
+      "Ne négliger aucun petit module (Médecine légale, Droit, Travail) qui font la différence au classement.",
+      "Faire des séries thématiques régulières pour fixer les réflexes diagnostiques."
+    ],
+    "recommended_sources": "Annales classées par module, cours officiels, fiches de synthèse GMA."
+  },
+  {
+    "id": "temoignage_belhout_2026",
+    "name": "Dr Belhout Meriem",
+    "rank_badge": "TOP 46 • BLIDA 2026 🏆",
+    "rank_number": 46,
+    "year": "2026",
+    "faculty": "Faculté de Médecine de Blida",
+    "is_recent_2026": true,
+    "document_type": "gdrive_folder",
+    "target_url": "https://drive.google.com/drive/folders/1-NgPKBA4PNC8SVNotO9-qvK1yVoqhhvw?usp=sharing",
+    "summary": "Classée TOP 46 au Résidanat de Blida 2026. Partage de son Google Drive complet comprenant tous ses supports de révision et fiches classées.",
+    "key_advices": [
+      "Planifier son année en 3 couches distinctes avec date butoir.",
+      "Consulter les dossiers et annales des Samedis Pédagogiques pour les cas cliniques.",
+      "Avoir accès à ses cours hors-ligne pour réviser partout sans contrainte de réseau."
+    ],
+    "recommended_sources": "Dossier complet Drive Dr Belhout, Annales résidanat, fiches Mon Carnet."
+  },
+  {
+    "id": "temoignage_ferhat_2025",
+    "name": "Dr Ferhat",
+    "rank_badge": "CLASSIFICATION & SOURCES OFFICIELLES ⭐",
+    "rank_number": 15,
+    "year": "2025",
+    "faculty": "Faculté de Médecine de Blida",
+    "is_recent_2026": false,
+    "document_type": "pdf_local",
+    "pdf_file": "Temoignage_Dr_Ferhat.pdf",
+    "extra_pdf_file": "Modules_Et_Sources_Dr_Ferhat.pdf",
+    "summary": "Auteur du pack de référence 'Résidanat Dr Ferhat'. Guide ultra-détaillé module par module (47 modules) avec sources idéales et cahier de tours.",
+    "key_advices": [
+      "Suivre la cartographie exacte des sources testées par les majors précédents.",
+      "Annoter ses propres cours ('Highlighted by me') pour une relecture ultra-rapide au dernier tour.",
+      "Utiliser les fiches 'À ne pas oublier' dans les matières de par cœur (Biochimie, Microbio)."
+    ],
+    "recommended_sources": "Pack Ferhat, Collection Mon Carnet, Fiches GMA, Drive Mahdaoui."
+  },
+  {
+    "id": "temoignage_boutiouta_2025",
+    "name": "Dr Boutiouta",
+    "rank_badge": "MAJOR NATIONALE • 1ÈRE 2025 🥇",
+    "rank_number": 1,
+    "year": "2025",
+    "faculty": "Concours National de Résidanat",
+    "is_recent_2026": false,
+    "document_type": "pdf_local",
+    "pdf_file": "Dr_Boutiouta_1ere_2025.pdf",
+    "summary": "Major Nationale au Concours de Résidanat 2025 (1ère place). Méthodologie d'excellence, discipline de fer et analyse approfondie des annales.",
+    "key_advices": [
+      "La régularité quotidienne prime sur les coups d'accélérateur occasionnels.",
+      "Comprendre la physiopathologie permet de répondre à n'importe quel QCM inédit.",
+      "Refaire au moins 3 fois l'intégralité des annales des 10 dernières années."
+    ],
+    "recommended_sources": "Cours officiels, annales nationales multi-facultés, synthèses cliniques."
+  },
+  {
+    "id": "temoignage_dilmi_2025",
+    "name": "Dr Dilmi",
+    "rank_badge": "TOP 05 NATIONAL 2025 🏆",
+    "rank_number": 5,
+    "year": "2025",
+    "faculty": "Concours National de Résidanat",
+    "is_recent_2026": false,
+    "document_type": "pdf_local",
+    "pdf_file": "Dr_Dilmi_5eme_2025.pdf",
+    "summary": "Classé 5ème au concours national 2025. Stratégie de mémorisation espacée et gestion optimale du stress pré-concours.",
+    "key_advices": [
+      "Ne pas se laisser déborder par la panique des derniers mois.",
+      "Se concentrer sur les questions discriminantes et les pièges classiques du Pr.",
+      "Privilégier la qualité de révision à la quantité brute de pages lues."
+    ],
+    "recommended_sources": "Supports officiels, résumés concis, fiches d'urgences."
+  },
+  {
+    "id": "temoignage_nouaret_2024",
+    "name": "Dr Nouaret",
+    "rank_badge": "MAJOR NATIONALE • 1ÈRE 2024 🥇",
+    "rank_number": 1,
+    "year": "2024",
+    "faculty": "Concours National de Résidanat",
+    "is_recent_2026": false,
+    "document_type": "pdf_local",
+    "pdf_file": "Dr_Nouaret_1ere_2024.pdf",
+    "summary": "Major Nationale du Concours de Résidanat 2024. Créatrice des fiches réputées de pharmacologie et psychiatrie du concours.",
+    "key_advices": [
+      "Structurer chaque cours sous forme d'arbre décisionnel et de tableaux comparatifs.",
+      "Maîtriser les thérapeutiques et contre-indications de première intention.",
+      "S'entraîner régulièrement en binôme ou petit groupe pour tester ses connaissances."
+    ],
+    "recommended_sources": "Drive Dr Nouaret, fiches thérapeutiques, annales nationales."
+  },
+  {
+    "id": "temoignage_ali_bachir_2024",
+    "name": "Dr Ali Bachir",
+    "rank_badge": "TOP 09 NATIONAL 2024 🏆",
+    "rank_number": 9,
+    "year": "2024",
+    "faculty": "Concours National de Résidanat",
+    "is_recent_2026": false,
+    "document_type": "pdf_local",
+    "pdf_file": "Dr_Ali_Bachir_9eme_2024.pdf",
+    "summary": "Classé 9ème au concours de Résidanat 2024. Approche synthétique orientée QCM et gain de temps.",
+    "key_advices": [
+      "Identifier immédiatement ce qui tombe souvent au concours pour chaque chapitre.",
+      "Ne pas perdre de temps sur des détails historiques ou non validés par le programme.",
+      "Faire des examens blancs hebdomadaires dès le mois de juin."
+    ],
+    "recommended_sources": "Annales classées, fiches flash, cours de synthèse."
+  },
+  {
+    "id": "temoignage_megateli_2023",
+    "name": "Dr Megateli",
+    "rank_badge": "MAJOR NATIONALE • 1ÈRE 2023 🥇",
+    "rank_number": 1,
+    "year": "2023",
+    "faculty": "Concours National de Résidanat",
+    "is_recent_2026": false,
+    "document_type": "pdf_local",
+    "pdf_file": "Dr_Megateli_1ere_2023.pdf",
+    "summary": "Major Nationale du Concours de Résidanat 2023. Auteure du Drive Megateli regroupant l'ensemble des modules d'externat et de biologie.",
+    "key_advices": [
+      "Commencer tôt et construire ses fiches personnelles tout au long des stages.",
+      "Associer clinique et biologie pour une vision médicale intégrative.",
+      "Répéter inlassablement les questions d'examens tombées les 15 dernières années."
+    ],
+    "recommended_sources": "Drive Dr Megateli, annales complètes de toutes les facultés algériennes."
+  },
+  {
+    "id": "temoignage_aissaoui_2025",
+    "name": "Dr Aissaoui",
+    "rank_badge": "TOP 44 NATIONAL 2025 🏆",
+    "rank_number": 44,
+    "year": "2025",
+    "faculty": "Concours National de Résidanat",
+    "is_recent_2026": false,
+    "document_type": "pdf_local",
+    "pdf_file": "Dr_Aissaoui_44eme_2025.pdf",
+    "summary": "Classé 44ème au concours 2025. Conseils sur la gestion du temps de révision, la concentration et le choix de spécialité.",
+    "key_advices": [
+      "Avoir confiance en son travail et garder une hygiène de vie saine pendant la préparation.",
+      "Vérifier les consensus récents (notamment en cardiologie et diabétologie).",
+      "Éviter les rumeurs et se concentrer uniquement sur les sources fiables."
+    ],
+    "recommended_sources": "Cours actualisés, consensus récents, banques de QCMs vérifiées."
+  }
+]

@@ -60,3 +60,4 @@ jobs:
             echo "$TELEGRAM_SESSION_B64" | base64 -d > scripts/automation/medsina_user.session
           fi
           python scripts/automation/telegram_promo_hunter.py --live --max ${{ inputs.max_replies || 2 }}
+

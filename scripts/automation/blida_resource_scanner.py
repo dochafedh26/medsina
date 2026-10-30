@@ -164,6 +164,28 @@ def resolve_gemini_key(supabase_url: str, supabase_key: str) -> str:
     return ""
 
 
+def load_drives_from_gdrives_txt() -> List[str]:
+    """Loads monitored Google Drive URLs from assets/drives/gdrives.txt."""
+    candidates = [
+        Path("assets/drives/gdrives.txt"),
+        Path("medsina/assets/drives/gdrives.txt"),
+        Path(r"D:\REVISION RESIDANAT\ressources\residanat-blida-2027\medsina\assets\drives\gdrives.txt"),
+    ]
+    drive_urls = []
+    for c in candidates:
+        if c.exists():
+            try:
+                for line in c.read_text(encoding="utf-8").splitlines():
+                    clean = line.strip()
+                    if clean.startswith("http") and "drive.google.com" in clean:
+                        drive_urls.append(clean)
+                if drive_urls:
+                    break
+            except Exception:
+                pass
+    return drive_urls
+
+
 def fetch_configured_sources(supabase_url: str, supabase_key: str) -> List[str]:
     sources: List[str] = []
     if supabase_key:
@@ -188,6 +210,13 @@ def fetch_configured_sources(supabase_url: str, supabase_key: str) -> List[str]:
 
     if not sources:
         sources = list(DEFAULT_SOURCES)
+
+    # Always ensure the monitored Google Drives from gdrives.txt are included
+    file_drives = load_drives_from_gdrives_txt()
+    for d in file_drives:
+        if d not in sources:
+            sources.append(d)
+
     return sources
 
 

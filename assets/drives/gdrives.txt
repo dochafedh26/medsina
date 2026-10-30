@@ -1,0 +1,65 @@
+# =============================================================================
+# MEDSINA — SOURCES GOOGLE DRIVE OFFICIELLES & SURVEILLÉES (17 DRIVES)
+# =============================================================================
+# Ces liens sont automatiquement inspectés par le scanner Medsina
+# (scripts/automation/blida_resource_scanner.py) pour détecter et indexer
+# en continu les nouveaux cours, fiches, QCMs et sujets sans duplication.
+# =============================================================================
+
+# --- 1. COURS OFFICIELS FACULTÉ DE MÉDECINE DE BLIDA (PROMOTION 2025 - 2026) ---
+# Drive 2ème Année Médecine Blida 2025-2026
+https://drive.google.com/drive/folders/1UjaxyXp8pU56jlz-F7K-MGECj2pheF21?usp=sharing
+
+# Drive 3ème Année Médecine Blida 2025-2026
+https://drive.google.com/drive/folders/1JYDVaU42brJ3TQPRGbrO90L5a_FSK6Q4?usp=sharing
+
+# Drive 4ème Année Médecine Blida 2025-2026
+https://drive.google.com/drive/folders/1Bka0eECqgf1A0Iyu9VSsfPgBAzDcPa_w?usp=sharing
+
+# Drive 5ème Année Médecine Blida 2025-2026
+https://drive.google.com/drive/folders/1P_qrApYN84T6jlu1qwxPzHvlWVOnGqVd?usp=sharing
+
+# Drive 6ème Année Médecine Blida 2025-2026
+https://drive.google.com/drive/folders/1q6cZ52JWDRrIOhCmL0TclGBTv_u0aaIq?usp=sharing
+
+# Drive Archives Années Précédentes Blida
+https://drive.google.com/drive/folders/1-4j0fd19TOa4jyAFeIIzbh6zIu085O5q?usp=sharing
+
+
+# --- 2. DRIVES DE RÉFÉRENCE NATIONALE & MAJORS DU CONCOURS ---
+# Drive Dr. Mahdaoui (Cours & QCMs de référence)
+https://drive.google.com/drive/folders/1aAngO0Y0gX-LfMR-JQqxqauVHCPZUVJ5?usp=sharing
+
+# Drive Dr. Nouaret (Major 2024 - Fiches Pharmacologie & Résidanat)
+https://drive.google.com/drive/folders/1jdJczV8lu7Wvu_2k6KLfIltVxN_T6P3f?usp=sharing
+
+# Drive Dr. Megateli (Major 2023 - Modules Cliniques & Biologiques)
+https://drive.google.com/drive/folders/1888ecPxZRrxbhzjdb3hSFGv23yzvExjz?usp=sharing
+
+# Collection Résidanat Blida (Fiches & EMDs centralisés)
+https://drive.google.com/drive/folders/1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo?usp=sharing
+
+# Résumés Dr. Chakib Goumari - CG (Cardio, Pneumo & Clinique)
+https://drive.google.com/drive/folders/1j0G8NAA4cCPYqSAY3y-icIHWN88UYsnx?usp=sharing
+
+
+# --- 3. DOSSIERS EXTERNES BLIDA & RESSOURCES EN LIGNE ---
+# Drive Externe Blida - Dossier 1 (EMDs & QCMs)
+https://drive.google.com/drive/folders/1qoUJmo3O5hFmCm1XihW98dlkT14BTwFZ?usp=sharing
+
+# Drive Externe Blida - Dossier 2 (Polycopies & Cours)
+https://drive.google.com/drive/folders/1BpTxu2_pnUsJ5CEHifBE3i_4lCt_-1FJ?usp=sharing
+
+
+# --- 4. TÉMOIGNAGES & DRIVES DES MAJORS DU RÉSIDANAT BLIDA 2026 ---
+# Drive Dr Belhout Meriem (TOP 46 Résidanat Blida 2026 - Dossier complet)
+https://drive.google.com/drive/folders/1-NgPKBA4PNC8SVNotO9-qvK1yVoqhhvw?usp=sharing
+
+# Fiche Méthode Dr Benkheira Ikram (TOP 20 Résidanat Blida 2026)
+https://drive.google.com/file/d/1qoIYIMS2HUDkFIBv0ntvkEWKD--CcwwX/view?usp=sharing
+
+# Fiche Méthode Dr Bentegri Zakaria (TOP 07 Résidanat Blida 2026)
+https://drive.google.com/file/d/1GSsVtpR2H7dh_UO8aJ_zewg1UyikQqQp/view?usp=sharing
+
+# Fiche Méthode Dr MOUAZ Zakaria (TOP 24 Résidanat Blida 2026)
+https://drive.google.com/file/d/16j_yOUSVreEeKAxzFjAOVQNnGvVCC94l/view?usp=sharing

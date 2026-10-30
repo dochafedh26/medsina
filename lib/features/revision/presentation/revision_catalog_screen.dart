@@ -26,6 +26,8 @@ import '../../group_revision/presentation/group_revision_hub_screen.dart';
 import '../../../core/services/cloud_sync_service.dart';
 import '../services/offline_course_manager.dart';
 import 'offline_storage_screen.dart';
+import 'samedis_pedagogiques_screen.dart';
+import 'temoignages_conseils_screen.dart';
 
 class RevisionCatalogScreen extends StatefulWidget {
   const RevisionCatalogScreen({super.key});
@@ -158,11 +160,19 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                     icon: Icon(Icons.psychology_alt_rounded, size: 20),
                     text: 'Flashcards FSRS 🧠',
                   ),
+                  const Tab(
+                    icon: Icon(Icons.school_rounded, size: 20),
+                    text: 'Samedis Pédagogiques 📚',
+                  ),
+                  const Tab(
+                    icon: Icon(Icons.lightbulb_rounded, size: 20),
+                    text: 'Témoignages & Conseils 💡',
+                  ),
                 ],
               );
 
               return DefaultTabController(
-                length: 6,
+                length: 8,
                 child: Column(
                   children: [
                     // Navigation TabBar: On mobile and tablet, TabBar has 100% full width to avoid squishing tabs!
@@ -209,8 +219,14 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                           // Tab 5: Study Planner par Couches & Analytics
                           const StudyPlannerScreen(),
 
-                          // Tab 4: Répétition Espacée FSRS & Flashcards
+                          // Tab 6: Répétition Espacée FSRS & Flashcards
                           const FlashcardsFsrsScreen(),
+
+                          // Tab 7: Samedis Pédagogiques (Dr KARE & Enseignants)
+                          const SamedisPedagogiquesScreen(),
+
+                          // Tab 8: Retours d'expérience, Témoignages & Conseils des Majors
+                          const TemoignagesConseilsScreen(),
                         ],
                       ),
                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/services/recent_activity_service.dart';
@@ -12,6 +13,8 @@ import '../../subscription/presentation/referral_screen.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
+import '../../ai_assistant/presentation/study_coach_screen.dart';
+import '../../clinical/presentation/case_simulator_screen.dart';
 import 'daily_pearls_archive_screen.dart';
 import '../../national_exam/presentation/national_exams_list_screen.dart';
 import '../../group_revision/presentation/group_revision_hub_screen.dart';
@@ -46,15 +49,30 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Overview Stats Grid
-              _buildStatsGrid(context, tier, user?.isSubscriptionActive == false),
+              _buildStatsGrid(
+                context,
+                tier,
+                user?.isSubscriptionActive == false,
+              ),
               const SizedBox(height: 20),
 
               // Collaborative Revision & National Exam Banners
               _buildCollaborativeAndExamRow(context),
               const SizedBox(height: 24),
 
+              // MedsinaCoach AI study plan
+              _buildStudyCoachPromoCard(context),
+              const SizedBox(height: 24),
+
+              // Clinical case simulator
+              _buildCaseSimulatorPromoCard(context),
+              const SizedBox(height: 24),
+
               // Clinical Tip of the Day
-              ClinicalTipCard(tier: tier, isSubscriptionActive: user?.isSubscriptionActive ?? true),
+              ClinicalTipCard(
+                tier: tier,
+                isSubscriptionActive: user?.isSubscriptionActive ?? true,
+              ),
               const SizedBox(height: 24),
 
               // Ambassador & Referral Viral Card
@@ -74,12 +92,19 @@ class DashboardScreen extends StatelessWidget {
                 tier == SubscriptionTier.clinicalPro
                     ? 'Actions Rapides Urgences & Clinique'
                     : (tier == SubscriptionTier.residentElite
-                        ? 'Continuité de Révision & Entraînement Résidanat'
-                        : 'Accès Rapide & Continuité de Révision'),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                          ? 'Continuité de Révision & Entraînement Résidanat'
+                          : 'Accès Rapide & Continuité de Révision'),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 14),
-              _buildQuickAccessCards(context, tier, user?.isSubscriptionActive == false),
+              _buildQuickAccessCards(
+                context,
+                tier,
+                user?.isSubscriptionActive == false,
+              ),
             ],
           ),
         );
@@ -87,15 +112,13 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-
-
   Widget _buildOmnisearchQuickBar(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const GlobalSearchScreen()));
       },
       borderRadius: BorderRadius.circular(14),
       child: Container(
@@ -123,7 +146,11 @@ class DashboardScreen extends StatelessWidget {
                 color: AppTheme.primaryTeal.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.search_rounded, color: AppTheme.primaryTeal, size: 20),
+              child: const Icon(
+                Icons.search_rounded,
+                color: AppTheme.primaryTeal,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -139,7 +166,9 @@ class DashboardScreen extends StatelessWidget {
                     'Recherchez dans tous les cours PDF, QCMs, CAT, mémentos, doses...',
                     style: TextStyle(
                       fontSize: 11,
-                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -159,7 +188,11 @@ class DashboardScreen extends StatelessWidget {
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.auto_awesome_rounded, size: 12, color: Colors.white),
+                  Icon(
+                    Icons.auto_awesome_rounded,
+                    size: 12,
+                    color: Colors.white,
+                  ),
                   SizedBox(width: 4),
                   Text(
                     'SCANNER',
@@ -172,6 +205,215 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStudyCoachPromoCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => const StudyCoachScreen()));
+      },
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: AppTheme.primaryTeal.withValues(alpha: 0.3),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryTeal.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF14B8A6), Color(0xFF0F766E)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(
+                Icons.auto_awesome_rounded,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'MedsinaCoach IA',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDCFCE7),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: const Text(
+                          'NOUVEAU',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF166534),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Priorise vos thèmes faibles, planifie votre séance et optimise votre progression avant l’examen.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.arrow_forward_rounded,
+              color: AppTheme.primaryTeal,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCaseSimulatorPromoCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: () {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const CaseSimulatorScreen()));
+      },
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: AppTheme.primaryTeal.withValues(alpha: 0.3),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryTeal.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF2563EB), Color(0xFF3B82F6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(
+                Icons.medical_information_outlined,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Simulateur de cas cliniques',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDBEAFE),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: const Text(
+                          'IA CASE',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1D4ED8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Entraînez votre raisonnement diagnostic sur des cas progressifs avec étapes, indices et correction.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.arrow_forward_rounded,
+              color: AppTheme.primaryTeal,
+              size: 20,
             ),
           ],
         ),
@@ -210,7 +452,11 @@ class DashboardScreen extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.menu_book_rounded, color: Colors.white, size: 24),
+            child: const Icon(
+              Icons.menu_book_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -222,13 +468,19 @@ class DashboardScreen extends StatelessWidget {
                     const Flexible(
                       child: Text(
                         'Guide Officiel Medsina',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13.5,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF0284C7).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(6),
@@ -262,15 +514,22 @@ class DashboardScreen extends StatelessWidget {
               backgroundColor: const Color(0xFF0284C7),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               elevation: 0,
             ),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const UserGuidePdfViewerScreen(),
+                ),
               );
             },
-            child: const Text('Ouvrir ➔', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+            child: const Text(
+              'Ouvrir ➔',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -308,7 +567,11 @@ class DashboardScreen extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.star_rounded, color: Colors.white, size: 24),
+            child: const Icon(
+              Icons.star_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -320,13 +583,19 @@ class DashboardScreen extends StatelessWidget {
                     const Flexible(
                       child: Text(
                         'Votre Avis sur Medsina ⭐',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13.5,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.amber.withValues(alpha: 0.16),
                         borderRadius: BorderRadius.circular(6),
@@ -360,7 +629,9 @@ class DashboardScreen extends StatelessWidget {
               backgroundColor: const Color(0xFFF59E0B),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               elevation: 0,
             ),
             onPressed: () {
@@ -370,7 +641,10 @@ class DashboardScreen extends StatelessWidget {
                 ),
               );
             },
-            child: const Text('Noter ★', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+            child: const Text(
+              'Noter ★',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -403,7 +677,11 @@ class DashboardScreen extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 24),
+            child: const Icon(
+              Icons.card_giftcard_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 14),
           const Expanded(
@@ -412,7 +690,11 @@ class DashboardScreen extends StatelessWidget {
               children: [
                 Text(
                   'Gagnez des Mois VIP Gratuits ! 🤝',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5, color: Colors.white),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13.5,
+                    color: Colors.white,
+                  ),
                 ),
                 SizedBox(height: 3),
                 Text(
@@ -427,14 +709,19 @@ class DashboardScreen extends StatelessWidget {
               backgroundColor: Colors.white,
               foregroundColor: const Color(0xFF0F766E),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ReferralScreen()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const ReferralScreen()));
             },
-            child: const Text('Parrainer ➔', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+            child: const Text(
+              'Parrainer ➔',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -453,35 +740,64 @@ class DashboardScreen extends StatelessWidget {
     String subtitleText;
 
     if (isExpired) {
-      gradientColors = const [Color(0xFF991B1B), Color(0xFFDC2626), Color(0xFFB91C1C)];
+      gradientColors = const [
+        Color(0xFF991B1B),
+        Color(0xFFDC2626),
+        Color(0xFFB91C1C),
+      ];
       badgeText = '⚠️ ABONNEMENT EXPIRÉ • ACCÈS SUSPENDU';
       subtitleText = 'Votre licence a expiré. Renouvelez votre offre pour débloquer l\'accès complet.';
     } else {
       switch (tier) {
         case SubscriptionTier.allAccess:
-          gradientColors = const [Color(0xFF4C1D95), Color(0xFF6D28D9), Color(0xFF8B5CF6)];
+          gradientColors = const [
+            Color(0xFF4C1D95),
+            Color(0xFF6D28D9),
+            Color(0xFF8B5CF6),
+          ];
           badgeText = '🌟 MEDSINA ALL-ACCESS VIP • ACCÈS INTÉGRAL';
-          subtitleText = 'Formule complète illimitée : 47 modules, QCMs, CATs & IA ($daysRemaining jours restants)';
+          subtitleText =
+              'Formule complète illimitée : 47 modules, QCMs, CATs & IA ($daysRemaining jours restants)';
           break;
         case SubscriptionTier.residentElite:
-          gradientColors = const [Color(0xFF0F766E), Color(0xFF0D9488), Color(0xFF14B8A6)];
+          gradientColors = const [
+            Color(0xFF0F766E),
+            Color(0xFF0D9488),
+            Color(0xFF14B8A6),
+          ];
           badgeText = '🎯 PASS RÉSIDENT ÉLITE • SPÉCIAL CONCOURS 2027';
-          subtitleText = 'Accès concours complet : 47 modules & 6 240+ QCMs ($daysRemaining jours restants)';
+          subtitleText =
+              'Accès concours complet : 47 modules & 6 240+ QCMs ($daysRemaining jours restants)';
           break;
         case SubscriptionTier.clinicalPro:
-          gradientColors = const [Color(0xFF0369A1), Color(0xFF0284C7), Color(0xFF38BDF8)];
+          gradientColors = const [
+            Color(0xFF0369A1),
+            Color(0xFF0284C7),
+            Color(0xFF38BDF8),
+          ];
           badgeText = '🩺 PASS CLINIQUE PRO • PRATIQUE HOSPITALIÈRE & UMC';
-          subtitleText = 'Accès clinique complet : CAT urgences, scores & pharmacopée ($daysRemaining jours restants)';
+          subtitleText =
+              'Accès clinique complet : CAT urgences, scores & pharmacopée ($daysRemaining jours restants)';
           break;
         case SubscriptionTier.etudiant:
-          gradientColors = const [Color(0xFF1D4ED8), Color(0xFF2563EB), Color(0xFF60A5FA)];
+          gradientColors = const [
+            Color(0xFF1D4ED8),
+            Color(0xFF2563EB),
+            Color(0xFF60A5FA),
+          ];
           badgeText = '🎓 PASS ÉTUDIANT • CURSUS UNIVERSITAIRE';
-          subtitleText = 'Programme personnalisé : cours & examens de faculté ($daysRemaining jours restants)';
+          subtitleText =
+              'Programme personnalisé : cours & examens de faculté ($daysRemaining jours restants)';
           break;
         case SubscriptionTier.free:
-          gradientColors = const [Color(0xFF334155), Color(0xFF475569), Color(0xFF64748B)];
+          gradientColors = const [
+            Color(0xFF334155),
+            Color(0xFF475569),
+            Color(0xFF64748B),
+          ];
           badgeText = '⚡ PASS DÉCOUVERTE • PÉRIODE D\'ESSAI (14J)';
-          subtitleText = 'Accès d\'évaluation : $daysRemaining jours restants (1er module & calculateurs)';
+          subtitleText =
+              'Accès d\'évaluation : $daysRemaining jours restants (1er module & calculateurs)';
           break;
       }
     }
@@ -543,16 +859,30 @@ class DashboardScreen extends StatelessWidget {
                 backgroundColor: Colors.white,
                 foregroundColor: gradientColors.first,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 9,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const SubscriptionPaywallScreen(),
+                  ),
                 );
               },
-              icon: const Icon(Icons.star_rounded, size: 18, color: Color(0xFFF59E0B)),
-              label: const Text('Gérer Offre', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5)),
+              icon: const Icon(
+                Icons.star_rounded,
+                size: 18,
+                color: Color(0xFFF59E0B),
+              ),
+              label: const Text(
+                'Gérer Offre',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5),
+              ),
             ),
           ],
         );
@@ -597,7 +927,11 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsGrid(BuildContext context, SubscriptionTier tier, bool isExpired) {
+  Widget _buildStatsGrid(
+    BuildContext context,
+    SubscriptionTier tier,
+    bool isExpired,
+  ) {
     // Tailored stats according to user tier & access
     final List<Widget> cards = [];
 
@@ -694,7 +1028,9 @@ class DashboardScreen extends StatelessWidget {
         _buildStatCard(
           'Formation Résidanat',
           '47 Modules • 6 240 QCMs',
-          isExpired ? 'Accès suspendu • Renouveler' : 'Banque complète Blida & National',
+          isExpired
+              ? 'Accès suspendu • Renouveler'
+              : 'Banque complète Blida & National',
           Icons.school_rounded,
           isExpired ? Colors.grey : AppTheme.primaryTeal,
         ),
@@ -703,7 +1039,9 @@ class DashboardScreen extends StatelessWidget {
         _buildStatCard(
           'Pratique Clinique',
           '18+ CAT & Protocoles',
-          isExpired ? 'Accès suspendu • Renouveler' : 'Arbres décisionnels d\'urgence',
+          isExpired
+              ? 'Accès suspendu • Renouveler'
+              : 'Arbres décisionnels d\'urgence',
           Icons.emergency_rounded,
           isExpired ? Colors.grey : const Color(0xFFEF4444),
         ),
@@ -746,7 +1084,13 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, String subtitle, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    String subtitle,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -765,11 +1109,27 @@ class DashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontWeight: FontWeight.w600)),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text(subtitle, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  ),
                 ],
               ),
             ),
@@ -779,8 +1139,11 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-
-  Widget _buildQuickAccessCards(BuildContext context, SubscriptionTier tier, bool isExpired) {
+  Widget _buildQuickAccessCards(
+    BuildContext context,
+    SubscriptionTier tier,
+    bool isExpired,
+  ) {
     return FutureBuilder<List<RecentActivityItem>>(
       future: RecentActivityService.instance.getRecentActivities(tier: tier),
       builder: (context, snapshot) {
@@ -789,7 +1152,8 @@ class DashboardScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (snapshot.connectionState == ConnectionState.waiting && activities.isEmpty)
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                activities.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Center(
@@ -799,22 +1163,30 @@ class DashboardScreen extends StatelessWidget {
                       const SizedBox(
                         width: 14,
                         height: 14,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primaryTeal),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppTheme.primaryTeal,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Text(
                         'Chargement de votre dernière activité...',
-                        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ],
                   ),
                 ),
               )
             else ...[
-              ...activities.map((item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _buildRecentActivityCard(context, item, isExpired),
-                  )),
+              ...activities.map(
+                (item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _buildRecentActivityCard(context, item, isExpired),
+                ),
+              ),
             ],
 
             // Action footer: Discover full catalog or tools
@@ -825,18 +1197,26 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   TextButton.icon(
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       visualDensity: VisualDensity.compact,
                       foregroundColor: AppTheme.primaryTeal,
                     ),
                     icon: const Icon(Icons.explore_outlined, size: 15),
                     label: const Text(
                       'Ouvrir le catalogue complet (47 Modules) ➔',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const RevisionCatalogScreen(),
+                        ),
                       );
                     },
                   ),
@@ -855,7 +1235,11 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivityCard(BuildContext context, RecentActivityItem item, bool isExpired) {
+  Widget _buildRecentActivityCard(
+    BuildContext context,
+    RecentActivityItem item,
+    bool isExpired,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
@@ -871,7 +1255,9 @@ class DashboardScreen extends StatelessWidget {
         onTap: () {
           if (isExpired) {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+              MaterialPageRoute(
+                builder: (_) => const SubscriptionPaywallScreen(),
+              ),
             );
             return;
           }
@@ -887,11 +1273,16 @@ class DashboardScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: item.badgeColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: item.badgeColor.withValues(alpha: 0.25)),
+                      border: Border.all(
+                        color: item.badgeColor.withValues(alpha: 0.25),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -919,7 +1310,11 @@ class DashboardScreen extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.schedule_rounded, size: 12, color: Colors.grey.shade500),
+                      Icon(
+                        Icons.schedule_rounded,
+                        size: 12,
+                        color: Colors.grey.shade500,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         item.relativeTime,
@@ -964,7 +1359,9 @@ class DashboardScreen extends StatelessWidget {
                           item.subtitle,
                           style: TextStyle(
                             fontSize: 12,
-                            color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                            color: isDark
+                                ? Colors.white70
+                                : const Color(0xFF64748B),
                             height: 1.3,
                           ),
                         ),
@@ -1023,7 +1420,11 @@ class DashboardScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Icon(Icons.play_arrow_rounded, size: 14, color: item.badgeColor),
+                        Icon(
+                          Icons.play_arrow_rounded,
+                          size: 14,
+                          color: item.badgeColor,
+                        ),
                       ],
                     ),
                   ],
@@ -1070,7 +1471,11 @@ class DashboardScreen extends StatelessWidget {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.school_rounded, color: Color(0xFF2DD4BF), size: 14),
+                    Icon(
+                      Icons.school_rounded,
+                      color: Color(0xFF2DD4BF),
+                      size: 14,
+                    ),
                     SizedBox(width: 5),
                     Text(
                       'FORMATION RÉSIDANAT MEDSINA',
@@ -1087,14 +1492,22 @@ class DashboardScreen extends StatelessWidget {
               const Spacer(),
               const Text(
                 'Concours Blida 2027',
-                style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: Colors.white60,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 10),
           const Text(
             'Vous préparez le concours ou encadrez des internes & résidents ?',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.5),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 14.5,
+            ),
           ),
           const SizedBox(height: 6),
           const Text(
@@ -1110,31 +1523,51 @@ class DashboardScreen extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
                   side: const BorderSide(color: Colors.white38),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 9,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => const RevisionCatalogScreen(),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.explore_rounded, size: 16),
-                label: const Text('Découvrir le catalogue', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                label: const Text(
+                  'Découvrir le catalogue',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                ),
               ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0D9488),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 9,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => const SubscriptionPaywallScreen(),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.upgrade_rounded, size: 16),
-                label: const Text('Voir les formules Résidanat', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                label: const Text(
+                  'Voir les formules Résidanat',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                ),
               ),
             ],
           ),
@@ -1151,10 +1584,7 @@ class DashboardScreen extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.amber.shade700,
-                  Colors.amber.shade900,
-                ],
+                colors: [Colors.amber.shade700, Colors.amber.shade900],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -1173,11 +1603,16 @@ class DashboardScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const NationalExamsListScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => const NationalExamsListScreen(),
+                    ),
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   child: Row(
                     children: [
                       Container(
@@ -1186,7 +1621,11 @@ class DashboardScreen extends StatelessWidget {
                           color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 20),
+                        child: const Icon(
+                          Icons.emoji_events_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       const Expanded(
@@ -1195,11 +1634,18 @@ class DashboardScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Concours Blancs',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
                             ),
                             Text(
                               'Classement National 🏆',
-                              style: TextStyle(color: Colors.white70, fontSize: 10.5),
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 10.5,
+                              ),
                             ),
                           ],
                         ),
@@ -1218,10 +1664,7 @@ class DashboardScreen extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  AppTheme.primaryTeal,
-                  const Color(0xFF00695C),
-                ],
+                colors: [AppTheme.primaryTeal, const Color(0xFF00695C)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -1240,11 +1683,16 @@ class DashboardScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const GroupRevisionHubScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => const GroupRevisionHubScreen(),
+                    ),
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   child: Row(
                     children: [
                       Container(
@@ -1253,7 +1701,11 @@ class DashboardScreen extends StatelessWidget {
                           color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.groups_rounded, color: Colors.white, size: 20),
+                        child: const Icon(
+                          Icons.groups_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       const Expanded(
@@ -1262,11 +1714,18 @@ class DashboardScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Groupes d\'Étude',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
                             ),
                             Text(
                               'Défis & Révision Pairs 👥',
-                              style: TextStyle(color: Colors.white70, fontSize: 10.5),
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 10.5,
+                              ),
                             ),
                           ],
                         ),
@@ -1303,7 +1762,8 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasResidentAccess = (widget.tier == SubscriptionTier.residentElite ||
+    final hasResidentAccess =
+        (widget.tier == SubscriptionTier.residentElite ||
             widget.tier == SubscriptionTier.allAccess) &&
         widget.isSubscriptionActive;
 
@@ -1337,12 +1797,19 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(Icons.tips_and_updates_rounded, color: AppTheme.accentCyan, size: 24),
+                    const Icon(
+                      Icons.tips_and_updates_rounded,
+                      color: AppTheme.accentCyan,
+                      size: 24,
+                    ),
                     const SizedBox(width: 8),
                     if (moduleName != null && moduleName.isNotEmpty)
                       Flexible(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: AppTheme.primaryTeal.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
@@ -1351,7 +1818,11 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                             moduleName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: AppTheme.primaryTeal),
+                            style: const TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.primaryTeal,
+                            ),
                           ),
                         ),
                       ),
@@ -1363,29 +1834,46 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                         tooltip: 'Perle précédente',
                         icon: const Icon(Icons.chevron_left_rounded, size: 20),
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                        constraints: const BoxConstraints(
+                          minWidth: 28,
+                          minHeight: 28,
+                        ),
                         onPressed: safeIndex > 0
-                            ? () => setState(() => _currentIndex = safeIndex - 1)
+                            ? () =>
+                                  setState(() => _currentIndex = safeIndex - 1)
                             : null,
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
+                          color: isDark
+                              ? const Color(0xFF0F172A)
+                              : const Color(0xFFE2E8F0),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           '${safeIndex + 1}/${pearls.length}',
-                          style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: Colors.grey.shade600),
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade600,
+                          ),
                         ),
                       ),
                       IconButton(
                         tooltip: 'Perle suivante',
                         icon: const Icon(Icons.chevron_right_rounded, size: 20),
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                        constraints: const BoxConstraints(
+                          minWidth: 28,
+                          minHeight: 28,
+                        ),
                         onPressed: safeIndex < pearls.length - 1
-                            ? () => setState(() => _currentIndex = safeIndex + 1)
+                            ? () =>
+                                  setState(() => _currentIndex = safeIndex + 1)
                             : null,
                       ),
                       const SizedBox(width: 4),
@@ -1393,16 +1881,30 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
 
                     // Open Full Archive Screen
                     OutlinedButton.icon(
-                      onPressed: () => DailyPearlsArchiveScreen.navigateTo(context),
+                      onPressed: () =>
+                          DailyPearlsArchiveScreen.navigateTo(context),
                       icon: const Icon(Icons.auto_stories_rounded, size: 14),
-                      label: const Text('Toutes', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                      label: const Text(
+                        'Toutes',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppTheme.accentCyan,
-                        side: BorderSide(color: AppTheme.accentCyan.withValues(alpha: 0.4)),
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        side: BorderSide(
+                          color: AppTheme.accentCyan.withValues(alpha: 0.4),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
                   ],
@@ -1412,13 +1914,21 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                 // Pearl Title
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5, color: AppTheme.accentCyan),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14.5,
+                    color: AppTheme.accentCyan,
+                  ),
                 ),
                 if (courseName != null && courseName.isNotEmpty) ...[
                   const SizedBox(height: 3),
                   Text(
                     '📖 Cours : $courseName',
-                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
                 ],
                 const SizedBox(height: 10),
@@ -1426,7 +1936,11 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                 // Pearl Body
                 Text(
                   pearlText,
-                  style: TextStyle(fontSize: 13, height: 1.45, color: Theme.of(context).textTheme.bodyMedium?.color),
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.45,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
                 ),
 
                 // Vital Rule Box
@@ -1437,17 +1951,27 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                     decoration: BoxDecoration(
                       color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFD97706)),
+                        const Icon(
+                          Icons.warning_amber_rounded,
+                          size: 16,
+                          color: Color(0xFFD97706),
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             vitalRule,
-                            style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFFB45309)),
+                            style: const TextStyle(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFB45309),
+                            ),
                           ),
                         ),
                       ],
@@ -1464,17 +1988,28 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                       decoration: BoxDecoration(
                         color: const Color(0xFFEF4444).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.25)),
+                        border: Border.all(
+                          color: const Color(0xFFEF4444)
+                              .withValues(alpha: 0.25),
+                        ),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.school_rounded, size: 16, color: Color(0xFFDC2626)),
+                          const Icon(
+                            Icons.school_rounded,
+                            size: 16,
+                            color: Color(0xFFDC2626),
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               examTrap,
-                              style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Color(0xFFB91C1C)),
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFB91C1C),
+                              ),
                             ),
                           ),
                         ],
@@ -1485,20 +2020,33 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                       builder: (context, box) {
                         final isCompact = box.maxWidth < 450;
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                            color: isDark
+                                ? const Color(0xFF1E293B)
+                                : Colors.white,
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: const Color(0xFF9333EA).withValues(alpha: 0.3)),
+                            border: Border.all(
+                              color: const Color(0xFF9333EA)
+                                  .withValues(alpha: 0.3),
+                            ),
                           ),
                           child: isCompact
                               ? Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        const Icon(Icons.lock_rounded, size: 16, color: Color(0xFF9333EA)),
+                                        const Icon(
+                                          Icons.lock_rounded,
+                                          size: 16,
+                                          color: Color(0xFF9333EA),
+                                        ),
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: Text(
@@ -1506,7 +2054,9 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                                             style: TextStyle(
                                               fontSize: 11.5,
                                               fontWeight: FontWeight.w600,
-                                              color: isDark ? Colors.white70 : const Color(0xFF4B5563),
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : const Color(0xFF4B5563),
                                             ),
                                           ),
                                         ),
@@ -1518,24 +2068,46 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                                       child: TextButton.icon(
                                         onPressed: () {
                                           Navigator.of(context).push(
-                                            MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const SubscriptionPaywallScreen(),
+                                            ),
                                           );
                                         },
                                         style: TextButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
                                           minimumSize: Size.zero,
-                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                          foregroundColor: const Color(0xFF9333EA),
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          foregroundColor: const Color(
+                                            0xFF9333EA,
+                                          ),
                                         ),
-                                        icon: const Icon(Icons.lock_open_rounded, size: 14),
-                                        label: const Text('Débloquer', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11.5)),
+                                        icon: const Icon(
+                                          Icons.lock_open_rounded,
+                                          size: 14,
+                                        ),
+                                        label: const Text(
+                                          'Débloquer',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: 11.5,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
                                 )
                               : Row(
                                   children: [
-                                    const Icon(Icons.lock_rounded, size: 16, color: Color(0xFF9333EA)),
+                                    const Icon(
+                                      Icons.lock_rounded,
+                                      size: 16,
+                                      color: Color(0xFF9333EA),
+                                    ),
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
@@ -1543,7 +2115,9 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                                         style: TextStyle(
                                           fontSize: 11.5,
                                           fontWeight: FontWeight.w600,
-                                          color: isDark ? Colors.white70 : const Color(0xFF4B5563),
+                                          color: isDark
+                                              ? Colors.white70
+                                              : const Color(0xFF4B5563),
                                         ),
                                       ),
                                     ),
@@ -1551,16 +2125,31 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).push(
-                                          MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const SubscriptionPaywallScreen(),
+                                          ),
                                         );
                                       },
                                       style: TextButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
                                         minimumSize: Size.zero,
-                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        foregroundColor: const Color(0xFF9333EA),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        foregroundColor: const Color(
+                                          0xFF9333EA,
+                                        ),
                                       ),
-                                      child: const Text('Débloquer', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11.5)),
+                                      child: const Text(
+                                        'Débloquer',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 11.5,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -1588,7 +2177,11 @@ class _ClinicalTipCardState extends State<ClinicalTipCard> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Icon(Icons.arrow_forward_rounded, size: 14, color: AppTheme.accentCyan),
+                        const Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 14,
+                          color: AppTheme.accentCyan,
+                        ),
                       ],
                     ),
                   ),
