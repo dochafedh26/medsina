@@ -93,6 +93,27 @@
     "recommended_sources": "Dossier complet Drive Dr Belhout, Annales résidanat, fiches Mon Carnet."
   },
   {
+    "id": "temoignage_rouis_2026",
+    "name": "Dr Rouis Nassima",
+    "rank_badge": "TOP 97 • RÉSIDANAT 2026 🏆",
+    "rank_number": 97,
+    "year": "2026",
+    "faculty": "Faculté de Médecine de Blida",
+    "is_recent_2026": true,
+    "document_type": "pdf_local_and_drive",
+    "target_url": "https://docs.google.com/document/d/1FRgoK8ZQnl6d4OO86vf0Yoy-F924yJ-w2CXN-rxRhsU/edit?usp=sharing",
+    "gdrive_folder_url": "https://drive.google.com/drive/folders/1Bi6qBMDqz593h06PePPaT-GtOov6lKZZ?usp=sharing",
+    "pdf_file": "Dr_Rouis_Nassima_97eme_Residanat_2026.pdf",
+    "summary": "Lauréate classée 97ème au Résidanat 2026 et résidente en Anatomie Pathologique. Témoignage axé sur la préparation en parallèle avec un internat chargé et la gestion du doute psychologique. Stratégie de 2 couches solides, chevauchement intelligent des modules (Bioch intégrée, Immuno-Hémato-Rhumato, Parasito-Dermato) et focus sur les Samedis Pédagogiques.",
+    "key_advices": [
+      "Adapter la méthode des couches à son rythme : 2 couches (une première longue et approfondie avec QCMs + une deuxième rapide de 'memory refresh') sont parfaitement suffisantes pour décrocher son poste convoité.",
+      "Gagner du temps en chevauchant les modules interconnectés : Bioch intégrée aux organes (Cardio, Gastro, Néphro), Immuno avec Hémato/Rhumato/Maladies de système, Parasito avec Dermato, UMC intégrée aux spécialités.",
+      "Maîtriser le mental et le doute intérieur ('I was my own enemy') : Zéro coupure prolongée (> 5 jours), profiter de chaque temps mort de stage, et ne négliger aucun module (Samedis pédagogiques, Médecine du Travail, Légale)."
+    ],
+    "recommended_sources": "Drive personnel Dr Rouis (RESIDANAT), GC+++ (Pneumo), Séries & Fiches Dr Zarouta (Radio, Psy, UMC, Légale, Travail), Benadès + Miza (Dermato), Samedis Pédagogiques (Anat, Cyto, Embryo, Scoliose).",
+    "gdrive_id": "1yulr5qr9tmDW_hf9-eenGzoKYQKqk-tw"
+  },
+  {
     "id": "temoignage_ferhat_2025",
     "name": "Dr Ferhat",
     "rank_badge": "CLASSIFICATION & SOURCES OFFICIELLES ⭐",
