@@ -14,6 +14,7 @@ import '../../dashboard/presentation/dashboard_screen.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
 import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
+import '../../externat/presentation/externat_catalog_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../notifications/models/medical_notification.dart';
@@ -166,6 +167,13 @@ class _MainScaffoldState extends State<MainScaffold> {
         page: RevisionCatalogScreen(),
       ));
       items.add(const NavItemConfig(
+        label: 'Externat',
+        title: 'Cursus Médical & Externat (1ère - 6ème Année)',
+        icon: Icons.local_library_outlined,
+        selectedIcon: Icons.local_library_rounded,
+        page: ExternatCatalogScreen(),
+      ));
+      items.add(const NavItemConfig(
         label: 'Mémento',
         title: 'Mémento de Garde',
         icon: Icons.handyman_outlined,
@@ -175,13 +183,13 @@ class _MainScaffoldState extends State<MainScaffold> {
     } else {
       switch (tier) {
         case SubscriptionTier.etudiant:
-          // Étudiant en Médecine: Programme Ciblé de l'Année & EMD
+          // Étudiant en Médecine: Hub complet Externat & EMDs (1ère à 6ème Année)
           items.add(const NavItemConfig(
-            label: 'Mon Année',
-            title: 'Cursus Universitaire & Examens',
+            label: 'Externat',
+            title: 'Cursus Médical & Externat (1ère - 6ème Année)',
             icon: Icons.school_outlined,
             selectedIcon: Icons.school_rounded,
-            page: RevisionCatalogScreen(),
+            page: ExternatCatalogScreen(),
           ));
           items.add(const NavItemConfig(
             label: 'Outils & Normes',
@@ -258,6 +266,13 @@ class _MainScaffoldState extends State<MainScaffold> {
             icon: Icons.school_outlined,
             selectedIcon: Icons.school_rounded,
             page: RevisionCatalogScreen(),
+          ));
+          items.add(const NavItemConfig(
+            label: 'Externat',
+            title: 'Cursus Médical & Externat (1ère - 6ème Année)',
+            icon: Icons.local_library_outlined,
+            selectedIcon: Icons.local_library_rounded,
+            page: ExternatCatalogScreen(),
           ));
           items.add(const NavItemConfig(
             label: 'Mémento',
