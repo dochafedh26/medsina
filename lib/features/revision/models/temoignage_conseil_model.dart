@@ -8,8 +8,9 @@ class TemoignageConseilItem extends Equatable {
   final String year;
   final String faculty;
   final bool isRecent2026;
-  final String documentType; // 'pdf_local', 'gdrive_url', 'gdrive_folder'
+  final String documentType; // 'pdf_local', 'gdrive_url', 'gdrive_folder', 'pdf_local_and_drive'
   final String? targetUrl;
+  final String? gdriveFolderUrl;
   final String? pdfFile;
   final String? extraPdfFile;
   final String summary;
@@ -26,6 +27,7 @@ class TemoignageConseilItem extends Equatable {
     required this.isRecent2026,
     required this.documentType,
     this.targetUrl,
+    this.gdriveFolderUrl,
     this.pdfFile,
     this.extraPdfFile,
     required this.summary,
@@ -50,6 +52,7 @@ class TemoignageConseilItem extends Equatable {
       isRecent2026: json['is_recent_2026'] as bool? ?? false,
       documentType: json['document_type'] as String? ?? 'pdf_local',
       targetUrl: json['target_url'] as String?,
+      gdriveFolderUrl: json['gdrive_folder_url'] as String?,
       pdfFile: json['pdf_file'] as String?,
       extraPdfFile: json['extra_pdf_file'] as String?,
       summary: json['summary'] as String? ?? '',
@@ -71,6 +74,7 @@ class TemoignageConseilItem extends Equatable {
         'is_recent_2026': isRecent2026,
         'document_type': documentType,
         'target_url': targetUrl,
+        if (gdriveFolderUrl != null) 'gdrive_folder_url': gdriveFolderUrl,
         'pdf_file': pdfFile,
         'extra_pdf_file': extraPdfFile,
         'summary': summary,
@@ -79,6 +83,14 @@ class TemoignageConseilItem extends Equatable {
       };
 
   @override
-  List<Object?> get props => [id, name, rankNumber, year, documentType];
+  List<Object?> get props => [
+        id,
+        name,
+        rankNumber,
+        year,
+        documentType,
+        targetUrl,
+        gdriveFolderUrl,
+        pdfFile,
+      ];
 }
-

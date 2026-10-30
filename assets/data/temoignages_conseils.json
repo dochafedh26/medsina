@@ -1,5 +1,26 @@
 [
   {
+    "id": "temoignage_benouarab_2026",
+    "name": "Dr Benouarab Ikram",
+    "rank_badge": "TOP 04 • BLIDA 2026 🏆",
+    "rank_number": 4,
+    "year": "2026",
+    "faculty": "Faculté de Médecine de Blida",
+    "is_recent_2026": true,
+    "document_type": "pdf_local_and_drive",
+    "target_url": "https://drive.google.com/file/d/1snSsMDVcIdmnqR2-bOUDKF06ClL5-FtO/view?usp=sharing",
+    "gdrive_folder_url": "https://drive.google.com/drive/folders/1Xnlf_q1v-VhVB7Sl5197pXZX-TlzuAAV?usp=sharing",
+    "pdf_file": "Dr_Benouarab_Ikram_4eme_Blida_2026.pdf",
+    "gdrive_id": "1xZschDkgsQCyuEKIW0QC7GcbF1vJHreH",
+    "summary": "4ème Major et Lauréate du Concours de Résidanat de Blida 2026 sans année préparatoire. Organisation méthodique 'Mega-Révision', fixation d'un support unique par cours et saturation de QCMs d'annales classées.",
+    "key_advices": [
+      "Le résidanat est un rizk : personne ne peut prédire son classement, trouvez votre propre rythme et écoutez-vous ('Listen to yourself !').",
+      "Réviser sans année préparatoire est tout à fait possible en optimisant le temps d'internat et en privilégiant la compréhension active avant les résumés.",
+      "Fixer une seule source de référence par cours, puis l'enrichir systématiquement des pièges et notions récurrentes tirées des QCMs."
+    ],
+    "recommended_sources": "Mega-Drive Benouarab, Résumés Dr Mégateli & Dr Ferhat & Dr Zarota, Supports officiels Faculté de Blida, Annales classées."
+  },
+  {
     "id": "temoignage_bentegri_2026",
     "name": "Dr Bentegri Zakaria",
     "rank_badge": "TOP 07 • BLIDA 2026 🏆",

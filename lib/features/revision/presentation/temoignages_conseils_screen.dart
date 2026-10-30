@@ -644,6 +644,26 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
                       ),
                     ),
                   ),
+                if (item.gdriveFolderUrl != null && item.gdriveFolderUrl!.isNotEmpty)
+                  OutlinedButton.icon(
+                    onPressed: () => _openExternalUrl(item.gdriveFolderUrl!),
+                    icon: const Icon(Icons.folder_shared_rounded, size: 16),
+                    label: const Text('Méga-Drive', style: TextStyle(fontSize: 12)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: item.isRecent2026
+                          ? (isDark ? Colors.amber[300] : Colors.amber[900])
+                          : (isDark ? Colors.blue[300] : Colors.blue[700]),
+                      side: BorderSide(
+                        color: item.isRecent2026
+                            ? Colors.amber[700]!
+                            : Colors.blue[600]!,
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],
