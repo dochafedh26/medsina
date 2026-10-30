@@ -754,5 +754,21 @@
     ],
     "created_at": "2026-10-30T10:18:49.939478+00:00",
     "updated_at": "2026-10-30T10:18:49.939490+00:00"
+  },
+  {
+    "id": "lab_cpk_totale",
+    "name": "Créatine Phosphokinase totale (CPK)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Homme: < 190 UI/L | Femme: < 170 UI/L (à 37°C, variable selon les techniques)",
+    "unit": "UI/L",
+    "high_interpretation": "Élévation témoignant d'une souffrance ou d'une nécrose tissulaire (musculaire squelettique, myocardique ou cérébrale). Causes majeures : rhabdomyolyse aiguë (CPK > 5 à 10x la N, risque d'insuffisance rénale aiguë par myoglobinurie), infarctus du myocarde (IDM), traumatismes musculaires, injections intramusculaires répétées, convulsions, efforts physiques intenses, myopathies inflammatoires (polymyosite, dermatomyosite), iatrogénie (statines, fibrates). Seuil d'urgence critique : CPK > 5000 UI/L (risque majeur de nécrose tubulaire aiguë, protocole d'hydratation IV massive et alcalinisation des urines requis).",
+    "low_interpretation": "Valeur basse généralement sans signification pathologique directe. Retrouvée chez les sujets dénutris, en cas de fonte musculaire importante (sarcopénie, cachexie néoplasique, maladies chroniques consumptives) ou d'hyperthyroïdie (parfois associée à une diminution de la masse musculaire). Pas de seuil d'urgence vitale pour les valeurs basses.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : l'activité CPK est très riche dans le muscle squelettique et le myocarde ; une ponction veineuse traumatique, un électromyogramme (EMG) récent ou des injections IM intempestives élèvent faussement les taux.",
+      "Spécificité tissulaire : bien que la CPK totale soit sensible pour la rhabdomyolyse, son isoenzyme CK-MB reste un marqueur historique mais détrôné par la troponine ultrasensible pour le diagnostic d'IDM. Penser à doser la myoglobinémie et la fonction rénale (créatininémie) devant toute hyperCKémie massive.",
+      "Règle en réanimation : toute rhabdomyolyse avec CPK > 1000 UI/L associée à des urines foncées doit faire craindre une myoglobinurie obstructive et néphrotoxique, nécessitant un remplissage vasculaire précoce par NaCl 0.9% pour maintenir un diurèse forcée > 100-200 mL/h."
+    ],
+    "created_at": "2026-10-30T21:38:37.046271+00:00",
+    "updated_at": "2026-10-30T21:38:37.046288+00:00"
   }
 ]
