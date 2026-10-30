@@ -215,34 +215,42 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryTeal.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.school_rounded, color: AppTheme.primaryTeal, size: 22),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Cursus Externat & Université',
-                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    Text(
-                      'Programme officiel de médecine en Algérie (1ère à 6ème Année)',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                    child: const Icon(Icons.school_rounded, color: AppTheme.primaryTeal, size: 22),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Cursus Externat & Université',
+                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
                       ),
-                    ),
-                  ],
-                ),
+                      Text(
+                        'Programme officiel (1ère à 6ème Année)',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               _buildOfflineStoragePill(context, isDark),
             ],
@@ -468,29 +476,48 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
           onChanged: (val) => setState(() => _searchQuery = val.trim()),
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 6,
           children: [
-            Row(
-              children: [
-                Switch.adaptive(
-                  value: _onlyEmdQuestions,
-                  activeTrackColor: AppTheme.primaryTeal,
-                  onChanged: (val) => setState(() => _onlyEmdQuestions = val),
-                ),
-                Text(
-                  'Questions EMD / Faculté uniquement',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+            InkWell(
+              onTap: () => setState(() => _onlyEmdQuestions = !_onlyEmdQuestions),
+              borderRadius: BorderRadius.circular(8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Switch.adaptive(
+                    value: _onlyEmdQuestions,
+                    activeTrackColor: AppTheme.primaryTeal,
+                    onChanged: (val) => setState(() => _onlyEmdQuestions = val),
                   ),
-                ),
-              ],
+                  Text(
+                    'Questions EMD / Faculté uniquement',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              _yearMeta[_selectedYear]!['title'].toString().split('•')[0].trim(),
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey.shade500),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: (_yearMeta[_selectedYear]!['color'] as Color).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                _yearMeta[_selectedYear]!['title'].toString().split('•')[0].trim(),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: _yearMeta[_selectedYear]!['color'] as Color,
+                ),
+              ),
             ),
           ],
         ),
