@@ -634,17 +634,16 @@
     "id": "lab_anticorps_anti_transglutaminase",
     "name": "Anticorps anti-Transglutaminase tissulaire IgA et IgG (Anti-tTG)",
     "category": "Immunologie & Rhumatologie",
-    "normal_range": "Négatif < 10 U/mL (ou seuil selon fabricant, généralement : Positif > 15 U/mL, Zone grise 10-15 U/mL)",
-    "unit": "U/mL ou UI/mL",
-    "high_interpretation": "Forte présomption de maladie cœliaque (sensibilité et spécificité > 90-95% pour les IgA anti-tTG). Un taux supérieur à 10 fois la limite supérieure de la normale (LSN) chez l'enfant permet, selon les recommandations ESPGHAN, de poser le diagnostic de maladie cœliaque sans biopsie intestinale si les anticorps anti-endomysium (EMA) sont positifs sur un second prélèvement. Conduite à tenir : Bilan de malabsorption (fer, folates, vitamine D, calcium), enquête familiale et confirmation par fibroscopie gastrique avec biopsies bulbaires et duodénales (sauf critères ESPGHAN remplis chez l'enfant).",
-    "low_interpretation": "Valeur négative : n'exclut pas formellement une maladie cœliaque s'il existe un déficit sélectif en IgA associé (fréquent chez les cœliaques : 10 à 15 fois plus fréquent que dans la population générale) ou si le patient suit déjà un régime sans gluten (RSG). Conduite à tenir : Toujours doser les IgA sériques totales en parallèle des anti-tTG IgA pour éliminer un déficit ; en cas de déficit en IgA, demander les anti-tTG IgG ou les anti-gliadines déamidées (DGP) IgG.",
+    "normal_range": "Négatif < 10 U/mL (Zone grise : 10 - 18 U/mL | Positif > 18 U/mL)",
+    "unit": "U/mL",
+    "high_interpretation": "Valeur élevée : En faveur d'une maladie cœliaque (sensibilité et spécificité > 95% pour les IgA anti-tTG). Un taux supérieur à 10 fois la limite supérieure de la normale ( > 10x LSN) associé aux anti-endomysium (EMA) positifs permet, selon les recommandations ESPGHAN, de se passer de la biopsie duodénale chez l'enfant symptomatique. Conduite à tenir : Réaliser des anticorps anti-endomysium (EMA) en confirmation et programmer une FOGD avec biopsies bulbaires et distales (classées Marsh).",
+    "low_interpretation": "Valeur basse ou négative : Exclut la maladie cœliaque sous réserve d'un dosage simultané des IgA totales sériques normal (pour éliminer un déficit sélectif en IgA, fréquent chez les cœliaques). En cas de déficit en IgA, ce sont les IgG anti-tTG ou les IgG anti-deamidated gliadin peptides (DGP) qu'il faut interpréter.",
     "clinical_notes": [
-      "Piège pré-analytique majeur : Un déficit en IgA sériques entraîne un résultat faussement négatif des anti-tTG IgA. Le dosage des IgA totales est donc indissociable du premier bilan de suspicion de maladie cœliaque.",
-      "Piège diététique : Le taux d'anti-tTG chute progressivement après l'instauration d'un régime sans gluten (demi-vie des anticorps de quelques semaines à quelques mois). Ne jamais réaliser le dosage ou l'évaluation sous régime sans gluten strict si l'on cherche à poser le diagnostic.",
-      "Association pathologique : Fréquence élevée de la maladie cœliaque chez les patients atteints de thyroïdite d'Hashimoto, de diabète de type 1, de syndrome de Down (Trisomie 21) et de déficit en IgA."
+      "Piège pré-analytique majeur : Le patient doit impérativement être sous régime normogluten au moment du dosage (au moins 3g de gluten/jour pendant 6 semaines avant le test). Un régime sans gluten strict fausse négativement les sérologies en quelques mois.",
+      "Piège biologique : Toujours vérifier le dosage des IgA totales sériques associé. Un déficit sélectif en IgA (fréquent dans la maladie cœliaque) donne de faux négatifs pour les anti-tTG IgA, nécessitant le recours systématique aux formes IgG (anti-tTG IgG ou anti-DGP IgG)."
     ],
-    "created_at": "2026-10-28T19:42:25.996695+00:00",
-    "updated_at": "2026-10-28T19:42:25.996711+00:00"
+    "created_at": "2026-10-30T16:45:45.550366+00:00",
+    "updated_at": "2026-10-30T16:45:45.550382+00:00"
   },
   {
     "id": "lab_calcitonine",
