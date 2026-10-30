@@ -403,3 +403,4 @@ class ExternatCurriculumMatrix {
     return modulesData.where((m) => m.studyYear == year).toList();
   }
 }
+

@@ -14,6 +14,12 @@ import urllib.request
 import urllib.parse
 from typing import Optional, Dict, Any, List
 
+try:
+    from anti_duplicate_guard import check_duplicate_or_flood, record_publication
+except ImportError:
+    check_duplicate_or_flood = None
+    record_publication = None
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://qzfssrhhuorljftpdvjm.supabase.co")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get(
     "SUPABASE_KEY",
@@ -118,6 +124,11 @@ def add_followers_comment(
 
 
 def publish_to_page_feed(page_id: str, token: str, message: str, link: Optional[str] = None) -> Dict[str, Any]:
+    if check_duplicate_or_flood:
+        is_dup, reason = check_duplicate_or_flood(page_id, message, cooldown_minutes=90)
+        if is_dup:
+            print(f"🛑 [Facebook Anti-Doublon] Page {page_id} : {reason}")
+            return {"success": False, "skipped": True, "reason": reason}
     url = f"https://graph.facebook.com/v21.0/{page_id}/feed"
     payload = {
         "message": message,
@@ -137,6 +148,8 @@ def publish_to_page_feed(page_id: str, token: str, message: str, link: Optional[
         res = json.loads(resp.read().decode("utf-8"))
         post_id = res.get("id")
         if post_id:
+            if record_publication:
+                record_publication(page_id, message, str(post_id))
             add_followers_comment(
                 target_id=post_id,
                 token=token,

@@ -27,6 +27,12 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 
 try:
+    from anti_duplicate_guard import check_duplicate_or_flood, record_publication
+except ImportError:
+    check_duplicate_or_flood = None
+    record_publication = None
+
+try:
     if sys.stdout.encoding.lower() != 'utf-8':
         sys.stdout.reconfigure(encoding='utf-8')
 except Exception:
@@ -140,6 +146,13 @@ def send_telegram_broadcast(
 
         return {"simulated": True, "success": True}
 
+    # Protection anti-doublon et anti-flood
+    if check_duplicate_or_flood:
+        is_dup, reason = check_duplicate_or_flood(channel, message_text, cooldown_minutes=90)
+        if is_dup:
+            print(f"🛑 [Telegram Anti-Doublon] Publication ignorée : {reason}")
+            return {"success": False, "skipped": True, "reason": reason}
+
     # Publication réelle via l'API Telegram Bot
     if image_path and os.path.exists(image_path):
         api_url = f"https://api.telegram.org/bot{token}/sendPhoto"
@@ -167,6 +180,8 @@ def send_telegram_broadcast(
         result = resp.json()
         msg_id = result.get('result', {}).get('message_id')
         print(f"✅ Diffusion Telegram réussie sur {channel} ! Message ID: {msg_id}")
+        if record_publication and msg_id:
+            record_publication(channel, message_text, str(msg_id))
 
         # Sur Telegram, l'équivalent natif de @followers pour alerter tous les abonnés
         # est d'épingler le message avec notification sonore/push active.
