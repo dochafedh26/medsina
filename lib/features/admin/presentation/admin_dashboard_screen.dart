@@ -610,12 +610,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
     return Column(
       children: [
-        // Promo Hunter Banner
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: _buildPromoHunterBanner(isDark),
-        ),
-
         // Search bar
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
@@ -4033,6 +4027,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               ),
             ),
           ),
+          const SizedBox(height: 20),
+
+          // 1.4. Chasseur Promo Telegram & Assistant Réponses Facebook
+          _buildPromoHunterBanner(isDark),
           const SizedBox(height: 24),
 
           // 1.5. Facebook AI Prompts Section (New)
