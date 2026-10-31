@@ -623,23 +623,23 @@
   },
   {
     "id": "memento_convulsion_febrile_emp",
-    "title": "⚡ Convulsion Fébrile & État de Mal Pédiatrique",
+    "title": "⚡ Convulsion Fébrile & EMP Pédiatrique",
     "category": "Pédiatrie & Urgences",
     "icon_name": "child_care_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Libération des VAS, oxygénothérapie au masque à fort débit (10 L/min), mise en position latérale de sécurité (PLS) si inconscient, et mesure immédiate de la glycémie capillaire au déchoquage.",
-      "Étape 2 : Si la crise dure > 5 min, administrer du Valium (Diazépam) intra-rectal : 0,5 mg/kg (max 10 mg) ou du Rivotril (Clonazépam) IV slow : 0,05 à 0,1 mg/kg. Répéter 1 fois à 5 min si échec.",
-      "Étape 3 : Si état de mal persistant (> 10-15 min malgré les benzodiazépines), initier une perfusion de Phénobarbital (Gardénal) IV : 20 mg/kg en 15 min dans du G5% sous monitorage cardio-respiratoire.",
-      "Étape 4 : Recherche active de la cause : bilan infectieux (NFS, CRP, hémocultures), et PL systématique si méningite suspectée après stabilisation et vérification de l'absence de signe de localisation/HTIC.",
-      "Étape 5 : Traitement symptomatique de la fièvre (Paracétamol IV 15 mg/kg/6h si > 38,5°C) et physiques (découvrir l'enfant, gants tièdes - éviter l'eau glacée).",
-      "Étape 6 : Piège médico-légal : Ne jamais administrer de Diazépam en IV rapide (risque d'apnée cataclysmique) et tout état de mal réfractaire nécessite l'appel immédiat du réanimateur pédiatrique de garde pour intubation et ventilation."
+      "Étape 1 : Libération des VAS, position latérale de sécurité (PLS), oxygénothérapie au masque à haute concentration (10 L/min) et mesure immédiate de la glycapie au bout du doigt.",
+      "Étape 2 : Si la crise persiste > 5 min, administrer du Valium (Diazépam) intra-rectal 0,5 mg/kg (max 10 mg) ou du Buccolam (Midazolam) intranasal/buccal 0,2-0,3 mg/kg.",
+      "Étape 3 : Si échec à 5 min, 2ème dose de Midazolam ou Rivotril (Clonazépam) IV 0,05-0,1 mg/kg. Si EMP établi (> 30 min), charger en Gardenal (Phénobarbital) IV lent : 20 mg/kg.",
+      "Étape 4 : Lutte active contre l'hyperthermie (Paracétamol IV 15 mg/kg si voie Abord d'urgence acquise, mesures physiques) et recherche étiologique (Pнце, méningite, infection ORL).",
+      "Étape 5 : Bilan biologique d'urgence (NFS, CRP, Ionogramme, Glycémie, Calcémie, GDS) et critères d'hospitalisation ou de transfert en réanimation pédiatrique.",
+      "Étape 6 : Piège : Ne jamais banaliser une convulsion fébrile simple prolongée et éliminer impérativement une méningo-encéphalite devant tout signe neurologique focal ou altération prolongée de la conscience."
     ],
-    "scientific_references": "SFMU / Société Française de Pédiatrie (SFP) / Recommandations MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / Société Française de Pédiatrie (SFP) / Protocoles Nationaux MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-27T22:59:36.300265+00:00",
-    "updated_at": "2026-10-27T22:59:36.300278+00:00"
+    "created_at": "2026-10-31T12:43:12.227985+00:00",
+    "updated_at": "2026-10-31T12:43:12.228001+00:00"
   },
   {
     "id": "memento_urgences_diabetiques",
