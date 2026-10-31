@@ -1,6 +1,6 @@
 #define MyAppName "Medsina"
 #ifndef MyAppVersion
-  #define MyAppVersion "1.0.29"
+  #define MyAppVersion "1.0.30"
 #endif
 #define MyAppPublisher "Medsina Sante Algerie"
 #define MyAppURL "https://medsina.medevsync.com"
