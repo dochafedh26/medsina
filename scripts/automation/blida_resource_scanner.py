@@ -47,7 +47,12 @@ DEFAULT_SOURCES = [
     "@residanat_blida",
     "@medecine_blida",
     "@preprsdblida",
+    "@fmb_blida",
+    "@Samedispedigogique2027DrKare",
+    "@mbset_blida",
     "https://t.me/preprsdblida",
+    "https://t.me/Samedispedigogique2027DrKare",
+    "https://t.me/mbset_blida",
     "https://drive.google.com/drive/folders/1___jg3oAyaBm-REwGb68q_XTN5dKWX2E",
 ]
 

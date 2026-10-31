@@ -2679,11 +2679,25 @@ class SupabaseService {
     "residanat_blida",
     "preprsdblida",
     "medsina_dz",
-    "qcm_medecine_dz"
+    "qcm_medecine_dz",
+    "Samedispedigogique2027DrKare",
+    "mbset_blida"
   ],
   "google_drive_folders": [
-    "https://drive.google.com/drive/folders/1D6p9Gbd9u39d0Hfn5h96y9kvyLBe34aC",
-    "https://drive.google.com/drive/folders/1c3bZ0d-N7n9F4R-5K9sX2vL6mP8qW1tY"
+    "https://drive.google.com/drive/folders/1UjaxyXp8pU56jlz-F7K-MGECj2pheF21",
+    "https://drive.google.com/drive/folders/1JYDVaU42brJ3TQPRGbrO90L5a_FSK6Q4",
+    "https://drive.google.com/drive/folders/1Bka0eECqgf1A0Iyu9VSsfPgBAzDcPa_w",
+    "https://drive.google.com/drive/folders/1P_qrApYN84T6jlu1qwxPzHvlWVOnGqVd",
+    "https://drive.google.com/drive/folders/1q6cZ52JWDRrIOhCmL0TclGBTv_u0aaIq",
+    "https://drive.google.com/drive/folders/1-4j0fd19TOa4jyAFeIIzbh6zIu085O5q",
+    "https://drive.google.com/drive/folders/1aAngO0Y0gX-LfMR-JQqxqauVHCPZUVJ5",
+    "https://drive.google.com/drive/folders/1jdJczV8lu7Wvu_2k6KLfIltVxN_T6P3f",
+    "https://drive.google.com/drive/folders/1888ecPxZRrxbhzjdb3hSFGv23yzvExjz",
+    "https://drive.google.com/drive/folders/1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo",
+    "https://drive.google.com/drive/folders/1j0G8NAA4cCPYqSAY3y-icIHWN88UYsnx",
+    "https://drive.google.com/drive/folders/1Bi6qBMDqz593h06PePPaT-GtOov6lKZZ",
+    "https://drive.google.com/drive/folders/1-NgPKBA4PNC8SVNotO9-qvK1yVoqhhvw",
+    "https://drive.google.com/drive/folders/1Xnlf_q1v-VhVB7Sl5197pXZX-TlzuAAV"
   ],
   "keywords": [
     "Blida",
@@ -2693,7 +2707,16 @@ class SupabaseService {
     "Rattrapage",
     "Résidanat",
     "Corrigé",
-    "CHU Frantz Fanon"
+    "CHU Frantz Fanon",
+    "Dr. Mahdaoui",
+    "Dr.MAHDAOUI",
+    "Mahdaoui",
+    "Zeemed",
+    "Dr KARE",
+    "SP2026",
+    "SP2027",
+    "Samedis Pédagogiques",
+    "MBset"
   ]
 }''';
 
