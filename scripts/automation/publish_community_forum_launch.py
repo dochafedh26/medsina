@@ -3,7 +3,7 @@
 
 """
 =============================================================================
-DIFFUSEUR MULTI-CANAL : PROMOTION DU FORUM TELEGRAM MEDSINA-COMMUNITY
+DIFFUSEUR MULTI-CANAL : PROMOTION DU FORUM TELEGRAM AVEC QR CODE
 =============================================================================
 Publie simultanément sur :
 1. Facebook Page « Résidanat Blida 2027 » (ID: 1405719695953624)
@@ -12,11 +12,10 @@ Publie simultanément sur :
 4. Telegram Canal Officiel « @medsina_officiel »
 5. Telegram Supergroupe Forum « MEDSINA-COMMUNITY » (Topic #General)
 
-Objectifs :
-- Annoncer l'ouverture du supergroupe Telegram forum MEDSINA-COMMUNITY avec 9 Topics.
-- Résoudre le problème n°1 des étudiants : la dispersion dans 50 groupes et drives.
-- Inviter expressément les gens à l'inscription sur Medsina Tout-en-Un.
-- Intégrer en priorité le lien d'invitation direct du groupe Telegram.
+Intègre :
+- Affiche Infographique HD avec Spotlight Card + QR Code intégré
+- Fichier image haute résolution dédié du QR Code en multi-photos Facebook
+- Inscription gratuite mise en avant sur Medsina Tout-en-Un
 =============================================================================
 """
 
@@ -26,7 +25,7 @@ import json
 import argparse
 import requests
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 try:
     if sys.stdout.encoding.lower() != 'utf-8':
@@ -40,10 +39,12 @@ from telegram_publisher import send_telegram_broadcast, OCTENIUM_WEB_URL, OCTENI
 
 TELEGRAM_COMMUNITY_INVITE = "https://t.me/+TVTTgt8eIMk5NmI0"
 
-BANNER_PATH = Path(__file__).resolve().parents[2] / "assets" / "medsina_community_telegram_forum_banner.png"
+ASSETS_DIR = Path(__file__).resolve().parents[2] / "assets"
+BANNER_PATH = ASSETS_DIR / "medsina_community_telegram_forum_banner.png"
+QR_PATH = ASSETS_DIR / "telegram_community_qr.png"
 
 # =============================================================================
-# RÉDACTION DES PUBLICATIONS FACEBOOK & TELEGRAM (ANONYMISÉES & CENTRÉES INSCRIPTION)
+# RÉDACTION DES PUBLICATIONS FACEBOOK & TELEGRAM (AVEC QR CODE & INSCRIPTION)
 # =============================================================================
 
 POST_FACEBOOK_GENERAL = f"""📢 @followers | FINIE LA DISPERSION : REJOIGNEZ LE GROUPE TELEGRAM & CRÉEZ VOTRE COMPTE SUR MEDSINA ! 🇩🇿⚡
@@ -69,7 +70,8 @@ Un Supergroupe structuré par spécialités et besoins, où chaque ressource est
 8️⃣ 🎯 #RESIDANAT-BLIDA-2027-CONCOURS-PRATIQUE : Annales QCMs classées & corrigés
 9️⃣ 📝 #CURSUS-EXTERNAT-BLIDA-2027- PRATIQUE EMD : Examens blancs de stage notés /20
 
-👉 Cliquez ici pour rejoindre le Groupe Telegram :
+📲 SCANNEZ LE QR CODE JOINT OU CLIQUEZ SUR LE LIEN :
+Pointez l'appareil photo de votre smartphone sur le QR Code joint pour intégrer le groupe instantanément :
 🔗 {TELEGRAM_COMMUNITY_INVITE}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -109,7 +111,7 @@ Rejoignez la communauté médicale officielle organisée par topics et inscrivez
 • 🌙 #MEMENTO DE GARDES : Posologies hospitalières (PCH & Saidal), scores d'alerte, constantes bio
 • 📚 #COURS & RÉSUMÉS : Fiches pratiques pour sécuriser chaque prescription
 
-👉 Lien d'accès direct au Groupe Telegram :
+📲 SCANNEZ LE QR CODE CI-JOINT OU CLIQUEZ SUR LE LIEN DIRECT :
 🔗 {TELEGRAM_COMMUNITY_INVITE}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -143,6 +145,8 @@ Rejoignez le <b>Groupe Forum Telegram MEDSINA-COMMUNITY</b> structuré en <b>9 T
 8️⃣ <b>#CONCOURS-PRATIQUE</b> : QCMs d'annales classées & corrigés
 9️⃣ <b>#PRATIQUE EMD</b> : Examens blancs notés /20
 
+📲 <i>Scannez le QR Code joint ou cliquez sur le bouton ci-dessous pour rejoindre le Forum Telegram !</i>
+
 ━━━━━━━━━━━━━━━━━━━━
 🚀 <b>INSCRIVEZ-VOUS SUR MEDSINA TOUT-EN-UN :</b>
 Créez votre compte gratuit en 30s et retrouvez <b>TOUT au même endroit 100% hors-ligne</b> !"""
@@ -152,8 +156,8 @@ Créez votre compte gratuit en 30s et retrouvez <b>TOUT au même endroit 100% ho
 # FONCTIONS DE PUBLICATION
 # =============================================================================
 
-def publish_facebook(page_id: str, token: str, page_name: str, image_path: Path, caption: str, dry_run: bool = False) -> Optional[str]:
-    print(f"\n📢 Diffusion Facebook sur : {page_name} (ID: {page_id})...")
+def publish_facebook_post(page_id: str, token: str, page_name: str, image_paths: List[Path], caption: str, dry_run: bool = False) -> Optional[str]:
+    print(f"\n📢 Diffusion Facebook sur : {page_name} (ID: {page_id}) avec {len(image_paths)} images (Affiche + QR Code)...")
     if dry_run:
         print(f"   [DRY-RUN] Facebook {page_name} simulé avec succès.")
         return "dry_run_fb_id"
@@ -163,19 +167,33 @@ def publish_facebook(page_id: str, token: str, page_name: str, image_path: Path,
         return None
 
     try:
-        url = f"https://graph.facebook.com/v21.0/{page_id}/photos"
-        with open(image_path, "rb") as f:
-            files = {"source": (os.path.basename(image_path), f, "image/png")}
-            data = {"caption": caption, "access_token": token}
-            r = requests.post(url, data=data, files=files, timeout=40)
+        # Multi-photo upload
+        media_fbids = []
+        for img_path in image_paths:
+            with open(img_path, "rb") as f:
+                files = {"source": (os.path.basename(img_path), f, "image/png")}
+                data = {"access_token": token, "published": "false"}
+                r = requests.post(f"https://graph.facebook.com/v21.0/{page_id}/photos", data=data, files=files, timeout=40)
+                if r.status_code == 200 and r.json().get("id"):
+                    media_fbids.append({"media_fbid": r.json()["id"]})
+                else:
+                    print(f"   ❌ Erreur upload photo {img_path}: {r.status_code} {r.text[:150]}")
+                    return None
 
-        if r.status_code == 200:
-            post_id = r.json().get("post_id") or r.json().get("id")
-            print(f"   ✅ Succès Facebook {page_name} ! Post ID: {post_id}")
+        feed_url = f"https://graph.facebook.com/v21.0/{page_id}/feed"
+        feed_data = {
+            "access_token": token,
+            "message": caption,
+            "attached_media": json.dumps(media_fbids)
+        }
+        r_feed = requests.post(feed_url, data=feed_data, timeout=40)
+        if r_feed.status_code == 200:
+            post_id = r_feed.json().get("id")
+            print(f"   ✅ Succès Facebook {page_name} (Affiche + QR Code) ! Post ID: {post_id}")
             print(f"   🔗 https://www.facebook.com/{post_id}")
             return post_id
         else:
-            print(f"   ❌ Erreur Facebook {page_name} ({r.status_code}): {r.text[:200]}")
+            print(f"   ❌ Erreur création post multi-photos ({r_feed.status_code}): {r_feed.text[:200]}")
             return None
     except Exception as e:
         print(f"   ❌ Exception Facebook {page_name}: {e}")
@@ -184,17 +202,20 @@ def publish_facebook(page_id: str, token: str, page_name: str, image_path: Path,
 
 def run_multi_channel_promo(dry_run: bool = False) -> Dict[str, Any]:
     print("=" * 70)
-    print("🚀 LANCEMENT DE LA PROMOTION MULTI-CANAL : FORUM MEDSINA-COMMUNITY")
+    print("🚀 LANCEMENT DE LA PROMOTION MULTI-CANAL AVEC QR CODE : FORUM MEDSINA")
     print(f"⚙️ Mode : {'SIMULATION (--dry-run)' if dry_run else 'PRODUCTION RÉELLE'}")
     print("=" * 70)
 
     creds = get_social_credentials()
 
-    if not BANNER_PATH.exists():
-        print(f"⚠️ Affiche non trouvée à : {BANNER_PATH}")
+    if not BANNER_PATH.exists() or not QR_PATH.exists():
+        print(f"⚠️ Affiche ou QR Code manquant ! Banner: {BANNER_PATH.exists()} | QR: {QR_PATH.exists()}")
         sys.exit(1)
 
     print(f"🖼️ Affiche marketing validée : {BANNER_PATH} ({os.path.getsize(BANNER_PATH) // 1024} Ko)")
+    print(f"📱 QR Code Telegram validé  : {QR_PATH} ({os.path.getsize(QR_PATH) // 1024} Ko)")
+
+    images_to_publish = [BANNER_PATH, QR_PATH]
 
     results = {
         "facebook_blida": None,
@@ -204,32 +225,32 @@ def run_multi_channel_promo(dry_run: bool = False) -> Dict[str, Any]:
         "telegram_community": None,
     }
 
-    # 1. Facebook Page Résidanat Blida 2027
-    results["facebook_blida"] = publish_facebook(
+    # 1. Facebook Page Résidanat Blida 2027 (Affiche + QR Code)
+    results["facebook_blida"] = publish_facebook_post(
         page_id=creds["blida_page_id"],
         token=creds["blida_token"],
         page_name="Résidanat Blida 2027",
-        image_path=BANNER_PATH,
+        image_paths=images_to_publish,
         caption=POST_FACEBOOK_GENERAL,
         dry_run=dry_run
     )
 
-    # 2. Facebook Page MedevSync
-    results["facebook_medevsync"] = publish_facebook(
+    # 2. Facebook Page MedevSync (Affiche + QR Code)
+    results["facebook_medevsync"] = publish_facebook_post(
         page_id=creds["medevsync_page_id"],
         token=creds["medevsync_token"],
         page_name="MedevSync Partenaire",
-        image_path=BANNER_PATH,
+        image_paths=images_to_publish,
         caption=POST_FACEBOOK_GENERAL,
         dry_run=dry_run
     )
 
-    # 3. Facebook Page CAT aux Urgences
-    results["facebook_cat"] = publish_facebook(
+    # 3. Facebook Page CAT aux Urgences (Affiche + QR Code)
+    results["facebook_cat"] = publish_facebook_post(
         page_id=creds["cat_page_id"],
         token=creds["cat_token"],
         page_name="CAT aux Urgences",
-        image_path=BANNER_PATH,
+        image_paths=images_to_publish,
         caption=POST_FACEBOOK_CAT_URGENCES,
         dry_run=dry_run
     )
@@ -277,7 +298,7 @@ def run_multi_channel_promo(dry_run: bool = False) -> Dict[str, Any]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Multi-Channel Broadcaster for Medsina-Community Forum Launch")
+    parser = argparse.ArgumentParser(description="Multi-Channel Broadcaster for Medsina-Community Forum Launch with QR Code")
     parser.add_argument("--dry-run", action="store_true", help="Simulate without publishing")
     args = parser.parse_args()
 
