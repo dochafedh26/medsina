@@ -179,21 +179,21 @@
   },
   {
     "id": "temoignage_dilmi_2025",
-    "name": "Dr Dilmi",
-    "rank_badge": "TOP 05 NATIONAL 2025 🏆",
+    "name": "Dr Dilmi Sidahmed",
+    "rank_badge": "TOP 05 • BLIDA 2025 🏆",
     "rank_number": 5,
     "year": "2025",
-    "faculty": "Concours National de Résidanat",
+    "faculty": "Faculté de Médecine de Blida",
     "is_recent_2026": false,
     "document_type": "pdf_local_and_drive",
     "pdf_file": "Dr_Dilmi_5eme_2025.pdf",
-    "summary": "Classé 5ème au concours national 2025. Stratégie de mémorisation espacée et gestion optimale du stress pré-concours.",
+    "summary": "Classé 5ème au concours de Résidanat Blida 2025 (préparation durant l'internat). Auteur des réorganisations de cours officiels de biologie et de synthèses cliniques hautement prisées.",
     "key_advices": [
-      "Ne pas se laisser déborder par la panique des derniers mois.",
-      "Se concentrer sur les questions discriminantes et les pièges classiques du Pr.",
-      "Privilégier la qualité de révision à la quantité brute de pages lues."
+      "Démarrer dès le début de l'internat (Août/Septembre) pour limiter la pression finale et faire 3 à 5 couches méthodiques.",
+      "Réorganisations des cours officiels des professeurs pour la biologie (disponibles dans son Drive) pour une mémoire visuelle maximale.",
+      "Pratiquer massivement des QCMs de réflexion clinique (Goat QCM, Scopio, Quizzy) plutôt que d'apprendre les QCMs par cœur sans raisonnement."
     ],
-    "recommended_sources": "Supports officiels, résumés concis, fiches d'urgences.",
+    "recommended_sources": "Réorganisations Biologie Dr Dilmi, Résumés Dr GMA, Résumés Dr Megateli, Fiches CODEX, Plateformes Goat & Scopio QCM.",
     "gdrive_id": "1sfIsxA7Z-JjfkdMrFoucITDpkai1GTRF",
     "target_url": "https://drive.google.com/file/d/1sfIsxA7Z-JjfkdMrFoucITDpkai1GTRF/view?usp=drivesdk"
   },
@@ -276,5 +276,62 @@
     "recommended_sources": "Cours actualisés, consensus récents, banques de QCMs vérifiées.",
     "gdrive_id": "1zP9nkr-JD8CE7uWO1iXLUGzdZOx5LD50",
     "target_url": "https://drive.google.com/file/d/1zP9nkr-JD8CE7uWO1iXLUGzdZOx5LD50/view?usp=drivesdk"
+  },
+  {
+    "id": "drive_chakib_goumari_cg",
+    "name": "Dr Chakib Goumari (CG)",
+    "rank_badge": "RÉFÉRENCE NATIONALE • PNEUMO & CARDIO 🌟",
+    "rank_number": 1,
+    "year": "2025",
+    "faculty": "Faculté de Médecine (Algérie)",
+    "is_recent_2026": false,
+    "document_type": "gdrive_folder",
+    "target_url": "https://drive.google.com/drive/folders/1j0G8NAA4cCPYqSAY3y-icIHWN88UYsnx?usp=sharing",
+    "summary": "Pack de résumés et fiches de synthèse de référence du Dr Chakib Goumari (CG), unanimement recommandé par les majors de Blida et Alger (Dr Ferhat, Dr Rouis, Dr Dilmi) pour la Pneumologie et la Cardiologie.",
+    "key_advices": [
+      "Pneumologie : Les résumés de CG sont considérés comme la référence absolue (GC+++) pour sécuriser tous les cas cliniques et QCMs.",
+      "Cardiologie : Synthèse claire et efficace de la physiopathologie cardiovasculaire et de la thérapeutique.",
+      "Parfait pour les couches rapides de consolidation et de mémorisation avant le concours."
+    ],
+    "recommended_sources": "Drive Résumés Dr Chakib Goumari (CG), Annales résidanat classées, Cas cliniques.",
+    "gdrive_id": "1j0G8NAA4cCPYqSAY3y-icIHWN88UYsnx"
+  },
+  {
+    "id": "drive_gma_alger",
+    "name": "Collection Dr GMA (Alger)",
+    "rank_badge": "RÉFÉRENCE CLINIQUE NATIONALE 📚",
+    "rank_number": 2,
+    "year": "2025",
+    "faculty": "Faculté de Médecine d'Alger",
+    "is_recent_2026": false,
+    "document_type": "gdrive_folder",
+    "target_url": "https://drive.google.com/drive/folders/1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo?usp=sharing",
+    "summary": "Collection complète des 17 modules cliniques du Dr GMA (Alger) : Cardio, Thérapeutique, Neuro, Gastro, Orthopédie, Rhumatologie, Urologie, Néphrologie, Endocrinologie, Gynécologie, Pédiatrie, Dermatologie, ORL, Ophtalmologie.",
+    "key_advices": [
+      "Permet de réviser un module volumineux en un temps record grâce à un format condensé et percutant.",
+      "Idéal en 2ème et 3ème couche pour rafraîchir la mémoire et fixer les classifications diagnostiques.",
+      "À associer aux cours officiels de sa faculté pour compléter les spécificités locales."
+    ],
+    "recommended_sources": "Collection GMA Alger (17 modules cliniques), Dossiers EMDs Blida, Annales nationales.",
+    "gdrive_id": "1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo"
+  },
+  {
+    "id": "drive_zarouta_zerrouta_az",
+    "name": "Dr Zarouta / Zerrouta (AZ)",
+    "rank_badge": "RÉFÉRENCE EN BIO & SPÉCIALITÉS 🧬",
+    "rank_number": 3,
+    "year": "2025",
+    "faculty": "Faculté de Médecine (Algérie)",
+    "is_recent_2026": false,
+    "document_type": "gdrive_folder",
+    "target_url": "https://drive.google.com/drive/folders/1Bi6qBMDqz593h06PePPaT-GtOov6lKZZ?usp=sharing",
+    "summary": "Formations, fiches et séries incontournables du Dr Zarouta (AZ) plébiscitées par les majors (Dr Belhout TOP 46, Dr Rouis TOP 97, Dr Zerouala TOP 90) : Microbiologie, Virologie, Médecine Légale, Médecine du Travail, UMC, Psychiatrie, Radio, Urologie, Physiologie.",
+    "key_advices": [
+      "Les formations de microbiologie, bactériologie et virologie sont reconnues comme indispensables par les lauréats.",
+      "Médecine Légale, Travail, UMC et Psychiatrie (séries Dr Zarouta) permettent de faire le plein de points rapidement sans dispersion.",
+      "Méthode Pomodoro (50 min / 10 min) préconisée par Dr Zarouta pour maintenir un rythme soutenu sans épuisement."
+    ],
+    "recommended_sources": "Séries & Formations Dr Zarouta (AZ), Packs Microbio/Viro, Légale, Travail, UMC, Pomodoro Guide.",
+    "gdrive_id": "1Bi6qBMDqz593h06PePPaT-GtOov6lKZZ"
   }
 ]

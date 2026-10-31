@@ -1,5 +1,35 @@
 [
   {
+    "id": "gdrive_series_dr_zarouta_az",
+    "title": "Dossier Référence : Séries & Formations Dr. Zarouta / Zerrouta - AZ",
+    "resource_type": "gdrive_folder",
+    "source_type": "google_drive",
+    "source_origin": "Google Drive Surveillé (gdrives.txt)",
+    "source_url": "https://drive.google.com/drive/folders/1Bi6qBMDqz593h06PePPaT-GtOov6lKZZ?usp=sharing",
+    "gdrive_file_id": "1Bi6qBMDqz593h06PePPaT-GtOov6lKZZ",
+    "suggested_module_id": "infectieux",
+    "suggested_course_id": null,
+    "study_year": "Biologie & Spécialités / Résidanat",
+    "ai_summary": "Packs de formation et fiches incontournables du Dr Zarouta (AZ) en Microbiologie, Virologie, Médecine Légale, Travail et UMC.",
+    "status": "verified",
+    "discovered_at": "2026-10-31T14:40:00.000000+00:00"
+  },
+  {
+    "id": "gdrive_collection_gma_alger",
+    "title": "Dossier Référence : Collection Dr. GMA - Alger (17 Modules Cliniques)",
+    "resource_type": "gdrive_folder",
+    "source_type": "google_drive",
+    "source_origin": "Google Drive Surveillé (gdrives.txt)",
+    "source_url": "https://drive.google.com/drive/folders/1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo?usp=sharing",
+    "gdrive_file_id": "1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo",
+    "suggested_module_id": "cardio",
+    "suggested_course_id": null,
+    "study_year": "4ème - 6ème Année / Résidanat",
+    "ai_summary": "Collection intégrale GMA (Alger) couvrant les 17 modules cliniques et la thérapeutique médicale et chirurgicale.",
+    "status": "verified",
+    "discovered_at": "2026-10-31T14:40:00.000000+00:00"
+  },
+  {
     "id": "gdrive_12fp2fv3G1nupOkBG_7N-tObseB8Lj3pr",
     "title": "Ressource Blida 12fp2fv3",
     "resource_type": "gdrive_folder",

@@ -1,5 +1,5 @@
 # =============================================================================
-# MEDSINA — SOURCES GOOGLE DRIVE OFFICIELLES & SURVEILLÉES (17 DRIVES)
+# MEDSINA — SOURCES GOOGLE DRIVE OFFICIELLES & SURVEILLÉES (20+ DRIVES)
 # =============================================================================
 # Ces liens sont automatiquement inspectés par le scanner Medsina
 # (scripts/automation/blida_resource_scanner.py) pour détecter et indexer
@@ -42,6 +42,12 @@ https://drive.google.com/drive/folders/1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo?usp=sha
 # Résumés Dr. Chakib Goumari - CG (Cardio, Pneumo & Clinique)
 https://drive.google.com/drive/folders/1j0G8NAA4cCPYqSAY3y-icIHWN88UYsnx?usp=sharing
 
+# Collection Dr. GMA - Alger (Packs Cliniques Complets & Thérapeutique)
+https://drive.google.com/drive/folders/1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo/10g0iH2i7nC6sNqC5?usp=sharing
+
+# Séries & Fiches Dr. Zarouta / Zerrouta - AZ (Microbio, Virologie, Légale, Travail, UMC, Psy, Radio)
+https://drive.google.com/drive/folders/1Bi6qBMDqz593h06PePPaT-GtOov6lKZZ/1AZaroutaResidanat?usp=sharing
+
 
 # --- 3. DOSSIERS EXTERNES BLIDA & RESSOURCES EN LIGNE ---
 # Drive Externe Blida - Dossier 1 (EMDs & QCMs)
@@ -51,7 +57,7 @@ https://drive.google.com/drive/folders/1qoUJmo3O5hFmCm1XihW98dlkT14BTwFZ?usp=sha
 https://drive.google.com/drive/folders/1BpTxu2_pnUsJ5CEHifBE3i_4lCt_-1FJ?usp=sharing
 
 
-# --- 4. TÉMOIGNAGES & DRIVES DES MAJORS DU RÉSIDANAT BLIDA 2026 ---
+# --- 4. TÉMOIGNAGES & DRIVES DES MAJORS DU RÉSIDANAT BLIDA & NATIONAL ---
 # Drive Dr Belhout Meriem (TOP 46 Résidanat Blida 2026 - Dossier complet)
 https://drive.google.com/drive/folders/1-NgPKBA4PNC8SVNotO9-qvK1yVoqhhvw?usp=sharing
 
@@ -78,3 +84,7 @@ https://docs.google.com/document/d/1FRgoK8ZQnl6d4OO86vf0Yoy-F924yJ-w2CXN-rxRhsU/
 
 # Témoignage & Guide Dr Zerouala Soufyane (TOP 90 Résidanat 2026 - Pomodoro, QCMs & Biologie)
 https://drive.google.com/file/d/1jfxh41kzNgubpXcy1sntRoLdsbFQp9PP/view?usp=sharing
+
+# Drive & Témoignage Dr Dilmi Sidahmed (TOP 05 Résidanat Blida 2025 - Réorganisations Biologie des Profs & Clinique)
+https://drive.google.com/file/d/1sfIsxA7Z-JjfkdMrFoucITDpkai1GTRF/view?usp=drivesdk
+
