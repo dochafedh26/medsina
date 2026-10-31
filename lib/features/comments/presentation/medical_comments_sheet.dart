@@ -414,6 +414,8 @@ class _MedicalCommentsSheetState extends State<MedicalCommentsSheet> {
                   children: [
                     Text(
                       item.userName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
                     ),
                     Text(
@@ -634,3 +636,4 @@ class _MedicalCommentsSheetState extends State<MedicalCommentsSheet> {
     );
   }
 }
+

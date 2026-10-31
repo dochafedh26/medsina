@@ -264,3 +264,4 @@ class MedicalCommentService {
     return true;
   }
 }
+

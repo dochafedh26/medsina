@@ -95,7 +95,7 @@ class _AnnouncementsHubScreenState extends State<AnnouncementsHubScreen> {
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
                 color: AppTheme.primaryTeal.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
@@ -103,29 +103,35 @@ class _AnnouncementsHubScreenState extends State<AnnouncementsHubScreen> {
               child: const Icon(
                 Icons.campaign_rounded,
                 color: AppTheme.primaryTeal,
-                size: 22,
+                size: 20,
               ),
             ),
-            const SizedBox(width: 12),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Annonces & Nouveautés',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Annonces & Nouveautés',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
-                Text(
-                  'Sources officielles, nouveaux cours, QCMs & actualités',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey,
+                  Text(
+                    'Sources officielles, nouveaux cours, QCMs & actualités',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -453,14 +459,17 @@ class _AnnouncementsHubScreenState extends State<AnnouncementsHubScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         TextButton.icon(
                           icon: const Icon(Icons.visibility_rounded, size: 16),
                           label: const Text('Voir l\'annonce complète', style: TextStyle(fontWeight: FontWeight.bold)),
                           onPressed: () => AnnouncementDetailDialog.show(context, item),
                         ),
-                        const Spacer(),
                         if (actionUrl != null)
                           ElevatedButton.icon(
                             icon: const Icon(Icons.open_in_new_rounded, size: 15),
@@ -554,24 +563,29 @@ class _AnnouncementsHubScreenState extends State<AnnouncementsHubScreen> {
                     children: [
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: primaryColor.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              item.badge.toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                color: primaryColor,
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: primaryColor.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                item.badge.toUpperCase(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                  color: primaryColor,
+                                ),
                               ),
                             ),
                           ),
-                          const Spacer(),
+                          const SizedBox(width: 8),
                           Text(
                             _formatTimeAgo(item.createdAt),
+                            maxLines: 1,
                             style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                           ),
                         ],

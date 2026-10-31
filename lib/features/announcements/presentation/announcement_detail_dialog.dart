@@ -129,31 +129,37 @@ class AnnouncementDetailDialog extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 16, 12, 12),
               child: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: primaryColor.withValues(alpha: 0.35),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(notification.type.icon, size: 14, color: primaryColor),
-                        const SizedBox(width: 6),
-                        Text(
-                          badgeLabel.toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.4,
-                            color: primaryColor,
-                          ),
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: primaryColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: primaryColor.withValues(alpha: 0.35),
+                          width: 1,
                         ),
-                      ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(notification.type.icon, size: 14, color: primaryColor),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              badgeLabel.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.4,
+                                color: primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const Spacer(),
@@ -305,70 +311,131 @@ class AnnouncementDetailDialog extends StatelessWidget {
                   ),
                 ),
               ),
-              child: Row(
-                children: [
-                  // Copy/Share Icon Button
-                  IconButton(
-                    icon: const Icon(Icons.share_outlined, size: 20),
-                    tooltip: 'Copier les détails de l\'annonce',
-                    onPressed: () {
-                      final shareText = '${notification.title}\n\n$cleanMsg\n\n${actionUrl ?? ""}';
-                      Clipboard.setData(ClipboardData(text: shareText.trim()));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Annonce copiée dans le presse-papier !'),
-                          behavior: SnackBarBehavior.floating,
-                          duration: Duration(seconds: 2),
+              child: size.width < 420
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (actionUrl != null) ...[
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.open_in_new_rounded, size: 17),
+                              label: Text(
+                                notification.actionLabel,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: Colors.white,
+                                elevation: 2,
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              onPressed: () => _handleAction(context, actionUrl),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.share_outlined, size: 20),
+                              tooltip: 'Copier les détails de l\'annonce',
+                              onPressed: () {
+                                final shareText = '${notification.title}\n\n$cleanMsg\n\n${actionUrl ?? ""}';
+                                Clipboard.setData(ClipboardData(text: shareText.trim()));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Annonce copiée dans le presse-papier !'),
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                            ),
+                            const Spacer(),
+                            OutlinedButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                side: BorderSide(
+                                  color: isDark ? Colors.white24 : Colors.grey.shade300,
+                                ),
+                              ),
+                              child: Text(
+                                'Fermer',
+                                style: TextStyle(
+                                  color: isDark ? Colors.white70 : Colors.black87,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 8),
-
-                  // Close Button
-                  OutlinedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      side: BorderSide(
-                        color: isDark ? Colors.white24 : Colors.grey.shade300,
-                      ),
-                    ),
-                    child: Text(
-                      'Fermer',
-                      style: TextStyle(
-                        color: isDark ? Colors.white70 : Colors.black87,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-
-                  // Primary Action Button (If action URL present)
-                  if (actionUrl != null) ...[
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        icon: const Icon(Icons.open_in_new_rounded, size: 17),
-                        label: Text(
-                          notification.actionLabel,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.share_outlined, size: 20),
+                          tooltip: 'Copier les détails de l\'annonce',
+                          onPressed: () {
+                            final shareText = '${notification.title}\n\n$cleanMsg\n\n${actionUrl ?? ""}';
+                            Clipboard.setData(ClipboardData(text: shareText.trim()));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Annonce copiée dans le presse-papier !'),
+                                behavior: SnackBarBehavior.floating,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
                         ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
-                          foregroundColor: Colors.white,
-                          elevation: 2,
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        const SizedBox(width: 8),
+                        OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            side: BorderSide(
+                              color: isDark ? Colors.white24 : Colors.grey.shade300,
+                            ),
+                          ),
+                          child: Text(
+                            'Fermer',
+                            style: TextStyle(
+                              color: isDark ? Colors.white70 : Colors.black87,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
-                        onPressed: () => _handleAction(context, actionUrl),
-                      ),
+                        const SizedBox(width: 10),
+                        if (actionUrl != null) ...[
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.open_in_new_rounded, size: 17),
+                              label: Text(
+                                notification.actionLabel,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: Colors.white,
+                                elevation: 2,
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              onPressed: () => _handleAction(context, actionUrl),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ],
-                ],
-              ),
             ),
           ],
         ),
