@@ -131,6 +131,115 @@ class MedicalNotification {
   }
 
   /// Determines if this notification should strictly be restricted to administrators
+  /// Extracts image or flyer URL from metadata or message
+  String? get imageUrl {
+    if (metadata != null) {
+      final img = metadata!['image_url'] ??
+          metadata!['imageUrl'] ??
+          metadata!['banner_url'] ??
+          metadata!['flyer_url'] ??
+          metadata!['image'];
+      if (img != null && img.toString().trim().isNotEmpty) {
+        return img.toString().trim();
+      }
+    }
+    final match = RegExp(
+      r'https?://[^\s]+\.(?:jpg|jpeg|png|webp|gif)',
+      caseSensitive: false,
+    ).firstMatch(message);
+    if (match != null) {
+      return match.group(0);
+    }
+    return null;
+  }
+
+  /// Extracts external or resource action URL
+  String? get actionUrl {
+    if (metadata != null) {
+      final url = metadata!['action_url'] ??
+          metadata!['actionUrl'] ??
+          metadata!['link'] ??
+          metadata!['url'] ??
+          metadata!['source_url'] ??
+          metadata!['drive_url'];
+      if (url != null && url.toString().trim().isNotEmpty) {
+        return url.toString().trim();
+      }
+    }
+    final imgUrl = imageUrl;
+    final matches = RegExp(r'https?://[^\s]+').allMatches(message);
+    for (final m in matches) {
+      final url = m.group(0);
+      if (url != null && url != imgUrl) {
+        return url;
+      }
+    }
+    return null;
+  }
+
+  /// Action button label
+  String get actionLabel {
+    if (metadata != null) {
+      final lbl = metadata!['action_label'] ??
+          metadata!['button_label'] ??
+          metadata!['cta_label'];
+      if (lbl != null && lbl.toString().trim().isNotEmpty) {
+        return lbl.toString().trim();
+      }
+    }
+    final act = actionUrl;
+    if (act != null) {
+      if (act.contains('drive.google.com')) return 'Consulter le Drive 📁';
+      if (act.contains('t.me')) return 'Ouvrir sur Telegram ✈️';
+      if (act.contains('qcm')) return 'S\'entraîner aux QCMs 🎯';
+      if (act.contains('cours') || act.contains('summary')) return 'Ouvrir le Cours 📖';
+      return 'Accéder à la Source 🚀';
+    }
+    return 'En Savoir Plus';
+  }
+
+  /// Category badge label
+  String get badge {
+    if (metadata != null) {
+      final b = metadata!['badge'] ?? metadata!['category'] ?? metadata!['tag'];
+      if (b != null && b.toString().trim().isNotEmpty) {
+        return b.toString().trim();
+      }
+    }
+    final t = title.toLowerCase();
+    if (t.contains('drive')) return 'Drive Officiel 📁';
+    if (t.contains('qcm') || type == NotificationType.qcm) return 'Banque QCM 🎯';
+    if (t.contains('cours') || type == NotificationType.course) return 'Nouveau Cours 📚';
+    if (t.contains('cat') || type == NotificationType.cat) return 'Conduite CAT 🚨';
+    if (t.contains('mémento') || t.contains('memento') || type == NotificationType.memento) return 'Mémento 🌙';
+    if (t.contains('promo') || t.contains('tarif') || type == NotificationType.subscription) return 'Offre Spéciale 💎';
+    if (type == NotificationType.announcement) return 'Annonce Officielle 📢';
+    return type.label;
+  }
+
+  /// Cleaned readable message with raw image/action URLs stripped out cleanly
+  String get cleanMessage {
+    String txt = message;
+    final img = imageUrl;
+    if (img != null) {
+      txt = txt.replaceAll(img, '');
+    }
+    final act = actionUrl;
+    if (act != null) {
+      txt = txt.replaceAll(act, '');
+    }
+    txt = txt.replaceAll(RegExp(r'Consultez l\x27affiche officielle\s*:?', caseSensitive: false), '');
+    txt = txt.replaceAll(RegExp(r'Consultez le flyer\s*:?', caseSensitive: false), '');
+    txt = txt.replaceAll(RegExp(r'Lien direct\s*:?', caseSensitive: false), '');
+    txt = txt.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+    return txt.trim();
+  }
+
+  bool get isAnnouncement =>
+      type == NotificationType.announcement ||
+      imageUrl != null ||
+      metadata?['is_announcement'] == true;
+
   bool get isAdminOnly {
     if (targetRole.toLowerCase() == 'admin') return true;
     if (metadata != null) {

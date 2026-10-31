@@ -27,10 +27,16 @@ import '../../group_revision/presentation/group_revision_hub_screen.dart';
 import '../models/medical_notification.dart';
 
 import 'realtime_notification_service.dart';
+import '../../announcements/presentation/announcement_detail_dialog.dart';
+import '../../announcements/presentation/announcements_hub_screen.dart';
 
 
 
 class NotificationNavigationService {
+  /// Opens the dedicated Annonces & Nouveautés Hub
+  static Future<void> openAnnouncementsHub(BuildContext context) async {
+    await AnnouncementsHubScreen.push(context);
+  }
 
   /// Handles tapping a notification across the app (ModalSheet, SnackBar, etc.)
 
@@ -92,6 +98,14 @@ class NotificationNavigationService {
     }
 
 
+
+    // 2b. Check for announcements or notifications with visual infographics/flyers
+    if (notification.type == NotificationType.announcement ||
+        notification.imageUrl != null ||
+        notification.isAnnouncement) {
+      await AnnouncementDetailDialog.show(context, notification);
+      return;
+    }
 
     // 3. If notification is an Alert / Subscription / Quota / Announcement -> Open Alert Dialog
 
@@ -364,6 +378,11 @@ class NotificationNavigationService {
     MedicalNotification notif,
 
   ) async {
+
+    if (notif.imageUrl != null || notif.isAnnouncement || notif.type == NotificationType.announcement) {
+      await AnnouncementDetailDialog.show(context, notif);
+      return;
+    }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 

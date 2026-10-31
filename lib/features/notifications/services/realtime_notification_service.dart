@@ -70,6 +70,11 @@ class RealtimeNotificationService {
     }
   }
 
+  /// Manually refreshes/reloads all notifications and announcements from Supabase
+  Future<void> reloadNotifications() async {
+    await _loadInitialNotifications();
+  }
+
   Future<void> _loadUserReadIds() async {
     try {
       final prefs = await SharedPreferences.getInstance();

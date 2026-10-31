@@ -1,3 +1,4 @@
+import '../../announcements/presentation/announcements_hub_screen.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -888,6 +889,14 @@ class _MainScaffoldState extends State<MainScaffold> {
             onTap: () => _manualCheckOtaUpdates(context),
           ),
           _buildDockDivider(isDark),
+          _buildDockIconButton(
+            icon: Icons.campaign_rounded,
+            tooltip: 'Annonces & Nouveautés Medsina',
+            color: const Color(0xFF14B8A6),
+            bgTint: const Color(0xFF14B8A6).withValues(alpha: 0.12),
+            onTap: () => AnnouncementsHubScreen.push(context),
+          ),
+          const SizedBox(width: 3),
           _buildNotificationBellAction(context, compact: true),
         ],
       ),

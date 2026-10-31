@@ -1,3 +1,4 @@
+import '../../announcements/presentation/announcements_hub_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../models/medical_notification.dart';
@@ -79,6 +80,55 @@ class NotificationsModalSheet extends StatelessWidget {
             ),
           ),
           const Divider(height: 1),
+
+          // Dedicated Banner to Annonces & Nouveautés Hub
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                Navigator.of(context).pop();
+                AnnouncementsHubScreen.push(context);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppTheme.primaryTeal.withValues(alpha: 0.18),
+                      const Color(0xFF6366F1).withValues(alpha: 0.12),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.35),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.campaign_rounded, color: AppTheme.primaryTeal, size: 20),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Coin Annonces & Nouveautés 📢',
+                            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                          ),
+                          Text(
+                            'Voir tous les nouveaux cours, drives & infographies',
+                            style: TextStyle(fontSize: 11, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.arrow_forward_ios_rounded, size: 13, color: Colors.grey.shade500),
+                  ],
+                ),
+              ),
+            ),
+          ),
 
           // Notifications List
           Expanded(
@@ -230,7 +280,7 @@ class _NotificationTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    item.message,
+                    item.cleanMessage,
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark ? Colors.white70 : Colors.grey.shade600,
