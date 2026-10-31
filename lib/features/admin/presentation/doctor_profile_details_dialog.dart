@@ -959,6 +959,9 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
 
   // --- TAB 4: LICENSES & QUOTAS ---
   Widget _buildLicensesAndQuotasTab(List keys, dynamic quotas, bool isDark) {
+    final prof = _deepDetails['profile'] as Map<String, dynamic>?;
+    final loyalty = _deepDetails['loyalty'] as Map<String, dynamic>?;
+
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -1032,6 +1035,35 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
             'Requêtes Assistant Copilot',
             quotas != null ? '${quotas['copilot_queries_used'] ?? 0} échange(s)' : '0 échange',
             Icons.smart_toy_outlined,
+            isDark,
+          ),
+        ]),
+        const SizedBox(height: 18),
+        _buildSectionHeader('Programme de Fidélité & Connexions', Icons.local_fire_department_outlined, isDark),
+        const SizedBox(height: 12),
+        _buildInfoGrid([
+          _InfoTile(
+            'Total Connexions',
+            '${prof?['connection_count'] ?? loyalty?['connection_count'] ?? 1} session(s)',
+            Icons.login_rounded,
+            isDark,
+          ),
+          _InfoTile(
+            'Série Active (Streak)',
+            '${prof?['streak_days'] ?? loyalty?['streak_days'] ?? 1} jour(s) consécutif(s) 🔥',
+            Icons.local_fire_department_rounded,
+            isDark,
+          ),
+          _InfoTile(
+            'Record de Série',
+            '${prof?['max_streak_days'] ?? loyalty?['max_streak_days'] ?? 1} jour(s) ininterrompu(s)',
+            Icons.emoji_events_outlined,
+            isDark,
+          ),
+          _InfoTile(
+            'Rang & Points XP',
+            '${prof?['loyalty_level'] ?? loyalty?['loyalty_level'] ?? 'Externe Studieux'} (${prof?['loyalty_points'] ?? loyalty?['loyalty_points'] ?? 10} XP)',
+            Icons.military_tech_rounded,
             isDark,
           ),
         ]),

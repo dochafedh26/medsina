@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'core/constants/app_constants.dart';
 import 'core/network/supabase_service.dart';
+import 'core/services/user_loyalty_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/medsina_logo.dart';
 import 'features/admin/bloc/admin_bloc.dart';
@@ -36,6 +37,8 @@ void main() async {
 
   try {
     await SupabaseService.initialize();
+    // Track user connection session, daily streak and loyalty XP
+    UserLoyaltyService.instance.initializeAndTrack();
   } catch (e) {
     debugPrint('Supabase initialization fallback: $e');
   }

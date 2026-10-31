@@ -858,6 +858,17 @@ class SupabaseService {
     }
 
     try {
+      final syncData = await client
+          .from('user_cloud_sync')
+          .select('payload')
+          .eq('id', '${userId}_loyalty_tracker')
+          .maybeSingle();
+      if (syncData != null && syncData['payload'] != null) {
+        result['loyalty'] = syncData['payload'];
+      }
+    } catch (_) {}
+
+    try {
       final sub = await client.from('subscriptions').select().eq('user_id', userId).maybeSingle();
       if (sub != null) {
         result['subscription'] = sub;
