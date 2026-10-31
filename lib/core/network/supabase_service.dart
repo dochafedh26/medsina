@@ -2756,11 +2756,13 @@ class SupabaseService {
             'status': newStatus,
             'reviewed_at': DateTime.now().toIso8601String(),
           })
-          .or('id.eq.$idOrHash,external_id_hash.eq.$idOrHash');
+          .eq('id', idOrHash);
       updatedTable = true;
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Note: update discovered_blida_resources table: $e');
+    }
 
-    // 2. Also update the JSON queue in `admin_system_settings` so both stay in sync
+    // 2. Also update the JSON queue in dmin_system_settings so both stay in sync
     try {
       final rawJson = await getAdminSetting(_blidaQueueSettingKey);
       if (rawJson != null && rawJson.trim().isNotEmpty) {
@@ -2807,21 +2809,30 @@ class SupabaseService {
     if (idsOrHashes.isEmpty) return 0;
     final idSet = idsOrHashes.toSet();
     final nowIso = DateTime.now().toIso8601String();
+    int tableUpdatedCount = 0;
 
-    // 1. Attempt update on dedicated table
+    // 1. Attempt update on dedicated table in safe chunks of 50
     try {
-      final filterList = idsOrHashes.map((id) => 'id.eq.$id,external_id_hash.eq.$id').join(',');
-      await client
-          .from('discovered_blida_resources')
-          .update({
-            'status': newStatus,
-            'reviewed_at': nowIso,
-          })
-          .or(filterList);
-    } catch (_) {}
+      for (var i = 0; i < idsOrHashes.length; i += 50) {
+        final chunk = idsOrHashes.sublist(
+          i,
+          (i + 50 > idsOrHashes.length) ? idsOrHashes.length : i + 50,
+        );
+        await client
+            .from('discovered_blida_resources')
+            .update({
+              'status': newStatus,
+              'reviewed_at': nowIso,
+            })
+            .inFilter('id', chunk);
+        tableUpdatedCount += chunk.length;
+      }
+    } catch (e) {
+      debugPrint('Error batch updating discovered_blida_resources table: $e');
+    }
 
-    // 2. Also update the JSON queue in `admin_system_settings`
-    int affected = 0;
+    // 2. Also update the JSON queue in dmin_system_settings
+    int settingAffected = 0;
     try {
       final rawJson = await getAdminSetting(_blidaQueueSettingKey);
       if (rawJson != null && rawJson.trim().isNotEmpty) {
@@ -2837,7 +2848,7 @@ class SupabaseService {
                 map['status'] = newStatus;
                 map['reviewed_at'] = nowIso;
                 changed = true;
-                affected++;
+                settingAffected++;
               }
               return map;
             }
@@ -2858,10 +2869,8 @@ class SupabaseService {
       debugPrint('Error updating batch discovered_blida_resources_queue setting: $e');
     }
 
-    return affected > 0 ? affected : idsOrHashes.length;
+    return tableUpdatedCount > 0 ? tableUpdatedCount : (settingAffected > 0 ? settingAffected : idsOrHashes.length);
   }
-
-
 
   /// Retrieve the JSON configuration of watched Telegram channels & Google Drive folders
   static Future<String> getBlidaScannerSources() async {
