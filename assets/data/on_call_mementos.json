@@ -351,23 +351,23 @@
   },
   {
     "id": "memento_asthme_aigu_grave",
-    "title": "⚡ Asthme Aigu Grave (AAG) : Déchoquage & Urgences",
+    "title": "⚡ Asthme Aigu Grave (AAG) : Conduite à Tenir en Urgence",
     "category": "Urgences Respiratoires",
     "icon_name": "air_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation immédiate de la gravité (incapacité à aligner les mots, FR > 30/min, FC > 120/min, SpO2 < 92% sous O2, silence auriculaire) et installation en position demi-assise.",
-      "Étape 2 : Oxygénothérapie à haut débit pour maintenir une SpO2 entre 93 et 98%, pose d'une voie veineuse périphérique (VVP) et réalisation d'un monitorage multiparamétrique (ECG, SpO2, PNI).",
-      "Étape 3 : Nébulisations urgentes associant Salbutamol (5 mg) + Ipratropium (0,5 mg) dans 4 mL de NaCl 0,9% sur 15 min, répétées toutes les 20 min si besoin, et Corticothérapie systémique IV précoce (Méthylprednisolone 1 à 2 mg/kg ou HHC 200 mg IV).",
-      "Étape 4 : En cas d'échec des nébulisations ou AAG menaçant : Adrénaline en nébulisation (2 mg) ou IVSE prudente, ou Sulfate de Magnésium IV (2 g dans 100 mL de G5% ou NaCl 0,9% en 20 min).",
-      "Étape 5 : Surveillance armée de la fatigue respiratoire, gaz du sang artériel (GSA) à la recherche d'une hypercapnie (signe d'épuisement imminent) et appel immédiat du réanimateur pour intubation orotrachéale si arrêt respiratoire ou encéphalopathie hypercapnique.",
-      "Étape 6 : Piège médico-légal absolu : NE JAMAIS administrer de sédatifs ou de morphiniques, et éviter la ventilation non invasive (VNI) en première intention hors réanimation (risque d'arrêt cardiaque par encombrement)."
+      "Étape 1 : Conditionnement immédiat, pose de 2 VVP gros calibre, mise en position assise, oxygénothérapie haut débit au masque facial pour maintenir une SpO2 > 92 % (ou 88-92% si insuffisant respiratoire chronique), monitorage continu (ECG, SpO2, PA).",
+      "Étape 2 : Bilan d'urgence au lit (GDS artériel indispensable pour rechercher une hypercapnie témoin d'épuisement, ionogramme, créatinine, NFS, radio pulmonaire de face si doute sur pneumothorax ou pneumonie).",
+      "Étape 3 : Nébulisations urgentes associant Bêta-2 mimétiques à courte durée d'action (Salbutamol 5 mg) + Anticholinergique (Bromure d'Ipratropium 0,5 mg) dans 4-5 mL de NaCl 0,9% administrées sous oxygène (8 L/min) toutes les 20 minutes la 1ère heure, associées à la corticothérapie systémique précoce : SolUPred IV (2 à 3 mg/kg) ou Hydrocortisone (200 mg IV).",
+      "Étape 4 : En cas d'échec des nébulisations ou AAG menaçant (silence pulmonaire, collapsus, troubles de la conscience), administrer de l'Adrénaline en IV discontinue ou en aérosol (0,25 à 0,5 mg IM ou sous-cutané si pas de VVP), ou Sulfate de Magnésium IV (2 g dans 100 mL de G5% ou NaCl 0,9% en 20 minutes). Préparer le matériel d'intubation (sédation adaptée type Kétamine, ventilation protective).",
+      "Étape 5 : Surveillance rapprochée (fréquence respiratoire, DEP, conscience, GDS de contrôle à H1). Critères de transfert en réanimation : acidose respiratoire (PaCO2 > 45 mmHg), silence pulmonaire, épuisement, troubles de la conscience ou arrêt respiratoire imminent.",
+      "Étape 6 : Piège médico-légal et CI absolue : Ne jamais administrer de Sédatifs ou de Bêtabloquants (même collyre), et ne pas attendre les résultats de la radio pulmonaire ou de la NFS pour débuter la bronchodilatation."
     ],
-    "scientific_references": "SFMU / SRLF / GINA / Recommandations MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / GINA / Collège de Médecine d'Urgence d'Algérie",
     "is_active": true,
-    "created_at": "2026-10-30T23:52:49.922361+00:00",
-    "updated_at": "2026-10-30T23:52:49.922374+00:00"
+    "created_at": "2026-10-31T17:48:50.940346+00:00",
+    "updated_at": "2026-10-31T17:48:50.940359+00:00"
   },
   {
     "id": "memento_pancreatite_aigue",
