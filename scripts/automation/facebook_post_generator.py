@@ -1821,7 +1821,8 @@ def main():
                     reference=post_data.get("reference", ""),
                     app_version=APP_VERSION
                 )
-            send_telegram_broadcast(message_text=tg_caption, image_path=img_path, dry_run=False)
+            tg_category = "qcm" if post_data.get("is_quiz") else post_data.get("category", post_data.get("badge", ""))
+            send_telegram_broadcast(message_text=tg_caption, image_path=img_path, category=tg_category, dry_run=False)
         except Exception as e:
             print(f"⚠️ Information Telegram: {e}")
     else:

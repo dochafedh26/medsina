@@ -61,3 +61,7 @@ assets/facebook/migration_cache/
 *.session
 *.session-journal
 *processed*.json
+
+# Local publication history cache
+.published_history.json
+*.published_history.json
