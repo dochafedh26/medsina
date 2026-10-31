@@ -817,5 +817,20 @@
     ],
     "created_at": "2026-10-31T19:26:55.781110+00:00",
     "updated_at": "2026-10-31T19:26:55.781123+00:00"
+  },
+  {
+    "id": "lab_complement_c3_c4",
+    "name": "Complément sérique C3 et C4",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "C3: 0.9 - 1.8 g/L | C4: 0.1 - 0.4 g/L",
+    "unit": "g/L",
+    "high_interpretation": "Signe d'un syndrome inflammatoire aigu ou chronique (phase aiguë, C3 et C4 étant des protéines de l'inflammation). Peu spécifique isolément.",
+    "low_interpretation": "Consommation du complément par activation des voies (classique, alterne ou des lectines). C3 et C4 bas : activation de la voie classique (Lupus érythémateux systémique en poussée, cryoglobulinémie, glomérulonéphrite post-infectieuse, endocardite bactérienne). C3 bas isolé : activation de la voie alterne (Glomérulonéphrite membranoproliférative / type II, syndrome hémolytique et urémique atypique - SHUa). Urgence : évaluer la fonction rénale et rechercher une glomérulonéphrite lupique active.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : instabilité thermique des fractions du complément. Le prélèvement doit être centrifugé rapidement et le sérum congelé à -80°C si le dosage n'est pas immédiat, pour éviter une activation spontanée in vitro faussement abaisseuse.",
+      "Utilité majeure dans le suivi évolutif du Lupus Érythémateux Systémique (LES) : une baisse isolée ou franche de C3/C4 précède souvent la rechute rénale (néphrite lupique) avant même l'élévation de la protéinurie ou la baisse de la clairance de la créatinine."
+    ],
+    "created_at": "2026-10-31T22:41:38.866202+00:00",
+    "updated_at": "2026-10-31T22:41:38.866218+00:00"
   }
 ]
