@@ -46,6 +46,16 @@ jobs:
           SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          FB_MEDSINA_PAGE_ID: ${{ secrets.FB_MEDSINA_PAGE_ID }}
+          FB_MEDSINA_PAGE_ACCESS_TOKEN: ${{ secrets.FB_MEDSINA_PAGE_ACCESS_TOKEN }}
+          FB_MEDEVSYNC_PAGE_ID: ${{ secrets.FB_MEDEVSYNC_PAGE_ID }}
+          FB_MEDEVSYNC_PAGE_ACCESS_TOKEN: ${{ secrets.FB_MEDEVSYNC_PAGE_ACCESS_TOKEN }}
+          FB_BLIDA_PAGE_ID: ${{ secrets.FB_BLIDA_PAGE_ID }}
+          FB_BLIDA_PAGE_ACCESS_TOKEN: ${{ secrets.FB_BLIDA_PAGE_ACCESS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: |
           CMD="python scripts/automation/medsina_agent.py --action drugs"
           if [ -n "${{ inputs.dci }}" ]; then

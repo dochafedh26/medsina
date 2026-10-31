@@ -561,100 +561,147 @@ L'arbre décisionnel interactif complet en 4 étapes, les posologies exactes ada
 
 def publish_to_facebook_page(page_id: str, token: str, page_name: str, image_path: Optional[str], caption: str, dry_run: bool = False) -> Optional[str]:
     if dry_run:
-        print(f"   [DRY-RUN] Facebook {page_name} ({page_id}): simulation réussie.")
-        return "dry_run_post_id"
+        print(f'   [DRY-RUN] Facebook {page_name} ({page_id}): simulation réussie.')
+        return 'dry_run_post_id'
 
     if not page_id or not token:
-        print(f"   ⚠️ Facebook {page_name} ignoré : page_id ou token manquant.")
+        print(f'   ⚠️ Facebook {page_name} ignoré : page_id ou token manquant.')
         return None
 
-    # Try photo post first if image exists
+    # Assurer la mention @followers dans le corps du texte
+    fb_caption = caption
+    if '@followers' not in fb_caption:
+        fb_caption = '@followers\n\n' + fb_caption
+
+    pid = None
+
     if image_path and os.path.exists(image_path):
         try:
-            url = f"https://graph.facebook.com/v21.0/{page_id}/photos"
-            with open(image_path, "rb") as f:
-                files = {"source": (os.path.basename(image_path), f, "image/png")}
-                data = {"caption": caption, "access_token": token}
+            url = f'https://graph.facebook.com/v21.0/{page_id}/photos'
+            with open(image_path, 'rb') as f:
+                files = {'source': (os.path.basename(image_path), f, 'image/png')}
+                data = {'caption': fb_caption, 'access_token': token}
                 r = requests.post(url, data=data, files=files, timeout=40)
             if r.status_code == 200:
                 res = r.json()
-                pid = res.get("post_id") or res.get("id")
-                print(f"   ✅ Succès Facebook {page_name} (Photo)! Post ID: {pid}")
-                return pid
+                pid = res.get('post_id') or res.get('id')
+                print(f'   ✅ Succès Facebook {page_name} (Photo)! Post ID: {pid}')
             else:
-                print(f"   ⚠️ Avertissement photo Facebook {page_name} ({r.status_code}): {r.text[:120]}")
+                print(f'   ⚠️ Avertissement photo Facebook {page_name} ({r.status_code}): {r.text[:120]}')
         except Exception as e:
-            print(f"   ⚠️ Erreur upload photo Facebook {page_name}: {e}")
+            print(f'   ⚠️ Erreur upload photo Facebook {page_name}: {e}')
 
-    # Fallback to feed text + link
-    try:
-        url = f"https://graph.facebook.com/v21.0/{page_id}/feed"
-        data = {"message": caption, "link": OFFICIAL_WEB_URL, "access_token": token}
-        r = requests.post(url, data=data, timeout=30)
-        if r.status_code == 200:
-            pid = r.json().get("id")
-            print(f"   ✅ Succès Facebook {page_name} (Feed Text)! Post ID: {pid}")
-            return pid
-        else:
-            print(f"   ❌ Échec Facebook {page_name} ({r.status_code}): {r.text[:150]}")
-    except Exception as e:
-        print(f"   ❌ Erreur Facebook feed {page_name}: {e}")
+    if not pid:
+        try:
+            url = f'https://graph.facebook.com/v21.0/{page_id}/feed'
+            data = {'message': fb_caption, 'link': OFFICIAL_WEB_URL, 'access_token': token}
+            r = requests.post(url, data=data, timeout=30)
+            if r.status_code == 200:
+                pid = r.json().get('id')
+                print(f'   ✅ Succès Facebook {page_name} (Feed Text)! Post ID: {pid}')
+            else:
+                print(f'   ❌ Échec Facebook {page_name} ({r.status_code}): {r.text[:150]}')
+        except Exception as e:
+            print(f'   ❌ Erreur Facebook feed {page_name}: {e}')
 
-    return None
+    if pid:
+        try:
+            comment_url = f'https://graph.facebook.com/v21.0/{pid}/comments'
+            c_data = {
+                'message': '@followers Retrouvez la fiche complète sur https://medsina.medevsync.com',
+                'access_token': token
+            }
+            requests.post(comment_url, data=c_data, timeout=10)
+        except Exception:
+            pass
 
-def publish_to_telegram(token: str, channel_id: str, image_path: Optional[str], caption: str, dry_run: bool = False) -> bool:
+    return pid
+
+
+def publish_to_telegram(token: str, channel_id: str, image_path: Optional[str], caption: str, dry_run: bool = False, auto_pin: bool = False) -> bool:
     if dry_run:
-        print("   [DRY-RUN] Telegram broadcast simulé avec succès.")
+        print('   [DRY-RUN] Telegram broadcast simulé avec succès.')
         return True
 
     if not token or not channel_id:
-        print("   ⚠️ Telegram ignoré : token ou channel_id manquant.")
+        print('   ⚠️ Telegram ignoré : token ou channel_id manquant.')
         return False
 
-    # Shorten caption for Telegram photo caption limit (1024 chars)
-    tg_caption = caption
-    if len(tg_caption) > 1000:
-        tg_caption = tg_caption[:980] + "...\n\n👉 Suite complète sur https://medsina.medevsync.com"
-
     reply_markup = {
-        "inline_keyboard": [
+        'inline_keyboard': [
             [
-                {"text": "🌐 Ouvrir sur Medsina Web", "url": OFFICIAL_WEB_URL},
-                {"text": "📲 Télécharger APK Android", "url": OFFICIAL_APK_URL}
+                {'text': '🌐 Ouvrir sur Medsina Web', 'url': OFFICIAL_WEB_URL},
+                {'text': '📲 Télécharger APK Android', 'url': OFFICIAL_APK_URL}
+            ],
+            [
+                {'text': '💻 Télécharger PC Windows', 'url': OFFICIAL_WIN_URL},
+                {'text': '👥 Page Facebook Medsina', 'url': 'https://www.facebook.com/residanatblida2027'}
             ]
         ]
     }
 
+    suffix = f'\n\n👉 Suite complète sur {OFFICIAL_WEB_URL}'
+    max_body_len = 940 - len(suffix)
+
+    tg_caption = caption
+    if len(tg_caption) > (1010 - len(suffix)):
+        cut_point = tg_caption[:max_body_len]
+        if '\n' in cut_point:
+            cut_point = cut_point.rsplit('\n', 1)[0]
+        tg_caption = cut_point.strip() + '...' + suffix
+
+    msg_id = None
     try:
         if image_path and os.path.exists(image_path):
-            url = f"https://api.telegram.org/bot{token}/sendPhoto"
-            with open(image_path, "rb") as f:
-                files = {"photo": f}
+            url = f'https://api.telegram.org/bot{token}/sendPhoto'
+            with open(image_path, 'rb') as f:
+                files = {'photo': f}
                 data = {
-                    "chat_id": channel_id,
-                    "caption": tg_caption,
-                    "reply_markup": json.dumps(reply_markup)
+                    'chat_id': channel_id,
+                    'caption': tg_caption,
+                    'reply_markup': json.dumps(reply_markup)
                 }
-                r = requests.post(url, data=data, files=files, timeout=30)
-        else:
-            url = f"https://api.telegram.org/bot{token}/sendMessage"
-            data = {
-                "chat_id": channel_id,
-                "text": caption,
-                "reply_markup": json.dumps(reply_markup)
-            }
-            r = requests.post(url, data=data, timeout=20)
+                r = requests.post(url, data=data, files=files, timeout=35)
 
-        if r.status_code == 200 and r.json().get("ok"):
-            msg_id = r.json().get("result", {}).get("message_id")
-            print(f"   ✅ Succès Telegram (@medsina_officiel)! Message ID: {msg_id}")
-            return True
+            if r.status_code == 200 and r.json().get('ok'):
+                msg_id = r.json().get('result', {}).get('message_id')
+                print(f'   ✅ Succès Telegram photo (@medsina_officiel)! Message ID: {msg_id}')
+            else:
+                print(f'   ⚠️ Avertissement sendPhoto Telegram ({r.status_code}): {r.text[:160]}')
+                print('   🔄 Repli résilient : Envoi photo + texte détaillé via sendMessage (supporte 4096 car)...')
+                short_caption = caption[:180].rsplit('\n', 1)[0] + f'\n\n👉 {OFFICIAL_WEB_URL}'
+                with open(image_path, 'rb') as f2:
+                    requests.post(url, data={'chat_id': channel_id, 'caption': short_caption}, files={'photo': f2}, timeout=30)
+                msg_url = f'https://api.telegram.org/bot{token}/sendMessage'
+                r3 = requests.post(msg_url, data={'chat_id': channel_id, 'text': caption[:4000], 'reply_markup': json.dumps(reply_markup)}, timeout=25)
+                if r3.status_code == 200 and r3.json().get('ok'):
+                    msg_id = r3.json().get('result', {}).get('message_id')
+                    print(f'   ✅ Succès Telegram en repli décomposé! Message ID: {msg_id}')
         else:
-            print(f"   ⚠️ Avertissement Telegram ({r.status_code}): {r.text[:150]}")
+            url = f'https://api.telegram.org/bot{token}/sendMessage'
+            data = {'chat_id': channel_id, 'text': caption[:4000], 'reply_markup': json.dumps(reply_markup)}
+            r = requests.post(url, data=data, timeout=20)
+            if r.status_code == 200 and r.json().get('ok'):
+                msg_id = r.json().get('result', {}).get('message_id')
+                print(f'   ✅ Succès Telegram sendMessage (@medsina_officiel)! Message ID: {msg_id}')
+            else:
+                print(f'   ⚠️ Avertissement Telegram ({r.status_code}): {r.text[:150]}')
+
+        if msg_id:
+            if auto_pin:
+                try:
+                    pin_url = f'https://api.telegram.org/bot{token}/pinChatMessage'
+                    requests.post(pin_url, json={'chat_id': channel_id, 'message_id': msg_id, 'disable_notification': False}, timeout=10)
+                    print(f'   📌 Message Telegram #{msg_id} épinglé avec notification push.')
+                except Exception:
+                    pass
+            return True
+
     except Exception as e:
-        print(f"   ⚠️ Erreur Telegram : {e}")
+        print(f'   ⚠️ Erreur Telegram : {e}')
 
     return False
+
 
 def broadcast_content_teaser(
     content_type: str,

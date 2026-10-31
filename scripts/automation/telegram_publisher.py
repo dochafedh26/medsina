@@ -154,27 +154,77 @@ def send_telegram_broadcast(
             return {"success": False, "skipped": True, "reason": reason}
 
     # Publication réelle via l'API Telegram Bot
+    resp = None
     if image_path and os.path.exists(image_path):
         api_url = f"https://api.telegram.org/bot{token}/sendPhoto"
+        
+        # Enforce Telegram sendPhoto caption limit (1024 UTF-16 code units)
+        tg_caption = message_text
+        if len(tg_caption) > 950:
+            cut_idx = tg_caption[:900].rfind("\n")
+            if cut_idx == -1:
+                cut_idx = 900
+            tg_caption = tg_caption[:cut_idx].strip() + "...\n\n👉 Suite sur " + OCTENIUM_WEB_URL
+
         with open(image_path, "rb") as img:
             files = {"photo": img}
             data = {
                 "chat_id": channel,
-                "caption": message_text,
+                "caption": tg_caption,
                 "parse_mode": "HTML",
                 "reply_markup": json.dumps(inline_keyboard)
             }
             resp = requests.post(api_url, data=data, files=files, timeout=45)
+            
+        # Fallback si HTML parse error ou dépassement résiduel
+        if resp.status_code != 200:
+            print(f"⚠️ Avertissement sendPhoto Telegram ({resp.status_code}): {resp.text[:120]}")
+            print("🔄 Repli résilient : envoi de l'image puis du message complet via sendMessage...")
+            with open(image_path, "rb") as img2:
+                requests.post(
+                    api_url,
+                    data={"chat_id": channel, "caption": f"🩺 {OCTENIUM_WEB_URL}"},
+                    files={"photo": img2},
+                    timeout=30
+                )
+            msg_url = f"https://api.telegram.org/bot{token}/sendMessage"
+            resp = requests.post(
+                msg_url,
+                json={
+                    "chat_id": channel,
+                    "text": message_text[:4000],
+                    "parse_mode": "HTML",
+                    "reply_markup": json.dumps(inline_keyboard),
+                    "disable_web_page_preview": False
+                },
+                timeout=30
+            )
+            # Second fallback if HTML tag error: send raw text without parse_mode
+            if resp.status_code != 200:
+                resp = requests.post(
+                    msg_url,
+                    json={
+                        "chat_id": channel,
+                        "text": message_text[:4000],
+                        "reply_markup": json.dumps(inline_keyboard),
+                        "disable_web_page_preview": False
+                    },
+                    timeout=30
+                )
     else:
         api_url = f"https://api.telegram.org/bot{token}/sendMessage"
         data = {
             "chat_id": channel,
-            "text": message_text,
+            "text": message_text[:4000],
             "parse_mode": "HTML",
             "reply_markup": json.dumps(inline_keyboard),
             "disable_web_page_preview": False
         }
         resp = requests.post(api_url, json=data, timeout=30)
+        if resp.status_code != 200:
+            # Fallback without HTML formatting
+            data.pop("parse_mode", None)
+            resp = requests.post(api_url, json=data, timeout=30)
 
     if resp.status_code == 200:
         result = resp.json()
