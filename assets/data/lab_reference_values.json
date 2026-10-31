@@ -449,19 +449,19 @@
     "updated_at": "2026-10-24T18:45:04.106901+00:00"
   },
   {
-    "id": "lab_fibrinogene_serique",
+    "id": "lab_fibrinogene",
     "name": "Fibrinogène (Facteur I)",
     "category": "Hématologie & Hémostase",
-    "normal_range": "2.0 - 4.0 g/L (ou 200 - 400 mg/dL)",
+    "normal_range": "2.0 - 4.0",
     "unit": "g/L",
-    "high_interpretation": "Hyperfibrinogénémie : 1. Syndrome inflammatoire aigu ou chronique (protéine de l'acute phase majeure). 2. Grossesse (hypercoagulabilité physiologique, peut atteindre 6 g/L au 3ème trimestre). 3. Risque thrombotique accru (cardiovasculaire, post-opératoire). Pas de seuil d'urgence vitale directe pour l'élévation seule, mais marqueur de risque ischémique et inflammatoire.",
-    "low_interpretation": "Hypofibrinogénémie (< 1.5 g/L) ou Afibrinogénémie : 1. CIVD (Consommation majeure, associée à une thrombopénie et un allongement du TP/TCA). 2. Hyperfibrinolyse primaire (choc, chirurgie cardiaque, obstétrique). 3. Insuffisance hépatocellulaire sévère (défaut de synthèse). 4. Déficit congénital rare. Seuil d'urgence vitale : < 1.0 g/L (risque hémorragique majeur, transfusion de cryoprécipités ou de fibrinogène indiquée).",
+    "high_interpretation": "Hyperfibrinogénémie (> 4.0 g/L) : Facteur de phase aiguë non spécifique (inflammation, infection, nécrose tissulaire, syndrome néphrotique, chirurgie, traumatisme). Facteur de risque cardiovasculaire et d'thrombose veineuse/artérielle. Physiologique au 3ème trimestre de la grossesse (jusqu'à 6 g/L).",
+    "low_interpretation": "Hypofinogénémie (< 2.0 g/L) ou Aﬁbrinogénémie (< 0.5 g/L). Causes : 1) Consommation (CIVD, hémorragie massive, embolie amniotique, décollement placentaire - HRP). 2) Défaut de synthèse (insuffisance hépatocellulaire sévère, cirrhose décompensée). 3) Congénitale (afibrinogénémie ou dysfibrinogénémie rare). Urgence vitale majeure si < 1.0 g/L : risque hémorragique cataclysmique, nécessite une transfusion de cryoprécipités ou de fibrinogène (facteur I concentré) et de plasma frais congelé.",
     "clinical_notes": [
-      "Piège pré-analytique : Le fibrinogène est une protéine thermostable, mais le prélèvement doit être acheminé rapidement sur tube citrate de sodium, centrifugé et analysé rapidement pour éviter l'activation plaquettaire ex vivo.",
-      "Règle au concours : Le fibrinogène est le premier facteur de la coagulation à s'effondrer lors d'une CIVD ou d'une hémorragie obstétricale grave (ex: hématome rétro-placentaire), souvent bien avant l'allongement critique du TP."
+      "Piège pré-analytique : Le fibrinogène est une protéine de l'inflammation. Une valeur normale basse chez un patient fébrile ou agressé chirurgicalement peut en réalité masquer une consommation débutante (CIVD).",
+      "Méthode de dosage de référence : Méthode de Clauss (temps de thrombine mesuré en excès de thrombine) par rapport à la méthode dérivée du TP (trop sensible aux variations d'autres facteurs et aux héparines)."
     ],
-    "created_at": "2026-10-26T20:03:35.078321+00:00",
-    "updated_at": "2026-10-26T20:03:35.078334+00:00"
+    "created_at": "2026-10-31T01:43:06.567164+00:00",
+    "updated_at": "2026-10-31T01:43:06.567178+00:00"
   },
   {
     "id": "lab_t4_t3_libres",
