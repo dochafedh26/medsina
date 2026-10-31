@@ -770,5 +770,21 @@
     ],
     "created_at": "2026-10-30T21:38:37.046271+00:00",
     "updated_at": "2026-10-30T21:38:37.046288+00:00"
+  },
+  {
+    "id": "lab_marqueurs_tumoraux_ace_ca",
+    "name": "Marqueurs Tumoraux (ACE, CA 125, CA 19-9, CA 15-3)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "ACE: < 5 ng/mL (Fumeur < 10) | CA 125: < 35 UI/mL | CA 19-9: < 37 UI/mL | CA 15-3: < 30 UI/mL",
+    "unit": "ng/mL ou UI/mL",
+    "high_interpretation": "ACE élevé : Adénocarcinomes (CCR, estomac, poumon, sein). CA 125 : Carcinome épithélial de l'ovaire, endométriose, règles, grossesse, péritonite. CA 19-9 : Adénocarcinome pancréatique, voies biliaires, colorectal (Attention : négatif si déficit en Lewis a-b-). CA 15-3 : Cancer du sein métastatique, adénocarcinomes. Conduite à tenir : Pas de dépistage de masse (valeur prédictive positive faible), utiles pour le suivi post-thérapeutique et la détection précoce des récidives.",
+    "low_interpretation": "Valeurs normales ou basses : N'excluent en rien une pathologie cancéreuse au stade précoce (manque de sensibilité pour le diagnostic initial). Pas de seuil d'urgence vitale bas.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Faux positifs fréquents par élévation bénigne (inflammation, cirrhose, insuffisance rénale, grossesse pour le CA 125).",
+      "Phénomène de crochet (hook effect) en cas de concentrations extrêmement élevées de tumeur, nécessitant une dilution de l'échantillon pour éviter un résultat faussement bas.",
+      "Le CA 19-9 est génétiquement indétectable chez les patients de phénotype Lewis a-b- (environ 5 à 10% de la population), générant un faux négatif malgré une tumeur pancréatique évolutive."
+    ],
+    "created_at": "2026-10-31T08:37:51.891227+00:00",
+    "updated_at": "2026-10-31T08:37:51.891239+00:00"
   }
 ]
