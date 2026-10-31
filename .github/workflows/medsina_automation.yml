@@ -85,6 +85,8 @@ jobs:
           FB_MEDEVSYNC_PAGE_ACCESS_TOKEN: ${{ secrets.FB_MEDEVSYNC_PAGE_ACCESS_TOKEN }}
           FB_BLIDA_PAGE_ID: ${{ secrets.FB_BLIDA_PAGE_ID }}
           FB_BLIDA_PAGE_ACCESS_TOKEN: ${{ secrets.FB_BLIDA_PAGE_ACCESS_TOKEN }}
+          FB_CAT_PAGE_ID: ${{ secrets.FB_CAT_PAGE_ID || '102416914491075' }}
+          FB_CAT_PAGE_ACCESS_TOKEN: ${{ secrets.FB_CAT_PAGE_ACCESS_TOKEN || secrets.FB_PAGE_ACCESS_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: |

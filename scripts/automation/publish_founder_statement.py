@@ -93,6 +93,8 @@ def get_credentials() -> Dict[str, Any]:
         "blida_token": os.environ.get("FB_BLIDA_PAGE_ACCESS_TOKEN", "").strip(),
         "medevsync_page_id": os.environ.get("FB_MEDEVSYNC_PAGE_ID", "1329939320211198").strip(),
         "medevsync_token": os.environ.get("FB_MEDEVSYNC_PAGE_ACCESS_TOKEN", "").strip(),
+        "cat_page_id": os.environ.get("FB_CAT_PAGE_ID", "102416914491075").strip(),
+        "cat_token": os.environ.get("FB_CAT_PAGE_ACCESS_TOKEN", "").strip(),
         "telegram_token": os.environ.get("TELEGRAM_BOT_TOKEN", "").strip(),
         "telegram_channel": os.environ.get("TELEGRAM_CHANNEL_ID", "@medsina_officiel").strip(),
     }
@@ -130,6 +132,10 @@ def get_credentials() -> Dict[str, Any]:
                     creds["blida_token"] = (settings.get("facebook_blida_page_access_token") or user_token or "").strip()
                 if not creds["medevsync_token"]:
                     creds["medevsync_token"] = (settings.get("facebook_medevsync_page_access_token") or user_token or "").strip()
+                if not creds["cat_token"]:
+                    creds["cat_token"] = (settings.get("facebook_cat_page_access_token") or user_token or "").strip()
+                if not creds["cat_page_id"]:
+                    creds["cat_page_id"] = (settings.get("facebook_cat_page_id") or "102416914491075").strip()
                 if not creds["telegram_token"]:
                     creds["telegram_token"] = (settings.get("telegram_bot_token") or "").strip()
                 if not creds["telegram_channel"] or creds["telegram_channel"] == "@medsina_officiel":
@@ -481,7 +487,7 @@ def main():
     )
 
     # 5. Diffusion Facebook - Page 3 : MedevSync
-    print("\n🚀 [3/4] Diffusion Facebook : MedevSync...")
+    print("\n🚀 [3/5] Diffusion Facebook : MedevSync...")
     p3 = publish_facebook(
         page_id=creds["medevsync_page_id"],
         token=creds["medevsync_token"],
@@ -491,8 +497,19 @@ def main():
         dry_run=args.dry_run
     )
 
+    # 5b. Diffusion Facebook - Page 4 : CAT aux Urgences
+    print("\n🚀 [4/5] Diffusion Facebook : CAT aux Urgences...")
+    p4 = publish_facebook(
+        page_id=creds["cat_page_id"],
+        token=creds["cat_token"],
+        page_name="CAT aux Urgences",
+        image_path=banner_path,
+        caption=POST_TEXT_BLIDA,
+        dry_run=args.dry_run
+    )
+
     # 6. Diffusion Telegram - Canal Officiel @medsina_officiel
-    print("\n🚀 [4/4] Diffusion Telegram : @medsina_officiel...")
+    print("\n🚀 [5/5] Diffusion Telegram : @medsina_officiel...")
     tg_ok = publish_telegram(
         token=creds["telegram_token"],
         channel_id=creds["telegram_channel"],
@@ -506,9 +523,11 @@ def main():
     print(f"   • Facebook Résidanat Blida 2027 : {'✅ Posté (ID: ' + str(p1) + ')' if p1 else '❌ Échec'}")
     print(f"   • Facebook Medsina Officiel     : {'✅ Posté (ID: ' + str(p2) + ')' if p2 else '❌ Échec'}")
     print(f"   • Facebook MedevSync            : {'✅ Posté (ID: ' + str(p3) + ')' if p3 else '❌ Échec'}")
+    print(f"   • Facebook CAT aux Urgences     : {'✅ Posté (ID: ' + str(p4) + ')' if p4 else '❌ Échec'}")
     print(f"   • Telegram @medsina_officiel    : {'✅ Diffusé & Épinglé' if tg_ok else '❌ Échec'}")
     print("=" * 70)
 
 
 if __name__ == "__main__":
     main()
+

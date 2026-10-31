@@ -92,6 +92,8 @@ def get_social_credentials() -> Dict[str, str]:
         "blida_token": os.environ.get("FB_BLIDA_PAGE_ACCESS_TOKEN", "").strip(),
         "medevsync_page_id": os.environ.get("FB_MEDEVSYNC_PAGE_ID", "1329939320211198").strip(),
         "medevsync_token": os.environ.get("FB_MEDEVSYNC_PAGE_ACCESS_TOKEN", "").strip(),
+        "cat_page_id": os.environ.get("FB_CAT_PAGE_ID", "102416914491075").strip(),
+        "cat_token": os.environ.get("FB_CAT_PAGE_ACCESS_TOKEN", "").strip(),
         "telegram_token": os.environ.get("TELEGRAM_BOT_TOKEN", "").strip(),
         "telegram_channel": os.environ.get("TELEGRAM_CHANNEL_ID", "@medsina_officiel").strip(),
     }
@@ -110,6 +112,10 @@ def get_social_credentials() -> Dict[str, str]:
                     creds["blida_token"] = (settings.get("facebook_blida_page_access_token") or settings.get("facebook_page_access_token") or "").strip()
                 if not creds["medevsync_token"]:
                     creds["medevsync_token"] = (settings.get("facebook_medevsync_page_access_token") or "").strip()
+                if not creds["cat_token"]:
+                    creds["cat_token"] = (settings.get("facebook_cat_page_access_token") or settings.get("facebook_user_access_token") or "").strip()
+                if not creds["cat_page_id"]:
+                    creds["cat_page_id"] = (settings.get("facebook_cat_page_id") or "102416914491075").strip()
                 if not creds["telegram_token"]:
                     creds["telegram_token"] = (settings.get("telegram_bot_token") or "").strip()
                 if not creds["telegram_channel"] or creds["telegram_channel"] == "@medsina_officiel":
@@ -784,6 +790,18 @@ def broadcast_content_teaser(
     )
     results["facebook_medevsync_post_id"] = p2_id
 
+    # 5b. Publish to Facebook Page 4 : CAT aux Urgences
+    print("   🚀 Diffusion sur Facebook : CAT aux Urgences...")
+    p3_id = publish_to_facebook_page(
+        page_id=creds["cat_page_id"],
+        token=creds["cat_token"],
+        page_name="CAT aux Urgences",
+        image_path=banner_path,
+        caption=caption,
+        dry_run=dry_run
+    )
+    results["facebook_cat_post_id"] = p3_id
+
     # 6. Publish to Telegram Official Channel
     print("   🚀 Diffusion sur Telegram : @medsina_officiel...")
     tg_ok = publish_to_telegram(
@@ -796,7 +814,7 @@ def broadcast_content_teaser(
     results["telegram_success"] = tg_ok
 
     # 7. Update Supabase admin_system_settings with last post ID
-    last_post_id = p0_id or p1_id or p2_id
+    last_post_id = p0_id or p1_id or p2_id or p3_id
     if last_post_id and not dry_run and last_post_id != "dry_run_post_id":
         try:
             import datetime

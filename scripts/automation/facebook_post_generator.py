@@ -187,6 +187,14 @@ def get_all_facebook_pages() -> List[Dict[str, str]]:
             "db_id_key": "facebook_blida_page_id",
             "db_token_key": "facebook_blida_page_access_token",
         },
+        {
+            "key": "cat_aux_urgences",
+            "name": "CAT aux Urgences",
+            "page_id": (os.environ.get("FB_CAT_PAGE_ID") or "102416914491075").strip(),
+            "token": (os.environ.get("FB_CAT_PAGE_ACCESS_TOKEN") or "").strip(),
+            "db_id_key": "facebook_cat_page_id",
+            "db_token_key": "facebook_cat_page_access_token",
+        },
     ]
 
     try:
