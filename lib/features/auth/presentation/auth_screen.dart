@@ -213,9 +213,12 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                         children: [
                           Icon(Icons.cloud_done_rounded, size: 14, color: Colors.grey.shade500),
                           const SizedBox(width: 6),
-                          Text(
-                            'Cloud Médical Sécurisé • Résidanat Blida 2027 v${AppConstants.appVersion}',
-                            style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                          Flexible(
+                            child: Text(
+                              'Cloud Médical Sécurisé • Résidanat Blida 2027 v${AppConstants.appVersion}',
+                              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),
@@ -721,12 +724,15 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                 children: [
                   Icon(Icons.menu_book_rounded, size: 16, color: Color(0xFF2563EB)),
                   SizedBox(width: 8),
-                  Text(
-                    '📖 Découvrir Medsina : Lire le Guide Officiel (PDF)',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2563EB),
+                  Flexible(
+                    child: Text(
+                      '📖 Découvrir Medsina : Lire le Guide Officiel (PDF)',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2563EB),
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -745,13 +751,16 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                   children: [
                     Icon(Icons.open_in_new_rounded, size: 12, color: Colors.grey.shade500),
                     const SizedBox(width: 5),
-                    Text(
-                      'Toutes les versions et mises à jour sur GitHub Releases',
-                      style: TextStyle(
-                        fontSize: 10.5,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline,
+                    Flexible(
+                      child: Text(
+                        'Toutes les versions et mises à jour sur GitHub Releases',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],

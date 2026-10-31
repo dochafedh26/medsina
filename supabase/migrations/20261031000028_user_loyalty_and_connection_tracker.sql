@@ -65,3 +65,4 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.record_user_connection TO authenticated, service_role;
+

@@ -155,7 +155,9 @@ class _CreateGroupDialogState extends State<CreateGroupDialog> {
                 const SizedBox(height: 16),
                 const Text('Couleur du groupe :', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                 const SizedBox(height: 8),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: _colors.map((hex) {
                     final color = _parseColor(hex);
                     final isSel = _selectedColor == hex;
@@ -176,14 +178,16 @@ class _CreateGroupDialogState extends State<CreateGroupDialog> {
                   }).toList(),
                 ),
                 const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: const Text('Annuler'),
                     ),
-                    const SizedBox(width: 8),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _parseColor(_selectedColor),

@@ -622,12 +622,16 @@ class _AnnouncementsHubScreenState extends State<AnnouncementsHubScreen> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    item.actionLabel,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                      color: primaryColor,
+                                  Flexible(
+                                    child: Text(
+                                      item.actionLabel,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: primaryColor,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 4),

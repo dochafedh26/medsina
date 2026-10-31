@@ -1186,12 +1186,15 @@ class _FeedbackReviewsScreenState extends State<FeedbackReviewsScreen> {
                     children: [
                       Icon(Icons.verified_rounded, size: 15, color: AppTheme.primaryTeal),
                       SizedBox(width: 6),
-                      Text(
-                        'Réponse officielle de l\'équipe Medsina',
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.primaryTeal,
+                      Expanded(
+                        child: Text(
+                          'Réponse officielle de l\'équipe Medsina',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.primaryTeal,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

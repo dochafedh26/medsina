@@ -147,7 +147,13 @@ class _ExamRunnerScreenState extends State<ExamRunnerScreen> {
                 children: [
                   const Icon(Icons.check_circle_outline, color: Colors.green, size: 18),
                   const SizedBox(width: 8),
-                  Text('$answered / ${_session.totalQuestions} questions répondues', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Expanded(
+                    child: Text(
+                      '$answered / ${_session.totalQuestions} questions répondues',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 6),
@@ -156,7 +162,13 @@ class _ExamRunnerScreenState extends State<ExamRunnerScreen> {
                   children: [
                     const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 18),
                     const SizedBox(width: 8),
-                    Text('$unanswered question${unanswered > 1 ? "s" : ""} sans réponse', style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)),
+                    Expanded(
+                      child: Text(
+                        '$unanswered question${unanswered > 1 ? "s" : ""} sans réponse',
+                        style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ],
                 ),
               if (flagged > 0) ...[
@@ -165,7 +177,13 @@ class _ExamRunnerScreenState extends State<ExamRunnerScreen> {
                   children: [
                     const Icon(Icons.flag_rounded, color: Colors.amber, size: 18),
                     const SizedBox(width: 8),
-                    Text('$flagged question${flagged > 1 ? "s" : ""} marquée${flagged > 1 ? "s" : ""} à revoir', style: const TextStyle(color: Colors.amber)),
+                    Expanded(
+                      child: Text(
+                        '$flagged question${flagged > 1 ? "s" : ""} marquée${flagged > 1 ? "s" : ""} à revoir',
+                        style: const TextStyle(color: Colors.amber),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -418,9 +436,15 @@ class _ExamRunnerScreenState extends State<ExamRunnerScreen> {
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.primaryTeal),
                           ),
                         ),
-                        Text(
-                          currentQ.courseName,
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            currentQ.courseName,
+                            textAlign: TextAlign.end,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                          ),
                         ),
                       ],
                     ),

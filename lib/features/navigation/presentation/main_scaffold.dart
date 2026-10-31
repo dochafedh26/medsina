@@ -362,7 +362,7 @@ class _MainScaffoldState extends State<MainScaffold> {
               height: 64,
               labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
                 (states) => TextStyle(
-                  fontSize: navItems.length >= 5 ? 10 : 11.5,
+                  fontSize: navItems.length >= 6 ? 9.5 : (navItems.length >= 5 ? 10 : 11.5),
                   fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
                   letterSpacing: -0.2,
                 ),
@@ -371,6 +371,9 @@ class _MainScaffoldState extends State<MainScaffold> {
             child: NavigationBar(
               selectedIndex: safeIndex,
               onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
+              labelBehavior: MediaQuery.of(context).size.width < 380 && navItems.length >= 6
+                  ? NavigationDestinationLabelBehavior.onlyShowSelected
+                  : NavigationDestinationLabelBehavior.alwaysShow,
               destinations: navItems.map((item) {
                 String displayLabel = item.label;
                 if (navItems.length >= 5 && displayLabel == 'Ordonnance') {

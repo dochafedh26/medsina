@@ -177,42 +177,47 @@ class _ExamResultScreenState extends State<ExamResultScreen> with SingleTickerPr
                 const SizedBox(height: 14),
                 // Ligne de statistiques de performance & chrono
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.grey.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatItem(
-                        icon: Icons.check_circle_outline,
-                        color: Colors.green,
-                        label: 'Bonnes réponses',
-                        value: '$correctCount / $totalQuestions',
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          _buildStatItem(
+                            icon: Icons.check_circle_outline,
+                            color: Colors.green,
+                            label: 'Bonnes réponses',
+                            value: '$correctCount / $totalQuestions',
+                          ),
+                          _buildDivider(),
+                          _buildStatItem(
+                            icon: Icons.cancel_outlined,
+                            color: Colors.red,
+                            label: 'Erreurs / Omissions',
+                            value: '${_falseResults.length} QCMs',
+                          ),
+                          _buildDivider(),
+                          _buildStatItem(
+                            icon: Icons.timer_outlined,
+                            color: AppTheme.primaryTeal,
+                            label: 'Temps total',
+                            value: _formatTime(widget.session.totalTimeSpentSeconds),
+                          ),
+                          _buildDivider(),
+                          _buildStatItem(
+                            icon: Icons.speed_rounded,
+                            color: Colors.orange.shade800,
+                            label: 'Moyenne / QCM',
+                            value: '${widget.session.averageSecondsPerQuestion.toStringAsFixed(0)}s',
+                          ),
+                        ],
                       ),
-                      _buildDivider(),
-                      _buildStatItem(
-                        icon: Icons.cancel_outlined,
-                        color: Colors.red,
-                        label: 'Erreurs / Omissions',
-                        value: '${_falseResults.length} QCMs',
-                      ),
-                      _buildDivider(),
-                      _buildStatItem(
-                        icon: Icons.timer_outlined,
-                        color: AppTheme.primaryTeal,
-                        label: 'Temps total',
-                        value: _formatTime(widget.session.totalTimeSpentSeconds),
-                      ),
-                      _buildDivider(),
-                      _buildStatItem(
-                        icon: Icons.speed_rounded,
-                        color: Colors.orange.shade800,
-                        label: 'Moyenne / QCM',
-                        value: '${widget.session.averageSecondsPerQuestion.toStringAsFixed(0)}s',
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -222,6 +227,8 @@ class _ExamResultScreenState extends State<ExamResultScreen> with SingleTickerPr
           // Onglets
           TabBar(
             controller: _tabController,
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
             labelColor: AppTheme.primaryTeal,
             unselectedLabelColor: Colors.grey,
             indicatorColor: AppTheme.primaryTeal,
@@ -480,7 +487,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> with SingleTickerPr
                         ),
                       ),
                     ),
-                    if (indicator != null) indicator,
+                    ?indicator,
                   ],
                 ),
               );

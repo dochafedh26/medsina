@@ -718,11 +718,14 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
           padding: const EdgeInsets.only(bottom: 12),
           child: Row(
             children: [
-              Text(
-                '6 Calculateurs & Scores Validés',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.grey.shade600),
+              Expanded(
+                child: Text(
+                  '6 Calculateurs & Scores Validés',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.grey.shade600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               TextButton.icon(
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

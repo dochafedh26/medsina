@@ -443,3 +443,4 @@ class LoyaltyRewardsDialog extends StatelessWidget {
     );
   }
 }
+

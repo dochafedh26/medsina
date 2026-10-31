@@ -459,11 +459,11 @@ class _AdminNationalExamsTabState extends State<AdminNationalExamsTab> {
                                 label: const Text('Rediffuser annonce'),
                                 onPressed: () async {
                                   await NationalExamService.instance.broadcastExamAnnouncement(exam);
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Annonce rediffusée avec succès !'), backgroundColor: AppTheme.primaryTeal),
-                                    );
-                                  }
+                                  if (!mounted) return;
+                                  if (!context.mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Annonce rediffusée avec succès !'), backgroundColor: AppTheme.primaryTeal),
+                                  );
                                 },
                               ),
                               const SizedBox(width: 8),

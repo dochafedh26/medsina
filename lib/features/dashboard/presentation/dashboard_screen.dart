@@ -3270,66 +3270,35 @@ class DashboardScreen extends StatelessWidget {
 
                 children: [
 
-                  Row(
-
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 6,
+                    runSpacing: 2,
                     children: [
-
-                      const Flexible(
-
-                        child: Text(
-
-                          'Cursus Médical & Externat',
-
-                          style: TextStyle(
-
-                            fontWeight: FontWeight.bold,
-
-                            fontSize: 14,
-
-                          ),
-
-                          overflow: TextOverflow.ellipsis,
-
+                      const Text(
+                        'Cursus Médical & Externat',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
                         ),
-
                       ),
-
-                      const SizedBox(width: 8),
-
                       Container(
-
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-
                         decoration: BoxDecoration(
-
                           color: const Color(0xFF0D9488).withValues(alpha: 0.14),
-
                           borderRadius: BorderRadius.circular(6),
-
                         ),
-
                         child: const Text(
-
                           '1ère - 6ème Année',
-
                           style: TextStyle(
-
                             fontSize: 9.5,
-
                             fontWeight: FontWeight.w800,
-
                             color: Color(0xFF0D9488),
-
                             letterSpacing: 0.3,
-
                           ),
-
                         ),
-
                       ),
-
                     ],
-
                   ),
 
                   const SizedBox(height: 4),

@@ -410,18 +410,28 @@ class _ExternatRotationBannerState extends State<ExternatRotationBanner> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Progression : ${(rot.progressPercentage * 100).toInt()}% (${rot.daysElapsed}/${rot.totalDays} jours)',
-                style: TextStyle(fontSize: 10.5, color: isDark ? Colors.white60 : Colors.grey.shade600),
+              Flexible(
+                child: Text(
+                  'Progression : ${(rot.progressPercentage * 100).toInt()}% (${rot.daysElapsed}/${rot.totalDays} jours)',
+                  style: TextStyle(fontSize: 10.5, color: isDark ? Colors.white60 : Colors.grey.shade600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              Text(
-                rot.daysRemaining > 0
-                    ? 'EMD dans ${rot.daysRemaining} jour(s)'
-                    : 'Module terminé • Session d\'EMD ouverte',
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: isEmdWindow ? const Color(0xFFD97706) : AppTheme.primaryTeal,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  rot.daysRemaining > 0
+                      ? 'EMD dans ${rot.daysRemaining} jour(s)'
+                      : 'Session EMD ouverte',
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                    color: isEmdWindow ? const Color(0xFFD97706) : AppTheme.primaryTeal,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

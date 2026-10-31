@@ -436,15 +436,24 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                                 InkWell(
                                   onTap: () => _copyToClipboard(u.email, 'Email'),
                                   borderRadius: BorderRadius.circular(4),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.email_outlined, size: 13, color: Colors.grey.shade500),
-                                      const SizedBox(width: 4),
-                                      Text(u.email, style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500)),
-                                      const SizedBox(width: 4),
-                                      Icon(Icons.copy_rounded, size: 11, color: Colors.grey.shade400),
-                                    ],
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: isMobile ? 180 : 280),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.email_outlined, size: 13, color: Colors.grey.shade500),
+                                        const SizedBox(width: 4),
+                                        Flexible(
+                                          child: Text(
+                                            u.email,
+                                            style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(Icons.copy_rounded, size: 11, color: Colors.grey.shade400),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 InkWell(

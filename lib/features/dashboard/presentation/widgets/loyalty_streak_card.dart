@@ -192,3 +192,4 @@ class LoyaltyStreakCard extends StatelessWidget {
     );
   }
 }
+

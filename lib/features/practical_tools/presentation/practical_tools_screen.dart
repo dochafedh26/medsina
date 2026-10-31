@@ -80,6 +80,8 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
             color: Theme.of(context).cardColor,
             child: TabBar(
               controller: _tabController,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
               labelColor: AppTheme.primaryTeal,
               unselectedLabelColor: Colors.grey.shade600,
               indicatorColor: AppTheme.primaryTeal,

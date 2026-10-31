@@ -99,7 +99,7 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                 actions: [
                   TextButton.icon(
                     icon: const Icon(Icons.event_available_rounded, size: 17),
-                    label: const Text('Date Concours/EMD', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    label: const Text('Échéance', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                     onPressed: () => _pickTargetExamDate(context),
                   ),
                   const SizedBox(width: 6),
@@ -217,9 +217,13 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                 children: [
                   const Icon(Icons.timer_rounded, color: AppTheme.primaryTeal, size: 20),
                   const SizedBox(width: 6),
-                  Text(
-                    'J-$daysRemaining avant votre échéance (${examDate.day.toString().padLeft(2, '0')}/${examDate.month.toString().padLeft(2, '0')}/${examDate.year})',
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+                  Flexible(
+                    child: Text(
+                      'J-$daysRemaining avant votre échéance (${examDate.day.toString().padLeft(2, '0')}/${examDate.month.toString().padLeft(2, '0')}/${examDate.year})',
+                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),
