@@ -786,5 +786,21 @@
     ],
     "created_at": "2026-10-31T08:37:51.891227+00:00",
     "updated_at": "2026-10-31T08:37:51.891239+00:00"
+  },
+  {
+    "id": "lab_bilan_hemolyse",
+    "name": "Bilan d'hémolyse (Haptoglobine, LDH, Bilirubine libre)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "Haptoglobine: 0.3 - 2.0 g/L | LDH: 135 - 225 UI/L | Bilirubine libre (indirecte): < 10 mg/L (< 17 µmol/L)",
+    "unit": "Mixte (g/L, UI/L, µmol/L)",
+    "high_interpretation": "Hémolyse (intra ou extravasculaire) : effondrement de l'Haptoglobine (consommée par liaison à l'hémoglobine libre), élévation majeure des LDH (libération intracellulaire) et élévation de la Bilirubine libre (non conjuguée, par catabolisme de l'hème). Urgence vitale: CIVD, hémolyse aiguë massive, choc transfusionnel. Conduite à tenir: test de Coombs direct (TCD), NFS, réticulocytes, frottis sanguin.",
+    "low_interpretation": "Haptoglobine basse : pathognomonique d'une hémolyse intravasculaire ou extravasculaire (ou insuffisance hépatique sévère par défaut de synthèse). LDH basse: rare, peu de signification clinique propre (parfois carence en vitamine B6). Bilirubine libre basse: sans signification pathologique.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'haptoglobine est une protéine de l'inflammation (glycoprotéine de la phase aiguë). En cas d'hémolyse associée à un syndrome inflammatoire (infection, connectivite), sa valeur peut faussement se normaliser ou s'élever, masquant l'hémolyse.",
+      "Piège analytique des LDH : Une hémolyse in vitro (prélèvement traumatique, garrot trop serré) provoque une fausse élévation spectaculaire des LDH et une fausse baisse de l'haptoglobine, mimant parfaitement une anémie hémolytique.",
+      "Bilan de certitude : Devant une suspicion d'hémolyse, toujours associer le taux de réticulocytes (élevé > 120 G/L en cas d'hémolyse régénérative) et rechercher des schistocytes sur le frottis sanguin (orientation vers une MAT)."
+    ],
+    "created_at": "2026-10-31T15:27:24.052259+00:00",
+    "updated_at": "2026-10-31T15:27:24.052277+00:00"
   }
 ]
