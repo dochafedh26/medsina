@@ -802,5 +802,20 @@
     ],
     "created_at": "2026-10-31T15:27:24.052259+00:00",
     "updated_at": "2026-10-31T15:27:24.052277+00:00"
+  },
+  {
+    "id": "lab_microalbuminurie",
+    "name": "Microalbuminurie (MAU)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Moins de 30 (Urines de 24h: < 30 mg/24h ; Rapport Albuminurie/Créatininurie: < 3 mg/mmol ou < 30 mg/g)",
+    "unit": "mg/24h ou mg/g de créatinine",
+    "high_interpretation": "Albuminurie persistante entre 30 et 300 mg/24h (stade de néphropathie débutante). Causes majeures : Néphropathie diabétique (type 1 et 2), glomérulonéphropathie chronique, HTA ancienne, pré-éclampsie. Signe précoce de dysfonctionnement endothélial et de morbi-mortalité cardiovasculaire globale. Conduite à tenir : Confirmer sur 2 à 3 dosages sur 3 à 6 mois, optimiser le contrôle glycémique (HbA1c < 7%) et tensionnel (IECA ou ARA2 en première intention).",
+    "low_interpretation": "Valeur physiologique normale (< 30 mg/24h). Absence d'atteinte glomérulaire significative à ce stade. Aucune intervention spécifique requise en dehors du suivi habituel des patients à risque (diabète, HTA).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Faux positifs fréquents en cas d'effort physique intense récent, d'infection urinaire (leucocyturie/hématurie), de fièvre, d'insuffisance cardiaque décompensée ou de menstruations. Toujours éliminer une IU par ECBU avant de conclure.",
+      "Recommandation internationale : Préférer systématiquement le rapport Albuminurie/Créatininurie (RAC) sur un échantillon urinaire (de préférence le premier urine du matin) plutôt que la collecte des urines de 24h, souvent source d'erreurs de recueil."
+    ],
+    "created_at": "2026-10-31T19:26:55.781110+00:00",
+    "updated_at": "2026-10-31T19:26:55.781123+00:00"
   }
 ]
