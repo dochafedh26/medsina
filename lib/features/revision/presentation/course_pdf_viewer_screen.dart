@@ -1,3 +1,4 @@
+import '../../comments/presentation/medical_comments_sheet.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -401,6 +402,18 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
                     }
                   },
                 ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.forum_outlined, color: AppTheme.primaryTeal),
+            tooltip: 'Commentaires & Notes du Cours',
+            onPressed: () {
+              MedicalCommentsSheet.show(
+                context,
+                targetType: 'course',
+                targetId: widget.course.id,
+                targetTitle: widget.course.name,
               );
             },
           ),

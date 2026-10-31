@@ -438,3 +438,4 @@ class AnnouncementDetailDialog extends StatelessWidget {
     );
   }
 }
+

@@ -1,3 +1,4 @@
+import '../../comments/presentation/medical_comments_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -124,6 +125,16 @@ class QcmStudyScreen extends StatelessWidget {
                   onPressed: () => MedsinaPilotSheet.show(context, q),
                 ),
                 const SizedBox(width: 4),
+                IconButton(
+                  icon: const Icon(Icons.forum_outlined, color: Color(0xFF0284C7)),
+                  tooltip: 'Commentaires & Notes du QCM',
+                  onPressed: () => MedicalCommentsSheet.show(
+                    context,
+                    targetType: 'qcm',
+                    targetId: q.id,
+                    targetTitle: 'QCM #${state.currentQuestionIndex + 1} • ${q.courseName}',
+                  ),
+                ),
                 IconButton(
                   icon: const Icon(Icons.pause_circle_outline_rounded, color: AppTheme.primaryTeal),
                   tooltip: 'Mettre en pause',
@@ -546,6 +557,29 @@ class QcmStudyScreen extends StatelessWidget {
                   onPressed: () => _showEditPersonalNoteDialog(context, q, ann.personalNote),
                 ),
                 ActionChip(
+                  avatar: const Icon(
+                    Icons.forum_outlined,
+                    size: 16,
+                    color: Color(0xFF0284C7),
+                  ),
+                  label: const Text(
+                    'Commentaires 💬',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0284C7),
+                    ),
+                  ),
+                  visualDensity: VisualDensity.compact,
+                  backgroundColor: const Color(0xFFE0F2FE),
+                  onPressed: () => MedicalCommentsSheet.show(
+                    context,
+                    targetType: 'qcm',
+                    targetId: q.id,
+                    targetTitle: 'QCM • ${q.courseName}',
+                  ),
+                ),
+                ActionChip(
                   avatar: Icon(
                     hasFlashcard ? Icons.check_circle_rounded : Icons.style_rounded,
                     size: 16,
@@ -745,6 +779,29 @@ class QcmStudyScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               ),
               onPressed: () => MedsinaPilotSheet.show(context, q),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF0284C7),
+                side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.forum_outlined, size: 18),
+              label: const Text(
+                'Commentaires & Notes du QCM (Publics & Privés) 💬',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              onPressed: () => MedicalCommentsSheet.show(
+                context,
+                targetType: 'qcm',
+                targetId: q.id,
+                targetTitle: 'QCM • ${q.courseName}',
+              ),
             ),
           ),
         ],

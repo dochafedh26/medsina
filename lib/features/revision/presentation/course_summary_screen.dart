@@ -1,3 +1,4 @@
+import '../../comments/presentation/medical_comments_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -94,6 +95,18 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
                 context,
                 initialSituation:
                     'Peux-tu m\'expliquer les points les plus tombables en QCM pour le cours "${widget.course.name}" (${widget.moduleName ?? ""}) ?',
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.forum_outlined),
+            tooltip: 'Commentaires & Notes du Cours',
+            onPressed: () {
+              MedicalCommentsSheet.show(
+                context,
+                targetType: 'course',
+                targetId: widget.course.id,
+                targetTitle: widget.course.name,
               );
             },
           ),
@@ -446,6 +459,23 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
                   );
                 },
               ),
+            ),
+            const SizedBox(width: 8),
+            IconButton.filledTonal(
+              style: IconButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.all(12),
+              ),
+              icon: const Icon(Icons.forum_outlined, size: 20),
+              tooltip: 'Commentaires & Notes du Cours',
+              onPressed: () {
+                MedicalCommentsSheet.show(
+                  context,
+                  targetType: 'course',
+                  targetId: widget.course.id,
+                  targetTitle: widget.course.name,
+                );
+              },
             ),
           ],
         ),
