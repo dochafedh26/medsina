@@ -26,6 +26,8 @@ Intègre :
 """
 
 import os
+import re
+import html
 import sys
 import argparse
 import requests
@@ -184,6 +186,47 @@ def resolve_telegram_topic(category: Optional[str] = None, text: str = "", topic
     return mapping.get("general", 1)
 
 
+
+def clean_to_telegram_html(raw_text: str) -> str:
+    """
+    Cleans and converts raw text (which may contain markdown, invalid HTML tags like <sub>,
+    or existing <b> tags) into 100% compliant Telegram HTML.
+    """
+    if not raw_text:
+        return ""
+    t = raw_text
+
+    # 1. Replace <sub> and <sup> tags with plain text or unicode
+    t = re.sub(r'<sub>(.*?)</sub>', r'_\1', t, flags=re.IGNORECASE)
+    t = re.sub(r'<sup>(.*?)</sup>', r'^\1', t, flags=re.IGNORECASE)
+    
+    # 2. Convert markdown headers like ### Définition -> <b>Définition</b>
+    t = re.sub(r'^#{1,6}\s*(.*?)$', r'<b>\1</b>', t, flags=re.MULTILINE)
+    
+    # 3. Convert markdown bold **word** -> <b>word</b>
+    t = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', t)
+    
+    # 4. Convert markdown bullets "- item" or "* item" at start of line
+    t = re.sub(r'^[*-]\s+', r'• ', t, flags=re.MULTILINE)
+    
+    # 5. Clean up any invalid HTML tags while preserving Telegram allowed tags
+    allowed_tags = {'b', 'strong', 'i', 'em', 'u', 'ins', 's', 'strike', 'del', 'a', 'code', 'pre', 'blockquote', 'tg-spoiler'}
+    
+    def sanitize_tag(match):
+        full_tag = match.group(0)
+        tag_name = match.group(1).lower().lstrip('/')
+        if tag_name in allowed_tags:
+            return full_tag
+        return ''
+
+    t = re.sub(r'</?([a-zA-Z0-9_-]+)(?:\s+[^>]*)?>', sanitize_tag, t)
+    
+    # 6. Normalize nested duplicate tags
+    t = re.sub(r'<b>\s*<b>', '<b>', t)
+    t = re.sub(r'</b>\s*</b>', '</b>', t)
+    
+    return t.strip()
+
 def _post_telegram_payload(
     token: str,
     target_id: str,
@@ -201,6 +244,7 @@ def _post_telegram_payload(
     reply_markup = inline_keyboard or {}
 
     # Tronquage propre pour sendPhoto (max 1024 caractères UTF-16)
+    message_text = clean_to_telegram_html(message_text)
     tg_caption = message_text
     if len(tg_caption) > 940:
         cut_idx = tg_caption[:890].rfind("\n")
@@ -244,7 +288,7 @@ def _post_telegram_payload(
                 "text": message_text[:4000],
                 "parse_mode": "HTML",
                 "reply_markup": json.dumps(reply_markup),
-                "disable_web_page_preview": False
+                "disable_web_page_preview": True
             }
             if valid_thread_id:
                 text_data["message_thread_id"] = valid_thread_id
@@ -264,7 +308,7 @@ def _post_telegram_payload(
             "text": message_text[:4000],
             "parse_mode": "HTML",
             "reply_markup": json.dumps(reply_markup),
-            "disable_web_page_preview": False
+            "disable_web_page_preview": True
         }
         if valid_thread_id:
             text_data["message_thread_id"] = valid_thread_id
