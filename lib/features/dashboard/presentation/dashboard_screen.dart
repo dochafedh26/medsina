@@ -859,459 +859,233 @@ class DashboardScreen extends StatelessWidget {
 
 
   Widget _buildUserGuidePromoCard(BuildContext context) {
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-
-      padding: const EdgeInsets.all(16),
-
       decoration: BoxDecoration(
-
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
-
         borderRadius: BorderRadius.circular(16),
-
         border: Border.all(
-
           color: const Color(0xFF0284C7).withValues(alpha: 0.25),
-
           width: 1.2,
-
         ),
-
         boxShadow: [
-
           BoxShadow(
-
             color: const Color(0xFF0284C7).withValues(alpha: 0.08),
-
             blurRadius: 10,
-
             offset: const Offset(0, 3),
-
           ),
-
         ],
-
       ),
-
-      child: Row(
-
-        children: [
-
-          Container(
-
-            padding: const EdgeInsets.all(12),
-
-            decoration: BoxDecoration(
-
-              gradient: const LinearGradient(
-
-                colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
-
-                begin: Alignment.topLeft,
-
-                end: Alignment.bottomRight,
-
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const UserGuidePdfViewerScreen(),
               ),
-
-              borderRadius: BorderRadius.circular(14),
-
-            ),
-
-            child: const Icon(
-
-              Icons.menu_book_rounded,
-
-              color: Colors.white,
-
-              size: 24,
-
-            ),
-
-          ),
-
-          const SizedBox(width: 14),
-
-          Expanded(
-
-            child: Column(
-
-              crossAxisAlignment: CrossAxisAlignment.start,
-
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
               children: [
-
-                Row(
-
-                  children: [
-
-                    const Flexible(
-
-                      child: Text(
-
-                        'Guide Officiel Medsina',
-
-                        style: TextStyle(
-
-                          fontWeight: FontWeight.bold,
-
-                          fontSize: 13.5,
-
-                        ),
-
-                        overflow: TextOverflow.ellipsis,
-
-                      ),
-
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF0284C7), Color(0xFF0EA5E9)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-
-                    const SizedBox(width: 8),
-
-                    Container(
-
-                      padding: const EdgeInsets.symmetric(
-
-                        horizontal: 6,
-
-                        vertical: 2,
-
-                      ),
-
-                      decoration: BoxDecoration(
-
-                        color: const Color(0xFF0284C7).withValues(alpha: 0.12),
-
-                        borderRadius: BorderRadius.circular(6),
-
-                      ),
-
-                      child: const Text(
-
-                        'PDF • 6 PAGES',
-
-                        style: TextStyle(
-
-                          fontSize: 9,
-
-                          fontWeight: FontWeight.w800,
-
-                          color: Color(0xFF0284C7),
-
-                          letterSpacing: 0.5,
-
-                        ),
-
-                      ),
-
-                    ),
-
-                  ],
-
-                ),
-
-                const SizedBox(height: 3),
-
-                Text(
-
-                  'Découvrez toutes les fonctionnalités, astuces de révision & formules d\'abonnement.',
-
-                  style: TextStyle(
-
-                    fontSize: 11.5,
-
-                    color: isDark ? Colors.white70 : Colors.black54,
-
+                    borderRadius: BorderRadius.circular(12),
                   ),
-
+                  child: const Icon(
+                    Icons.menu_book_rounded,
+                    color: Colors.white,
+                    size: 22,
+                  ),
                 ),
-
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 3,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text(
+                            'Guide Officiel Medsina',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0284C7).withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'PDF • 6 PAGES',
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF0284C7),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Découvrez les fonctionnalités, astuces de révision & formules d\'abonnement.',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: Color(0xFF0284C7),
+                ),
               ],
-
             ),
-
           ),
-
-          const SizedBox(width: 10),
-
-          ElevatedButton(
-
-            style: ElevatedButton.styleFrom(
-
-              backgroundColor: const Color(0xFF0284C7),
-
-              foregroundColor: Colors.white,
-
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-
-              shape: RoundedRectangleBorder(
-
-                borderRadius: BorderRadius.circular(10),
-
-              ),
-
-              elevation: 0,
-
-            ),
-
-            onPressed: () {
-
-              Navigator.of(context).push(
-
-                MaterialPageRoute(
-
-                  builder: (_) => const UserGuidePdfViewerScreen(),
-
-                ),
-
-              );
-
-            },
-
-            child: const Text(
-
-              'Ouvrir ➔',
-
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
-
-            ),
-
-          ),
-
-        ],
-
+        ),
       ),
-
     );
-
   }
 
 
 
   Widget _buildCommunityFeedbackCard(BuildContext context) {
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-
-      padding: const EdgeInsets.all(16),
-
       decoration: BoxDecoration(
-
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
-
         borderRadius: BorderRadius.circular(16),
-
         border: Border.all(
-
           color: Colors.amber.withValues(alpha: 0.38),
-
           width: 1.2,
-
         ),
-
         boxShadow: [
-
           BoxShadow(
-
             color: Colors.amber.withValues(alpha: 0.08),
-
             blurRadius: 10,
-
             offset: const Offset(0, 3),
-
           ),
-
         ],
-
       ),
-
-      child: Row(
-
-        children: [
-
-          Container(
-
-            padding: const EdgeInsets.all(12),
-
-            decoration: BoxDecoration(
-
-              gradient: const LinearGradient(
-
-                colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-
-                begin: Alignment.topLeft,
-
-                end: Alignment.bottomRight,
-
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const FeedbackReviewsScreen(),
               ),
-
-              borderRadius: BorderRadius.circular(14),
-
-            ),
-
-            child: const Icon(
-
-              Icons.star_rounded,
-
-              color: Colors.white,
-
-              size: 24,
-
-            ),
-
-          ),
-
-          const SizedBox(width: 14),
-
-          Expanded(
-
-            child: Column(
-
-              crossAxisAlignment: CrossAxisAlignment.start,
-
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
               children: [
-
-                Wrap(
-
-                  spacing: 8,
-
-                  runSpacing: 4,
-
-                  crossAxisAlignment: WrapCrossAlignment.center,
-
-                  children: [
-
-                    const Text(
-
-                      'Votre Avis sur Medsina ⭐',
-
-                      style: TextStyle(
-
-                        fontWeight: FontWeight.bold,
-
-                        fontSize: 13.5,
-
-                      ),
-
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-
-                    Container(
-
-                      padding: const EdgeInsets.symmetric(
-
-                        horizontal: 6,
-
-                        vertical: 2,
-
-                      ),
-
-                      decoration: BoxDecoration(
-
-                        color: Colors.amber.withValues(alpha: 0.16),
-
-                        borderRadius: BorderRadius.circular(6),
-
-                      ),
-
-                      child: const Text(
-
-                        '4.9 ★ • COMMUNAUTÉ',
-
-                        style: TextStyle(
-
-                          fontSize: 9,
-
-                          fontWeight: FontWeight.w800,
-
-                          color: Color(0xFFB45309),
-
-                          letterSpacing: 0.4,
-
-                        ),
-
-                      ),
-
-                    ),
-
-                  ],
-
-                ),
-
-                const SizedBox(height: 3),
-
-                Text(
-
-                  'Notez l\'application de 1 à 5 étoiles, partagez vos suggestions et consultez les avis vérifiés.',
-
-                  style: TextStyle(
-
-                    fontSize: 11.5,
-
-                    color: isDark ? Colors.white70 : Colors.black54,
-
+                    borderRadius: BorderRadius.circular(12),
                   ),
-
+                  child: const Icon(
+                    Icons.star_rounded,
+                    color: Colors.white,
+                    size: 22,
+                  ),
                 ),
-
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 3,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text(
+                            'Votre Avis sur Medsina ⭐',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withValues(alpha: 0.16),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              '4.9 ★ • COMMUNAUTÉ',
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFFB45309),
+                                letterSpacing: 0.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Partagez vos suggestions et consultez les retours des étudiants.',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: Color(0xFFF59E0B),
+                ),
               ],
-
             ),
-
           ),
-
-          const SizedBox(width: 10),
-
-          ElevatedButton(
-
-            style: ElevatedButton.styleFrom(
-
-              backgroundColor: const Color(0xFFF59E0B),
-
-              foregroundColor: Colors.white,
-
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-
-              shape: RoundedRectangleBorder(
-
-                borderRadius: BorderRadius.circular(10),
-
-              ),
-
-              elevation: 0,
-
-            ),
-
-            onPressed: () {
-
-              Navigator.of(context).push(
-
-                MaterialPageRoute(
-
-                  builder: (_) => const FeedbackReviewsScreen(),
-
-                ),
-
-              );
-
-            },
-
-            child: const Text(
-
-              'Noter ★',
-
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
-
-            ),
-
-          ),
-
-        ],
-
+        ),
       ),
-
     );
-
   }
 
 
@@ -3350,331 +3124,174 @@ class DashboardScreen extends StatelessWidget {
 
 
   Widget _buildCollaborativeAndExamRow(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Row(
-
       children: [
-
         // Concours Blancs Nationaux
-
         Expanded(
-
           child: Container(
-
             decoration: BoxDecoration(
-
-              gradient: LinearGradient(
-
-                colors: [Colors.amber.shade700, Colors.amber.shade900],
-
-                begin: Alignment.topLeft,
-
-                end: Alignment.bottomRight,
-
-              ),
-
+              color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(14),
-
-              boxShadow: [
-
-                BoxShadow(
-
-                  color: Colors.amber.withValues(alpha: 0.25),
-
-                  blurRadius: 8,
-
-                  offset: const Offset(0, 3),
-
-                ),
-
-              ],
-
-            ),
-
-            child: Material(
-
-              color: Colors.transparent,
-
-              child: InkWell(
-
-                borderRadius: BorderRadius.circular(14),
-
-                onTap: () {
-
-                  Navigator.of(context).push(
-
-                    MaterialPageRoute(
-
-                      builder: (_) => const NationalExamsListScreen(),
-
-                    ),
-
-                  );
-
-                },
-
-                child: Padding(
-
-                  padding: const EdgeInsets.symmetric(
-
-                    horizontal: 14,
-
-                    vertical: 12,
-
-                  ),
-
-                  child: Row(
-
-                    children: [
-
-                      Container(
-
-                        padding: const EdgeInsets.all(8),
-
-                        decoration: BoxDecoration(
-
-                          color: Colors.white.withValues(alpha: 0.2),
-
-                          shape: BoxShape.circle,
-
-                        ),
-
-                        child: const Icon(
-
-                          Icons.emoji_events_rounded,
-
-                          color: Colors.white,
-
-                          size: 20,
-
-                        ),
-
-                      ),
-
-                      const SizedBox(width: 10),
-
-                      const Expanded(
-
-                        child: Column(
-
-                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                          children: [
-
-                            Text(
-
-                              'Concours Blancs',
-
-                              style: TextStyle(
-
-                                color: Colors.white,
-
-                                fontWeight: FontWeight.bold,
-
-                                fontSize: 13,
-
-                              ),
-
-                            ),
-
-                            Text(
-
-                              'Classement National 🏆',
-
-                              style: TextStyle(
-
-                                color: Colors.white70,
-
-                                fontSize: 10.5,
-
-                              ),
-
-                            ),
-
-                          ],
-
-                        ),
-
-                      ),
-
-                    ],
-
-                  ),
-
-                ),
-
+              border: Border.all(
+                color: const Color(0xFFF59E0B).withValues(alpha: isDark ? 0.35 : 0.25),
+                width: 1.2,
               ),
-
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFF59E0B).withValues(alpha: isDark ? 0.08 : 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NationalExamsListScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.emoji_events_rounded,
+                          color: Color(0xFFF59E0B),
+                          size: 19,
+                        ),
+                      ),
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Concours Blancs',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.5,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              'National 🏆',
+                              style: TextStyle(
+                                color: isDark ? Colors.white60 : Colors.black54,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-
         ),
-
-        const SizedBox(width: 12),
-
-
+        const SizedBox(width: 10),
 
         // Groupes de Révision
-
         Expanded(
-
           child: Container(
-
             decoration: BoxDecoration(
-
-              gradient: LinearGradient(
-
-                colors: [AppTheme.primaryTeal, const Color(0xFF00695C)],
-
-                begin: Alignment.topLeft,
-
-                end: Alignment.bottomRight,
-
-              ),
-
+              color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(14),
-
-              boxShadow: [
-
-                BoxShadow(
-
-                  color: AppTheme.primaryTeal.withValues(alpha: 0.25),
-
-                  blurRadius: 8,
-
-                  offset: const Offset(0, 3),
-
-                ),
-
-              ],
-
-            ),
-
-            child: Material(
-
-              color: Colors.transparent,
-
-              child: InkWell(
-
-                borderRadius: BorderRadius.circular(14),
-
-                onTap: () {
-
-                  Navigator.of(context).push(
-
-                    MaterialPageRoute(
-
-                      builder: (_) => const GroupRevisionHubScreen(),
-
-                    ),
-
-                  );
-
-                },
-
-                child: Padding(
-
-                  padding: const EdgeInsets.symmetric(
-
-                    horizontal: 14,
-
-                    vertical: 12,
-
-                  ),
-
-                  child: Row(
-
-                    children: [
-
-                      Container(
-
-                        padding: const EdgeInsets.all(8),
-
-                        decoration: BoxDecoration(
-
-                          color: Colors.white.withValues(alpha: 0.2),
-
-                          shape: BoxShape.circle,
-
-                        ),
-
-                        child: const Icon(
-
-                          Icons.groups_rounded,
-
-                          color: Colors.white,
-
-                          size: 20,
-
-                        ),
-
-                      ),
-
-                      const SizedBox(width: 10),
-
-                      const Expanded(
-
-                        child: Column(
-
-                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                          children: [
-
-                            Text(
-
-                              'Groupes d\'Étude',
-
-                              style: TextStyle(
-
-                                color: Colors.white,
-
-                                fontWeight: FontWeight.bold,
-
-                                fontSize: 13,
-
-                              ),
-
-                            ),
-
-                            Text(
-
-                              'Défis & Révision Pairs 👥',
-
-                              style: TextStyle(
-
-                                color: Colors.white70,
-
-                                fontSize: 10.5,
-
-                              ),
-
-                            ),
-
-                          ],
-
-                        ),
-
-                      ),
-
-                    ],
-
-                  ),
-
-                ),
-
+              border: Border.all(
+                color: AppTheme.primaryTeal.withValues(alpha: isDark ? 0.35 : 0.25),
+                width: 1.2,
               ),
-
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryTeal.withValues(alpha: isDark ? 0.08 : 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const GroupRevisionHubScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.groups_rounded,
+                          color: AppTheme.primaryTeal,
+                          size: 19,
+                        ),
+                      ),
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Groupes d\'Étude',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12.5,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              'Défis & Entraide 👥',
+                              style: TextStyle(
+                                color: isDark ? Colors.white60 : Colors.black54,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-
         ),
-
       ],
-
     );
-
   }
 
 }

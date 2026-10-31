@@ -57,24 +57,28 @@ class LoyaltyStreakCard extends StatelessWidget {
                   builder: (context, constraints) {
                     final isNarrow = constraints.maxWidth < 420;
 
+                    final progressRatio = stats.nextLevelThreshold > 0
+                        ? (stats.loyaltyPoints / stats.nextLevelThreshold).clamp(0.0, 1.0)
+                        : 1.0;
+
                     final streakBadge = Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF97316).withValues(alpha: 0.16),
+                        color: const Color(0xFFF97316).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(0xFFF97316).withValues(alpha: 0.3),
+                          color: const Color(0xFFF97316).withValues(alpha: 0.35),
                         ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('🔥', style: TextStyle(fontSize: 14)),
-                          const SizedBox(width: 5),
+                          const Text('🔥', style: TextStyle(fontSize: 13)),
+                          const SizedBox(width: 4),
                           Text(
                             '${stats.streakDays}j d\'affilée',
                             style: const TextStyle(
-                              fontSize: 12.5,
+                              fontSize: 12,
                               fontWeight: FontWeight.w800,
                               color: Color(0xFFF97316),
                             ),
@@ -83,76 +87,93 @@ class LoyaltyStreakCard extends StatelessWidget {
                       ),
                     );
 
-                    final levelInfo = Column(
+                    final ctaButton = Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: levelColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Paliers 🎁',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: levelColor,
+                            ),
+                          ),
+                          const SizedBox(width: 3),
+                          Icon(Icons.arrow_forward_ios_rounded, size: 10, color: levelColor),
+                        ],
+                      ),
+                    );
+
+                    final levelHeader = Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                          decoration: BoxDecoration(
+                            color: levelColor.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            stats.loyaltyLevel,
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w800,
+                              color: levelColor,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '• ${stats.connectionCount}e session',
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            color: isDark ? Colors.white60 : Colors.black54,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    );
+
+                    final xpProgressSection = Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Row(
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: levelColor.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                stats.loyaltyLevel,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800,
-                                  color: levelColor,
-                                ),
+                            Text(
+                              '${stats.loyaltyPoints} XP',
+                              style: const TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const SizedBox(width: 8),
                             Text(
-                              '${stats.connectionCount}e connexion',
+                              'Prochain rang: ${stats.nextLevelThreshold} XP',
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 10.5,
                                 color: isDark ? Colors.white60 : Colors.black54,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 5),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '${stats.loyaltyPoints} XP',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '• Prochain rang dans ${stats.nextLevelThreshold - stats.loyaltyPoints} XP',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: isDark ? Colors.white60 : Colors.black54,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-
-                    final ctaButton = Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Récompenses',
-                          style: TextStyle(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w700,
-                            color: levelColor,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: progressRatio,
+                            minHeight: 5,
+                            backgroundColor: levelColor.withValues(alpha: 0.15),
+                            valueColor: AlwaysStoppedAnimation<Color>(levelColor),
                           ),
                         ),
-                        const SizedBox(width: 2),
-                        Icon(Icons.arrow_forward_ios_rounded, size: 11, color: levelColor),
                       ],
                     );
 
@@ -168,18 +189,27 @@ class LoyaltyStreakCard extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          levelInfo,
+                          levelHeader,
+                          const SizedBox(height: 8),
+                          xpProgressSection,
                         ],
                       );
                     }
 
-                    return Row(
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        streakBadge,
-                        const SizedBox(width: 14),
-                        Expanded(child: levelInfo),
-                        const SizedBox(width: 8),
-                        ctaButton,
+                        Row(
+                          children: [
+                            streakBadge,
+                            const SizedBox(width: 10),
+                            Expanded(child: levelHeader),
+                            const SizedBox(width: 8),
+                            ctaButton,
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        xpProgressSection,
                       ],
                     );
                   },

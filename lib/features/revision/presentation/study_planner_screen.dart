@@ -422,19 +422,22 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
             Expanded(
               child: Text(
                 mod.name,
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 6),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
               decoration: BoxDecoration(
                 color: AppTheme.primaryTeal.withValues(alpha: 0.14),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
-                '$modPct% ($modLayersDone/$modTotalLayers couches)',
+                '$modPct% ($modLayersDone/$modTotalLayers)',
                 style: const TextStyle(
-                  fontSize: 11,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.w800,
                   color: AppTheme.primaryTeal,
                 ),

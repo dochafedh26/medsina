@@ -335,46 +335,77 @@ class _AdminNationalExamsTabState extends State<AdminNationalExamsTab> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.2)),
                 ),
-                child: Row(
-                  children: [
-                    Container(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isNarrowBanner = constraints.maxWidth < 620;
+
+                    final iconWidget = Container(
                       padding: const EdgeInsets.all(12),
                       decoration: const BoxDecoration(
                         color: AppTheme.primaryTeal,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 28),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Gestion des Concours Blancs Nationaux',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Créez des épreuves officielles, diffusez les invitations à toute la communauté Medsina et générez les classements officiels nationaux.',
-                            style: TextStyle(fontSize: 12.5, color: Colors.grey.shade600),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    ElevatedButton.icon(
+                      child: const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 26),
+                    );
+
+                    final textWidget = Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Gestion des Concours Blancs Nationaux',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.5),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Créez des épreuves officielles, diffusez les invitations à toute la communauté Medsina et générez les classements officiels nationaux.',
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        ),
+                      ],
+                    );
+
+                    final buttonWidget = ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryTeal,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       icon: const Icon(Icons.add_rounded),
                       label: const Text('Créer un Concours', style: TextStyle(fontWeight: FontWeight.bold)),
                       onPressed: _openCreateExamDialog,
-                    ),
-                  ],
+                    );
+
+                    if (isNarrowBanner) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              iconWidget,
+                              const SizedBox(width: 12),
+                              Expanded(child: textWidget),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          SizedBox(
+                            width: double.infinity,
+                            child: buttonWidget,
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      children: [
+                        iconWidget,
+                        const SizedBox(width: 16),
+                        Expanded(child: textWidget),
+                        const SizedBox(width: 12),
+                        buttonWidget,
+                      ],
+                    );
+                  },
                 ),
               ),
 

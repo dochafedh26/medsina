@@ -306,9 +306,13 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
             children: [
               Icon(Icons.local_fire_department_rounded, size: 18, color: Color(0xFFF59E0B)),
               SizedBox(width: 8),
-              Text(
-                'Pathologies & Sujets Populaires Concours',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+              Expanded(
+                child: Text(
+                  'Pathologies & Sujets Populaires Concours',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),

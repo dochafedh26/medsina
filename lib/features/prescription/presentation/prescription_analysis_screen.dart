@@ -977,16 +977,16 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                     const SizedBox(height: 14),
                     const Divider(height: 1),
                     const SizedBox(height: 10),
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Expanded(
-                          child: Text(
-                            'Médicaments dans l\'ordonnance à analyser :',
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
+                        const Text(
+                          'Médicaments dans l\'ordonnance à analyser :',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                         ),
+                        const SizedBox(height: 2),
                         Text(
-                          'Cliquez sur "Fiche & Posologie" pour les détails',
+                          'Touchez un médicament ou "Fiche" pour afficher les détails Vidal & posologie',
                           style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500, fontStyle: FontStyle.italic),
                         ),
                       ],
@@ -1946,10 +1946,10 @@ En tant que pharmacologue clinicien MedsinaPilot :
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.menu_book_rounded, size: 14, color: AppTheme.primaryTeal),
-                      SizedBox(width: 5),
+                      Icon(Icons.menu_book_rounded, size: 13, color: AppTheme.primaryTeal),
+                      SizedBox(width: 4),
                       Text(
-                        'Fiche & Posologie',
+                        'Fiche',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,

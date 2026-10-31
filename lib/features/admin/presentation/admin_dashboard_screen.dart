@@ -2302,53 +2302,62 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                // Method badge
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.account_balance_rounded, size: 14, color: Color(0xFF2563EB)),
-                      const SizedBox(width: 4),
-                      Text(
-                        payment.paymentMethod.toUpperCase(),
-                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: Color(0xFF2563EB)),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2563EB).withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.account_balance_rounded, size: 13, color: Color(0xFF2563EB)),
+                          const SizedBox(width: 4),
+                          Text(
+                            payment.paymentMethod.toUpperCase(),
+                            style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: Color(0xFF2563EB)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isQuotaTopup) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.flash_on_rounded, size: 13, color: Colors.amber),
+                            const SizedBox(width: 4),
+                            Text(
+                              '+$bonusCount IA',
+                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.amber),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
-                  ),
-                ),
-                if (isQuotaTopup) ...[
-                  const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.amber.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+                    Text(
+                      '${payment.amount.toStringAsFixed(0)} ${payment.currency}',
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                     ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.flash_on_rounded, size: 13, color: Colors.amber),
-                        const SizedBox(width: 4),
-                        Text(
-                          '+$bonusCount REQUÊTES IA',
-                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.amber),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                const SizedBox(width: 8),
-                Text(
-                  '${payment.amount.toStringAsFixed(0)} ${payment.currency}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                  ],
                 ),
-                const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -2356,6 +2365,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(statusIcon, size: 13, color: statusColor),
                       const SizedBox(width: 4),
@@ -2980,21 +2990,44 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                         child: Text('Aucune annonce active diffusée pour l\'instant.', style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
                       )
                     else
-                      ...state.announcements.map((a) => ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(a.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5)),
-                            subtitle: Text(a.message, style: const TextStyle(fontSize: 12)),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
+                      ...state.announcements.map((a) => Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade200),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Switch(
-                                  value: a.isActive,
-                                  activeThumbColor: AppTheme.primaryTeal,
-                                  onChanged: (val) => context.read<AdminBloc>().add(ToggleAnnouncementEvent(id: a.id, isActive: val)),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        a.title,
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                                      ),
+                                    ),
+                                    Switch(
+                                      value: a.isActive,
+                                      activeThumbColor: AppTheme.primaryTeal,
+                                      onChanged: (val) => context.read<AdminBloc>().add(ToggleAnnouncementEvent(id: a.id, isActive: val)),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFDC2626), size: 18),
+                                      onPressed: () => context.read<AdminBloc>().add(DeleteAnnouncementEvent(a.id)),
+                                    ),
+                                  ],
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFDC2626), size: 18),
-                                  onPressed: () => context.read<AdminBloc>().add(DeleteAnnouncementEvent(a.id)),
+                                const SizedBox(height: 6),
+                                Text(
+                                  a.message,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: isDark ? Colors.white70 : Colors.black87,
+                                    height: 1.35,
+                                  ),
                                 ),
                               ],
                             ),

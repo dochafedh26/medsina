@@ -654,12 +654,15 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
         const SizedBox(height: 20),
 
         // Active Custom Sessions List
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 6,
           children: [
             const Text(
               'Mes Sessions Enregistrées',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5),
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -670,7 +673,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                 ],
                 Text(
                   '${state.customSessions.length} session(s)',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
