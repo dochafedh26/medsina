@@ -183,6 +183,19 @@ class DeleteAnnouncementEvent extends AdminEvent {
   List<Object?> get props => [id];
 }
 
+class BanUserEvent extends AdminEvent {
+  final String userId;
+  final String reason;
+
+  const BanUserEvent({
+    required this.userId,
+    required this.reason,
+  });
+
+  @override
+  List<Object?> get props => [userId, reason];
+}
+
 class UnbanUserEvent extends AdminEvent {
   final String userId;
   final String? adminNotes;

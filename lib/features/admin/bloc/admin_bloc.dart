@@ -20,6 +20,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<CreateAnnouncementEvent>(_onCreateAnnouncement);
     on<ToggleAnnouncementEvent>(_onToggleAnnouncement);
     on<DeleteAnnouncementEvent>(_onDeleteAnnouncement);
+    on<BanUserEvent>(_onBanUser);
     on<UnbanUserEvent>(_onUnbanUser);
     on<ArchiveEligibleReceiptsEvent>(_onArchiveEligibleReceipts);
     on<RevokeLicenseKeyEvent>(_onRevokeLicenseKey);
@@ -385,6 +386,36 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       emit(state.copyWith(
         status: AdminStatus.loaded,
         errorMessage: 'Erreur lors de la mise à jour : $e',
+      ));
+    }
+  }
+
+  Future<void> _onBanUser(BanUserEvent event, Emitter<AdminState> emit) async {
+    emit(state.copyWith(status: AdminStatus.loading, clearMessages: true));
+    try {
+      final success = await SupabaseService.banUser(
+        userId: event.userId,
+        reason: event.reason,
+      );
+
+      final usersData = await SupabaseService.fetchAdminUsers();
+      final metricsData = await SupabaseService.fetchAdminMetrics();
+      final updatedUsers = usersData.map((u) => AdminUserItem.fromJson(u)).toList();
+      final updatedMetrics = AdminMetrics.fromJson(metricsData);
+
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        users: updatedUsers,
+        filteredUsers: updatedUsers,
+        metrics: updatedMetrics,
+        successMessage: success
+            ? 'Compte utilisateur suspendu avec succès.'
+            : 'Échec de la suspension du compte.',
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        errorMessage: 'Erreur lors de la suspension : $e',
       ));
     }
   }

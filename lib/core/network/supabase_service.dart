@@ -841,6 +841,72 @@ class SupabaseService {
     }
   }
 
+
+  /// Fetch complete 360° doctor profile for Admin (Profile, Subscriptions, Payments, Licenses, Quotas)
+  static Future<Map<String, dynamic>> fetchDoctorFullProfileDetails({
+    required String userId,
+    required String userEmail,
+  }) async {
+    final result = <String, dynamic>{};
+    try {
+      final prof = await client.from('profiles').select().eq('id', userId).maybeSingle();
+      if (prof != null) {
+        result['profile'] = prof;
+      }
+    } catch (e) {
+      debugPrint('Error fetching doctor profile: $e');
+    }
+
+    try {
+      final sub = await client.from('subscriptions').select().eq('user_id', userId).maybeSingle();
+      if (sub != null) {
+        result['subscription'] = sub;
+      }
+    } catch (e) {
+      debugPrint('Error fetching doctor subscription: $e');
+    }
+
+    try {
+      final payments = await client
+          .from('payments')
+          .select()
+          .or('user_id.eq.$userId,user_email.eq.$userEmail')
+          .order('created_at', ascending: false);
+      result['payments'] = List<Map<String, dynamic>>.from(payments);
+    } catch (e) {
+      result['payments'] = <Map<String, dynamic>>[];
+    }
+
+    try {
+      final keys = await client
+          .from('license_keys')
+          .select()
+          .eq('redeemed_by', userId)
+          .order('redeemed_at', ascending: false);
+      result['license_keys'] = List<Map<String, dynamic>>.from(keys);
+    } catch (e) {
+      result['license_keys'] = <Map<String, dynamic>>[];
+    }
+
+    try {
+      final quotas = await client.from('user_trial_quotas').select().eq('user_id', userId).maybeSingle();
+      if (quotas != null) {
+        result['trial_quotas'] = quotas;
+      }
+    } catch (_) {}
+
+    try {
+      final qcm = await client.from('user_question_history').select('id, is_correct').eq('user_id', userId);
+      result['qcm_count'] = qcm.length;
+      result['qcm_correct'] = qcm.where((q) => q['is_correct'] == true).length;
+    } catch (_) {
+      result['qcm_count'] = 0;
+      result['qcm_correct'] = 0;
+    }
+
+    return result;
+  }
+
   /// List Users for Admin Dashboard
   static Future<List<Map<String, dynamic>>> fetchAdminUsers() async {
     try {
@@ -1605,6 +1671,31 @@ class SupabaseService {
     } catch (e) {
       debugPrint('Error fetching receipts eligible for archival: $e');
       return [];
+    }
+  }
+
+
+  /// Ban user and suspend access with reason
+  static Future<bool> banUser({
+    required String userId,
+    required String reason,
+  }) async {
+    try {
+      await client.from('profiles').update({
+        'is_banned': true,
+        'ban_reason': reason,
+        'banned_at': DateTime.now().toIso8601String(),
+      }).eq('id', userId);
+
+      await client.from('subscriptions').update({
+        'status': 'suspended',
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('user_id', userId);
+
+      return true;
+    } catch (e) {
+      debugPrint('Error banning user: $e');
+      return false;
     }
   }
 

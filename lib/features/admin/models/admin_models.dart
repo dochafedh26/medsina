@@ -87,6 +87,10 @@ class AdminUserItem extends Equatable {
   final String? banReason;
   final int rejectedPaymentsCount;
   final DateTime? createdAt;
+  final int? studyYear;
+  final String? referralCode;
+  final String? avatarUrl;
+  final DateTime? updatedAt;
 
   const AdminUserItem({
     required this.id,
@@ -102,6 +106,10 @@ class AdminUserItem extends Equatable {
     this.banReason,
     this.rejectedPaymentsCount = 0,
     this.createdAt,
+    this.studyYear,
+    this.referralCode,
+    this.avatarUrl,
+    this.updatedAt,
   });
 
   factory AdminUserItem.fromJson(Map<String, dynamic> json) {
@@ -123,11 +131,15 @@ class AdminUserItem extends Equatable {
       banReason: reason,
       rejectedPaymentsCount: rejections,
       createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
+      studyYear: (json['study_year'] as num?)?.toInt(),
+      referralCode: json['referral_code'],
+      avatarUrl: json['avatar_url'],
+      updatedAt: json['updated_at'] != null ? DateTime.tryParse(json['updated_at']) : null,
     );
   }
 
   @override
-  List<Object?> get props => [id, email, fullName, medicalRole, faculty, tier, status, expiresAt, isAdmin, isBanned, banReason, rejectedPaymentsCount, createdAt];
+  List<Object?> get props => [id, email, fullName, medicalRole, faculty, tier, status, expiresAt, isAdmin, isBanned, banReason, rejectedPaymentsCount, createdAt, studyYear, referralCode, avatarUrl, updatedAt];
 }
 
 class AdminLicenseItem extends Equatable {
