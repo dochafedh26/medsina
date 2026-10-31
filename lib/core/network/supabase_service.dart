@@ -911,9 +911,38 @@ class SupabaseService {
   static Future<List<Map<String, dynamic>>> fetchAdminUsers() async {
     try {
       final response = await client.rpc('admin_list_users');
-      return List<Map<String, dynamic>>.from(response);
+      final list = List<Map<String, dynamic>>.from(response);
+
+      // Enrich with study_year and sanitize malformed roles from profiles table
+      try {
+        final profs = await client.from('profiles').select('id, study_year, medical_role');
+        final profileMap = <String, Map<String, dynamic>>{};
+        for (final p in profs) {
+          final pid = p['id']?.toString();
+          if (pid != null) profileMap[pid] = p;
+        }
+
+        for (final u in list) {
+          final uid = u['id']?.toString();
+          if (uid != null && profileMap.containsKey(uid)) {
+            final prof = profileMap[uid]!;
+            if (u['study_year'] == null && prof['study_year'] != null) {
+              u['study_year'] = prof['study_year'];
+            }
+            final r = (u['medical_role'] ?? '').toString();
+            if (r.contains('(e Année)') || r.contains('(e Annee)')) {
+              final y = prof['study_year'] ?? u['study_year'];
+              u['medical_role'] = y != null
+                  ? 'Étudiant (e Année)'
+                  : 'Étudiant en Médecine';
+            }
+          }
+        }
+      } catch (_) {}
+
+      return list;
     } catch (e) {
-      debugPrint('Error fetching admin users: $e');
+      debugPrint('Error fetching admin users: ');
       return [];
     }
   }
@@ -1730,6 +1759,29 @@ class SupabaseService {
       return true;
     } catch (e) {
       debugPrint('Error unbanning user: $e');
+      return false;
+    }
+  }
+
+  /// Update user's study year and medical role (Admin feature)
+  static Future<bool> updateUserStudyYear({
+    required String userId,
+    required int? studyYear,
+    String? medicalRole,
+  }) async {
+    try {
+      final updates = <String, dynamic>{
+        'updated_at': DateTime.now().toIso8601String(),
+        'study_year': studyYear,
+      };
+      if (medicalRole != null && medicalRole.trim().isNotEmpty) {
+        updates['medical_role'] = medicalRole.trim();
+      }
+
+      await client.from('profiles').update(updates).eq('id', userId);
+      return true;
+    } catch (e) {
+      debugPrint('Error updating user study year: ');
       return false;
     }
   }

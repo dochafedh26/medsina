@@ -122,6 +122,169 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
     }
   }
 
+  int? _resolveStudyYear(Map<String, dynamic> profile, AdminUserItem u) {
+    if (profile['study_year'] != null) {
+      final y = int.tryParse(profile['study_year'].toString());
+      if (y != null && y >= 1 && y <= 6) return y;
+    }
+    if (u.studyYear != null && u.studyYear! >= 1 && u.studyYear! <= 6) {
+      return u.studyYear;
+    }
+
+    final combinedRole = '${profile["medical_role"] ?? ""} ${u.medicalRole}';
+    final match = RegExp(r'([1-6])\s*(?:e|è|eme|ère)?\s*ann', caseSensitive: false).firstMatch(combinedRole);
+    if (match != null) {
+      return int.tryParse(match.group(1) ?? '');
+    }
+
+    final parenMatch = RegExp(r'\(\s*([1-6])', caseSensitive: false).firstMatch(combinedRole);
+    if (parenMatch != null) {
+      return int.tryParse(parenMatch.group(1) ?? '');
+    }
+
+    return null;
+  }
+
+  String _cleanMedicalRole(String rawRole, int? studyYear) {
+    var cleaned = rawRole.trim();
+    cleaned = cleaned.replaceAll('(e Année)', '').replaceAll('(e Annee)', '').replaceAll('(e année)', '').trim();
+
+    if (cleaned.toLowerCase().contains('étudiant') || cleaned.toLowerCase().contains('etudiant')) {
+      if (studyYear != null) {
+        return 'Étudiant ($studyYear${studyYear == 1 ? "ère" : "ème"} Année)';
+      } else {
+        return 'Étudiant en Médecine';
+      }
+    }
+    return cleaned.isNotEmpty ? cleaned : 'Praticien';
+  }
+
+  String _formatStudyYearDisplay(int? studyYear, String medicalRole) {
+    if (studyYear != null) {
+      return '$studyYear${studyYear == 1 ? "ère" : "ème"} Année d\'études';
+    }
+    final lower = medicalRole.toLowerCase();
+    if (lower.contains('étudiant') || lower.contains('etudiant') || lower.contains('externe')) {
+      return 'Étudiant (Année non renseignée)';
+    }
+    if (lower.contains('résident') || lower.contains('resident') || lower.contains('résidanat')) {
+      return 'Médecin Résident (Spécialité)';
+    }
+    if (lower.contains('interne')) {
+      return 'Interne en Médecine (7ème Année)';
+    }
+    return 'Diplômé / Praticien';
+  }
+
+  void _showEditStudyYearDialog(BuildContext context, int? currentYear, String currentRole) {
+    int? selected = currentYear;
+    bool isSaving = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (dialogCtx, setModalState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.school_rounded, color: AppTheme.primaryTeal),
+              SizedBox(width: 10),
+              Flexible(child: Text('Modifier Niveau / Année', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Niveau académique pour ${widget.user.fullName} :',
+                style: const TextStyle(fontSize: 12.5),
+              ),
+              const SizedBox(height: 14),
+              DropdownButtonFormField<int?>(
+                initialValue: selected,
+                isExpanded: true,
+                decoration: const InputDecoration(
+                  labelText: 'Année Universitaire',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+                items: const [
+                  DropdownMenuItem(value: 1, child: Text('1ère Année (Sciences Fondamentales I)')),
+                  DropdownMenuItem(value: 2, child: Text('2ème Année (Sciences Fondamentales II)')),
+                  DropdownMenuItem(value: 3, child: Text('3ème Année (Pré-Clinique & Sémiologie)')),
+                  DropdownMenuItem(value: 4, child: Text('4ème Année (Externat - Pathologie I)')),
+                  DropdownMenuItem(value: 5, child: Text('5ème Année (Externat - Pathologie II)')),
+                  DropdownMenuItem(value: 6, child: Text('6ème Année (Externat - Thérapeutique)')),
+                  DropdownMenuItem(value: null, child: Text('Diplômé / Résident / Praticien')),
+                ],
+                onChanged: (val) => setModalState(() => selected = val),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryTeal,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      setModalState(() => isSaving = true);
+                      final newRole = selected != null
+                          ? 'Étudiant (${selected}e Année)'
+                          : (currentRole.contains('Étudiant') ? 'Médecin Généraliste' : currentRole);
+
+                      final ok = await SupabaseService.updateUserStudyYear(
+                        userId: widget.user.id,
+                        studyYear: selected,
+                        medicalRole: newRole,
+                      );
+
+                      if (!ctx.mounted) return;
+                      Navigator.pop(ctx);
+
+                      if (ok) {
+                        setState(() {
+                          if (_deepDetails['profile'] is Map) {
+                            _deepDetails['profile']['study_year'] = selected;
+                            _deepDetails['profile']['medical_role'] = newRole;
+                          } else {
+                            _deepDetails['profile'] = {
+                              'study_year': selected,
+                              'medical_role': newRole,
+                            };
+                          }
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: const Color(0xFF16A34A),
+                            content: Text('Niveau académique mis à jour : ${selected != null ? "$selected" "e Année" : "Diplômé"}'),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            backgroundColor: Color(0xFFDC2626),
+                            content: Text('Erreur lors de la mise à jour du niveau.'),
+                          ),
+                        );
+                      }
+                    },
+              child: isSaving
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Enregistrer'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
@@ -136,7 +299,9 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
     final isBanned = u.isBanned;
 
     final referralCode = profile['referral_code']?.toString() ?? 'DR-${u.id.substring(0, 6).toUpperCase()}';
-    final studyYear = profile['study_year'] ?? u.studyYear;
+    final resolvedStudyYear = _resolveStudyYear(profile, u);
+    final resolvedMedicalRole = _cleanMedicalRole(profile['medical_role']?.toString() ?? u.medicalRole, resolvedStudyYear);
+    final studyYearDisplay = _formatStudyYearDisplay(resolvedStudyYear, resolvedMedicalRole);
 
     DateTime? effectiveExpiry = u.expiresAt;
     if (subscription['expires_at'] != null) {
@@ -255,7 +420,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${u.medicalRole}${studyYear != null ? ' ($studyYear' 'e Année)' : ''} • ${u.faculty}',
+                              '$resolvedMedicalRole • ${u.faculty}',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: isDark ? Colors.white70 : Colors.grey.shade700,
@@ -389,7 +554,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                   : TabBarView(
                       controller: _tabController,
                       children: [
-                        _buildIdentityTab(u, profile, isDark, referralCode, studyYear),
+                        _buildIdentityTab(u, profile, isDark, referralCode, resolvedMedicalRole, studyYearDisplay, resolvedStudyYear),
                         _buildSubscriptionTab(u, subscription, isDark, effectiveExpiry, daysRemaining, isExpired),
                         _buildPaymentsTab(payments, isDark),
                         _buildLicensesAndQuotasTab(licenseKeys, _deepDetails['trial_quotas'], isDark),
@@ -399,46 +564,94 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
 
             // --- FOOTER ACTIONS ---
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
                 border: Border(top: BorderSide(color: isDark ? const Color(0xFF334155) : Colors.grey.shade200)),
               ),
-              child: Row(
-                children: [
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: isBanned ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
-                      side: BorderSide(color: isBanned ? const Color(0xFF16A34A) : const Color(0xFFDC2626)),
+              child: isMobile
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryTeal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          icon: const Icon(Icons.edit_calendar_rounded, size: 16),
+                          label: const Text('Gérer Abonnement', style: TextStyle(fontWeight: FontWeight.bold)),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            widget.onManageSubscription();
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  visualDensity: VisualDensity.compact,
+                                  foregroundColor: isBanned ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
+                                  side: BorderSide(color: isBanned ? const Color(0xFF16A34A) : const Color(0xFFDC2626)),
+                                ),
+                                icon: Icon(isBanned ? Icons.lock_open_rounded : Icons.block_rounded, size: 15),
+                                label: Text(isBanned ? 'Débannir' : 'Suspendre', style: const TextStyle(fontSize: 12)),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  widget.onToggleBan();
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(visualDensity: VisualDensity.compact),
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('Fermer', style: TextStyle(fontSize: 12)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: isBanned ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
+                            side: BorderSide(color: isBanned ? const Color(0xFF16A34A) : const Color(0xFFDC2626)),
+                          ),
+                          icon: Icon(isBanned ? Icons.lock_open_rounded : Icons.block_rounded, size: 16),
+                          label: Text(isBanned ? 'Débannir' : 'Suspendre'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            widget.onToggleBan();
+                          },
+                        ),
+                        const Spacer(),
+                        OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Fermer'),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryTeal,
+                            foregroundColor: Colors.white,
+                          ),
+                          icon: const Icon(Icons.edit_calendar_rounded, size: 16),
+                          label: const Text('Gérer / Prolonger Abonnement'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            widget.onManageSubscription();
+                          },
+                        ),
+                      ],
                     ),
-                    icon: Icon(isBanned ? Icons.lock_open_rounded : Icons.block_rounded, size: 16),
-                    label: Text(isBanned ? 'Débannir' : 'Suspendre'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      widget.onToggleBan();
-                    },
-                  ),
-                  const Spacer(),
-                  OutlinedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Fermer'),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryTeal,
-                      foregroundColor: Colors.white,
-                    ),
-                    icon: const Icon(Icons.edit_calendar_rounded, size: 16),
-                    label: const Text('Gérer / Prolonger Abonnement'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      widget.onManageSubscription();
-                    },
-                  ),
-                ],
-              ),
             ),
           ],
         ),
@@ -447,16 +660,37 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
   }
 
   // --- TAB 1: IDENTITY & MEDICAL CAREER ---
-  Widget _buildIdentityTab(AdminUserItem u, Map<String, dynamic> profile, bool isDark, String referralCode, dynamic studyYear) {
+  Widget _buildIdentityTab(
+    AdminUserItem u,
+    Map<String, dynamic> profile,
+    bool isDark,
+    String referralCode,
+    String resolvedRole,
+    String yearDisplay,
+    int? resolvedYear,
+  ) {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
         _buildSectionHeader('Profil Médical & Académique', Icons.local_hospital_outlined, isDark),
         const SizedBox(height: 12),
         _buildInfoGrid([
-          _InfoTile('Rôle Médical', u.medicalRole, Icons.medical_services_outlined, isDark),
+          _InfoTile('Rôle Médical', resolvedRole, Icons.medical_services_outlined, isDark),
           _InfoTile('Faculté de Médecine', u.faculty, Icons.school_outlined, isDark),
-          _InfoTile('Niveau / Année', studyYear != null ? '$studyYear' 'e Année d\'études' : 'Diplômé / Praticien', Icons.timeline_outlined, isDark),
+          _InfoTile(
+            'Niveau / Année',
+            yearDisplay,
+            Icons.timeline_outlined,
+            isDark,
+            trailing: IconButton(
+              icon: const Icon(Icons.edit_outlined, size: 15, color: AppTheme.primaryTeal),
+              tooltip: 'Modifier le Niveau',
+              onPressed: () => _showEditStudyYearDialog(context, resolvedYear, resolvedRole),
+              splashRadius: 14,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ),
           _InfoTile('Code Parrainage', referralCode, Icons.loyalty_outlined, isDark, onCopy: () => _copyToClipboard(referralCode, 'Code Parrainage')),
         ]),
 
@@ -850,8 +1084,9 @@ class _InfoTile extends StatelessWidget {
   final bool isDark;
   final Color? valueColor;
   final VoidCallback? onCopy;
+  final Widget? trailing;
 
-  const _InfoTile(this.label, this.value, this.icon, this.isDark, {this.valueColor, this.onCopy});
+  const _InfoTile(this.label, this.value, this.icon, this.isDark, {this.valueColor, this.onCopy, this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -884,7 +1119,9 @@ class _InfoTile extends StatelessWidget {
               ],
             ),
           ),
-          if (onCopy != null)
+          ?trailing,
+          if (onCopy != null) ...[
+            if (trailing != null) const SizedBox(width: 4),
             IconButton(
               icon: const Icon(Icons.copy_rounded, size: 13),
               color: Colors.grey.shade400,
@@ -893,6 +1130,7 @@ class _InfoTile extends StatelessWidget {
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
+          ],
         ],
       ),
     );

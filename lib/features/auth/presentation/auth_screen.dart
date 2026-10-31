@@ -504,7 +504,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     }
 
     final roleToSend = _selectedRole == 'Étudiant en Médecine'
-        ? 'Étudiant (e Année)'
+        ? 'Étudiant (${_selectedStudyYear}e Année)'
         : _selectedRole;
 
     context.read<AuthBloc>().add(
