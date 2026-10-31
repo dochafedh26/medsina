@@ -301,6 +301,7 @@ def send_telegram_broadcast(
     community_group_id: Optional[str] = None,
     topic_id: Optional[int] = None,
     category: Optional[str] = None,
+    inline_keyboard: Optional[Dict] = None,
     dry_run: bool = False,
     auto_pin: bool = True,
     broadcast_to_community: bool = True
@@ -319,18 +320,19 @@ def send_telegram_broadcast(
     target_topic_id = topic_id if topic_id is not None else resolve_telegram_topic(category, message_text, topics_map)
     topic_title = TOPIC_NAMES.get(target_topic_id, f"Topic #{target_topic_id}")
 
-    inline_keyboard = {
-        "inline_keyboard": [
-            [
-                {"text": "🌐 Ouvrir Medsina Web", "url": OCTENIUM_WEB_URL},
-                {"text": "📱 Télécharger APK Android", "url": OCTENIUM_APK_URL}
-            ],
-            [
-                {"text": "💻 Télécharger PC Windows", "url": OCTENIUM_EXE_URL},
-                {"text": "👥 Page Facebook Residanat Blida", "url": "https://www.facebook.com/residanatblida2027"}
+    if inline_keyboard is None:
+        inline_keyboard = {
+            "inline_keyboard": [
+                [
+                    {"text": "🌐 Ouvrir Medsina Web", "url": OCTENIUM_WEB_URL},
+                    {"text": "📱 Télécharger APK Android", "url": OCTENIUM_APK_URL}
+                ],
+                [
+                    {"text": "💻 Télécharger PC Windows", "url": OCTENIUM_EXE_URL},
+                    {"text": "👥 Page Facebook Residanat Blida", "url": "https://www.facebook.com/residanatblida2027"}
+                ]
             ]
-        ]
-    }
+        }
 
     if dry_run or not token or not channel:
         print("\n" + "=" * 60)
