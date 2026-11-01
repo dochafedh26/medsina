@@ -673,6 +673,20 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
                       ),
                     ),
                   ),
+                if (item.telegramUrl != null && item.telegramUrl!.isNotEmpty)
+                  OutlinedButton.icon(
+                    onPressed: () => _openExternalUrl(item.telegramUrl!),
+                    icon: const Icon(Icons.send_rounded, size: 16),
+                    label: const Text('Canal Telegram', style: TextStyle(fontSize: 12)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF0284C7),
+                      side: const BorderSide(color: Color(0xFF0284C7)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],
