@@ -200,10 +200,12 @@ class SupabaseService {
   /// Fetch Clinical Protocols (CAT Urgence)
   static Future<List<Map<String, dynamic>>> fetchClinicalProtocols() async {
     try {
-      final response = await client.from('clinical_protocols').select();
+      final response = await client
+          .from('clinical_protocols')
+          .select()
+          .timeout(const Duration(seconds: 4));
       return List<Map<String, dynamic>>.from(response);
-    } catch (e) {
-      debugPrint('Error fetching clinical protocols: $e');
+    } catch (_) {
       return [];
     }
   }

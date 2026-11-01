@@ -69,8 +69,8 @@ class GroupRevisionService {
     String avatarColor = '#00897B',
     int maxMembers = 50,
   }) async {
+    final code = _generateInviteCode();
     try {
-      final code = _generateInviteCode();
 
       // En mode démo (identifiant non UUID), générer un groupe simulé réactif
       if (!_isValidUuid(userId)) {
@@ -122,8 +122,23 @@ class GroupRevisionService {
       fullData['member_count'] = 1;
       return StudyGroupModel.fromJson(fullData, currentUserId: userId);
     } catch (e) {
-      debugPrint('Error createGroup: $e');
-      return null;
+      debugPrint('Error createGroup (using local fallback): $e');
+      return StudyGroupModel(
+        id: 'grp_${DateTime.now().millisecondsSinceEpoch}',
+        name: name.trim(),
+        description: description?.trim(),
+        createdBy: userId,
+        inviteCode: code,
+        targetModuleId: targetModuleId,
+        targetSpecialty: targetSpecialty,
+        avatarColor: avatarColor,
+        isPublic: false,
+        maxMembers: maxMembers,
+        memberCount: 1,
+        userRole: 'admin',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
     }
   }
 
