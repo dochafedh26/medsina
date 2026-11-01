@@ -832,5 +832,20 @@
     ],
     "created_at": "2026-10-31T22:41:38.866202+00:00",
     "updated_at": "2026-10-31T22:41:38.866218+00:00"
+  },
+  {
+    "id": "lab_methemoglobinemie",
+    "name": "Méthémoglobinémie (MetHb)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "0.5 - 1.5",
+    "unit": "% de l'hémoglobine totale",
+    "high_interpretation": "Urgence médicale majeure. 1.5-10%: Asymptomatique ou cyanose discrète. 10-20%: Cyanose cutanéo-muqueuse isolée ('chocolat blood' ne se colorant pas à l'air), céphalées, asthénie. 20-50%: Dyspnée, tachycardie, céphalées intenses, vertiges, syncope, acidose lactique. 50-70%: Arythmies, convulsions, coma, acidose métabolique sévère, défaillance multiviscérale. >70%: Souvent mortel par hypoxie tissulaire profonde. Causes: Toxiques (nitrites, nitrates, benzocaïne, dapsone, anilines), héréditaires (déficit en cytochrome b5 réductase, Hb M). Conduite à tenir: Arrêt immédiat de l'exposition, oxygénothérapie normobare ou hyperbare, et administration de Bleu de Méthylène IV (1 à 2 mg/kg en 5 minutes) si MetHb > 20% (ou > 10% si symptomatique), contre-indiqué en cas de déficit en G6PD (risque d'anémie hémolytique aiguë).",
+    "low_interpretation": "Valeur non pathologique en soi. Correspond à l'absence de méthémoglobinémie significative. Pas de signification clinique particulière, si ce n'est l'exclusion d'une intoxication oxydative ou d'une hémoglobinopathie de type Hb M. Aucune conduite à tenir particulière.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'oxymétrie de pouls (SpO2) est fausse et stagne obstinément autour de 85% malgré l'oxygénothérapie (phénomène de 'trou oxymétrique' où SpO2 lue >> SaO2 mesurée par co-oxymétrie).",
+      "Pour le concours de résidanat : Le diagnostic de certitude repose impérativement sur la co-oxymétrie (spectrophotométrie à plusieurs longueurs d'onde sur sang artériel ou veineux) et non sur la gazométrie artérielle standard qui calcule la saturation au lieu de la mesurer."
+    ],
+    "created_at": "2026-11-01T02:24:46.696982+00:00",
+    "updated_at": "2026-11-01T02:24:46.696998+00:00"
   }
 ]
