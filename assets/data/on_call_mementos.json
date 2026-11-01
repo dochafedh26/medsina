@@ -431,21 +431,21 @@
     "id": "memento_acr_adulte",
     "title": "⚡ Arrêt Cardio-Respiratoire (ACR) Adulte",
     "category": "Réanimation & Urgences Vitales",
-    "icon_name": "bolt_rounded",
+    "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Sécuriser les lieux, vérifier l'absence de conscience et de respiration, débuter immédiatement la RCP (100-120/min, depth 5-6 cm, ratio 30:2) et brancher le défibrillateur (DAE/Pale).",
-      "Étape 2 : Analyser le rythme (chocable vs non chocable). Si FV/TV sans pouls : Coup depoing sternal si synchrone, puis CEE (150-200J biphasique). Si Asystolie/AESP : pas de choc, RCP exclusive.",
-      "Étape 3 : Abord vasculaire immédiat (IV périphérique gros calibre ou IO) et administration d'Adrénaline 1 mg IV0/IO (à répéter toutes les 3 à 5 minutes). En cas de FV/TV réfractaire : Amiodarone 300 mg IV direct après le 3ème choc.",
-      "Étape 4 : Sécuriser les voies aériennes supérieures (Intubation endotrachéale par opérateur entrainé ou pose de masques laryngés) avec ventilation au ballon (FiO2 100%) et capnographie (ETCO2 < 10 mmHg = pronostic sombre). Rechercher les 4H et 4T (Hypoxie, Hypovolémie, Hyper/Hypokaliémie, Hypothermie / Tamponnade, Tension pneumothorax, Toxiques, Thrombose coro/pulmonaire).",
-      "Étape 5 : Post-ROSC (Return of Spontaneous Circulation) : Monitorage invasif, contrôle de la température ciblée (32-36°C), maintien de la PAM > 65 mmHg (remplissage et noradrénaline), réalisation d'un ECG 12 dérivations et transfert urgent en réanimation.",
-      "Étape 6 : Piège médico-légal absolu : Ne jamais débuter d'adrénaline ou de réanimation si rigidité cadavérique, livores fixes ou décapitation, et consigner heure de constatation du décès et nom du médecin sur le registre des UMC."
+      "Étape 1 : Sécuriser la zone, vérifier l'absence de ventilation, débuter immédiatement la RCP (MCE 100-120/min, 30:2) et brancher le défibrillateur (DCA/DAE) dès son arrivée pour analyser le rythme.",
+      "Étape 2 : En cas de FV/TV sans pouls : Cadioversion asynchrone (Choc 150-200 J biphasique), reprise immédiate de la RCP pendant 2 min. En cas de AESP/Asystolie : RCP stricte sans interruption.",
+      "Étape 3 : Voie veineuse périphérique (ou intra-osseuse), administration d'Adrénaline 1 mg IVP toutes les 3 à 5 min (immédiat si non choquable, après le 3ème choc si FV/TV). Amiodarone 300 mg IVL après le 3ème choc réfractaire.",
+      "Étape 4 : Sécurisation des voies aériennes supérieures par intubation trachéale par un senior (ou pose de masques laryngés) avec capnographie de sortie (ETCO2 > 10 mmHg) et ventilation non hyperoxique.",
+      "Étape 5 : Recherche des 4H et 4T (Hypoxie, Hypovolémie, Hyper/Hypokaliémie/H+, Hypothermie, Tension de thorax/Pneumothorax, Tamponnade, Toxiques, Thrombose coronarienne/pulmonaire).",
+      "Étape 6 : Piège critique : Ne jamais interrompre le MCE plus de 10 secondes pour le check du pouls ou l'intubation, et orienter post-RACS vers l'unité de soins intensifs/réanimation."
     ],
-    "scientific_references": "ERC Guidelines 2021 / SRLF / Recommandations Officielles du MSPRH Algérie",
+    "scientific_references": "Guidelines ERC / SRLF / SFMU / Consensus National Algérien de Réanimation",
     "is_active": true,
-    "created_at": "2026-10-27T18:46:33.267966+00:00",
-    "updated_at": "2026-10-27T18:46:33.267976+00:00"
+    "created_at": "2026-11-01T15:15:38.369830+00:00",
+    "updated_at": "2026-11-01T15:15:38.369847+00:00"
   },
   {
     "id": "memento_pediatrie_deshydratation_aigue",
