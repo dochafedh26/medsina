@@ -1539,5 +1539,28 @@
     "treatment_summary": "Arrêt immédiat et définitif du médicament incriminé, correction des désordres volémiques et électrolytiques, et adaptation de la posologie des traitements co-administrés selon la DFG.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-10-31T22:46:58.550794+00:00"
+  },
+  {
+    "course_id": "Blida_CARDIOLOGIE_INSUFFISANCE_CARDIAQUE_AIGUE",
+    "course_name": "Insuffisance cardiaque aigue",
+    "module_id": "Blida_CARDIOLOGIE",
+    "module_name": "Cardiologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nL'**Insuffisance Cardiaque Aiguë (ICA)** se définit par l'apparition rapide ou l'aggravation des symptômes et des signes d'insuffisance cardiaque, nécessitant une **hospitalisation en urgence** ou un traitement immédiat.\n* **Physiopathologie :** Élévation brutale des pressions de remplissage ventriculaires (gauche et/ou droite) entraînant une congestion pulmonaire et/ou systémique, liée à un dysfonctionnement systolique et/ou diastolique.\n* **Facteurs déclenchants (les 5 I + R) :** Inobservance thérapeutique ou régime, Ischémie myocardique/Infarctus, Iatrogénie (AINS, corticoïdes, bêta-bloquants mal introduits), Infection (broncho-pulmonaire), Troubles du rythme (FA rapide), Inanition ou poussée Hypertensive.\n\n## 2. Démarche Diagnostique (Clinique, Paraclinique, Critères)\n* **Clinique :** \n  - Forme la plus fréquente : **OAP (Œdème Aigu du Poumon)** associant dyspnée extrême, polypnée, râles crépitants remontant des bases aux sommets, expecturations saumonées, orthopnée.\n  - Forme grave : Choc cardiogénique (hypotension artérielle PAS < 90 mmHg, hypoperfusion périphérique, oligurie).\n* **Paraclinique de référence :**\n  - **BNP ou NT-proBNP :** Examen clé si doute diagnostique (valeurs normales excluent l'ICA : BNP < 100 pg/mL, NT-proBNP < 300 pg/mL).\n  - **Échocardiographie transthoracique (ETT) :** Urgente, évalue la FEVG, recherche une valvulopathie, un épanchement péricardique ou des signes d'hypertension artérielle pulmonaire.\n  - **Gaz du sang (GDS) :** Hypoxémie, hypocapnie puis hypercapnie en cas de détresse respiratoire avancée.\n  - **Radiographie thoracique :** Cardiomégalie, redistribution vasculaire, lignes de Kerley B, alvéolite en ailes de papillon.\n* **Critères diagnostiques :** Association d'une dyspnée aiguë sévère, de signes physiques de congestion (crépitants, œdèmes des membres inférieurs) et d'une élévation des peptides natriurétiques.\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n* **Diagnostics différentiels :** Exacerbation de BPCO/asthme, embolie pulmonaire, pneumopathie aiguë, syndrome de détresse respiratoire aiguë (SDRA).\n* **Formes cliniques majeures :**\n  - *OAP cardiogénique hyposystolique ou à PA conservée.*\n  - *Choc cardiogénique* (urgence absolue, vasopresseurs et inotropes).\n  - *ICA droite pure* (infarctus du VD, embolie pulmonaire grave).\n  - *ICA sur cœur ischémique.*",
+    "key_takeaways": [
+      "L'OAP cardiogénique est une urgence médicale absolue nécessitant une mise en position assise et une oxygénothérapie immédiate.",
+      "Le dosage des peptides natriurétiques (BNP / NT-proBNP) a une excellente valeur prédictive négative pour exclure une ICA.",
+      "Les diurétiques de l'anse (Furosémide) par voie IV sont la pierre angulaire du traitement de la congestion.",
+      "La VNI (Ventilation Non Invasive) en mode CPAP ou BIPAP réduit la mortalité et le recours à l'intubation en cas d'OAP.",
+      "Le choc cardiogénique est défini par une PAS < 90 mmHg malgré un remplissage correct, associée à des signes d'hypoperfusion tissulaire."
+    ],
+    "exam_traps": [
+      "Piège Annales : Ne pas confondre l'OAP cardiogénique (où le remplissage est formellement contre-indiqué hors choc) avec l'infarctus du ventricule droit compliqué d'hypotension où le remplissage prudent est requis.",
+      "Piège Traitement : L'utilisation des bêta-bloquants est contre-indiquée en phase aiguë d'une ICA décompensée (ils doivent être débutés ou augmentés uniquement après stabilisation).",
+      "Piège Diagnostic : Des râles crépitants peuvent être absents dans un OAP sec ou chez le patient insuffisant rénal chronique en surcharge volémique pure."
+    ],
+    "diagnostic_criteria": "Association d'un syndrome dyspnéique aigu, de signes cliniques de congestion pulmonaire ou systémique, et d'un taux élevé de BNP (> 100 pg/mL) ou NT-proBNP (> 300 pg/mL).",
+    "treatment_summary": "Oxygénothérapie, VNI si détresse respiratoire, Diurétiques de l'anse en IV (Furosémide), et Dérivés nitrés si PAS > 110 mmHg. En cas de choc cardiogénique : Dobutamine ± Noradrénaline.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-01T02:31:14.542450+00:00"
   }
 ]
