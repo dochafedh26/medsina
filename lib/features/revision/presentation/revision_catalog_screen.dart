@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/services/free_trial_quota_service.dart';
 import '../../../core/theme/app_theme.dart';
@@ -124,7 +125,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
     }
   }
 
-  void _showSectionSelectorBottomSheet(BuildContext context, int customSessionsCount) {
+  void _showSectionSelectorBottomSheet(
+    BuildContext context,
+    int customSessionsCount,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final sections = [
@@ -137,7 +141,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
       },
       {
         'title': 'Sessions Sur-Mesure',
-        'badge': customSessionsCount > 0 ? '$customSessionsCount active(s)' : 'Sur-Mesure',
+        'badge': customSessionsCount > 0
+            ? '$customSessionsCount active(s)'
+            : 'Sur-Mesure',
         'subtitle': 'Créer des sessions multi-cours personnalisées',
         'icon': Icons.dashboard_customize_rounded,
         'color': const Color(0xFF2563EB),
@@ -214,11 +220,18 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                 ),
                 Row(
                   children: [
-                    const Icon(Icons.apps_rounded, color: AppTheme.primaryTeal, size: 20),
+                    const Icon(
+                      Icons.apps_rounded,
+                      color: AppTheme.primaryTeal,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     const Text(
                       'Sections de Révision Medsina',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                     const Spacer(),
                     IconButton(
@@ -240,14 +253,21 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
 
                       return ListTile(
                         dense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         leading: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: color.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Icon(item['icon'] as IconData, color: color, size: 20),
+                          child: Icon(
+                            item['icon'] as IconData,
+                            color: color,
+                            size: 20,
+                          ),
                         ),
                         title: Row(
                           children: [
@@ -255,14 +275,21 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                               child: Text(
                                 item['title'] as String,
                                 style: TextStyle(
-                                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w800
+                                      : FontWeight.w600,
                                   fontSize: 13.5,
-                                  color: isSelected ? AppTheme.primaryTeal : null,
+                                  color: isSelected
+                                      ? AppTheme.primaryTeal
+                                      : null,
                                 ),
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: color.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(6),
@@ -280,15 +307,291 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                         ),
                         subtitle: Text(
                           item['subtitle'] as String,
-                          style: TextStyle(fontSize: 11, color: isDark ? Colors.white60 : Colors.black54),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isDark ? Colors.white60 : Colors.black54,
+                          ),
                         ),
                         trailing: isSelected
-                            ? const Icon(Icons.check_circle_rounded, color: AppTheme.primaryTeal, size: 20)
+                            ? const Icon(
+                                Icons.check_circle_rounded,
+                                color: AppTheme.primaryTeal,
+                                size: 20,
+                              )
                             : null,
                         onTap: () {
                           Navigator.pop(ctx);
                           _tabController.animateTo(i);
                         },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showPausedSessionsBottomSheet(
+    BuildContext context,
+    RevisionState state,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final progresses = state.activeCourseProgresses.values.toList()
+      ..sort((a, b) => b.lastActiveAt.compareTo(a.lastActiveAt));
+
+    if (progresses.isEmpty) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.pause_circle_rounded,
+                        color: Colors.amber.shade900,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${progresses.length} Révision(s) en Pause',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            'Sélectionnez une session pour reprendre où vous vous étiez arrêté',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: isDark
+                                  ? Colors.white60
+                                  : Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded, size: 20),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(height: 1),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: progresses.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 10),
+                    itemBuilder: (context, idx) {
+                      final p = progresses[idx];
+                      final currentQ = p.currentQuestionIndex + 1;
+                      final totalQ = p.totalQuestions;
+                      final pct = (p.progressPercentage * 100).toInt();
+
+                      // Retrouver le module associé si possible
+                      String moduleTitle = 'Module';
+                      for (final mod in state.modules) {
+                        if (mod.id == p.moduleId) {
+                          moduleTitle = mod.name;
+                          break;
+                        }
+                      }
+
+                      return Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1E293B)
+                              : Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white12
+                                : Colors.grey.shade200,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 7,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primaryTeal.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    moduleTitle,
+                                    style: const TextStyle(
+                                      color: AppTheme.primaryTeal,
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.shade100,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    '$pct%',
+                                    style: TextStyle(
+                                      color: Colors.amber.shade900,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              p.courseName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13.5,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: p.progressPercentage,
+                                minHeight: 6,
+                                backgroundColor: isDark
+                                    ? Colors.white12
+                                    : Colors.grey.shade200,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  AppTheme.primaryTeal,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Question $currentQ sur $totalQ',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.grey.shade700,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.primaryTeal,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    minimumSize: const Size(80, 32),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.play_arrow_rounded,
+                                    size: 16,
+                                  ),
+                                  label: const Text(
+                                    'Reprendre',
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                    CourseModel? matchedCourse;
+                                    for (final mod in state.modules) {
+                                      for (final c in mod.courses) {
+                                        if (c.id == p.courseId) {
+                                          matchedCourse = c;
+                                          break;
+                                        }
+                                      }
+                                      if (matchedCourse != null) break;
+                                    }
+
+                                    final courseToOpen =
+                                        matchedCourse ??
+                                        CourseModel(
+                                          id: p.courseId,
+                                          moduleId: p.moduleId,
+                                          name: p.courseName,
+                                          questionsCount: p.totalQuestions,
+                                        );
+
+                                    ResumeSessionSheet.show(
+                                      context,
+                                      course: courseToOpen,
+                                      progress: p,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -310,27 +613,43 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border(bottom: BorderSide(color: isDark ? Colors.white12 : Colors.grey.shade200)),
+        border: Border(
+          bottom: BorderSide(
+            color: isDark ? Colors.white12 : Colors.grey.shade200,
+          ),
+        ),
       ),
       child: Row(
         children: [
           // Dropdown pill showing active section
           Expanded(
             child: InkWell(
-              onTap: () => _showSectionSelectorBottomSheet(context, customSessionsCount),
+              onTap: () =>
+                  _showSectionSelectorBottomSheet(context, customSessionsCount),
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
-                  color: (currentTabInfo['color'] as Color).withValues(alpha: isDark ? 0.2 : 0.08),
+                  color: (currentTabInfo['color'] as Color).withValues(
+                    alpha: isDark ? 0.2 : 0.08,
+                  ),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: (currentTabInfo['color'] as Color).withValues(alpha: isDark ? 0.4 : 0.25),
+                    color: (currentTabInfo['color'] as Color).withValues(
+                      alpha: isDark ? 0.4 : 0.25,
+                    ),
                   ),
                 ),
                 child: Row(
                   children: [
-                    Icon(currentTabInfo['icon'] as IconData, size: 17, color: currentTabInfo['color'] as Color),
+                    Icon(
+                      currentTabInfo['icon'] as IconData,
+                      size: 17,
+                      color: currentTabInfo['color'] as Color,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -338,7 +657,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12.5,
-                          color: isDark ? Colors.white : (currentTabInfo['color'] as Color),
+                          color: isDark
+                              ? Colors.white
+                              : (currentTabInfo['color'] as Color),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -355,7 +676,8 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
             visualDensity: VisualDensity.compact,
             icon: const Icon(Icons.more_vert_rounded),
             tooltip: 'Changer de section',
-            onPressed: () => _showSectionSelectorBottomSheet(context, customSessionsCount),
+            onPressed: () =>
+                _showSectionSelectorBottomSheet(context, customSessionsCount),
           ),
         ],
       ),
@@ -383,7 +705,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
           ? AppBar(
               title: Text(
                 screenTitle,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_rounded),
@@ -394,14 +719,19 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
       body: BlocBuilder<RevisionBloc, RevisionState>(
         builder: (context, state) {
           if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.primaryTeal));
+            return const Center(
+              child: CircularProgressIndicator(color: AppTheme.primaryTeal),
+            );
           }
 
           final filteredModules = state.modules.where((m) {
             bool matchesCat = true;
-            if (isStudent && _selectedCategory == 'Mon Année (${studentYear}e)') {
-              matchesCat = ResidencyRepository.getYearForModule(m) == studentYear;
-            } else if (_selectedCategory == 'Tous' || _selectedCategory == 'Tous les Modules') {
+            if (isStudent &&
+                _selectedCategory == 'Mon Année (${studentYear}e)') {
+              matchesCat =
+                  ResidencyRepository.getYearForModule(m) == studentYear;
+            } else if (_selectedCategory == 'Tous' ||
+                _selectedCategory == 'Tous les Modules') {
               matchesCat = true;
             } else if (_selectedCategory.contains('1ère')) {
               matchesCat = ResidencyRepository.getYearForModule(m) == 1;
@@ -416,16 +746,25 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
             } else if (_selectedCategory.contains('6ème')) {
               matchesCat = ResidencyRepository.getYearForModule(m) == 6;
             } else {
-              matchesCat = m.category.toLowerCase().contains(_selectedCategory.toLowerCase());
+              matchesCat = m.category.toLowerCase().contains(
+                _selectedCategory.toLowerCase(),
+              );
             }
 
-            final matchesSearch = _searchQuery.isEmpty ||
+            final matchesSearch =
+                _searchQuery.isEmpty ||
                 m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                m.courses.any((c) => c.name.toLowerCase().contains(_searchQuery.toLowerCase()));
+                m.courses.any(
+                  (c) =>
+                      c.name.toLowerCase().contains(_searchQuery.toLowerCase()),
+                );
             return matchesCat && matchesSearch;
           }).toList();
 
-          final totalVisibleCourses = filteredModules.fold<int>(0, (sum, m) => sum + m.totalCourses);
+          final totalVisibleCourses = filteredModules.fold<int>(
+            0,
+            (sum, m) => sum + m.totalCourses,
+          );
 
           return LayoutBuilder(
             builder: (context, constraints) {
@@ -439,14 +778,20 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                 indicatorWeight: 3,
                 labelColor: AppTheme.primaryTeal,
                 unselectedLabelColor: Colors.grey.shade600,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                labelStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
                 tabs: [
                   const Tab(
                     icon: Icon(Icons.menu_book_rounded, size: 20),
                     text: 'Catalogue (47 Modules)',
                   ),
                   Tab(
-                    icon: const Icon(Icons.dashboard_customize_rounded, size: 20),
+                    icon: const Icon(
+                      Icons.dashboard_customize_rounded,
+                      size: 20,
+                    ),
                     text: state.customSessions.isNotEmpty
                         ? 'Sessions Sur-Mesure (${state.customSessions.length})'
                         : 'Sessions Sur-Mesure',
@@ -489,7 +834,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                             children: [
                               Expanded(child: tabBar),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -502,7 +849,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                             ],
                           ),
                         )
-                      : _buildMobileTabHeader(context, state.customSessions.length),
+                      : _buildMobileTabHeader(
+                          context,
+                          state.customSessions.length,
+                        ),
                   const Divider(height: 1),
 
                   // Tab Views
@@ -510,34 +860,44 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                     child: TabBarView(
                       controller: _tabController,
                       children: [
-                          // Tab 1: Official Modules & Courses Catalogue
-                          _buildCatalogTab(context, state, filteredModules, totalVisibleCourses, isDesktopWide: isDesktopWide),
+                        // Tab 1: Official Modules & Courses Catalogue
+                        _buildCatalogTab(
+                          context,
+                          state,
+                          filteredModules,
+                          totalVisibleCourses,
+                          isDesktopWide: isDesktopWide,
+                        ),
 
-                          // Tab 2: Custom Multi-Course Sessions
-                          _buildCustomSessionsTab(context, state, isDesktopWide: isDesktopWide),
+                        // Tab 2: Custom Multi-Course Sessions
+                        _buildCustomSessionsTab(
+                          context,
+                          state,
+                          isDesktopWide: isDesktopWide,
+                        ),
 
-                          // Tab 3: Concours Blancs Nationaux & Palmarès
-                          const NationalExamsListScreen(),
+                        // Tab 3: Concours Blancs Nationaux & Palmarès
+                        const NationalExamsListScreen(),
 
-                          // Tab 4: Groupes de Révision & Défis
-                          const GroupRevisionHubScreen(),
+                        // Tab 4: Groupes de Révision & Défis
+                        const GroupRevisionHubScreen(),
 
-                          // Tab 5: Study Planner par Couches & Analytics
-                          const StudyPlannerScreen(),
+                        // Tab 5: Study Planner par Couches & Analytics
+                        const StudyPlannerScreen(),
 
-                          // Tab 6: Répétition Espacée FSRS & Flashcards
-                          const FlashcardsFsrsScreen(),
+                        // Tab 6: Répétition Espacée FSRS & Flashcards
+                        const FlashcardsFsrsScreen(),
 
-                          // Tab 7: Samedis Pédagogiques (Dr KARE & Enseignants)
-                          const SamedisPedagogiquesScreen(),
+                        // Tab 7: Samedis Pédagogiques (Dr KARE & Enseignants)
+                        const SamedisPedagogiquesScreen(),
 
-                          // Tab 8: Retours d'expérience, Témoignages & Conseils des Majors
-                          const TemoignagesConseilsScreen(),
-                        ],
-                      ),
+                        // Tab 8: Retours d'expérience, Témoignages & Conseils des Majors
+                        const TemoignagesConseilsScreen(),
+                      ],
                     ),
-                  ],
-                );
+                  ),
+                ],
+              );
             },
           );
         },
@@ -556,20 +916,24 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
           message: isSyncing
               ? 'Synchronisation des données avec Supabase en cours...'
               : (sync.lastSyncTime != null
-                  ? 'Cloud synchronisé (${sync.lastSyncTime!.hour.toString().padLeft(2, '0')}:${sync.lastSyncTime!.minute.toString().padLeft(2, '0')})\nCliquez pour forcer la synchronisation'
-                  : 'Double Sauvegarde Cloud active\nCliquez pour synchroniser'),
+                    ? 'Cloud synchronisé (${sync.lastSyncTime!.hour.toString().padLeft(2, '0')}:${sync.lastSyncTime!.minute.toString().padLeft(2, '0')})\nCliquez pour forcer la synchronisation'
+                    : 'Double Sauvegarde Cloud active\nCliquez pour synchroniser'),
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
             onTap: isSyncing
                 ? null
                 : () async {
-                    final ok = await CloudSyncService.instance.syncAll(forceUpload: true);
+                    final ok = await CloudSyncService.instance.syncAll(
+                      forceUpload: true,
+                    );
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(ok
-                              ? '☁️ Vos données sont 100% synchronisées sur le Cloud !'
-                              : 'Erreur de synchronisation Cloud. Vérifiez votre connexion.'),
+                          content: Text(
+                            ok
+                                ? '☁️ Vos données sont 100% synchronisées sur le Cloud !'
+                                : 'Erreur de synchronisation Cloud. Vérifiez votre connexion.',
+                          ),
                           behavior: SnackBarBehavior.floating,
                           duration: const Duration(seconds: 2),
                         ),
@@ -582,7 +946,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                 color: isSyncing ? Colors.amber.shade50 : Colors.teal.shade50,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSyncing ? Colors.amber.shade300 : Colors.teal.shade200,
+                  color: isSyncing
+                      ? Colors.amber.shade300
+                      : Colors.teal.shade200,
                   width: 1,
                 ),
               ),
@@ -593,17 +959,26 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                     const SizedBox(
                       width: 12,
                       height: 12,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.amber),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.amber,
+                      ),
                     )
                   else
-                    const Icon(Icons.cloud_done_rounded, color: Colors.teal, size: 16),
+                    const Icon(
+                      Icons.cloud_done_rounded,
+                      color: Colors.teal,
+                      size: 16,
+                    ),
                   const SizedBox(width: 6),
                   Text(
                     isSyncing ? 'Synchro...' : 'Cloud OK',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: isSyncing ? Colors.amber.shade900 : Colors.teal.shade800,
+                      color: isSyncing
+                          ? Colors.amber.shade900
+                          : Colors.teal.shade800,
                     ),
                   ),
                 ],
@@ -627,9 +1002,15 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
               side: BorderSide(color: Colors.teal.shade200),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               minimumSize: const Size(0, 32),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
-            icon: const Icon(Icons.offline_pin_rounded, size: 16, color: Colors.teal),
+            icon: const Icon(
+              Icons.offline_pin_rounded,
+              size: 16,
+              color: Colors.teal,
+            ),
             label: const Text(
               'Mode Hors-Ligne',
               style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
@@ -668,185 +1049,254 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
         // Search & Category Header
         SliverToBoxAdapter(
           child: Container(
-          padding: const EdgeInsets.all(16),
-          color: Theme.of(context).cardColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (user?.isStudent == true) ...[
-                Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFF2563EB).withValues(alpha: 0.25)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.school_rounded, color: Color(0xFF2563EB), size: 24),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Programme Universitaire • ${ResidencyRepository.getYearTitle(user?.studyYear ?? 1)}',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1D4ED8)),
-                            ),
-                            const Text(
-                              'Affichage ciblé : cours de votre année & QCMs d\'examens (EMD/Faculté). Les concours de résidanat sont exclus.',
-                              style: TextStyle(fontSize: 11, color: Color(0xFF334155)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Rechercher parmi les 47 modules et 1 205 cours (ex: HTA, Asthme, ECG)...',
-                  prefixIcon: const Icon(Icons.search_rounded),
-                  suffixIcon: _searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () => setState(() => _searchQuery = ''),
-                        )
-                      : null,
-                ),
-                onChanged: (val) => setState(() => _searchQuery = val),
-              ),
-              const SizedBox(height: 12),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: (context.watch<AuthBloc>().state.user?.isStudent == true
-                      ? [
-                          'Mon Année (${context.watch<AuthBloc>().state.user?.studyYear ?? 1}e)',
-                          '1ère Année',
-                          '2ème Année',
-                          '3ème Année',
-                          '4ème Année',
-                          '5ème Année',
-                          '6ème Année',
-                          'Tous les Modules',
-                        ]
-                      : _defaultCategories).map((cat) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: _buildFilterChip(cat),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  Text(
-                    '${filteredModules.length} modules affichés • $totalVisibleCourses cours officiels révisables',
-                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
-                  ),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      if (state.activeCourseProgresses.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.shade100,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            '${state.activeCourseProgresses.length} révision(s) en pause ⏸️',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.amber.shade900,
-                            ),
-                          ),
-                        ),
-                      if (!isDesktopWide) ...[
-                        _buildCloudSyncPill(context),
-                        _buildOfflineStorageButton(context),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      if (isFree)
-        SliverToBoxAdapter(
-          child: Container(
-            margin: const EdgeInsets.fromLTRB(16, 10, 16, 2),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.amber.shade50,
-                  Colors.amber.shade100.withValues(alpha: 0.5),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.amber.shade300),
-            ),
-            child: Row(
+            padding: const EdgeInsets.all(16),
+            color: Theme.of(context).cardColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.amber.shade200,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.stars_rounded, color: Colors.amber.shade900, size: 20),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Pass Découverte Actif',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF78350F)),
+                if (user?.isStudent == true) ...[
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2563EB).withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFF2563EB).withValues(alpha: 0.25),
                       ),
-                      Text(
-                        selectedModules.isNotEmpty
-                            ? 'Modules choisis : ${selectedModules.join(" & ")} (2 cours débloqués par spécialité • 1 session QCM test)'
-                            : 'Choisissez 2 spécialités médicales à explorer (2 cours gratuits par spécialité).',
-                        style: const TextStyle(fontSize: 11, color: Color(0xFF92400E)),
-                      ),
-                    ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.school_rounded,
+                          color: Color(0xFF2563EB),
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Programme Universitaire • ${ResidencyRepository.getYearTitle(user?.studyYear ?? 1)}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                  color: Color(0xFF1D4ED8),
+                                ),
+                              ),
+                              const Text(
+                                'Affichage ciblé : cours de votre année & QCMs d\'examens (EMD/Faculté). Les concours de résidanat sont exclus.',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFF334155),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Rechercher parmi les 47 modules et 1 205 cours (ex: HTA, Asthme, ECG)...',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () => setState(() => _searchQuery = ''),
+                          )
+                        : null,
+                  ),
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                ),
+                const SizedBox(height: 12),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children:
+                        (context.watch<AuthBloc>().state.user?.isStudent == true
+                                ? [
+                                    'Mon Année (${context.watch<AuthBloc>().state.user?.studyYear ?? 1}e)',
+                                    '1ère Année',
+                                    '2ème Année',
+                                    '3ème Année',
+                                    '4ème Année',
+                                    '5ème Année',
+                                    '6ème Année',
+                                    'Tous les Modules',
+                                  ]
+                                : _defaultCategories)
+                            .map((cat) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: _buildFilterChip(cat),
+                              );
+                            })
+                            .toList(),
                   ),
                 ),
-                const SizedBox(width: 8),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    visualDensity: VisualDensity.compact,
-                    foregroundColor: const Color(0xFF78350F),
-                  ),
-                  onPressed: () => _showSelectFreeModulesDialog(context, user!, state.modules),
-                  child: Text(
-                    selectedModules.isNotEmpty ? 'Modifier' : 'Choisir',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                  ),
+                const SizedBox(height: 8),
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    Text(
+                      '${filteredModules.length} modules affichés • $totalVisibleCourses cours officiels révisables',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (state.activeCourseProgresses.isNotEmpty)
+                          Tooltip(
+                            message: 'Cliquez pour voir et reprendre vos révisions en pause',
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => _showPausedSessionsBottomSheet(
+                                  context,
+                                  state,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.shade100,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.amber.shade300,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '${state.activeCourseProgresses.length} révision(s) en pause ⏸️',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.amber.shade900,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        size: 10,
+                                        color: Colors.amber.shade900,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (!isDesktopWide) ...[
+                          _buildCloudSyncPill(context),
+                          _buildOfflineStorageButton(context),
+                        ],
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ),
-        const SliverToBoxAdapter(
-          child: Divider(height: 1),
-        ),
+        if (isFree)
+          SliverToBoxAdapter(
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.amber.shade50,
+                    Colors.amber.shade100.withValues(alpha: 0.5),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.amber.shade300),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.shade200,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.stars_rounded,
+                      color: Colors.amber.shade900,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Pass Découverte Actif',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: Color(0xFF78350F),
+                          ),
+                        ),
+                        Text(
+                          selectedModules.isNotEmpty
+                              ? 'Modules choisis : ${selectedModules.join(" & ")} (2 cours débloqués par spécialité • 1 session QCM test)'
+                              : 'Choisissez 2 spécialités médicales à explorer (2 cours gratuits par spécialité).',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Color(0xFF92400E),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      foregroundColor: const Color(0xFF78350F),
+                    ),
+                    onPressed: () => _showSelectFreeModulesDialog(
+                      context,
+                      user!,
+                      state.modules,
+                    ),
+                    child: Text(
+                      selectedModules.isNotEmpty ? 'Modifier' : 'Choisir',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        const SliverToBoxAdapter(child: Divider(height: 1)),
 
         // Modules List
         if (filteredModules.isEmpty)
@@ -856,7 +1306,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.shade400),
+                  Icon(
+                    Icons.search_off_rounded,
+                    size: 48,
+                    color: Colors.grey.shade400,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     'Aucun module trouvé pour "$_searchQuery"',
@@ -870,16 +1324,13 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
           SliverPadding(
             padding: const EdgeInsets.all(16),
             sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final module = filteredModules[index];
-                  return _ModuleCard(
-                    module: module,
-                    activeProgresses: state.activeCourseProgresses,
-                  );
-                },
-                childCount: filteredModules.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final module = filteredModules[index];
+                return _ModuleCard(
+                  module: module,
+                  activeProgresses: state.activeCourseProgresses,
+                );
+              }, childCount: filteredModules.length),
             ),
           ),
       ],
@@ -907,7 +1358,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.25)),
+            border: Border.all(
+              color: AppTheme.primaryTeal.withValues(alpha: 0.25),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -920,7 +1373,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                       color: AppTheme.primaryTeal,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 22),
+                    child: const Icon(
+                      Icons.auto_awesome_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   const Expanded(
@@ -929,12 +1386,18 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                       children: [
                         Text(
                           'Sessions de Révision Sur-Mesure',
-                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 16,
+                          ),
                         ),
                         SizedBox(height: 2),
                         Text(
                           'Créez des séries ciblées en combinant plusieurs modules & cours',
-                          style: TextStyle(fontSize: 12, color: Color(0xFF4B5563)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF4B5563),
+                          ),
                         ),
                       ],
                     ),
@@ -949,7 +1412,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                     backgroundColor: AppTheme.primaryTeal,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   icon: const Icon(Icons.add_rounded, size: 20),
                   label: const Text(
@@ -957,9 +1422,14 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   onPressed: () async {
-                    await CustomSessionBuilderDialog.show(context, state.modules);
+                    await CustomSessionBuilderDialog.show(
+                      context,
+                      state.modules,
+                    );
                     if (context.mounted) {
-                      context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
+                      context.read<RevisionBloc>().add(
+                        LoadSavedSessionsEvent(),
+                      );
                     }
                   },
                 ),
@@ -989,7 +1459,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                 ],
                 Text(
                   '${state.customSessions.length} session(s)',
-                  style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -1008,7 +1482,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
             child: Center(
               child: Column(
                 children: [
-                  Icon(Icons.dashboard_customize_outlined, size: 48, color: Colors.grey.shade400),
+                  Icon(
+                    Icons.dashboard_customize_outlined,
+                    size: 48,
+                    color: Colors.grey.shade400,
+                  ),
                   const SizedBox(height: 12),
                   const Text(
                     'Aucune session personnalisée pour le moment.',
@@ -1033,9 +1511,15 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
 
   bool _checkedTrialModules = false;
 
-  void _checkAndPromptFreeModules(BuildContext context, UserModel? user, List<MedicalModuleModel> modules) {
+  void _checkAndPromptFreeModules(
+    BuildContext context,
+    UserModel? user,
+    List<MedicalModuleModel> modules,
+  ) {
     if (_checkedTrialModules) return;
-    if (user != null && user.tier == SubscriptionTier.free && modules.isNotEmpty) {
+    if (user != null &&
+        user.tier == SubscriptionTier.free &&
+        modules.isNotEmpty) {
       _checkedTrialModules = true;
       FreeTrialQuotaService.instance.loadQuotas(user.id).then((_) {
         if (mounted) {
@@ -1050,8 +1534,14 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
     }
   }
 
-  void _showSelectFreeModulesDialog(BuildContext context, UserModel user, List<MedicalModuleModel> allModules) {
-    final currentSelected = List<String>.from(FreeTrialQuotaService.instance.selectedFreeModules);
+  void _showSelectFreeModulesDialog(
+    BuildContext context,
+    UserModel user,
+    List<MedicalModuleModel> allModules,
+  ) {
+    final currentSelected = List<String>.from(
+      FreeTrialQuotaService.instance.selectedFreeModules,
+    );
     final selectedNames = <String>{...currentSelected};
     String filterText = '';
 
@@ -1066,7 +1556,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
           }).toList();
 
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             title: Row(
               children: [
                 Container(
@@ -1075,7 +1567,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                     color: Colors.amber.shade100,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.stars_rounded, color: Colors.amber.shade900, size: 24),
+                  child: Icon(
+                    Icons.stars_rounded,
+                    color: Colors.amber.shade900,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 const Expanded(
@@ -1084,7 +1580,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                     children: [
                       Text(
                         'Pass Découverte',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         'Choisissez 2 spécialités médicales à explorer',
@@ -1112,7 +1611,8 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                       prefixIcon: Icon(Icons.search_rounded, size: 18),
                       isDense: true,
                     ),
-                    onChanged: (val) => setDlgState(() => filterText = val.trim()),
+                    onChanged: (val) =>
+                        setDlgState(() => filterText = val.trim()),
                   ),
                   const SizedBox(height: 10),
                   Expanded(
@@ -1126,12 +1626,17 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                           title: Text(
                             mod.name,
                             style: TextStyle(
-                              fontWeight: isChecked ? FontWeight.bold : FontWeight.w500,
+                              fontWeight: isChecked
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
                               fontSize: 13,
                               color: isChecked ? AppTheme.primaryTeal : null,
                             ),
                           ),
-                          subtitle: Text('${mod.totalCourses} cours • ${mod.totalQuestions} QCMs', style: const TextStyle(fontSize: 11)),
+                          subtitle: Text(
+                            '${mod.totalCourses} cours • ${mod.totalQuestions} QCMs',
+                            style: const TextStyle(fontSize: 11),
+                          ),
                           value: isChecked,
                           onChanged: (bool? val) {
                             setDlgState(() {
@@ -1139,7 +1644,9 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                                 if (selectedNames.length >= 2) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Le Pass Découverte est limité à 2 modules au choix.'),
+                                      content: Text(
+                                        'Le Pass Découverte est limité à 2 modules au choix.',
+                                      ),
                                       duration: Duration(seconds: 2),
                                     ),
                                   );
@@ -1166,22 +1673,31 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                 ),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: selectedNames.length == 2 ? AppTheme.primaryTeal : Colors.grey,
+                  backgroundColor: selectedNames.length == 2
+                      ? AppTheme.primaryTeal
+                      : Colors.grey,
                   foregroundColor: Colors.white,
                 ),
                 icon: const Icon(Icons.check_rounded, size: 16),
-                label: Text('Valider mes 2 modules (${selectedNames.length}/2)'),
+                label: Text(
+                  'Valider mes 2 modules (${selectedNames.length}/2)',
+                ),
                 onPressed: selectedNames.length == 2
                     ? () async {
                         final list = selectedNames.toList();
-                        await FreeTrialQuotaService.instance.selectFreeModules(user.id, list);
+                        await FreeTrialQuotaService.instance.selectFreeModules(
+                          user.id,
+                          list,
+                        );
                         if (context.mounted) {
                           Navigator.pop(ctx);
                           setState(() {});
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: const Color(0xFF16A34A),
-                              content: Text('Modules activés : ${list.join(" & ")}. Les 2 premiers cours sont débloqués !'),
+                              content: Text(
+                                'Modules activés : ${list.join(" & ")}. Les 2 premiers cours sont débloqués !',
+                              ),
                             ),
                           );
                         }
@@ -1227,7 +1743,9 @@ class _CustomSessionCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isPaused ? AppTheme.primaryTeal.withValues(alpha: 0.4) : Colors.grey.shade200,
+          color: isPaused
+              ? AppTheme.primaryTeal.withValues(alpha: 0.4)
+              : Colors.grey.shade200,
         ),
       ),
       child: Padding(
@@ -1240,26 +1758,38 @@ class _CustomSessionCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     session.title,
-                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
                 if (isPaused)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.amber.shade100,
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
                       'En pause ⏸️ ($pct%)',
-                      style: TextStyle(color: Colors.amber.shade900, fontWeight: FontWeight.bold, fontSize: 11),
+                      style: TextStyle(
+                        color: Colors.amber.shade900,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert_rounded, size: 20),
                   onSelected: (val) {
                     if (val == 'delete') {
-                      context.read<RevisionBloc>().add(DeleteCustomSessionEvent(session.id));
+                      context.read<RevisionBloc>().add(
+                        DeleteCustomSessionEvent(session.id),
+                      );
                     }
                   },
                   itemBuilder: (_) => [
@@ -1267,9 +1797,16 @@ class _CustomSessionCard extends StatelessWidget {
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red),
+                          Icon(
+                            Icons.delete_outline_rounded,
+                            size: 18,
+                            color: Colors.red,
+                          ),
                           SizedBox(width: 8),
-                          Text('Supprimer la session', style: TextStyle(color: Colors.red, fontSize: 13)),
+                          Text(
+                            'Supprimer la session',
+                            style: TextStyle(color: Colors.red, fontSize: 13),
+                          ),
                         ],
                       ),
                     ),
@@ -1291,7 +1828,9 @@ class _CustomSessionCard extends StatelessWidget {
                 value: session.progressPercentage,
                 minHeight: 6,
                 backgroundColor: Colors.grey.shade200,
-                valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryTeal),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  AppTheme.primaryTeal,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -1301,33 +1840,57 @@ class _CustomSessionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  totalQ > 0 ? 'Question $currentQ sur $totalQ' : '${session.questionLimit == -1 ? "Tous" : session.questionLimit} questions',
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  totalQ > 0
+                      ? 'Question $currentQ sur $totalQ'
+                      : '${session.questionLimit == -1 ? "Tous" : session.questionLimit} questions',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Row(
                   children: [
                     if (isPaused) ...[
                       TextButton.icon(
-                        style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                        style: TextButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                        ),
                         icon: const Icon(Icons.refresh_rounded, size: 16),
-                        label: const Text('Recommencer', style: TextStyle(fontSize: 12)),
+                        label: const Text(
+                          'Recommencer',
+                          style: TextStyle(fontSize: 12),
+                        ),
                         onPressed: () {
                           final user = context.read<AuthBloc>().state.user;
                           if (user?.tier == SubscriptionTier.free) {
-                            if (!FreeTrialQuotaService.instance.canStartQcmSession(user)) {
+                            if (!FreeTrialQuotaService.instance
+                                .canStartQcmSession(user)) {
                               FreeTrialQuotaService.showQuotaLimitDialog(
                                 context,
-                                featureTitle: 'Session Test Pass Découverte Utilisée',
+                                featureTitle:
+                                    'Session Test Pass Découverte Utilisée',
                                 message: 'Vous avez déjà utilisé votre session de révision test gratuite. Pour continuer à vous entraîner sur les 6 240+ QCMs sans limite, abonnez-vous à l\'un de nos plans.',
                               );
                               return;
                             }
-                            FreeTrialQuotaService.instance.consumeQcmSession(user);
+                            FreeTrialQuotaService.instance.consumeQcmSession(
+                              user,
+                            );
                           }
-                          final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
-                          context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: false, filterForStudent: isStudent));
+                          final isStudent =
+                              context.read<AuthBloc>().state.user?.isStudent ==
+                              true;
+                          context.read<RevisionBloc>().add(
+                            StartCustomSessionEvent(
+                              session,
+                              resume: false,
+                              filterForStudent: isStudent,
+                            ),
+                          );
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const QcmStudyScreen(),
+                            ),
                           );
                         },
                       ),
@@ -1337,26 +1900,41 @@ class _CustomSessionCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppTheme.primaryTeal,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
                         minimumSize: const Size(0, 34),
                       ),
-                      icon: Icon(isPaused ? Icons.play_arrow_rounded : Icons.play_arrow_rounded, size: 16),
+                      icon: Icon(
+                        isPaused
+                            ? Icons.play_arrow_rounded
+                            : Icons.play_arrow_rounded,
+                        size: 16,
+                      ),
                       label: Text(
                         isPaused ? 'Reprendre (Q. $currentQ)' : 'Démarrer',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                       onPressed: () {
                         final user = context.read<AuthBloc>().state.user;
                         if (!isPaused && user?.tier == SubscriptionTier.free) {
-                          if (!FreeTrialQuotaService.instance.canStartQcmSession(user)) {
+                          if (!FreeTrialQuotaService.instance
+                              .canStartQcmSession(user)) {
                             FreeTrialQuotaService.showQuotaLimitDialog(
                               context,
-                              featureTitle: 'Session Test Pass Découverte Utilisée',
+                              featureTitle:
+                                  'Session Test Pass Découverte Utilisée',
                               message: 'Vous avez déjà utilisé votre session de révision test gratuite. Pour composer et démarrer des sessions sur-mesure en illimité, abonnez-vous à l\'un de nos plans.',
                             );
                             return;
                           }
-                          FreeTrialQuotaService.instance.consumeQcmSession(user);
+                          FreeTrialQuotaService.instance.consumeQcmSession(
+                            user,
+                          );
                         }
                         if (session.sessionMode == 'exam') {
                           ResidencyRepository.getQuestionsForMultipleCoursesAsync(
@@ -1374,32 +1952,51 @@ class _CustomSessionCard extends StatelessWidget {
                                 durationMinutes: session.durationMinutes ?? 60,
                                 startedAt: DateTime.now(),
                               );
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => ExamRunnerScreen(
-                                    session: examSession,
-                                    correctionStyle: session.correctionStyle,
-                                  ),
-                                ),
-                              ).then((_) {
-                                if (context.mounted) {
-                                  context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
-                                }
-                              });
+                              Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (_) => ExamRunnerScreen(
+                                        session: examSession,
+                                        correctionStyle:
+                                            session.correctionStyle,
+                                      ),
+                                    ),
+                                  )
+                                  .then((_) {
+                                    if (context.mounted) {
+                                      context.read<RevisionBloc>().add(
+                                        LoadSavedSessionsEvent(),
+                                      );
+                                    }
+                                  });
                             }
                           });
                           return;
                         }
 
-                        final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
-                        context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: isPaused, filterForStudent: isStudent));
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-                        ).then((_) {
-                          if (context.mounted) {
-                            context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
-                          }
-                        });
+                        final isStudent =
+                            context.read<AuthBloc>().state.user?.isStudent ==
+                            true;
+                        context.read<RevisionBloc>().add(
+                          StartCustomSessionEvent(
+                            session,
+                            resume: isPaused,
+                            filterForStudent: isStudent,
+                          ),
+                        );
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (_) => const QcmStudyScreen(),
+                              ),
+                            )
+                            .then((_) {
+                              if (context.mounted) {
+                                context.read<RevisionBloc>().add(
+                                  LoadSavedSessionsEvent(),
+                                );
+                              }
+                            });
                       },
                     ),
                   ],
@@ -1428,25 +2025,44 @@ class _ModuleCardState extends State<_ModuleCard> {
 
   IconData _getIconData(String iconName) {
     switch (iconName) {
-      case 'favorite': return Icons.favorite_rounded;
-      case 'air': return Icons.air_rounded;
-      case 'psychology': return Icons.psychology_rounded;
-      case 'restaurant': return Icons.restaurant_rounded;
-      case 'child_care': return Icons.child_care_rounded;
-      case 'coronavirus': return Icons.coronavirus_rounded;
-      case 'emergency': return Icons.emergency_rounded;
-      case 'accessibility_new': return Icons.accessibility_new_rounded;
-      case 'pregnant_woman': return Icons.pregnant_woman_rounded;
-      case 'visibility': return Icons.visibility_rounded;
-      case 'hearing': return Icons.hearing_rounded;
-      case 'water_drop': return Icons.water_drop_rounded;
-      case 'spa': return Icons.spa_rounded;
-      case 'bloodtype': return Icons.bloodtype_rounded;
-      case 'medication': return Icons.medication_rounded;
-      case 'self_improvement': return Icons.self_improvement_rounded;
-      case 'shield': return Icons.shield_rounded;
-      case 'science': return Icons.science_rounded;
-      default: return Icons.school_rounded;
+      case 'favorite':
+        return Icons.favorite_rounded;
+      case 'air':
+        return Icons.air_rounded;
+      case 'psychology':
+        return Icons.psychology_rounded;
+      case 'restaurant':
+        return Icons.restaurant_rounded;
+      case 'child_care':
+        return Icons.child_care_rounded;
+      case 'coronavirus':
+        return Icons.coronavirus_rounded;
+      case 'emergency':
+        return Icons.emergency_rounded;
+      case 'accessibility_new':
+        return Icons.accessibility_new_rounded;
+      case 'pregnant_woman':
+        return Icons.pregnant_woman_rounded;
+      case 'visibility':
+        return Icons.visibility_rounded;
+      case 'hearing':
+        return Icons.hearing_rounded;
+      case 'water_drop':
+        return Icons.water_drop_rounded;
+      case 'spa':
+        return Icons.spa_rounded;
+      case 'bloodtype':
+        return Icons.bloodtype_rounded;
+      case 'medication':
+        return Icons.medication_rounded;
+      case 'self_improvement':
+        return Icons.self_improvement_rounded;
+      case 'shield':
+        return Icons.shield_rounded;
+      case 'science':
+        return Icons.science_rounded;
+      default:
+        return Icons.school_rounded;
     }
   }
 
@@ -1470,7 +2086,11 @@ class _ModuleCardState extends State<_ModuleCard> {
                       color: AppTheme.primaryTeal.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(_getIconData(m.iconName), color: AppTheme.primaryTeal, size: 28),
+                    child: Icon(
+                      _getIconData(m.iconName),
+                      color: AppTheme.primaryTeal,
+                      size: 28,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -1479,7 +2099,10 @@ class _ModuleCardState extends State<_ModuleCard> {
                       children: [
                         Text(
                           m.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Wrap(
@@ -1489,17 +2112,27 @@ class _ModuleCardState extends State<_ModuleCard> {
                           children: [
                             Text(
                               '${m.totalCourses} cours • ${m.totalQuestions} QCMs',
-                              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12,
+                              ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.blue.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 m.category,
-                                style: const TextStyle(fontSize: 10, color: Colors.blue, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                             InkWell(
@@ -1507,35 +2140,53 @@ class _ModuleCardState extends State<_ModuleCard> {
                               onTap: () async {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Téléchargement du pack "${m.name}" (${m.courses.length} cours) en cours...'),
+                                    content: Text(
+                                      'Téléchargement du pack "${m.name}" (${m.courses.length} cours) en cours...',
+                                    ),
                                     duration: const Duration(seconds: 3),
                                   ),
                                 );
-                                await OfflineCourseManager.instance.downloadEntireModule(m);
+                                await OfflineCourseManager.instance
+                                    .downloadEntireModule(m);
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Pack "${m.name}" disponible en mode hors-ligne !'),
+                                      content: Text(
+                                        'Pack "${m.name}" disponible en mode hors-ligne !',
+                                      ),
                                       backgroundColor: Colors.teal,
                                     ),
                                   );
                                 }
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.teal.shade50,
                                   borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: Colors.teal.shade200),
+                                  border: Border.all(
+                                    color: Colors.teal.shade200,
+                                  ),
                                 ),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.download_for_offline_rounded, size: 12, color: Colors.teal),
+                                    Icon(
+                                      Icons.download_for_offline_rounded,
+                                      size: 12,
+                                      color: Colors.teal,
+                                    ),
                                     SizedBox(width: 4),
                                     Text(
                                       'Pack Hors-Ligne',
-                                      style: TextStyle(fontSize: 10, color: Colors.teal, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.teal,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -1546,7 +2197,11 @@ class _ModuleCardState extends State<_ModuleCard> {
                       ],
                     ),
                   ),
-                  Icon(_expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded),
+                  Icon(
+                    _expanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                  ),
                 ],
               ),
             ),
@@ -1600,9 +2255,7 @@ class _CourseTile extends StatelessWidget {
           ],
         ),
         content: Text(
-          lockReason.isNotEmpty
-              ? lockReason
-              : 'Ce cours fait partie du programme officiel avancé. Choisissez un abonnement pour débloquer l\'accès complet.',
+          lockReason.isNotEmpty ? lockReason : 'Ce cours fait partie du programme officiel avancé. Choisissez un abonnement pour débloquer l\'accès complet.',
         ),
         actions: [
           TextButton(
@@ -1610,11 +2263,15 @@ class _CourseTile extends StatelessWidget {
             child: const Text('Annuler'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryTeal,
+            ),
             onPressed: () {
               Navigator.pop(dlgContext);
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const SubscriptionPaywallScreen(),
+                ),
               );
             },
             child: const Text('Voir les Plans'),
@@ -1632,7 +2289,11 @@ class _CourseTile extends StatelessWidget {
     final isClinicalOnly = user?.tier == SubscriptionTier.clinicalPro;
     final isFree = user?.tier == SubscriptionTier.free;
 
-    final isUnlocked = FreeTrialQuotaService.instance.isCourseUnlocked(user, moduleName, courseIndex);
+    final isUnlocked = FreeTrialQuotaService.instance.isCourseUnlocked(
+      user,
+      moduleName,
+      courseIndex,
+    );
     final bool isLocked = !isUnlocked;
 
     String lockReason = '';
@@ -1645,13 +2306,19 @@ class _CourseTile extends StatelessWidget {
       if (selected.isEmpty) {
         lockReason = 'Veuillez choisir vos 2 spécialités médicales d\'essai dans le catalogue pour débloquer leurs 2 premiers cours.';
       } else {
-        final normModule = FreeTrialQuotaService.instance.normalizeModuleName(moduleName);
+        final normModule = FreeTrialQuotaService.instance.normalizeModuleName(
+          moduleName,
+        );
         final isChosen = selected.any((m) {
-          final chosenNorm = FreeTrialQuotaService.instance.normalizeModuleName(m);
-          return normModule.contains(chosenNorm) || chosenNorm.contains(normModule);
+          final chosenNorm = FreeTrialQuotaService.instance.normalizeModuleName(
+            m,
+          );
+          return normModule.contains(chosenNorm) ||
+              chosenNorm.contains(normModule);
         });
         if (!isChosen) {
-          lockReason = 'Le module "$moduleName" n\'a pas été sélectionné dans vos 2 spécialités d\'essai (${selected.join(", ")}). Passez au Pass Résident Élite ou All-Access pour débloquer l\'intégralité des 47 modules.';
+          lockReason =
+              'Le module "$moduleName" n\'a pas été sélectionné dans vos 2 spécialités d\'essai (${selected.join(", ")}). Passez au Pass Résident Élite ou All-Access pour débloquer l\'intégralité des 47 modules.';
         } else {
           lockReason = 'Dans le Pass Découverte, seuls les 2 premiers cours de chaque spécialité choisie sont accessibles gratuitement. Passez au Pass Résident Élite ou All-Access pour débloquer les autres cours de ce module.';
         }
@@ -1674,20 +2341,30 @@ class _CourseTile extends StatelessWidget {
                   Expanded(
                     child: Text(
                       course.name,
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                   if (isPaused) ...[
                     const SizedBox(width: 6),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.amber.shade100,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         '⏸️ En pause (${progress!.currentQuestionIndex + 1}/${progress!.totalQuestions})',
-                        style: TextStyle(fontSize: 10, color: Colors.amber.shade900, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.amber.shade900,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -1708,18 +2385,29 @@ class _CourseTile extends StatelessWidget {
             children: [
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 6,
+                  ),
                   minimumSize: const Size(0, 32),
-                  side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.5)),
+                  side: BorderSide(
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.5),
+                  ),
                 ),
                 icon: Icon(
-                  isLocked ? Icons.lock_outline_rounded : Icons.menu_book_rounded,
+                  isLocked
+                      ? Icons.lock_outline_rounded
+                      : Icons.menu_book_rounded,
                   size: 14,
                   color: AppTheme.primaryTeal,
                 ),
                 label: const Text(
                   'Fiche',
-                  style: TextStyle(fontSize: 11, color: AppTheme.primaryTeal, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.primaryTeal,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 onPressed: () {
                   if (isLocked) {
@@ -1739,17 +2427,27 @@ class _CourseTile extends StatelessWidget {
               ),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   minimumSize: const Size(0, 32),
                 ),
-                icon: Icon(isLocked ? Icons.lock_outline_rounded : Icons.picture_as_pdf_rounded, size: 14),
+                icon: Icon(
+                  isLocked
+                      ? Icons.lock_outline_rounded
+                      : Icons.picture_as_pdf_rounded,
+                  size: 14,
+                ),
                 label: const Text('PDF', style: TextStyle(fontSize: 11)),
                 onPressed: () {
                   if (isLocked) {
                     _showPaywallPrompt(context, lockReason);
                     return;
                   }
-                  if (course.hasPdf || (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty)) {
+                  if (course.hasPdf ||
+                      (course.pdfDownloadUrl != null &&
+                          course.pdfDownloadUrl!.isNotEmpty)) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -1763,25 +2461,35 @@ class _CourseTile extends StatelessWidget {
                   }
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Support PDF pour "${course.name}" en cours de préparation.'),
+                      content: Text(
+                        'Support PDF pour "${course.name}" en cours de préparation.',
+                      ),
                       duration: const Duration(seconds: 2),
                     ),
                   );
                 },
               ),
-              if (!isLocked && (course.hasPdf || (course.pdfDownloadUrl != null && course.pdfDownloadUrl!.isNotEmpty)))
+              if (!isLocked &&
+                  (course.hasPdf ||
+                      (course.pdfDownloadUrl != null &&
+                          course.pdfDownloadUrl!.isNotEmpty)))
                 AnimatedBuilder(
                   animation: OfflineCourseManager.instance,
                   builder: (context, _) {
                     final mgr = OfflineCourseManager.instance;
                     final progress = mgr.getProgress(course.id);
                     final isDownloading = progress > 0;
-                    final isOffline = mgr.isCourseAvailableOfflineSync(course.id);
+                    final isOffline = mgr.isCourseAvailableOfflineSync(
+                      course.id,
+                    );
 
                     if (isDownloading) {
                       final pct = (progress * 100).toInt();
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.amber.shade50,
                           borderRadius: BorderRadius.circular(6),
@@ -1800,7 +2508,14 @@ class _CourseTile extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 6),
-                            Text('$pct%', style: TextStyle(fontSize: 10, color: Colors.amber.shade900, fontWeight: FontWeight.bold)),
+                            Text(
+                              '$pct%',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.amber.shade900,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -1810,7 +2525,10 @@ class _CourseTile extends StatelessWidget {
                       return Tooltip(
                         message: 'Disponible 100% hors-ligne',
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.green.shade50,
                             borderRadius: BorderRadius.circular(6),
@@ -1819,9 +2537,20 @@ class _CourseTile extends StatelessWidget {
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.offline_pin_rounded, size: 14, color: Colors.green),
+                              Icon(
+                                Icons.offline_pin_rounded,
+                                size: 14,
+                                color: Colors.green,
+                              ),
                               SizedBox(width: 4),
-                              Text('Hors-ligne', style: TextStyle(fontSize: 10, color: Colors.green, fontWeight: FontWeight.bold)),
+                              Text(
+                                'Hors-ligne',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -1834,15 +2563,23 @@ class _CourseTile extends StatelessWidget {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.teal,
                           side: BorderSide(color: Colors.teal.shade200),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
                           minimumSize: const Size(0, 32),
                         ),
                         icon: const Icon(Icons.download_rounded, size: 14),
-                        label: const Text('Hors-ligne', style: TextStyle(fontSize: 11)),
+                        label: const Text(
+                          'Hors-ligne',
+                          style: TextStyle(fontSize: 11),
+                        ),
                         onPressed: () async {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Téléchargement de "${course.name}" lancé...'),
+                              content: Text(
+                                'Téléchargement de "${course.name}" lancé...',
+                              ),
                               duration: const Duration(seconds: 2),
                             ),
                           );
@@ -1850,7 +2587,9 @@ class _CourseTile extends StatelessWidget {
                           if (context.mounted && ok) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Cours "${course.name}" prêt pour le mode hors-ligne !'),
+                                content: Text(
+                                  'Cours "${course.name}" prêt pour le mode hors-ligne !',
+                                ),
                                 backgroundColor: Colors.teal,
                               ),
                             );
@@ -1864,19 +2603,29 @@ class _CourseTile extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isLocked
                       ? Colors.grey.shade400
-                      : (isPaused ? const Color(0xFFD97706) : AppTheme.primaryTeal),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      : (isPaused
+                            ? const Color(0xFFD97706)
+                            : AppTheme.primaryTeal),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   minimumSize: const Size(0, 32),
                 ),
                 icon: Icon(
                   isLocked
                       ? Icons.lock_rounded
-                      : (isPaused ? Icons.play_arrow_rounded : Icons.play_arrow_rounded),
+                      : (isPaused
+                            ? Icons.play_arrow_rounded
+                            : Icons.play_arrow_rounded),
                   size: 16,
                 ),
                 label: Text(
                   isLocked ? 'Débloquer' : (isPaused ? 'Continuer' : 'Réviser'),
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 onPressed: () {
                   if (isLocked) {
@@ -1885,7 +2634,9 @@ class _CourseTile extends StatelessWidget {
                   }
 
                   if (!isPaused && user?.tier == SubscriptionTier.free) {
-                    if (!FreeTrialQuotaService.instance.canStartQcmSession(user)) {
+                    if (!FreeTrialQuotaService.instance.canStartQcmSession(
+                      user,
+                    )) {
                       FreeTrialQuotaService.showQuotaLimitDialog(
                         context,
                         featureTitle: 'Session Test Pass Découverte Utilisée',
@@ -1897,10 +2648,21 @@ class _CourseTile extends StatelessWidget {
                   }
 
                   if (isPaused) {
-                    ResumeSessionSheet.show(context, course: course, progress: progress!);
+                    ResumeSessionSheet.show(
+                      context,
+                      course: course,
+                      progress: progress!,
+                    );
                   } else {
-                    final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
-                    context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: false, filterForStudent: isStudent));
+                    final isStudent =
+                        context.read<AuthBloc>().state.user?.isStudent == true;
+                    context.read<RevisionBloc>().add(
+                      OpenCourseQuestionsEvent(
+                        course,
+                        resume: false,
+                        filterForStudent: isStudent,
+                      ),
+                    );
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
                     );
