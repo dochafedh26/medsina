@@ -847,5 +847,21 @@
     ],
     "created_at": "2026-11-01T02:24:46.696982+00:00",
     "updated_at": "2026-11-01T02:24:46.696998+00:00"
+  },
+  {
+    "id": "lab_lithiemie",
+    "name": "Lithiumémie (Dosage du Lithium)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Traitement d'entretien : 0,6 - 1,2 mmol/L | Sujet âgé : 0,4 - 0,8 mmol/L | Seuil toxique : > 1,2 - 1,5 mmol/L (aigu) ou > 1,0 mmol/L (chronique)",
+    "unit": "mmol/L",
+    "high_interpretation": "Intoxication au lithium (aigüe ou chronique). Signes précoces (> 1,2 mmol/L) : troubles digestifs, tremblements fins, asthénie. Signes de toxicité modérée (1,5 - 2,5 mmol/L) : confusion, dysarthrie, nystagmus, hyperréflexie, troubles de l'équilibre. Signes de toxicité grave (> 2,5 mmol/L ou > 2,0 mmol/L chez le sujet âgé) : convulsions, coma, collapsus cardiovasculaire, insuffisance rénale aiguë. Conduite à tenir : Arrêt immédiat du traitement, réhydratation IV, monitorage ECG et neurologique, alcalinisation des urines parfois, et épuration extra-rénale (hémodialyse) en urgence si lithémie > 2,5 mmol/L, insuffisance rénale ou signes neurologiques graves.",
+    "low_interpretation": "Sous-dosage thérapeutique ou mauvaise observance (inobservance fréquente en psychiatrie). Risque de rechute thymique (épisodes maniaques ou dépressifs majeurs). Conduite à tenir : Réinterroger le patient sur l'observance, réajuster la posologie si l'observance est bonne et la clinique l'exige.",
+    "clinical_notes": [
+      "Délai de prélèvement impératif : Le dosage doit être réalisé exactement 12 heures après la dernière prise (état d'équilibre pharmacocinétique), idéalement le matin à jeun.",
+      "Pièges pharmacologiques (interactions majeures augmentant la lithémie) : AINS, diurétiques (thiazidiques et épargneurs potassiques), IEC et ARA2 réduisent la clairance rénale du lithium et provoquent des intoxications graves.",
+      "Pièges biologiques et pré-analytiques : Ne jamais utiliser de tubes de prélèvement contenant de l'héparinate de lithium pour ce dosage (interférence majeure faussement infinie) ; préférer l'héparinate de sodium ou le tube sec (sérum)."
+    ],
+    "created_at": "2026-11-01T09:28:39.787331+00:00",
+    "updated_at": "2026-11-01T09:28:39.787347+00:00"
   }
 ]
