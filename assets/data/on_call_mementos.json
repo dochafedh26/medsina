@@ -662,22 +662,22 @@
   },
   {
     "id": "memento_syndrome_meninge_pl",
-    "title": "🧠 Syndrome Méningé Aigu & PL",
-    "category": "Infectiologie & Urgences Neurologiques",
-    "icon_name": "bolt_rounded",
+    "title": "🧠 Syndrome Méningé Aigu & PL d'Urgence",
+    "category": "Neurologie & Urgences Infectieuses",
+    "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation immédiate de la conscience (Glasgow), recherche d'un purpura fulminans (signe de gravité extrême) et des signes d'engagement cérébral (anisocorie, troubles respiratoires).",
-      "Étape 2 : Bilan biologique urgent au lit (NFS, plaquettes, TP/TCA, ionogramme, urée, créatinine, glycémie capillaire) et pose d'une voie veineuse périphérique.",
-      "Étape 3 : Antibiothérapie probabiliste immédiate (C3G : Céfotaxime 2g IV direct ou Ceftriaxone 2g IV) dès les prélèvements faits, SANS attendre la PL si purpura ou retard de imagerie/PL.",
-      "Étape 4 : Réalisation de la Ponction Lombaire (après élimination des contre-indications : troubles de l'hémostase, signe de focalisation, confusion profonde) avec mesure de la pression d'ouverture et analyse cytologique, biochimique et bactériologique.",
-      "Étape 5 : Piège médico-légal / CI absolue : Ne JAMAIS faire de PL en présence d'un purpura fulminans ou d'un syndrome de focalisation neurologique sans TDM cérébrale préalable ; déclarer obligatoirement tout cas suspect de méningite aux autorités sanitaires (MSPRH)."
+      "Étape 1 : Évaluation clinique immédiate au déchoquage, recherche de signes de gravité (purpura fulminans, Glasgow < 12, signes de focalisation, crises convulsives) et respect strict des contre-indications de la PL.",
+      "Étape 2 : Bilan biologique urgent au lit (NFS, plaquettes, TP, TCK, ionogramme, urée, créatinine, CRP, hémocultures x2) avant toute antibiothérapie si possible.",
+      "Étape 3 : Antibiothérapie probabiliste immédiate en cas de suspicion de méningite bactéro-purulente : C3G (Ceftriaxone 2g IV direct en 5 min ou Cefotaxime 2g IV toutes les 6h) + Dexaméthasone (10mg IV) 15-30 min avant ou pendant la 1ère injection.",
+      "Étape 4 : Réalisation de la ponction lombaire (PL) en décubitus latéral aseptique, mesure de la pression d'ouverture, tubulures étagées pour biochimie, cytologie, bactériologie, et coloration de Gram immédiate au labo.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne JAMAIS faire de PL sans imagerie cérébrale (TDM) préalable en cas de signe de focalisation, déficit moteur, œdème papillaire ou trouble de conscience profond."
     ],
-    "scientific_references": "Consensus SPILF / SRLF / Recommandations Nationales du Ministère de la Santé (MSPRH Algérie)",
+    "scientific_references": "Consensus SPILF / SFMU / SRLF / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-24T05:05:43.606906+00:00",
-    "updated_at": "2026-10-24T05:05:43.606920+00:00"
+    "created_at": "2026-11-01T23:40:05.332755+00:00",
+    "updated_at": "2026-11-01T23:40:05.332764+00:00"
   },
   {
     "id": "memento_pneumothorax_compressif",
