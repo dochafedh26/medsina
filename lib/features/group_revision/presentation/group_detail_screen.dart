@@ -1,3 +1,4 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -93,134 +94,269 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> with SingleTicker
 
     final searchCtrl = TextEditingController();
     List<Map<String, dynamic>> searchResults = [];
-    bool isSearching = false;
+    bool isSearching = true;
+
+    // Charger les suggestions initiales dès l'ouverture
+    final initialList = await GroupRevisionService.instance.searchUsersToInvite('', user.id);
+    searchResults = initialList;
+    isSearching = false;
+
+    if (!mounted) return;
 
     await showDialog(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setDlgState) {
+            void performSearch(String val) async {
+              setDlgState(() => isSearching = true);
+              final res = await GroupRevisionService.instance.searchUsersToInvite(val, user.id);
+              if (ctx.mounted) {
+                setDlgState(() {
+                  searchResults = res;
+                  isSearching = false;
+                });
+              }
+            }
+
             return Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.person_add_alt_1_rounded, color: AppTheme.primaryTeal),
-                        const SizedBox(width: 8),
-                        const Expanded(
-                          child: Text(
-                            'Inviter un Étudiant',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(Icons.person_add_alt_1_rounded, color: AppTheme.primaryTeal, size: 22),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Inviter un Confrère',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                                Text(
+                                  'Groupe : ${_group.name}',
+                                  style: TextStyle(fontSize: 11.5, color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 20),
+                            onPressed: () => Navigator.of(ctx).pop(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      TextField(
+                        controller: searchCtrl,
+                        onChanged: (val) => performSearch(val),
+                        onSubmitted: (val) => performSearch(val),
+                        decoration: InputDecoration(
+                          hintText: 'Rechercher par nom, email (ex: Amina, Mohamed)...',
+                          prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          suffixIcon: searchCtrl.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear, size: 18),
+                                  onPressed: () {
+                                    searchCtrl.clear();
+                                    performSearch('');
+                                  },
+                                )
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      if (isSearching)
+                        const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()))
+                      else if (searchResults.isNotEmpty) ...[
+                        const Text(
+                          'Membres & Collègues disponibles :',
+                          style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 6),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 190),
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: searchResults.length,
+                            separatorBuilder: (_, _) => const Divider(height: 1),
+                            itemBuilder: (_, idx) {
+                              final u = searchResults[idx];
+                              final displayName = u['full_name']?.toString() ?? 'Médecin';
+                              return ListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                leading: CircleAvatar(
+                                  radius: 17,
+                                  backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                                  child: Text(
+                                    displayName.isNotEmpty ? displayName[0].toUpperCase() : 'M',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.primaryTeal),
+                                  ),
+                                ),
+                                title: Text(displayName, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                subtitle: Text(u['faculty']?.toString() ?? u['email']?.toString() ?? '', style: const TextStyle(fontSize: 11)),
+                                trailing: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.primaryTeal,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    minimumSize: const Size(64, 30),
+                                  ),
+                                  icon: const Icon(Icons.send_rounded, size: 13),
+                                  label: const Text('Inviter', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                  onPressed: () async {
+                                    Navigator.of(ctx).pop();
+                                    final ok = await GroupRevisionService.instance.inviteUserToGroup(
+                                      groupId: _group.id,
+                                      groupName: _group.name,
+                                      inviteCode: _group.inviteCode,
+                                      targetUserId: u['id'].toString(),
+                                      senderName: user.fullName.isNotEmpty ? user.fullName : 'Un confrère',
+                                    );
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Invitation envoyée avec succès à $displayName ! 🎉'),
+                                          backgroundColor: AppTheme.primaryTeal,
+                                        ),
+                                      );
+                                      _loadData();
+                                    }
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ] else ...[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(Icons.person_search_rounded, size: 36, color: Colors.grey.shade400),
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Aucun utilisateur trouvé pour "${searchCtrl.text}"',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Recherchez par nom ou email pour lui envoyer une notification d\'invitation directe :',
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: searchCtrl,
-                      decoration: InputDecoration(
-                        hintText: 'ex: Mohamed, amina@gmail.com...',
-                        prefixIcon: const Icon(Icons.search, size: 20),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.arrow_forward),
-                          onPressed: () async {
-                            final q = searchCtrl.text.trim();
-                            if (q.length < 2) return;
-                            setDlgState(() => isSearching = true);
-                            final res = await GroupRevisionService.instance.searchUsersToInvite(q, user.id);
-                            setDlgState(() {
-                              searchResults = res;
-                              isSearching = false;
-                            });
-                          },
+                      const SizedBox(height: 12),
+                      const Divider(height: 1),
+                      const SizedBox(height: 12),
+                      // Direct Code & External Share Section
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryTeal.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.2)),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    if (isSearching)
-                      const Center(child: Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator()))
-                    else if (searchResults.isNotEmpty)
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxHeight: 180),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: searchResults.length,
-                          separatorBuilder: (_, _) => const Divider(height: 1),
-                          itemBuilder: (_, idx) {
-                            final u = searchResults[idx];
-                            return ListTile(
-                              dense: true,
-                              contentPadding: EdgeInsets.zero,
-                              leading: CircleAvatar(
-                                radius: 16,
-                                backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.15),
-                                child: Text(
-                                  (u['full_name']?.toString() ?? 'U')[0].toUpperCase(),
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.primaryTeal),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.share_rounded, size: 16, color: AppTheme.primaryTeal),
+                                const SizedBox(width: 6),
+                                const Expanded(
+                                  child: Text(
+                                    'Code d\'accès direct au groupe :',
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                  ),
                                 ),
-                              ),
-                              title: Text(u['full_name']?.toString() ?? 'Médecin', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                              subtitle: Text(u['faculty']?.toString() ?? u['email']?.toString() ?? '', style: const TextStyle(fontSize: 11)),
-                              trailing: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.primaryTeal,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  minimumSize: const Size(60, 28),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: AppTheme.primaryTeal),
+                                  ),
+                                  child: Text(
+                                    _group.inviteCode,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 1.2, color: AppTheme.primaryTeal),
+                                  ),
                                 ),
-                                child: const Text('Inviter', style: TextStyle(fontSize: 11)),
-                                onPressed: () async {
-                                  Navigator.of(ctx).pop();
-                                  final ok = await GroupRevisionService.instance.inviteUserToGroup(
-                                    groupId: _group.id,
-                                    groupName: _group.name,
-                                    inviteCode: _group.inviteCode,
-                                    targetUserId: u['id'].toString(),
-                                    senderName: user.fullName.isNotEmpty ? user.fullName : 'Un confrère',
-                                  );
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(ok ? 'Invitation envoyée avec succès à ${u['full_name']} !' : 'Erreur lors de l\'envoi de l\'invitation.'),
-                                        backgroundColor: ok ? AppTheme.primaryTeal : Colors.red,
-                                      ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 6,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    _copyInviteCode();
+                                    Navigator.of(ctx).pop();
+                                  },
+                                  icon: const Icon(Icons.copy_rounded, size: 14),
+                                  label: const Text('Copier le code', style: TextStyle(fontSize: 11)),
+                                  style: OutlinedButton.styleFrom(visualDensity: VisualDensity.compact),
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () async {
+                                    final text = Uri.encodeComponent(
+                                      'Rejoins notre groupe de révision "${_group.name}" sur Medsina ! 🩺📚\n'
+                                      'Code d\'accès : ${_group.inviteCode}\n'
+                                      'Application Medsina : https://medsina.dz',
                                     );
-                                    _loadData();
-                                  }
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      )
-                    else
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          'Ou partagez directement le code "${_group.inviteCode}" sur WhatsApp ou Telegram.',
-                          style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500, fontStyle: FontStyle.italic),
+                                    final uri = Uri.parse('https://wa.me/?text=$text');
+                                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                  },
+                                  icon: const Icon(Icons.chat_rounded, size: 14),
+                                  label: const Text('WhatsApp', style: TextStyle(fontSize: 11)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF25D366),
+                                    foregroundColor: Colors.white,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () async {
+                                    final text = Uri.encodeComponent(
+                                      'Rejoins notre groupe de révision "${_group.name}" sur Medsina ! 🩺📚\n'
+                                      'Code d\'accès : ${_group.inviteCode}',
+                                    );
+                                    final uri = Uri.parse('https://t.me/share/url?url=&text=$text');
+                                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                  },
+                                  icon: const Icon(Icons.send_rounded, size: 14),
+                                  label: const Text('Telegram', style: TextStyle(fontSize: 11)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF0088CC),
+                                    foregroundColor: Colors.white,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    const SizedBox(height: 12),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => Navigator.of(ctx).pop(),
-                        child: const Text('Fermer'),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -252,7 +388,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> with SingleTicker
             return Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(10),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -280,6 +416,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> with SingleTicker
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
+                        isExpanded: true,
                         initialValue: selectedModuleId,
                         decoration: InputDecoration(
                           labelText: 'Module cible',
@@ -295,6 +432,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> with SingleTicker
                         children: [
                           Expanded(
                             child: DropdownButtonFormField<int>(
+                              isExpanded: true,
                               initialValue: questionCount,
                               decoration: InputDecoration(
                                 labelText: 'QCMs',
