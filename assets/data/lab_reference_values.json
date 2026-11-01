@@ -862,5 +862,21 @@
     ],
     "created_at": "2026-11-01T16:14:52.398404+00:00",
     "updated_at": "2026-11-01T16:14:52.398417+00:00"
+  },
+  {
+    "id": "lab_magnesemie",
+    "name": "Magnésémie (Magnésium sérique)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "0.75 - 0.95 (ou 1.7 - 2.2)",
+    "unit": "mmol/L (ou mg/dL)",
+    "high_interpretation": "Hypermagnésémie (rare) : Insuffisance rénale sévère (DFG < 30 mL/min), iatrogénie (perfusions massives, laxatifs ou antiacides magnésiens). Signes cliniques : abolition des réflexes ostéo-tendineux (ROT) dès > 1.5 mmol/L, somnolence, bradycardie, hypotension, troubles de la conduction (bAV) et risque d'arrêt cardiaque en diastole si > 2.5 mmol/L. Conduite à tenir : arrêt immédiat des apports, réhydratation, diurétiques de l'anse, et Gluconate de Calcium IV en urgence si signes électrocardiographiques ou neurologiques.",
+    "low_interpretation": "Hypomagnésémie (fréquente en réanimation) : Pertes digestives (diarrhées chroniques, fistules, malabsorption) ou rénales (diurétiques de l'anse ou thiazidiques, néphropathies tubulaires, hypercalcémie, alcoolisme chronique). Signes cliniques : hyperexcitabilité neuromusculaire (signes de Chvostek et Trousseau, tétanie, tremblements, convulsions), troubles du rythme cardiaque (Torsades de pointes, FV). Conduite à tenir : supplémentation IV (Sulfate de Magnésium) en cas de symptômes aigus ou de Torsades de pointes, associée impérativement à une correction de la kaliémie et de la calcémie.",
+    "clinical_notes": [
+      "Piège biologique : Le magnésium est un ion essentiellement intracellulaire. La magnésémie sanguine ne reflète que 1% du stock total de l'organisme ; une valeur normale n'élimine donc pas une déplétion tissulaire profonde.",
+      "Corrélation clinique indispensable : Une hypomagnésémie sévère entraîne une résistance à la parathormone (hypocalcémie réfractaire) et une inefficacité de la correction de l'hypokaliémie (par fuite rénale de potassium via l'inhibition de la pompe Na+/K+-ATPase).",
+      "Contexte concours de résidanat : Devant toute Torsade de pointes, même si la magnésémie est dans les limites de la norme basse, l'administration empirique de Sulfate de Magnésium IV est un geste salvateur et une question classique d'internat."
+    ],
+    "created_at": "2026-11-01T20:40:49.129896+00:00",
+    "updated_at": "2026-11-01T20:40:49.129913+00:00"
   }
 ]
