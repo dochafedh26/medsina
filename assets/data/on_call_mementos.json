@@ -371,23 +371,23 @@
   },
   {
     "id": "memento_pancreatite_aigue",
-    "title": "🔥 Pancréatite Aiguë : Stratégie Initiale en UMC",
-    "category": "Gastro-entérologie / Urgences",
+    "title": "🩸 Prise en Charge Initiale de la Pancréatite Aiguë",
+    "category": "Gastro-entérologie / Réanimation",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate. Conditionnement (2 VVP gros calibre, SpO2, scope). Jeûne strict (zéro os) et pose d'une SNG si vomissements incoercibles ou iléus réflexe.",
-      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, CRP, Ionogramme, Urée, Créatinine, Glycémie, Calcémie, Bilan hépatique (ASAT, ALAT, Bilirubine, GGT, Phosphatases alcalines), Lipasémie (si disponible, > 3N) et gaz du sang (GDS) avec lactates.",
-      "Étape 3 : Antalgie et Remplissage vasculaire guidé par l'écho-guidage (VCI) : Paracétamol 1g IV / 6h associé à de la Nefopam (Acupan) ou titration morphinique (Morphine IV 0,1 mg/kg). Remplissage par Cristalloïdes (NaCl 0,9% ou Ringer Lactate) 100-150 ml/h selon volémie, éviter les macromolécules.",
-      "Étape 4 : Imagerie de débrouillage : Échographie abdominale en salle (recherche de lithiase biliaire) et TDM abdomino-pelvienne avec injection de produit de contraste (temps portal) à réaliser idéalement entre la 48e et la 72e heure pour classer selon Balthazar (ou dès l'admission si doute diagnostique).",
-      "Étape 5 : Surveillance armée et critères de transfert en Réanimation : Score de Glasgow > 8, score de Ranson ≥ 3, SIRS persistant, défaillance organique (rénale, respiratoire, choc), score BISAP ≥ 3. Alerter le réanimateur de garde si anurie ou lactates élevés.",
-      "Étape 6 : Piège médico-légal / Erreur fréquente : Ne pas prescrire d'antibiotiques en prophylaxie (inutile en l'absence d'infection documentée) et ne pas administrer d'inhibiteurs de la pompe à protons (IPP) sans indication formelle d'ulcère."
+      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate. Pose de 2 VVP de bon calibre, monitorage continu (SpO2, ECG, PNI, diurèse horaire via sonde urinaire si score de Bedside Index for Severity in Acute Pancreatitis [BISAP] ≥ 2).",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, groupement-isogroupe, urée, créatinine, ionogramme sanguin, calcémie, CRP, bilan hépatique complet (ASAT, ALAT, gamma-GT, PAL, bilirubinémie), lipase sanguine et triglycéridémie.",
+      "Étape 3 : Réanimation volémique agressive de 1ère intention : NaCl 0,9% ou Ringer Lactate (10 à 20 mL/kg en bolus initial puis 150-250 mL/h adapté selon la volémie et la diurèse). Antalgie palier 3 IV (Morphine : 0,1 mg/kg en titration IV toutes les 5 min jusqu'à soulagement ou Paracétamol 1g IV si douleur modérée). Jeûne strict.",
+      "Étape 4 : Imagerie de référence : Échographie abdominale au lit du malade à la recherche d'une origine lithiasique. TDM abdominale injectée (avec temps portal) entre la 48e et la 72e heure pour évaluer le score de Balthazar et le pronostic nécrotique.",
+      "Étape 5 : Surveillance armée en réanimation ou USI si : défaillance d'organe (score Marshall modifié ≥ 2), SIRS persistant, ou score BISAP ≥ 3. Indications des antibiotiques (Imipénème ou Céfotaxime + Métronidazole) uniquement si surinfection documentée de nécrose ou foyer extra-pancréatique associé.",
+      "Étape 6 : Piège médico-légal et contre-indication absolue : Ne jamais administrer d'AINS (aggravation de l'insuffisance rénale aiguë) ni de spasmolytiques inutiles. L'antibioprophylaxie systématique est formellement proscrite (risque de sélection de souches multirésistantes)."
     ],
-    "scientific_references": "Recommandations SFMU / SRLF / IAP/APA evidence-based guidelines / MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / Collège de Réanimation / Recommandations nationales MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-30T01:07:12.645772+00:00",
-    "updated_at": "2026-10-30T01:07:12.645785+00:00"
+    "created_at": "2026-11-01T19:45:14.960013+00:00",
+    "updated_at": "2026-11-01T19:45:14.960051+00:00"
   },
   {
     "id": "memento_intoxication_medicamenteuse_aigue",
