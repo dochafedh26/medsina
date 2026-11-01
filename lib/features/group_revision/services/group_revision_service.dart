@@ -10,6 +10,11 @@ class GroupRevisionService {
 
   SupabaseClient get _client => SupabaseService.client;
 
+  static bool _isValidUuid(String? s) {
+    if (s == null || s.isEmpty) return false;
+    return RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$').hasMatch(s);
+  }
+
   String _generateInviteCode() {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     final rnd = Random.secure();
@@ -19,6 +24,9 @@ class GroupRevisionService {
 
   /// Récupère la liste des groupes dont l'utilisateur connecté est membre
   Future<List<StudyGroupModel>> getUserGroups(String userId) async {
+    if (!_isValidUuid(userId)) {
+      return [];
+    }
     try {
       final memberships = await _client
           .from('study_group_members')
@@ -63,6 +71,28 @@ class GroupRevisionService {
   }) async {
     try {
       final code = _generateInviteCode();
+
+      // En mode démo (identifiant non UUID), générer un groupe simulé réactif
+      if (!_isValidUuid(userId)) {
+        final mockGroup = StudyGroupModel(
+          id: 'demo_grp_${DateTime.now().millisecondsSinceEpoch}',
+          name: name.trim(),
+          description: description?.trim(),
+          createdBy: userId,
+          inviteCode: code,
+          targetModuleId: targetModuleId,
+          targetSpecialty: targetSpecialty,
+          avatarColor: avatarColor,
+          isPublic: false,
+          maxMembers: maxMembers,
+          memberCount: 1,
+          userRole: 'admin',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        return mockGroup;
+      }
+
       final insertData = {
         'name': name.trim(),
         'description': description?.trim(),
@@ -102,6 +132,9 @@ class GroupRevisionService {
     required String userId,
     required String inviteCode,
   }) async {
+    if (!_isValidUuid(userId)) {
+      throw Exception('Veuillez vous connecter avec votre compte Medsina pour rejoindre un groupe.');
+    }
     try {
       final cleanCode = inviteCode.trim().toUpperCase();
       final groups = await _client
