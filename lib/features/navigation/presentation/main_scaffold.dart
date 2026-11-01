@@ -753,7 +753,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   ) {
     return AppBar(
       titleSpacing: 12,
-      title: const MedsinaLogo(height: 23),
+      title: const MedsinaLogo(height: 33),
       actions: [
         Flexible(
           child: FittedBox(
@@ -1513,7 +1513,7 @@ class _MainScaffoldState extends State<MainScaffold> {
               ),
 
               const SizedBox(height: 16),
-              const Center(child: MedsinaLogo(height: 20)),
+              const Center(child: MedsinaLogo(height: 28)),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,

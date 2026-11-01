@@ -36,7 +36,9 @@ class RevisionCatalogScreen extends StatefulWidget {
   State<RevisionCatalogScreen> createState() => _RevisionCatalogScreenState();
 }
 
-class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
+class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   String _searchQuery = '';
   String _selectedCategory = 'Tous';
   bool _initializedCategory = false;
@@ -52,8 +54,312 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 8, vsync: this);
+    _tabController.addListener(() {
+      if (mounted) setState(() {});
+    });
     context.read<RevisionBloc>().add(LoadModulesEvent());
     context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Map<String, dynamic> _getTabInfo(int index, int customSessionsCount) {
+    switch (index) {
+      case 1:
+        return {
+          'title': customSessionsCount > 0
+              ? 'Sessions Sur-Mesure ($customSessionsCount)'
+              : 'Sessions Sur-Mesure',
+          'icon': Icons.dashboard_customize_rounded,
+          'color': const Color(0xFF2563EB),
+        };
+      case 2:
+        return {
+          'title': 'Concours Blancs Nationaux 🏆',
+          'icon': Icons.emoji_events_rounded,
+          'color': const Color(0xFFF59E0B),
+        };
+      case 3:
+        return {
+          'title': 'Groupes de Révision 👥',
+          'icon': Icons.groups_rounded,
+          'color': const Color(0xFF8B5CF6),
+        };
+      case 4:
+        return {
+          'title': 'Study Planner (3 Couches)',
+          'icon': Icons.calendar_month_rounded,
+          'color': const Color(0xFF0EA5E9),
+        };
+      case 5:
+        return {
+          'title': 'Flashcards FSRS 🧠',
+          'icon': Icons.psychology_alt_rounded,
+          'color': const Color(0xFFEC4899),
+        };
+      case 6:
+        return {
+          'title': 'Samedis Pédagogiques 📚',
+          'icon': Icons.school_rounded,
+          'color': const Color(0xFF10B981),
+        };
+      case 7:
+        return {
+          'title': 'Témoignages & Conseils 💡',
+          'icon': Icons.lightbulb_rounded,
+          'color': const Color(0xFFF97316),
+        };
+      case 0:
+      default:
+        return {
+          'title': 'Catalogue (47 Modules)',
+          'icon': Icons.menu_book_rounded,
+          'color': const Color(0xFF0D9488),
+        };
+    }
+  }
+
+  void _showSectionSelectorBottomSheet(BuildContext context, int customSessionsCount) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final sections = [
+      {
+        'title': 'Catalogue Officiel',
+        'badge': '47 Modules',
+        'subtitle': '47 modules officiels & cours révisables',
+        'icon': Icons.menu_book_rounded,
+        'color': const Color(0xFF0D9488),
+      },
+      {
+        'title': 'Sessions Sur-Mesure',
+        'badge': customSessionsCount > 0 ? '$customSessionsCount active(s)' : 'Sur-Mesure',
+        'subtitle': 'Créer des sessions multi-cours personnalisées',
+        'icon': Icons.dashboard_customize_rounded,
+        'color': const Color(0xFF2563EB),
+      },
+      {
+        'title': 'Concours Blancs Nationaux',
+        'badge': 'Officiel 🏆',
+        'subtitle': 'Épreuves nationales & classement en direct',
+        'icon': Icons.emoji_events_rounded,
+        'color': const Color(0xFFF59E0B),
+      },
+      {
+        'title': 'Groupes de Révision',
+        'badge': 'Entraide 👥',
+        'subtitle': 'Groupes d\'étude, émulation & défis collectifs',
+        'icon': Icons.groups_rounded,
+        'color': const Color(0xFF8B5CF6),
+      },
+      {
+        'title': 'Study Planner par Couches',
+        'badge': 'Méthode',
+        'subtitle': 'Planification méthodique & suivi d\'avancement',
+        'icon': Icons.calendar_month_rounded,
+        'color': const Color(0xFF0EA5E9),
+      },
+      {
+        'title': 'Flashcards FSRS',
+        'badge': 'Algorithme IA 🧠',
+        'subtitle': 'Répétition espacée FSRS & révisions actives',
+        'icon': Icons.psychology_alt_rounded,
+        'color': const Color(0xFFEC4899),
+      },
+      {
+        'title': 'Samedis Pédagogiques',
+        'badge': 'Dr KARE 📚',
+        'subtitle': 'Sessions dirigées par les professeurs',
+        'icon': Icons.school_rounded,
+        'color': const Color(0xFF10B981),
+      },
+      {
+        'title': 'Témoignages & Conseils',
+        'badge': 'Majors 💡',
+        'subtitle': 'Retours d\'expérience & conseils des lauréats',
+        'icon': Icons.lightbulb_rounded,
+        'color': const Color(0xFFF97316),
+      },
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.apps_rounded, color: AppTheme.primaryTeal, size: 20),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Sections de Révision Medsina',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded, size: 20),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: sections.length,
+                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    itemBuilder: (context, i) {
+                      final item = sections[i];
+                      final isSelected = _tabController.index == i;
+                      final color = item['color'] as Color;
+
+                      return ListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(item['icon'] as IconData, color: color, size: 20),
+                        ),
+                        title: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item['title'] as String,
+                                style: TextStyle(
+                                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                  fontSize: 13.5,
+                                  color: isSelected ? AppTheme.primaryTeal : null,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: color.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                item['badge'] as String,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: color,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        subtitle: Text(
+                          item['subtitle'] as String,
+                          style: TextStyle(fontSize: 11, color: isDark ? Colors.white60 : Colors.black54),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(Icons.check_circle_rounded, color: AppTheme.primaryTeal, size: 20)
+                            : null,
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          _tabController.animateTo(i);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMobileTabHeader(BuildContext context, int customSessionsCount) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currentIndex = _tabController.index;
+    final currentTabInfo = _getTabInfo(currentIndex, customSessionsCount);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border(bottom: BorderSide(color: isDark ? Colors.white12 : Colors.grey.shade200)),
+      ),
+      child: Row(
+        children: [
+          // Dropdown pill showing active section
+          Expanded(
+            child: InkWell(
+              onTap: () => _showSectionSelectorBottomSheet(context, customSessionsCount),
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                decoration: BoxDecoration(
+                  color: (currentTabInfo['color'] as Color).withValues(alpha: isDark ? 0.2 : 0.08),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: (currentTabInfo['color'] as Color).withValues(alpha: isDark ? 0.4 : 0.25),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(currentTabInfo['icon'] as IconData, size: 17, color: currentTabInfo['color'] as Color),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        currentTabInfo['title'] as String,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.5,
+                          color: isDark ? Colors.white : (currentTabInfo['color'] as Color),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          // Three dots action button
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(Icons.more_vert_rounded),
+            tooltip: 'Changer de section',
+            onPressed: () => _showSectionSelectorBottomSheet(context, customSessionsCount),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -126,6 +432,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
               final isDesktopWide = constraints.maxWidth >= 1050;
 
               final tabBar = TabBar(
+                controller: _tabController,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 indicatorColor: AppTheme.primaryTeal,
@@ -171,39 +478,38 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                 ],
               );
 
-              return DefaultTabController(
-                length: 8,
-                child: Column(
-                  children: [
-                    // Navigation TabBar: On mobile and tablet, TabBar has 100% full width to avoid squishing tabs!
-                    Container(
-                      color: Theme.of(context).cardColor,
-                      width: double.infinity,
-                      child: isDesktopWide
-                          ? Row(
-                              children: [
-                                Expanded(child: tabBar),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      _buildCloudSyncPill(context),
-                                      const SizedBox(width: 8),
-                                      _buildOfflineStorageButton(context),
-                                    ],
-                                  ),
+              return Column(
+                children: [
+                  // Navigation: On desktop show full TabBar; on mobile show sleek 3-dots section selector!
+                  isDesktopWide
+                      ? Container(
+                          color: Theme.of(context).cardColor,
+                          width: double.infinity,
+                          child: Row(
+                            children: [
+                              Expanded(child: tabBar),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _buildCloudSyncPill(context),
+                                    const SizedBox(width: 8),
+                                    _buildOfflineStorageButton(context),
+                                  ],
                                 ),
-                              ],
-                            )
-                          : tabBar,
-                    ),
-                    const Divider(height: 1),
+                              ),
+                            ],
+                          ),
+                        )
+                      : _buildMobileTabHeader(context, state.customSessions.length),
+                  const Divider(height: 1),
 
-                    // Tab Views
-                    Expanded(
-                      child: TabBarView(
-                        children: [
+                  // Tab Views
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
                           // Tab 1: Official Modules & Courses Catalogue
                           _buildCatalogTab(context, state, filteredModules, totalVisibleCourses, isDesktopWide: isDesktopWide),
 
@@ -231,8 +537,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
                       ),
                     ),
                   ],
-                ),
-              );
+                );
             },
           );
         },
@@ -358,10 +663,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
 
     final selectedModules = FreeTrialQuotaService.instance.selectedFreeModules;
 
-    return Column(
-      children: [
+    return CustomScrollView(
+      slivers: [
         // Search & Category Header
-        Container(
+        SliverToBoxAdapter(
+          child: Container(
           padding: const EdgeInsets.all(16),
           color: Theme.of(context).cardColor,
           child: Column(
@@ -478,8 +784,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
             ],
           ),
         ),
-        if (isFree) ...[
-          Container(
+      ),
+      if (isFree)
+        SliverToBoxAdapter(
+          child: Container(
             margin: const EdgeInsets.fromLTRB(16, 10, 16, 2),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -535,37 +843,45 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen> {
               ],
             ),
           ),
-        ],
-        const Divider(height: 1),
+        ),
+        const SliverToBoxAdapter(
+          child: Divider(height: 1),
+        ),
 
         // Modules List
-        Expanded(
-          child: filteredModules.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.shade400),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Aucun module trouvé pour "$_searchQuery"',
-                        style: TextStyle(color: Colors.grey.shade500),
-                      ),
-                    ],
+        if (filteredModules.isEmpty)
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search_off_rounded, size: 48, color: Colors.grey.shade400),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Aucun module trouvé pour "$_searchQuery"',
+                    style: TextStyle(color: Colors.grey.shade500),
                   ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: filteredModules.length,
-                  itemBuilder: (context, index) {
-                    final module = filteredModules[index];
-                    return _ModuleCard(
-                      module: module,
-                      activeProgresses: state.activeCourseProgresses,
-                    );
-                  },
-                ),
-        ),
+                ],
+              ),
+            ),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.all(16),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final module = filteredModules[index];
+                  return _ModuleCard(
+                    module: module,
+                    activeProgresses: state.activeCourseProgresses,
+                  );
+                },
+                childCount: filteredModules.length,
+              ),
+            ),
+          ),
       ],
     );
   }

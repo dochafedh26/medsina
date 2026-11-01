@@ -710,32 +710,47 @@ class QcmStudyScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              Icon(
-                isFullyCorrect ? Icons.check_circle_rounded : Icons.info_outline_rounded,
-                color: isFullyCorrect ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
-                size: 20,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isFullyCorrect ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                    color: isFullyCorrect ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      isFullyCorrect ? 'Excellente réponse ! (+1 point)' : 'Réponse incorrecte ou incomplète',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13.5,
+                        color: isFullyCorrect ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Text(
-                isFullyCorrect ? 'Excellente réponse ! (+1 point)' : 'Réponse incorrecte ou incomplète',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 14,
-                  color: isFullyCorrect ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
-                ),
-              ),
-              const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: isFullyCorrect
+                        ? const Color(0xFFBBF7D0)
+                        : const Color(0xFFFECACA),
+                  ),
                 ),
                 child: Text(
                   'Bonne(s) réponse(s) : ${q.correctAnswers.join(", ")}',
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: Color(0xFF0F766E)),
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 11.5, color: Color(0xFF0F766E)),
                 ),
               ),
             ],
