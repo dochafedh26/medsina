@@ -701,23 +701,23 @@
   },
   {
     "id": "memento_acidocetose_diabetique",
-    "title": "⚡ Acidocétose Diabétique : Réanimation Métabolique",
-    "category": "Métabolique & Endocrinologie",
+    "title": "⚡ Acidocétose Diabétique : Réanimation d'Urgence",
+    "category": "Urgences Endocriniennes",
     "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Bilan biologique d'urgence au lit du malade (Glycémie capillaire, Gaz du sang veineux, Cétonurie/Cétonémie, Ionogramme sanguin avec créatinine) et éliminer un facteur déclenchant (infection, IDM, Iono, Oubli insuline).",
-      "Étape 2 : Remplissage vasculaire immédiat par NaCl 0,9 % (1000 mL les 1ères heures selon l'état hémodynamique) pour restaurer la volote intravasculaire et la perfusion rénale.",
-      "Étape 3 : Insulinothérapie IV continue à la seringue électrique (PSE) : Insuline rapide (Actrapid) à 0,1 UI/kg/h (sans bolus initial) dès que la kaliémie est > 3,3 mmol/L.",
-      "Étape 4 : Supplémentation potassique systématique dès que K+ < 5 mmol/L (20 à 40 mmol de KCl par litre de perfusion) pour éviter une hypokaliémie fatale lors de l'alcalinisation et de la correction de l'hyperglycémie.",
-      "Étape 5 : Surveillance armée horaire (glycémie, conscience, diurèse, GDS) ; le bicarbonate de sodium n'est indiqué qu'en cas d'acidémie profonde menaçante (pH < 7,0) et se discute en réanimation.",
-      "Étape 6 : Piège médico-légal et contre-indication : Ne JAMAIS administrer d'insuline si la kaliémie est < 3,3 mmol/L (risque d'arythmie mortelle et d'arrêt cardiaque) et rechercher systématiquement une cause chirurgicale abdominale masquée par l'acidocétose."
+      "Étape 1 : Bilan biologique d'urgence au déchoquage (Glycémie capillaire, Gaz du sang veineux/artériel, Ionogramme sanguin avec Kaliémie, urée, créatinine, BU corps cétoniques) et pose immédiate de 2 VVP de bon calibre.",
+      "Étape 2 : Expansion volémique initiale par NaCl 0.9% (1000 mL en 1 heure), puis réévaluation hémodynamique stricte pour éviter l'œdème cérébral et l'OAP.",
+      "Étape 3 : Insulinothérapie IV stricte à l'alef/seringue électrique : Actrapid 0.1 UI/kg/h (soit environ 5 à 10 UI/h) sans bolus initial, après vérification impérative d'une Kaliémie > 3.3 mmol/L.",
+      "Étape 4 : Supplémentation potassique systématique dès que la Kaliémie est < 5.0 mmol/L (ajouter 20 à 40 mEq de KCl par litre de perfusion) pour maintenir K+ entre 4 et 5 mmol/L.",
+      "Étape 5 : Alcalinisation par Bicarbonate de Sodium 1.4% uniquement si pH < 7.00 ou acidémie menaçante (collapsus), 250 mL en 30-60 minutes sous monitorage cardiaque continu.",
+      "Étape 6 : Piège mortel : Ne jamais arrêter l'insuline devant la normalisation de la glycémie, mais adjoindre du G5% ou G10% pour maintenir la glycémie entre 2 et 2.5 g/L jusqu'à la levée de l'acidose (pH > 7.30 et Bicarbonates > 18 mmol/L)."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / ALFEDIM / MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / ADA / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-26T07:52:56.581065+00:00",
-    "updated_at": "2026-10-26T07:52:56.581081+00:00"
+    "created_at": "2026-11-01T07:38:40.706473+00:00",
+    "updated_at": "2026-11-01T07:38:40.706485+00:00"
   },
   {
     "id": "memento_chalazion",
