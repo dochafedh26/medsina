@@ -852,16 +852,15 @@
     "id": "lab_lithiemie",
     "name": "Lithiumémie (Dosage du Lithium)",
     "category": "Endocrinologie & Métabolisme",
-    "normal_range": "Traitement d'entretien : 0,6 - 1,2 mmol/L | Sujet âgé : 0,4 - 0,8 mmol/L | Seuil toxique : > 1,2 - 1,5 mmol/L (aigu) ou > 1,0 mmol/L (chronique)",
+    "normal_range": "Traitement d'entretien : 0,6 - 1,2 mmol/L | Sujet âgé : 0,4 - 0,8 mmol/L",
     "unit": "mmol/L",
-    "high_interpretation": "Intoxication au lithium (aigüe ou chronique). Signes précoces (> 1,2 mmol/L) : troubles digestifs, tremblements fins, asthénie. Signes de toxicité modérée (1,5 - 2,5 mmol/L) : confusion, dysarthrie, nystagmus, hyperréflexie, troubles de l'équilibre. Signes de toxicité grave (> 2,5 mmol/L ou > 2,0 mmol/L chez le sujet âgé) : convulsions, coma, collapsus cardiovasculaire, insuffisance rénale aiguë. Conduite à tenir : Arrêt immédiat du traitement, réhydratation IV, monitorage ECG et neurologique, alcalinisation des urines parfois, et épuration extra-rénale (hémodialyse) en urgence si lithémie > 2,5 mmol/L, insuffisance rénale ou signes neurologiques graves.",
-    "low_interpretation": "Sous-dosage thérapeutique ou mauvaise observance (inobservance fréquente en psychiatrie). Risque de rechute thymique (épisodes maniaques ou dépressifs majeurs). Conduite à tenir : Réinterroger le patient sur l'observance, réajuster la posologie si l'observance est bonne et la clinique l'exige.",
+    "high_interpretation": "Surdosage / Intoxication au lithium (Urgence médicale absolue si > 1,2 mmol/L et critique si > 2,0 mmol/L). Causes : Insuffisance rénale, déshydratation, régime hyposodé, iatrogénie (diurétiques thiazidiques, AINS, IEC/ARA2). Signes cliniques : Troubles neuro-psychiques (tremblements amples, dysarthrie, confusion, convulsions, coma), troubles digestifs (nausées, vomissements, diarrhées profuses aggravaant la déshydratation). Conduite à tenir : Arrêt immédiat du traitement, réhydratation IV, alcalinisation des urines, et épuration extra-rénale (hémodialyse) en urgence si lithiémie > 1,5 - 2 mmol/L avec signes neurologiques sévères ou insuffisance rénale associée.",
+    "low_interpretation": "Sous-dosage (Lithiumémie < 0,5 mmol/L). Causes : Ininobservance thérapeutique (très fréquente chez les patients bipolaires), clairance rénale augmentée (grossesse, surcharge sodée). Conséquence : Risque majeur de rechute de l'épisode maniaque ou dépressif (perte d'efficacité de la thymorégulation).",
     "clinical_notes": [
-      "Délai de prélèvement impératif : Le dosage doit être réalisé exactement 12 heures après la dernière prise (état d'équilibre pharmacocinétique), idéalement le matin à jeun.",
-      "Pièges pharmacologiques (interactions majeures augmentant la lithémie) : AINS, diurétiques (thiazidiques et épargneurs potassiques), IEC et ARA2 réduisent la clairance rénale du lithium et provoquent des intoxications graves.",
-      "Pièges biologiques et pré-analytiques : Ne jamais utiliser de tubes de prélèvement contenant de l'héparinate de lithium pour ce dosage (interférence majeure faussement infinie) ; préférer l'héparinate de sodium ou le tube sec (sérum)."
+      "Délai de prélèvement indispensable : Toujours réaliser le prélèvement 12 heures après la dernière prise (état d'équilibre pharmacocinétique).",
+      "Piège pharmacologique et ionique : Le lithium est réabsorbé au niveau du tubule rénal proximal en compétition directe avec le sodium. Toute déplétion sodée (régime sans sel, diurétiques, sueurs intenses, vomissements) entraîne une réabsorption accrue du lithium et une toxicité menaçant le pronostic vital."
     ],
-    "created_at": "2026-11-01T09:28:39.787331+00:00",
-    "updated_at": "2026-11-01T09:28:39.787347+00:00"
+    "created_at": "2026-11-01T16:14:52.398404+00:00",
+    "updated_at": "2026-11-01T16:14:52.398417+00:00"
   }
 ]
