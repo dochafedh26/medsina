@@ -1677,5 +1677,28 @@
     "treatment_summary": "Traitement axé sur la cause (corticothérapie pour le syndrome néphrotique), l'association de mesures symptomatiques (restriction sodée, diurétiques si besoin) et la néphroprotection par IEC/BRA II en cas de protéinurie chronique persistante.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-02T08:12:47.306238+00:00"
+  },
+  {
+    "course_id": "Blida_NEUROLOGIE_EXAMEN_NEUROLOGIQUE",
+    "course_name": "Examen neurologique",
+    "module_id": "Blida_NEUROLOGIE",
+    "module_name": "Neurologie",
+    "summary_markdown": "## 1. Définition & Principes Généraux\nL'**examen neurologique** est une étape clinique rigoureuse visant à topographier une lésion du système nerveux central (SNC) ou périphérique (SNP). Il repose sur une anamnèse minutieuse et un examen méthodique : conscience, fonctions supérieures, paires crâniennes, motricité, réflexes, sensibilité, coordination et marche.\n\n## 2. Démarche Diagnostique\n- **Fonctions supérieures :** Évaluation de la vigilance (score de **Glasgow**), du langage (aphasie de Broca vs Wernicke), des gnosies et praxies.\n- **Paires crâniennes (I à XII) :** \n  - I : Olfaction.\n  - II : Acuité visuelle, champ visuel (fond d'œil).\n  - III, IV, VI : Motricité oculaire et pupille (réflexe photomoteur).\n  - V : Sensibilité faciale et muscles masticateurs.\n  - VII : Motricité faciale (centrale vs périphérique).\n  - VIII : Audition et équilibre.\n  - IX, X : Déglutition, phonation, réflexe nauséeux.\n  - XI : STCM et trapèze.\n  - XII : Motricité linguale.\n- **Motricité & Tonus :**\n  - Force musculaire (échelle du **MRC de 0 à 5**).\n  - Tonus : Spasticité (syndrome pyramidal, **hypertonie élastique**, exaggeration des ROT, signe de Babinski) vs Rigidité extrapiramidale (**hypertonie plastique**, en roue dentée, inépuisable).\n- **Réflexes Ostéo-Tendineux (ROT) :** Vifs, polycinétiques (pyramidal) vs Abolis (périphérique/neuropathie).\n- **Sensibilité :** Superficie (tactile, thermo-algique) et profonde (proprioceptive, vibration/pallesthésie).\n- **Coordination & Équilibre :** Épreuve doigt-nez, talon-genou, ataxie cérébelleuse (hypotonie, dysmétrie, dysdiadokinésie) vs ataxie proprioceptive (aggravée par la fermeture des yeux, signe de Romberg positif).\n\n## 3. Formes Cliniques & Sémiologie Topographique\n- **Syndrome pyramidal :** Déficit moteur prédominant aux fléchisseurs aux MI et extenseurs aux MS, ROT vifs, **Babinski positif**, abolition des réflexes cutanés abdominaux (RCA).\n- **Syndrome extra-pyramidal :** Akinésie, rigidité, tremor de repos.\n- **Syndrome cérébelleux :** Hypotonie, ataxie statique et dynamique, nystagmus, dysarthrie scandée.\n- **Syndrome neurogène périphérique :** Déficit flasque, amyotrophie précoce, ROT abolis, fasciculations.\n\n## 4. Approche Thérapeutique Générale\nL'examen clinique guide les urgences paracliniques :\n- **Imagerie de référence :** **IRM cérébrale ou médullaire** avec injection de gadolinium selon la suspicion, ou **TDM cérébrale sans injection** en urgence extrême (AVC, HIC).\n- Ponction lombaire (PL) si suspicion infectieuse ou inflammatoire (après élimination d'un effet de masse à l'imagerie).\n\n## 5. Complications & Pièges sémiologiques\n- Ne pas confondre une atteinte du **nerf facial périphérique** (paralysie faciale totale touchant le front) et **centrale** (respectant le territoire supérieur).\n- Distinction formelle entre un coma métabolique (réflexes du tronc conservés) et un coma lésionnel (atteinte du tronc cérébral).",
+    "key_takeaways": [
+      "Le signe de Babinski signe formellement une atteinte de la voie pyramidale (faisceau corticospinal).",
+      "L'échelle MRC évalue la force musculaire de 0 (pas de contraction) à 5 (force normale).",
+      "L'ataxie proprioceptive est aggravée par l'occlusion des yeux (Romberg proprioceptif positif), contrairement à l'ataxie cérébelleuse.",
+      "Une paralysie faciale périphérique touche tout l'hémiface (front inclus), contrairement à la centrale qui épargne le front.",
+      "L'hypertonie pyramidale est élastique, prédomine aux fléchisseurs des MS et extenseurs des MI, et s'associe à des ROT vifs."
+    ],
+    "exam_traps": [
+      "Piège Annales : Attribuer un signe de Babinski à une lésion du système nerveux périphérique (Faux, c'est strictement central/pyramidal).",
+      "Piège Diagnostic : Oublier de tester le réflexe cutané plantaire ou de rechercher une abolition des RCA dans le syndrome pyramidal.",
+      "Piège Sémiologie : Confondre hypertonie plastique (extra-pyramidale) et élastique (pyramidale)."
+    ],
+    "diagnostic_criteria": "Corrélation anatomo-clinique rigoureuse entre les symptômes déficitaires ou irritatifs et la topographie de l'atteinte du système nerveux central ou périphérique, confirmée par l'imagerie ou l'électrophysiologie.",
+    "treatment_summary": "Urgence diagnostique nécessitant une imagerie adaptée (IRM/TDM) et une orientation étiologique immédiate (vasculaire, inflammatoire, tumorale ou infectieuse).",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-02T18:47:27.631322+00:00"
   }
 ]
