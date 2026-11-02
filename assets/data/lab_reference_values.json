@@ -878,5 +878,20 @@
     ],
     "created_at": "2026-11-01T20:40:49.129896+00:00",
     "updated_at": "2026-11-01T20:40:49.129913+00:00"
+  },
+  {
+    "id": "lab_calcemie_corrigee_calcium_ionise",
+    "name": "Calcémie corrigée & Calcium ionisé",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Calcémie totale: 2.20 - 2.60 mmol/L (88 - 104 mg/L) | Calcium ionisé: 1.15 - 1.30 mmol/L",
+    "unit": "mmol/L",
+    "high_interpretation": "Hypercalcémie (> 2.60 mmol/L ou Ca ionisé > 1.30 mmol/L) : Causes principales (Hyperparathyroïdie primaire, hypercalcémie humorale maligne sur PTHrP, myélome multiple, sarcoïdose). Urgence vitale si > 3.0 mmol/L (crise hypercalcémique) : risque d'arythmie cardiaque, coma, insuffisance rénale aiguë. Conduite à tenir : Réhydratation IV massive (NaCl 0.9%), diurétiques de l'anse après repletion volémique, bisphosphonates (zolédronique) ou calcitonine en urgence.",
+    "low_interpretation": "Hypocalcémie (< 2.20 mmol/L ou Ca ionisé < 1.15 mmol/L) : Causes principales (Hypoparathyroïdie post-opératoire, carence en vitamine D, insuffisance rénale chronique, hypomagnésémie sévère, pancréatite aiguë). Urgence vitale si < 1.90 mmol/L ou signes de tetanie/spasme laryngé : risque de convulsions, QT long, torsades de pointes, insuffisance cardiaque. Conduite à tenir : Gluconate de calcium IV lent sous monitorage ECG strict, correction d'une éventuelle hypomagnésémie associée.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Toujours corriger la calcémie totale en cas d'hypoalbuminémie. Formule de Payne : Calcémes corrigée (mmol/L) = Calcémes mesurée + 0.02 x (40 - Albuminémie en g/L).",
+      "Le calcium ionisé (forme active) ne dépend pas des protéines plasmatiques et doit être dosé en urgence en réanimation (gaz du sang avec électrolytes) en cas de troubles acido-basiques (l'alcalose augmente la liaison aux protéines et baisse le calcium ionisé libre)."
+    ],
+    "created_at": "2026-11-02T00:56:02.969727+00:00",
+    "updated_at": "2026-11-02T00:56:02.969743+00:00"
   }
 ]
