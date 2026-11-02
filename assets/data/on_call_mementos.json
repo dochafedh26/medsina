@@ -351,23 +351,22 @@
   },
   {
     "id": "memento_asthme_aigu_grave",
-    "title": "⚡ Asthme Aigu Grave (AAG) : Conduite à Tenir en Urgence",
+    "title": "⚡ Asthme Aigu Grave (AAG) : Déchoquage",
     "category": "Urgences Respiratoires",
     "icon_name": "air_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Conditionnement immédiat, pose de 2 VVP gros calibre, mise en position assise, oxygénothérapie haut débit au masque facial pour maintenir une SpO2 > 92 % (ou 88-92% si insuffisant respiratoire chronique), monitorage continu (ECG, SpO2, PA).",
-      "Étape 2 : Bilan d'urgence au lit (GDS artériel indispensable pour rechercher une hypercapnie témoin d'épuisement, ionogramme, créatinine, NFS, radio pulmonaire de face si doute sur pneumothorax ou pneumonie).",
-      "Étape 3 : Nébulisations urgentes associant Bêta-2 mimétiques à courte durée d'action (Salbutamol 5 mg) + Anticholinergique (Bromure d'Ipratropium 0,5 mg) dans 4-5 mL de NaCl 0,9% administrées sous oxygène (8 L/min) toutes les 20 minutes la 1ère heure, associées à la corticothérapie systémique précoce : SolUPred IV (2 à 3 mg/kg) ou Hydrocortisone (200 mg IV).",
-      "Étape 4 : En cas d'échec des nébulisations ou AAG menaçant (silence pulmonaire, collapsus, troubles de la conscience), administrer de l'Adrénaline en IV discontinue ou en aérosol (0,25 à 0,5 mg IM ou sous-cutané si pas de VVP), ou Sulfate de Magnésium IV (2 g dans 100 mL de G5% ou NaCl 0,9% en 20 minutes). Préparer le matériel d'intubation (sédation adaptée type Kétamine, ventilation protective).",
-      "Étape 5 : Surveillance rapprochée (fréquence respiratoire, DEP, conscience, GDS de contrôle à H1). Critères de transfert en réanimation : acidose respiratoire (PaCO2 > 45 mmHg), silence pulmonaire, épuisement, troubles de la conscience ou arrêt respiratoire imminent.",
-      "Étape 6 : Piège médico-légal et CI absolue : Ne jamais administrer de Sédatifs ou de Bêtabloquants (même collyre), et ne pas attendre les résultats de la radio pulmonaire ou de la NFS pour débuter la bronchodilatation."
+      "Étape 1 : Évaluation immédiate de la gravité (signes de lutte, silence thoracique, cyanose, incapacité à aligner les mots, collapsus, trouble de la conscience) et mise en condition (demi-assis, oxygénothérapie haut débit pour SpO2 92-98%).",
+      "Étape 2 : Bilan d'urgence au lit (GDS artériels, Ionogramme, Urée, Créatinine, NFS) et DEP (Débit Expiratoire de Pointe) si le patient est coopérant et stable.",
+      "Étape 3 : Nébulisations urgentes associées (Salbutamol 5 mg + Ipratropium 0,5 mg dans 4 mL de NaCl 0,9% sur 15 min) à renouveler, et Corticothérapie IV précoce (Hémisuccinate d'Hydrocortisone 200 mg IVD ou Méthylprednisolone 1-2 mg/kg).",
+      "Étape 4 : Si échec des nébulisations après 1h ou forme asphyxique : Sulfate de Magnésium (2 g IV slow dans 100 mL G5% sur 20 min) et préparation au transfert en Réanimation pour éventuelle ventilation non invasive (VNI) ou intubation oro-trachéale.",
+      "Étape 5 : Surveillance armée (fréquence respiratoire, SpO2, auscultation, GDS de contrôle) et Piège absolu : NE JAMAIS prescrire de sédatifs ni d'antitussifs, et éviter l'intubation hâtive sans sédation adaptée sous peine d'arrêt cardiorespiratoire."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / GINA / Collège de Médecine d'Urgence d'Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / GINA / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-31T17:48:50.940346+00:00",
-    "updated_at": "2026-10-31T17:48:50.940359+00:00"
+    "created_at": "2026-11-02T06:19:36.413005+00:00",
+    "updated_at": "2026-11-02T06:19:36.413019+00:00"
   },
   {
     "id": "memento_pancreatite_aigue",
