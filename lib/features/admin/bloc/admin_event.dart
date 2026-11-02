@@ -36,15 +36,19 @@ class UpgradeUserSubscriptionEvent extends AdminEvent {
   final String userId;
   final String tier;
   final int durationDays;
+  final String calculationMode; // 'replace', 'extend', 'exact_date'
+  final DateTime? targetExpiresAt;
 
   const UpgradeUserSubscriptionEvent({
     required this.userId,
     required this.tier,
     required this.durationDays,
+    this.calculationMode = 'replace',
+    this.targetExpiresAt,
   });
 
   @override
-  List<Object?> get props => [userId, tier, durationDays];
+  List<Object?> get props => [userId, tier, durationDays, calculationMode, targetExpiresAt];
 }
 
 class ClearAdminMessageEvent extends AdminEvent {}

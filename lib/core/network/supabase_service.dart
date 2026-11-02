@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../features/feedback/models/app_review_model.dart';
+import '../constants/app_constants.dart';
 import '../services/medsina_notification_dispatcher.dart';
 
 class SupabaseService {
@@ -83,6 +84,22 @@ class SupabaseService {
     // Notify Administrator in Realtime about new member registration
     final newId = res.user?.id;
     if (newId != null) {
+      final isPromo = AppConstants.isNovemberPromoActive;
+      if (isPromo) {
+        try {
+          final now = DateTime.now().toUtc();
+          await client.from('subscriptions').upsert({
+            'user_id': newId,
+            'tier': 'all_access',
+            'status': 'active',
+            'starts_at': now.toIso8601String(),
+            'expires_at': now.add(const Duration(days: 30)).toIso8601String(),
+            'updated_at': now.toIso8601String(),
+          });
+        } catch (e) {
+          debugPrint('Notice on promo subscription upsert: $e');
+        }
+      }
       try {
         await client.from('medical_notifications').insert({
           'id': 'new_user_${newId}_${DateTime.now().millisecondsSinceEpoch}',
@@ -133,11 +150,31 @@ class SupabaseService {
           .eq('id', userId)
           .maybeSingle();
 
-      final subscription = await client
+      var subscription = await client
           .from('subscriptions')
           .select()
           .eq('user_id', userId)
           .maybeSingle();
+
+      // Self-healing: if promo is active and user registered during promo or has free tier, grant All-Access 30d
+      if (AppConstants.isNovemberPromoActive && (subscription == null || subscription['tier'] == 'free')) {
+        final now = DateTime.now().toUtc();
+        try {
+          await client.from('subscriptions').upsert({
+            'user_id': userId,
+            'tier': 'all_access',
+            'status': 'active',
+            'starts_at': now.toIso8601String(),
+            'expires_at': now.add(const Duration(days: 30)).toIso8601String(),
+            'updated_at': now.toIso8601String(),
+          });
+          subscription = await client
+              .from('subscriptions')
+              .select()
+              .eq('user_id', userId)
+              .maybeSingle();
+        } catch (_) {}
+      }
 
       return {
         'profile': profile,
@@ -1152,21 +1189,84 @@ class SupabaseService {
     }
   }
 
-  /// Update User Subscription
+  /// Update User Subscription with full control over mode (replace, extend, exact_date)
   static Future<Map<String, dynamic>> updateUserSubscription({
     required String userId,
     required String tier,
-    required int durationDays,
+    int? durationDays,
+    DateTime? targetExpiresAt,
+    String calculationMode = 'replace', // 'replace' | 'extend' | 'exact_date'
   }) async {
     try {
-      final response = await client.rpc('admin_update_user_subscription', params: {
-        'p_user_id': userId,
-        'p_tier': tier.trim().toLowerCase(),
-        'p_duration_days': durationDays,
-      });
-      return Map<String, dynamic>.from(response);
+      final cleanTier = tier.trim().toLowerCase();
+      final now = DateTime.now().toUtc();
+      DateTime finalExpiry;
+
+      if (targetExpiresAt != null) {
+        finalExpiry = targetExpiresAt.toUtc();
+      } else {
+        final days = durationDays ?? 30;
+        if (calculationMode == 'extend') {
+          // Extension: add days to existing expiration if in the future
+          final currentSub = await client
+              .from('subscriptions')
+              .select('expires_at')
+              .eq('user_id', userId)
+              .maybeSingle();
+          final currentExp = currentSub != null && currentSub['expires_at'] != null
+              ? DateTime.tryParse(currentSub['expires_at'].toString())?.toUtc()
+              : null;
+          final baseDate = (currentExp != null && currentExp.isAfter(now)) ? currentExp : now;
+          finalExpiry = baseDate.add(Duration(days: days));
+        } else {
+          // 'replace' mode (default): duration calculated from today
+          finalExpiry = now.add(Duration(days: days));
+        }
+      }
+
+      // 1. Direct deterministic update/upsert on subscriptions table
+      final existingSub = await client
+          .from('subscriptions')
+          .select('id')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      if (existingSub != null) {
+        await client.from('subscriptions').update({
+          'tier': cleanTier,
+          'status': 'active',
+          'expires_at': finalExpiry.toIso8601String(),
+          'updated_at': now.toIso8601String(),
+        }).eq('id', existingSub['id']);
+      } else {
+        await client.from('subscriptions').insert({
+          'user_id': userId,
+          'tier': cleanTier,
+          'status': 'active',
+          'starts_at': now.toIso8601String(),
+          'expires_at': finalExpiry.toIso8601String(),
+          'updated_at': now.toIso8601String(),
+        });
+      }
+
+      return {
+        'success': true,
+        'message': 'Abonnement mis à jour avec succès.',
+        'tier': cleanTier,
+        'expires_at': finalExpiry.toIso8601String(),
+      };
     } catch (e) {
-      return {'success': false, 'message': 'Erreur mise à jour: $e'};
+      debugPrint('Direct subscription update fallback to RPC: $e');
+      try {
+        final response = await client.rpc('admin_update_user_subscription', params: {
+          'p_user_id': userId,
+          'p_tier': tier.trim().toLowerCase(),
+          'p_duration_days': durationDays ?? 30,
+        });
+        return Map<String, dynamic>.from(response);
+      } catch (e2) {
+        return {'success': false, 'message': 'Erreur mise à jour: $e2'};
+      }
     }
   }
 

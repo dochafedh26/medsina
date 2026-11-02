@@ -282,14 +282,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (supaUser != null) {
         final prefs = await SharedPreferences.getInstance();
+        final isPromo = AppConstants.isNovemberPromoActive;
+        final initialTier = isPromo ? SubscriptionTier.allAccess : SubscriptionTier.free;
+        final initialExpiry = DateTime.now().add(Duration(days: isPromo ? 30 : 14));
+        final expiryFormatted = '${initialExpiry.day.toString().padLeft(2, "0")}/${initialExpiry.month.toString().padLeft(2, "0")}/${initialExpiry.year}';
+        final welcomeMsg = isPromo
+            ? '🎉 Bienvenue sur Medsina ! Votre Pass All-Access VIP (1 Mois Offert) est activé jusqu\'au $expiryFormatted !'
+            : 'Bienvenue sur Medsina ! Période d\'essai de 14 jours activée.';
+
         final user = UserModel(
           id: supaUser.id,
           fullName: fullName,
           email: email,
           medicalRole: event.medicalRole,
           faculty: event.faculty,
-          tier: SubscriptionTier.free,
-          subscriptionExpiry: DateTime.now().add(const Duration(days: 14)),
+          tier: initialTier,
+          subscriptionExpiry: initialExpiry,
           token: session?.accessToken ?? '',
           studyYear: event.studyYear,
         );
@@ -299,14 +307,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(state.copyWith(
             status: AuthStatus.authenticated,
             user: user,
-            successMessage: 'Bienvenue sur Medsina ! Période d\'essai de 14 jours activée.',
+            successMessage: welcomeMsg,
           ));
         } else {
           // Email confirmation is required
           await prefs.remove(_userPrefsKey);
           emit(state.copyWith(
             status: AuthStatus.unauthenticated,
-            successMessage: 'Compte créé avec succès ! Veuillez vérifier votre boîte mail et cliquer sur le lien de confirmation avant de vous connecter.',
+            successMessage: isPromo
+                ? 'Compte créé avec succès ! Votre Pass All-Access VIP 1 mois offert vous attend. Veuillez vérifier votre boîte mail pour confirmer votre compte.'
+                : 'Compte créé avec succès ! Veuillez vérifier votre boîte mail et cliquer sur le lien de confirmation avant de vous connecter.',
           ));
         }
         return;

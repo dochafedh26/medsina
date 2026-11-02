@@ -1022,77 +1022,534 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     String selectedTier = ['all_access', 'resident_elite', 'clinical_pro', 'etudiant', 'free'].contains(user.tier.toLowerCase())
         ? user.tier.toLowerCase()
         : 'all_access';
-    int durationDays = 365;
+
+    // Calculation mode: 'replace' (par défaut), 'extend', or 'exact_date'
+    String calculationMode = 'replace';
+    int durationDays = 30;
+    final daysController = TextEditingController(text: '30');
+    DateTime? chosenDate;
+
+    final now = DateTime.now();
+    final bool hasActiveExpiry = user.expiresAt != null && user.expiresAt!.isAfter(now);
+    final int currentRemainingDays = hasActiveExpiry
+        ? (user.expiresAt!.difference(now).inDays + 1)
+        : 0;
+
+    DateTime calculateProjectedExpiry() {
+      if (calculationMode == 'exact_date' && chosenDate != null) {
+        return chosenDate!;
+      }
+      final days = int.tryParse(daysController.text.trim()) ?? durationDays;
+      if (calculationMode == 'extend' && hasActiveExpiry) {
+        return user.expiresAt!.add(Duration(days: days));
+      }
+      return now.add(Duration(days: days));
+    }
 
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (dialogCtx, setDialogState) => AlertDialog(
-          title: Row(
-            children: [
-              const Icon(Icons.manage_accounts_rounded, color: AppTheme.primaryTeal),
-              const SizedBox(width: 10),
-              Flexible(child: Text('Abonnement de ${user.fullName}')),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Email: ${user.email}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-              const SizedBox(height: 16),
-              const Text('Formule Cible :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              const SizedBox(height: 6),
-              DropdownButtonFormField<String>(
-                initialValue: selectedTier,
-                isExpanded: true,
-                decoration: const InputDecoration(isDense: true),
-                items: const [
-                  DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP (Complet)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite (47 Modules)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro (Pratique)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 'etudiant', child: Text('Pass Étudiant (1ère - 6ème Année)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 'free', child: Text('Essai Gratuit', overflow: TextOverflow.ellipsis)),
-                ],
-                onChanged: (val) => setDialogState(() => selectedTier = val ?? selectedTier),
-              ),
-              const SizedBox(height: 14),
-              const Text('Durée de validité :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-              const SizedBox(height: 6),
-              DropdownButtonFormField<int>(
-                initialValue: durationDays,
-                isExpanded: true,
-                decoration: const InputDecoration(isDense: true),
-                items: const [
-                  DropdownMenuItem(value: 30, child: Text('30 jours (1 mois)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 90, child: Text('90 jours (3 mois)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 180, child: Text('180 jours (6 mois)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 365, child: Text('365 jours (1 an / Concours 2027)', overflow: TextOverflow.ellipsis)),
-                  DropdownMenuItem(value: 730, child: Text('730 jours (2 ans - Réduction -20%)', overflow: TextOverflow.ellipsis)),
-                ],
-                onChanged: (val) => setDialogState(() => durationDays = val ?? durationDays),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                context.read<AdminBloc>().add(
-                      UpgradeUserSubscriptionEvent(
-                        userId: user.id,
-                        tier: selectedTier,
-                        durationDays: durationDays,
+        builder: (dialogCtx, setDialogState) {
+          final isDark = Theme.of(dialogCtx).brightness == Brightness.dark;
+          final projectedExpiry = calculateProjectedExpiry();
+          final int projectedDaysRemaining = projectedExpiry.isAfter(now)
+              ? projectedExpiry.difference(now).inDays + 1
+              : 0;
+
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            content: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: SingleChildScrollView(
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // En-tête avec Avatar et Nom
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.manage_accounts_rounded, color: AppTheme.primaryTeal, size: 26),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.fullName,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  user.email,
+                                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    );
-              },
-              child: const Text('Appliquer'),
-            ),
-          ],
-        ),
+                      const SizedBox(height: 14),
+
+                      // 1. BANDEAU DE STATUT ACTUEL DU MÉDECIN
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              hasActiveExpiry ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                              size: 18,
+                              color: hasActiveExpiry ? const Color(0xFF10B981) : Colors.orange,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text('Abonnement Actuel : ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          user.tier.toUpperCase().replaceAll('_', ' '),
+                                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppTheme.primaryTeal),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    hasActiveExpiry
+                                        ? '$currentRemainingDays jour(s) restants (expire le ${_formatDateOnly(user.expiresAt!)})'
+                                        : 'Abonnement expiré ou inactif',
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: hasActiveExpiry ? const Color(0xFF10B981) : Colors.orange.shade700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 2. FORMULE CIBLE
+                      const Text('1. Formule d\'Abonnement Cible :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        initialValue: selectedTier,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'all_access', child: Text('All-Access VIP (Accès Intégral)', overflow: TextOverflow.ellipsis)),
+                          DropdownMenuItem(value: 'resident_elite', child: Text('Résident Élite (47 Modules Résidanat)', overflow: TextOverflow.ellipsis)),
+                          DropdownMenuItem(value: 'clinical_pro', child: Text('Clinical Pro (Pratique Hospitalière & Urgences)', overflow: TextOverflow.ellipsis)),
+                          DropdownMenuItem(value: 'etudiant', child: Text('Pass Étudiant (1ère à 6ème Année)', overflow: TextOverflow.ellipsis)),
+                          DropdownMenuItem(value: 'free', child: Text('Pass Découverte / Gratuit', overflow: TextOverflow.ellipsis)),
+                        ],
+                        onChanged: (val) => setDialogState(() => selectedTier = val ?? selectedTier),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 3. MODE D'APPLICATION (REMPLACER vs PROLONGER vs DATE EXACTE)
+                      const Text('2. Mode d\'Application de la Durée :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+                        ),
+                        child: Column(
+                          children: [
+                            // Option 1: Remplacer (Reset)
+                            InkWell(
+                              onTap: () => setDialogState(() => calculationMode = 'replace'),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: calculationMode == 'replace'
+                                      ? AppTheme.primaryTeal.withValues(alpha: isDark ? 0.2 : 0.08)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: calculationMode == 'replace' ? AppTheme.primaryTeal : Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      calculationMode == 'replace' ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+                                      size: 18,
+                                      color: calculationMode == 'replace' ? AppTheme.primaryTeal : Colors.grey,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Remplacer la durée (Reset dès aujourd\'hui)',
+                                            style: TextStyle(
+                                              fontSize: 12.5,
+                                              fontWeight: FontWeight.bold,
+                                              color: calculationMode == 'replace' ? AppTheme.primaryTeal : null,
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Applique exactement la durée choisie à partir d\'aujourd\'hui (évite tout cumul accidentel).',
+                                            style: TextStyle(fontSize: 10.5, color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+
+                            // Option 2: Prolonger / Cumuler
+                            InkWell(
+                              onTap: () => setDialogState(() => calculationMode = 'extend'),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: calculationMode == 'extend'
+                                      ? AppTheme.primaryTeal.withValues(alpha: isDark ? 0.2 : 0.08)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: calculationMode == 'extend' ? AppTheme.primaryTeal : Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      calculationMode == 'extend' ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+                                      size: 18,
+                                      color: calculationMode == 'extend' ? AppTheme.primaryTeal : Colors.grey,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Prolonger / Cumuler ',
+                                                style: TextStyle(
+                                                  fontSize: 12.5,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: calculationMode == 'extend' ? AppTheme.primaryTeal : null,
+                                                ),
+                                              ),
+                                              if (hasActiveExpiry)
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                                  decoration: BoxDecoration(color: Colors.green.shade100, borderRadius: BorderRadius.circular(4)),
+                                                  child: Text('+$currentRemainingDays j existants', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Colors.green.shade900)),
+                                                ),
+                                            ],
+                                          ),
+                                          const Text(
+                                            'Ajoute la durée à la suite de la date d\'échéance actuelle.',
+                                            style: TextStyle(fontSize: 10.5, color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+
+                            // Option 3: Date Précise
+                            InkWell(
+                              onTap: () {
+                                setDialogState(() {
+                                  calculationMode = 'exact_date';
+                                  chosenDate ??= user.expiresAt != null && user.expiresAt!.isAfter(now)
+                                      ? user.expiresAt!.add(const Duration(days: 30))
+                                      : now.add(const Duration(days: 30));
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: calculationMode == 'exact_date'
+                                      ? AppTheme.primaryTeal.withValues(alpha: isDark ? 0.2 : 0.08)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: calculationMode == 'exact_date' ? AppTheme.primaryTeal : Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      calculationMode == 'exact_date' ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+                                      size: 18,
+                                      color: calculationMode == 'exact_date' ? AppTheme.primaryTeal : Colors.grey,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    const Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Date d\'échéance précise (Calendrier)',
+                                            style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            'Fixer une date exacte de fin d\'abonnement sur mesure.',
+                                            style: TextStyle(fontSize: 10.5, color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 4. CHOIX DE DURÉE OU CALENDRIER
+                      if (calculationMode != 'exact_date') ...[
+                        const Text('3. Durée de Validité :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        const SizedBox(height: 8),
+
+                        // Raccourcis Rapides (Pills)
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: [
+                            for (final d in [7, 15, 30, 60, 90, 180, 365, 730, 3650])
+                              InkWell(
+                                onTap: () {
+                                  setDialogState(() {
+                                    durationDays = d;
+                                    daysController.text = d.toString();
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(6),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: (int.tryParse(daysController.text) == d)
+                                        ? AppTheme.primaryTeal
+                                        : (isDark ? Colors.white10 : Colors.grey.shade200),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    d == 3650
+                                        ? 'À Vie (10 ans)'
+                                        : (d >= 365 ? '${d ~/ 365} an(s)' : (d >= 30 ? '${d ~/ 30} mois' : '$d j')),
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: (int.tryParse(daysController.text) == d)
+                                          ? Colors.white
+                                          : (isDark ? Colors.white70 : Colors.black87),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Champ de Saisie Libre
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: daysController,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: 'Nombre de jours (Saisie Libre)',
+                                  hintText: 'ex: 15, 30, 45, 120...',
+                                  suffixText: 'jours',
+                                  isDense: true,
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                ),
+                                onChanged: (val) {
+                                  setDialogState(() {
+                                    durationDays = int.tryParse(val) ?? 30;
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              tooltip: 'Choisir sur calendrier',
+                              icon: const Icon(Icons.date_range_rounded, color: AppTheme.primaryTeal),
+                              onPressed: () async {
+                                final picked = await showDatePicker(
+                                  context: dialogCtx,
+                                  initialDate: projectedExpiry,
+                                  firstDate: now,
+                                  lastDate: now.add(const Duration(days: 3650)),
+                                );
+                                if (picked != null) {
+                                  setDialogState(() {
+                                    chosenDate = picked;
+                                    calculationMode = 'exact_date';
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ] else ...[
+                        const Text('3. Date d\'Expiration Cible :', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        const SizedBox(height: 8),
+                        OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            side: const BorderSide(color: AppTheme.primaryTeal),
+                          ),
+                          icon: const Icon(Icons.calendar_today_rounded, color: AppTheme.primaryTeal, size: 18),
+                          label: Text(
+                            chosenDate != null
+                                ? 'Échéance fixée au : ${_formatDateOnly(chosenDate!)}'
+                                : 'Sélectionner une date sur le calendrier',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.primaryTeal),
+                          ),
+                          onPressed: () async {
+                            final picked = await showDatePicker(
+                              context: dialogCtx,
+                              initialDate: chosenDate ?? now.add(const Duration(days: 30)),
+                              firstDate: now,
+                              lastDate: now.add(const Duration(days: 3650)),
+                            );
+                            if (picked != null) {
+                              setDialogState(() => chosenDate = picked);
+                            }
+                          },
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+
+                      // 5. ENCADRÉ LIVE PREVIEW
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryTeal.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.3)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Icon(Icons.auto_awesome_rounded, size: 16, color: AppTheme.primaryTeal),
+                                SizedBox(width: 6),
+                                Text(
+                                  'Aperçu du Résultat Final :',
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '• Formule : ${selectedTier.toUpperCase().replaceAll('_', ' ')}',
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              '• Expiration : ${_formatDateOnly(projectedExpiry)} ($projectedDaysRemaining jours au total)',
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+                            ),
+                            Text(
+                              calculationMode == 'replace'
+                                  ? '• Mode : Remplacement direct (durée exacte dès aujourd\'hui)'
+                                  : (calculationMode == 'extend'
+                                      ? '• Mode : Prolongation cumulée (ajouté à l\'échéance actuelle)'
+                                      : '• Mode : Date exacte personnalisée'),
+                              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryTeal,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                ),
+                icon: const Icon(Icons.check_circle_rounded, size: 18),
+                label: const Text('Valider & Appliquer', style: TextStyle(fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  final finalDays = int.tryParse(daysController.text.trim()) ?? durationDays;
+                  context.read<AdminBloc>().add(
+                        UpgradeUserSubscriptionEvent(
+                          userId: user.id,
+                          tier: selectedTier,
+                          durationDays: finalDays,
+                          calculationMode: calculationMode,
+                          targetExpiresAt: projectedExpiry,
+                        ),
+                      );
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
+  }
+
+  static String _formatDateOnly(DateTime dt) {
+    final d = dt.day.toString().padLeft(2, '0');
+    final m = dt.month.toString().padLeft(2, '0');
+    final y = dt.year.toString();
+    return '$d/$m/$y';
   }
 
   void _confirmUnbanUser(BuildContext context, AdminUserItem user) {

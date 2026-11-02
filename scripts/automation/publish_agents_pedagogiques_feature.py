@@ -65,7 +65,7 @@ def generate_light_banner() -> str:
         "title": "6 Agents IA Pédagogiques par Année d'Étude",
         "subtitle": "1ère à 6ème Année • Durées Réelles en Algérie • EMD Blanc & Lit du Malade",
         "points": [
-            "6 Tuteurs Dédiés : Pr. Sarah (1ère), Dr. Mansouri (2ème), Dr. Charef (3ème), Pr. Boudiaf (4ème), Pr. Khelifi (5ème), Dr. Belkacem (6ème).",
+            "6 Tuteurs Dédiés : MedsinaTeacher 1ère à 6ème Année (Sciences Fondamentales, Physiologie, Sémiologie, Clinique I, Clinique II, UMC).",
             "Matrice Durées Algérie : Suivi des stages réels (ORL 3 sem., Cardio 6 sem., Pédiatrie 12 sem.) avec compte à rebours d'examen.",
             "Sessions de Cours Amphi : Cas clinique d'accroche, cours structuré, piège du professeur aux EMDs et questions flash d'auto-évaluation.",
             "EMD Blanc /20 & Lit du Malade : Examens chronométrés notés sur 20 officiel + Guide de stage clinique au chevet du patient !",
@@ -126,13 +126,13 @@ POST_TEXT_BLIDA = """🧠 RÉVOLUTION PÉDAGOGIQUE POUR L'EXTERNAT & LE RÉSIDAN
 Chers futurs confrères et résidents,
 Medsina transforme vos révisions en véritable faculté interactive ! Chaque promotion dispose désormais de son propre Enseignant Virtuel spécialisé :
 
-👨‍🏫 LES 6 TUTEURS DE PROMOTION :
-• 1ère Année : Pr. Sarah Benali (Sciences Fondamentales, Anatomie & schémas descriptifs)
-• 2ème Année : Dr. Karim Mansouri (Physiologie, Unités intégrées & boucles de régulation)
-• 3ème Année : Dr. Amine Charef (Sémiologie clinique & examen au lit du malade)
-• 4ème Année : Pr. Yassine Boudiaf (Pathologie I : Cardio, Pneumo, Gastro, Neuro)
-• 5ème Année : Pr. Meriem Khelifi (Pathologie II : Pédiatrie, Gynéco, ORL, Ophtalmo)
-• 6ème Année : Dr. Reda Belkacem (UMC, Thérapeutique & Simulations de gardes réelles)
+👨‍🏫 LES 6 TUTEURS DE PROMOTION MEDSINATEACHER :
+• 1ère Année : MedsinaTeacher - Sciences Fondamentales & Anatomie (Anatomie descriptive & biochimie)
+• 2ème Année : MedsinaTeacher - Physiologie & Unités Intégrées (Boucles de régulation & systèmes)
+• 3ème Année : MedsinaTeacher - Sémiologie & Pré-Clinique (Examen clinique au lit du malade & diagnostic)
+• 4ème Année : MedsinaTeacher - Pathologie Médicale & Chirurgicale I (Cardio, Pneumo, Gastro, Neuro)
+• 5ème Année : MedsinaTeacher - Pathologie Médico-Chirurgicale II (Pédiatrie, Gynéco, ORL, Ophtalmo)
+• 6ème Année : MedsinaTeacher - Urgences (UMC) & Thérapeutique (Simulations de gardes réelles & ordonnances)
 
 📅 CALENDRIER RÉEL DES STAGES EN ALGÉRIE :
 L'application intègre les durées officielles de vos rotations hospitalières :
@@ -207,8 +207,8 @@ POST_TEXT_TELEGRAM = """🔥 EXCLUSIF : 6 AGENTS IA PÉDAGOGIQUES (1ère à 6èm
 
 Medsina lance ses tuteurs virtuels dédiés par promotion :
 
-👨‍🏫 6 Tuteurs IA Spécialisés :
-Pr. Sarah (1ère), Dr. Mansouri (2ème), Dr. Charef (3ème), Pr. Boudiaf (4ème), Pr. Khelifi (5ème), Dr. Belkacem (6ème).
+👨‍🏫 6 Tuteurs IA MedsinaTeacher :
+MedsinaTeacher 1ère à 6ème Année (Sciences Fondamentales, Physiologie, Sémiologie, Clinique I, Clinique II, UMC).
 
 📅 Durées Réelles Algérie :
 Stages paramétrés selon la durée officielle (ORL 3 sem., Cardio 6 sem., Péd 12 sem.) avec compte à rebours d'examen.

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/app_constants.dart';
 import '../network/supabase_service.dart';
 
 /// Centralized service for Google Drive Archival & Automated Email Notifications.
@@ -74,6 +75,9 @@ class MedsinaNotificationDispatcher {
           'medical_role': medicalRole ?? 'Médecin',
           'faculty': faculty ?? 'Faculté de Médecine de Blida',
           'study_year': studyYear,
+          'is_promo_active': AppConstants.isNovemberPromoActive,
+          'promo_name': AppConstants.isNovemberPromoActive ? 'novembre_2026_all_access_1_mois' : null,
+          'promo_description': AppConstants.isNovemberPromoActive ? '1 Mois All-Access VIP Offert' : null,
         },
       );
     } catch (e) {
@@ -107,6 +111,8 @@ class MedsinaNotificationDispatcher {
           'medical_role': medicalRole ?? 'Médecin',
           'faculty': faculty ?? 'Faculté de Médecine de Blida',
           'study_year': studyYear,
+          'is_promo_active': AppConstants.isNovemberPromoActive,
+          'promo_name': AppConstants.isNovemberPromoActive ? 'novembre_2026_all_access_1_mois' : null,
           'registered_at': DateTime.now().toLocal().toString().split('.').first,
         },
       );

@@ -317,12 +317,13 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   dense: true,
-                  title: const Row(
+                  title: Row(
+                    spacing: 6,
                     children: [
                       Icon(Icons.offline_pin_rounded, size: 16, color: Colors.teal),
-                      SizedBox(width: 6),
-                      Text('Rendre cette session disponible hors-ligne',
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                      
+                      Expanded(child: Text('Rendre cette session disponible hors-ligne',
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
                     ],
                   ),
                   subtitle: const Text(

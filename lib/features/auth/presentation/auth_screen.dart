@@ -395,6 +395,82 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
+        if (AppConstants.isNovemberPromoActive) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF7C3AED).withValues(alpha: 0.25),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF59E0B),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'OFFRE SPÉCIALE NOVEMBRE',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Text(
+                            'Jusqu\'au 30/11',
+                            style: TextStyle(color: Colors.white70, fontSize: 10.5, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        '1 Mois All-Access VIP Offert !',
+                        style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 2),
+                      const Text(
+                        'Accès illimité aux 47 modules du Résidanat, QCMs, urgences et tuteurs MedsinaTeacher.',
+                        style: TextStyle(color: Colors.white, fontSize: 11, height: 1.25),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         TextField(
           controller: _registerNameController,
           decoration: const InputDecoration(
@@ -481,9 +557,24 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                     height: 22,
                     child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
                   )
-                : const Text('Créer mon Compte (14j Essai Gratuit)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                : Text(
+                    AppConstants.isNovemberPromoActive
+                        ? 'Créer mon Compte (1 Mois VIP Offert 🎁)'
+                        : 'Créer mon Compte (14j Essai Gratuit)',
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
           ),
         ),
+        if (AppConstants.isNovemberPromoActive) ...[
+          const SizedBox(height: 8),
+          const Center(
+            child: Text(
+              '⭐ Aucun paiement requis • Activation instantanée du Pass VIP 30 jours',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 11, color: Color(0xFF059669), fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
       ],
     );
   }

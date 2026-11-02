@@ -1,0 +1,99 @@
+name: 👨‍🏫 Medsina - Vie Réelle de l'Étudiant (MedsinaTeacher 1e-6e)
+
+on:
+  schedule:
+    # 07:00 UTC = 08:00 Algérie (Matin : Lit du Malade & Tour de Salle)
+    - cron: '0 7 * * *'
+    # 13:00 UTC = 14:00 Algérie (Après-Midi : Séance d'Amphi & Piège EMD)
+    - cron: '0 13 * * *'
+    # 18:00 UTC = 19:00 Algérie (Soirée : Défi Flash EMD & Compte à Rebours)
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'Année ciblée (1, 2, 3, 4, 5, 6, all, auto)'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - all
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+      phase:
+        description: 'Phase de la journée médicale'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - morning
+          - afternoon
+          - evening
+          - emd_alert
+      dry_run:
+        description: 'Mode test (simulation sans publication réelle)'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: medsina-student-life-automation
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run-student-life:
+    name: 🩺 MedsinaTeacher Student Life Agent
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Récupérer le code Medsina
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurer l environnement Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'scripts/automation/requirements.txt'
+
+      - name: 📦 Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/automation/requirements.txt
+
+      - name: 🩺 Exécuter l Agent MedsinaTeacher
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          FB_MEDSINA_PAGE_ID: ${{ secrets.FB_MEDSINA_PAGE_ID }}
+          FB_MEDSINA_PAGE_ACCESS_TOKEN: ${{ secrets.FB_MEDSINA_PAGE_ACCESS_TOKEN }}
+          FB_MEDEVSYNC_PAGE_ID: ${{ secrets.FB_MEDEVSYNC_PAGE_ID }}
+          FB_MEDEVSYNC_PAGE_ACCESS_TOKEN: ${{ secrets.FB_MEDEVSYNC_PAGE_ACCESS_TOKEN }}
+          FB_BLIDA_PAGE_ID: ${{ secrets.FB_BLIDA_PAGE_ID }}
+          FB_BLIDA_PAGE_ACCESS_TOKEN: ${{ secrets.FB_BLIDA_PAGE_ACCESS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: |
+          YEAR="${{ inputs.year || 'auto' }}"
+          PHASE="${{ inputs.phase || 'auto' }}"
+          CMD="python scripts/automation/medsina_student_life_agent.py --year $YEAR --phase $PHASE"
+          
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            CMD="$CMD --dry-run"
+          fi
+          
+          echo "Executing: $CMD"
+          eval $CMD
+

@@ -199,12 +199,15 @@ class _MedicalCommentsSheetState extends State<MedicalCommentsSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        
                         children: [
-                          Text(
-                            widget.targetType == 'course' ? 'Commentaires du Cours' : 'Commentaires du QCM',
-                            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                          Expanded(
+                            child: Text(
+                              widget.targetType == 'course' ? 'Commentaires du Cours' : 'Commentaires du QCM',
+                              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                            ),
                           ),
-                          const SizedBox(width: 8),
+                          
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(

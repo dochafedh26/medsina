@@ -346,13 +346,17 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         userId: event.userId,
         tier: event.tier,
         durationDays: event.durationDays,
+        targetExpiresAt: event.targetExpiresAt,
+        calculationMode: event.calculationMode,
       );
 
       if (result['success'] == true) {
         // Send email confirmation to user
         final targetUser = state.users.where((u) => u.id == event.userId).firstOrNull;
         if (targetUser != null && targetUser.email.isNotEmpty) {
-          final expiryDate = DateTime.now().add(Duration(days: event.durationDays));
+          final expiryDate = result['expires_at'] != null
+              ? DateTime.tryParse(result['expires_at'].toString()) ?? DateTime.now().add(Duration(days: event.durationDays))
+              : (event.targetExpiresAt ?? DateTime.now().add(Duration(days: event.durationDays)));
           MedsinaNotificationDispatcher.sendCandidatePaymentApprovedEmail(
             userEmail: targetUser.email,
             userName: targetUser.fullName,

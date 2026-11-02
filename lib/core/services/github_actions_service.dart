@@ -223,6 +223,18 @@ class GitHubActionsService {
       inputFieldLabel: 'Mode d exécution (telegram / facebook / all)',
       inputFieldHint: 'telegram, facebook, ou all (défaut: telegram)',
     ),
+    GitHubAgentDefinition(
+      id: 'student_life',
+      workflowFile: 'medsina_student_life.yml',
+      title: 'Vie Réelle de l Étudiant (MedsinaTeacher 1e-6e)',
+      description: 'Simule les 3 phases de la journée d un étudiant (matin lit du malade, amphi & piège EMD, soir défi flash) et diffuse sur FB & Telegram.',
+      icon: Icons.school_rounded,
+      color: Color(0xFF10B981),
+      defaultCadence: '3 fois par jour (08h, 14h, 19h Algérie)',
+      inputFieldKey: 'year',
+      inputFieldLabel: 'Année ciblée (1 à 6, all, auto)',
+      inputFieldHint: 'auto, all, 1, 2, 3, 4, 5, 6 (défaut: auto)',
+    ),
   ];
 
   /// Get configured Personal Access Token

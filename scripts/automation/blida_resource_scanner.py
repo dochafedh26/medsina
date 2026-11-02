@@ -54,6 +54,26 @@ DEFAULT_SOURCES = [
     "https://t.me/Samedispedigogique2027DrKare",
     "https://t.me/mbset_blida",
     "https://drive.google.com/drive/folders/1___jg3oAyaBm-REwGb68q_XTN5dKWX2E",
+    # --- Drives Officiels Faculte de Medecine Blida & Promotions ---
+    "https://drive.google.com/drive/folders/1fPjicGWf2sFz5oJ6nTxWExlT5FggBVml",  # Drives BLIDA General
+    "https://drive.google.com/drive/folders/1OpTSOfoyXF8sTK1tW2323KmAqXzBVUzV",  # 1ere Annee 2026
+    "https://drive.google.com/drive/folders/1mNbDj7B936Tm2O87ycOCqqXvCvOUI5EL",  # 2eme Annee 2026
+    "https://drive.google.com/drive/folders/1TZhLE7o-QQVemz5oxAqO46SoM2rCcYep",  # 3eme & 4eme Annee 2026
+    "https://drive.google.com/drive/folders/13Z89CeV8bpQlL74OVFMfjrone2M0XQ--",  # 5eme Annee 2026
+    "https://drive.google.com/drive/folders/1-4j0fd19TOa4jyAFeIIzbh6zIu085O5q",  # 6eme Annee 2026
+    "https://drive.google.com/drive/folders/10LH_iY6aKdToR0MoiBrhvugsaz22FpBm",  # Drive 2018
+    "https://drive.google.com/drive/folders/1rXSfTA9Ylvc8eQwLoT_I9KwhF0W6PDBR",  # Drive 2017
+    "https://drive.google.com/drive/folders/1888ecPxZRrxbhzjdb3hSFGv23yzvExjz",  # Drive Dr Megatli
+    "https://drive.google.com/drive/folders/1jdJczV8lu7Wvu_2k6KLfIltVxN_T6P3f",  # Drive Dr Nouaret
+    "https://drive.google.com/drive/folders/1gEACIpmJ7lplGMe7kfMJAUKHDzC7Bjs_",  # Drive Residanat 2023
+    "https://drive.google.com/drive/folders/1aAngO0Y0gX-LfMR-JQqxqauVHCPZUVJ5",  # Drive Dr Mahdaoui
+    "https://drive.google.com/drive/folders/1nwRK7CtQYAX_aupThoQ6yvOS6rROnDJ7",  # Drive Dr Dilmi
+    "https://drive.google.com/drive/folders/14WMGbJM1wWBDDmTvwvdO7QcUr15nDBh5",  # Drive Dr Ferhat
+    "https://drive.google.com/drive/folders/1_zx21e77UNrJc9iUV5iauREM8rsq-Uih",  # Drive Dr Hocine
+    "https://drive.google.com/drive/folders/1vXpifrV1RYbhe9M7nZecZVUT3KiJW1xF",  # Drive Externat + CT
+    "https://drive.google.com/drive/folders/1wjt2j-hYh0IU5zayra970fyM3fXEiZGy",  # Drive Dr Sellani
+    "https://drive.google.com/drive/folders/13sszUJvcPvFFROkVxFLcF2FcFnm2QAKz",  # Collection Blida
+    "https://drive.google.com/drive/folders/1NXSP4l7Eip9eKxsRKgUy5qRZDG4zEF1k",  # Samedi Pedagogique 2026
 ]
 
 USER_AGENT = (

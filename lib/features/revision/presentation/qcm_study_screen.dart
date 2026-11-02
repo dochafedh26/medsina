@@ -803,7 +803,7 @@ class QcmStudyScreen extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF0284C7),
                 side: const BorderSide(color: Color(0xFF0284C7), width: 1.2),
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               icon: const Icon(Icons.forum_outlined, size: 18),
@@ -905,6 +905,7 @@ class QcmStudyScreen extends StatelessWidget {
           'Votre progression actuelle peut être mise en pause pour reprendre plus tard exactement où vous étiez.',
           style: TextStyle(fontSize: 13.5, height: 1.4),
         ),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dlgContext).pop(),
@@ -919,6 +920,7 @@ class QcmStudyScreen extends StatelessWidget {
             },
             child: const Text('Recommencer à zéro plus tard'),
           ),
+          SizedBox(height: 12),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryTeal,

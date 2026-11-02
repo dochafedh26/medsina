@@ -56,7 +56,7 @@ class ExternatCurriculumMatrix {
   static const List<ExternatTeacherPersona> teachers = [
     ExternatTeacherPersona(
       studyYear: 1,
-      name: 'Pr. Sarah Benali',
+      name: 'MedsinaTeacher - Sciences Fondamentales & Anatomie',
       academicTitle: 'Professeur en Sciences Fondamentales & Anatomie',
       tagline: 'Maîtrisez les bases anatomiques et biochimiques sans apprendre par cœur inutilement.',
       avatarAsset: 'assets/images/doctor_avatar.png',
@@ -67,7 +67,7 @@ class ExternatCurriculumMatrix {
     ),
     ExternatTeacherPersona(
       studyYear: 2,
-      name: 'Dr. Karim Mansouri',
+      name: 'MedsinaTeacher - Physiologie & Unités Intégrées',
       academicTitle: 'Maître-Assistant en Physiologie & Unités Intégrées',
       tagline: 'Comprendre la physiologie normale, c\'est résoudre d\'avance toutes les pathologies.',
       avatarAsset: 'assets/images/doctor_avatar.png',
@@ -78,7 +78,7 @@ class ExternatCurriculumMatrix {
     ),
     ExternatTeacherPersona(
       studyYear: 3,
-      name: 'Dr. Amine Charef',
+      name: 'MedsinaTeacher - Sémiologie & Pré-Clinique',
       academicTitle: 'Chef de Clinique en Sémiologie & Diagnostic',
       tagline: 'De l\'amphi au lit du malade : l\'examen clinique rigoureux fait 80% du diagnostic.',
       avatarAsset: 'assets/images/doctor_avatar.png',
@@ -89,7 +89,7 @@ class ExternatCurriculumMatrix {
     ),
     ExternatTeacherPersona(
       studyYear: 4,
-      name: 'Pr. Yassine Boudiaf',
+      name: 'MedsinaTeacher - Pathologie Médicale & Chirurgicale I',
       academicTitle: 'Professeur Hospitalo-Universitaire en Médecine Interne & Clinique I',
       tagline: 'Grandes pathologies d\'hospitalisation : raisonnement rapide, consensus et zéro impasse.',
       avatarAsset: 'assets/images/doctor_avatar.png',
@@ -100,7 +100,7 @@ class ExternatCurriculumMatrix {
     ),
     ExternatTeacherPersona(
       studyYear: 5,
-      name: 'Pr. Meriem Khelifi',
+      name: 'MedsinaTeacher - Pathologie Médico-Chirurgicale II',
       academicTitle: 'Professeur en Spécialités Médico-Chirurgicales',
       tagline: 'Gérer les rotations courtes avec intensité : Pédiatrie, Gynécologie, ORL et Ophtalmo.',
       avatarAsset: 'assets/images/doctor_avatar.png',
@@ -111,7 +111,7 @@ class ExternatCurriculumMatrix {
     ),
     ExternatTeacherPersona(
       studyYear: 6,
-      name: 'Dr. Reda Belkacem',
+      name: 'MedsinaTeacher - Urgences (UMC) & Thérapeutique',
       academicTitle: 'Praticien Spécialiste aux UMC & Enseignant Thérapeutique',
       tagline: 'Objectif Internat & Résidanat : maîtriser l\'urgence vitale et l\'ordonnance parfaite.',
       avatarAsset: 'assets/images/doctor_avatar.png',
@@ -121,6 +121,22 @@ class ExternatCurriculumMatrix {
       pedagogicalStyle: 'Simulations de gardes réelles, gestion du stress, ordonnances complètes et justifications.',
     ),
   ];
+
+  /// Official Google Drive folders for Algerian Medical Curriculum & Blida Faculty
+  static const Map<int, String> officialYearDrives = {
+    1: 'https://drive.google.com/drive/folders/1OpTSOfoyXF8sTK1tW2323KmAqXzBVUzV',
+    2: 'https://drive.google.com/drive/folders/1mNbDj7B936Tm2O87ycOCqqXvCvOUI5EL',
+    3: 'https://drive.google.com/drive/folders/1TZhLE7o-QQVemz5oxAqO46SoM2rCcYep',
+    4: 'https://drive.google.com/drive/folders/1TZhLE7o-QQVemz5oxAqO46SoM2rCcYep',
+    5: 'https://drive.google.com/drive/folders/13Z89CeV8bpQlL74OVFMfjrone2M0XQ--',
+    6: 'https://drive.google.com/drive/folders/1-4j0fd19TOa4jyAFeIIzbh6zIu085O5q',
+  };
+
+  static const String blidaGeneralDrive = 'https://drive.google.com/drive/folders/1fPjicGWf2sFz5oJ6nTxWExlT5FggBVml';
+  static const String blidaCollectionDrive = 'https://drive.google.com/drive/folders/13sszUJvcPvFFROkVxFLcF2FcFnm2QAKz';
+  static const String samediPedagogique2026Drive = 'https://drive.google.com/drive/folders/1NXSP4l7Eip9eKxsRKgUy5qRZDG4zEF1k';
+  static const String residanatBlidaYouTube = 'https://www.youtube.com/@residanatblida';
+  static const String drAladdinYouTube = 'https://www.youtube.com/@dr_aladdin_helper';
 
   static ExternatTeacherPersona getTeacherForYear(int year) {
     return teachers.firstWhere(
