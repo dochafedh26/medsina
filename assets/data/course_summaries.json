@@ -1631,5 +1631,28 @@
     "treatment_summary": "Urgence médicale absolue : protocole ABCDE, intubation si GCS ≤ 8, administration de G30% + Vitamine B1, TDM cérébrale en urgence et traitement étiologique.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-01T20:47:38.615544+00:00"
+  },
+  {
+    "course_id": "Blida_URO_NEPHROLOGIE_ANOMALIES_DU_BILAN_DE_L_EAU_ET_DU_SODIUM",
+    "course_name": "Anomalies du bilan de l'eau et du Sodium",
+    "module_id": "Blida_URO_NEPHROLOGIE",
+    "module_name": "Uro-Néphrologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\n- **Natrémie normale** : 135 - 145 mmol/L. Le sodium (Na+) est le principal déterminant de l'osmolalité extracellulaire (Posm = 2 x Na + Glycémie + Urée, en mmol/L, normale = 285 - 295 mOsm/kg).\n- **Dysnatrémies** : Troubles de l'eau plus que du sodium total.\n- **Hyponatrémie** (< 135 mmol/L) : Excès d'eau relatif par rapport au sodium. Toujours vérifier l'osmolalité plasmatique (normale/élevée/basse) et le statut volémique (extracellulaire).\n- **Hypernatrémie** (> 145 mmol/L) : Déficit en eau libre (pertes d'eau pures ou pertes hypo-osmotiques).\n\n## 2. Démarche Diagnostique\n- **Clinique** :\n  - *Hyponatrémie aigüe* : Céphalées, nausées, vomissements, troubles de la conscience, convulsions, coma, engagement cérébral.\n  - *Hypernatrémie* : Soif intense, sécheresse des muqueuses, irritabilité, léthargie, troubles neuromusculaires, hémorragies intracrâniennes par rupture des vaisseaux par rétraction cérébrale.\n- **Paraclinique de référence** :\n  - Ionogramme plasmatique et urinaire (natriurèse, osmolalité urinaire).\n  - Glycémie, fonction rénale (urée, créatinine).\n- **Critères diagnostiques de l'hyponatrémie** :\n  - Vrai hyponatrémie hypotonique (Posm < 275 mOsm/kg).\n  - Évaluation du VEC : Hypovolémique (pertes extra-rénales ou rénales avec Na urinaire > 20 mmol/L), Euvolémique (SIADH, hypothyroïdie, potomanie), Hypervolémique (insuffisance cardiaque, cirrhose, insuffisance rénale).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Pseudohyponatrémie** : Hyponatrémie isotonique (hyperprotidémie majeure, hyperlipidémie) ou hypertonique (hyperglycémie : correction de la natrémie = Na mesurée + 1,6 x [Glycémie(g/L) - 1]).\n- **SIADH (Syndrome de Secretion Inappropriée d'ADH)** :\n  - Hyponatrémie hypotonique avec euvolémie clinique.\n  - Osmolalité urinaire > 100 mOsm/kg, Natriurèse > 30 mmol/L.\n  - Absence d'insuffisance surrénalienne, rénale, cardiaque ou hépatique, et de prise de diurétiques.\n\n## 4. Stratégie Thérapeutique\n- **Urgences thérapeutiques** :\n  - *Hyponatrémie aigüe symptomatique* : NaCl 3% (hypertonique) IV pour remonter la natrémie de 1 à 2 mmol/L/h (max 8-10 mmol/L dans les premières 24h) pour éviter la **myélinolyse centro-pontine** (syndrome de démyélinisation osmotique).\n  - *Hypernatrémie aigüe* : Apport d'eau libre (G5% ou eau parSonde gastrique), calcul du déficit en eau : 0,6 x Poids x ((Na/140) - 1).\n- **Traitements chroniques** :\n  - Restrestriction hydrique dans le SIADH.\n  - Remplissage par NaCl 0,9% si déshydratation extracellulaire.\n\n## 5. Évolution, Pronostic & Complications majeures\n- Risque d'engagement cérébral en cas d'hyponatrémie aigüe sévère.\n- Risque de myélinolyse centro-pontine en cas de correction trop rapide d'une hyponatrémie chronique.\n- Risque de thrombose veineuse cérébrale et d'hémorragie méningée/intraparenchymateuse en cas d'hypernatrémie sévère.",
+    "key_takeaways": [
+      "Une hyponatrémie s'accompagne TOUJOURS d'une baisse de l'osmolalité plasmatique (sauf si pseudo-hyponatrémie).",
+      "La natriurèse est indispensable pour différencier une cause rénale (> 20 mmol/L) d'une cause extra-rénale (< 20 mmol/L) en cas d'hyponatrémie hypovolémique.",
+      "La vitesse de correction de l'hyponatrémie ne doit pas dépasser 8 à 10 mmol/L par 24 heures pour prévenir la myélinolyse centro-pontine.",
+      "Le SIADH se caractérise par une euvolémie, des urines concentrées (Uosm > 100) et une natriurèse élevée (> 30) malgré l'hyponatrémie.",
+      "L'hypernatrémie traduit toujours un déficit en eau libre et met en jeu le pronostic vital chez le sujet âgé (troubles de la conscience, HIC)."
+    ],
+    "exam_traps": [
+      "Piège Annales : Oublier de corriger la natrémie en présence d'une hyperglycémie majeure (formule de Katz).",
+      "Piège Traitement : Corriger une hyponatrémie chronique de plus de 10 mmol/L en 24h (risque mortel de myélinolyse centro-pontine).",
+      "Piège Diagnostic : Confondre hyponatrémie de dilution (insuffisance cardiaque/cirrhose, VEC augmenté) et SIADH (euvolémie clinique)."
+    ],
+    "diagnostic_criteria": "Hyponatrémie définie par une natrémie < 135 mmol/L confirmée par une osmolalité plasmatique abaissée (< 275 mOsm/kg), classée ensuite selon l'état du volume extracellulaire et la natriurèse.",
+    "treatment_summary": "Urgence médicale basée sur la sémiologie neurologique : NaCl 3% en cas d'hyponatrémie aigüe symptomatique, restriction hydrique pour le SIADH, et apport d'eau libre pour l'hypernatrémie en respectant impérativement les vitesses de correction.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-02T01:00:05.524424+00:00"
   }
 ]
