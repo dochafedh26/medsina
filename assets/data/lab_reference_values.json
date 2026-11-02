@@ -908,5 +908,20 @@
     ],
     "created_at": "2026-11-02T07:53:30.125272+00:00",
     "updated_at": "2026-11-02T07:53:30.125286+00:00"
+  },
+  {
+    "id": "ionogramme_urinaire",
+    "name": "Ionogramme urinaire (Natriurèse, Kaliurèse)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Natriurèse: 40 - 220 mmol/24h | Kaliurèse: 25 - 100 mmol/24h",
+    "unit": "mmol/24h (ou spot urinaire en mmol/L)",
+    "high_interpretation": "Natriurèse > 20-40 mmol/L en cas d'hyponatrémie : élimine une hypovolémie vraie (pertes extra-rénales), oriente vers une SIADH, une néphropathie perte de sel ou un diurétique. Kaliurèse > 30 mmol/24h en cas d'hypokaliémie : origine rénale (alcalose métabolique, diurétiques, hyperminéralocorticismes, tubulopathies).",
+    "low_interpretation": "Natriurèse < 20 mmol/L : réponse rénale adaptée à une hypovolémie vraie (pertes extra-rénales digestives ou cutanées) ou un état d'œdèmes avec baisse du VCAM (insuffisance cardiaque, cirrhose, syndrome néphrotique). Kaliurèse < 20 mmol/L : origine extra-rénale (pertes digestives basses, vomissements avec alcalose chloropénique).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Toujours interpréter le ionogramme urinaire couplé au ionogramme sanguin et à l'osmolalité urinaire et plasmatique. Pour la natriurèse de spot, le rapport Na/K urinaire et le calcul de la FENa (Fraction Excrétée du Sodium) sont indispensables devant une IRA.",
+      "Règle clé IRA : Une FENa < 1% (ou FeUrea < 35%) oriente vers une insuffisance rénale aiguë fonctionnelle (pré-rénale), tandis qu'une FENa > 2% (ou FeUrea > 50%) oriente vers une nécrose tubulaire aiguë (NTA), sauf si prise récente de diurétiques ou glomérulonéphrite aiguë pigmentaire."
+    ],
+    "created_at": "2026-11-02T18:38:50.864769+00:00",
+    "updated_at": "2026-11-02T18:38:50.864781+00:00"
   }
 ]
