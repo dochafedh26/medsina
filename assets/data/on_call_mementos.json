@@ -448,22 +448,23 @@
   },
   {
     "id": "memento_pediatrie_deshydratation_aigue",
-    "title": "👶 Déshydratation Aiguë du Nourrisson & Réhydratation IV",
+    "title": "💧 Déshydratation Aiguë & Réhydratation IV en Pédiatrie",
     "category": "Pédiatrie d'Urgence",
     "icon_name": "child_care_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluer immédiatement le degré de déshydratation (légère <5%, modérée 5-9%, sévère ≥10%) et chercher des signes de choc (marbrures, TRC > 3 sec, tachycardie extrême, pouls filiformes).",
-      "Étape 2 : Poser une voie veineuse périphérique (VVP) ou une voie intra-osseuse (IO) en < 90 secondes si échec. Bilan urgent : GDS, ionogramme sanguin, urée, créatinine, glycémo-capillaire.",
-      "Étape 3 : En cas de choc hypovolémique (Dasévère), bolus de NaCl 0,9% : 20 mL/kg en 20 minutes (répétable 1 fois si persistance du choc). Puis réhydratation de maintenance + déficit sur 24h avec du Sérum Salé 0,45% ou G5% + NaCl 2g/L + KCl 1g/L selon iono.",
-      "Étape 4 : Surveillance armée (diurèse horaire ≥ 1 mL/kg/h, conscience, poids de contrôle). Critères d'admission en Réanimation Pédiatrique : échec des bolus, choc réfractaire, troubles neurologiques profonds, acidose sévère (pH < 7,15).",
-      "Étape 5 : PIÈGE MAJEUR : Ne jamais corriger une hyponatrémie ou une hypernatrémie trop rapidement (risque d'œdème cérébral ou de myélinolyse centropontine). Jamais de bolus de KCl pur !"
+      "Étape 1 : Évaluer immédiatement le degré de déshydratation (légère <5%, modérée 5-9%, sévère ≥10%) et rechercher des signes de choc hypovolémique (marbrures, tachycardie, TRC > 3s, oligurie).",
+      "Étape 2 : Poser une voie veineuse périphérique (VVP) de bon calibre ou un accès intra-osseux (IO) en < 90 secondes en cas d'échec chez le nourrisson en état de choc.",
+      "Étape 3 : Instaurer le remplissage vasculaire d'urgence en cas de choc : Bolus de NaCl 0,9% ou Ringer Lactate à 20 mL/kg en 15-20 minutes, renouvelable 1 fois si nécessaire.",
+      "Étape 4 : Calculer la perfusion de réhydratation de maintenance + déficit : Utiliser le SSI 0,9% ou G5% + NaCl/KCl selon la volémie après la phase de choc, répartie sur 24h selon la formule de Holliday-Segar.",
+      "Étape 5 : Monitorer la diurèse horaire (objectif > 1 mL/kg/h) et contrôler la natrémie, la kaliémie et l'équilibre acido-basique (GDS) à H6.",
+      "Étape 6 : Piège : Ne jamais administrer de bolus de K+ pur IV direct (risque d'arrêt cardiaque) et éviter la correction trop rapide d'une hyponatrémie sévère (risque de myélinolyse centropontique)."
     ],
-    "scientific_references": "Recommandations ESPGHAN / SFMU / Consensus Nationaux Algériens de Pédiatrie",
+    "scientific_references": "Consensus ESPGHAN / SFMU / Recommandations MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-18T18:59:20.504370+00:00",
-    "updated_at": "2026-10-18T18:59:20.504388+00:00"
+    "created_at": "2026-11-02T23:37:45.086808+00:00",
+    "updated_at": "2026-11-02T23:37:45.086823+00:00"
   },
   {
     "id": "memento_transfusion_choc_hemorragique",
