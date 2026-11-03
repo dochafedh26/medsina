@@ -196,7 +196,7 @@ def generate_vertical_flyer(output_path: str):
 
     features_11 = [
         ("1", "Les 47 modules officiels", "Alger, Blida, Oran, Constantine conformes CNES"),
-        ("2", "Banque de +15 000 QCMs", "Classés par cours avec badge Tombabilité 🔥"),
+        ("2", "Banque de +15 000 QCMs", "Classés par cours avec badge Tombabilité "),
         ("3", "Simulateur de Concours Blanc", "Chronométré, barème officiel Tout ou Rien / Pondéré"),
         ("4", "Alerte Pièges Automatique", "Détection « SAUF UNE » et questions éliminatoires"),
         ("5", "Statistiques Communautaires", "% de réussite en temps réel par proposition"),
@@ -253,7 +253,7 @@ def generate_vertical_flyer(output_path: str):
     draw_rounded_rect(draw, (50, promo_box_y, W - 50, promo_box_y + 50), radius=0, fill=COLOR_GOLD)
     draw_rounded_rect(draw, (50, promo_box_y, W - 50, promo_box_y + 50), radius=22, fill=COLOR_GOLD)
     draw.rectangle([50, promo_box_y + 25, W - 50, promo_box_y + 50], fill=COLOR_GOLD)
-    draw.text((80, promo_box_y + 12), "🎁 OFFRE DE LANCEMENT : 30 JOURS ALL-ACCESS VIP GRATUITS (JUSQU'AU 30/11) !", fill=COLOR_PRIMARY_NAVY, font=get_font(21, bold=True))
+    draw.text((80, promo_box_y + 12), " OFFRE DE LANCEMENT : 30 JOURS ALL-ACCESS VIP GRATUITS (JUSQU'AU 30/11) !", fill=COLOR_PRIMARY_NAVY, font=get_font(21, bold=True))
 
     # QR Code on the right
     qr_img = make_qr_code("https://medsina.medevsync.com", 160)
@@ -276,11 +276,11 @@ def generate_vertical_flyer(output_path: str):
     btn_x, btn_y, btn_w, btn_h = 85, promo_box_y + 170, 480, 50
     draw_rounded_rect(draw, (btn_x, btn_y, btn_x + btn_w, btn_y + btn_h), radius=14, fill=COLOR_RED_ACCENT)
     f_btn = get_font(20, bold=True)
-    draw.text((btn_x + 30, btn_y + 12), "👉 Activez sur medsina.medevsync.com", fill=COLOR_WHITE, font=f_btn)
+    draw.text((btn_x + 30, btn_y + 12), " Activez sur medsina.medevsync.com", fill=COLOR_WHITE, font=f_btn)
 
     # 6. Slogan "Transforme tes révisions en succès !"
     f_quote = get_font(34, bold=True)
-    draw.text((360, 1445), "Transforme tes révisions en succès ! 🏆", fill=COLOR_PRIMARY_NAVY, font=f_quote)
+    draw.text((360, 1445), "Transforme tes révisions en succès ! ", fill=COLOR_PRIMARY_NAVY, font=f_quote)
 
     # 7. Red Tag "Disponible sur Chariow / Web / Windows / Android"
     draw_rounded_rect(draw, (380, 1505, 820, 1560), radius=16, fill=COLOR_RED_ACCENT)
@@ -294,9 +294,9 @@ def generate_vertical_flyer(output_path: str):
 
     # 3 reassurance pills
     f_reassure = get_font(18, bold=True)
-    draw.text((90, foot_y + 50), "🛡️ 100% Gratuit en Novembre", fill=COLOR_PRIMARY_NAVY, font=f_reassure)
+    draw.text((90, foot_y + 50), "️ 100% Gratuit en Novembre", fill=COLOR_PRIMARY_NAVY, font=f_reassure)
     draw.text((460, foot_y + 50), "⚡ Activation Immédiate", fill=COLOR_PRIMARY_NAVY, font=f_reassure)
-    draw.text((790, foot_y + 50), "🩺 Aucune Carte Requise", fill=COLOR_PRIMARY_NAVY, font=f_reassure)
+    draw.text((790, foot_y + 50), " Aucune Carte Requise", fill=COLOR_PRIMARY_NAVY, font=f_reassure)
 
     # Save flyer
     img.save(output_path, "PNG", quality=95)
@@ -321,7 +321,7 @@ def generate_square_post(output_path: str):
 
     # Top pill
     draw_rounded_rect(draw, (700, 45, 1150, 95), radius=16, fill=COLOR_GOLD)
-    draw.text((725, 58), "🔥 CONCOURS RÉSIDANAT 2026-2027", fill=COLOR_PRIMARY_NAVY, font=get_font(17, bold=True))
+    draw.text((725, 58), " CONCOURS RÉSIDANAT 2026-2027", fill=COLOR_PRIMARY_NAVY, font=get_font(17, bold=True))
 
     # Main Hero Title
     draw.text((60, 130), "30 JOURS ALL-ACCESS VIP", fill=COLOR_PRIMARY_NAVY, font=get_font(46, bold=True))
@@ -331,9 +331,9 @@ def generate_square_post(output_path: str):
 
     # 4 Big Value Cards
     cards = [
-        ("📚 47 MODULES OFFICIELS", "+15 000 QCMs corrigés classés par cours et par Tombabilité 🔥"),
+        (" 47 MODULES OFFICIELS", "+15 000 QCMs corrigés classés par cours et par Tombabilité "),
         ("⏱️ CONCOURS BLANCS RÉELS", "Chronométré, barème officiel Tout ou Rien / Pondéré"),
-        ("🚨 DÉTECTION DES PIÈGES", "Vigilance automatique « SAUF UNE » et propositions pièges"),
+        (" DÉTECTION DES PIÈGES", "Vigilance automatique « SAUF UNE » et propositions pièges"),
         ("⚡ 100% HORS-LIGNE", "Fonctionne sans internet sur PC Windows & Smartphone Android")
     ]
     card_y = 330
@@ -355,12 +355,12 @@ def generate_square_post(output_path: str):
     draw.text((W - 245, foot_y + 205), "Scannez pour tester", fill=COLOR_GOLD, font=get_font(13, bold=True))
 
     # Text in promo
-    draw.text((90, foot_y + 30), "🎁 OFFRE LIMITÉE À 100 PLACES", fill=COLOR_GOLD, font=get_font(20, bold=True))
+    draw.text((90, foot_y + 30), " OFFRE LIMITÉE À 100 PLACES", fill=COLOR_GOLD, font=get_font(20, bold=True))
     draw.text((90, foot_y + 68), "Inscrivez-vous avant le 30 Novembre !", fill=COLOR_WHITE, font=get_font(30, bold=True))
-    draw.text((90, foot_y + 120), "👉 Lien d'inscription directe dans le premier commentaire !", fill=(226, 232, 240), font=get_font(19, bold=False))
+    draw.text((90, foot_y + 120), " Lien d'inscription directe dans le premier commentaire !", fill=(226, 232, 240), font=get_font(19, bold=False))
 
     draw_rounded_rect(draw, (90, foot_y + 165, 520, foot_y + 215), radius=12, fill=COLOR_RED_ACCENT)
-    draw.text((120, foot_y + 178), "🔗 medsina.medevsync.com", fill=COLOR_WHITE, font=get_font(20, bold=True))
+    draw.text((120, foot_y + 178), " medsina.medevsync.com", fill=COLOR_WHITE, font=get_font(20, bold=True))
 
     img.save(output_path, "PNG", quality=95)
     print(f"✅ Post Carré Facebook généré : {output_path}")
@@ -384,7 +384,7 @@ def generate_telegram_banner(output_path: str):
 
     # Badge RITUEL 20H
     draw_rounded_rect(draw, (750, 35, 1140, 85), radius=16, fill=COLOR_GOLD)
-    draw.text((775, 48), "🌙 RITUEL QUOTIDIEN • 20H00", fill=COLOR_PRIMARY_NAVY, font=get_font(18, bold=True))
+    draw.text((775, 48), " RITUEL QUOTIDIEN • 20H00", fill=COLOR_PRIMARY_NAVY, font=get_font(18, bold=True))
 
     # Title
     draw.text((50, 120), "QUESTION PIÈGE DU JOUR", fill=COLOR_PRIMARY_NAVY, font=get_font(46, bold=True))
@@ -392,10 +392,10 @@ def generate_telegram_banner(output_path: str):
 
     # Features list
     features = [
-        "🔥 QCM piège officiel posté chaque soir à 20h00",
-        "🗳️ Votez en direct dans le sondage Telegram interactif",
-        "💡 Corrigé argumenté + fiche réflexe le lendemain",
-        "🎁 30 jours All-Access VIP offerts sur medsina.medevsync.com"
+        " QCM piège officiel posté chaque soir à 20h00",
+        "️ Votez en direct dans le sondage Telegram interactif",
+        " Corrigé argumenté + fiche réflexe le lendemain",
+        " 30 jours All-Access VIP offerts sur medsina.medevsync.com"
     ]
     f_y = 260
     for feat in features:
@@ -425,7 +425,7 @@ def main():
     generate_vertical_flyer(flyer_path)
     generate_square_post(square_path)
     generate_telegram_banner(tg_path)
-    print("\n🎉 Kit graphique moderne & light généré avec succès dans assets/facebook/ !")
+    print("\n Kit graphique moderne & light généré avec succès dans assets/facebook/ !")
 
 
 if __name__ == "__main__":
