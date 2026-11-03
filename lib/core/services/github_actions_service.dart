@@ -235,6 +235,18 @@ class GitHubActionsService {
       inputFieldLabel: 'Année ciblée (1 à 6, all, auto)',
       inputFieldHint: 'auto, all, 1, 2, 3, 4, 5, 6 (défaut: auto)',
     ),
+    GitHubAgentDefinition(
+      id: 'course_bundles',
+      workflowFile: 'generate_course_bundles.yml',
+      title: 'Livrets Tout-en-Un Résidanat 2027',
+      description: 'Génère le livret complet de révision (Fiche de synthèse + Polycopié officiel + QCMs d\'entraînement sans corrigé + Grille du corrigé type) avec notification in-app et diffusion multicanale.',
+      icon: Icons.picture_as_pdf_rounded,
+      color: Color(0xFFD97706),
+      defaultCadence: 'Tous les soirs à 02h00 UTC & À la demande',
+      inputFieldKey: 'course_id',
+      inputFieldLabel: 'ID du Cours Cible (ou "all")',
+      inputFieldHint: 'ex: Blida_HEPATO_GASTRO_ENTEROLOGIE_CANCER_DU_PANCREAS (ou all)',
+    ),
   ];
 
   /// Get configured Personal Access Token

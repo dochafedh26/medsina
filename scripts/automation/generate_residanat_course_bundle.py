@@ -53,6 +53,11 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT, TA_JUSTIFY
 from reportlab.pdfgen import canvas
 import pymupdf  # fitz
 
+try:
+    from booklet_notification_broadcaster import broadcast_residanat_bundle
+except ImportError:
+    broadcast_residanat_bundle = None
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 WORKSPACE_ROOT = SCRIPT_DIR.parents[1] if len(SCRIPT_DIR.parents) > 1 else SCRIPT_DIR
 
@@ -875,7 +880,9 @@ def process_single_course(
     supabase_url: str,
     supabase_key: str,
     output_dir: Path,
-    dry_run: bool = False
+    dry_run: bool = False,
+    broadcast: bool = False,
+    showcase: bool = False
 ) -> Optional[Dict[str, Any]]:
     cid = course["id"]
     cname = course.get("name", cid)
@@ -956,6 +963,24 @@ def process_single_course(
                 qcm_count=len(qcms)
             )
 
+        # 8. Diffusion Multicanale (In-App, FB 4 pages, Telegram)
+        broadcast_res = None
+        if broadcast and bundle_url and broadcast_residanat_bundle:
+            try:
+                broadcast_res = broadcast_residanat_bundle(
+                    course_id=cid,
+                    course_name=cname,
+                    module_id=mid,
+                    bundle_url=bundle_url,
+                    is_hypertombable=is_hyper,
+                    residanat_sessions=sessions,
+                    qcm_count=len(qcms),
+                    is_showcase=showcase,
+                    dry_run=dry_run
+                )
+            except Exception as e:
+                print(f"   ⚠️ Notice diffusion multicanale : {e}")
+
         return {
             "course_id": cid,
             "course_name": cname,
@@ -965,7 +990,8 @@ def process_single_course(
             "qcms_count": len(qcms),
             "has_course_pdf": downloaded,
             "local_path": str(final_local_pdf),
-            "bundle_url": bundle_url
+            "bundle_url": bundle_url,
+            "broadcast": broadcast_res
         }
 
 
@@ -979,6 +1005,8 @@ def main():
     parser.add_argument("--limit", type=int, default=10, help="Nombre max de cours à traiter en mode batch (défaut: 10)")
     parser.add_argument("--hypertombable-only", action="store_true", default=False, help="Filtrer uniquement les cours hypertombables")
     parser.add_argument("--dry-run", action="store_true", default=False, help="Générer en local sans upload Supabase")
+    parser.add_argument("--broadcast", action="store_true", default=False, help="Diffuser in-app, Facebook (4 pages) et Telegram")
+    parser.add_argument("--showcase", action="store_true", default=False, help="Mode Showcase : inclure le lien direct du livret dans le post public")
     parser.add_argument("--output-dir", type=str, default=str(WORKSPACE_ROOT / "livrets_residanat_2027"), help="Dossier de sortie local")
     args = parser.parse_args()
 
@@ -1013,7 +1041,9 @@ def main():
             supabase_url=supabase_url,
             supabase_key=supabase_key,
             output_dir=out_dir,
-            dry_run=args.dry_run
+            dry_run=args.dry_run,
+            broadcast=args.broadcast,
+            showcase=args.showcase
         )
         if res:
             results.append(res)

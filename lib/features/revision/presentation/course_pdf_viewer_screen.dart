@@ -32,12 +32,18 @@ class CoursePdfViewerScreen extends StatefulWidget {
   final CourseModel course;
   final String? moduleName;
   final String? initialSearchQuery;
+  final String? customPdfUrl;
+  final String? customTitle;
+  final bool isBooklet;
 
   const CoursePdfViewerScreen({
     super.key,
     required this.course,
     this.moduleName,
     this.initialSearchQuery,
+    this.customPdfUrl,
+    this.customTitle,
+    this.isBooklet = false,
   });
 
   @override
@@ -85,6 +91,12 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
 
   /// Resolve secure direct stream URL from Google Drive ID
   String _getStreamUrl() {
+    if (widget.customPdfUrl != null && widget.customPdfUrl!.isNotEmpty) {
+      return widget.customPdfUrl!;
+    }
+    if (widget.isBooklet && widget.course.bundlePdfUrl != null && widget.course.bundlePdfUrl!.isNotEmpty) {
+      return widget.course.bundlePdfUrl!;
+    }
     final driveId = widget.course.pdfDriveId;
     if (driveId != null && driveId.isNotEmpty) {
       return 'https://drive.google.com/uc?export=download&id=$driveId';
@@ -500,23 +512,34 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
   }
 
   Widget _buildTitle() {
+    final titleText = widget.customTitle ??
+        (widget.isBooklet
+            ? '🔥 Livret Résidanat 2027 • ${widget.course.name}'
+            : widget.course.name);
+    final subtitleText = widget.isBooklet
+        ? 'Livret Tout-en-Un (Synthèse + Cours + QCMs + Corrigé type)'
+        : (widget.moduleName ?? 'Support de Révision');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          widget.course.name,
+          titleText,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        if (widget.moduleName != null)
-          Text(
-            widget.moduleName!,
-            style: const TextStyle(fontSize: 11, color: AppTheme.primaryTeal, fontWeight: FontWeight.w600),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        Text(
+          subtitleText,
+          style: TextStyle(
+            fontSize: 11,
+            color: widget.isBooklet ? const Color(0xFFD97706) : AppTheme.primaryTeal,
+            fontWeight: FontWeight.w600,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ],
     );
   }

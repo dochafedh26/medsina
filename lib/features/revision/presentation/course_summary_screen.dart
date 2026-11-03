@@ -210,6 +210,89 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Livret All-in-One Concours 2027 Card
+          if (widget.course.isHypertombable || widget.course.bundlePdfUrl != null)
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFEF3C7), Color(0xFFFDE68A)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFF59E0B), width: 1.5),
+              ),
+              child: Row(
+                children: [
+                  const Text('🔥', style: TextStyle(fontSize: 26)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              'LIVRET RÉVISION 2027',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: Color(0xFF92400E),
+                                fontSize: 13,
+                              ),
+                            ),
+                            if (widget.course.isHypertombable) ...[
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFDC2626),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text(
+                                  'HYPERTOMBABLE',
+                                  style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.course.residanatYears.isNotEmpty
+                              ? 'Annales Concours : Sessions ${widget.course.residanatYears.join(', ')}'
+                              : 'Fiche Synthèse + Cours + QCMs + Corrigé type officiel',
+                          style: const TextStyle(color: Color(0xFF78350F), fontSize: 12, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD97706),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
+                    label: const Text('Ouvrir', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CoursePdfViewerScreen(
+                            course: widget.course,
+                            moduleName: widget.moduleName,
+                            isBooklet: true,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+
           // Highlight Banner
           if (_summary!.diagnosticCriteria != null || _summary!.treatmentSummary != null)
             Container(
@@ -418,6 +501,37 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
       child: SafeArea(
         child: Row(
           children: [
+            if (widget.course.bundlePdfUrl != null) ...[
+              Expanded(
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFD97706),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.menu_book_rounded, size: 18),
+                  label: const Text(
+                    'Livret 2027 🔥',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CoursePdfViewerScreen(
+                          course: widget.course,
+                          moduleName: widget.moduleName,
+                          isBooklet: true,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
             Expanded(
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(

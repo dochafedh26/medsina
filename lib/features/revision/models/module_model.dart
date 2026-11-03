@@ -9,6 +9,9 @@ class CourseModel extends Equatable {
   final String? pdfDownloadUrl;
   final String? pdfDriveId;
   final int completedQuestions;
+  final String? bundlePdfUrl;
+  final bool isHypertombable;
+  final List<String> residanatYears;
 
   const CourseModel({
     required this.id,
@@ -19,6 +22,9 @@ class CourseModel extends Equatable {
     this.pdfDownloadUrl,
     this.pdfDriveId,
     this.completedQuestions = 0,
+    this.bundlePdfUrl,
+    this.isHypertombable = false,
+    this.residanatYears = const [],
   });
 
   double get progressPercentage =>
@@ -33,6 +39,9 @@ class CourseModel extends Equatable {
     String? pdfDownloadUrl,
     String? pdfDriveId,
     int? completedQuestions,
+    String? bundlePdfUrl,
+    bool? isHypertombable,
+    List<String>? residanatYears,
   }) {
     return CourseModel(
       id: id ?? this.id,
@@ -43,6 +52,9 @@ class CourseModel extends Equatable {
       pdfDownloadUrl: pdfDownloadUrl ?? this.pdfDownloadUrl,
       pdfDriveId: pdfDriveId ?? this.pdfDriveId,
       completedQuestions: completedQuestions ?? this.completedQuestions,
+      bundlePdfUrl: bundlePdfUrl ?? this.bundlePdfUrl,
+      isHypertombable: isHypertombable ?? this.isHypertombable,
+      residanatYears: residanatYears ?? this.residanatYears,
     );
   }
 
@@ -56,6 +68,13 @@ class CourseModel extends Equatable {
       pdfDownloadUrl: (json['pdf_url'] ?? json['pdfDownloadUrl']) as String?,
       pdfDriveId: (json['pdf_drive_id'] ?? json['pdfDriveId']) as String?,
       completedQuestions: (json['completedQuestions'] ?? 0) as int,
+      bundlePdfUrl: (json['bundle_pdf_url'] ?? json['bundlePdfUrl']) as String?,
+      isHypertombable: (json['is_hypertombable'] ?? json['isHypertombable'] ?? false) as bool,
+      residanatYears: (json['residanat_years'] is List)
+          ? (json['residanat_years'] as List).map((e) => e.toString()).toList()
+          : (json['residanatYears'] is List)
+              ? (json['residanatYears'] as List).map((e) => e.toString()).toList()
+              : const [],
     );
   }
 
@@ -68,6 +87,9 @@ class CourseModel extends Equatable {
         'pdfDownloadUrl': pdfDownloadUrl,
         'pdfDriveId': pdfDriveId,
         'completedQuestions': completedQuestions,
+        'bundle_pdf_url': bundlePdfUrl,
+        'is_hypertombable': isHypertombable,
+        'residanat_years': residanatYears,
       };
 
   @override
@@ -80,6 +102,9 @@ class CourseModel extends Equatable {
         pdfDownloadUrl,
         pdfDriveId,
         completedQuestions,
+        bundlePdfUrl,
+        isHypertombable,
+        residanatYears,
       ];
 }
 

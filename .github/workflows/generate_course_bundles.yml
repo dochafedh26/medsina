@@ -16,6 +16,16 @@ on:
         required: false
         type: boolean
         default: false
+      broadcast:
+        description: 'Broadcast to In-App, Facebook 4 Pages & Telegram'
+        required: false
+        type: boolean
+        default: true
+      showcase:
+        description: 'Showcase Mode (include full download link in public post)'
+        required: false
+        type: boolean
+        default: false
   repository_dispatch:
     types: [generate_course_bundle]
   schedule:
@@ -44,8 +54,20 @@ jobs:
 
       - name: Run Course Revision Booklet Generator
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          FB_MEDSINA_PAGE_ID: ${{ secrets.FB_MEDSINA_PAGE_ID }}
+          FB_MEDSINA_PAGE_ACCESS_TOKEN: ${{ secrets.FB_MEDSINA_PAGE_ACCESS_TOKEN }}
+          FB_MEDEVSYNC_PAGE_ID: ${{ secrets.FB_MEDEVSYNC_PAGE_ID }}
+          FB_MEDEVSYNC_PAGE_ACCESS_TOKEN: ${{ secrets.FB_MEDEVSYNC_PAGE_ACCESS_TOKEN }}
+          FB_BLIDA_PAGE_ID: ${{ secrets.FB_BLIDA_PAGE_ID }}
+          FB_BLIDA_PAGE_ACCESS_TOKEN: ${{ secrets.FB_BLIDA_PAGE_ACCESS_TOKEN }}
+          FB_CAT_PAGE_ID: ${{ secrets.FB_CAT_PAGE_ID || '102416914491075' }}
+          FB_CAT_PAGE_ACCESS_TOKEN: ${{ secrets.FB_CAT_PAGE_ACCESS_TOKEN || secrets.FB_PAGE_ACCESS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: |
           EXTRA_ARGS=""
           if [ "${{ github.event.inputs.course_id }}" != "" ] && [ "${{ github.event.inputs.course_id }}" != "all" ]; then
@@ -56,6 +78,14 @@ jobs:
 
           if [ "${{ github.event.inputs.hypertombable_only }}" = "true" ]; then
             EXTRA_ARGS="$EXTRA_ARGS --hypertombable-only"
+          fi
+
+          if [ "${{ github.event.inputs.broadcast }}" != "false" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --broadcast"
+          fi
+
+          if [ "${{ github.event.inputs.showcase }}" = "true" ]; then
+            EXTRA_ARGS="$EXTRA_ARGS --showcase"
           fi
 
           echo "🚀 Executing generator with args: $EXTRA_ARGS"
