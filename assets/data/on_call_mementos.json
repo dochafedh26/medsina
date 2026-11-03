@@ -701,23 +701,23 @@
   },
   {
     "id": "memento_acidocetose_diabetique",
-    "title": "⚡ Acidocétose Diabétique (ACD) de l'Adulte",
-    "category": "Urgences Métaboliques & Réanimation",
+    "title": "⚡ Acidocétose Diabétique : Réanimation Métabolique",
+    "category": "Métabolique & Endocrinien",
     "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Bilan biologique d'urgence (Glycémie capillaire et veineuse, Gaz du sang, Urée, Créatinine, Ionogramme sanguin avec K+ et Na+ corrigé, Cétonémie capillaire ou cétonurie).",
-      "Étape 2 : Expansion volémique initiale par Sérum Salé Isotonique 0,9% (1000 mL en 1 heure), puis réévaluation hémodynamique stricte.",
-      "Étape 3 : Insulinothérapie IV continue à l'seringue électrique (Actrapid 0,1 UI/kg/h) après vérification d'une kaliémie > 3,3 mmol/L (sinon supplémentation potassique préalable obligatoire).",
-      "Étape 4 : Supplémentation potassique systématique dès que K+ < 5 mmol/L (20 à 40 mmol de KCl par litre de perfusion) pour éviter les arythmies fatales.",
-      "Étape 5 : Alcalinisation par Bicarbonate de sodium 1,4% uniquement si pH < 6,9 ou choc cardiogénique réfractaire, sous monitorage rapproché et contrôle gazométrique.",
-      "Étape 6 : Piège mortel : Ne jamais administrer d'insuline si le potassium est effondré (< 3,3 mmol/L) et éviter la correction trop rapide de la glycemie pour prévenir l'œdème cérébral."
+      "Étape 1 : Conditionnement immédiat (2 VVP gros calibre), monitorage ECG, oxygénothérapie si SpO2 < 95%, et élimination d'un facteur déclenchant (Infection, IDM, Iatrogénie).",
+      "Étape 2 : Bilan biologique d'urgence au lit (Glycémie capillaire, Gaz du sang artériels, Ionogramme sanguin avec K+ corrigé, Urée, Créatinine, Cétonémie capillaire ou BU urinaire).",
+      "Étape 3 : Réhydratation IV agressive par NaCl 0.9% (1000 mL en 1h, puis 500 mL/h les 2h suivantes, puis adapté selon diurèse et hémodynamique). Dès que Glycémie < 2.5 g/L, passer au G5% associé au NaCl.",
+      "Étape 4 : Insulinothérapie par Insuline rapide (Actrapid®) en PSE continu : 0.1 UI/kg/h sans bolus initial. Viser une baisse de la glycemie de 0.5 à 0.75 g/L/h et maintenir K+ entre 4 et 5 mmol/L (supplémentation systématique par KCl dès que K+ < 5 mmol/L).",
+      "Étape 5 : Surveillance armée (glycémie horaire, GDS et iono/4h). Critères de transfert en Réanimation : pH < 7.00, bicarbonates < 10 mmol/L, Glasgow < 13, instabilité hémodynamique ou hypokaliémie menaçante.",
+      "Étape 6 : Piège absolu : NE JAMAIS administrer de bicarbonate de sodium en routine (sauf acidémie extrême menaçante pH < 6.9 avec collapsus) et NE JAMAIS arrêter l'insuline avant la correction complète de l'acidocétose (pH > 7.30, Bicont > 18 mmol/L) sous peine de rebond cétonique."
     ],
-    "scientific_references": "Consensus ALFEDIM / SRLF / SFD / MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / ALMS Algérie",
     "is_active": true,
-    "created_at": "2026-11-02T16:18:55.939255+00:00",
-    "updated_at": "2026-11-02T16:18:55.939269+00:00"
+    "created_at": "2026-11-03T15:16:15.520706+00:00",
+    "updated_at": "2026-11-03T15:16:15.520720+00:00"
   },
   {
     "id": "memento_chalazion",
