@@ -58,6 +58,12 @@ try:
 except ImportError:
     broadcast_residanat_bundle = None
 
+try:
+    from gdrive_booklets_manager import upload_booklet_to_gdrive, update_course_in_supabase_with_gdrive
+except ImportError:
+    upload_booklet_to_gdrive = None
+    update_course_in_supabase_with_gdrive = None
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 WORKSPACE_ROOT = SCRIPT_DIR.parents[1] if len(SCRIPT_DIR.parents) > 1 else SCRIPT_DIR
 
@@ -949,19 +955,45 @@ def process_single_course(
 
         print(f"   🎉 Livret PDF généré avec succès ({final_local_pdf.stat().st_size} octets) : {final_local_pdf.name}")
 
-        # 7. Upload & Synchronisation Supabase
+        # 7. Upload & Hébergement Google Drive (Prioritaire pour économiser Supabase)
         bundle_url = None
-        if not dry_run and supabase_url and supabase_key:
-            bundle_url = upload_bundle_to_supabase(
-                pdf_path=final_local_pdf,
-                module_id=mid,
-                course_id=cid,
-                supabase_url=supabase_url,
-                supabase_key=supabase_key,
-                is_hyper=is_hyper,
-                residanat_sessions=sessions,
-                qcm_count=len(qcms)
-            )
+        if not dry_run:
+            if upload_booklet_to_gdrive:
+                try:
+                    g_res = upload_booklet_to_gdrive(
+                        pdf_path=final_local_pdf,
+                        module_id=mid,
+                        course_id=cid
+                    )
+                    bundle_url = g_res.get("view_link")
+                    file_id = g_res.get("file_id")
+                    if supabase_url and supabase_key and update_course_in_supabase_with_gdrive:
+                        update_course_in_supabase_with_gdrive(
+                            course_id=cid,
+                            gdrive_link=bundle_url,
+                            file_id=file_id,
+                            supabase_url=supabase_url,
+                            supabase_key=supabase_key,
+                            is_hyper=is_hyper,
+                            residanat_sessions=sessions,
+                            qcm_count=len(qcms)
+                        )
+                except Exception as e:
+                    print(f"   ⚠️ Upload Google Drive notice : {e}")
+
+            # Fallback vers Supabase Storage si Google Drive non disponible
+            if not bundle_url and supabase_url and supabase_key:
+                print("   ☁️ Fallback vers Supabase Storage...")
+                bundle_url = upload_bundle_to_supabase(
+                    pdf_path=final_local_pdf,
+                    module_id=mid,
+                    course_id=cid,
+                    supabase_url=supabase_url,
+                    supabase_key=supabase_key,
+                    is_hyper=is_hyper,
+                    residanat_sessions=sessions,
+                    qcm_count=len(qcms)
+                )
 
         # 8. Diffusion Multicanale (In-App, FB 4 pages, Telegram)
         broadcast_res = None
