@@ -896,20 +896,20 @@
   {
     "id": "memento_sca_non_st",
     "title": "⚡ SCA sans sus-décalage du ST (SCA non ST+)",
-    "category": "Cardiologie",
+    "category": "Cardiologie d'Urgence",
     "icon_name": "favorite_border_rounded",
-    "color_hex": "#EF4444",
+    "color_hex": "#DC2626",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Monitorage continu, ECG 12 dérivations en < 10 min, pose de 2 VVP de bon calibre, oxygénothérapie uniquement si SpO2 < 90%.",
-      "Étape 2 : Bilan biologique d'urgence au déchoquage : Troponine ultra-sensible (à H0 et H1 ou H3 selon le kit), NFS, glycémique, fonction rénale (créat/clairance), bilan lipidique, TP/TCA.",
-      "Étape 3 : Antithrombotiques de 1ère intention : Aspirine 250-300 mg IV direct + Inhibiteur du P2Y12 (Ticagrélor 180 mg PO dose de charge ou Clopidogrel 300 mg si Ticagrélor indisponible ou indication chirurgicale imminente) + Anticoagulation (Enoxaparine 0,5 mg/kg IV direct puis 1 mg/kg SC toutes les 12h ou Héparine non fractionnée).",
-      "Étape 4 : Stratification du risque et réévaluation de la douleur : trinitrine en spray sublingual si TA systolique > 100 mmHg, antalgiques (morphine 2-3 mg IV par paliers si douleur réfractaire). Transfert urgent en unité de soins intensifs cardiologiques (USIC) si critères de très haut risque (choc, arythmie ventriculaire, récidive ischémique).",
-      "Étape 5 : Piège médico-légal et CI : Ne jamais administrer de thrombolyse (inefficace et délétère dans le SCA non ST+). Éliminer une dissection aortique ou une embolie pulmonaire devant des atypies avant l'anticoagulation pleine."
+      "Étape 1 : Monitorage continu, scope, pose de 2 VVP de bon calibre, oxygénothérapie seulement si SpO2 < 90%. ECG 12 dérivations immédiat (< 10 min) et répété si récidive douloureuse.",
+      "Étape 2 : Bilan biologique d'urgence au lit : Troponine ultra-sensible (à H0 et H1 ou H3 selon le kit), NFS, plaquettes, TP/TCA, fonction rénale (urée/créatinine), ionogramme sanguin, glycémie.",
+      "Étape 3 : Thérapie anti-ischémique et antithrombotique : Aspirine 250-300 mg PO (si non pris), Clopidogrel 300 mg PO (dose de charge) ou Ticagrelor 180 mg PO si coronarographie programmée, Anticoagulation par Enoxaparine 0,75 mg/kg SC (ou HNF si IRC sévère), et Dérivés nitrés sublinguaux si PA le permet.",
+      "Étape 4 : Stratégie de reperfusion et transfert : Évaluation du score GRACE. Transfert urgent en unité de soins intensifs cardiologiques (USIC) ou salle de cathétérisme pour coronarographie dans les 24h (ou < 2h si critères de très haut risque : instabilité hémodynamique, TV/FV, récidive douloureuse réfractaire).",
+      "Étape 5 : Piège médico-légal : Ne jamais éliminer un SCA sur une troponine unique négative à H0 ; éliminer une dissection aortique avant toute anticoagulation si asymétrie tensionnelle ou douleur dorsale transfixiante."
     ],
-    "scientific_references": "ESC Guidelines / SFMU / SFC / Recommandations Nationales Algériennes de Cardiologie",
+    "scientific_references": "Recommandations ESC 2023 / SFC / Consensus National Algérien de Cardiologie",
     "is_active": true,
-    "created_at": "2026-11-01T01:16:26.809458+00:00",
-    "updated_at": "2026-11-01T01:16:26.809472+00:00"
+    "created_at": "2026-11-03T21:04:50.138478+00:00",
+    "updated_at": "2026-11-03T21:04:50.138497+00:00"
   }
 ]
