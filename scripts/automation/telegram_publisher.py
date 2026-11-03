@@ -446,6 +446,93 @@ def send_telegram_broadcast(
     return results
 
 
+def send_telegram_quiz_poll(
+    question: str,
+    options: list,
+    correct_option_id: int = 0,
+    explanation: str = None,
+    bot_token: str = None,
+    channel_id: str = None,
+    community_group_id: str = None,
+    topic_id: int = None,
+    dry_run: bool = False,
+    is_anonymous: bool = False
+) -> dict:
+    """
+    Envoie un Quiz/Sondage interactif Telegram natif (sendPoll)
+    sur le canal officiel et/ou dans le Topic du supergroupe.
+    Permet aux étudiants de voter en direct, stimulant l'engagement et le reach.
+    """
+    creds = get_telegram_credentials()
+    token = (bot_token or creds.get("bot_token", "")).strip()
+    channel = (channel_id or creds.get("channel_id", "")).strip()
+    community = (community_group_id or creds.get("community_group_id", "")).strip()
+
+    if dry_run or not token or not channel:
+        print("\n" + "=" * 60)
+        print("🗳️ [TELEGRAM QUIZ POLL NOUVEAU - DRY RUN / SIMULATION]")
+        print(f"❓ Question : {question}")
+        for idx, opt in enumerate(options):
+            marker = "✅" if idx == correct_option_id else "⭕"
+            print(f"   {marker} [{chr(65 + idx)}] {opt}")
+        print(f"💡 Explication : {explanation}")
+        print("=" * 60)
+        return {"simulated": True, "success": True}
+
+    poll_payload = {
+        "question": question[:290],
+        "options": json.dumps([str(opt)[:99] for opt in options]),
+        "type": "quiz",
+        "correct_option_id": correct_option_id,
+        "is_anonymous": is_anonymous,
+    }
+    if explanation:
+        poll_payload["explanation"] = str(explanation)[:195]
+
+    results = {
+        "channel_success": False,
+        "channel_msg_id": None,
+        "community_success": False,
+        "community_msg_id": None,
+    }
+
+    # 1. Envoi au canal
+    try:
+        url = f"https://api.telegram.org/bot{token}/sendPoll"
+        data_ch = dict(poll_payload)
+        data_ch["chat_id"] = channel
+        resp = requests.post(url, data=data_ch, timeout=15)
+        res_json = resp.json()
+        if res_json.get("ok"):
+            results["channel_msg_id"] = res_json["result"]["message_id"]
+            results["channel_success"] = True
+            print(f"✅ Quiz Poll publié sur le canal Telegram ! ID: {results['channel_msg_id']}")
+        else:
+            print(f"⚠️ Erreur Telegram sendPoll canal : {res_json.get('description')}")
+    except Exception as e:
+        print(f"❌ Exception Telegram sendPoll canal : {e}")
+
+    # 2. Envoi au groupe communautaire / topic
+    if community:
+        try:
+            url = f"https://api.telegram.org/bot{token}/sendPoll"
+            data_gr = dict(poll_payload)
+            data_gr["chat_id"] = community
+            if topic_id and topic_id != 1:
+                data_gr["message_thread_id"] = topic_id
+            resp = requests.post(url, data=data_gr, timeout=15)
+            res_json = resp.json()
+            if res_json.get("ok"):
+                results["community_msg_id"] = res_json["result"]["message_id"]
+                results["community_success"] = True
+                print(f"✅ Quiz Poll publié dans la communauté (Topic #{topic_id}) !")
+        except Exception as e:
+            print(f"❌ Exception Telegram sendPoll communauté : {e}")
+
+    results["success"] = results["channel_success"] or results["community_success"]
+    return results
+
+
 def format_telegram_caption(title: str, badge: str, points: list, reference: str = "", app_version: str = "1.0.8") -> str:
     """
     Formate un message clair, élégant et optimisé pour Telegram en HTML,

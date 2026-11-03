@@ -44,7 +44,7 @@ except ImportError:
     build_modern_light_banner = None
 
 try:
-    from telegram_publisher import send_telegram_broadcast
+    from telegram_publisher import send_telegram_broadcast, send_telegram_quiz_poll
 except ImportError:
     send_telegram_broadcast = None
 
@@ -318,7 +318,7 @@ C'est l'heure du tour de salle du matin dans le service de {module_name}.
 📋 Vous êtes en stage hospitalier ? Ouvrez Medsina en mode « Lit du Malade » pour avoir en 30 secondes vos questions d'interrogatoire, l'examen ciblé et les bilans d'urgence de première intention.
 
 Bon courage à tous dans vos services ce matin ! 🩺🇩🇿
-👉 {OFFICIAL_WEB_URL}"""
+👉 Lien d'accès direct et concours blanc en 1er commentaire épinglé 👇"""
 
         caption_tg = f"""☀️ <b>[LIT DU MALADE • TOUR DE SALLE]</b>
 👨‍🏫 <b>{teacher['name']}</b>
@@ -365,7 +365,7 @@ Après la matinée de stage, place à l'enseignement théorique de l'après-midi
 
 ✨ Retrouvez la séance interactive complète délivrée par votre tuteur dans Medsina : cas d'accroche, cours structuré, questions flash d'amphi et fiche anti-sèche pour l'examen !
 
-👉 Consultez le cours : {OFFICIAL_WEB_URL}"""
+👉 Lien direct d'accès au cours complet en 1er commentaire épinglé 👇"""
 
         caption_tg = f"""🏛️ <b>[AMPHI MAGISTRAL • SÉANCE DU JOUR]</b>
 👨‍🏫 <b>{teacher['name']}</b>
@@ -410,7 +410,7 @@ Fin de journée pour la promotion ! C'est l'heure de tester si vous avez bien fi
 Révisez efficacement chaque soir avec les séries de QCMs classés par cours et annales de faculté sur Medsina.
 
 Bonne soirée et bon travail personnel ! 🩺
-👉 {OFFICIAL_WEB_URL}"""
+👉 Lien d'accès direct et concours blanc en 1er commentaire épinglé 👇"""
 
         caption_tg = f"""🌙 <b>[DÉFI FLASH EMD DU SOIR & COMPTE À REBOURS]</b>
 👨‍🏫 <b>{teacher['name']}</b>
@@ -453,7 +453,7 @@ Votre rotation de stage en {module_name} touche à sa fin : il est temps de test
 Ne partez pas à l'épreuve sans avoir validé votre EMD blanc sur l'application !
 
 Lancez votre examen maintenant :
-👉 {OFFICIAL_WEB_URL}"""
+👉 Lien d'accès direct et concours blanc en 1er commentaire épinglé 👇"""
 
         caption_tg = f"""🔥 <b>[ALERTE EMD BLANC CHRONOMÉTRÉ]</b>
 👨‍🏫 <b>{teacher['name']}</b>
@@ -482,6 +482,7 @@ L'épreuve d'examen blanc est prête ! Testez votre niveau avant le grand jour :
         "summary_pts": summary_pts,
         "caption_fb": caption_fb + get_promo_footer(is_telegram=False),
         "caption_tg": caption_tg + get_promo_footer(is_telegram=True),
+        "first_comment_fb": f"🔗 ACCÈS DIRECT & 30 JOURS GRATUITS : {OFFICIAL_WEB_URL}\n\n🎁 OFFRE NOVEMBRE 2026 : Débloquez tous les 47 modules du résidanat, 15 000+ QCMs corrigés et nos simulateurs d'examen sans payer 1 DA jusqu'au 30/11 !\n(100 places réservées aux nouveaux inscrits)", 
         "days_to_emd": days_to_emd,
         "current_week": current_week,
         "weeks_total": weeks_total
@@ -521,7 +522,7 @@ def fetch_facebook_pages() -> Dict[str, Dict[str, str]]:
     }
 
 
-def publish_photo_to_facebook(page_id: str, token: str, image_path: str, caption: str) -> Dict[str, Any]:
+def publish_photo_to_facebook(page_id: str, token: str, image_path: str, caption: str, first_comment: Optional[str] = None) -> Dict[str, Any]:
     url = f"https://graph.facebook.com/v21.0/{page_id}/photos"
     with open(image_path, "rb") as f:
         resp = requests.post(
@@ -530,7 +531,19 @@ def publish_photo_to_facebook(page_id: str, token: str, image_path: str, caption
             files={"source": f},
             timeout=45,
         )
-    return resp.json()
+    res_data = resp.json()
+    
+    # Auto-post le 1er commentaire pour respecter l'algorithme Meta sans lien dans le post
+    if first_comment and res_data.get("id"):
+        target_post_id = res_data.get("post_id") or res_data.get("id")
+        try:
+            c_url = f"https://graph.facebook.com/v21.0/{target_post_id}/comments"
+            requests.post(c_url, data={"message": first_comment, "access_token": token}, timeout=15)
+            print(f"   💬 1er commentaire épinglé auto-publié sur Facebook !")
+        except Exception as e_c:
+            print(f"   ⚠️ Notice 1er commentaire : {e_c}")
+            
+    return res_data
 
 
 def run_student_life_cycle(year: int, phase: str, dry_run: bool = False) -> Dict[str, Any]:
@@ -572,6 +585,8 @@ def run_student_life_cycle(year: int, phase: str, dry_run: bool = False) -> Dict
         print("\n🧪 [MODE SIMULATION / DRY-RUN ACTIF]")
         print("--- APERÇU FACEBOOK ---")
         print(content["caption_fb"])
+        print("\n--- 💬 1ER COMMENTAIRE FACEBOOK (À ÉPINGLER) ---")
+        print(content.get("first_comment_fb", ""))
         print("\n--- APERÇU TELEGRAM ---")
         print(content["caption_tg"])
         return {"success": True, "dry_run": True, "content": content}
@@ -593,6 +608,29 @@ def run_student_life_cycle(year: int, phase: str, dry_run: bool = False) -> Dict
             )
             tg_results = tg_res
             print(f"✅ Telegram diffusé ! ID: {tg_res.get('message_id')}")
+
+            # Sondage interactif Telegram Quiz pour la phase du soir (20h00)
+            if phase == "evening" and send_telegram_quiz_poll:
+                print("🗳️ Publication du Quiz Sondage Telegram interactif de 20h00...")
+                q_text = f"🎯 [Défi 20H • {content['module']}] {content['topic']}"
+                opts = [
+                    "A) " + content['summary_pts'][2][:45],
+                    "B) Abstention thérapeutique et repos strict",
+                    "C) Fausse proposition / Piège d'examen",
+                    "D) Surveillance paraclinique seule"
+                ]
+                try:
+                    send_telegram_quiz_poll(
+                        question=q_text,
+                        options=opts,
+                        correct_option_id=0,
+                        explanation="💡 Explication détaillée & 47 modules sur medsina.medevsync.com (30j VIP offerts) !",
+                        topic_id=target_topic,
+                        dry_run=False,
+                        is_anonymous=False
+                    )
+                except Exception as ex_p:
+                    print(f"⚠️ Notice Quiz Poll : {ex_p}")
         except Exception as e:
             print(f"❌ Erreur Telegram : {e}")
 
@@ -606,7 +644,7 @@ def run_student_life_cycle(year: int, phase: str, dry_run: bool = False) -> Dict
                 continue
             try:
                 if image_path and os.path.exists(image_path):
-                    res = publish_photo_to_facebook(p_info["page_id"], p_info["token"], image_path, content["caption_fb"])
+                    res = publish_photo_to_facebook(p_info["page_id"], p_info["token"], image_path, content["caption_fb"], first_comment=content.get("first_comment_fb"))
                 else:
                     url = f"https://graph.facebook.com/v21.0/{p_info['page_id']}/feed"
                     res = requests.post(url, data={"message": content["caption_fb"], "access_token": p_info["token"]}, timeout=20).json()
