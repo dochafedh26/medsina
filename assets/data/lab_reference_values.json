@@ -939,5 +939,20 @@
     ],
     "created_at": "2026-11-03T09:48:27.338199+00:00",
     "updated_at": "2026-11-03T09:48:27.338216+00:00"
+  },
+  {
+    "id": "lab_frottis_sanguin_schizocytes",
+    "name": "Frottis Sanguin Périphérique : Schizocytes (FS - Schizocytes)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "< 0.5 % (ou < 2 ‰ des hématies, voire 0 selon les laboratoires)",
+    "unit": "% (pourcentage des globules rouges)",
+    "high_interpretation": "Présence de schizocytes (hématies fragmentées par cisaillement mécanique). Seuil critique d'urgence : >= 2 % (ou > 1 % selon les classifications) couplé à une anémie hémolytique mécanique et une thrombopénie. Signe cardinal des Microangiopathies Thrombotiques (MAT : PTTh et SHU), CIVD, valves cardiaques dysfonctionnelles, HTA maligne, éclampsie. Conduite à tenir immédiate : Urgence médicale absolue, évaluation de l'hémostase, LDH, haptoglobine, test de Coombs direct (doit être négatif pour orienter vers une MAT), et discussion urgente pour échanges plasmatiques si suspicion de PTT (score de PLASMIC).",
+    "low_interpretation": "Valeur normale ou physiologiquement insignifiante. Absence de microangiopathie thrombotique ou d'hémolyse mécanique significative. Aucune action particulière requise.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'évaluation des schizocytes nécessite une lecture soigneuse du frottis par un opérateur entraîné. Une anémie ischémique, des artéfacts de prélèvement ou une mauvaise fixation peuvent générer des faux positifs (ou fausses anomalies morphologiques). Toujours corréler avec l'effondrement de l'haptoglobine, l'élévation des LDH et de la bilirubine libre.",
+      "Règle d'or du concours de résidanat : Devant une association anémie hémolytique négative au test de Coombs + thrombopénie + schizocytes >= 1-2% + insuffisance rénale et/ou signes neurologiques, le diagnostic d'Urgence de Purpura Thrombotique Thrombopénique (PTT) est suspecté, imposant de doser en urgence l'activité de l'enzyme ADAMTS13 tout en initiant sans délai les échanges plasmatiques."
+    ],
+    "created_at": "2026-11-03T17:58:07.630278+00:00",
+    "updated_at": "2026-11-03T17:58:07.630296+00:00"
   }
 ]
