@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Publication Officielle : Recrutement Délégués & Émissaires Faculté de Médecine de Blida (V2 Mise à jour).
+Publication Officielle : Recrutement Délégués & Émissaires Faculté de Médecine de Blida.
 Diffuse en direct avec les coordonnées officielles du Dr Chikh Touami :
 - Telegram : @docchikhtouami (https://t.me/docchikhtouami)
 - Téléphone & WhatsApp : 0770 25 84 53 (https://wa.me/213770258453)
 - Web : https://medsina.medevsync.com
 
-1. Pages Facebook officielles (Résidanat Blida 2027, Medsina, MedevSync) avec image HD carrée corrigée
+1. Pages Facebook officielles (Résidanat Blida 2027, Medsina, MedevSync, CAT aux Urgences)
 2. Telegram : Canal Officiel (@medsina_officiel) et Topic 8 (Cursus Externat Blida 2027) du Supergroupe (-1004438944860)
 """
 
@@ -55,7 +55,7 @@ def get_credentials():
 
 def publish():
     print("=" * 70)
-    print("📢 ACTUALISATION DE LA DIFFUSION : RECRUTEMENT BLIDA (V2)")
+    print("📢 DIFFUSION MULTI-PAGES FACEBOOK & TELEGRAM : RECRUTEMENT BLIDA")
     print("=" * 70)
     
     settings = get_credentials()
@@ -104,7 +104,7 @@ Contactez directement le Dr Chikh Touami :
 👥 Confrères de Blida : taguez en commentaire les personnes motivées de votre promo qui feraient d'excellents émissaires ! 👇
 
 👉 Tous les détails et le lien de contact direct sont également dans le premier commentaire épinglé.
-#MedecineBlida #CHUBlida #ResidanatBlida #FaculteDeMedecineBlida #EmissaireMedsina #ExternatBlida #Medsina"""
+#MedecineBlida #CHUBlida #ResidanatBlida #FaculteDeMedecineBlida #EmissaireMedsina #ExternatBlida #Medsina #CATauxUrgences"""
 
     first_comment_text = """🔗 CONTACTEZ DIRECTEMENT LE DR CHIKH TOUAMI :
 📱 WhatsApp & Téléphone : 0770 25 84 53 (https://wa.me/213770258453)
@@ -114,7 +114,7 @@ Contactez directement le Dr Chikh Touami :
 ⭐ Précisez simplement votre Année d'étude (1ère à 6ème / Interne) et votre statut (Délégué ou Candidat Émissaire) en message privé pour activer votre compte VIP 1 an !"""
 
     # -------------------------------------------------------------
-    # 1. PUBLICATION SUR LES PAGES FACEBOOK
+    # 1. PUBLICATION SUR LES 4 PAGES FACEBOOK
     # -------------------------------------------------------------
     fb_pages = [
         {
@@ -134,6 +134,12 @@ Contactez directement le Dr Chikh Touami :
             "name": "MedevSync (Page Partenaire)",
             "page_id": settings.get("facebook_medevsync_page_id") or "1329939320211198",
             "token": settings.get("facebook_medevsync_page_access_token")
+        },
+        {
+            "key": "cat_aux_urgences",
+            "name": "CAT aux Urgences",
+            "page_id": settings.get("facebook_cat_page_id") or "102416914491075",
+            "token": settings.get("facebook_cat_page_access_token")
         }
     ]
 
@@ -172,7 +178,7 @@ Contactez directement le Dr Chikh Touami :
     # -------------------------------------------------------------
     # 2. PUBLICATION TELEGRAM (CANAL + TOPIC FORUM)
     # -------------------------------------------------------------
-    print("\n✈️ --- ÉTAPE 2 : ACTUALISATION SUR TELEGRAM ---")
+    print("\n✈️ --- ÉTAPE 2 : DIFFUSION SUR TELEGRAM ---")
     tg_token = settings.get("telegram_bot_token")
     tg_channel = settings.get("telegram_channel_id") or "@medsina_officiel"
     tg_group = settings.get("telegram_community_group_id") or "-1004438944860"
@@ -211,14 +217,7 @@ Contactez directement le <b>Dr Chikh Touami</b> ci-dessous 👇
 
     tg_results = []
     if tg_token:
-        # A. Nettoyage éventuel du précédent message Telegram
-        try:
-            requests.post(f"https://api.telegram.org/bot{tg_token}/deleteMessage", data={"chat_id": tg_channel, "message_id": 165}, timeout=10)
-            requests.post(f"https://api.telegram.org/bot{tg_token}/deleteMessage", data={"chat_id": tg_group, "message_id": 168}, timeout=10)
-        except Exception:
-            pass
-
-        # B. Sur le Canal Officiel
+        # Sur le Canal Officiel
         print(f"\n📢 Envoi sur le Canal Officiel ({tg_channel})...")
         try:
             url = f"https://api.telegram.org/bot{tg_token}/sendPhoto"
@@ -236,13 +235,10 @@ Contactez directement le <b>Dr Chikh Touami</b> ci-dessous 👇
                     msg_id = res_ch["result"]["message_id"]
                     print(f"   🎉 SUCCÈS Canal Telegram ! Message ID: {msg_id}")
                     tg_results.append({"target": "channel", "id": msg_id, "success": True})
-                else:
-                    print(f"   ❌ Erreur Canal Telegram: {res_ch}")
-                    tg_results.append({"target": "channel", "error": res_ch, "success": False})
         except Exception as e:
             print(f"   ❌ Exception Canal Telegram: {e}")
 
-        # C. Dans le Supergroupe Topic 8 (CURSUS EXTERNAT BLIDA 2027)
+        # Dans le Supergroupe Topic 8 (CURSUS EXTERNAT BLIDA 2027)
         print(f"\n👥 Envoi dans le Supergroupe (Chat ID: {tg_group}, Topic 8 : CURSUS EXTERNAT BLIDA)...")
         try:
             url = f"https://api.telegram.org/bot{tg_token}/sendPhoto"
@@ -261,14 +257,11 @@ Contactez directement le <b>Dr Chikh Touami</b> ci-dessous 👇
                     msg_id = res_grp["result"]["message_id"]
                     print(f"   🎉 SUCCÈS Topic 8 Supergroupe ! Message ID: {msg_id}")
                     tg_results.append({"target": "topic_8", "id": msg_id, "success": True})
-                else:
-                    print(f"   ❌ Erreur Topic Supergroupe: {res_grp}")
-                    tg_results.append({"target": "topic_8", "error": res_grp, "success": False})
         except Exception as e:
             print(f"   ❌ Exception Topic Supergroupe: {e}")
 
     print("\n" + "=" * 70)
-    print("📊 RÉSUMÉ DE LA DIFFUSION ACTUALISÉE :")
+    print("📊 RÉSUMÉ DE LA DIFFUSION :")
     print(f"• Facebook : {sum(1 for r in fb_results if r.get('success'))}/{len(fb_pages)} pages publiées")
     print(f"• Telegram : {sum(1 for r in tg_results if r.get('success'))}/{len(tg_results)} cibles publiées")
     print("=" * 70)
