@@ -806,6 +806,15 @@ def merge_reportlab_and_course_pdf(
                 insert_page_idx = page_idx
                 break
 
+        # Purge automatique des pieds de page tiers (MBset / liens)
+        for page in doc_course:
+            for r in page.search_for("mbset"):
+                if r.y1 > page.rect.height * 0.65:
+                    page.draw_rect(pymupdf.Rect(r.x0 - 3, r.y0 - 3, r.x1 + 3, r.y1 + 3), color=(1, 1, 1), fill=(1, 1, 1), overlay=True)
+            for l in page.get_links():
+                if "mbset" in l.get("uri", "").lower():
+                    page.delete_link(l)
+
         # Insérer les pages du polycopié à insert_page_idx
         doc_main.insert_pdf(doc_course, start_at=insert_page_idx)
         doc_main.save(str(final_output_path))
