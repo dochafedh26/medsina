@@ -923,5 +923,21 @@
     ],
     "created_at": "2026-11-02T18:38:50.864769+00:00",
     "updated_at": "2026-11-02T18:38:50.864781+00:00"
+  },
+  {
+    "id": "lab_salicylemie",
+    "name": "Salicylémie (Acide Acétylsalicylique / Aspirine)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "Thérapeutique: 1.5 - 3 mmol/L (100 - 200 mg/L) | Anti-inflammatoire: 1.5 - 2.2 mmol/L | Toxique: > 2.0 mmol/L (> 300 mg/L)",
+    "unit": "mg/L (ou mmol/L)",
+    "high_interpretation": "Intoxication salicylée (aigüe ou chronique). Signes d'appel : acouphènes, hyperventilation (alcalose respiratoire primitive), troubles digestifs, hyperthermie. Urgence vitale absolue si > 500 mg/L (3.6 mmol/L) chez l'adulte ou > 300 mg/L chez l'enfant. Conduite à tenir immédiate : Réanimation (alcalinisation des urines par bicarbonate de sodium iso-osmotique pour viser un pH urinaire entre 7.5 et 8.0, remplissage, épuration extrarénale en urgence si neurotoxicités, acidose sévère, OAP ou insuffisance rénale).",
+    "low_interpretation": "Absence d'imprégnation salicylée significative ou posologie thérapeutique infrarésiduelle. Pas de retentissement clinique ni de seuil d'urgence associé.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Demander un dosage de contrôle à H4 ou H6 post-ingestion car l'absorption digestive peut être retardée (formation de bézoards gastriques, galénique gastro-résistante). Ne jamais éliminer une intoxication sur une seule valeur précoce.",
+      "Piège biologique et gazométrique : L'intoxication salicylée induit typiquement un trouble acido-basique mixte associant une alcalose respiratoire (stimulation directe du centre respiratoire bulbaire) et une acidose métabolique à trou anionique sérique augmenté (accumulation d'acide salicylique, lactates et cétones).",
+      "Calcul indispensable au lit du malade : Utiliser le nomogramme de Done (corrélant la salicylémie en fonction du temps post-ingestion) pour estimer la sévérité, tout en sachant que la clinique prime toujours sur la biologie."
+    ],
+    "created_at": "2026-11-03T09:48:27.338199+00:00",
+    "updated_at": "2026-11-03T09:48:27.338216+00:00"
   }
 ]
