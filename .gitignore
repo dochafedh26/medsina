@@ -65,3 +65,6 @@ assets/facebook/migration_cache/
 # Local publication history cache
 .published_history.json
 *.published_history.json
+
+livrets_residanat_2027/
+
