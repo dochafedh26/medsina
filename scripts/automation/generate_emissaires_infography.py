@@ -6,9 +6,10 @@ MEDSINA - GÉNÉRATEUR INFOGRAPHIE "RECRUTEMENT DÉLÉGUÉS & ÉMISSAIRES BLIDA"
 =============================================================================
 Supprime tous les caractères emojis incompatibles (qui causaient les carrés vides "tofu")
 et remplace les puces par de superbes badges vectoriels numérotés et icônes géométriques.
-Génère :
-1. medsina_emissaires_blida_square.png (1200x1200 - Post Facebook / Instagram)
-2. medsina_emissaires_blida_flyer.png (1200x1600 - Affiche Verticale HD)
+Intègre les coordonnées réelles du Dr Chikh Touami :
+- Telegram : @docchikhtouami
+- Téléphone & WhatsApp : 0770 25 84 53
+- Web : medsina.medevsync.com
 =============================================================================
 """
 
@@ -175,47 +176,47 @@ def generate_square_emissaires_post(output_path: str):
 
     cy = 425
     for num, badge_col, title, desc in cards:
-        # Boîte de la carte
         draw_rounded_rect(draw, (50, cy, W - 50, cy + 105), radius=16, fill=COLOR_WHITE, outline=COLOR_CARD_BORDER, width=2)
-        # Bande latérale colorée
         draw_rounded_rect(draw, (50, cy, 64, cy + 105), radius=8, fill=badge_col)
-        # Macaron circulaire numéroté
         draw_number_circle(draw, 105, cy + 52, 22, badge_col, COLOR_WHITE, num)
-        # Textes
         draw.text((145, cy + 16), title, fill=COLOR_PRIMARY_NAVY, font=get_font(21, bold=True))
         draw.text((145, cy + 54), desc, fill=COLOR_TEXT_MUTED, font=get_font(16, bold=False))
         cy += 122
 
     # 7. Conteneur Appel à l'action bas (Bleu Nuit avec contour Or)
-    box_y = 810
-    draw_rounded_rect(draw, (50, box_y, W - 50, box_y + 260), radius=22, fill=COLOR_PRIMARY_NAVY, outline=COLOR_GOLD, width=3)
+    box_y = 800
+    box_h = 280
+    draw_rounded_rect(draw, (50, box_y, W - 50, box_y + box_h), radius=22, fill=COLOR_PRIMARY_NAVY, outline=COLOR_GOLD, width=3)
 
     # QR Code
-    qr_img = make_qr_code("https://medsina.medevsync.com", 170)
+    qr_img = make_qr_code("https://medsina.medevsync.com", 175)
     img.paste(qr_img, (W - 250, box_y + 45), qr_img)
-    draw.text((W - 245, box_y + 225), "Scannez pour tester", fill=COLOR_GOLD, font=get_font(13, bold=True))
+    draw.text((W - 245, box_y + 235), "Scannez pour tester", fill=COLOR_GOLD, font=get_font(13, bold=True))
 
     # Badge Places limitées
-    draw_rounded_rect(draw, (85, box_y + 25, 410, box_y + 65), radius=10, fill=COLOR_GOLD)
-    draw_bullet_dot(draw, 105, box_y + 45, 5, COLOR_PRIMARY_NAVY)
-    draw.text((120, box_y + 33), "PLACES LIMITÉES PAR PROMOTION", fill=COLOR_PRIMARY_NAVY, font=get_font(15, bold=True))
+    draw_rounded_rect(draw, (85, box_y + 20, 410, box_y + 60), radius=10, fill=COLOR_GOLD)
+    draw_bullet_dot(draw, 105, box_y + 40, 5, COLOR_PRIMARY_NAVY)
+    draw.text((120, box_y + 28), "PLACES LIMITÉES PAR PROMOTION", fill=COLOR_PRIMARY_NAVY, font=get_font(15, bold=True))
 
-    draw.text((85, box_y + 80), "Postulez directement en message privé !", fill=COLOR_WHITE, font=get_font(28, bold=True))
-    draw.text((85, box_y + 125), "Envoyez simplement votre Année d'étude et votre statut à :", fill=(226, 232, 240), font=get_font(18, bold=False))
+    draw.text((85, box_y + 72), "Postulez directement en message privé !", fill=COLOR_WHITE, font=get_font(28, bold=True))
+    draw.text((85, box_y + 114), "Envoyez simplement votre Année d'étude et votre statut à :", fill=(226, 232, 240), font=get_font(17, bold=False))
 
-    # Puces de contact avec ronds cyan et or
-    draw_bullet_dot(draw, 98, box_y + 172, 6, COLOR_CYAN_ACCENT)
-    draw.text((115, box_y + 160), "Telegram direct : @chikhtouamidoc", fill=COLOR_CYAN_ACCENT, font=get_font(22, bold=True))
+    # 3 Lignes de contact direct
+    draw_bullet_dot(draw, 98, box_y + 160, 6, COLOR_CYAN_ACCENT)
+    draw.text((115, box_y + 148), "Telegram direct : @docchikhtouami", fill=COLOR_CYAN_ACCENT, font=get_font(21, bold=True))
 
-    draw_bullet_dot(draw, 98, box_y + 207, 6, COLOR_GOLD)
-    draw.text((115, box_y + 195), "Plateforme Web : medsina.medevsync.com", fill=COLOR_GOLD, font=get_font(20, bold=True))
+    draw_bullet_dot(draw, 98, box_y + 198, 6, COLOR_EMERALD)
+    draw.text((115, box_y + 186), "WhatsApp & Tél : 0770 25 84 53", fill=COLOR_EMERALD, font=get_font(21, bold=True))
+
+    draw_bullet_dot(draw, 98, box_y + 236, 6, COLOR_GOLD)
+    draw.text((115, box_y + 224), "Plateforme Web : medsina.medevsync.com", fill=COLOR_GOLD, font=get_font(20, bold=True))
 
     # 8. Pied de page rassurance sans aucun emoji
     footer_text = "Partenariat d'entraide médicale 100% gratuit  •  CHU Blida & Faculté Frantz Fanon  •  Aucun frais"
     f_font = get_font(16, bold=True)
     f_bbox = f_font.getbbox(footer_text)
     f_w = f_bbox[2] - f_bbox[0]
-    draw.text(((W - f_w) // 2, 1115), footer_text, fill=COLOR_TEXT_MUTED, font=f_font)
+    draw.text(((W - f_w) // 2, 1120), footer_text, fill=COLOR_TEXT_MUTED, font=f_font)
 
     img.save(output_path, "PNG", quality=95)
     print(f"✅ Infographie carrée Émissaires Blida corrigée : {output_path}")
@@ -294,32 +295,36 @@ def generate_flyer_emissaires_post(output_path: str):
         my += 42
 
     # 8. Boîte Appel à l'action bas
-    c_box_y = 1190
-    draw_rounded_rect(draw, (60, c_box_y, W - 60, c_box_y + 280), radius=22, fill=COLOR_PRIMARY_NAVY, outline=COLOR_GOLD, width=3)
+    c_box_y = 1180
+    c_box_h = 300
+    draw_rounded_rect(draw, (60, c_box_y, W - 60, c_box_y + c_box_h), radius=22, fill=COLOR_PRIMARY_NAVY, outline=COLOR_GOLD, width=3)
 
-    qr_img = make_qr_code("https://medsina.medevsync.com", 180)
-    img.paste(qr_img, (W - 270, c_box_y + 50), qr_img)
-    draw.text((W - 265, c_box_y + 240), "Scannez pour tester", fill=COLOR_GOLD, font=get_font(13, bold=True))
+    qr_img = make_qr_code("https://medsina.medevsync.com", 185)
+    img.paste(qr_img, (W - 270, c_box_y + 55), qr_img)
+    draw.text((W - 265, c_box_y + 255), "Scannez pour tester", fill=COLOR_GOLD, font=get_font(13, bold=True))
 
-    draw_rounded_rect(draw, (95, c_box_y + 30, 480, c_box_y + 70), radius=10, fill=COLOR_GOLD)
-    draw_bullet_dot(draw, 115, c_box_y + 50, 5, COLOR_PRIMARY_NAVY)
-    draw.text((130, c_box_y + 38), "CONTACTEZ LE DR CHIKH TOUAMI", fill=COLOR_PRIMARY_NAVY, font=get_font(17, bold=True))
+    draw_rounded_rect(draw, (95, c_box_y + 25, 480, c_box_y + 65), radius=10, fill=COLOR_GOLD)
+    draw_bullet_dot(draw, 115, c_box_y + 45, 5, COLOR_PRIMARY_NAVY)
+    draw.text((130, c_box_y + 33), "CONTACTEZ LE DR CHIKH TOUAMI", fill=COLOR_PRIMARY_NAVY, font=get_font(17, bold=True))
 
-    draw.text((95, c_box_y + 90), "Rejoignez l'équipe des Émissaires dès aujourd'hui !", fill=COLOR_WHITE, font=get_font(26, bold=True))
-    draw.text((95, c_box_y + 135), "Envoyez simplement votre Année d'étude et votre statut (Délégué ou Candidat) :", fill=(226, 232, 240), font=get_font(18, bold=False))
+    draw.text((95, c_box_y + 80), "Rejoignez l'équipe des Émissaires dès aujourd'hui !", fill=COLOR_WHITE, font=get_font(26, bold=True))
+    draw.text((95, c_box_y + 122), "Envoyez simplement votre Année d'étude et votre statut (Délégué ou Candidat) :", fill=(226, 232, 240), font=get_font(18, bold=False))
 
-    draw_bullet_dot(draw, 110, c_box_y + 185, 7, COLOR_CYAN_ACCENT)
-    draw.text((128, c_box_y + 172), "Telegram direct : @chikhtouamidoc", fill=COLOR_CYAN_ACCENT, font=get_font(22, bold=True))
+    draw_bullet_dot(draw, 110, c_box_y + 170, 7, COLOR_CYAN_ACCENT)
+    draw.text((128, c_box_y + 158), "Telegram direct : @docchikhtouami", fill=COLOR_CYAN_ACCENT, font=get_font(22, bold=True))
 
-    draw_bullet_dot(draw, 110, c_box_y + 225, 7, COLOR_GOLD)
-    draw.text((128, c_box_y + 212), "Plateforme Web : medsina.medevsync.com", fill=COLOR_GOLD, font=get_font(20, bold=True))
+    draw_bullet_dot(draw, 110, c_box_y + 210, 7, COLOR_EMERALD)
+    draw.text((128, c_box_y + 198), "WhatsApp & Tél : 0770 25 84 53", fill=COLOR_EMERALD, font=get_font(22, bold=True))
+
+    draw_bullet_dot(draw, 110, c_box_y + 250, 7, COLOR_GOLD)
+    draw.text((128, c_box_y + 238), "Plateforme Web : medsina.medevsync.com", fill=COLOR_GOLD, font=get_font(20, bold=True))
 
     # 9. Pied de page
     footer_text = "Partenariat d'entraide médicale 100% gratuit  •  CHU Blida & Faculté Frantz Fanon  •  Aucun frais"
     f_font = get_font(16, bold=True)
     f_bbox = f_font.getbbox(footer_text)
     f_w = f_bbox[2] - f_bbox[0]
-    draw.text(((W - f_w) // 2, 1515), footer_text, fill=COLOR_TEXT_MUTED, font=f_font)
+    draw.text(((W - f_w) // 2, 1520), footer_text, fill=COLOR_TEXT_MUTED, font=f_font)
 
     img.save(output_path, "PNG", quality=95)
     print(f"✅ Infographie flyer Émissaires Blida corrigée : {output_path}")
