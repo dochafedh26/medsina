@@ -954,5 +954,20 @@
     ],
     "created_at": "2026-11-03T17:58:07.630278+00:00",
     "updated_at": "2026-11-03T17:58:07.630296+00:00"
+  },
+  {
+    "id": "lab_reticulocytes",
+    "name": "Numération des Réticulocytes",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "20 000 - 120 000 /mm³ (ou 0.8% - 2.0%)",
+    "unit": "/mm³ (ou G/L)",
+    "high_interpretation": "Réticulocytose (> 120 000 /mm³) : Signe une anémie RÉGÉNÉRATIVE. Évoque en premier lieu une anémie hémolytique (corpusculaire ou extracorpusculaire, test de Coombs, haptoglobine effondrée, LDH augmentées) ou une hémorragie aiguë extériorisée/occulte. Également observée en post-thérapeutique immédiate (fer, vitamine B12, folates, EPO). Pas d'urgence vitale immédiate sauf si le taux d'hémoglobine est bas (syndrome anémique aigu).",
+    "low_interpretation": "Réticulopénie (< 20 000 /mm³) : Signe une anémie ARÉGÉNÉRATIVE (centrale). Évoque une insuffisance médullaire globale (aplasie médullaire, envahissement leucémique ou métastatique, myélofibrose) ou sectorielle (érythroblastopénie aiguë ou chronique, carence martiale profonde, carence en B12/folates, anémie inflammatoire). Urgence si pancytopénie associée (risque infectieux et hémorragique majeur).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Ne jamais se fier au pourcentage brut (%) en cas d'anémie sévère ! Il faut toujours calculer le Taux de Réticulocytes Corrigé (TRC = % réticulocytes x [Hb patient / Hb normale] ou [Hte patient / Hte normale]) ou l'Indice de Production Réticulocytaire (IPR = TRC / facteur de maturation qui est de 1.5 si Hte entre 20-30% et 2 si Hte < 20%).",
+      "Une anémie avec des réticulocytes normaux (entre 20k et 120k) dans un contexte d'anémie sévère est en réalité une anémie arégénérative relative (la moelle ne répond pas de manière adaptée à l'anémie)."
+    ],
+    "created_at": "2026-11-03T23:32:52.243939+00:00",
+    "updated_at": "2026-11-03T23:32:52.243953+00:00"
   }
 ]
