@@ -1700,5 +1700,28 @@
     "treatment_summary": "Urgence diagnostique nécessitant une imagerie adaptée (IRM/TDM) et une orientation étiologique immédiate (vasculaire, inflammatoire, tumorale ou infectieuse).",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-02T18:47:27.631322+00:00"
+  },
+  {
+    "course_id": "Blida_CARDIOLOGIE_SYNDROME_CORONARIEN_AIGU_ST",
+    "course_name": "Syndrome Coronarien Aigue ST+",
+    "module_id": "Blida_CARDIOLOGIE",
+    "module_name": "Cardiologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLe **Syndrome Coronarien Aigu avec sus-décalage du segment ST (SCA ST+)** correspond à une **occlusion coronaire aiguë et complète**, le plus souvent par thrombose sur plaque d'athérome rompue ou érodée. L'ischémie myocardique transmurale qui en résulte conduit rapidement à la **nécrose myocardique** (infarctus du myocarde) si la reperfusion n'est pas obtenue en urgence absolue.\n\n## 2. Démarche Diagnostique\n*   **Clinique :** \n    *   **Douleur thoracique** typique : rétro-sternale, constrictive, intense en \"tau",
+    "key_takeaways": [
+      "L'ECG 12 dérivations doit être réalisé et interprété en moins de 10 minutes après le premier contact médical.",
+      "Le délai maximal recommandé entre le premier contact médical et l'angioplastie primaire (porte-ballon) est de ≤ 90 minutes (≤ 120 minutes si transfert).",
+      "Le seuil de sus-décalage du ST pour le diagnostic positif est mesuré au point J : ≥ 1 mm dans toutes les dérivations (sauf V2-V3 où il est de ≥ 2 mm chez l'homme de ≥ 40 ans, ≥ 2.5 mm chez l'homme de < 40 ans, et ≥ 1.5 mm chez la femme).",
+      "La thrombolyse est indiquée si le délai d'angioplastie primaire dépasse 120 minutes et si les symptômes datent de < 12 heures, en l'absence de contre-indications.",
+      "La trinitrine est formellement contre-indiquée en cas d'infarctus du ventricule droit (IDV) associé (risque de collapsus hémodynamique sévère)."
+    ],
+    "exam_traps": [
+      "Piège Annales : Penser qu'un IDM du ventricule droit donne des signes gauches. Il donne une hémodynamique effondrée avec des champs pulmonaires libres et une élévation de la pression veineuse jugulaire (triade de Beck modifiée).",
+      "Piège Traitement : Administrer de la trinitrine sans vérifier la tension artérielle ou en cas de prise récente d'inhibiteurs de la phosphodiestérase (Viagra) dans les dernières 24 à 48 heures.",
+      "Piège Diagnostic : Oublier de faire un ECG des dérivations droites (V3R-V4R) et postérieures (V7-V9) devant un tableau d'ischémie inféro-basale."
+    ],
+    "diagnostic_criteria": "Douleur thoracique typique d'allure coronarienne associée à un sus-décalage persistant du segment ST ≥ 1 mm sur au moins deux dérivations contiguës (ou un bloc de branche gauche présumé récent).",
+    "treatment_summary": "Urgence absolue : Double anti-agrégation plaquettaire (Aspirine + Inhibiteur P2Y12), héparinothérapie, et reperfusion en urgence par angioplastie primaire préférentielle ou thrombolyse si délai PCI > 120 min.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-03T01:45:33.084121+00:00"
   }
 ]
