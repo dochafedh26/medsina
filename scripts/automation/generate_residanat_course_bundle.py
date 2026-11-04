@@ -806,11 +806,22 @@ def merge_reportlab_and_course_pdf(
                 insert_page_idx = page_idx
                 break
 
-        # Purge automatique des pieds de page tiers (MBset / liens)
+        # Purge automatique des pieds de page tiers (MBset / liens / logos)
+        white_pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 30, 25), 0)
+        white_pix.clear_with(255)
         for page in doc_course:
+            for img in page.get_images():
+                if img[2] == 30 and img[3] == 25:
+                    try:
+                        page.replace_image(img[0], pixmap=white_pix)
+                    except Exception:
+                        pass
             for r in page.search_for("mbset"):
                 if r.y1 > page.rect.height * 0.65:
                     page.draw_rect(pymupdf.Rect(r.x0 - 3, r.y0 - 3, r.x1 + 3, r.y1 + 3), color=(1, 1, 1), fill=(1, 1, 1), overlay=True)
+            # Patch blanc au bas de page centré
+            pw, ph = page.rect.width, page.rect.height
+            page.draw_rect(pymupdf.Rect(pw/2 - 60, ph - 30, pw/2 + 60, ph - 5), color=(1, 1, 1), fill=(1, 1, 1), overlay=True)
             for l in page.get_links():
                 if "mbset" in l.get("uri", "").lower():
                     page.delete_link(l)
