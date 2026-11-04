@@ -756,7 +756,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                 m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
                 m.courses.any(
                   (c) =>
-                      c.name.toLowerCase().contains(_searchQuery.toLowerCase()),
+                      c.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                      (c.teacher != null &&
+                          c.teacher!
+                              .toLowerCase()
+                              .contains(_searchQuery.toLowerCase())),
                 );
             return matchesCat && matchesSearch;
           }).toList();
@@ -1104,7 +1108,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                 ],
                 TextField(
                   decoration: InputDecoration(
-                    hintText: 'Rechercher parmi les 47 modules et 1 205 cours (ex: HTA, Asthme, ECG)...',
+                    hintText: 'Rechercher un cours, module ou enseignant (ex: HTA, Pr Abdi, Asthme)...',
                     prefixIcon: const Icon(Icons.search_rounded),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
@@ -1329,6 +1333,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                 return _ModuleCard(
                   module: module,
                   activeProgresses: state.activeCourseProgresses,
+                  searchQuery: _searchQuery,
                 );
               }, childCount: filteredModules.length),
             ),
@@ -2013,8 +2018,13 @@ class _CustomSessionCard extends StatelessWidget {
 class _ModuleCard extends StatefulWidget {
   final MedicalModuleModel module;
   final Map<String, CourseRevisionProgress> activeProgresses;
+  final String searchQuery;
 
-  const _ModuleCard({required this.module, required this.activeProgresses});
+  const _ModuleCard({
+    required this.module,
+    required this.activeProgresses,
+    this.searchQuery = '',
+  });
 
   @override
   State<_ModuleCard> createState() => _ModuleCardState();
@@ -2205,20 +2215,36 @@ class _ModuleCardState extends State<_ModuleCard> {
                 ],
               ),
             ),
-            if (_expanded) ...[
+            if (_expanded || widget.searchQuery.isNotEmpty) ...[
               const Divider(height: 24),
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: m.courses.length,
-                separatorBuilder: (_, index) => const Divider(height: 1),
-                itemBuilder: (context, i) {
-                  final course = m.courses[i];
-                  return _CourseTile(
-                    course: course,
-                    moduleName: m.name,
-                    courseIndex: i,
-                    progress: widget.activeProgresses[course.id],
+              Builder(
+                builder: (context) {
+                  final displayedCourses = widget.searchQuery.isEmpty ||
+                          m.name.toLowerCase().contains(widget.searchQuery.toLowerCase())
+                      ? m.courses
+                      : m.courses
+                          .where((c) =>
+                              c.name.toLowerCase().contains(widget.searchQuery.toLowerCase()) ||
+                              (c.teacher != null &&
+                                  c.teacher!
+                                      .toLowerCase()
+                                      .contains(widget.searchQuery.toLowerCase())))
+                          .toList();
+
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: displayedCourses.length,
+                    separatorBuilder: (_, index) => const Divider(height: 1),
+                    itemBuilder: (context, i) {
+                      final course = displayedCourses[i];
+                      return _CourseTile(
+                        course: course,
+                        moduleName: m.name,
+                        courseIndex: i,
+                        progress: widget.activeProgresses[course.id],
+                      );
+                    },
                   );
                 },
               ),
@@ -2375,6 +2401,32 @@ class _CourseTile extends StatelessWidget {
                 '${course.questionsCount} questions officielles de concours',
                 style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
               ),
+              if (course.teacher != null && course.teacher!.isNotEmpty) ...[
+                const SizedBox(height: 3),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.person_pin_rounded,
+                      size: 13,
+                      color: Colors.teal.shade600,
+                    ),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        course.teacher!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.teal.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           );
 

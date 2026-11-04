@@ -224,7 +224,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> with SingleTicker
                                   label: const Text('Inviter', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                   onPressed: () async {
                                     Navigator.of(ctx).pop();
-                                    final ok = await GroupRevisionService.instance.inviteUserToGroup(
+                                    await GroupRevisionService.instance.inviteUserToGroup(
                                       groupId: _group.id,
                                       groupName: _group.name,
                                       inviteCode: _group.inviteCode,

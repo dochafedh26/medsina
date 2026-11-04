@@ -12,6 +12,7 @@ class CourseModel extends Equatable {
   final String? bundlePdfUrl;
   final bool isHypertombable;
   final List<String> residanatYears;
+  final String? teacher;
 
   const CourseModel({
     required this.id,
@@ -25,6 +26,7 @@ class CourseModel extends Equatable {
     this.bundlePdfUrl,
     this.isHypertombable = false,
     this.residanatYears = const [],
+    this.teacher,
   });
 
   double get progressPercentage =>
@@ -42,6 +44,7 @@ class CourseModel extends Equatable {
     String? bundlePdfUrl,
     bool? isHypertombable,
     List<String>? residanatYears,
+    String? teacher,
   }) {
     return CourseModel(
       id: id ?? this.id,
@@ -55,6 +58,7 @@ class CourseModel extends Equatable {
       bundlePdfUrl: bundlePdfUrl ?? this.bundlePdfUrl,
       isHypertombable: isHypertombable ?? this.isHypertombable,
       residanatYears: residanatYears ?? this.residanatYears,
+      teacher: teacher ?? this.teacher,
     );
   }
 
@@ -75,6 +79,7 @@ class CourseModel extends Equatable {
           : (json['residanatYears'] is List)
               ? (json['residanatYears'] as List).map((e) => e.toString()).toList()
               : const [],
+      teacher: (json['teacher'] ?? json['professor']) as String?,
     );
   }
 
@@ -90,6 +95,7 @@ class CourseModel extends Equatable {
         'bundle_pdf_url': bundlePdfUrl,
         'is_hypertombable': isHypertombable,
         'residanat_years': residanatYears,
+        'teacher': teacher,
       };
 
   @override
@@ -105,6 +111,7 @@ class CourseModel extends Equatable {
         bundlePdfUrl,
         isHypertombable,
         residanatYears,
+        teacher,
       ];
 }
 

@@ -229,6 +229,7 @@ class GlobalSearchService {
         final normModName = normalize(module.name);
         for (final course in module.courses) {
           final normCourseName = normalize(course.name);
+          final normTeacherName = normalize(course.teacher ?? '');
 
           int score = 0;
           if (normCourseName == normQuery) {
@@ -237,10 +238,14 @@ class GlobalSearchService {
             score += 90;
           } else if (normCourseName.contains(normQuery)) {
             score += 70;
+          } else if (normTeacherName.isNotEmpty && (normTeacherName.contains(normQuery) || normQuery.contains(normTeacherName))) {
+            score += 110;
           } else {
             bool allTokens = true;
             for (final token in queryTokens) {
-              if (!normCourseName.contains(token) && !normModName.contains(token)) {
+              if (!normCourseName.contains(token) &&
+                  !normModName.contains(token) &&
+                  !normTeacherName.contains(token)) {
                 allTokens = false;
                 break;
               }
@@ -249,14 +254,26 @@ class GlobalSearchService {
           }
 
           if (score > 0) {
+            final teacherSuffix = course.teacher != null && course.teacher!.isNotEmpty
+                ? ' • ${course.teacher}'
+                : '';
+            final snippetText = course.teacher != null && course.teacher!.isNotEmpty
+                ? 'Enseignant : ${course.teacher} • Support PDF officiel du programme.'
+                : 'Cours officiel du programme de résidanat avec support PDF complet.';
+
             results.add(SearchResultItem(
               id: course.id,
               title: course.name,
-              subtitle: 'Module ${module.name} • ${course.questionsCount} QCMs',
-              snippet: 'Cours officiel du programme de résidanat avec support PDF complet.',
+              subtitle: 'Module ${module.name}$teacherSuffix • ${course.questionsCount} QCMs',
+              snippet: snippetText,
               type: SearchResultType.course,
               relevanceScore: score,
-              tags: [module.name, 'cours', 'pdf'],
+              tags: [
+                module.name,
+                'cours',
+                'pdf',
+                if (course.teacher != null && course.teacher!.isNotEmpty) course.teacher!,
+              ],
               payload: {'course': course, 'module': module},
             ));
           }
@@ -575,7 +592,9 @@ class GlobalSearchService {
         candidateModuleIds.add(mod.id);
       }
       for (final c in mod.courses) {
-        if (tokens.any((t) => normalize(c.name).contains(t))) {
+        if (tokens.any((t) =>
+            normalize(c.name).contains(t) ||
+            (c.teacher != null && normalize(c.teacher!).contains(t)))) {
           candidateModuleIds.add(mod.id);
           break;
         }
