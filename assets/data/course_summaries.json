@@ -1792,5 +1792,28 @@
     "treatment_summary": "Urgence maniaque traitée par association thymorégulateur (Lithium ou Valproate) et antipsychotique atypique, avec instauration d'une prophylaxie au long cours par le lithium pour prévenir les récidives et le risque suicidaire.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-03T23:38:08.004015+00:00"
+  },
+  {
+    "course_id": "Blida_PNEUMOLOGIE_PID",
+    "course_name": "Pneumopathies Infiltrantes Diffuses",
+    "module_id": "Blida_PNEUMOLOGIE",
+    "module_name": "Pneumologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLes **Pneumopathies Infiltrantes Diffuses (PID)** ou interstitielles diffuses regroupent un groupe hétérogène d'affections pulmonaires caractérisées par une atteinte diffuse du parenchyme pulmonaire (interstitium, alvéoles, bronchioles terminales).\n- **Physiopathologie :** Processus inflammatoire initial évoluant vers la fibrose pulmonaire dans certaines formes (ex: **Fibrose Pulmonaire Idiopathique - FPI**). Altération de la barrière alvéolo-capillaire menant à un trouble restrictif et des **troubles de la diffusion alvéolo-capillaire (DLCO abaissée)**.\n\n## 2. Démarche Diagnostique\n- **Clinique :** Dyspnée d'effort progressive, toux sèche rebelle, **râles crépitants velcro** bilatéraux et des bases à l'auscultation (très évocateurs de FPI), hippocratisme digital fréquent dans les formes fibrosantes.\n- **Paraclinique de référence :**\n  - **TDM thoracique haute résolution (TDM HR) :** Examen clé non invasif. Recherche de signes de fibrose (rayons de miel, bronchectasies par traction, réticulations) ou d'atteinte alvéolaire (verre dépoli, micronodules). Le patron **UIP (Usual Interstitial Pneumonia)** est pathognomonique de la FPI.\n  - **EFR :** **Syndrome restrictif** (diminution de la CPT < 80%, CVF abaissée, rapport VEMS/CVF normal ou augmenté) associé à une **chute de la DLCO**.\n  - **LBA (Lavage Bron Alvéolaire) :** Oriente l'étiologie selon la formule cellulaire (alvéolite lymphocytaire > 15-20% orientant vers une sarcoïdose ou PHS; alvéolite neutrophilique ou éosinophilique).\n  - **Biopsie pulmonaire :** Parfois nécessaire (chirurgicale ou cryobiopsie sous endoscopie) si le TDM HR n'est pas concluant.\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Insuffisance cardiaque gauche** (oedème interstitiel).\n- **Lymphangite carcinomatose.**\n- **Formes principales :**\n  - **FPI :** Idiopathique, sujet âgé, tabagisme, pronostic sombre (survie médiane 3 ans).\n  - **Sarcoïdose :** Atteinte médiastino-pulmonaire (adénopathies hilaires symétriques), granulomes non nécaseux, hypercalcémie possible, bon pronostic (stades I et II).\n  - **PID liée aux connectivités** (PR, Sclérodermie, Gougerot-Sjögren).\n  - **Pneumopathie d'Hypersensibilité (PHS) :** Cause environnementale (antigène organique, ex: poumon de farmer).\n\n## 4. Stratégie Thérapeutique\n- **Mesures générales :** Arrêt du tabac, éviction de l'allergène (si PHS), oxygénothérapie au long cours si hypoxémie chronique, réhabilitation respiratoire, vaccination anti-grippale et anti-pneumococcique.\n- **Traitement spécifique :**\n  - **Corticoïdes et immunosuppresseurs :** Indiqués dans les PID inflammatoires (sarcoïdose, connectivités, PHS), mais **CONTRE-INDIQUÉS** dans la FPI pure.\n  - **Anti-fibrosants (Nintedanib, Pirfénidone) :** Indiqués dans la FPI et les PID progressives fibrosantes pour ralentir le déclin de la CVF.\n  - **Transplantation pulmonaire :** Envisagée chez les patients jeunes aux stades terminales.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Complications :** Insuffisance respiratoire chronique, Hypertension Artérielle Pulmonaire (HTAP) secondaire de groupe 3, exacerbations aiguës mortelles, surinfections, pneumothorax.\n- **Pronostic :** Variable, très péjoratif pour la FPI (résistante aux corticoïdes), meilleur pour la sarcoïdose (rémission spontanée fréquente).",
+    "key_takeaways": [
+      "Les râles crépitants 'velcro' bilatéraux et constants sont la signature clinique majeure des PID fibrosantes.",
+      "L'EFR objective un profil restrictif (CPT < 80%) avec une altération précoce de la DLCO.",
+      "Le TDM thoracique HR est l'examen clé pour identifier le pattern radiologique (ex: UIP pour la FPI).",
+      "La corticothérapie est le pilier des PID inflammatoires mais est formellement contre-indiquée dans la Fibrose Pulmonaire Idiopathique (FPI).",
+      "Les anti-fibrosants (Pirfénidone, Nintedanib) ralentissent la progression de la FPI mais ne guérissent pas la maladie."
+    ],
+    "exam_traps": [
+      "Piège Annales : Proposer des corticoïdes de première intention devant une Fibrose Pulmonaire Idiopathique (FPI) (C'est une erreur grave, les corticoïdes accélèrent le déclin ou n'ont pas d'efficacité dans la FPI).",
+      "Piège Traitement : Oublier que la PHS nécessite avant tout l'éviction stricte de l'antigène causal.",
+      "Piège Diagnostic : Confondre syndrome obstructif et restrictif aux EFR. Dans la PID, le rapport VEMS/CVF est normal ou augmentée, avec une CPT effondrée."
+    ],
+    "diagnostic_criteria": "Association d'une dyspnée d'effort avec râles crépitants velcro, d'un syndrome restrictif avec baisse de la DLCO aux EFR, et d'images interstitielles diffuses (réticulations, rayon de miel, verre dépoli) au TDM HR.",
+    "treatment_summary": "Éviction des causes et corticothérapie/immunosuppresseurs pour les PID inflammatoires (Sarcoïdose, PHS), contre-indication absolue des corticoïdes dans la FPI où l'on utilise les anti-fibrosants (Nintedanib/Pirfénidone).",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-04T03:13:19.744832+00:00"
   }
 ]
