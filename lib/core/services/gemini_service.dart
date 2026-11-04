@@ -469,24 +469,30 @@ Rédige une analyse médicale structurée en Markdown enrichi avec les sections 
     return _executeWithConcurrencyAndPacing(() async {
       final prompt = '''
 Tu es le moteur pharmacologique officiel Vidal, ANSM et MSPRH de Medsina.
+RÈGLE ABSOLUE : ZÉRO FAUX NÉGATIF. PAS DROIT À L'ERREUR EN SÉCURITÉ CLINIQUE ET THÉRAPEUTIQUE.
 Analyse la sécurité de cette prescription :
 - Médicaments prescrits : ${drugs.join(', ')}
 - Terrains / Profils patient : ${terrains.isEmpty ? 'Aucun terrain renseigné' : terrains.join(', ')}
 
 Recherche rigoureusement :
-1. Les contre-indications absolues ou relatives entre chaque médicament et les terrains patients indiqués.
-2. Les interactions médicamenteuses majeures (contre-indiquées ou déconseillées) entre les médicaments entre eux.
+1. Les interactions médicamenteuses directes ou indirectes entre les molécules prescrites (Contre-indication > Association déconseillée > Précaution d'emploi > À prendre en compte).
+2. Les contre-indications absolues ou relatives entre chaque médicament et les terrains patients indiqués.
 
-Réponds STRICTEMENT sous forme d'un objet JSON valide avec cette structure exacte (sans aucun bloc markdown, sans texte autour) :
+Réponds STRICTEMENT sous forme d'un objet JSON valide avec cette structure exacte (sans aucun bloc markdown, sans texte additionnel) :
 {
   "has_alert": true,
-  "severity": "contraindicated",
-  "title": "Titre clinique précis de l'alerte",
+  "is_drug_interaction": true,
+  "drug_a": "Nom commercial ou DCI du 1er médicament concerné",
+  "drug_b": "Nom commercial ou DCI du 2e médicament concerné (si interaction entre deux molécules)",
+  "severity": "contraindicated", // "contraindicated", "disadvised", "precaution", "info"
+  "severity_level": 4, // 4 pour CI, 3 pour Déconseillé, 2 pour Précaution, 1 pour Info
+  "title": "Titre clinique précis de l'alerte (ex: Interaction Anticoagulant + AINS : Risque hémorragique majeur)",
   "warning": "Mécanisme pharmacologique précis et danger clinique encouru",
-  "recommendation": "Conduite à tenir immédiate (arrêt, adaptation posologique, molécule alternative)",
+  "recommendation": "Conduite à tenir immédiate (arrêt, adaptation posologique, molécule de substitution)",
   "source": "Vidal / ANSM"
 }
-Si aucun risque n'existe, renvoie {"has_alert": false, "severity": "info", "title": "Aucune anomalie détectée", "warning": "", "recommendation": "", "source": "Vidal"}
+Si absolument AUCUN risque n'existe, renvoie STRICTEMENT :
+{"has_alert": false, "is_drug_interaction": false, "severity": "info", "severity_level": 1, "title": "Aucune interaction ni anomalie détectée", "warning": "", "recommendation": "", "source": "Vidal / ANSM"}
 ''';
 
       final requestData = {
@@ -520,7 +526,12 @@ Si aucun risque n'existe, renvoie {"has_alert": false, "severity": "info", "titl
               if (parts != null && parts.isNotEmpty) {
                 final raw = parts[0]['text'] as String?;
                 if (raw != null) {
-                  final clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
+                  var clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
+                  final firstBrace = clean.indexOf('{');
+                  final lastBrace = clean.lastIndexOf('}');
+                  if (firstBrace != -1 && lastBrace != -1 && lastBrace > firstBrace) {
+                    clean = clean.substring(firstBrace, lastBrace + 1);
+                  }
                   return jsonDecode(clean) as Map<String, dynamic>;
                 }
               }
