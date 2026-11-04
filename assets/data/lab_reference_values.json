@@ -969,5 +969,20 @@
     ],
     "created_at": "2026-11-03T23:32:52.243939+00:00",
     "updated_at": "2026-11-03T23:32:52.243953+00:00"
+  },
+  {
+    "id": "lab_alpha_1_antitrypsine",
+    "name": "Alpha-1-Antitrypsine sérique (A1AT)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "0.90 - 2.00",
+    "unit": "g/L",
+    "high_interpretation": "Valeur élevée : Correspond à une protéine de l'inflammation (phase aiguë). Causes : infection aiguë ou chronique, inflammation systémique, néoplasie, grossesse, œstrogénothérapie. Pas de seuil d'urgence vitale spécifique, interpréter dans le contexte inflammatoire global (CRP, VS).",
+    "low_interpretation": "Valeur basse (< 0.5 g/L évocatrice, < 0.2 g/L pathognomonique) : Déficit en alpha-1-antitrypsine (maladie génétique autosomique co-dominante, allèles Z et S). Causes : emphysème pulmonaire panacinaire précoce (surtout chez le non-fumeur, base pulmonaire), cirrhose hépatique de l'enfant ou de l'adulte, hépatocarcinome, panniculite nécrosante. Urgence relative : sevrage tabagique impératif, éviction des expositions professionnelles, avis spécialisé en pneumologie/gastro-entérologie pour phénotypage (PiMM, PiMZ, PiZZ) et supplémentation éventuelle.",
+    "clinical_notes": [
+      "Piège biologique majeur : L'A1AT étant une protéine de l'inflammation, un taux 'normal' ou faussement 'bas-normal' peut masquer un déficit hétérozygote (PiMZ) ou même homozygote (PiZZ) en période inflammatoire aiguë. Toujours coupler le dosage à un Électrophorèse des Protéines Sériques (E.P.S.) pour rechercher l'aplatissement de la zone alpha-1.",
+      "Corrélation génotypique et phénotypique : Le génotype PiZZ est associé à un risque majeur d'emphysème pulmonaire précoce et d'atteinte hépatique par accumulation polymérique intra-hépatocytaire. Le tabagisme accélère considérablement la destruction pulmonaire par inactivation oxydative de l'enzyme résiduelle."
+    ],
+    "created_at": "2026-11-04T06:48:07.545582+00:00",
+    "updated_at": "2026-11-04T06:48:07.545599+00:00"
   }
 ]
