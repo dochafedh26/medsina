@@ -312,23 +312,23 @@
   },
   {
     "id": "memento_aes_exposition_sang",
-    "title": "🩸 Conduite à tenir devant un AES",
-    "category": "Urgences Infectieuses & Procédures",
-    "icon_name": "healing_rounded",
+    "title": "🩸 Accident d'Exposition au Sang (AES)",
+    "category": "Urgences Infectieuses & Médico-légales",
+    "icon_name": "warning_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Nettoyage immédiat de la plaie à l'eau et au savon, puis antisepsie au Dakin ou Polyvidone iodée (Dakin 5 min, ou alcool à 70° si projection muqueuse : rincer abondamment à l'eau stérile ou S.S.). Ne jamais faire saigner, ne pas frotter.",
-      "Étape 2 : Évaluation immédiate du risque (type de blessure : piqûre profonde vs égratignure, liquide en cause, statut sérologique du patient source : VIH, VHB, VHC). Déclarer l'accident au service de médecine du travail et enregistrer le dossier.",
-      "Étape 3 : Prophylaxie post-exposition (PPE) VIH si patient source VIH+ ou à haut risque : trithérapie antirétrovirale d'urgence à débuter dans les 4 heures idéales (max 48h) : ex. Ténofovir/Emtricitabine 1 cp/j + Dolutégravir 50 mg 1 cp/j pendant 28 jours.",
-      "Étape 4 : Gestion du risque VHB : vérifier la sérologie du soignant (Ac anti-HBs). Si soignant non vacciné ou non répondeur (< 10 UI/L) : injection d'immunoglobulines spécifiques anti-VHB (HBIg) + première dose de vaccin VHB dans les 24-48h sur un site séparé.",
-      "Étape 5 : Bilan biologique initial (J0) de référence pour le soignant : Ag HBs, Ac anti-HCV, Sérologie VIH, Créatininémie, transaminases, et test de grossesse (si femme en âge de procréer avant PPE). Suivi sérologique obligatoire à J0, 6 semaines, 3 mois et 6 mois.",
-      "Étape 6 : Piège médico-légal et éthique : le soignant ne peut exiger le dépistage forcé du patient source (consentement éclairé obligatoire). En cas de refus du patient source, considérer le risque comme réel et initier la PPE par précaution."
+      "Étape 1 : Nettoyage immédiat à l'eau et au savon ou Dakin/Désinfectant (Dakin ou Alcool à 70% ou Bétadine) pendant 5 min minimum. NE PAS faire saigner, NE PAS frotter. En cas de projection muqueuse : rincer abondamment au sérum physiologique ou à l'eau claire 15 min.",
+      "Étape 2 : Évaluation rapide du risque (statut du patient source : sérologies VIH, VHB, VCH ; nature de l'exposition : piqure profonde, coupure, surface cutanée lésée ou muqueuse ; type de liquide biologique).",
+      "Étape 3 : Consultation urgente Infectiologue/Référent (dans les 4h, max 4h-48h). Si indication de prophylaxie antirétrovirale post-exposition (TPE VIH) : trithérapie standard (ex: Ténofovir/Emtricitabine + Dolutégravir ou Raltegravir) à débuter au plus vite.",
+      "Étape 4 : Bilan biologique initial urgent (J0) de la victime : Sérologie VIH, Ag HBs, Ac anti-HBs, Ac anti-HCV, Transaminases, Créatininémie, Bêta-HCG (femme en âge de procréer). Vérifier le statut vaccinal VHB de l'agent.",
+      "Étape 5 : Déclaration obligatoire de l'accident (fiche AES de l'établissement, médecine du travail) et mise en place du suivi sérologique à J0, 6 semaines, 3 mois et 6 mois.",
+      "Étape 6 : Piège médico-légal et réglementaire absolu : Ne jamais banaliser un AES. La prophylaxie post-exposition (TPE) est d'autant plus efficace qu'elle est débutée tôt, idéalement dans les 2 à 4 premières heures suivant l'exposition."
     ],
-    "scientific_references": "Consensus SFMU / Ministère de la Santé Algérie / GERES / Haut Conseil de la Santé Publique",
+    "scientific_references": "Consensus SFMU / Ministère de la Santé Algérie (Guide de prévention des AES et prise en charge)",
     "is_active": true,
-    "created_at": "2026-10-21T14:10:22.192685+00:00",
-    "updated_at": "2026-10-21T14:10:22.192702+00:00"
+    "created_at": "2026-11-04T09:25:12.627559+00:00",
+    "updated_at": "2026-11-04T09:25:12.627570+00:00"
   },
   {
     "id": "memento_hemorragie_digestive_rvo",
