@@ -371,21 +371,22 @@
   {
     "id": "memento_pancreatite_aigue",
     "title": "🩸 Prise en Charge Initiale de la Pancréatite Aiguë",
-    "category": "Gastro-entérologie / Urgences",
+    "category": "Gastro-entérologie / Réanimation",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate, pose de 2 VVP de gros calibre, scope et oxygénothérapie si SpO2 < 95 %.",
-      "Étape 2 : Bilan biologique urgent au déchoquage : NFS, CRP, Ionogramme, Urée, Créatinine, Calcémie, Glycémie, Bilan hépatique (ASAT/ALAT, GGT, PAL, Bilirubine) et Lipasémie.",
-      "Étape 3 : Réanimation volémique agressive par Cristalloïdes (Ringer Lactate : 100-200 ml/h adapté au remplissage), antalgiques majeurs (Palier 3 : Nefopam ou Morphine IV titration) et mise à jeun stricte.",
-      "Étape 4 : Surveillance armée (diurèse horaire via sonde urinaire si score de Ranson/BISAP élevé, paramètres hémodynamiques) et orientation vers l'unité de soins continus ou réanimation si défaillance d'organe.",
-      "Étape 5 : Piège médico-légal : Ne pas prescrire d'antibiotiques en prophylaxie (indication uniquement en cas d'infection documentée ou de nécrose infectée) et réaliser une Échographie abdominale aux urgences à la recherche d'une origine lithiasique."
+      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate. Conditionnement (2 VVP gros calibre), pose d'une sonde urinaire (diurèse horaire) et mise à jeun stricte.",
+      "Étape 2 : Bilan biologique d'urgence : Lipasémie, NFS, ionogramme sanguin, urée, créatinine, CRP, glycémie, calcémie, bilan hépatique (ASAT, ALAT, PAL, GGT, Bilirubine) et hémostase (TP, TCA).",
+      "Étape 3 : Remplissage vasculaire agressif mais prudent par Cristalloïdes (NaCl 0.9% ou Ringer Lactate) : 10 à 20 mL/kg en 2 heures puis 2-3 mL/kg/h adapté à la diurèse (> 0.5 mL/kg/h). Antalgie palier 3 (Néfopam 20mg ou Paracétamol IV) et inhibiteurs de la pompe à proton (Oméprazole 40mg IV).",
+      "Étape 4 : Imagerie de première intention : Échographie abdominale aux urgences à la recherche d'une origine biliaire. TDM abdominale spiralée avec injection de produits de contraste (C+ à H72 si doute diagnostique ou aggravation).",
+      "Étape 5 : Surveillance rapprochée (paramètres vitaux toutes les heures) et score de Marshall modifié ou Ranson. Critères de transfert en Réanimation : Défaillance d'organe (choc, IRA, détresse respiratoire) ou score APACHE II > 8.",
+      "Étape 6 : Piège médico-légal et contre-indications : Ne jamais prescrire d'antibiotiques en prophylaxie (indication uniquement si sepsis avéré ou nécrose infectée prouvée) et éviter les AINS."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / Collège de Réanimation / MSPRH Algérie",
+    "scientific_references": "SFMU / SRLF / Consensus Algérien de Gastro-Entérologie & Réanimation",
     "is_active": true,
-    "created_at": "2026-11-04T18:02:55.693380+00:00",
-    "updated_at": "2026-11-04T18:02:55.693396+00:00"
+    "created_at": "2026-11-04T23:45:01.382803+00:00",
+    "updated_at": "2026-11-04T23:45:01.382817+00:00"
   },
   {
     "id": "memento_intoxication_medicamenteuse_aigue",
