@@ -359,7 +359,7 @@ def broadcast_new_source(
             tg_text,
             image_path=img_path,
             category="drive",
-            app_version="1.0.29"
+            
         )
         if tg_res.get("success") or tg_res.get("ok"):
             print("  ✈️ [Telegram] Diffusé sur le canal officiel Telegram et forum communautaire !")
