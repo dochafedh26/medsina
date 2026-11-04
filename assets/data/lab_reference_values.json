@@ -174,15 +174,19 @@
   },
   {
     "id": "lab_alat_asat",
-    "name": "Transaminases (ALAT / ASAT)",
-    "category": "Gastroentérologie & Foie",
-    "normal_range": "ALAT < 45 UI/L | ASAT < 35 UI/L",
-    "unit": "UI/L",
-    "high_interpretation": "Cytolyse hépatique aiguë. Si transaminases > 10 à 20x LSN : hépatite virale aiguë (A, B, E), hépatite médicamenteuse/toxique (Paracétamol), hépatite ischémique (foie de choc). ALAT prédomine dans les hépatites aiguës virales ; ASAT prédomine dans l'alcoolisme chronique (ratio ASAT/ALAT > 2).",
-    "low_interpretation": "Sans signification pathologique.",
+    "name": "Transaminases (ALAT/SGPT et ASAT/SGOT)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "ALAT: < 45 UI/L (Homme) / < 34 UI/L (Femme) | ASAT: < 35 UI/L (Homme) / < 31 UI/L (Femme)",
+    "unit": "UI/L (à 37°C)",
+    "high_interpretation": "Élévation modérée (< 5N) : stéatose (NAFLD/NASH), hépatite chronique (B, C), médicaments, alcool. Élévation majeure (> 10N ou > 1000 UI/L) : hépatite aiguë virale (A, B, C, E), hépatite médicamenteuse (paracétamol) ou ischémique (foie de choc). Urgence vitale si associée à un TP < 50% ou un Facteur V < 50% (Hépatite fulminante) : transfert immédiat en réanimation et avis spécialisé pour transplantation hépatique.",
+    "low_interpretation": "Généralement non pathologique. Des taux très bas peuvent parfois se voir en cas de carence sévère en pyridoxine (vitamine B6, cofacteur indispensable des aminotransférases, notamment chez les patients dénuttrés ou en hémodialyse chronique).",
     "clinical_notes": [
-      "Devant toute cytolyse aiguë sévère, doser immédiatement le TP et le Facteur V pour dépister une hépatite fulminante (seuil TP < 50% = transfert en réanimation hépatologique)."
-    ]
+      "Rapport d'Iturbe-Chahoun (ASAT/ALAT) : > 2 en faveur d'une hépatite alcoolique (carence en B6 diminuant l'ALAT cytosolique) ; < 1 en faveur d'une origine métabolique (NAFLD) ou virale.",
+      "Piège pré-analytique : L'ASAT est également présente dans le myocarde, les muscles squelettiques, les globules rouges et les reins. Une hémolyse in vitro ou une rhabdomyolyse élève faussement l'ASAT sans souffrance hépatique (toujours confronter avec la CPK et la LDH).",
+      "Piège du concours : Une chute brutale des transaminases lors d'une hépatite aiguë fulminante ne signe pas la guérison, mais peut refléter une nécrose massive et une disparition du parenchyme hépatique (foie 'vide', pronostic sombre)."
+    ],
+    "created_at": "2026-11-04T15:38:55.655815+00:00",
+    "updated_at": "2026-11-04T15:38:55.655830+00:00"
   },
   {
     "id": "lab_bilirubine",
