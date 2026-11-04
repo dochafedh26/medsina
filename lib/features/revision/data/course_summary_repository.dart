@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/network/supabase_service.dart';
+import '../../../core/services/gemini_service.dart';
 import '../models/course_summary_model.dart';
 import '../models/module_model.dart';
 
@@ -59,7 +61,7 @@ class CourseSummaryRepository {
       return _cache[courseId];
     }
 
-    // Try fetching single from Supabase
+    // 1. Try fetching single from Supabase
     try {
       final row = await SupabaseService.fetchCourseSummary(courseId);
       if (row != null) {
@@ -69,9 +71,60 @@ class CourseSummaryRepository {
       }
     } catch (_) {}
 
-    // Fall back to loading all from JSON
+    // 2. Try fetching from local SharedPreferences cache
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final localJson = prefs.getString('cached_summary_$courseId');
+      if (localJson != null && localJson.isNotEmpty) {
+        final map = jsonDecode(localJson) as Map<String, dynamic>;
+        final model = CourseSummaryModel.fromJson(map);
+        _cache[courseId] = model;
+        return model;
+      }
+    } catch (_) {}
+
+    // 3. Fall back to loading all from JSON asset
     await loadAllSummariesAsync();
     return _cache[courseId];
+  }
+
+  /// Generates a summary via Medsina AI, saves to Cache & Supabase, and returns the model
+  static Future<CourseSummaryModel?> generateAndSaveSummary({
+    required CourseModel course,
+    String? moduleName,
+  }) async {
+    try {
+      final json = await GeminiService.generateCourseSummary(
+        courseName: course.name,
+        moduleName: moduleName ?? 'Médecine',
+        courseId: course.id,
+        moduleId: course.moduleId,
+      );
+
+      if (json != null) {
+        final model = CourseSummaryModel.fromJson(json);
+        // 1. Save in memory cache
+        _cache[course.id] = model;
+
+        // 2. Persist to Supabase Cloud so all users and future sessions have it
+        try {
+          await SupabaseService.upsertCourseSummary(model.toJson());
+        } catch (e) {
+          debugPrint('Notice: Error syncing generated summary to Supabase: $e');
+        }
+
+        // 3. Persist locally to SharedPreferences for offline reading
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('cached_summary_${course.id}', jsonEncode(model.toJson()));
+        } catch (_) {}
+
+        return model;
+      }
+    } catch (e) {
+      debugPrint('Error generating course summary with AI: $e');
+    }
+    return null;
   }
 
   /// Synchronous cache lookup

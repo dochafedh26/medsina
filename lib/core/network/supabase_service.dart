@@ -2040,6 +2040,16 @@ class SupabaseService {
     }
   }
 
+  static Future<bool> upsertCourseSummary(Map<String, dynamic> data) async {
+    try {
+      await client.from('course_summaries').upsert(data, onConflict: 'course_id');
+      return true;
+    } catch (e) {
+      debugPrint('Error upserting course summary: $e');
+      return false;
+    }
+  }
+
   // --- OTA APP RELEASES ---
 
   static Future<Map<String, dynamic>?> fetchLatestRelease(String platform) async {

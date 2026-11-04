@@ -633,4 +633,101 @@ Réponds STRICTEMENT sous forme d'un objet JSON valide avec cette structure exac
       return null;
     });
   }
+
+  /// Generates a comprehensive, high-yield Course Summary for residency exam candidates
+  static Future<Map<String, dynamic>?> generateCourseSummary({
+    required String courseName,
+    required String moduleName,
+    required String courseId,
+    String? moduleId,
+  }) async {
+    return _executeWithConcurrencyAndPacing(() async {
+      final prompt = '''
+Tu es le grand professeur expert et référent officiel du Concours de Résidanat de Médecine en Algérie (Facultés d'Alger, Blida, Constantine, Oran).
+Rédige une Fiche Synthétique de Révision officielle et exhaustive pour le cours suivant :
+- Cours : $courseName
+- Module / Spécialité : $moduleName
+- ID Cours : $courseId
+
+La fiche doit être claire, percutante, axée sur les questions fermées et cas cliniques des annales de résidanat.
+Respecte scrupuleusement ce schéma JSON valide (sans aucun bloc markdown, sans texte additionnel) :
+{
+  "course_id": "$courseId",
+  "course_name": "$courseName",
+  "module_id": "${moduleId ?? ""}",
+  "module_name": "$moduleName",
+  "summary_markdown": "Texte markdown riche et soigné, avec titres h2 (##), listes à puces, mise en gras des mots-clés et valeurs chiffrées importantes pour le concours.",
+  "key_takeaways": [
+    "Point clé 1 incontournable pour le concours",
+    "Point clé 2...",
+    "Point clé 3...",
+    "Point clé 4...",
+    "Point clé 5..."
+  ],
+  "exam_traps": [
+    "Piège Annales : formulation classique vicieuse ou fausse proposition type des annales",
+    "Piège Traitement : contre-indication ou erreur de prescription éliminatoire",
+    "Piège Diagnostic : signe à ne jamais confondre"
+  ],
+  "diagnostic_criteria": "Résumé en 1-2 phrases des critères formels de diagnostic positif",
+  "treatment_summary": "Résumé en 1-2 phrases de la ligne thérapeutique de référence et des urgences",
+  "target_audience": "Concours Résidanat 2027"
+}
+N'utilise AUCUNE balise LaTeX. Utilise du texte Unicode pur (ex: ≥, ≤, µg, ², →).
+''';
+
+      final requestData = {
+        'contents': [
+          {
+            'parts': [
+              {'text': prompt}
+            ]
+          }
+        ],
+        'generationConfig': {
+          'temperature': 0.2,
+          'responseMimeType': 'application/json',
+        }
+      };
+
+      for (final model in _modelCascade) {
+        try {
+          final url = '$_baseUrl/$model:generateContent?key=$apiKey';
+          final response = await _dio.post(
+            url,
+            options: Options(headers: {'Content-Type': 'application/json'}),
+            data: requestData,
+          );
+
+          if (response.statusCode == 200) {
+            final data = response.data is String ? jsonDecode(response.data) : response.data;
+            final candidates = data['candidates'] as List?;
+            if (candidates != null && candidates.isNotEmpty) {
+              final parts = candidates[0]['content']?['parts'] as List?;
+              if (parts != null && parts.isNotEmpty) {
+                final raw = parts[0]['text'] as String?;
+                if (raw != null) {
+                  var clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
+                  final firstBrace = clean.indexOf('{');
+                  final lastBrace = clean.lastIndexOf('}');
+                  if (firstBrace != -1 && lastBrace != -1 && lastBrace > firstBrace) {
+                    clean = clean.substring(firstBrace, lastBrace + 1);
+                  }
+                  final parsed = jsonDecode(clean) as Map<String, dynamic>;
+                  parsed['course_id'] = courseId;
+                  parsed['course_name'] = courseName;
+                  parsed['module_name'] = moduleName;
+                  parsed['updated_at'] = DateTime.now().toIso8601String();
+                  return parsed;
+                }
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Gemini summary generation exception with $model: $e');
+        }
+      }
+      return null;
+    });
+  }
 }

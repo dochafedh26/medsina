@@ -31,6 +31,7 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
   late TabController _tabController;
   CourseSummaryModel? _summary;
   bool _isLoading = true;
+  bool _isGenerating = false;
 
   @override
   void initState() {
@@ -57,6 +58,58 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
         _summary = summary;
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _handleGenerateSummary() async {
+    setState(() => _isGenerating = true);
+    try {
+      final generated = await CourseSummaryRepository.generateAndSaveSummary(
+        course: widget.course,
+        moduleName: widget.moduleName,
+      );
+
+      if (mounted) {
+        if (generated != null) {
+          setState(() {
+            _summary = generated;
+            _isGenerating = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFF10B981),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              content: const Row(
+                children: [
+                  Icon(Icons.check_circle_rounded, color: Colors.white),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Fiche de synthèse générée et enregistrée avec succès !',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else {
+          setState(() => _isGenerating = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFFEF4444),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              content: const Text('Impossible de générer la fiche. Veuillez réessayer dans quelques instants.'),
+            ),
+          );
+        }
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isGenerating = false);
+      }
     }
   }
 
@@ -156,6 +209,59 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
   }
 
   Widget _buildEmptyState() {
+    if (_isGenerating) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(22),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3.5,
+                    color: AppTheme.primaryTeal,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Génération de la Fiche Synthétique...',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Medsina AI synthétise le cours "${widget.course.name}", extrait les points clés à haut rendement et repère les pièges d\'annales de concours...',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 13, height: 1.45),
+              ),
+              const SizedBox(height: 20),
+              const SizedBox(
+                width: 200,
+                child: LinearProgressIndicator(
+                  minHeight: 4,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Enregistrement automatique sur le Cloud et en local',
+                style: TextStyle(fontSize: 11, color: AppTheme.primaryTeal, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -171,9 +277,9 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
               child: const Icon(Icons.hourglass_top_rounded, size: 48, color: AppTheme.primaryTeal),
             ),
             const SizedBox(height: 20),
-            Text(
+            const Text(
               'Fiche en cours de génération',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
@@ -186,17 +292,16 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryTeal,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              icon: const Icon(Icons.auto_awesome_rounded),
-              label: const Text('Générer avec Medsina AI ✨'),
-              onPressed: () {
-                ClinicalCopilotSheet.show(
-                  context,
-                  initialSituation:
-                      'Rédige-moi une fiche de révision complète et structurée pour le cours "${widget.course.name}" (${widget.moduleName ?? ""}) avec définition, diagnostic, démarche thérapeutique et pièges de concours.',
-                );
-              },
+              icon: const Icon(Icons.auto_awesome_rounded, size: 20),
+              label: const Text(
+                'Générer avec Medsina AI ✨',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
+              onPressed: _handleGenerateSummary,
             ),
           ],
         ),
