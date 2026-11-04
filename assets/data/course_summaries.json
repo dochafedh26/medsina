@@ -1838,5 +1838,28 @@
     "treatment_summary": "Chirurgie carcinologique (gastrectomie totale ou partielle avec curage ≥ 16 ganglions) associée à une chimiothérapie péri-opératoire, guidée par les données anatomopathologiques (stade TNM, HER2, MSI).",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-04T11:29:57.285056+00:00"
+  },
+  {
+    "course_id": "Blida_HEPATO_GASTRO_ENTEROLOGIE_RGO",
+    "course_name": "Reflux gastro-œsophagien (RGO)",
+    "module_id": "Blida_HEPATO_GASTRO_ENTEROLOGIE",
+    "module_name": "Hépato-Gastro-Entérologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\n- **Définition** : Passage du contenu gastrique dans l'œsophage au-delà de la ligne Z, responsable de symptômes gênants et/ou de complications.\n- **Physiopathologie** : Le principal mécanisme est le **relâchement transitoire spontané du SIO** (sphincter inférieur de l'œsophage) indépendant de la déglutition. Facteurs favorisants : hernie hiatale, diminution de la pression du SIO, troubles de la clairance œsophagienne, agression acide/peptique ou biliaire.\n\n## 2. Démarche Diagnostique (Clinique, Paraclinique de référence, Critères)\n- **Clinique** : Le **pyrosis** et les **régurgitations acides** post-prandiales ou lors du décubitus sont les symptômes typiques. Signes d'alarme (indication formelle d'endoscopie) : dysphagie, odynophagie, anémie, altération de l'état général, âge supérieur à 50 ans.\n- **Endoscopie haute (FOGD)** : Non systématique devant un tableau typique. Elle cherche les complications (**œsophagite de reflux** classée selon Los Angeles de A à D, **brachy-œsophage** ou Barrett, sténose peptique).\n- **pH-métrie / pH-impédancemétrie des 24h** : Examen de référence en cas de discordance clinico-endoscopique ou avant chirurgie anti-reflux.\n- **Manométrie œsophagienne** : Indiquée avant la chirurgie pour éliminer une achalasie ou un trouble moteur.\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Diagnostics différentiels** : Cardialgie (angor coronarien à éliminer impérativement), spasmes œsophagiens diffus, achalasie, ulcère gastroduodénal, dyspepsie fonctionnelle.\n- **Formes cliniques** : RGO compliqué (œsophagite sévère, sténose, endobrachy-œsophage), RGO extra-digestif (ORL : toux chronique, laryngite, asthme rebelle).\n- **Endobrachy-œsophage (EBO)** : Métaplasie intestinale de la muqueuse œsophagienne (cylindrique à la place de malpighienne). **Risque majeur : adénocarcinome œsophagien**, nécessitant des biopsies régulières (surveillance endoscopique).\n\n## 4. Stratégie Thérapeutique\n- **Mesures hygiéno-diététiques** : Surélévation de la tête du lit, perte de poids si surcharge pondérale, éviter les repas copieux et gras, l'alcool, le tabac, et les aliments acides ou irritants.\n- **Traitement médical** :\n  - 1ère intention : **Inhibiteurs de la Pompe à Protons (IPP)** à pleine dose (ex: Oméprazole 20mg/j) pendant 4 semaines pour les formes typiques non compliquées, ou jusqu'à 8 semaines pour les œsophagites.\n  - Anti-acides et alginates en traitement symptomatique d'appoint.\n  - Traitement d'entretien par IPP à la dose minimale efficace si récidive rapide à l'arrêt.\n- **Traitement chirurgical** : **Fundoplicature (intervention de Nissen)** indiquée en cas d'échec du traitement médical bien conduit, d'intolérance aux IPP, ou de hernie hiatale volumineuse symptomatique.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Évolution** : Maladie chronique récidivante, souvent bénigne mais altérant la qualité de vie.\n- **Complications majeures** :\n  - Hémorragie digestive (faible abondance ou anémie par saignement occulte).\n  - Sténose peptique (dysphagie progressive aux solides).\n  - **Endobrachy-œsophage (EBO)** et dégénérescence en **adénocarcinome**.",
+    "key_takeaways": [
+      "Le pyrosis typique ne nécessite PAS d'endoscopie de première intention pour poser le diagnostic.",
+      "L'endoscopie haute est indispensable en présence de signes d'alarme (dysphagie, âge > 50 ans, anémie).",
+      "La classification de Los Angeles (grades A à D) est le gold standard pour grader l'œsophagite peptique.",
+      "L'EBO (métaplasie) expose au risque d'adénocarcinome et impose une surveillance endoscopique avec biopsies.",
+      "La chirurgie anti-reflux (Nissen) nécessite obligatoirement une manométrie œsophagienne préopératoire."
+    ],
+    "exam_traps": [
+      "Piège Annales : Proposer une FOGD systématique devant tout RGO typique simple (FAUX, la clinique suffit pour débuter le traitement).",
+      "Piège Traitement : Oublier que la manométrie œsophagienne est impérative avant toute chirurgie anti-reflux.",
+      "Piège Diagnostic : Confondre l'EBO (métaplasie glandulaire) avec un simple ulcère ou une œsophagite sévère."
+    ],
+    "diagnostic_criteria": "Présence de symptômes typiques de reflux (pyrosis, régurgitations) et/ou mise en évidence de lésions d'œsophagite à l'endoscopie, confirmés si besoin par une pH-impédancemétrie anormale.",
+    "treatment_summary": "Repose sur les mesures hygiéno-diététiques associées aux IPP en première intention. La chirurgie de Nissen est réservée aux formes compliquées, rebelles ou récidivantes.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-04T18:50:31.321395+00:00"
   }
 ]
