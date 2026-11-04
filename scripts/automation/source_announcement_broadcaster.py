@@ -270,15 +270,26 @@ def broadcast_new_source(
         "telegram": False
     }
 
-    # 1. Generate Infographic Flyer if not provided
+    # 1. Generate Infographic Flyer if not provided (Modern Playwright Engine with Pillow fallback)
     img_path = custom_image_path
     if not img_path or not os.path.exists(img_path):
-        img_path = generate_source_infographic(
-            source_title=title,
-            source_type=source_type,
-            module=module,
-            features=features
-        )
+        try:
+            from modern_infographic_generator import generate_modern_infographic
+            img_path = generate_modern_infographic(
+                title=title,
+                source_type=source_type,
+                module=module,
+                features=features,
+                aspect_ratio="landscape"
+            )
+        except Exception as e:
+            print(f"  ℹ️ [Infographic] Utilisation fallback Pillow : {e}")
+            img_path = generate_source_infographic(
+                source_title=title,
+                source_type=source_type,
+                module=module,
+                features=features
+            )
 
     # 2. Upload to Supabase Storage for permanent CDN image URL
     public_img_url = upload_banner_to_supabase(img_path)
