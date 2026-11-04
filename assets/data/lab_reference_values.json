@@ -988,5 +988,20 @@
     ],
     "created_at": "2026-11-04T06:48:07.545582+00:00",
     "updated_at": "2026-11-04T06:48:07.545599+00:00"
+  },
+  {
+    "id": "lab_pal_gammagt",
+    "name": "Phosphatases Alcalines (PAL) et Gamma-Glutamyl transférase (Gamma-GT)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "PAL: 40 - 129 UI/L (Adulte) | Gamma-GT: Homme: 10 - 55 UI/L, Femme: 9 - 38 UI/L",
+    "unit": "UI/L",
+    "high_interpretation": "PAL élevées associées à Gamma-GT élevées : origine hépato-biliaire (cholestase intrahépatique ou extrahépatique, obstacle biliaire, hépatopathie). PAL élevées avec Gamma-GT normales : origine osseuse (maladie de Paget, ostéomalacie, métastases osseuses, hyperparathyroïdisme, croissance) ou physiologique (grossesse au 3e trimestre). Gamma-GT isolément élevées : induction enzymatique (alcool, médicaments inducteurs: barbituriques, anticonvulsivants), stéatose hépatique (NAFLD/NASH). Urgence vitale : Ictère obstructif compliqué de cholangite aiguë (triade de Charcot : fièvre, ictère, douleurs de l'hypochondre droit) nécessitant une antibiothérapie IV et une décompression biliaire urgente (CPRE).",
+    "low_interpretation": "PAL basses : hypophosphatasie (maladie métabolique rare), malnutrition sévère, carence en zinc ou en magnésium, hypothyroïdie, anémie pernicieuse. Gamma-GT basses : situation le plus souvent sans signification pathologique particulière.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'activité des PAL est thermolabile et augmente à température ambiante ; le prélèvement doit être acheminé rapidement au laboratoire. L'hémolyse perturbe modérément certains dosages. Ne pas confondre l'origine hépatique et osseuse des PAL : l'élévation concomitante des Gamma-GT confirme l'origine biliaire.",
+      "Règle clé pour le concours de résidanat : Devant une élévation isolée des PAL chez un patient asymptomatique, toujours doser les Gamma-GT et la 5'-nucléotidase (ou faire une électrophorèse des isoenzymes des PAL) pour éliminer une origine osseuse avant de lancer une exploration hépatique invasive."
+    ],
+    "created_at": "2026-11-04T22:01:47.548244+00:00",
+    "updated_at": "2026-11-04T22:01:47.548256+00:00"
   }
 ]
