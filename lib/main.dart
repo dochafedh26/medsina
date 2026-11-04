@@ -23,7 +23,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Full-Screen Edge-to-Edge display on Android
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  // Full-Screen Immersive Sticky: hides Android system navigation bar so Medsina is true full screen
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
