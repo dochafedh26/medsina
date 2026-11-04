@@ -371,7 +371,7 @@ def broadcast_new_source(
 
     # 6. Post to Facebook Pages
     try:
-        from facebook_publisher import get_all_facebook_pages, publish_to_page_feed
+        from facebook_publisher import get_all_facebook_pages, publish_to_page_feed, publish_photo_to_page
         fb_caption = (
             f"📢 NOUVELLE RESSOURCE OFFICIELLE AJOUTÉE !\n\n"
             f"📁 {title}\n"
@@ -386,12 +386,20 @@ def broadcast_new_source(
         for page in pages:
             if not page.get("token"):
                 continue
-            res = publish_to_page_feed(
-                page_id=page["page_id"],
-                token=page["token"],
-                message=fb_caption,
-                link=url or "https://medsina.medevsync.com"
-            )
+            if public_img_url:
+                res = publish_photo_to_page(
+                    page_id=page["page_id"],
+                    token=page["token"],
+                    caption=fb_caption,
+                    image_url=public_img_url
+                )
+            else:
+                res = publish_to_page_feed(
+                    page_id=page["page_id"],
+                    token=page["token"],
+                    message=fb_caption,
+                    link=url or "https://medsina.medevsync.com"
+                )
             if res.get("id"):
                 print(f"  📢 [Facebook] Publié avec succès sur {page['name']} (Post ID: {res['id']})")
                 results["facebook"] = True

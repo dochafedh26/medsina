@@ -131,6 +131,41 @@ def add_followers_comment(
         return {"success": False, "error": str(e)}
 
 
+def publish_photo_to_page(page_id: str, token: str, caption: str, image_url: str) -> Dict[str, Any]:
+    """Publie une photo HD avec légende sur la page Facebook via le endpoint Graph API /photos."""
+    if check_duplicate_or_flood:
+        is_dup, reason = check_duplicate_or_flood(page_id, caption, cooldown_minutes=90)
+        if is_dup:
+            print(f"🛑 [Facebook Anti-Doublon Photo] Page {page_id} : {reason}")
+            return {"success": False, "skipped": True, "reason": reason}
+    url = f"https://graph.facebook.com/v21.0/{page_id}/photos"
+    payload = {
+        "caption": caption,
+        "url": image_url,
+        "access_token": token,
+    }
+    encoded_data = urllib.parse.urlencode(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=encoded_data,
+        method="POST",
+        headers={"User-Agent": "MedsinaPublisher/1.0"},
+    )
+    with urllib.request.urlopen(req, timeout=25) as resp:
+        res = json.loads(resp.read().decode("utf-8"))
+        photo_id = res.get("id")
+        post_id = res.get("post_id") or photo_id
+        if post_id:
+            if record_publication:
+                record_publication(page_id, caption, str(post_id))
+            add_followers_comment(
+                target_id=post_id,
+                token=token,
+                comment_text="@followers 🩺 Partagez avec vos confrères et activez les notifications pour ne rien manquer !",
+            )
+        return res
+
+
 def publish_to_page_feed(page_id: str, token: str, message: str, link: Optional[str] = None) -> Dict[str, Any]:
     if check_duplicate_or_flood:
         is_dup, reason = check_duplicate_or_flood(page_id, message, cooldown_minutes=90)
