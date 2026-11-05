@@ -895,21 +895,21 @@
   },
   {
     "id": "memento_sca_non_st",
-    "title": "⚡ SCA sans sus-décalage du ST (SCA non ST+)",
-    "category": "Cardiologie d'Urgence",
+    "title": "⚡ SCA sans ST (SCA non ST+) en UMC",
+    "category": "Cardiologie & Urgences",
     "icon_name": "favorite_border_rounded",
-    "color_hex": "#DC2626",
+    "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Monitorage continu, scope, pose de 2 VVP de bon calibre, oxygénothérapie seulement si SpO2 < 90%. ECG 12 dérivations immédiat (< 10 min) et répété si récidive douloureuse.",
-      "Étape 2 : Bilan biologique d'urgence au lit : Troponine ultra-sensible (à H0 et H1 ou H3 selon le kit), NFS, plaquettes, TP/TCA, fonction rénale (urée/créatinine), ionogramme sanguin, glycémie.",
-      "Étape 3 : Thérapie anti-ischémique et antithrombotique : Aspirine 250-300 mg PO (si non pris), Clopidogrel 300 mg PO (dose de charge) ou Ticagrelor 180 mg PO si coronarographie programmée, Anticoagulation par Enoxaparine 0,75 mg/kg SC (ou HNF si IRC sévère), et Dérivés nitrés sublinguaux si PA le permet.",
-      "Étape 4 : Stratégie de reperfusion et transfert : Évaluation du score GRACE. Transfert urgent en unité de soins intensifs cardiologiques (USIC) ou salle de cathétérisme pour coronarographie dans les 24h (ou < 2h si critères de très haut risque : instabilité hémodynamique, TV/FV, récidive douloureuse réfractaire).",
-      "Étape 5 : Piège médico-légal : Ne jamais éliminer un SCA sur une troponine unique négative à H0 ; éliminer une dissection aortique avant toute anticoagulation si asymétrie tensionnelle ou douleur dorsale transfixiante."
+      "Étape 1 : Monitorage immédiat, scope, pose de 2 VVP de bon calibre, ECG 12 dérivations < 10 min et oxymétrie (O2 si SpO2 < 90%).",
+      "Étape 2 : Bilan biologique d'urgence au lit : Troponine ultra-sensible, NFS, plaquettes, fonction rénale (créatinine/clairance), ionogramme, bilan hépatique et hémostase.",
+      "Étape 3 : Thérapie anti-ischémique et antithrombotique de 1ère intention : Aspirine (300 mg per os) + Clopidogrel (dose de charge 300 mg per os, ou 600 mg si stratégie invasive précoce) + Anticoagulation (Enoxaparine 0,5 mg/kg IV direct puis 1 mg/kg/12h SC ou Héparine Non Fractionnée IV).",
+      "Étape 4 : Évaluation de la stratification du risque (ESC) : Critères de très haut risque (hémodynamique instable, arythmies graves, douleur réfractaire) imposant une coronarographie urgente < 2h.",
+      "Étape 5 : Piège médico-légal et CI absolue : Ne jamais administrer de thrombolyse (inefficace et délétère dans le SCA non ST+) et éliminer formellement une dissection aortique ou une embolie pulmonaire avant toute anticoagulation pleine."
     ],
-    "scientific_references": "Recommandations ESC 2023 / SFC / Consensus National Algérien de Cardiologie",
+    "scientific_references": "Recommandations ESC / SFMU / Consensus National Algérien de Cardiologie",
     "is_active": true,
-    "created_at": "2026-11-03T21:04:50.138478+00:00",
-    "updated_at": "2026-11-03T21:04:50.138497+00:00"
+    "created_at": "2026-11-05T06:57:51.824002+00:00",
+    "updated_at": "2026-11-05T06:57:51.824030+00:00"
   }
 ]
