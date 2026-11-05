@@ -515,18 +515,18 @@
   },
   {
     "id": "lab_troponine_hs",
-    "name": "Troponine Cardiaque Hautement Sensible (hs-cTnT / hs-cTnI)",
+    "name": "Troponine Cardiaque Haute Sensibilité (hs-cTnT / hs-cTnI)",
     "category": "Cardiologie & Vasculaire",
-    "normal_range": "Inférieure au 99e percentile de la limite supérieure de référence (LSR) de la population saine (généralement < 14 ng/L ou pg/mL selon les réactifs)",
+    "normal_range": "Sexe-spécifique (Variable selon réactif, généralement < 14 ng/L pour hs-cTnT et < 19-26 ng/L pour hs-cTnI, ou < 99e percentile de la population saine)",
     "unit": "ng/L (ou pg/mL)",
-    "high_interpretation": "Élévation (myocrane): 1. Infarctus du Myocarde Aigu (IMA ST+ ou non ST) avec cinétique typique (ascension et/ou décroissance). 2. Causes non coronariennes (Infarctus de type 2) : Embolie pulmonaire grave, myocardite aiguë, insuffisance cardiaque aiguë, dissection aortique, choc septique, insuffisance rénale chronique sévère, contusion myocardique, tachyarythmie sévère. Seuil d'urgence : Toute élévation aiguë avec tableau clinique évocateur impose un ECG immédiat et une orientation en USIC.",
-    "low_interpretation": "Valeur normale (< 99e percentile) : Exclut un infarctus du myocarde aigu en cours si le dosage initial et le dosage séquentiel (à H1 ou H3 selon l'algorithme ESC 0h/1h ou 0h/3h) restent sous le seuil ou s'il s'est écoulé plus de 6 heures depuis le début de la douleur. Pas de seuil pathologique bas (une valeur indétectable est normale).",
+    "high_interpretation": "Nécrose myocardique. Causes coronariennes : Syndrome Coronarien Aigu avec ou sans sus-décalage du ST (SCA ST+ / SCA non ST+). Causes non coronariennes : Embolie pulmonaire grave, myocardite aigue, dissection aortique, insuffisance cardiaque aigue, contusion myocardique, sepsis sévère, choc, insuffisance rénale chronique avancée (élévation basale chronique), tachyarythmies sévères. Urgence vitale : Douleur thoracique suspecte avec ascension dynamique. Conduite à tenir : ECG 12 dérivations immédiat (< 10 min), monitorage, avis cardiologique urgent, protocole algorithmique 0h/1h ou 0h/2h selon les recommandations ESC, double dosage à distance si premier douteux.",
+    "low_interpretation": "Valeur normale ou indétectable n'excluant pas un SCA précoce (fenêtre temporelle < 3 heures post-douleur). Une valeur inférieure au seuil de décision à H0 et H1 (selon l'algorithme ESC 0h/1h) permet d'exclure formellement un SCA avec une excellente valeur predictive négative (VPN). Conduite à tenir : Si la clinique est hautement suspecte et que le prélèvement est précoce (< 3h), répéter le dosage à H3 ou H6.",
     "clinical_notes": [
-      "Piège pré-analytique : La troponine hs peut être faussement élevée en cas d'insuffisance rénale chronique (clairance abaissée, clairance rénale diminuée de la troponine libre) ou d'interférences analytiques (anticorps hétérophiles, macro-troponine).",
-      "Règle d'interprétation cinétique : Ne jamais interpréter une troponine isolée hors contexte. C'est la variation (delta) entre deux dosages (H0 et H1 ou H3) qui affirme la souffrance myocardique aigue (ischémique ou non)."
+      "Piège pré-analytique / Interférences : L'insuffisance rénale chronique (DFG abaissé) provoque une élévation chronique modérée de la hs-cTn par diminution de sa clairance et/ou micro-ischémie chronique ; il faut rechercher une cinétique (variation) plutôt qu'une valeur isolée. Les macro-complexes (macro-troponine) peuvent causer de fausses élévations asymptomatiques.",
+      "Notion clé Concours / Réanimation : Le diagnostic de l'Infarctus du Myocarde (IDM) repose sur la cinétique de la troponine (ascension et/ou décroissance avec au moins une valeur supérieure au 99e percentile URL) associée à des arguments ischémiques (cliniques, électriques ou d'imagerie). Une valeur isolée élevée n'est pas synonyme de SCA."
     ],
-    "created_at": "2026-10-26T23:58:18.472974+00:00",
-    "updated_at": "2026-10-26T23:58:18.472988+00:00"
+    "created_at": "2026-11-05T18:53:02.023478+00:00",
+    "updated_at": "2026-11-05T18:53:02.023503+00:00"
   },
   {
     "id": "lab_cortisol_8h",
