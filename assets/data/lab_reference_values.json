@@ -1003,5 +1003,21 @@
     ],
     "created_at": "2026-11-04T22:01:47.548244+00:00",
     "updated_at": "2026-11-04T22:01:47.548256+00:00"
+  },
+  {
+    "id": "lab_carboxyhemoglobine_hbco",
+    "name": "Carboxyhémoglobine (HbCO)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "Non-fumeur : < 2 % | Fumeur : 5 - 10 %",
+    "unit": "% de l'hémoglobine totale",
+    "high_interpretation": "Signe une intoxication au monoxyde de carbone (CO), urgence toxicologique majeure (chauffages d'appoint défectueux, chauffe-eau non raccordés, incendies, groupes électrogènes). Clinique progressive : 10-20 % (céphalées pulsatiles, nausées, vertiges), 20-30 % (confusion, tachycardie, faiblesse musculaire), > 30-40 % (coma, convulsions, état de choc, ischémie myocardique aiguë, acidose lactique sévère), > 50-60 % (arrêt cardio-respiratoire). Seuil d'urgence vitale : HbCO > 20-25 % ou présence de signes de gravité neurologiques/cardiologiques. CAT immédiate : évacuation de la zone, oxygénothérapie normobare au masque à haute concentration à réservoir (12-15 L/min) sans attendre les résultats ; indication d'oxygénothérapie hyperbare (OHB) en caisson selon les critères de gravité.",
+    "low_interpretation": "Taux physiologiques (< 2 % chez le non-fumeur) correspondant au catabolisme physiologique de l'hème par l'hème oxygénase. Piège clinique majeur : un taux bas ou normalisé n'élimine absolument pas une intoxication grave récente si le prélèvement a été différé ou réalisé après mise sous oxygène pré-hospitalière, en raison de la clairance rapide du CO.",
+    "clinical_notes": [
+      "Piège d'oxymétrie de pouls (SpO2) : Le saturomètre de pouls standard à deux longueurs d'onde est incapable de distinguer l'HbCO de l'oxyhémoglobine (HbO2). La SpO2 affichée reste faussement normale (98-100 %) malgré une hypoxie tissulaire mortelle. Seule la co-oxymétrie sur analyseur de gaz du sang (artériel ou veineux hépariné) permet le dosage fiable.",
+      "Cinétique d'élimination et demi-vie (T1/2) : La demi-vie de l'HbCO est de 4 à 5 heures à l'air ambiant (FiO2 21 %), réduite à 60-90 minutes sous O2 pur normobare (FiO2 100 %) et à 20-30 minutes en caisson hyperbare à 2,5-3 ATA. Il est impératif de consigner l'heure exacte de fin d'exposition et le délai de mise sous O2 pour évaluer la gravité réelle de l'exposition initiale.",
+      "Indications consensuelles de l'Oxygénothérapie Hyperbare (OHB) au concours : Perte de connaissance (même transitoire ou initiale), signes neurologiques focaux, coma, convulsions, signes d'ischémie myocardique (angor, anomalies ECG, élévation de troponine), femme enceinte (HbF fœtale à très haute affinité pour le CO avec risque létal ou tératogène fœtal), ou taux d'HbCO > 25 % (ou > 15-20 % chez la femme enceinte)."
+    ],
+    "created_at": "2026-11-05T02:39:00.371250+00:00",
+    "updated_at": "2026-11-05T02:39:00.371267+00:00"
   }
 ]
