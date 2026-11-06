@@ -161,9 +161,19 @@ def get_supabase_credentials() -> Tuple[str, str]:
                 k, v = line.split("=", 1)
                 env_vars[k.strip()] = v.strip().strip("\"'")
 
-    url = env_vars.get("SUPABASE_URL", "https://qzfssrhhuorljftpdvjm.supabase.co")
-    key = env_vars.get("SUPABASE_SERVICE_ROLE_KEY", "")
-    return url, key
+    url = (
+        os.environ.get("SUPABASE_URL")
+        or env_vars.get("SUPABASE_URL")
+        or "https://qzfssrhhuorljftpdvjm.supabase.co"
+    )
+    key = (
+        os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+        or os.environ.get("SUPABASE_KEY")
+        or env_vars.get("SUPABASE_SERVICE_ROLE_KEY")
+        or env_vars.get("SUPABASE_KEY")
+        or "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF6ZnNzcmhodW9ybGpmdHBkdmptIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTYxMjg1NCwiZXhwIjoyMTA3MTg4ODU0fQ.-KCUgZdY8RDUwvNOUAabDhQFwv5FFGHYz0J-dM7Cic4"
+    )
+    return url.strip().rstrip("/"), key.strip()
 
 
 # -----------------------------------------------------------------------------
