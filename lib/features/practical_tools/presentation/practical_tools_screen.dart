@@ -77,27 +77,45 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
       body: Column(
         children: [
           Container(
-            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            decoration: AppTheme.bentoCardDecoration(context, radius: 18),
+            width: double.infinity,
             child: TabBar(
               controller: _tabController,
               isScrollable: true,
               tabAlignment: TabAlignment.start,
-              labelColor: AppTheme.primaryTeal,
+              dividerColor: Colors.transparent,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+              indicator: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppTheme.primaryTeal
+                    : AppTheme.clinicalNavy,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.clinicalNavy.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              labelColor: Colors.white,
               unselectedLabelColor: Colors.grey.shade600,
-              indicatorColor: AppTheme.primaryTeal,
-              indicatorWeight: 3,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+              labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12.5),
               tabs: [
                 const Tab(
-                  icon: Icon(Icons.psychology_rounded),
+                  icon: Icon(Icons.psychology_rounded, size: 18),
                   text: 'Analyseur IA ✨',
                 ),
                 Tab(
-                  icon: const Icon(Icons.biotech_rounded),
+                  icon: const Icon(Icons.biotech_rounded, size: 18),
                   text: 'Normes (${_allLabs.length})',
                 ),
                 Tab(
-                  icon: const Icon(Icons.nightlight_round),
+                  icon: const Icon(Icons.nightlight_round, size: 18),
                   text: 'Mémento (${_allMementos.length})',
                 ),
               ],
@@ -277,115 +295,115 @@ class _OnCallMementoCardState extends State<_OnCallMementoCard> {
     final m = widget.memento;
     final color = m.color;
 
-    return Card(
-      elevation: 0,
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: Colors.grey.shade200, width: 1.2),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: () => setState(() => _expanded = !_expanded),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
+      decoration: AppTheme.bentoCardDecoration(context, radius: 18),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(m.icon, color: color, size: 22),
                     ),
-                    child: Icon(m.icon, color: color, size: 22),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          m.title,
-                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
-                        ),
-                        const SizedBox(height: 3),
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 2,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            if (m.category.isNotEmpty)
-                              Text(
-                                m.category,
-                                style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
-                              ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: color.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                '${m.points.length} réflexes',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: color,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Icon(
-                    _expanded ? Icons.expand_less : Icons.expand_more,
-                    size: 20,
-                    color: Colors.grey.shade600,
-                  ),
-                ],
-              ),
-              if (_expanded) ...[
-                const SizedBox(height: 14),
-                const Divider(height: 1),
-                const SizedBox(height: 12),
-                ...m.points.map((p) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('• ', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16)),
-                          Expanded(
-                            child: Text(p, style: const TextStyle(fontSize: 13, height: 1.4)),
+                          Text(
+                            m.title,
+                            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                          ),
+                          const SizedBox(height: 3),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 2,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              if (m.category.isNotEmpty)
+                                Text(
+                                  m.category,
+                                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                                ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: color.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  '${m.points.length} réflexes',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: color,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    )),
-                if (m.scientificReferences != null && m.scientificReferences!.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  const Divider(),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.menu_book_rounded, size: 14, color: Colors.grey.shade500),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          m.scientificReferences!,
-                          style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade600),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      _expanded ? Icons.expand_less : Icons.expand_more,
+                      size: 20,
+                      color: Colors.grey.shade600,
+                    ),
+                  ],
+                ),
+                if (_expanded) ...[
+                  const SizedBox(height: 14),
+                  const Divider(height: 1),
+                  const SizedBox(height: 12),
+                  ...m.points.map((p) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('• ', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 16)),
+                            Expanded(
+                              child: Text(p, style: const TextStyle(fontSize: 13, height: 1.4)),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
+                      )),
+                  if (m.scientificReferences != null && m.scientificReferences!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    const Divider(),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.menu_book_rounded, size: 14, color: Colors.grey.shade500),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            m.scientificReferences!,
+                            style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -408,13 +426,9 @@ class _LabValueCardState extends State<_LabValueCard> {
   Widget build(BuildContext context) {
     final lab = widget.lab;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: Colors.grey.shade200, width: 1.2),
-      ),
+      decoration: AppTheme.bentoCardDecoration(context, radius: 18),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
