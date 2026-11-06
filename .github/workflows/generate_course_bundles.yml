@@ -89,7 +89,7 @@ jobs:
           fi
 
           echo "🚀 Executing generator with args: $EXTRA_ARGS"
-          python medsina/scripts/automation/generate_residanat_course_bundle.py $EXTRA_ARGS
+          python scripts/automation/generate_residanat_course_bundle.py $EXTRA_ARGS
 
       - name: Upload Generated Booklets as GitHub Artifacts (Optional backup)
         uses: actions/upload-artifact@v4
