@@ -1052,5 +1052,20 @@
     ],
     "created_at": "2026-11-06T15:15:07.427565+00:00",
     "updated_at": "2026-11-06T15:15:07.427580+00:00"
+  },
+  {
+    "id": "lab_cryoglobulinee",
+    "name": "Cryoglobulinémie (Recherche et typage)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Négatif (Absence de précipité cryable après 7 jours à 4°C)",
+    "unit": "% (ou absence/présence, quantification en mg/L)",
+    "high_interpretation": "Présence de cryoglobulines (immunoglobulines précipitant au froid et se solubilisant à 37°C). Classées en 3 types (Brouet) : Type I (monoclonale, hémopathies malignes type myeloma/Waldenström, risque d'hyperviscosité) ; Type II et III (mixtes, polyclonales ou mixtes avec composante monoclonale, associées à l'Hépatite C, maladies auto-immunes type Gougerot-Sjögren, LES). Urgence clinique : Vascularite cryoglobulinémique systémique (purpura vasculaire infiltré, arthralgies, glomérulonéphrite membranaire ou MPGN, neuropathie périphérique, nécrose cutanée). Conduite à tenir : Bilan étiologique urgent (Sérologie VHC, VIH, VHB, EPP sérique et urinaire, fraction C3/C4/CH50 effondrées) et corticothérapie/plasmaphérèse si atteinte viscérale menaçante.",
+    "low_interpretation": "Non applicable (absence de cryoglobulines, valeur normale).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le prélèvement DOIT être strictement recueilli sur tube préchauffé à 37°C, transporté immédiatement à 37°C au laboratoire, et centrifugé à 37°C pour éviter la précipitation intempestive dans le caillot et un faux négatif.",
+      "Bilan biologique associé indispensable : Le complément sérique (particulièrement le C4) est effondré dans les cryoglobulinémies mixtes (types II et III) par consommation sur complexes immuns circulants."
+    ],
+    "created_at": "2026-11-06T20:58:16.024568+00:00",
+    "updated_at": "2026-11-06T20:58:16.024582+00:00"
   }
 ]
