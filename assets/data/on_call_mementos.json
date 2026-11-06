@@ -896,21 +896,21 @@
   },
   {
     "id": "memento_sca_non_st",
-    "title": "⚡ SCA sans ST (SCA non ST+) en UMC",
-    "category": "Cardiologie & Urgences",
+    "title": "⚡ SCA sans ST (NSTEMI)",
+    "category": "Cardiologie / UMC",
     "icon_name": "favorite_border_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Monitorage immédiat, scope, pose de 2 VVP de bon calibre, ECG 12 dérivations < 10 min et oxymétrie (O2 si SpO2 < 90%).",
-      "Étape 2 : Bilan biologique d'urgence au lit : Troponine ultra-sensible, NFS, plaquettes, fonction rénale (créatinine/clairance), ionogramme, bilan hépatique et hémostase.",
-      "Étape 3 : Thérapie anti-ischémique et antithrombotique de 1ère intention : Aspirine (300 mg per os) + Clopidogrel (dose de charge 300 mg per os, ou 600 mg si stratégie invasive précoce) + Anticoagulation (Enoxaparine 0,5 mg/kg IV direct puis 1 mg/kg/12h SC ou Héparine Non Fractionnée IV).",
-      "Étape 4 : Évaluation de la stratification du risque (ESC) : Critères de très haut risque (hémodynamique instable, arythmies graves, douleur réfractaire) imposant une coronarographie urgente < 2h.",
-      "Étape 5 : Piège médico-légal et CI absolue : Ne jamais administrer de thrombolyse (inefficace et délétère dans le SCA non ST+) et éliminer formellement une dissection aortique ou une embolie pulmonaire avant toute anticoagulation pleine."
+      "Étape 1 : Monitorage immédiat, pose de 2 VVP de gros calibre, ECG 12 dérivations < 10 min et oxygénothérapie si SpO2 < 90%.",
+      "Étape 2 : Biologie urgente au lit : Troponine ultrasensible, NFS, ionogramme sanguin, fonction rénale (Créat/Clairance), bilan hépatique et hémostase.",
+      "Étape 3 : Double anti-agrégation plaquettaire (DAPT) : Aspirine 250-300 mg IV + Clopidogrel 300-600 mg PO (ou Ticagrelor 180 mg PO si disponible), plus Anticoagulation (Enoxaparine 0,5 mg/kg IV direct puis 1 mg/kg/12h SC ou Héparine Non Fractionnée).",
+      "Étape 4 : Traitement symptomatique de la douleur : Dérivés nitrés sublinguaux ou IVSE si PA le permet, et Bêtabloquants si stables et sans signe d'insuffisance cardiaque.",
+      "Étape 5 : Stratification du risque (GRACE score) : Coronarographie en urgence < 2h en cas de très haut risque (choc, instabilité hémodynamique, arythmie menaçante, douleur persistante)."
     ],
-    "scientific_references": "Recommandations ESC / SFMU / Consensus National Algérien de Cardiologie",
+    "scientific_references": "Recommandations ESC / SFMU / Société Algérienne de Cardiologie",
     "is_active": true,
-    "created_at": "2026-11-05T06:57:51.824002+00:00",
-    "updated_at": "2026-11-05T06:57:51.824030+00:00"
+    "created_at": "2026-11-06T11:02:18.761458+00:00",
+    "updated_at": "2026-11-06T11:02:18.761473+00:00"
   }
 ]
