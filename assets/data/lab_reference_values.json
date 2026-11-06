@@ -1019,5 +1019,21 @@
     ],
     "created_at": "2026-11-05T02:39:00.371250+00:00",
     "updated_at": "2026-11-05T02:39:00.371267+00:00"
+  },
+  {
+    "id": "lab_uree_sanguine",
+    "name": "Urée sérique / sanguine",
+    "category": "Ionogramme & Rein",
+    "normal_range": "2.5 - 7.5 (soit 0.15 - 0.45 g/L)",
+    "unit": "mmol/L",
+    "high_interpretation": "Urée élevée (Urémie) : Insuffisance rénale aiguë (IRA) ou chronique (IRC). Causes pré-rénales (déshydratation, insuffisance cardiaque, syndrome hépatorénal, hypercatabolisme protéique, corticothérapie, saignement digestif haut), rénales (néphropathies organiques) ou post-rénales (obstruction des voies urinaires). Seuil d'alerte > 30 mmol/L : risque d'encéphalopathie urémique et de péricardite urémique, urgence néphrologique.",
+    "low_interpretation": "Urée basse : Dénutrition sévère, insuffisance hépatocellulaire grave (défaut de synthèse par le foie), hyperhydratation extracellulaire (prise de volume), grossesse normale (augmentation du débit filtration glomérulaire). Rarement critique en soi, mais témoigne d'un état catabolique ou hépatique sous-jacent.",
+    "clinical_notes": [
+      "Facteurs pré-analytiques : L'urée est moins spécifique que la créatinine de la fonction rénale car elle subit une réabsorption tubulaire passive sensible au débit urinaire et au statut volémique.",
+      "Piège concours/clinique : Le rapport Urée/Créatinine (en mmol/L) > 100 (ou > 0.1 si créat en mg/L et urée en g/L) oriente fortement vers une cause pré-rénale (déshydratation, hémorragie digestive haute avec digestion des protéines par le tractus).",
+      "Conversion usuelle en Algérie : 1 g/L d'urée = 16.65 mmol/L (ou Urée en mmol/L x 0.06 = Urée en g/L)."
+    ],
+    "created_at": "2026-11-06T00:27:36.055140+00:00",
+    "updated_at": "2026-11-06T00:27:36.055155+00:00"
   }
 ]
