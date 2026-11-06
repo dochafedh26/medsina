@@ -6,6 +6,7 @@ class AppTheme {
   static const Color clinicalNavy = Color(0xFF0B2545); // Deep Clinical Navy (Hero & Active Pill)
   static const Color clinicalNavyElevated = Color(0xFF133663);
   static const Color primaryTeal = Color(0xFF0D9488); // Medical Teal/Emerald
+  static const Color secondaryTeal = Color(0xFF14B8A6); // Vibrant Teal Highlight
   static const Color primaryDarkTeal = Color(0xFF0F766E);
   static const Color accentCyan = Color(0xFF0284C7);
   static const Color medicalGreen = Color(0xFF10B981);
@@ -27,7 +28,7 @@ class AppTheme {
 
   /// Dual-font typography: Plus Jakarta Sans for display/headings/KPIs, Inter for clinical reading
   static TextTheme _buildTextTheme(TextTheme base, Color primaryTextColor, Color secondaryTextColor) {
-    final interTheme = GoogleFonts.interTextTheme(base).apply(
+    final interTheme = base.apply(
       bodyColor: primaryTextColor,
       displayColor: primaryTextColor,
     );
@@ -104,15 +105,17 @@ class AppTheme {
   static BoxDecoration bentoCardDecoration(
     BuildContext context, {
     Color? accentBorder,
+    Color? borderColor,
     Color? fillColor,
     double radius = 20,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final effectiveBorder = borderColor ?? accentBorder;
     return BoxDecoration(
       color: fillColor ?? (isDark ? darkSurface : lightSurface),
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(
-        color: accentBorder ??
+        color: effectiveBorder ??
             (isDark
                 ? darkBorder.withValues(alpha: 0.85)
                 : lightBorder.withValues(alpha: 0.9)),
