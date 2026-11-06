@@ -77,36 +77,54 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
           : null,
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'fab_clinical_copilot',
-        backgroundColor: const Color(0xFF2563EB),
+        backgroundColor: AppTheme.clinicalNavy,
         foregroundColor: Colors.white,
-        icon: const Icon(Icons.auto_awesome_rounded, size: 20),
-        label: const Text('Copilote Clinique IA', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+        icon: const Icon(Icons.auto_awesome_rounded, size: 20, color: AppTheme.secondaryTeal),
+        label: const Text('Copilote Clinique IA', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
         onPressed: () => ClinicalCopilotSheet.show(context),
       ),
       body: Column(
         children: [
           Container(
-            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            decoration: AppTheme.bentoCardDecoration(context, radius: 18),
+            width: double.infinity,
             child: TabBar(
               controller: _tabController,
               isScrollable: true,
               tabAlignment: TabAlignment.start,
-              labelColor: AppTheme.primaryTeal,
+              dividerColor: Colors.transparent,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+              indicator: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppTheme.primaryTeal
+                    : AppTheme.clinicalNavy,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.clinicalNavy.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              labelColor: Colors.white,
               unselectedLabelColor: Colors.grey.shade600,
-              indicatorColor: AppTheme.primaryTeal,
-              indicatorWeight: 3,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+              labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12.5),
               tabs: const [
                 Tab(
-                  icon: Icon(Icons.emergency_rounded),
+                  icon: Icon(Icons.emergency_rounded, size: 18),
                   text: 'Protocoles & CAT',
                 ),
                 Tab(
-                  icon: Icon(Icons.calculate_rounded),
+                  icon: Icon(Icons.calculate_rounded, size: 18),
                   text: 'Scores Cliniques',
                 ),
                 Tab(
-                  icon: Icon(Icons.medication_liquid_rounded),
+                  icon: Icon(Icons.medication_liquid_rounded, size: 18),
                   text: 'Urgences & DCI Algérie',
                 ),
               ],
@@ -336,14 +354,18 @@ class _ProtocolCardState extends State<_ProtocolCard> {
     final isPreviewCAT = p.id.contains('scorpion') || p.id.contains('acr');
     final isLocked = isExpired || (isFree && !isPreviewCAT);
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: urgColor.withValues(alpha: 0.35), width: 1.2),
+      decoration: AppTheme.bentoCardDecoration(
+        context,
+        radius: 18,
+        borderColor: urgColor.withValues(alpha: 0.35),
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
         onTap: () {
           if (isLocked) {
             final reason = isExpired
@@ -559,6 +581,7 @@ class _ProtocolCardState extends State<_ProtocolCard> {
           ),
         ),
       ),
+      ),
     );
   }
 }
@@ -634,19 +657,17 @@ class _CalculatorsTabState extends State<_CalculatorsTab> {
   }) {
     final isExpanded = _expandedCalculators.contains(id);
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(
-          color: isExpanded ? iconColor.withValues(alpha: 0.4) : Colors.grey.withValues(alpha: 0.2),
-          width: isExpanded ? 1.5 : 1,
-        ),
+      decoration: AppTheme.bentoCardDecoration(
+        context,
+        radius: 18,
+        borderColor: isExpanded ? iconColor.withValues(alpha: 0.45) : null,
       ),
       child: Column(
         children: [
           InkWell(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(18),
             onTap: () => _toggleCalculator(id),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -1474,18 +1495,17 @@ class _EmergencyDrugCardState extends State<_EmergencyDrugCard> {
     final drug = widget.drug;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
-      ),
-      elevation: 0,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () => setState(() => _expanded = !_expanded),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
+      decoration: AppTheme.bentoCardDecoration(context, radius: 18),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -1667,6 +1687,7 @@ class _EmergencyDrugCardState extends State<_EmergencyDrugCard> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

@@ -83,7 +83,8 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isDesktop = MediaQuery.of(context).size.width >= 900;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktopSplit = screenWidth >= 960;
 
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
@@ -122,114 +123,339 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       builder: (context, state) {
         final isLoading = state.status == AuthStatus.loading;
 
+        final authBentoCard = Container(
+          decoration: AppTheme.bentoCardDecoration(context, radius: 24),
+          padding: const EdgeInsets.all(26),
+          child: Column(
+            children: [
+              // Pill-segmented Tabs
+              Container(
+                height: 48,
+                padding: const EdgeInsets.all(4),
+                decoration: AppTheme.segmentedPillContainerDecoration(
+                  context,
+                  radius: 14,
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  dividerColor: Colors.transparent,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: BoxDecoration(
+                    color: isDark ? AppTheme.primaryTeal : AppTheme.clinicalNavy,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.clinicalNavy.withValues(alpha: 0.18),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: isDark ? Colors.white60 : const Color(0xFF475569),
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                  unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  tabs: const [
+                    Tab(text: 'Connexion'),
+                    Tab(text: 'Créer un Compte'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Tab Views
+              SizedBox(
+                height: 445,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildLoginForm(isLoading),
+                    _buildRegisterForm(isLoading),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+
         return Scaffold(
           body: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
                 colors: isDark
-                    ? [const Color(0xFF0F172A), const Color(0xFF0B0F19)]
-                    : [const Color(0xFFF8FAFC), const Color(0xFFE2E8F0)],
+                    ? [const Color(0xFF090D16), const Color(0xFF111827)]
+                    : [const Color(0xFFF3F6FA), const Color(0xFFE6EEF8)],
               ),
             ),
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: isDesktop ? 500 : 440),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Brand Header
-                      _buildBrandHeader(isDark),
-                      const SizedBox(height: 24),
-
-                      // Feature Highlights Pills
-                      _buildHighlightsPills(isDark),
-                      const SizedBox(height: 24),
-
-                      // Auth Card with Tabs
-                      Card(
-                        elevation: isDark ? 0 : 4,
-                        shadowColor: Colors.black.withValues(alpha: 0.1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(
-                            color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isDesktopSplit ? 40 : 20,
+                  vertical: 32,
+                ),
+                child: isDesktopSplit
+                    ? ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1120),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Tabs
-                              Container(
-                                height: 46,
-                                decoration: BoxDecoration(
-                                  color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF1F5F9),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: TabBar(
-                                  controller: _tabController,
-                                  indicatorSize: TabBarIndicatorSize.tab,
-                                  indicator: BoxDecoration(
-                                    color: AppTheme.primaryTeal,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  labelColor: Colors.white,
-                                  unselectedLabelColor: isDark ? Colors.white60 : Colors.grey.shade700,
-                                  labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                                  tabs: const [
-                                    Tab(text: 'Connexion'),
-                                    Tab(text: 'Créer un Compte'),
-                                  ],
-                                ),
+                              Expanded(
+                                flex: 5,
+                                child: _buildDesktopShowcasePanel(isDark),
                               ),
-                              const SizedBox(height: 24),
-
-                              // Tab Views
-                              SizedBox(
-                                height: 440,
-                                child: TabBarView(
-                                  controller: _tabController,
+                              const SizedBox(width: 28),
+                              Expanded(
+                                flex: 5,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    _buildLoginForm(isLoading),
-                                    _buildRegisterForm(isLoading),
+                                    authBentoCard,
+                                    const SizedBox(height: 16),
+                                    _buildDownloadSection(isDark),
                                   ],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-
-                      const SizedBox(height: 16),
-                      _buildDownloadSection(isDark),
-                      const SizedBox(height: 18),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.cloud_done_rounded, size: 14, color: Colors.grey.shade500),
-                          const SizedBox(width: 6),
-                          Flexible(
-                            child: Text(
-                              'Cloud Médical Sécurisé • Résidanat Blida 2027 v${AppConstants.appVersion}',
-                              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
-                              overflow: TextOverflow.ellipsis,
+                      )
+                    : ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 460),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildBrandHeader(isDark),
+                            const SizedBox(height: 20),
+                            _buildHighlightsPills(isDark),
+                            const SizedBox(height: 20),
+                            authBentoCard,
+                            const SizedBox(height: 16),
+                            _buildDownloadSection(isDark),
+                            const SizedBox(height: 18),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.cloud_done_rounded, size: 14, color: Colors.grey.shade500),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    'Cloud Médical Sécurisé • Résidanat Blida 2027 v${AppConstants.appVersion}',
+                                    style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildDesktopShowcasePanel(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(36),
+      decoration: AppTheme.heroNavyDecoration(radius: 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: const MedsinaLogo.icon(size: 40),
+                  ),
+                  const SizedBox(width: 14),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'MEDSINA',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                      Text(
+                        'CLINICAL & RESIDENCY SUITE • 2027',
+                        style: TextStyle(
+                          color: AppTheme.secondaryTeal.withValues(alpha: 0.95),
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.9,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                ),
+                child: const Text(
+                  '✨ ARCHITECTURE BENTO MÉDICALE • NOUVELLE GÉNÉRATION',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.7,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'L\'Excellence Médicale,\ndu Cursus Universitaire\nà la Garde d\'Urgence.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
+                  letterSpacing: -0.6,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'Préparez le concours de Résidanat (Blida & Facultés Nationales) et sécurisez vos décisions cliniques au lit du malade grâce à une plateforme unifiée.',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.82),
+                  fontSize: 13.5,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 28),
+              _buildShowcaseFeatureTile(
+                icon: Icons.school_rounded,
+                title: '47 Modules & 6 240+ QCMs Corrigés',
+                subtitle: 'Annales officielles, fiches synthétiques PDF & répétition espacée FSRS.',
+              ),
+              const SizedBox(height: 14),
+              _buildShowcaseFeatureTile(
+                icon: Icons.emergency_rounded,
+                title: 'Pratique Clinique, CAT & DCI Algérie',
+                subtitle: 'Arbres décisionnels MSPRH, scores validés & pharmacopée Saidal/IPA.',
+              ),
+              const SizedBox(height: 14),
+              _buildShowcaseFeatureTile(
+                icon: Icons.auto_awesome_rounded,
+                title: 'MedsinaTeacher & Copilote Clinique IA',
+                subtitle: 'Tuteur médical intelligent, simulateur de cas & analyseur biologique.',
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.verified_user_rounded,
+                  color: AppTheme.secondaryTeal,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Synchronisation Cloud multi-appareils & Mode 100% Hors-Ligne • v${AppConstants.appVersion}',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShowcaseFeatureTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              color: AppTheme.secondaryTeal.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: AppTheme.secondaryTeal, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13.5,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    fontSize: 11.5,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

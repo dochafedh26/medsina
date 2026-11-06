@@ -333,9 +333,8 @@ class _MainScaffoldState extends State<MainScaffold> {
               child: Scaffold(
             body: Row(
               children: [
-                // Desktop Navigation Sidebar
+                // Desktop Navigation Sidebar (Floating Bento Cards)
                 _buildSidebar(context, tier, user, navItems, safeIndex),
-                const VerticalDivider(width: 1, thickness: 1),
                 // Main Content
                 Expanded(
                   child: Scaffold(
@@ -351,44 +350,80 @@ class _MainScaffoldState extends State<MainScaffold> {
     }
 
         // Mobile Layout (Android APK & small screens)
+        final isDarkMobile = Theme.of(context).brightness == Brightness.dark;
         return Scaffold(
           appBar: _buildMobileTopBar(context, tier, user),
           body: IndexedStack(
             index: safeIndex,
             children: navItems.map((item) => item.page).toList(),
           ),
-          bottomNavigationBar: NavigationBarTheme(
-            data: NavigationBarThemeData(
-              height: 64,
-              labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
-                (states) => TextStyle(
-                  fontSize: navItems.length >= 6 ? 9.5 : (navItems.length >= 5 ? 10 : 11.5),
-                  fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
-                  letterSpacing: -0.2,
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: isDarkMobile ? AppTheme.darkSurface : Colors.white,
+              border: Border(
+                top: BorderSide(
+                  color: isDarkMobile ? AppTheme.darkBorder : AppTheme.lightBorder,
+                  width: 1,
                 ),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDarkMobile ? 0.25 : 0.05),
+                  blurRadius: 16,
+                  offset: const Offset(0, -4),
+                ),
+              ],
             ),
-            child: NavigationBar(
-              selectedIndex: safeIndex,
-              onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
-              labelBehavior: MediaQuery.of(context).size.width < 380 && navItems.length >= 6
-                  ? NavigationDestinationLabelBehavior.onlyShowSelected
-                  : NavigationDestinationLabelBehavior.alwaysShow,
-              destinations: navItems.map((item) {
-                String displayLabel = item.label;
-                if (navItems.length >= 5 && displayLabel == 'Ordonnance') {
-                  displayLabel = 'Ordo / Rx';
-                }
-                return NavigationDestination(
-                  icon: Icon(item.icon, size: 22),
-                  selectedIcon: Icon(
-                    item.selectedIcon,
-                    size: 22,
-                    color: item.isSpecial ? const Color(0xFFDC2626) : AppTheme.primaryTeal,
+            child: NavigationBarTheme(
+              data: NavigationBarThemeData(
+                height: 66,
+                backgroundColor: Colors.transparent,
+                surfaceTintColor: Colors.transparent,
+                indicatorColor: isDarkMobile
+                    ? AppTheme.primaryTeal.withValues(alpha: 0.22)
+                    : AppTheme.clinicalNavy,
+                indicatorShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+                  (states) => TextStyle(
+                    fontSize: navItems.length >= 6 ? 9.5 : (navItems.length >= 5 ? 10 : 11.5),
+                    fontWeight: states.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w600,
+                    letterSpacing: -0.2,
+                    color: states.contains(WidgetState.selected)
+                        ? (isDarkMobile ? Colors.white : AppTheme.clinicalNavy)
+                        : (isDarkMobile ? Colors.white60 : const Color(0xFF64748B)),
                   ),
-                  label: displayLabel,
-                );
-              }).toList(),
+                ),
+              ),
+              child: NavigationBar(
+                selectedIndex: safeIndex,
+                onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
+                labelBehavior: MediaQuery.of(context).size.width < 380 && navItems.length >= 6
+                    ? NavigationDestinationLabelBehavior.onlyShowSelected
+                    : NavigationDestinationLabelBehavior.alwaysShow,
+                destinations: navItems.map((item) {
+                  String displayLabel = item.label;
+                  if (navItems.length >= 5 && displayLabel == 'Ordonnance') {
+                    displayLabel = 'Ordo / Rx';
+                  }
+                  return NavigationDestination(
+                    icon: Icon(
+                      item.icon,
+                      size: 21,
+                      color: isDarkMobile ? Colors.white70 : const Color(0xFF64748B),
+                    ),
+                    selectedIcon: Icon(
+                      item.selectedIcon,
+                      size: 21,
+                      color: item.isSpecial
+                          ? const Color(0xFFEF4444)
+                          : (isDarkMobile ? AppTheme.primaryTeal : Colors.white),
+                    ),
+                    label: displayLabel,
+                  );
+                }).toList(),
+              ),
             ),
           ),
         );
@@ -407,275 +442,310 @@ class _MainScaffoldState extends State<MainScaffold> {
     final userName = user?.fullName ?? 'Médecin';
 
     return Material(
-      color: isDark ? AppTheme.darkSurface : Colors.white,
+      color: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
       child: SizedBox(
-        width: 270,
-        child: Column(
-          children: [
-            // Header Logo
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const MedsinaLogo(height: 32),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.only(left: 2),
-                  child: Text(
-                    'SaaS Médical & Résidanat Blida 2027',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.grey.shade500,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // User & Subscription Card (Clickable to open profile)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: InkWell(
-              onTap: () => _showUserProfileModal(context, user),
-              borderRadius: BorderRadius.circular(14),
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
-                  ),
-                ),
+        width: 276,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 14, 10, 14),
+          child: Column(
+            children: [
+              // Floating Brand & User Header Card
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: AppTheme.bentoCardDecoration(context, radius: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundColor: AppTheme.primaryTeal,
-                          child: Text(
-                            userName.isNotEmpty ? userName[0].toUpperCase() : 'M',
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                        const MedsinaLogo(height: 30),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            '2027',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.primaryTeal,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    InkWell(
+                      onTap: () => _showUserProfileModal(context, user),
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isDark ? AppTheme.darkSurfaceElevated : AppTheme.lightSurfaceElevated,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 34,
+                                  height: 34,
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [AppTheme.clinicalNavy, AppTheme.primaryTeal],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    userName.isNotEmpty ? userName[0].toUpperCase() : 'M',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 13.5,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        userName,
+                                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        user?.medicalRole ?? 'Candidat Résidanat',
+                                        style: TextStyle(
+                                          fontSize: 10.5,
+                                          color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Icon(Icons.unfold_more_rounded, size: 16, color: Colors.grey),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                                  decoration: BoxDecoration(
+                                    color: tier.color.withValues(alpha: 0.14),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    tier.badgeText,
+                                    style: TextStyle(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: tier.color,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '${user?.daysRemaining ?? 14}j restants',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Floating Navigation Card (matches Pinterest/Dribbble UI concept)
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                  decoration: AppTheme.bentoCardDecoration(context, radius: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 2, 10, 8),
+                        child: Text(
+                          'ESPACE MÉDICAL',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.9,
+                            color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount: navItems.length,
+                          itemBuilder: (context, index) {
+                            final item = navItems[index];
+                            return _buildNavItem(
+                              index: index,
+                              selectedIndex: selectedIndex,
+                              title: item.label,
+                              subtitle: item.title,
+                              icon: isSelectedIndex(index, selectedIndex) ? item.selectedIcon : item.icon,
+                              isSpecial: item.isSpecial,
+                            );
+                          },
+                        ),
+                      ),
+                      if (tier == SubscriptionTier.clinicalPro) ...[
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: AppTheme.heroNavyDecoration(radius: 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                userName,
-                                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                                overflow: TextOverflow.ellipsis,
+                              Row(
+                                children: [
+                                  const Icon(Icons.school_rounded, size: 14, color: Color(0xFF2DD4BF)),
+                                  const SizedBox(width: 6),
+                                  const Expanded(
+                                    child: Text(
+                                      'Concours Résidanat 2027',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF2DD4BF),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                user?.medicalRole ?? 'Candidat Résidanat',
-                                style: TextStyle(
-                                  fontSize: 10.5,
-                                  color: isDark ? Colors.white60 : Colors.grey.shade600,
+                              const SizedBox(height: 4),
+                              const Text(
+                                '47 modules & Livrets All-in-One.',
+                                style: TextStyle(fontSize: 10.5, color: Colors.white70),
+                              ),
+                              const SizedBox(height: 8),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.primaryTeal,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 6),
+                                    minimumSize: const Size(0, 30),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Ouvrir le Catalogue',
+                                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                                  ),
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
                         ),
-                        const Icon(Icons.chevron_right_rounded, size: 18, color: Colors.grey),
                       ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: tier.color.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: tier.color.withValues(alpha: 0.3)),
-                          ),
-                          child: Text(
-                            tier.badgeText,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              color: tier.color,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          '${user?.daysRemaining ?? 14}j restants',
-                          style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-          const Divider(height: 1),
-
-          // Nav Items dynamiques par rôle
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              itemCount: navItems.length,
-              itemBuilder: (context, index) {
-                final item = navItems[index];
-                return _buildNavItem(
-                  index: index,
-                  selectedIndex: selectedIndex,
-                  title: item.title,
-                  icon: item.selectedIcon,
-                  isSpecial: item.isSpecial,
-                );
-              },
-            ),
-          ),
-
-          // Modern Residency promo card in sidebar for Clinique Pro
-          if (tier == SubscriptionTier.clinicalPro)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFF334155)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.school_rounded, size: 14, color: Color(0xFF2DD4BF)),
-                        const SizedBox(width: 6),
-                        const Text(
-                          'Espace Résidanat',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF2DD4BF),
-                          ),
-                        ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2DD4BF).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text('47 modules', style: TextStyle(fontSize: 9, color: Colors.white70)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      '6 240+ QCMs d\'annales pour le concours.',
-                      style: TextStyle(fontSize: 10.5, color: Colors.white70, height: 1.3),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Color(0xFF0D9488)),
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          minimumSize: const Size(0, 28),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
-                          );
-                        },
-                        child: const Text(
-                          'Découvrir le programme',
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-          const Divider(height: 1),
-          // Footer
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Résidanat Blida 2027',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
-                      ),
-                      Text(
-                        'v${AppConstants.appVersion} • Cloud Medsina',
-                        style: TextStyle(fontSize: 10, color: Colors.grey.shade400),
-                      ),
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.star_rounded, size: 19, color: Colors.amber),
-                  tooltip: 'Avis & Évaluations Medsina',
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const FeedbackReviewsScreen()),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.menu_book_rounded, size: 18),
-                  tooltip: 'Guide d\'utilisation (PDF)',
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.system_update_rounded, size: 18),
-                  tooltip: 'Vérifier les mises à jour',
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () => _manualCheckOtaUpdates(context),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.logout_rounded, size: 18),
-                  tooltip: 'Déconnexion',
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () => _confirmLogout(context),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
+              ),
 
+              const SizedBox(height: 10),
+
+              // Compact Bottom Quick-Action Card
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: AppTheme.bentoCardDecoration(context, radius: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Medsina Cloud',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: isDark ? Colors.white70 : AppTheme.clinicalNavy,
+                            ),
+                          ),
+                          Text(
+                            'v${AppConstants.appVersion}',
+                            style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.star_rounded, size: 18, color: Colors.amber),
+                      tooltip: 'Avis & Évaluations Medsina',
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const FeedbackReviewsScreen()),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.menu_book_rounded, size: 17),
+                      tooltip: 'Guide d\'utilisation (PDF)',
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.system_update_rounded, size: 17),
+                      tooltip: 'Vérifier les mises à jour',
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () => _manualCheckOtaUpdates(context),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.logout_rounded, size: 17, color: Color(0xFFEF4444)),
+                      tooltip: 'Déconnexion',
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () => _confirmLogout(context),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool isSelectedIndex(int index, int selectedIndex) => index == selectedIndex;
 
   void _openOmnisearch(BuildContext context) {
     Navigator.of(context).push(
@@ -715,33 +785,79 @@ class _MainScaffoldState extends State<MainScaffold> {
     required int index,
     required int selectedIndex,
     required String title,
+    String? subtitle,
     required IconData icon,
     bool isSpecial = false,
   }) {
     final isSelected = selectedIndex == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final highlightColor = isSpecial ? const Color(0xFFDC2626) : AppTheme.primaryTeal;
+    final activeBg = isSpecial
+        ? const Color(0xFFDC2626)
+        : (isDark ? AppTheme.primaryTeal : AppTheme.clinicalNavy);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        selected: isSelected,
-        selectedTileColor: highlightColor.withValues(alpha: isDark ? 0.2 : 0.1),
-        leading: Icon(
-          icon,
-          color: isSelected ? highlightColor : (isSpecial ? const Color(0xFFDC2626) : Colors.grey.shade500),
-          size: 20,
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: isSelected ? FontWeight.w700 : (isSpecial ? FontWeight.w600 : FontWeight.w500),
-            color: isSelected ? highlightColor : (isSpecial ? const Color(0xFFDC2626) : (isDark ? Colors.white70 : const Color(0xFF334155))),
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => setState(() => _currentIndex = index),
+          borderRadius: BorderRadius.circular(14),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+            decoration: BoxDecoration(
+              color: isSelected ? activeBg : Colors.transparent,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: activeBg.withValues(alpha: 0.25),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  color: isSelected
+                      ? Colors.white
+                      : (isSpecial
+                          ? const Color(0xFFDC2626)
+                          : (isDark ? Colors.white60 : const Color(0xFF64748B))),
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                      color: isSelected
+                          ? Colors.white
+                          : (isSpecial
+                              ? const Color(0xFFDC2626)
+                              : (isDark ? Colors.white70 : const Color(0xFF1E293B))),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (isSelected)
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF2DD4BF),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
-        onTap: () => setState(() => _currentIndex = index),
       ),
     );
   }
@@ -752,8 +868,8 @@ class _MainScaffoldState extends State<MainScaffold> {
     UserModel? user,
   ) {
     return AppBar(
-      titleSpacing: 12,
-      title: const MedsinaLogo(height: 33),
+      titleSpacing: 14,
+      title: const MedsinaLogo(height: 31),
       actions: [
         Flexible(
           child: FittedBox(
@@ -765,7 +881,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                 _buildModernActionDock(context, includeSearch: true),
                 const SizedBox(width: 6),
                 _buildModernProfileAndTierPill(context, tier, user),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
               ],
             ),
           ),
@@ -780,51 +896,97 @@ class _MainScaffoldState extends State<MainScaffold> {
     UserModel? user,
     String pageTitle,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AppBar(
-      title: Text(pageTitle),
-      actions: [
-        InkWell(
-          onTap: () => _openOmnisearch(context),
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            width: 300,
-            height: 38,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.25)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search_rounded, size: 18, color: AppTheme.primaryTeal),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Rechercher cours, QCMs, CAT, doses...',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Text('Ctrl K', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey)),
-                ),
-              ],
+      backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,
+      toolbarHeight: 68,
+      titleSpacing: 20,
+      title: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              pageTitle,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.4,
+                color: isDark ? Colors.white : AppTheme.clinicalNavy,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-        ),
-        const SizedBox(width: 10),
+          const SizedBox(width: 16),
+          Expanded(
+            flex: 4,
+            child: InkWell(
+              onTap: () => _openOmnisearch(context),
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                height: 42,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  color: isDark ? AppTheme.darkSurface : Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.clinicalNavy.withValues(alpha: isDark ? 0.15 : 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search_rounded, size: 18, color: AppTheme.primaryTeal),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Rechercher cours, QCMs, CAT, doses... (Omnisearch)',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppTheme.darkSurfaceElevated : AppTheme.lightSurfaceElevated,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+                        ),
+                      ),
+                      child: Text(
+                        '⌘K',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? Colors.white70 : AppTheme.clinicalNavy,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        const SizedBox(width: 12),
         _buildModernActionDock(context, includeSearch: false),
         const SizedBox(width: 10),
         _buildTierBadge(context, tier),
         const SizedBox(width: 8),
         _buildUserAvatarAction(context, user),
-        const SizedBox(width: 16),
+        const SizedBox(width: 20),
       ],
     );
   }

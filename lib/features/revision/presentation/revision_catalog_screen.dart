@@ -773,55 +773,80 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
           return LayoutBuilder(
             builder: (context, constraints) {
               final isDesktopWide = constraints.maxWidth >= 1050;
+              final isDark = Theme.of(context).brightness == Brightness.dark;
 
               final tabBar = TabBar(
                 controller: _tabController,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
-                indicatorColor: AppTheme.primaryTeal,
-                indicatorWeight: 3,
-                labelColor: AppTheme.primaryTeal,
-                unselectedLabelColor: Colors.grey.shade600,
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorPadding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                  vertical: 6,
+                ),
+                indicator: BoxDecoration(
+                  color: isDark ? AppTheme.primaryTeal : AppTheme.clinicalNavy,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isDark
+                              ? AppTheme.primaryTeal
+                              : AppTheme.clinicalNavy)
+                          .withValues(alpha: 0.22),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                labelColor: Colors.white,
+                unselectedLabelColor: isDark
+                    ? Colors.grey.shade400
+                    : const Color(0xFF475569),
                 labelStyle: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12.5,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.5,
                 ),
                 tabs: [
                   const Tab(
-                    icon: Icon(Icons.menu_book_rounded, size: 20),
+                    icon: Icon(Icons.menu_book_rounded, size: 18),
                     text: 'Catalogue (47 Modules)',
                   ),
                   Tab(
                     icon: const Icon(
                       Icons.dashboard_customize_rounded,
-                      size: 20,
+                      size: 18,
                     ),
                     text: state.customSessions.isNotEmpty
                         ? 'Sessions Sur-Mesure (${state.customSessions.length})'
                         : 'Sessions Sur-Mesure',
                   ),
                   const Tab(
-                    icon: Icon(Icons.emoji_events_rounded, size: 20),
+                    icon: Icon(Icons.emoji_events_rounded, size: 18),
                     text: 'Concours Blancs 🏆',
                   ),
                   const Tab(
-                    icon: Icon(Icons.groups_rounded, size: 20),
+                    icon: Icon(Icons.groups_rounded, size: 18),
                     text: 'Groupes de Révision 👥',
                   ),
                   const Tab(
-                    icon: Icon(Icons.calendar_month_rounded, size: 20),
+                    icon: Icon(Icons.calendar_month_rounded, size: 18),
                     text: 'Study Planner (3 Couches)',
                   ),
                   const Tab(
-                    icon: Icon(Icons.psychology_alt_rounded, size: 20),
+                    icon: Icon(Icons.psychology_alt_rounded, size: 18),
                     text: 'Flashcards FSRS 🧠',
                   ),
                   const Tab(
-                    icon: Icon(Icons.school_rounded, size: 20),
+                    icon: Icon(Icons.school_rounded, size: 18),
                     text: 'Samedis Pédagogiques 📚',
                   ),
                   const Tab(
-                    icon: Icon(Icons.lightbulb_rounded, size: 20),
+                    icon: Icon(Icons.lightbulb_rounded, size: 18),
                     text: 'Témoignages & Conseils 💡',
                   ),
                 ],
@@ -829,10 +854,18 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
 
               return Column(
                 children: [
-                  // Navigation: On desktop show full TabBar; on mobile show sleek 3-dots section selector!
+                  // Navigation: On desktop show full pill-segmented TabBar; on mobile show sleek section selector!
                   isDesktopWide
                       ? Container(
-                          color: Theme.of(context).cardColor,
+                          margin: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: AppTheme.bentoCardDecoration(
+                            context,
+                            radius: 18,
+                          ),
                           width: double.infinity,
                           child: Row(
                             children: [
@@ -857,7 +890,6 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                           context,
                           state.customSessions.length,
                         ),
-                  const Divider(height: 1),
 
                   // Tab Views
                   Expanded(
@@ -1743,15 +1775,14 @@ class _CustomSessionCard extends StatelessWidget {
     final pct = (session.progressPercentage * 100).toInt();
     final isPaused = session.currentQuestionIndex > 0 && !session.isCompleted;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: isPaused
-              ? AppTheme.primaryTeal.withValues(alpha: 0.4)
-              : Colors.grey.shade200,
-        ),
+      decoration: AppTheme.bentoCardDecoration(
+        context,
+        radius: 18,
+        borderColor: isPaused
+            ? AppTheme.primaryTeal.withValues(alpha: 0.4)
+            : null,
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -1828,7 +1859,7 @@ class _CustomSessionCard extends StatelessWidget {
 
             // Progress Bar
             ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(999),
               child: LinearProgressIndicator(
                 value: session.progressPercentage,
                 minHeight: 6,
@@ -2079,27 +2110,43 @@ class _ModuleCardState extends State<_ModuleCard> {
   @override
   Widget build(BuildContext context) {
     final m = widget.module;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 14),
+      decoration: AppTheme.bentoCardDecoration(
+        context,
+        radius: 18,
+        borderColor: _expanded
+            ? AppTheme.primaryTeal.withValues(alpha: 0.4)
+            : null,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         child: Column(
           children: [
             InkWell(
+              borderRadius: BorderRadius.circular(14),
               onTap: () => setState(() => _expanded = !_expanded),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryTeal.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.primaryTeal.withValues(alpha: 0.16),
+                          AppTheme.primaryTeal.withValues(alpha: 0.06),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
                       _getIconData(m.iconName),
                       color: AppTheme.primaryTeal,
-                      size: 28,
+                      size: 26,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -2110,43 +2157,62 @@ class _ModuleCardState extends State<_ModuleCard> {
                         Text(
                           m.name,
                           style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
                             fontSize: 16,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 5),
                         Wrap(
                           spacing: 8,
                           runSpacing: 4,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            Text(
-                              '${m.totalCourses} cours • ${m.totalQuestions} QCMs',
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 12,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.06)
+                                    : const Color(0xFFF1F5F9),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                '${m.totalCourses} cours • ${m.totalQuestions} QCMs',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white70
+                                      : const Color(0xFF475569),
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
+                                horizontal: 8,
+                                vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(4),
+                                color: AppTheme.clinicalNavy.withValues(
+                                  alpha: isDark ? 0.35 : 0.08,
+                                ),
+                                borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
                                 m.category,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
+                                style: TextStyle(
+                                  fontSize: 10.5,
+                                  color: isDark
+                                      ? AppTheme.secondaryTeal
+                                      : AppTheme.clinicalNavy,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
                             ),
                             InkWell(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(999),
                               onTap: () async {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -2171,14 +2237,18 @@ class _ModuleCardState extends State<_ModuleCard> {
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
+                                  horizontal: 8,
+                                  vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.teal.shade50,
-                                  borderRadius: BorderRadius.circular(6),
+                                  color: AppTheme.primaryTeal.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(999),
                                   border: Border.all(
-                                    color: Colors.teal.shade200,
+                                    color: AppTheme.primaryTeal.withValues(
+                                      alpha: 0.28,
+                                    ),
                                   ),
                                 ),
                                 child: const Row(
@@ -2187,15 +2257,15 @@ class _ModuleCardState extends State<_ModuleCard> {
                                     Icon(
                                       Icons.download_for_offline_rounded,
                                       size: 12,
-                                      color: Colors.teal,
+                                      color: AppTheme.primaryTeal,
                                     ),
                                     SizedBox(width: 4),
                                     Text(
                                       'Pack Hors-Ligne',
                                       style: TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.teal,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10.5,
+                                        color: AppTheme.primaryTeal,
+                                        fontWeight: FontWeight.w800,
                                       ),
                                     ),
                                   ],
@@ -2207,10 +2277,20 @@ class _ModuleCardState extends State<_ModuleCard> {
                       ],
                     ),
                   ),
-                  Icon(
-                    _expanded
-                        ? Icons.keyboard_arrow_up_rounded
-                        : Icons.keyboard_arrow_down_rounded,
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : const Color(0xFFF1F5F9),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      _expanded
+                          ? Icons.keyboard_arrow_up_rounded
+                          : Icons.keyboard_arrow_down_rounded,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),
