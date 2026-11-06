@@ -294,6 +294,26 @@ class _ExternatRotationBannerState extends State<ExternatRotationBanner> {
     );
   }
 
+  void _launchDaily20hChallenge() {
+    final rot = _activeRotation;
+    if (rot == null) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ExternatEmdSimulationScreen(
+          moduleName: rot.moduleName,
+          studyYear: widget.studyYear,
+          allModules: widget.yearModules,
+          questionCount: 15,
+          durationMinutes: 15,
+          isDailyChallenge: true,
+          customTitle: '🎯 Défi 20H Externat • ${rot.moduleName}',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -444,7 +464,21 @@ class _ExternatRotationBannerState extends State<ExternatRotationBanner> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              // 1. Session de cours type enseignant
+              // 1. Défi 20H Externat (Banque QCM Réelle)
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0F172A),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 1,
+                ),
+                icon: const Icon(Icons.bolt_rounded, size: 16, color: Color(0xFF2DD4BF)),
+                label: const Text('Défi 20H Externat (QCMs Réels) 🎯', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
+                onPressed: _launchDaily20hChallenge,
+              ),
+
+              // 2. Session de cours type enseignant
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryTeal,
@@ -458,7 +492,7 @@ class _ExternatRotationBannerState extends State<ExternatRotationBanner> {
                 onPressed: _showLecturePicker,
               ),
 
-              // 2. EMD Blanc chronométré
+              // 3. EMD Blanc chronométré
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isEmdWindow ? const Color(0xFFF59E0B) : const Color(0xFF0284C7),
@@ -475,7 +509,7 @@ class _ExternatRotationBannerState extends State<ExternatRotationBanner> {
                 onPressed: _launchEmdSimulation,
               ),
 
-              // 3. Mode Lit du Malade
+              // 4. Mode Lit du Malade
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF10B981),

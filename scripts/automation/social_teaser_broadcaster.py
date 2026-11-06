@@ -202,371 +202,91 @@ def draw_lock_icon(draw, cx, cy, size=24, color=(180, 83, 9)):
 
 def render_modern_light_banner(content_type: str, data: Dict[str, Any], output_path: str) -> str:
     """
-    Génère l'affiche promotionnelle carrée (1080x1080) au design Light Theme ultra-moderne.
+    Génère l'affiche carrée (1080x1080) au design Infographie Bento Grid Pinterest 2026
+    annonçant qu'un nouveau défi ou protocole est programmé et disponible dans l'App.
     """
-    W, H = 1080, 1080
-    
-    THEMES = {
-        "cat": {
-            "category": "CONDUITE À TENIR CLINIQUE (CAT)",
-            "primary": (13, 148, 136),     # Medical Teal #0D9488
-            "pill_bg": (204, 251, 241),    # #CCFBF1
-            "pill_text": (15, 118, 110),   # #0F766E
-            "orb_color": (13, 148, 136, 22),
-            "flow_steps": ["1. Diagnostic & Scope", "2. Échocardiographie", "3. Inotropes & PAM", "4. Revascularisation"]
-        },
-        "memento": {
-            "category": "MÉMENTO DE GARDE HOSPITALIÈRE",
-            "primary": (99, 102, 241),     # Indigo #6366F1
-            "pill_bg": (238, 242, 255),    # #EEF2FF
-            "pill_text": (67, 56, 202),    # #4338CA
-            "orb_color": (99, 102, 241, 22),
-            "flow_steps": ["1. Appel Garde 3h", "2. Tri & Gravité", "3. Gestes Réflexes", "4. Bilan & Prescription"]
-        },
-        "drug": {
-            "category": "MONOGRAPHIE D'URGENCE & DCI ALGÉRIE",
-            "primary": (16, 185, 129),     # Emerald #10B981
-            "pill_bg": (209, 250, 229),    # #D1FAE5
-            "pill_text": (4, 120, 87),     # #047857
-            "orb_color": (16, 185, 129, 22),
-            "flow_steps": ["1. Indication Princeps", "2. Dilution & Solvant", "3. Débit Perfuseur", "4. Surveillance Scope"]
-        },
-        "lab": {
-            "category": "NORMES DE LABORATOIRE & SEUILS CRITIQUES",
-            "primary": (2, 132, 199),      # Sky Blue #0284C7
-            "pill_bg": (224, 242, 254),    # #E0F2FE
-            "pill_text": (3, 105, 161),    # #0369A1
-            "orb_color": (2, 132, 199, 22),
-            "flow_steps": ["1. Tube & Prélèvement", "2. Normes Usuelles", "3. Seuil Panique", "4. CAT Devant Anomalie"]
-        },
-        "summary": {
-            "category": "FICHE RÉSUMÉ DU CONCOURS DU RÉSIDANAT",
-            "primary": (217, 119, 6),      # Amber #D97706
-            "pill_bg": (254, 243, 199),    # #FEF3C7
-            "pill_text": (180, 83, 9),     # #B45309
-            "orb_color": (217, 119, 6, 22),
-            "flow_steps": ["1. Définition Concours", "2. Tableaux Cliniques", "3. Pièges d'Annales", "4. Fiche Mémorisation"]
-        },
-        "pearl": {
-            "category": "PERLE CLINIQUE & PIÈGE DU CONCOURS",
-            "primary": (168, 85, 247),     # Purple #A855F7
-            "pill_bg": (243, 232, 255),    # #F3E8FF
-            "pill_text": (126, 34, 206),    # #7E22CE
-            "orb_color": (168, 85, 247, 22),
-            "flow_steps": ["1. Cas Clinique", "2. Piège Fréquent", "3. Règle d'Or", "4. Référence Médicale"]
-        }
+    THEMES_MAP = {
+        "cat": ("teal", "DEFI CLINIQUE & CAT LANCE", "CONDUITE A TENIR"),
+        "memento": ("indigo", "MEMENTO DE GARDE DISPONIBLE", "GARDE HOSPITALIERE"),
+        "drug": ("emerald", "PROTOCOLE THERAPEUTIQUE", "DCI & URGENCES"),
+        "lab": ("cyan", "SEUILS CRITIQUES & BILAN", "BIOLOGIE MEDICALE"),
+        "summary": ("amber", "FICHE & DEFI QCM CONCOURS", "RESIDANAT & EXTERNAT"),
+        "pearl": ("purple", "DEFI PIEGE D'EXAMEN LANCE", "PERLE & QCM REEL"),
     }
-    
-    cfg = THEMES.get(content_type, THEMES["cat"])
-    primary_color = cfg["primary"]
-    pill_bg = cfg["pill_bg"]
-    pill_text = cfg["pill_text"]
-    
-    # Extract metadata from data dict
-    raw_title = data.get("title") or data.get("name") or data.get("dci") or data.get("course_name") or "Protocole Médical Clinique"
-    raw_specialty = data.get("specialty") or data.get("module_name") or data.get("category") or "Pratique Clinique"
-    raw_subtitle = data.get("definition") or data.get("indication") or data.get("urgency_level") or "Protocole décisionnel & posologies validées"
-    
+    theme_key, badge_prefix, metric_tag = THEMES_MAP.get(content_type, THEMES_MAP["cat"])
+
+    raw_title = data.get("title") or data.get("name") or data.get("dci") or data.get("course_name") or "Nouveau Defi Medical"
+    raw_specialty = data.get("specialty") or data.get("module_name") or data.get("category") or "Medecine & Externat"
+
     title = strip_emojis_for_image(raw_title)
     specialty = strip_emojis_for_image(raw_specialty)
-    subtitle = strip_emojis_for_image(raw_subtitle)
-    if len(subtitle) > 85:
-        subtitle = subtitle[:82] + "..."
-        
-    # Extract 2 to 3 teaser bullet points
-    raw_points = []
-    if "red_flags" in data and isinstance(data["red_flags"], list):
-        for rf in data["red_flags"][:2]:
-            raw_points.append(f"Signe d'alerte : {rf}")
-    if "steps" in data and isinstance(data["steps"], list):
-        for step in data["steps"][:2]:
-            st = step.get("title") or step.get("content", "")
-            if st and st not in raw_points:
-                raw_points.append(st)
-    if "points" in data and isinstance(data["points"], list):
-        for pt in data["points"][:3]:
-            raw_points.append(pt)
-    if "key_points" in data and isinstance(data["key_points"], list):
-        for kp in data["key_points"][:3]:
-            raw_points.append(kp)
-    if "clinical_reflexes" in data and isinstance(data["clinical_reflexes"], list):
-        for cr in data["clinical_reflexes"][:3]:
-            raw_points.append(cr)
-            
-    # Fallback points if empty
-    if not raw_points:
-        raw_points = [
-            f"Critères diagnostiques immédiats & démarche de première intention pour {title}",
-            "Conduite à tenir structurée selon les recommandations officielles (MSPRH & Sociétés Savantes)",
-            "Posologies hospitalières adaptées aux spécialités disponibles en Algérie (Saidal / PCH)"
-        ]
 
-    points = [strip_emojis_for_image(p) for p in raw_points if strip_emojis_for_image(p)]
-
-    # 1. Base image with smooth light gradient
-    img = Image.new("RGBA", (W, H), (255, 255, 255, 255))
-    draw = ImageDraw.Draw(img)
-    
-    for y in range(H):
-        ratio = y / H
-        r = int(255 - ratio * 9)
-        g = int(255 - ratio * 7)
-        b = int(255 - ratio * 5)
-        draw.line([(0, y), (W, y)], fill=(r, g, b, 255))
-        
-    # Subtle background ambient orbs
-    orb_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    orb_draw = ImageDraw.Draw(orb_layer)
-    orb_draw.ellipse([680, -120, 1220, 420], fill=cfg["orb_color"])
-    orb_draw.ellipse([-160, 580, 450, 1180], fill=(*primary_color, 12))
-    orb_layer = orb_layer.filter(ImageFilter.GaussianBlur(90))
-    img = Image.alpha_composite(img, orb_layer)
-    draw = ImageDraw.Draw(img)
-    
-    # Micro dot-matrix texture
-    for gx in range(40, W - 40, 40):
-        for gy in range(40, H - 40, 40):
-            draw.point((gx, gy), fill=(203, 213, 225, 110))
-            
-    # --- HEADER SECTION ---
-    # Real Medsina Logo (left)
-    if LOGO_PATH.exists():
-        try:
-            raw_logo = Image.open(LOGO_PATH).convert("RGBA")
-            aspect = raw_logo.width / raw_logo.height
-            logo_h = 44
-            logo_w = int(logo_h * aspect)
-            res_logo = raw_logo.resize((logo_w, logo_h), Image.Resampling.LANCZOS)
-            img.paste(res_logo, (60, 56), res_logo)
-        except Exception:
-            draw_rounded_rect(draw, [60, 55, 250, 105], radius=25, fill=(255, 255, 255, 230), outline=(226, 232, 240, 255))
-            draw.text((80, 70), "MEDSINA", font=get_font(24, bold=True), fill=(15, 23, 42))
-    else:
-        draw_rounded_rect(draw, [60, 55, 250, 105], radius=25, fill=(255, 255, 255, 230), outline=(226, 232, 240, 255))
-        draw.text((80, 70), "MEDSINA", font=get_font(24, bold=True), fill=(15, 23, 42))
-        
-    # Right Specialty Pill
-    f_spec = get_font(16, bold=True)
-    draw_pill(draw, W - 60 - 320, 58, specialty.upper()[:24], f_spec, (241, 245, 249), (71, 85, 105), pad_h=18, pad_v=8, radius=18, border_color=(203, 213, 225))
-    
-    # --- CATEGORY PILL & TITLES ---
-    f_cat = get_font(16, bold=True)
-    draw_pill(draw, 60, 138, f"●  {cfg['category']}", f_cat, pill_bg, pill_text, pad_h=16, pad_v=7, radius=14, border_color=(*primary_color, 70))
-    
-    f_title = get_font(42, bold=True)
-    f_sub = get_font(22, bold=False)
-    
-    title_words = title.split()
-    lines = []
-    cur_line = []
-    for word in title_words:
-        test_line = " ".join(cur_line + [word])
-        w = f_title.getbbox(test_line)[2] - f_title.getbbox(test_line)[0]
-        if w > W - 120:
-            lines.append(" ".join(cur_line))
-            cur_line = [word]
-        else:
-            cur_line.append(word)
-    if cur_line:
-        lines.append(" ".join(cur_line))
-        
-    y_title = 195
-    for l in lines[:2]:
-        draw.text((60, y_title), l, font=f_title, fill=(15, 23, 42))
-        y_title += 52
-        
-    if subtitle:
-        draw.text((60, y_title + 4), subtitle, font=f_sub, fill=(100, 116, 139))
-        y_title += 38
-    else:
-        y_title += 8
-        
-    # --- HERO SNEAK-PEEK CARD ---
-    card_x0, card_y0 = 60, y_title + 14
-    card_x1, card_y1 = W - 60, 895
-    card_w = card_x1 - card_x0
-    
-    # Soft realistic shadow
-    shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    s_draw = ImageDraw.Draw(shadow)
-    draw_rounded_rect(s_draw, [card_x0 + 4, card_y0 + 10, card_x1 - 4, card_y1 + 14], radius=26, fill=(15, 23, 42, 22))
-    shadow = shadow.filter(ImageFilter.GaussianBlur(14))
-    img = Image.alpha_composite(img, shadow)
-    draw = ImageDraw.Draw(img)
-    
-    # Card surface
-    draw_rounded_rect(draw, [card_x0, card_y0, card_x1, card_y1], radius=24, fill=(255, 255, 255, 255), outline=(226, 232, 240, 255), width=2)
-    
-    # Card Header
-    draw_rounded_rect(draw, [card_x0, card_y0, card_x1, card_y0 + 56], radius=24, fill=(248, 250, 252, 255))
-    draw.rectangle([card_x0, card_y0 + 30, card_x1, card_y0 + 56], fill=(248, 250, 252, 255))
-    draw.line([(card_x0, card_y0 + 56), (card_x1, card_y0 + 56)], fill=(226, 232, 240, 255), width=1)
-    
-    f_card_hdr = get_font(16, bold=True)
-    draw.text((card_x0 + 24, card_y0 + 18), "EXTRAIT DU PROTOCOLE INTERACTIF (APERÇU CLINIQUE)", font=f_card_hdr, fill=(51, 65, 85))
-    draw_pill(draw, card_x1 - 175, card_y0 + 13, "100% Hors-Ligne", get_font(13, bold=True), (240, 253, 244), (22, 101, 52), pad_h=12, pad_v=4, radius=10, border_color=(187, 247, 208))
-    
-    # Visual Decision Tree / Flow Steps
-    flow_y = card_y0 + 74
-    flow_steps = cfg.get("flow_steps", [])
-    step_w = (card_w - 48 - (len(flow_steps) - 1) * 20) // len(flow_steps)
-    f_flow = get_font(13, bold=True)
-    for idx, step in enumerate(flow_steps):
-        sx0 = card_x0 + 24 + idx * (step_w + 20)
-        sx1 = sx0 + step_w
-        sy0 = flow_y
-        sy1 = flow_y + 36
-        draw_rounded_rect(draw, [sx0, sy0, sx1, sy1], radius=10, fill=(241, 245, 249), outline=(226, 232, 240))
-        bbox = f_flow.getbbox(step)
-        tw = bbox[2] - bbox[0]
-        tx = sx0 + (step_w - tw) // 2
-        draw.text((tx, sy0 + 10), step, font=f_flow, fill=(71, 85, 105))
-        if idx < len(flow_steps) - 1:
-            draw.text((sx1 + 6, sy0 + 8), "›", font=get_font(18, bold=True), fill=(148, 163, 184))
-            
-    # Bullet points section
-    cur_y = flow_y + 50
-    f_body = get_font(18, bold=False)
-    for i, p in enumerate(points[:3]):
-        idx_box = [card_x0 + 24, cur_y + 2, card_x0 + 58, cur_y + 36]
-        draw_rounded_rect(draw, idx_box, radius=17, fill=pill_bg, outline=(*primary_color, 90))
-        draw.text((card_x0 + 35, cur_y + 7), str(i + 1), font=get_font(17, bold=True), fill=pill_text)
-        
-        p_words = p.split()
-        p_lines = []
-        c_p = []
-        for w in p_words:
-            t_str = " ".join(c_p + [w])
-            tw = f_body.getbbox(t_str)[2] - f_body.getbbox(t_str)[0]
-            if tw > (card_w - 95):
-                p_lines.append(" ".join(c_p))
-                c_p = [w]
-            else:
-                c_p.append(w)
-        if c_p:
-            p_lines.append(" ".join(c_p))
-            
-        py = cur_y
-        for l in p_lines[:2]:
-            draw.text((card_x0 + 72, py + 2), l, font=f_body, fill=(30, 41, 59))
-            py += 26
-        cur_y = py + 16
-        
-    # --- LOCK & SPOILER BANNER ---
-    lock_y0 = card_y1 - 110
-    lock_y1 = card_y1 - 16
-    draw_rounded_rect(draw, [card_x0 + 16, lock_y0, card_x1 - 16, lock_y1], radius=16, fill=(254, 252, 232, 255), outline=(254, 240, 138, 255), width=1)
-    
-    padlock_box = [card_x0 + 32, lock_y0 + 18, card_x0 + 88, lock_y0 + 74]
-    draw_rounded_rect(draw, padlock_box, radius=28, fill=(254, 243, 199), outline=(252, 211, 77))
-    draw_lock_icon(draw, card_x0 + 60, lock_y0 + 46, size=24, color=(180, 83, 9))
-    
-    f_lt = get_font(17, bold=True)
-    f_ld = get_font(15, bold=False)
-    draw.text((card_x0 + 104, lock_y0 + 22), "Protocole Complet, Arbres Décisionnels & Posologies Débloqués sur Medsina", font=f_lt, fill=(15, 23, 42))
-    draw.text((card_x0 + 104, lock_y0 + 48), "Consultez l'arbre interactif, les posologies adaptées PCH/Saidal et les QCMs officiels.", font=f_ld, fill=(113, 63, 18))
-    
-    # --- FOOTER SECTION ---
-    footer_y = 926
-    f_plat = get_font(15, bold=True)
-    draw_pill(draw, 60, footer_y + 12, "PC (Windows)", f_plat, (241, 245, 249), (51, 65, 85), pad_h=15, pad_v=8, radius=14, border_color=(203, 213, 225))
-    draw_pill(draw, 220, footer_y + 12, "Mobile (Android)", f_plat, (241, 245, 249), (51, 65, 85), pad_h=15, pad_v=8, radius=14, border_color=(203, 213, 225))
-    draw_pill(draw, 410, footer_y + 12, "Web App", f_plat, (241, 245, 249), (51, 65, 85), pad_h=15, pad_v=8, radius=14, border_color=(203, 213, 225))
-    
-    btn_w = 340
-    btn_x0 = W - 60 - btn_w
-    btn_y0 = footer_y + 8
-    draw_rounded_rect(draw, [btn_x0, btn_y0, btn_x0 + btn_w, btn_y0 + 54], radius=16, fill=(15, 23, 42))
-    f_btn = get_font(16, bold=True)
-    draw.text((btn_x0 + 28, btn_y0 + 18), "medsina.medevsync.com", font=f_btn, fill=(255, 255, 255))
-    # Vector Chevron Arrow ->
-    ax = btn_x0 + btn_w - 38
-    ay = btn_y0 + 27
-    draw.line([(ax - 12, ay), (ax, ay)], fill=(255, 255, 255), width=2)
-    draw.line([(ax - 5, ay - 5), (ax, ay)], fill=(255, 255, 255), width=2)
-    draw.line([(ax - 5, ay + 5), (ax, ay)], fill=(255, 255, 255), width=2)
-    
-    # Save output
-    output_dir = os.path.dirname(output_path)
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
-    img.convert("RGB").save(output_path, "PNG", quality=98)
-    return output_path
+    try:
+        from generate_modern_light_banner import build_modern_light_banner
+        bento_data = {
+            "theme": theme_key,
+            "status_pill": "NOUVEAU SUR L'APPLICATION",
+            "badge": f"{badge_prefix} • {specialty.upper()}",
+            "title": title,
+            "subtitle": f"Module {specialty} • Ce defi et sa fiche interactive sont lances et disponibles dans l'App Medsina.",
+            "metric_tag": metric_tag,
+            "metric_value": "100% APP",
+            "metric_label": f"Spécialité : {specialty}",
+            "metric_desc": "Accedez au protocole interactif complet et aux QCMs reels associes directement dans l'application.",
+            "points": [
+                f"Module / Specialite : {specialty}",
+                f"Sujet Programme : {title}",
+                "Disponibilite : Lance et accessible immediatement dans l'application Medsina",
+            ],
+            "callout_title": "Disponible Exclusivement dans l'Application Medsina !",
+            "callout_sub": "Ouvrez l'application Medsina pour participer au defi et consulter la ressource complete.",
+        }
+        return build_modern_light_banner(data=bento_data, output_path=output_path, app_version="MEDSINA APP")
+    except Exception as e:
+        print(f"⚠️ Fallback render_modern_light_banner: {e}")
+        raise
 
 
 # =============================================================================
-# 3. GÉNÉRATEUR DE TEXTE TEASER (ANTI-SPOILER)
+# 3. GÉNÉRATEUR DE TEXTE D'ANNONCE (ZÉRO SPOILER • DISPONIBLE DANS L'APP)
 # =============================================================================
 
 def build_teaser_copy(content_type: str, data: Dict[str, Any]) -> str:
     """
-    Rédige un post teaser captivant respectant la règle anti-spoiler :
-    - Titre accrocheur et situation clinique
-    - 2-3 points réflexes d'alerte / repères clés
-    - Barrière teaser invitant à débloquer le protocole intégral
-    - Liens officiels (Web, Android APK, Windows PC, Telegram)
+    Rédige une annonce concise informant qu'un nouveau défi / session / ressource
+    est lancé ou programmé et disponible dans l'application Medsina (sans dévoiler le contenu).
     """
-    title = data.get("title") or data.get("name") or data.get("dci") or data.get("course_name") or "Protocole Médical Clinique"
-    specialty = data.get("specialty") or data.get("module_name") or data.get("category") or "Pratique Clinique"
+    title = data.get("title") or data.get("name") or data.get("dci") or data.get("course_name") or "Session Médicale"
+    specialty = data.get("specialty") or data.get("module_name") or data.get("category") or "Médecine"
 
-    headers_map = {
-        "cat": f"🚨 NOUVELLE CONDUITE À TENIR (CAT) DISPONIBLE SUR MEDSINA ! 🩺⚡\n\nPraticiens hospitaliers, internes et futurs résidents : le protocole d'urgence pour « {title} » vient d'être intégré à vos Outils Pratiques !",
-        "memento": f"🌙 NOUVEAU MÉMENTO DE GARDE HOSPITALIÈRE SUR MEDSINA ! 📋🏥\n\nPour ne rien oublier lors de vos gardes de nuit : la fiche réflexe « {title} » ({specialty}) est désormais disponible !",
-        "drug": f"💊 NOUVELLE MONOGRAPHIE D'URGENCE & POSOLOGIE DCI SUR MEDSINA ! 🩺\n\nPrécision thérapeutique immédiate au lit du malade : la fiche complète pour « {title} » ({specialty}) est en ligne !",
-        "lab": f"🧪 VALEURS DE RÉFÉRENCE & SEUILS CRITIQUES SUR MEDSINA ! 📊\n\nInterprétation biologique rapide : la fiche de référence pour « {title} » ({specialty}) a été ajoutée !",
-        "summary": f"📚 NOUVELLE FICHE RÉSUMÉ DU CONCOURS DU RÉSIDANAT SUR MEDSINA ! 🎯\n\nPréparez efficacement vos révisions : le résumé officiel du cours « {title} » ({specialty}) est disponible !",
-        "pearl": f"💡 PERLE CLINIQUE & PIÈGE DU CONCOURS SUR MEDSINA ! 🌟\n\nRetenez l'essentiel pour le concours et la pratique : focus sur « {title} » ({specialty}) !"
+    type_labels = {
+        "cat": "🎯 NOUVEAU DÉFI CLINIQUE & CAT LANCÉ SUR MEDSINA ! 🔔",
+        "memento": "🌙 NOUVELLE SESSION DE GARDE PROGRAMMÉE SUR MEDSINA ! 🔔",
+        "drug": "💊 NOUVEAU DÉFI THÉRAPEUTIQUE & POSOLOGIE DISPONIBLE SUR MEDSINA ! 🔔",
+        "lab": "🧪 NOUVEAU DÉFI BIOLOGIQUE & SEUILS CRITIQUES SUR MEDSINA ! 🔔",
+        "summary": "📚 NOUVELLE SESSION DE COURS & DÉFI QCM LANCÉS SUR MEDSINA ! 🔔",
+        "pearl": "🎯 NOUVEAU DÉFI « PIÈGE D'EXAMEN & QCM » LANCÉ SUR MEDSINA ! 🔔",
     }
 
-    intro = headers_map.get(content_type, headers_map["cat"])
+    header = type_labels.get(content_type, type_labels["cat"])
 
-    # Extract teaser snippets (2 items max)
-    snippets = []
-    if "red_flags" in data and isinstance(data["red_flags"], list):
-        for rf in data["red_flags"][:2]:
-            snippets.append(f"• ⚠️ Alerte / Seuil : {rf}")
-    elif "steps" in data and isinstance(data["steps"], list):
-        for st in data["steps"][:2]:
-            step_title = st.get("title") or ""
-            step_content = st.get("content") or ""
-            if step_title:
-                snippets.append(f"• 📌 {step_title} : {step_content[:90]}...")
-    elif "key_points" in data and isinstance(data["key_points"], list):
-        for kp in data["key_points"][:2]:
-            snippets.append(f"• 📌 {kp}")
-    elif "clinical_reflexes" in data and isinstance(data["clinical_reflexes"], list):
-        for cr in data["clinical_reflexes"][:2]:
-            snippets.append(f"• ⚡ Réflexe de garde : {cr}")
-            
-    if not snippets:
-        snippets = [
-            f"• 📌 Situation clinique : Prise en charge initiale de « {title} »",
-            "• ⚠️ Points d'alerte : Évaluation rapide de gravité et monitorage immédiat"
-        ]
+    post_text = f"""{header}
 
-    snippet_text = "\n".join(snippets)
+Un nouveau défi et sa session interactive sont programmés et disponibles dès maintenant dans l'application Medsina :
 
-    post_text = f"""{intro}
+📋 FICHE OFFICIELLE :
+• 🏥 Module / Spécialité : {specialty}
+• 🎯 Sujet programmé : « {title} »
+• ✅ Inclus dans l'App : Session interactive, arbre décisionnel et série de QCMs réels issus de la banque officielle.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 APERÇU CLINIQUE & POINTS CLÉS :
-{snippet_text}
+🔒 Le contenu et les questions ne sont pas dévoilés dans cette publication : tout se passe directement dans l'application !
 
-🔒 [...] LA SUITE DU PROTOCOLE COMPLET SUR MEDSINA :
-Fini de vous disperser entre 50 groupes, drives et canaux !
-L'arbre décisionnel interactif complet en 4 étapes, les posologies hospitalières exactes (PCH & Saidal), les résumés et les QCMs d'annales sont TOUS réunis en un seul endroit sur l'application Medsina.
-━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-⚡ 100% Hors-ligne en salle de garde et au bloc UMC.
-🔍 Recherche instantanée via Omnisearch (Ctrl+K).
-
-📲 Accédez ou inscrivez-vous dès aujourd'hui :
+📲 Ouvrez l'application Medsina pour relever le défi :
 👉 Web App directe : {OFFICIAL_WEB_URL}
-👉 Téléchargement direct APK Android : {OFFICIAL_APK_URL}
-👉 Téléchargement Windows PC : {OFFICIAL_WIN_URL}
+👉 Application Android (.apk) : {OFFICIAL_APK_URL}
 👉 Canal Telegram Officiel : {OFFICIAL_TELEGRAM_URL}
 
-#Medsina #MedevSync #ResidanatBlida2027 #MedecineAlgerie #UrgencesMedicales #InternatMedecine #AlgerieMedecine"""
+#Medsina #MedevSync #DefiMedsina #MedecineAlgerie #ExternatAlgerie #Residanat2027"""
 
     return post_text.strip()
 

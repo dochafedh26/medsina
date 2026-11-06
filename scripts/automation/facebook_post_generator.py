@@ -584,42 +584,41 @@ def load_real_qcm(topic: Optional[str] = None) -> Optional[Dict[str, Any]]:
 
 
 def build_from_real_qcm(qcm: Dict[str, Any]) -> Dict[str, Any]:
-    """Construit les données complètes et la légende d'un post Facebook pour un vrai QCM du concours."""
+    """Construit l'annonce officielle d'un Défi QCM Réel programmé et disponible dans l'application Medsina (sans spoiler)."""
     source = qcm.get("source", "Concours Officiel")
     course = qcm.get("courseName", "Révision Médicale")
     module = qcm.get("moduleName", "Médecine")
     year = qcm.get("year", "2024")
-    q_text = qcm.get("questionText", "").strip()
     options = qcm.get("options", [])
+    opts_count = len(options) or 5
 
-    caption = f"""🎯 [QCM RÉEL • {source.upper()}] : {course}
-📚 Module : {module} • Session {year} 🏥
+    caption = f"""🎯 [NOUVEAU DÉFI QCM LANCÉ SUR MEDSINA] 🔔
+📚 Module : {module} • Cours : « {course} »
+🏛️ Source officielle : {source} (Session {year})
 
-Chers confrères, résidents et candidats au concours de Résidanat, sauriez-vous répondre sans hésiter à cette question réelle tombée aux examens officiels ?
+Un nouveau Défi QCM issu de la banque officielle des annales est programmé et disponible dès maintenant dans l'application Medsina ! 🚀
 
-❓ QUESTION :
-« {q_text} »
+📋 FICHE DU DÉFI DANS L'APPLICATION :
+• 🏥 Module : {module}
+• 📖 Cours ciblé : {course}
+• ✅ Épreuve : Question réelle officielle ({opts_count} propositions — {source}, Session {year}) avec chronomètre, pièges d'examen et corrigé détaillé.
 
-"""
-    for opt in options:
-        caption += f"🔹 {opt.get('key')} : {opt.get('text')}\n"
-
-    caption += f"""
-👇 QUELLE EST VOTRE RÉPONSE (A, B, C, D ou E) ?
-Partagez votre choix et vos arguments en commentaire ! 💬
-
-💡 La réponse officielle, les pièges du Pr. et l'explication détaillée de ce QCM sont disponibles en 1 clic dans l'application Medsina.
+🔒 Aucune question n'est dévoilée dans cette publication : ouvrez l'application Medsina pour relever le défi en conditions réelles !
 {OFFICIAL_FOOTER}"""
 
     return {
         "is_quiz": True,
         "qcm": qcm,
-        "badge": f"ANNALES • {source.upper()}",
-        "title": f"QCM : {course}",
-        "subtitle": f"Module {module} • Session {year}",
+        "badge": f"DÉFI QCM LANCÉ • {source.upper()}",
+        "title": f"Défi QCM : {course}",
+        "subtitle": f"Module {module} • Session {year} disponible dans l'App",
         "caption": caption,
-        "theme": random.choice(["blue", "purple", "emerald", "cyan"]),
-        "points": [f"{opt.get('key')}: {opt.get('text')}" for opt in options[:4]],
+        "theme": random.choice(["teal", "blue", "purple", "emerald", "cyan"]),
+        "points": [
+            f"Module & Cours Cible : {module} — {course}",
+            f"Source Officielle : {source} (Session {year}) — Banque de QCMs Medsina",
+            "Disponibilite : Defi lance et disponible immediatement dans l'application Medsina",
+        ],
         "reference": f"{source} — Faculté de Médecine en Algérie",
     }
 

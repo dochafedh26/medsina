@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/services/gemini_service.dart';
@@ -274,39 +275,103 @@ Fournis-lui un guide pratique express pour son tour de salle en format JSON stri
     }
   }
 
-  /// Builds a realistic EMD mock exam for a module.
+  /// Builds a realistic EMD mock exam or 20H Daily Challenge using 100% real QCMs from the official QCM bank.
   static Future<List<QcmQuestion>> buildEmdExamQuestions({
     required String moduleName,
     required int year,
     required List<MedicalModuleModel> allModules,
     int questionCount = 20,
+    bool isDailyChallenge = false,
   }) async {
-    // 1. Check if we have verified questions in local repository for this module
+    // 1. Resolve official QCM bank module IDs (Blida_*.json)
+    final Set<String> targetModuleIds = {};
+
+    final matrixInfo = ExternatCurriculumMatrix.findModuleInfo(moduleName, year);
+    if (matrixInfo != null && matrixInfo.id.isNotEmpty) {
+      targetModuleIds.add(matrixInfo.id);
+    }
+
     final matchingModules = allModules.where(
-      (m) => m.name.toLowerCase().contains(moduleName.toLowerCase()) ||
+      (m) =>
+          m.id.toLowerCase() == (matrixInfo?.id.toLowerCase() ?? '') ||
+          m.name.toLowerCase().contains(moduleName.toLowerCase()) ||
           moduleName.toLowerCase().contains(m.name.toLowerCase()),
     ).toList();
 
-    List<QcmQuestion> collected = [];
-
-    if (matchingModules.isNotEmpty) {
-      for (final mod in matchingModules) {
-        for (final c in mod.courses) {
-          final qList = ResidencyRepository.getQuestionsForCourse(c.id);
-          collected.addAll(qList);
-        }
+    for (final mod in matchingModules) {
+      if (mod.id.isNotEmpty) {
+        targetModuleIds.add(mod.id);
       }
     }
 
-    if (collected.length >= questionCount) {
-      collected.shuffle();
-      return collected.take(questionCount).toList();
+    if (targetModuleIds.isEmpty) {
+      final yearMods = ExternatCurriculumMatrix.getModulesForYear(year);
+      if (yearMods.isNotEmpty) {
+        targetModuleIds.add(yearMods.first.id);
+      }
     }
 
-    // 2. If questions are insufficient, generate realistic faculty EMD questions via Gemini
+    // 2. Asynchronously load real QCMs from assets/data/qcms/Blida_*.json
+    List<QcmQuestion> collected = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+      courseIds: const [],
+      moduleIds: targetModuleIds.toList(),
+      limit: -1,
+      shuffle: false,
+    );
+
+    // Fallback to all modules of the study year if a specific sub-module was empty
+    if (collected.isEmpty) {
+      final fallbackIds = ExternatCurriculumMatrix.getModulesForYear(year)
+          .map((m) => m.id)
+          .toList();
+      if (fallbackIds.isNotEmpty) {
+        collected = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+          courseIds: const [],
+          moduleIds: fallbackIds,
+          limit: -1,
+          shuffle: false,
+        );
+      }
+    }
+
+    if (collected.isNotEmpty) {
+      if (isDailyChallenge) {
+        // Deterministic daily selection for the "Défi de 20H Externat" so all students get today's real QCM series
+        final now = DateTime.now();
+        final seed = now.year * 10000 + now.month * 100 + now.day + (year * 37);
+        final rng = Random(seed);
+
+        final Map<String, List<QcmQuestion>> byCourse = {};
+        for (final q in collected) {
+          final cKey = q.courseName.trim().isNotEmpty ? q.courseName.trim() : moduleName;
+          byCourse.putIfAbsent(cKey, () => []).add(q);
+        }
+
+        final richCourses = byCourse.entries.where((e) => e.value.length >= 5).toList();
+        if (richCourses.isNotEmpty) {
+          final chosenCourse = richCourses[seed % richCourses.length];
+          final coursePool = List<QcmQuestion>.from(chosenCourse.value)..shuffle(rng);
+          if (coursePool.length >= questionCount) {
+            return coursePool.take(questionCount).toList();
+          }
+          final remainingPool = collected
+              .where((q) => q.courseName.trim() != chosenCourse.key)
+              .toList()
+            ..shuffle(rng);
+          return [...coursePool, ...remainingPool].take(questionCount).toList();
+        }
+
+        final dailyPool = List<QcmQuestion>.from(collected)..shuffle(rng);
+        return dailyPool.take(questionCount).toList();
+      }
+
+      final examPool = List<QcmQuestion>.from(collected)..shuffle();
+      return examPool.take(questionCount).toList();
+    }
+
+    // 3. Only if local bank assets failed to load, fallback to AI/synthetic
     try {
-      final needed = questionCount - collected.length;
-      final generated = await _generateEmdQuestionsWithAi(moduleName, year, needed.clamp(5, 20));
+      final generated = await _generateEmdQuestionsWithAi(moduleName, year, questionCount.clamp(5, 20));
       collected.addAll(generated);
     } catch (e) {
       debugPrint('[ExternatPedagogyService] Fallback to synthetic EMD bank: $e');

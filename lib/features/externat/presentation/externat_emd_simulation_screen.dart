@@ -13,6 +13,8 @@ class ExternatEmdSimulationScreen extends StatefulWidget {
   final List<MedicalModuleModel> allModules;
   final int? questionCount;
   final int? durationMinutes;
+  final bool isDailyChallenge;
+  final String? customTitle;
 
   const ExternatEmdSimulationScreen({
     super.key,
@@ -21,6 +23,8 @@ class ExternatEmdSimulationScreen extends StatefulWidget {
     required this.allModules,
     this.questionCount,
     this.durationMinutes,
+    this.isDailyChallenge = false,
+    this.customTitle,
   });
 
   @override
@@ -51,8 +55,8 @@ class _ExternatEmdSimulationScreenState extends State<ExternatEmdSimulationScree
   void initState() {
     super.initState();
     final moduleInfo = ExternatCurriculumMatrix.findModuleInfo(widget.moduleName, widget.studyYear);
-    final count = widget.questionCount ?? moduleInfo?.defaultEmdQuestions ?? 20;
-    final minutes = widget.durationMinutes ?? moduleInfo?.emdDurationMinutes ?? 30;
+    final count = widget.questionCount ?? (widget.isDailyChallenge ? 15 : (moduleInfo?.defaultEmdQuestions ?? 20));
+    final minutes = widget.durationMinutes ?? (widget.isDailyChallenge ? 15 : (moduleInfo?.emdDurationMinutes ?? 30));
 
     _totalDurationSeconds = minutes * 60;
     _remainingSeconds = _totalDurationSeconds;
@@ -78,6 +82,7 @@ class _ExternatEmdSimulationScreenState extends State<ExternatEmdSimulationScree
         year: widget.studyYear,
         allModules: widget.allModules,
         questionCount: count,
+        isDailyChallenge: widget.isDailyChallenge,
       );
 
       if (mounted) {
@@ -237,7 +242,10 @@ class _ExternatEmdSimulationScreenState extends State<ExternatEmdSimulationScree
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'EMD Blanc • ${widget.moduleName}',
+                widget.customTitle ??
+                    (widget.isDailyChallenge
+                        ? '🎯 Défi 20H Externat • ${widget.moduleName}'
+                        : 'EMD Blanc • ${widget.moduleName}'),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -245,8 +253,12 @@ class _ExternatEmdSimulationScreenState extends State<ExternatEmdSimulationScree
                 ),
               ),
               Text(
-                '${widget.studyYear}e Année • Barème /20 officiel',
+                widget.isDailyChallenge
+                    ? '${widget.studyYear}e Année • Banque QCM Officielle (${_questions.isNotEmpty ? _questions.first.courseName : widget.moduleName})'
+                    : '${widget.studyYear}e Année • Barème /20 officiel',
                 style: const TextStyle(fontSize: 11, color: AppTheme.primaryTeal, fontWeight: FontWeight.w600),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
