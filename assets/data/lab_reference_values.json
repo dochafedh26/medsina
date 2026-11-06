@@ -1036,5 +1036,21 @@
     ],
     "created_at": "2026-11-06T00:27:36.055140+00:00",
     "updated_at": "2026-11-06T00:27:36.055155+00:00"
+  },
+  {
+    "id": "lab_vitamines_b12_b9",
+    "name": "Vitamines B12 et Folates (Vitamine B9)",
+    "category": "Vitamines & Oligo-éléments",
+    "normal_range": "Vitamine B12 : 200 - 900 pg/mL (ou 145 - 637 pmol/L) | Folates sériques : 3 - 20 ng/mL | Folates érythrocytaires : 150 - 600 ng/mL",
+    "unit": "pg/mL (B12) et ng/mL (Folates)",
+    "high_interpretation": "Vitamine B12 élevée : Hépatopathies aiguës ou chroniques (cytolyse libérant les stocks), syndromes myéloprolifératifs (polycytémie vraie, leucémie myéloïde chronique via augmentation de l'haptocorrine), insuffisance rénale chronique. Folates élevés : Supplémentation récente, surdosage médicamenteux, alimentation riche.",
+    "low_interpretation": "Vitamine B12 basse (< 200 pg/mL) : Maladie de Biermer (anémie pernicieuse par atrophie gastrique et anticorps anti-facteur intrinsèque/anti-cellules pariétales), gastrectomie, résection iléale, malabsorption (maladie cœliaque, Crohn), régime végétalien strict. Risque d'atteinte neurologique irréversible (dégénérescence combinée des cordons de la moelle). Folates bas (< 3 ng/mL) : Carence d'apports (alcoolisme, dénutrition), malabsorption jéjunale, besoins accrus (grossesse, hémolyse chronique). Risque de spina bifida chez le fœtus.",
+    "clinical_notes": [
+      "Piège diagnostique majeur (Règle d'or de réanimation/interne) : Ne jamais supplémenter en folates seul une carence mixte en B12/B9, car cela aggrave ou déclenche les manifestations neurologiques graves de la carence en B12 (myélose cervico-arthrosique). Toujours charger en B12 avant ou en même temps que les folates.",
+      "Fausse baisse des folates sériques : Observée en cas de grossesse, d'hyperglycémie ou de traitement par certains anticonvulsivants. Le dosage des folates érythrocytaires reflète mieux les stocks tissulaires à long terme.",
+      "Causes de fausse baisse de la vitamine B12 : Déficit en haptocorrine (congénital, bénin) ou grossesse (chute physiologique des protéines porteuses)."
+    ],
+    "created_at": "2026-11-06T15:15:07.427565+00:00",
+    "updated_at": "2026-11-06T15:15:07.427580+00:00"
   }
 ]
