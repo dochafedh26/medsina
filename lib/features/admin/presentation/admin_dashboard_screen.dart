@@ -851,24 +851,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  u.fullName,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: isNarrow ? 13.5 : 14.5,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              if (isNarrow) ...[
-                                const SizedBox(width: 6),
-                                _buildTierPill(tierColor, tierLabel, isNarrow: true),
-                              ],
-                            ],
+                          Text(
+                            u.fullName.trim().isNotEmpty ? u.fullName : u.email.split('@').first,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: isNarrow ? 14 : 14.5,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -877,13 +867,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (u.isAdmin || u.isBanned || u.rejectedPaymentsCount > 0) ...[
-                            const SizedBox(height: 4),
+                          if (isNarrow || u.isAdmin || u.isBanned || u.rejectedPaymentsCount > 0) ...[
+                            const SizedBox(height: 5),
                             Wrap(
                               spacing: 6,
                               runSpacing: 4,
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
+                                if (isNarrow)
+                                  _buildTierPill(tierColor, tierLabel, isNarrow: true),
                                 if (u.isAdmin)
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),

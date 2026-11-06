@@ -117,10 +117,16 @@ class AdminUserItem extends Equatable {
     final reason = json['ban_reason'] ?? json['banReason'];
     final rejections = (json['rejected_payments_count'] ?? json['rejectedPaymentsCount'] as num?)?.toInt() ?? 0;
 
+    final rawName = (json['full_name'] ?? json['name'] ?? '').toString().trim();
+    final rawEmail = (json['email'] ?? '').toString().trim();
+    final resolvedFullName = rawName.isNotEmpty
+        ? rawName
+        : (rawEmail.isNotEmpty ? rawEmail.split('@').first : 'Médecin');
+
     return AdminUserItem(
       id: json['id'] ?? '',
-      email: json['email'] ?? '',
-      fullName: json['full_name'] ?? json['email'] ?? 'Médecin',
+      email: rawEmail,
+      fullName: resolvedFullName,
       medicalRole: json['medical_role'] ?? 'Candidat Résidanat',
       faculty: json['faculty'] ?? 'Faculté de Médecine de Blida',
       tier: json['tier'] ?? 'free',

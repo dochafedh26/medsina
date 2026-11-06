@@ -303,6 +303,14 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
     final resolvedMedicalRole = _cleanMedicalRole(profile['medical_role']?.toString() ?? u.medicalRole, resolvedStudyYear);
     final studyYearDisplay = _formatStudyYearDisplay(resolvedStudyYear, resolvedMedicalRole);
 
+    final profileFullName = profile['full_name']?.toString().trim() ?? '';
+    final rawDoctorName = profileFullName.isNotEmpty
+        ? profileFullName
+        : (u.fullName.trim().isNotEmpty ? u.fullName.trim() : u.email.split('@').first);
+    final displayDoctorName = rawDoctorName.toLowerCase().startsWith('dr')
+        ? rawDoctorName
+        : 'Dr. $rawDoctorName';
+
     DateTime? effectiveExpiry = u.expiresAt;
     if (subscription['expires_at'] != null) {
       effectiveExpiry = DateTime.tryParse(subscription['expires_at'].toString()) ?? effectiveExpiry;
@@ -331,7 +339,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
           children: [
             // --- TOP HEADER WITH DOCTOR IDENTITY ---
             Container(
-              padding: const EdgeInsets.fromLTRB(20, 18, 16, 16),
+              padding: const EdgeInsets.fromLTRB(20, 18, 12, 16),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -350,8 +358,8 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                             radius: isMobile ? 26 : 32,
                             backgroundColor: tierColor.withValues(alpha: 0.20),
                             child: Text(
-                              u.fullName.trim().isNotEmpty
-                                  ? u.fullName.trim().split(' ').map((e) => e.isNotEmpty ? e[0] : '').take(2).join().toUpperCase()
+                              rawDoctorName.isNotEmpty
+                                  ? rawDoctorName.split(' ').map((e) => e.isNotEmpty ? e[0] : '').take(2).join().toUpperCase()
                                   : 'DR',
                               style: TextStyle(
                                 fontSize: isMobile ? 18 : 22,
@@ -387,19 +395,23 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            Text(
+                              displayDoctorName,
+                              style: TextStyle(
+                                fontSize: isMobile ? 17 : 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : const Color(0xFF0F172A),
+                                height: 1.2,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 6),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 4,
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    u.fullName.startsWith('Dr') ? u.fullName : 'Dr. ${u.fullName}',
-                                    style: TextStyle(
-                                      fontSize: isMobile ? 17 : 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: isDark ? Colors.white : const Color(0xFF0F172A),
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                   decoration: BoxDecoration(
@@ -418,14 +430,15 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 6),
                             Text(
                               '$resolvedMedicalRole • ${u.faculty}',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 12.5,
                                 color: isDark ? Colors.white70 : Colors.grey.shade700,
                                 fontWeight: FontWeight.w500,
                               ),
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 6),
@@ -437,7 +450,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                                   onTap: () => _copyToClipboard(u.email, 'Email'),
                                   borderRadius: BorderRadius.circular(4),
                                   child: ConstrainedBox(
-                                    constraints: BoxConstraints(maxWidth: isMobile ? 180 : 280),
+                                    constraints: BoxConstraints(maxWidth: isMobile ? 210 : 280),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -479,6 +492,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                         icon: const Icon(Icons.close_rounded),
                         onPressed: () => Navigator.of(context).pop(),
                         splashRadius: 20,
+                        visualDensity: VisualDensity.compact,
                       ),
                     ],
                   ),
@@ -534,6 +548,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
               child: TabBar(
                 controller: _tabController,
                 isScrollable: isMobile,
+                tabAlignment: isMobile ? TabAlignment.start : TabAlignment.fill,
                 labelColor: AppTheme.primaryTeal,
                 unselectedLabelColor: isDark ? Colors.white60 : Colors.grey.shade600,
                 indicatorColor: AppTheme.primaryTeal,
@@ -563,7 +578,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
                   : TabBarView(
                       controller: _tabController,
                       children: [
-                        _buildIdentityTab(u, profile, isDark, referralCode, resolvedMedicalRole, studyYearDisplay, resolvedStudyYear),
+                        _buildIdentityTab(u, profile, isDark, referralCode, resolvedMedicalRole, studyYearDisplay, resolvedStudyYear, displayDoctorName),
                         _buildSubscriptionTab(u, subscription, isDark, effectiveExpiry, daysRemaining, isExpired),
                         _buildPaymentsTab(payments, isDark),
                         _buildLicensesAndQuotasTab(licenseKeys, _deepDetails['trial_quotas'], isDark),
@@ -677,6 +692,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
     String resolvedRole,
     String yearDisplay,
     int? resolvedYear,
+    String displayDoctorName,
   ) {
     return ListView(
       padding: const EdgeInsets.all(20),
@@ -684,6 +700,7 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
         _buildSectionHeader('Profil Médical & Académique', Icons.local_hospital_outlined, isDark),
         const SizedBox(height: 12),
         _buildInfoGrid([
+          _InfoTile('Nom Complet', displayDoctorName, Icons.person_outline_rounded, isDark, onCopy: () => _copyToClipboard(displayDoctorName, 'Nom')),
           _InfoTile('Rôle Médical', resolvedRole, Icons.medical_services_outlined, isDark),
           _InfoTile('Faculté de Médecine', u.faculty, Icons.school_outlined, isDark),
           _InfoTile(
@@ -1155,6 +1172,7 @@ class _InfoTile extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: valueColor ?? (isDark ? Colors.white : const Color(0xFF0F172A)),
                   ),
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
