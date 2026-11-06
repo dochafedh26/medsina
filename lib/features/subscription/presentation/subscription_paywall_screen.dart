@@ -496,7 +496,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                           SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Remise spéciale 2 ans appliquée : -20% de réduction immédiate sur tous les abonnements !',
+                              'Remise spéciale 2 ans appliquée : jusqu\'à -35% d\'économie sur tous les abonnements !',
                               style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFF6D28D9)),
                             ),
                           ),
@@ -546,9 +546,9 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     ? residentElitePlan!.features
                     : [
                         'Les 47 modules officiels de préparation au Résidanat',
-                        'Simulateur d\'examens blancs chronométrés',
-                        'Téléchargement des cours PDF officiels',
-                        'Exports Anki et PDF',
+                        'Simulateur d\'examens blancs chronométrés & Classement National',
+                        'Téléchargement des cours PDF officiels & Flashcards FSRS',
+                        'Exports Anki et PDF + MedsinaCoach IA',
                         'CAT d\'urgences essentielles',
                       ],
                 isCurrent: currentTier == SubscriptionTier.residentElite,
@@ -568,10 +568,10 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     ? clinicalProPlan!.features
                     : [
                         'Toutes les Conduites à Tenir (CAT) par spécialité',
-                        'Arbres décisionnels et protocoles d\'urgence vitale',
-                        'Tous les scores et calculateurs médicaux',
-                        'Mémento de garde hospitalière et fiches réflexes',
-                        'Normes de laboratoire complètes avec interprétations',
+                        'Arbres décisionnels et protocoles d\'urgence vitale Algérie',
+                        'Tous les scores et calculateurs médicaux spécialisés',
+                        'Pharmacopée & DCI Algérie (Saidal, IPA, Biopharm) + Vidal IA',
+                        'Normes de laboratoire complètes avec interprétations IA',
                       ],
                 isCurrent: currentTier == SubscriptionTier.clinicalPro,
               ),
@@ -593,7 +593,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         'Banque QCMs d\'examens ultérieurs & EMD de Faculté',
                         'Exclusion des pièges hors-programme du résidanat',
                         'Fiches de cours & résumés officiels de l\'année',
-                        'Mode révision semestrielle & partiels',
+                        'Mode révision semestrielle, partiels & Flashcards FSRS',
                       ],
                 isCurrent: currentTier == SubscriptionTier.etudiant,
               ),
@@ -608,9 +608,11 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                 planItem: null,
                 duration: _selectedDuration,
                 features: [
-                  '2 modules d\'initiation au résidanat (50 QCMs)',
-                  'Scores médicaux de base',
-                  'Consultation des cours PDF en ligne',
+                  '3 modules complets au choix (cours PDF + résumés)',
+                  '100 QCMs corrigés et commentés d\'initiation',
+                  'Calculateurs et scores médicaux essentiels (Glasgow, IMC, DFG)',
+                  '2 Conduites à Tenir d\'urgence vitale (ACR & Envenimation scorpionique)',
+                  '3 essais IA gratuits (Vidal IA, Bilan Labo & MedsinaPilot)',
                 ],
                 isCurrent: currentTier == SubscriptionTier.free,
               ),

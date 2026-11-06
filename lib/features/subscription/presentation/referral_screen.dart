@@ -284,7 +284,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: const Text(
-                                        '5 600 DZD',
+                                        '3 200 DZD',
                                         style: TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.bold),
                                       ),
                                     ),
@@ -346,7 +346,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: const Text(
-                                        '4 200 DZD',
+                                        '2 600 DZD',
                                         style: TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.bold),
                                       ),
                                     ),

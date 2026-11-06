@@ -21,15 +21,15 @@ class AiQuotaPack {
     AiQuotaPack(
       id: 'pack_50',
       name: 'Pack Éco IA',
-      credits: 50,
-      priceDzd: 500,
+      credits: 60,
+      priceDzd: 400,
       description: 'Idéal pour terminer une session intensive de révision ou une garde.',
     ),
     AiQuotaPack(
       id: 'pack_150',
       name: 'Pack Pro IA',
-      credits: 150,
-      priceDzd: 1200,
+      credits: 200,
+      priceDzd: 950,
       description: 'Recommandé pour les révisions complètes de dossiers cliniques et QCMs.',
       isPopular: true,
       discountBadge: 'Le plus populaire',
@@ -37,10 +37,10 @@ class AiQuotaPack {
     AiQuotaPack(
       id: 'pack_500',
       name: 'Pack Max IA',
-      credits: 500,
-      priceDzd: 3000,
+      credits: 600,
+      priceDzd: 2200,
       description: 'Tranquillité absolue pour les révisions de concours sans jamais être freiné.',
-      discountBadge: '-40% Économie',
+      discountBadge: '-45% Économie',
     ),
   ];
 }

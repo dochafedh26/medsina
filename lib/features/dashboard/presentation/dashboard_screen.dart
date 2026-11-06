@@ -130,11 +130,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                   ] else ...[
-                    _buildStudyCoachPromoCard(context),
-                    const SizedBox(height: 12),
-                    _buildCaseSimulatorPromoCard(context),
-                    const SizedBox(height: 12),
-                    _buildCollaborativeAndExamRow(context),
+                    _buildMobilePinterestQuickGrid(context),
                   ],
 
                   const SizedBox(height: 26),
@@ -1158,9 +1154,9 @@ class DashboardScreen extends StatelessWidget {
             AppTheme.clinicalNavyElevated,
             Color(0xFF0D9488),
           ];
-          badgeText = '⚡ PASS DÉCOUVERTE • PÉRIODE D\'ESSAI (14J)';
+          badgeText = '⚡ PASS DÉCOUVERTE • GRATUIT';
           subtitleText =
-              'Accès d\'évaluation : $daysRemaining jours restants (1er module & calculateurs)';
+              'Accès découverte : 3 modules complets, 100 QCMs corrigés, scores & 3 essais IA';
           break;
       }
     }
@@ -1174,43 +1170,105 @@ class DashboardScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.14),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
           ),
           child: Text(
             badgeText,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 10,
+              fontSize: 9.8,
               fontWeight: FontWeight.w800,
-              letterSpacing: 0.6,
+              letterSpacing: 0.5,
             ),
           ),
         );
 
-        final textColumn = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        final masteryRing = Container(
+          width: 72,
+          height: 72,
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 58,
+                height: 58,
+                child: CircularProgressIndicator(
+                  value: isExpired ? 0.15 : (tier == SubscriptionTier.free ? 0.35 : 0.82),
+                  strokeWidth: 5.5,
+                  backgroundColor: Colors.white.withValues(alpha: 0.16),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Color(0xFF38BDF8),
+                  ),
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    isExpired
+                        ? 'EXP'
+                        : (tier == SubscriptionTier.free ? '3/47' : '100%'),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.3,
+                    ),
+                  ),
+                  Text(
+                    'ACTIF',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.78),
+                      fontSize: 7.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+
+        final textAndRingRow = Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            badge,
-            const SizedBox(height: 12),
-            Text(
-              'Bienvenue, $name',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 23,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.4,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  badge,
+                  const SizedBox(height: 11),
+                  Text(
+                    'Bonjour, $name',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.4,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    subtitleText,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.88),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      height: 1.38,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 5),
-            Text(
-              subtitleText,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.88),
-                fontSize: 12.5,
-                fontWeight: FontWeight.w500,
-                height: 1.4,
-              ),
-            ),
+            const SizedBox(width: 14),
+            masteryRing,
           ],
         );
 
@@ -1220,31 +1278,6 @@ class DashboardScreen extends StatelessWidget {
           alignment: isNarrow ? WrapAlignment.start : WrapAlignment.end,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 9,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const RevisionCatalogScreen(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.menu_book_rounded, size: 16),
-              label: const Text(
-                '47 Modules',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
-              ),
-            ),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -1255,7 +1288,36 @@ class DashboardScreen extends StatelessWidget {
                   vertical: 9,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const RevisionCatalogScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.play_circle_fill_rounded,
+                size: 17,
+                color: AppTheme.primaryTeal,
+              ),
+              label: const Text(
+                'Reprendre la session',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
+              ),
+            ),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 13,
+                  vertical: 9,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
                 ),
               ),
               onPressed: () {
@@ -1266,13 +1328,13 @@ class DashboardScreen extends StatelessWidget {
                 );
               },
               icon: const Icon(
-                Icons.star_rounded,
-                size: 17,
-                color: Color(0xFFF59E0B),
+                Icons.workspace_premium_rounded,
+                size: 16,
+                color: Color(0xFFFBBF24),
               ),
               label: const Text(
                 'Gérer Offre',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
               ),
             ),
           ],
@@ -1280,20 +1342,20 @@ class DashboardScreen extends StatelessWidget {
 
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(22),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: gradientColors,
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
             boxShadow: [
               BoxShadow(
-                color: gradientColors.first.withValues(alpha: 0.25),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: gradientColors.first.withValues(alpha: 0.26),
+                blurRadius: 22,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -1302,7 +1364,7 @@ class DashboardScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    textColumn,
+                    textAndRingRow,
                     const SizedBox(height: 16),
                     actionButtons,
                   ],
@@ -1311,7 +1373,7 @@ class DashboardScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    textColumn,
+                    textAndRingRow,
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1333,7 +1395,7 @@ class DashboardScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.white.withValues(alpha: 0.75),
+                                color: Colors.white.withValues(alpha: 0.78),
                               ),
                             ),
                           ],
@@ -1345,6 +1407,189 @@ class DashboardScreen extends StatelessWidget {
                 ),
         );
       },
+    );
+  }
+
+  Widget _buildMobilePinterestQuickGrid(BuildContext context) {
+    return Column(
+      children: [
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: _buildPinterestSquareTile(
+                  context,
+                  title: 'MedsinaCoach IA',
+                  subtitle: 'Plan & Thèmes faibles',
+                  badge: 'COACH IA',
+                  icon: Icons.auto_awesome_rounded,
+                  accentColor: const Color(0xFF7C3AED),
+                  bgTint: const Color(0xFFF3E8FF),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const StudyCoachScreen()),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildPinterestSquareTile(
+                  context,
+                  title: 'Simulateur Cas',
+                  subtitle: 'Dossiers progressifs',
+                  badge: 'CLINIQUE',
+                  icon: Icons.medical_information_rounded,
+                  accentColor: const Color(0xFF2563EB),
+                  bgTint: const Color(0xFFDBEAFE),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const CaseSimulatorScreen()),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: _buildPinterestSquareTile(
+                  context,
+                  title: 'Concours Blancs',
+                  subtitle: 'Classement national',
+                  badge: 'OFFICIEL 🏆',
+                  icon: Icons.emoji_events_rounded,
+                  accentColor: const Color(0xFFD97706),
+                  bgTint: const Color(0xFFFEF3C7),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NationalExamsListScreen(),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildPinterestSquareTile(
+                  context,
+                  title: 'Groupes d\'Étude',
+                  subtitle: 'Défis & Salles QCM',
+                  badge: 'LIVE 👥',
+                  icon: Icons.groups_rounded,
+                  accentColor: const Color(0xFF0D9488),
+                  bgTint: const Color(0xFFCCFBF1),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const GroupRevisionHubScreen(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPinterestSquareTile(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required String badge,
+    required IconData icon,
+    required Color accentColor,
+    required Color bgTint,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: AppTheme.bentoCardDecoration(
+        context,
+        radius: 22,
+        borderColor: accentColor.withValues(alpha: 0.24),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(22),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(22),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? accentColor.withValues(alpha: 0.22)
+                            : bgTint,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(icon, color: accentColor, size: 22),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        badge,
+                        style: TextStyle(
+                          fontSize: 8.5,
+                          fontWeight: FontWeight.w800,
+                          color: accentColor,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14.5,
+                        letterSpacing: -0.2,
+                        color: isDark ? Colors.white : AppTheme.clinicalNavy,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -2089,156 +2334,6 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildCollaborativeAndExamRow(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            decoration: AppTheme.bentoCardDecoration(context, radius: 16),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const NationalExamsListScreen(),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 13,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.emoji_events_rounded,
-                          color: Color(0xFFF59E0B),
-                          size: 19,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Concours Blancs',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 12.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              'National 🏆',
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.white60
-                                    : const Color(0xFF64748B),
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            decoration: AppTheme.bentoCardDecoration(context, radius: 16),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const GroupRevisionHubScreen(),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 13,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryTeal.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.groups_rounded,
-                          color: AppTheme.primaryTeal,
-                          size: 19,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Groupes d\'Étude',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 12.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              'Défis & Entraide 👥',
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.white60
-                                    : const Color(0xFF64748B),
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

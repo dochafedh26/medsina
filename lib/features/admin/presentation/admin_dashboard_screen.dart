@@ -3203,10 +3203,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ? state.plans
         : [
             const SubscriptionPlanItem(id: 'free', name: 'Pass Découverte', badge: 'GRATUIT', priceYearly: 0, priceMonthly: 0),
-            const SubscriptionPlanItem(id: 'etudiant', name: 'Pass Étudiant', badge: 'PROMO CURSUS • ÉTUDIANTS', priceYearly: 2500, priceMonthly: 500, discountPercent: 58),
-            const SubscriptionPlanItem(id: 'clinical_pro', name: 'Pass Clinique Pro', badge: 'PROMO CLINIQUE • INTERNAT & UMC', priceYearly: 3000, priceMonthly: 600, discountPercent: 58),
-            const SubscriptionPlanItem(id: 'resident_elite', name: 'Pass Résident Élite', badge: 'PROMO CONCOURS • RÉSIDANAT 2027', priceYearly: 3500, priceMonthly: 700, discountPercent: 58),
-            const SubscriptionPlanItem(id: 'all_access', name: 'Medsina All-Access (VIP)', badge: 'PROMO ALL-ACCESS • SUITE COMPLÈTE VIP', priceYearly: 4500, priceMonthly: 800, discountPercent: 53),
+            const SubscriptionPlanItem(id: 'etudiant', name: 'Pass Étudiant', badge: 'PROMO CURSUS • ÉTUDIANTS', priceYearly: 1900, priceMonthly: 400, discountPercent: 60),
+            const SubscriptionPlanItem(id: 'clinical_pro', name: 'Pass Clinique Pro', badge: 'PROMO CLINIQUE • INTERNAT & UMC', priceYearly: 2600, priceMonthly: 500, discountPercent: 57),
+            const SubscriptionPlanItem(id: 'resident_elite', name: 'Pass Résident Élite', badge: 'PROMO CONCOURS • RÉSIDANAT 2027', priceYearly: 3200, priceMonthly: 600, discountPercent: 56),
+            const SubscriptionPlanItem(id: 'all_access', name: 'Medsina All-Access (VIP)', badge: 'PROMO ALL-ACCESS • SUITE COMPLÈTE VIP', priceYearly: 3900, priceMonthly: 750, discountPercent: 57),
           ];
 
     return ListView(

@@ -349,7 +349,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       );
     }
 
-        // Mobile Layout (Android APK & small screens)
+        // Mobile Layout (Android APK & small screens) — Pinterest Floating Pill Bottom Dock
         final isDarkMobile = Theme.of(context).brightness == Brightness.dark;
         return Scaffold(
           appBar: _buildMobileTopBar(context, tier, user),
@@ -357,72 +357,82 @@ class _MainScaffoldState extends State<MainScaffold> {
             index: safeIndex,
             children: navItems.map((item) => item.page).toList(),
           ),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: isDarkMobile ? AppTheme.darkSurface : Colors.white,
-              border: Border(
-                top: BorderSide(
-                  color: isDarkMobile ? AppTheme.darkBorder : AppTheme.lightBorder,
-                  width: 1,
+          bottomNavigationBar: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 2, 12, 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F172A),
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(
+                    color: isDarkMobile
+                        ? const Color(0xFF334155)
+                        : Colors.white.withValues(alpha: 0.12),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF0F172A).withValues(alpha: isDarkMobile ? 0.45 : 0.24),
+                      blurRadius: 24,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDarkMobile ? 0.25 : 0.05),
-                  blurRadius: 16,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: NavigationBarTheme(
-              data: NavigationBarThemeData(
-                height: 66,
-                backgroundColor: Colors.transparent,
-                surfaceTintColor: Colors.transparent,
-                indicatorColor: isDarkMobile
-                    ? AppTheme.primaryTeal.withValues(alpha: 0.22)
-                    : AppTheme.clinicalNavy,
-                indicatorShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
-                  (states) => TextStyle(
-                    fontSize: navItems.length >= 6 ? 9.5 : (navItems.length >= 5 ? 10 : 11.5),
-                    fontWeight: states.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w600,
-                    letterSpacing: -0.2,
-                    color: states.contains(WidgetState.selected)
-                        ? (isDarkMobile ? Colors.white : AppTheme.clinicalNavy)
-                        : (isDarkMobile ? Colors.white60 : const Color(0xFF64748B)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(28),
+                  child: NavigationBarTheme(
+                    data: NavigationBarThemeData(
+                      height: 62,
+                      backgroundColor: Colors.transparent,
+                      surfaceTintColor: Colors.transparent,
+                      indicatorColor: AppTheme.primaryTeal,
+                      indicatorShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+                        (states) => TextStyle(
+                          fontSize: navItems.length >= 6 ? 9.5 : 10.5,
+                          fontWeight: states.contains(WidgetState.selected)
+                              ? FontWeight.w800
+                              : FontWeight.w600,
+                          letterSpacing: -0.2,
+                          color: states.contains(WidgetState.selected)
+                              ? Colors.white
+                              : Colors.white.withValues(alpha: 0.65),
+                        ),
+                      ),
+                    ),
+                    child: NavigationBar(
+                      selectedIndex: safeIndex,
+                      onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
+                      labelBehavior: navItems.length >= 6
+                          ? NavigationDestinationLabelBehavior.onlyShowSelected
+                          : NavigationDestinationLabelBehavior.alwaysShow,
+                      destinations: navItems.map((item) {
+                        String displayLabel = item.label;
+                        if (navItems.length >= 5 && displayLabel == 'Ordonnance') {
+                          displayLabel = 'Ordo IA';
+                        }
+                        return NavigationDestination(
+                          icon: Icon(
+                            item.icon,
+                            size: 20,
+                            color: Colors.white.withValues(alpha: 0.68),
+                          ),
+                          selectedIcon: Icon(
+                            item.selectedIcon,
+                            size: 21,
+                            color: item.isSpecial
+                                ? const Color(0xFFFCA5A5)
+                                : Colors.white,
+                          ),
+                          label: displayLabel,
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
-              ),
-              child: NavigationBar(
-                selectedIndex: safeIndex,
-                onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
-                labelBehavior: MediaQuery.of(context).size.width < 380 && navItems.length >= 6
-                    ? NavigationDestinationLabelBehavior.onlyShowSelected
-                    : NavigationDestinationLabelBehavior.alwaysShow,
-                destinations: navItems.map((item) {
-                  String displayLabel = item.label;
-                  if (navItems.length >= 5 && displayLabel == 'Ordonnance') {
-                    displayLabel = 'Ordo / Rx';
-                  }
-                  return NavigationDestination(
-                    icon: Icon(
-                      item.icon,
-                      size: 21,
-                      color: isDarkMobile ? Colors.white70 : const Color(0xFF64748B),
-                    ),
-                    selectedIcon: Icon(
-                      item.selectedIcon,
-                      size: 21,
-                      color: item.isSpecial
-                          ? const Color(0xFFEF4444)
-                          : (isDarkMobile ? AppTheme.primaryTeal : Colors.white),
-                    ),
-                    label: displayLabel,
-                  );
-                }).toList(),
               ),
             ),
           ),
@@ -867,26 +877,248 @@ class _MainScaffoldState extends State<MainScaffold> {
     SubscriptionTier tier,
     UserModel? user,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AppBar(
       titleSpacing: 14,
-      title: const MedsinaLogo(height: 31),
+      toolbarHeight: 58,
+      title: const MedsinaLogo(height: 30),
       actions: [
-        Flexible(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerRight,
-            child: Row(
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E293B) : Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.clinicalNavy.withValues(alpha: isDark ? 0.2 : 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildDockIconButton(
+                icon: Icons.search_rounded,
+                tooltip: 'Recherche Globale (Omnisearch)',
+                color: AppTheme.primaryTeal,
+                bgTint: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                onTap: () => _openOmnisearch(context),
+              ),
+              const SizedBox(width: 4),
+              _buildNotificationBellAction(context, compact: true),
+              const SizedBox(width: 4),
+              _buildDockIconButton(
+                icon: Icons.widgets_rounded,
+                tooltip: 'Outils, Guide PDF, Annonces & Mises à jour',
+                color: isDark ? const Color(0xFF38BDF8) : AppTheme.clinicalNavy,
+                bgTint: (isDark ? const Color(0xFF38BDF8) : AppTheme.clinicalNavy)
+                    .withValues(alpha: 0.1),
+                onTap: () => _showMobileQuickToolsSheet(context),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        _buildModernProfileAndTierPill(context, tier, user),
+        const SizedBox(width: 14),
+      ],
+    );
+  }
+
+  void _showMobileQuickToolsSheet(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? AppTheme.darkSurface : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+            child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildModernActionDock(context, includeSearch: true),
-                const SizedBox(width: 6),
-                _buildModernProfileAndTierPill(context, tier, user),
-                const SizedBox(width: 12),
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.widgets_rounded,
+                        color: AppTheme.primaryTeal,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text(
+                        'Espace Outils & Ressources Medsina',
+                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded, size: 20),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 2.2,
+                  children: [
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.campaign_rounded,
+                      title: 'Annonces',
+                      subtitle: 'Nouveautés & Infos',
+                      color: const Color(0xFF0D9488),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        AnnouncementsHubScreen.push(context);
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.menu_book_rounded,
+                      title: 'Guide PDF',
+                      subtitle: 'Manuel officiel',
+                      color: const Color(0xFF4F46E5),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const UserGuidePdfViewerScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.star_rounded,
+                      title: 'Avis 5★',
+                      subtitle: 'Communauté',
+                      color: const Color(0xFFF59E0B),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const FeedbackReviewsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.system_update_rounded,
+                      title: 'Mise à jour',
+                      subtitle: 'Vérifier OTA',
+                      color: const Color(0xFF0284C7),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _manualCheckOtaUpdates(context);
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildQuickToolTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF8FAFC),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: color.withValues(alpha: 0.22),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Icon(icon, color: color, size: 19),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12.5,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 

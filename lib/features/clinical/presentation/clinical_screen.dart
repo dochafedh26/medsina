@@ -86,46 +86,76 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
       body: Column(
         children: [
           Container(
-            margin: const EdgeInsets.fromLTRB(16, 10, 16, 6),
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-            decoration: AppTheme.bentoCardDecoration(context, radius: 18),
+            margin: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+            padding: const EdgeInsets.all(4),
+            decoration: AppTheme.bentoCardDecoration(context, radius: 16),
             width: double.infinity,
             child: TabBar(
               controller: _tabController,
-              isScrollable: true,
-              tabAlignment: TabAlignment.start,
+              isScrollable: MediaQuery.of(context).size.width < 410,
+              tabAlignment: MediaQuery.of(context).size.width < 410
+                  ? TabAlignment.start
+                  : TabAlignment.fill,
               dividerColor: Colors.transparent,
               indicatorSize: TabBarIndicatorSize.tab,
-              indicatorPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+              indicatorPadding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 10),
               indicator: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? AppTheme.primaryTeal
-                    : AppTheme.clinicalNavy,
+                gradient: LinearGradient(
+                  colors: Theme.of(context).brightness == Brightness.dark
+                      ? [AppTheme.primaryTeal, const Color(0xFF1D4ED8)]
+                      : [AppTheme.clinicalNavy, AppTheme.primaryTeal],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.clinicalNavy.withValues(alpha: 0.2),
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.24),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
               labelColor: Colors.white,
-              unselectedLabelColor: Colors.grey.shade600,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12.5),
+              unselectedLabelColor: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade400
+                  : const Color(0xFF475569),
+              labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
               tabs: const [
                 Tab(
-                  icon: Icon(Icons.emergency_rounded, size: 18),
-                  text: 'Protocoles & CAT',
+                  height: 38,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.emergency_rounded, size: 15),
+                      SizedBox(width: 6),
+                      Text('Protocoles & CAT'),
+                    ],
+                  ),
                 ),
                 Tab(
-                  icon: Icon(Icons.calculate_rounded, size: 18),
-                  text: 'Scores Cliniques',
+                  height: 38,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.calculate_rounded, size: 15),
+                      SizedBox(width: 6),
+                      Text('Scores'),
+                    ],
+                  ),
                 ),
                 Tab(
-                  icon: Icon(Icons.medication_liquid_rounded, size: 18),
-                  text: 'Urgences & DCI Algérie',
+                  height: 38,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.medication_liquid_rounded, size: 15),
+                      SizedBox(width: 6),
+                      Text('Urgences & DCI'),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -152,6 +182,7 @@ class _ProtocolsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return BlocBuilder<ClinicalBloc, ClinicalState>(
       builder: (context, state) {
         if (state.status == ClinicalStatus.loading) {
@@ -174,44 +205,106 @@ class _ProtocolsTab extends StatelessWidget {
 
         return Column(
           children: [
-            // Search & Filter header
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              color: Theme.of(context).cardColor,
+            // Sleek Pinterest Unified Search & Specialty Pills Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
               child: Column(
                 children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Rechercher une urgence, protocole, scorpion, rage...',
-                      prefixIcon: const Icon(Icons.search_rounded),
-                      suffixIcon: state.searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () => context.read<ClinicalBloc>().add(const SearchProtocolsEvent('')),
-                            )
-                          : null,
+                  Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.darkSurface : Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isDark ? AppTheme.darkBorder : AppTheme.lightBorder,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.clinicalNavy.withValues(alpha: isDark ? 0.16 : 0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    onChanged: (val) => context.read<ClinicalBloc>().add(SearchProtocolsEvent(val)),
+                    child: TextField(
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                      decoration: InputDecoration(
+                        hintText: 'Rechercher une urgence, CAT, scorpion, rage...',
+                        hintStyle: TextStyle(
+                          fontSize: 12.5,
+                          color: isDark ? Colors.grey.shade500 : const Color(0xFF94A3B8),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search_rounded,
+                          size: 19,
+                          color: AppTheme.primaryTeal,
+                        ),
+                        suffixIcon: state.searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear_rounded, size: 18),
+                                onPressed: () => context
+                                    .read<ClinicalBloc>()
+                                    .add(const SearchProtocolsEvent('')),
+                              )
+                            : null,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 11),
+                      ),
+                      onChanged: (val) =>
+                          context.read<ClinicalBloc>().add(SearchProtocolsEvent(val)),
+                    ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
                   SizedBox(
-                    height: 38,
+                    height: 34,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: state.availableSpecialties.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 8),
+                      separatorBuilder: (context, index) => const SizedBox(width: 7),
                       itemBuilder: (context, index) {
                         final spec = state.availableSpecialties[index];
                         final isSelected = spec == state.selectedSpecialty;
-                        return ChoiceChip(
-                          label: Text(spec),
-                          selected: isSelected,
-                          onSelected: (_) => context.read<ClinicalBloc>().add(FilterSpecialtyEvent(spec)),
-                          selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.18),
-                          labelStyle: TextStyle(
-                            color: isSelected ? AppTheme.primaryDarkTeal : null,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                            fontSize: 12,
+                        return InkWell(
+                          borderRadius: BorderRadius.circular(999),
+                          onTap: () => context
+                              .read<ClinicalBloc>()
+                              .add(FilterSpecialtyEvent(spec)),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppTheme.primaryTeal
+                                  : (isDark ? AppTheme.darkSurface : Colors.white),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppTheme.primaryTeal
+                                    : (isDark ? AppTheme.darkBorder : AppTheme.lightBorder),
+                              ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: AppTheme.primaryTeal.withValues(alpha: 0.25),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              spec,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Colors.white
+                                    : (isDark ? Colors.grey.shade300 : const Color(0xFF475569)),
+                                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                fontSize: 11.5,
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -220,7 +313,6 @@ class _ProtocolsTab extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(height: 1),
 
             // Protocols List
             Expanded(
@@ -236,7 +328,7 @@ class _ProtocolsTab extends StatelessWidget {
                       ),
                     )
                   : ListView.builder(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 90),
                       itemCount: protocols.length,
                       itemBuilder: (context, index) {
                         final protocol = protocols[index];
@@ -305,6 +397,19 @@ class _ProtocolCardState extends State<_ProtocolCard> {
     return const Color(0xFF2563EB);
   }
 
+  IconData _getSpecialtyIcon(String specialty) {
+    final s = specialty.toLowerCase();
+    if (s.contains('cardio')) return Icons.monitor_heart_rounded;
+    if (s.contains('infect')) return Icons.coronavirus_rounded;
+    if (s.contains('neuro')) return Icons.psychology_rounded;
+    if (s.contains('pneumo')) return Icons.air_rounded;
+    if (s.contains('pédia') || s.contains('pedia')) return Icons.child_care_rounded;
+    if (s.contains('gynéco') || s.contains('obst')) return Icons.pregnant_woman_rounded;
+    if (s.contains('toxico') || s.contains('réa')) return Icons.science_rounded;
+    if (s.contains('gastro')) return Icons.medical_information_rounded;
+    return Icons.emergency_share_rounded;
+  }
+
   void _showPaywallPrompt(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -355,232 +460,433 @@ class _ProtocolCardState extends State<_ProtocolCard> {
     final isLocked = isExpired || (isFree && !isPreviewCAT);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 14),
       decoration: AppTheme.bentoCardDecoration(
         context,
-        radius: 18,
-        borderColor: urgColor.withValues(alpha: 0.35),
+        radius: 20,
+        borderColor: _expanded
+            ? urgColor.withValues(alpha: 0.5)
+            : urgColor.withValues(alpha: 0.22),
       ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(18),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(18),
-        onTap: () {
-          if (isLocked) {
-            final reason = isExpired
-                ? 'Votre abonnement a expiré. Veuillez renouveler votre formule pour accéder aux Conduites à Tenir cliniques et protocoles d\'urgence.'
-                : 'La CAT "${p.title}" fait partie du Pass Clinique Pro ou Medsina All-Access. Votre Pass Découverte donne accès aux 2 premières CAT d\'urgence (Envenimation scorpionique et ACR).';
-            _showPaywallPrompt(context, reason);
-            return;
-          }
-          setState(() {
-            _expanded = !_expanded;
-            if (_expanded) {
-              RecentActivityService.instance.recordProtocolView(
-                protocolId: p.id,
-                title: p.title,
-                specialty: p.specialty,
-              );
-            }
-          });
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Badge row
-              Row(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              if (isLocked) {
+                final reason = isExpired
+                    ? 'Votre abonnement a expiré. Veuillez renouveler votre formule pour accéder aux Conduites à Tenir cliniques et protocoles d\'urgence.'
+                    : 'La CAT "${p.title}" fait partie du Pass Clinique Pro ou Medsina All-Access. Votre Pass Découverte donne accès aux 2 premières CAT d\'urgence (Envenimation scorpionique et ACR).';
+                _showPaywallPrompt(context, reason);
+                return;
+              }
+              setState(() {
+                _expanded = !_expanded;
+                if (_expanded) {
+                  RecentActivityService.instance.recordProtocolView(
+                    protocolId: p.id,
+                    title: p.title,
+                    specialty: p.specialty,
+                  );
+                }
+              });
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(color: urgColor, width: 4.5),
+                ),
+              ),
+              padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 6,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: urgColor.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            p.urgencyLevel.toUpperCase(),
-                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: urgColor),
-                          ),
+                  // Top Pinterest Header: Specialty Icon Avatar + Title + Expand/Lock circle
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: urgColor.withValues(alpha: isDark ? 0.2 : 0.1),
+                          borderRadius: BorderRadius.circular(13),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            p.specialty,
-                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
-                          ),
+                        child: Icon(
+                          _getSpecialtyIcon(p.specialty),
+                          color: urgColor,
+                          size: 21,
                         ),
-                        if (isLocked)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFEF3C7),
-                              borderRadius: BorderRadius.circular(6),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              p.title,
+                              style: TextStyle(
+                                fontSize: 15.5,
+                                fontWeight: FontWeight.w800,
+                                height: 1.25,
+                                letterSpacing: -0.2,
+                                color: isDark ? Colors.white : AppTheme.clinicalNavy,
+                              ),
                             ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
+                            const SizedBox(height: 7),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 5,
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                Icon(Icons.lock_rounded, size: 11, color: Color(0xFFD97706)),
-                                SizedBox(width: 4),
-                                Text('Verrouillé', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFFD97706))),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: urgColor.withValues(alpha: 0.13),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Text(
+                                    p.urgencyLevel.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.3,
+                                      color: urgColor,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primaryTeal.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Text(
+                                    p.specialty,
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppTheme.primaryTeal,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? Colors.white.withValues(alpha: 0.06)
+                                        : const Color(0xFFF1F5F9),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Text(
+                                    '📋 ${p.steps.length} étapes • 💊 ${p.treatments.length}',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark ? Colors.grey.shade300 : const Color(0xFF475569),
+                                    ),
+                                  ),
+                                ),
+                                if (isLocked)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFEF3C7),
+                                      borderRadius: BorderRadius.circular(999),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.lock_rounded, size: 10.5, color: Color(0xFFD97706)),
+                                        SizedBox(width: 3),
+                                        Text(
+                                          'PRO',
+                                          style: TextStyle(
+                                            fontSize: 9.5,
+                                            fontWeight: FontWeight.w800,
+                                            color: Color(0xFFD97706),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                               ],
                             ),
-                          ),
-                      ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: isLocked
+                              ? const Color(0xFFFEF3C7)
+                              : (isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF1F5F9)),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isLocked
+                              ? Icons.lock_outline_rounded
+                              : (_expanded
+                                  ? Icons.keyboard_arrow_up_rounded
+                                  : Icons.keyboard_arrow_down_rounded),
+                          size: 18,
+                          color: isLocked
+                              ? const Color(0xFFD97706)
+                              : (isDark ? Colors.white70 : AppTheme.clinicalNavy),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Definition
+                  Text(
+                    p.definition,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: isDark ? Colors.grey.shade300 : const Color(0xFF475569),
+                      height: 1.38,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    isLocked
-                        ? Icons.lock_outline_rounded
-                        : (_expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded),
-                    color: isLocked ? const Color(0xFFD97706) : null,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
 
-              // Title
-              Text(
-                p.title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 6),
-
-              // Definition
-              Text(
-                p.definition,
-                style: TextStyle(fontSize: 12.5, color: isDark ? Colors.grey.shade400 : Colors.grey.shade700, height: 1.3),
-              ),
-
-              // Red Flags Preview
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: p.redFlags.take(2).map((rf) => Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.warning_amber_rounded, size: 13, color: Color(0xFFDC2626)),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        rf,
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFFDC2626)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  // Well-fitted Red Flags Callout Box (No mid-sentence truncation!)
+                  if (p.redFlags.isNotEmpty && !_expanded) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF450A0A).withValues(alpha: 0.42)
+                            : const Color(0xFFFEF2F2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isDark
+                              ? const Color(0xFFEF4444).withValues(alpha: 0.3)
+                              : const Color(0xFFFECACA),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: p.redFlags.take(2).toList().asMap().entries.map((entry) {
+                          final isLast = entry.key == (p.redFlags.take(2).length - 1);
+                          final rf = entry.value;
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: isLast ? 0 : 6),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 1.5),
+                                  child: Icon(
+                                    Icons.warning_amber_rounded,
+                                    size: 14.5,
+                                    color: Color(0xFFDC2626),
+                                  ),
+                                ),
+                                const SizedBox(width: 7),
+                                Expanded(
+                                  child: Text(
+                                    rf,
+                                    softWrap: true,
+                                    style: TextStyle(
+                                      fontSize: 11.8,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.32,
+                                      color: isDark
+                                          ? const Color(0xFFFCA5A5)
+                                          : const Color(0xFFB91C1C),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ),
                   ],
-                )).toList(),
-              ),
 
-              // Expanded Details
-              if (_expanded) ...[
-                const SizedBox(height: 16),
-                const Divider(),
-                const SizedBox(height: 10),
+                  // Expanded Details
+                  if (_expanded) ...[
+                    const SizedBox(height: 16),
+                    const Divider(),
+                    const SizedBox(height: 10),
 
-                // All Red Flags
-                const Text('🚩 Signes d\'Alarme & Critères de Gravité :', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFFDC2626))),
-                const SizedBox(height: 6),
-                ...p.redFlags.map((rf) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('• ', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFDC2626))),
-                      Expanded(child: Text(rf, style: const TextStyle(fontSize: 12, height: 1.3))),
-                    ],
-                  ),
-                )),
-                const SizedBox(height: 14),
-
-                // Clinical Steps
-                const Text('📋 Étapes de la Prise en Charge :', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppTheme.primaryDarkTeal)),
-                const SizedBox(height: 8),
-                ...p.steps.map((step) => Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF8FAFC),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(step.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12.5, color: Color(0xFF2563EB))),
-                      const SizedBox(height: 4),
-                      Text(step.content, style: const TextStyle(fontSize: 12, height: 1.35)),
-                      if (step.bulletPoints.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        ...step.bulletPoints.map((bp) => Padding(
-                          padding: const EdgeInsets.only(left: 6, bottom: 2),
+                    // All Red Flags
+                    const Text(
+                      '🚩 Signes d\'Alarme & Critères de Gravité :',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                        color: Color(0xFFDC2626),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    ...p.redFlags.map((rf) => Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('› ', style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryTeal)),
-                              Expanded(child: Text(bp, style: TextStyle(fontSize: 11.5, color: isDark ? Colors.grey.shade300 : Colors.grey.shade800, height: 1.3))),
+                              const Text(
+                                '• ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFDC2626),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  rf,
+                                  style: const TextStyle(fontSize: 12, height: 1.35),
+                                ),
+                              ),
                             ],
                           ),
                         )),
-                      ],
-                    ],
-                  ),
-                )),
+                    const SizedBox(height: 14),
 
-                // Essential Treatments
-                const Text('💊 Traitements Immédiats :', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF16A34A))),
-                const SizedBox(height: 6),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: p.treatments.map((t) => Chip(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    backgroundColor: const Color(0xFFDCFCE7),
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    label: Text(t, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF16A34A))),
-                  )).toList(),
-                ),
-
-                const SizedBox(height: 12),
-                Text(
-                  '📚 Source / Consensus : ${p.references}',
-                  style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade600),
-                ),
-
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF2563EB),
-                      side: const BorderSide(color: Color(0xFF2563EB), width: 1.2),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    // Clinical Steps
+                    const Text(
+                      '📋 Étapes de la Prise en Charge :',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                        color: AppTheme.primaryDarkTeal,
+                      ),
                     ),
-                    icon: const Icon(Icons.auto_awesome_rounded, size: 16),
-                    label: const Text('Approfondir avec le Copilote Clinique Gemini ✨', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5)),
-                    onPressed: () => ClinicalCopilotSheet.show(context, initialSituation: '${p.title} (${p.urgencyLevel}) - ${p.definition}'),
-                  ),
-                ),
-              ],
-            ],
+                    const SizedBox(height: 8),
+                    ...p.steps.map((step) => Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? AppTheme.darkSurfaceElevated
+                                : const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                step.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12.5,
+                                  color: Color(0xFF2563EB),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                step.content,
+                                style: const TextStyle(fontSize: 12, height: 1.35),
+                              ),
+                              if (step.bulletPoints.isNotEmpty) ...[
+                                const SizedBox(height: 6),
+                                ...step.bulletPoints.map((bp) => Padding(
+                                      padding: const EdgeInsets.only(left: 6, bottom: 3),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            '› ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppTheme.primaryTeal,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              bp,
+                                              style: TextStyle(
+                                                fontSize: 11.5,
+                                                color: isDark
+                                                    ? Colors.grey.shade300
+                                                    : Colors.grey.shade800,
+                                                height: 1.3,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
+                              ],
+                            ],
+                          ),
+                        )),
+
+                    // Essential Treatments
+                    const Text(
+                      '💊 Traitements Immédiats :',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                        color: Color(0xFF16A34A),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: p.treatments
+                          .map((t) => Chip(
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                backgroundColor: const Color(0xFFDCFCE7),
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                label: Text(
+                                  t,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF16A34A),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+
+                    const SizedBox(height: 12),
+                    Text(
+                      '📚 Source / Consensus : ${p.references}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF2563EB),
+                          side: const BorderSide(color: Color(0xFF2563EB), width: 1.2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        icon: const Icon(Icons.auto_awesome_rounded, size: 16),
+                        label: const Text(
+                          'Approfondir avec le Copilote Clinique Gemini ✨',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
+                        ),
+                        onPressed: () => ClinicalCopilotSheet.show(
+                          context,
+                          initialSituation: '${p.title} (${p.urgencyLevel}) - ${p.definition}',
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
-      ),
       ),
     );
   }
