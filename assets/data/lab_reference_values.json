@@ -1097,5 +1097,20 @@
     ],
     "created_at": "2026-11-07T07:28:30.336104+00:00",
     "updated_at": "2026-11-07T07:28:30.336118+00:00"
+  },
+  {
+    "id": "lab_cortisol_uri_freinage",
+    "name": "Cortisol libre urinaire des 24h (CLU) et Freinage minute à la Dexaméthasone",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "CLU : 50 - 250 µg/24h (138 - 690 nmol/24h) | Freinage minute : Cortisol sérique post-dexaméthasone < 50 nmol/L (< 1.8 µg/dL)",
+    "unit": "µg/24h et nmol/L",
+    "high_interpretation": "Évoque un syndrome de Cushing (ACTH-dépendant ou ACTH-indépendant). En cas de CLU > 3 à 4 fois la normale haute ou d'absence de freinage (cortisol > 50 nmol/L après 1 mg de dexaméthasone à 23h-00h), confirmer par un second test de première intention (CLU, cortisol salivaire de minuit ou freinage faible standard à 2 mg/j pendant 48h).",
+    "low_interpretation": "Évoque une insuffisance surrénalienne (primaire ou secondaire) ou une non-observance du test de freinage. Une valeur de cortisol post-freinage effondrée est normale. Si CLU effondré, rechercher une corticothérapie occulte ou une insuffisance corticotrope.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur pour le CLU : La qualité du recueil des urines de 24h est critique. Vérifier impérativement la créatininurie des 24h pour valider l'exhaustivité du recueil (chez l'adulte : 15-20 mg/kg/j chez la femme, 20-25 mg/kg/j chez l'homme).",
+      "Piège du test de freinage minute (Dexa 1mg) : De nombreux faux positifs existent en cas de stress, dépression, alcoolisme chronique, obésité morbide, insuffisance rénale ou prise d'inducteurs enzymatiques (phénobarbital, rifampicine, carbamazépine) qui accélèrent la clairance de la dexaméthasone."
+    ],
+    "created_at": "2026-11-07T18:57:55.690667+00:00",
+    "updated_at": "2026-11-07T18:57:55.690685+00:00"
   }
 ]
