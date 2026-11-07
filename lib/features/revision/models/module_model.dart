@@ -10,6 +10,7 @@ class CourseModel extends Equatable {
   final String? pdfDriveId;
   final int completedQuestions;
   final String? bundlePdfUrl;
+  final String? bundleGeneratedAt;
   final bool isHypertombable;
   final List<String> residanatYears;
   final String? teacher;
@@ -24,6 +25,7 @@ class CourseModel extends Equatable {
     this.pdfDriveId,
     this.completedQuestions = 0,
     this.bundlePdfUrl,
+    this.bundleGeneratedAt,
     this.isHypertombable = false,
     this.residanatYears = const [],
     this.teacher,
@@ -42,6 +44,7 @@ class CourseModel extends Equatable {
     String? pdfDriveId,
     int? completedQuestions,
     String? bundlePdfUrl,
+    String? bundleGeneratedAt,
     bool? isHypertombable,
     List<String>? residanatYears,
     String? teacher,
@@ -56,6 +59,7 @@ class CourseModel extends Equatable {
       pdfDriveId: pdfDriveId ?? this.pdfDriveId,
       completedQuestions: completedQuestions ?? this.completedQuestions,
       bundlePdfUrl: bundlePdfUrl ?? this.bundlePdfUrl,
+      bundleGeneratedAt: bundleGeneratedAt ?? this.bundleGeneratedAt,
       isHypertombable: isHypertombable ?? this.isHypertombable,
       residanatYears: residanatYears ?? this.residanatYears,
       teacher: teacher ?? this.teacher,
@@ -63,16 +67,19 @@ class CourseModel extends Equatable {
   }
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
+    final rawQuestionsCount = (json['questions_count'] ?? json['questionsCount'] ?? 0) as int;
+    final rawQcmCount = (json['qcm_count'] ?? json['qcmCount'] ?? 0) as int;
     return CourseModel(
       id: json['id'] as String,
       moduleId: (json['module_id'] ?? json['moduleId'] ?? '') as String,
       name: (json['name'] ?? '') as String,
-      questionsCount: (json['questions_count'] ?? json['questionsCount'] ?? 0) as int,
+      questionsCount: rawQuestionsCount > 0 ? rawQuestionsCount : rawQcmCount,
       hasPdf: (json['has_pdf'] ?? json['hasPdf'] ?? true) as bool,
       pdfDownloadUrl: (json['pdf_url'] ?? json['pdfDownloadUrl']) as String?,
       pdfDriveId: (json['pdf_drive_id'] ?? json['pdfDriveId']) as String?,
       completedQuestions: (json['completedQuestions'] ?? 0) as int,
       bundlePdfUrl: (json['bundle_pdf_url'] ?? json['bundlePdfUrl']) as String?,
+      bundleGeneratedAt: (json['bundle_generated_at'] ?? json['bundleGeneratedAt'])?.toString(),
       isHypertombable: (json['is_hypertombable'] ?? json['isHypertombable'] ?? false) as bool,
       residanatYears: (json['residanat_years'] is List)
           ? (json['residanat_years'] as List).map((e) => e.toString()).toList()
@@ -93,6 +100,7 @@ class CourseModel extends Equatable {
         'pdfDriveId': pdfDriveId,
         'completedQuestions': completedQuestions,
         'bundle_pdf_url': bundlePdfUrl,
+        'bundle_generated_at': bundleGeneratedAt,
         'is_hypertombable': isHypertombable,
         'residanat_years': residanatYears,
         'teacher': teacher,
@@ -109,6 +117,7 @@ class CourseModel extends Equatable {
         pdfDriveId,
         completedQuestions,
         bundlePdfUrl,
+        bundleGeneratedAt,
         isHypertombable,
         residanatYears,
         teacher,

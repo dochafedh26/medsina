@@ -27,6 +27,7 @@ import '../../group_revision/presentation/group_revision_hub_screen.dart';
 import '../../../core/services/cloud_sync_service.dart';
 import '../services/offline_course_manager.dart';
 import 'offline_storage_screen.dart';
+import 'livrets_catalog_screen.dart';
 import 'samedis_pedagogiques_screen.dart';
 import 'temoignages_conseils_screen.dart';
 
@@ -55,7 +56,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 8, vsync: this);
+    _tabController = TabController(length: 9, vsync: this);
     _tabController.addListener(() {
       if (mounted) setState(() {});
     });
@@ -73,43 +74,49 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
     switch (index) {
       case 1:
         return {
+          'title': 'Catalogue Livrets 2027 🔥',
+          'icon': Icons.auto_stories_rounded,
+          'color': const Color(0xFFD97706),
+        };
+      case 2:
+        return {
           'title': customSessionsCount > 0
               ? 'Sessions Sur-Mesure ($customSessionsCount)'
               : 'Sessions Sur-Mesure',
           'icon': Icons.dashboard_customize_rounded,
           'color': const Color(0xFF2563EB),
         };
-      case 2:
+      case 3:
         return {
           'title': 'Concours Blancs Nationaux 🏆',
           'icon': Icons.emoji_events_rounded,
           'color': const Color(0xFFF59E0B),
         };
-      case 3:
+      case 4:
         return {
           'title': 'Groupes de Révision 👥',
           'icon': Icons.groups_rounded,
           'color': const Color(0xFF8B5CF6),
         };
-      case 4:
+      case 5:
         return {
           'title': 'Study Planner (3 Couches)',
           'icon': Icons.calendar_month_rounded,
           'color': const Color(0xFF0EA5E9),
         };
-      case 5:
+      case 6:
         return {
           'title': 'Flashcards FSRS 🧠',
           'icon': Icons.psychology_alt_rounded,
           'color': const Color(0xFFEC4899),
         };
-      case 6:
+      case 7:
         return {
           'title': 'Samedis Pédagogiques 📚',
           'icon': Icons.school_rounded,
           'color': const Color(0xFF10B981),
         };
-      case 7:
+      case 8:
         return {
           'title': 'Témoignages & Conseils 💡',
           'icon': Icons.lightbulb_rounded,
@@ -138,6 +145,13 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
         'subtitle': '47 modules officiels & cours révisables',
         'icon': Icons.menu_book_rounded,
         'color': const Color(0xFF0D9488),
+      },
+      {
+        'title': 'Catalogue des Livrets 2027',
+        'badge': 'Tout-en-Un 🔥',
+        'subtitle': 'Livrets PDF générés (Synthèse + Cours + QCMs + Corrigé)',
+        'icon': Icons.auto_stories_rounded,
+        'color': const Color(0xFFD97706),
       },
       {
         'title': 'Sessions Sur-Mesure',
@@ -816,6 +830,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                     icon: Icon(Icons.menu_book_rounded, size: 18),
                     text: 'Catalogue (47 Modules)',
                   ),
+                  const Tab(
+                    icon: Icon(Icons.auto_stories_rounded, size: 18),
+                    text: 'Livrets 2027 🔥',
+                  ),
                   Tab(
                     icon: const Icon(
                       Icons.dashboard_customize_rounded,
@@ -905,29 +923,32 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                           isDesktopWide: isDesktopWide,
                         ),
 
-                        // Tab 2: Custom Multi-Course Sessions
+                        // Tab 2: Dedicated Catalogue des Livrets Tout-en-Un 2027
+                        const LivretsCatalogScreen(embeddedInTab: true),
+
+                        // Tab 3: Custom Multi-Course Sessions
                         _buildCustomSessionsTab(
                           context,
                           state,
                           isDesktopWide: isDesktopWide,
                         ),
 
-                        // Tab 3: Concours Blancs Nationaux & Palmarès
+                        // Tab 4: Concours Blancs Nationaux & Palmarès
                         const NationalExamsListScreen(),
 
-                        // Tab 4: Groupes de Révision & Défis
+                        // Tab 5: Groupes de Révision & Défis
                         const GroupRevisionHubScreen(),
 
-                        // Tab 5: Study Planner par Couches & Analytics
+                        // Tab 6: Study Planner par Couches & Analytics
                         const StudyPlannerScreen(),
 
-                        // Tab 6: Répétition Espacée FSRS & Flashcards
+                        // Tab 7: Répétition Espacée FSRS & Flashcards
                         const FlashcardsFsrsScreen(),
 
-                        // Tab 7: Samedis Pédagogiques (Dr KARE & Enseignants)
+                        // Tab 8: Samedis Pédagogiques (Dr KARE & Enseignants)
                         const SamedisPedagogiquesScreen(),
 
-                        // Tab 8: Retours d'expérience, Témoignages & Conseils des Majors
+                        // Tab 9: Retours d'expérience, Témoignages & Conseils des Majors
                         const TemoignagesConseilsScreen(),
                       ],
                     ),
@@ -1138,6 +1159,68 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                     ),
                   ),
                 ],
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.primaryTeal.withValues(alpha: 0.12),
+                        const Color(0xFFEA580C).withValues(alpha: 0.08),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: AppTheme.primaryTeal.withValues(alpha: 0.35),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.auto_stories_rounded,
+                        color: AppTheme.primaryTeal,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 10),
+                      const Expanded(
+                        child: Text(
+                          'NOUVEAU : Catalogue Spécifique des Livrets Tout-en-Un 2027 (Fiche + Cours + QCMs + Corrigés)',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFEA580C),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          minimumSize: const Size(0, 32),
+                        ),
+                        onPressed: () => _tabController.animateTo(1),
+                        icon: const Icon(
+                          Icons.local_fire_department_rounded,
+                          size: 14,
+                        ),
+                        label: const Text(
+                          'Voir les Livrets',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 TextField(
                   decoration: InputDecoration(
                     hintText: 'Rechercher un cours, module ou enseignant (ex: HTA, Pr Abdi, Asthme)...',
@@ -2515,6 +2598,48 @@ class _CourseTile extends StatelessWidget {
             runSpacing: 6,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
+              if (course.bundlePdfUrl != null &&
+                  course.bundlePdfUrl!.isNotEmpty)
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFFEA580C),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 6,
+                    ),
+                    minimumSize: const Size(0, 32),
+                  ),
+                  icon: Icon(
+                    isLocked
+                        ? Icons.lock_outline_rounded
+                        : Icons.auto_stories_rounded,
+                    size: 14,
+                  ),
+                  label: const Text(
+                    'Livret 🔥',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  onPressed: () {
+                    if (isLocked) {
+                      _showPaywallPrompt(context, lockReason);
+                      return;
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CoursePdfViewerScreen(
+                          course: course,
+                          moduleName: moduleName,
+                          isBooklet: true,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(

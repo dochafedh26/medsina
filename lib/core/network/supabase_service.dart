@@ -218,6 +218,21 @@ class SupabaseService {
     }
   }
 
+  /// Fetch all courses that have a generated All-in-One Livret PDF (bundle_pdf_url != null)
+  static Future<List<Map<String, dynamic>>> fetchGeneratedBookletCourses() async {
+    try {
+      final response = await client
+          .from('courses')
+          .select('*')
+          .not('bundle_pdf_url', 'is', null)
+          .order('bundle_generated_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching generated booklet courses: $e');
+      return [];
+    }
+  }
+
   /// Fetch Questions for a specific course
   static Future<List<Map<String, dynamic>>> fetchCourseQuestions(String courseId) async {
     try {
