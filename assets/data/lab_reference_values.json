@@ -1082,5 +1082,20 @@
     ],
     "created_at": "2026-11-07T01:00:43.342576+00:00",
     "updated_at": "2026-11-07T01:00:43.342589+00:00"
+  },
+  {
+    "id": "lab_frottis_sanguin_schizocytes_mat",
+    "name": "Frottis sanguin périphérique : Schizocytes et Microangiopathie Thrombotique (MAT)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "Absents ou < 0.5% (< 2 pour mille ou < 5 gellules/champ)",
+    "unit": "% ou pour mille (‰)",
+    "high_interpretation": "Signe d'une hémolyse mécanique par fragmentation intravasculaire. Seuil d'alerte > 1% à 2% (selon les laboratoires) couplé à une anémie hémolytique mécanico-vasculaire et une thrombopénie périphérique. Étiologies urgentes (Urgences médico-réanimatoires) : Purpura Thrombotique Thrombocytopénique (PTT - déficit en ADAMTS13), Syndrome Hémolytique et Urémique (SHU typique post-diarrhéique Shiga-toxine ou atypique lié au complément), CIVD, HTA maligne, valves cardiaques mécaniques dysfonctionnelles, greffe de moelle osseuse, cancers disséminés. Conduite à tenir immédiate : Urgence absolue. Bilan d'hémostase, dosage de haptoglobine effondrée, LDH très élevées, test de Coombs direct (doit être NÉGATIF pour éliminer une AIHA), fonction rénale. Avis hématologique/réanimation et contact immédiat avec le centre de référence pour plasmaphérèse en urgence si PTT suspecté (score PLASMIC).",
+    "low_interpretation": "Valeur normale ou absence de schizocytes significatifs. N'exclut pas formellement une MAT débutante ou localisée (réitérer le frottis si forte suspicion clinique).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'analyse doit être réalisée sur un frottis sanguin frais, étalé rapidement après prélèvement sur EDTA pour éviter les artefacts de crenation (échinocytes) ou de lyse mimant des schizocytes. L'examen au microscope par un biologiste qualifié est indispensable.",
+      "Triade biologique classique de la MAT (Syndrome de Moschcowitz et apparentés) : Anémie hémolytique mécanique (schizocytes > 1-2%, LDH augmentées, haptoglobine effondrée, bilirubine indirecte augmentée), Thrombopénie périphérique consommptive, et test de Coombs direct négatif. La fièvre et les signes neurologiques ou rénaux complètent le tableau."
+    ],
+    "created_at": "2026-11-07T07:28:30.336104+00:00",
+    "updated_at": "2026-11-07T07:28:30.336118+00:00"
   }
 ]
