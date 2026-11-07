@@ -605,21 +605,21 @@
     "id": "memento_metrorragies_geu",
     "title": "🚨 Métrorragies du 1er Trimestre & Suspicion de GEU",
     "category": "Gynéco-Obstétrique d'Urgence",
-    "icon_name": "pregnant_woman_rounded",
+    "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation hémodynamique immédiate (TA, FC, SpO2), pose de 2 VVP de gros calibre (18G), remplissage par NaCl 0,9% si choc, et typage-groupage / rhésus / RAI en urgence absolue.",
-      "Étape 2 : Bilan pré-opératoire complet (NFS, plaquettes, TP, TCK, fibrinogène, fonction rénale) et Test Urinaire de Grossesse (TUG) systématique, complété par un dosage quantitatif des Bêta-HCG plasmatiques.",
-      "Étape 3 : Échographie pelvienne (sus-pubienne et endovaginale si disponible) en urgence par l'interne/sénior de garde à la recherche d'une vacuité utérine, d'une masse annexielle ou d'un épanchement du Douglas.",
-      "Étape 4 : En cas de GEU rompue (choc, tableau d'hémopéritoine) : conditionnement strict, appel immédiat du chirurgien-généraliste ou gynécologue de garde et du réanimateur pour bloc opératoire en urgence (laparotomie ou cœlioscopie). En cas de GEU stable : avis spécialisé pour protocole au Méthotrexate (1 mg/kg IM) après vérification des bilans hépatique et rénal.",
-      "Étape 5 : Administration systématique d'Immunoglobulines anti-D (250 UI / 50 µg IV ou IM dans les 72h) chez toute patiente Rhésus Négatif non immunisée, quel que soit le terme ou le type de fausse couche/GEU.",
-      "Étape 6 : Piège médico-légal absolu : Ne jamais éliminer une GEU sur la simple constatation d'un test urinaire positif faible ou d'un utérus vide à l'échographie précoce sans corrélation avec le taux de Bêta-HCG (seuil critique de vacuité utérine à 1500-2000 UI/L)."
+      "Étape 1 : Conditionnement immédiat (2 VVP gros calibre 18G), voluvène ou G5% si choc, monitorage, typage-rhesius en urgence et appel de l'équipe de chirurgie/garde",
+      "Étape 2 : Bilan biologique urgent (NFS, Groupage-Rhéso x2, B-hCG quantitatives, Bilan d'hémostase, Fonction rénale) + Test urinaire de grossesse (TUG) systématique",
+      "Étape 3 : Échographie pelvienne au lit du malade (sus-pubienne puis endovaginale) : recherche d'une vacuité utérine, d'un sac gestationnel intra-utérin ou d'une masse annexielle latéro-utérine avec épanchement du Douglas",
+      "Étape 4 : Si GEU rompue ou hémodynamique instable : Appel immédiat du bloc opératoire pour laparotomie ou cœlioscopie exploratrice en urgence absolue",
+      "Étape 5 : Si Rhésus négatif chez la mère et Rhésus positif ou inconnu du père : injection systématique d'Immunoglobulines anti-D (250 UI ou 300 µg) dans les 72 heures suivant les saignements",
+      "Étape 6 : Piège médico-légal majeur : Ne jamais éliminer une GEU sur la seule base de bêta-hCG négatives ou basses ; toute femme en âge de procréer présentant des douleurs pelviennes et des métrorragies a une GEU jusqu'à preuve du contraire"
     ],
-    "scientific_references": "Recommandations CNGOF / SFMU / Collège National des Gynécologues Obstétriciens Algériens / MSPRH",
+    "scientific_references": "CNGOF / SFMU / Consensus National Algérien de Gynécologie-Obstétrique",
     "is_active": true,
-    "created_at": "2026-11-04T01:27:31.660439+00:00",
-    "updated_at": "2026-11-04T01:27:31.660453+00:00"
+    "created_at": "2026-11-07T20:56:53.425904+00:00",
+    "updated_at": "2026-11-07T20:56:53.425919+00:00"
   },
   {
     "id": "memento_convulsion_febrile_emp",
