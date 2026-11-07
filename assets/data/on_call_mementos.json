@@ -911,5 +911,25 @@
     "is_active": true,
     "created_at": "2026-11-06T11:02:18.761458+00:00",
     "updated_at": "2026-11-06T11:02:18.761473+00:00"
+  },
+  {
+    "id": "memento_intoxication_medicamenteuse",
+    "title": "🧪 Intoxication Médicamenteuse Aiguë (IMA) Poly-médicamenteuse",
+    "category": "Toxicologie / Urgences",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation ABCDE immédiate, sécurisation des voies aériennes si Glasgow < 8 (intubation prophylactique), monitoring continu (ECG, SpO2, PNI).",
+      "Étape 2 : Bilan biologique d'urgence : gaz du sang, ionogramme, urée, créatinine, glycémie capillaire, bilan hépatique, TP/TCA, et recherche toxicologique urinaire/sanguine si disponible.",
+      "Étape 3 : Décontamination digestive précoce si ingestion < 1h et patient conscient ou intubé : Charbon activé 50g per os ou par SNG. Antidotes spécifiques : Naloxone (0,4mg IV si comas/bradypnée) et Flumazénil (CI si épilepsie ou poly-intox aux benzodiazépines + psychotropes).",
+      "Étape 4 : En cas d'intoxication au Paracétamol, initier l'Acetylcystéine (Mucomyst) selon le nomogramme de Rumack-Matthew : 150 mg/kg dans 250ml SG 5% sur 1h, puis 50 mg/kg sur 4h, puis 100 mg/kg sur 16h.",
+      "Étape 5 : Surveillance armée (troubles du rythme, dépression respiratoire, passage en réanimation si instabilité hémodynamique, acidose sévère ou coma persistant).",
+      "Étape 6 : Piège médico-légal : Ne jamais libérer un patient intoxiqué sans un avis psychiatrique formel après stabilisation somatique, et consigner l'inventaire des gélules/flacons retrouvés."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Collège de Réanimation / Protocoles Nationaux Algériens de Toxicologie d'Urgence",
+    "is_active": true,
+    "created_at": "2026-11-07T02:52:26.467039+00:00",
+    "updated_at": "2026-11-07T02:52:26.467054+00:00"
   }
 ]
