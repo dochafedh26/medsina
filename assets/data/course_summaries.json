@@ -1953,5 +1953,28 @@
     "treatment_summary": "Repose sur une prise en charge multifactorielle : correction des FRCV, utilisation en première intention des inhibiteurs de la PDE5 (avec vérification stricte de l'absence de dérivés nitrés), puis recours aux injections intracaverneuses ou à la chirurgie prothétique en cas d'échec.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-07T03:09:53.960643+00:00"
+  },
+  {
+    "course_id": "Blida_URGENCES_UMC_TD_TRAUMATISME_CRANIEN",
+    "course_name": "TD Traumatisme cranien",
+    "module_id": "Blida_URGENCES_UMC",
+    "module_name": "Urgences (UMC)",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLe **traumatisme crânien (TC)** est un choc mécanique appliqué à la tête, entraînant des lésions anatomiques ou fonctionnelles du cuir chevelu, du crâne et/ou du contenu intracrânien.\n\n- **Lésions primaires** : Surviennent au moment de l'impact (contusions cérébrales, cisaillement axonal diffus [LAD], fractures du crâne, hématomes extra-duraux [HED] et sous-duraux [HSD] aigus).\n- **Lésions secondaires** : Facteurs aggravants systémiques (hypoxie, hypotension artérielle) et intracrâniens (œdème cérébral, hypertension intracrânienne [HIC], ischémie, convulsions). La **pression de perfusion cérébrale (PPC)** doit être maintenue ≥ 60-70 mmHg (PPC = PAM - PIC).\n\n## 2. Démarche Diagnostique\n- **Évaluation initiale (ABCDE)** : Sécuriser les voies aériennes (A), la ventilation (B) et l'hémodynamique (C). Ne jamais attribuer une agitation à l'alcool avant d'avoir éliminé une hypoxie ou un hématome intracrânien !\n- **Score de Glasgow (GCS)** : Classification de la gravité :\n  - TC **léger** : GCS 13 - 15\n  - TC **modéré** : GCS 9 - 12\n  - TC **grave** : GCS 3 - 8\n- **Examen neurologique** : Recherche de signes de focalisation, étude de la réactivité pupillaire (mydriase unilatérale aréactive = signe d'engagement cérébral imminent).\n- **Imagerie de référence** : **TDM cérébrale sans injection** en urgence devant tout TC modéré/grave ou TC léger avec facteurs de risque (amnésie, vomissements répétés, âge > 60 ans, anticoagulants, céphalées violentes).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Hématome Extra-Dural (HED)** : Urgence neurochirurgicale absolue. Souvent associé à une fracture de l'écaille temporale lésant l'artère méningée moyenne. Caractérisé par l'**intervalle libre de Lucite** (perte de conscience initiale, réveil, puis détérioration neurologique rapide).\n- **Hématome Sous-Dural (HSD)** aigu : Rupture des veines ponts, souvent associé à des lésions parenchymateuses sous-jacentes (pronostic plus sombre).\n- **Commotion cérébrale** : Perte de conscience transitoire sans lésion anatomique visible en TDM, réversible.\n\n## 4. Stratégie Thérapeutique\n- **Mesures générales (Réanimation)** :\n  - Position : Tête surélevée à **30 degrés**, axe neutre.\n  - Sédation et analgésie adaptées (propofol, sufentanil).\n  - Ventilation mécanique si GCS ≤ 8 (objectif PaCO2 entre 35 et 38 mmHg).\n  - Maintien de l'hémodynamique (éviter absolument l'hypotension artérielle).\n- **Lutte contre l'HIC** :\n  - Mannitol 20% ou sérum salé hypertonique.\n  - Dérivation ventriculaire externe (DVE) si hydrocéphalie aiguë.\n- **Traitement chirurgical en urgence** : Évacuation des HED ou HSD compressifs, craniectomie de décompression.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Complications aiguës** : Engagement cérébral (temporal, sous-falcorien), crises convulsives post-traumatiques précoces, infections (méningite sur fracture de la base).\n- **Complications tardives** : Syndrome post-commotionnel, épilepsie post-traumatique, hydrocéphalie à pression normale.\n- **Pronostic** : Dépend essentiellement de l'âge, de la valeur initiale du GCS, de la réactivité pupillaire et de la présence de lésions axonales diffuses à l'imagerie.",
+    "key_takeaways": [
+      "Un GCS inférieur ou égal à 8 impose une intubation trachéale immédiate et une ventilation mécanique.",
+      "L'Hématome Extra-Dural (HED) se caractérise typiquement par un intervalle libre de Lucite et une lésion de l'artère méningée moyenne.",
+      "La triade délétère en réanimation neurochirurgicale associe hypoxie, hypotension artérielle et HIC.",
+      "La TDM cérébrale sans injection est l'examen de première intention en urgence absolue.",
+      "Une mydriase unilatérale aréactive chez un traumatisé crânien signe un engagement cérébral nécessitant une prise en charge neurochirurgicale urgente."
+    ],
+    "exam_traps": [
+      "Piège Annales : Attribuer une agitation ou des troubles de la conscience à l'alcool ou aux toxiques avant d'avoir éliminé une lésion intracrânienne chirurgicale.",
+      "Piège Traitement : Réaliser une ponction lombaire devant un TC sans imagerie préalable en cas de suspicion d'HIC (risque majeur d'engagement cérébral mortel).",
+      "Piège Diagnostic : Oublier que l'Hématome Extra-Dural peut survenir après un traumatisme minime sans perte de conscience initiale prolongée."
+    ],
+    "diagnostic_criteria": "Évaluation du score de Glasgow (GCS), recherche de signes neurologiques focaux et confirmation morphologique en TDM cérébrale sans injection mettant en évidence une lésion traumatique (HED, HSD, contusion, fracture).",
+    "treatment_summary": "Conditionnement immédiat (ABCDE), intubation si GCS ≤ 8, maintien de la PPC et de la PAM, lutte contre l'HIC (osmothérapie, position surélevée) et évacuation chirurgicale urgente des collections extra-cérébrales compressives.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-07T10:38:27.527261+00:00"
   }
 ]
