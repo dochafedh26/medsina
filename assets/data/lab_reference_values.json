@@ -1112,5 +1112,20 @@
     ],
     "created_at": "2026-11-07T18:57:55.690667+00:00",
     "updated_at": "2026-11-07T18:57:55.690685+00:00"
+  },
+  {
+    "id": "lab_peptide_c_insuline_homa",
+    "name": "Peptide C et Insulinémie à jeun (Indice HOMA-IR)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Insulinémie à jeun : 2.6 - 24.9 mUI/L | Peptide C à jeun : 1.1 - 4.4 µg/L | HOMA-IR normal : < 2.5",
+    "unit": "mUI/L (Insuline), µg/L (Peptide C), sans (HOMA-IR)",
+    "high_interpretation": "Hyperinsulinémie / Peptide C élevé : Insulinorésistance (syndrome métabolique, obésité, diabète de type 2 débutant), Insulinome (hypoglycémie avec insuline et peptide C hauts, rapport insuline/glycémie élevé), Insuffisance rénale chronique (diminution de la clairance du peptide C). Conduite à tenir : Rechercher une hypoglycémie organique si suspecte, explorer le syndrome métabolique.",
+    "low_interpretation": "Hypoinsulinémie / Peptide C bas : Diabète de type 1 ancien (carence insulinique profonde), Diabète monogénique (MODY) ou LADA au stade avancé, Factice (prise de sulfamides ou insuline exogène : insuline haute mais peptide C bas ou effondré). Conduite à tenir : Différencier DT1 et DT2, éliminer une hypoglycémie factice.",
+    "clinical_notes": [
+      "Piège diagnostique majeur en cas d'hypoglycémie : un Peptide C bas ou indétectable en présence d'une forte insulinémie signe formellement une administration d'insuline exogène (factice ou accidentelle).",
+      "Calcul de l'HOMA-IR (Homeostatic Model Assessment for Insulin Resistance) : [Insuline à jeun (mUI/L) × Glycémie à jeun (mmol/L)] / 22.5. Un score supérieur à 2.5 (ou 2.0 selon les laboratoires) définit l'insulinorésistance."
+    ],
+    "created_at": "2026-11-07T22:53:00.211368+00:00",
+    "updated_at": "2026-11-07T22:53:00.211382+00:00"
   }
 ]
