@@ -89,27 +89,68 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
     super.dispose();
   }
 
-  /// Resolve secure direct stream URL from Google Drive ID
+  String get _cacheKey {
+    if (widget.isBooklet) {
+      return '${widget.course.id}_livret_2027';
+    }
+    if (widget.customPdfUrl != null && widget.customPdfUrl!.isNotEmpty) {
+      return '${widget.course.id}_custom_${widget.customPdfUrl.hashCode.abs()}';
+    }
+    return widget.course.id;
+  }
+
+  String _normalizeRemotePdfUrl(String rawUrl) {
+    final trimmed = rawUrl.trim();
+    if (trimmed.contains('/d/')) {
+      final parts = trimmed.split('/d/');
+      if (parts.length > 1) {
+        final id = parts[1].split('/')[0].split('?')[0];
+        if (id.isNotEmpty) {
+          return 'https://drive.google.com/uc?export=download&id=$id';
+        }
+      }
+    }
+    if (trimmed.contains('drive.google.com/open?id=')) {
+      final uri = Uri.tryParse(trimmed);
+      final id = uri?.queryParameters['id'];
+      if (id != null && id.isNotEmpty) {
+        return 'https://drive.google.com/uc?export=download&id=$id';
+      }
+    }
+    return trimmed;
+  }
+
+  bool _hasValidPdfHeader(Uint8List bytes) {
+    if (bytes.length < 5) return false;
+    final limit = bytes.length < 1024 ? bytes.length - 4 : 1020;
+    for (int i = 0; i <= limit; i++) {
+      if (bytes[i] == 0x25 && // %
+          bytes[i + 1] == 0x50 && // P
+          bytes[i + 2] == 0x44 && // D
+          bytes[i + 3] == 0x46) {
+        // F
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Resolve secure direct stream URL from Google Drive ID or Supabase Storage
   String _getStreamUrl() {
     if (widget.customPdfUrl != null && widget.customPdfUrl!.isNotEmpty) {
-      return widget.customPdfUrl!;
+      return _normalizeRemotePdfUrl(widget.customPdfUrl!);
     }
-    if (widget.isBooklet && widget.course.bundlePdfUrl != null && widget.course.bundlePdfUrl!.isNotEmpty) {
-      return widget.course.bundlePdfUrl!;
+    if (widget.isBooklet &&
+        widget.course.bundlePdfUrl != null &&
+        widget.course.bundlePdfUrl!.isNotEmpty) {
+      return _normalizeRemotePdfUrl(widget.course.bundlePdfUrl!);
     }
     final driveId = widget.course.pdfDriveId;
     if (driveId != null && driveId.isNotEmpty) {
       return 'https://drive.google.com/uc?export=download&id=$driveId';
     }
     final rawUrl = widget.course.pdfDownloadUrl ?? '';
-    if (rawUrl.contains('/d/')) {
-      final parts = rawUrl.split('/d/');
-      if (parts.length > 1) {
-        final id = parts[1].split('/')[0];
-        return 'https://drive.google.com/uc?export=download&id=$id';
-      }
-    }
-    return rawUrl;
+    return _normalizeRemotePdfUrl(rawUrl);
   }
 
   Future<void> _loadPdfSecurely() async {
@@ -120,33 +161,28 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
     });
 
     try {
-      // 1. Check if course is already available offline in local sandbox
-      final cacheFile = await OfflineCourseManager.instance.getCourseFile(widget.course.id);
-      if (await cacheFile.exists() && await cacheFile.length() > 1024) {
-        final bytes = await cacheFile.readAsBytes();
-        if (mounted) {
-          setState(() {
-            _pdfBytes = bytes;
-            _isLoading = false;
-          });
-        }
-        return;
+      // Clean up any legacy corrupted cache on the base course ID if it holds HTML instead of PDF
+      if (widget.isBooklet) {
+        try {
+          final legacyFile = await OfflineCourseManager.instance.getCourseFile(
+            widget.course.id,
+          );
+          if (await legacyFile.exists() && await legacyFile.length() > 0) {
+            final legacyBytes = await legacyFile.readAsBytes();
+            if (!_hasValidPdfHeader(legacyBytes)) {
+              await legacyFile.delete();
+            }
+          }
+        } catch (_) {}
       }
 
-      // 2. Check if the course is an in-app asset (e.g. assets/data/samedis_pedagogiques/...)
-      final rawDownloadUrl = widget.course.pdfDownloadUrl ?? '';
-      if (rawDownloadUrl.startsWith('assets/') || rawDownloadUrl.startsWith('packages/')) {
-        try {
-          final byteData = await rootBundle.load(rawDownloadUrl);
-          final bytes = byteData.buffer.asUint8List();
-          // Write to local cache for instant future retrieval
-          try {
-            if (!await cacheFile.parent.exists()) {
-              await cacheFile.parent.create(recursive: true);
-            }
-            await cacheFile.writeAsBytes(bytes);
-          } catch (_) {}
-
+      // 1. Check if course/booklet is already available offline in local sandbox
+      final cacheFile = await OfflineCourseManager.instance.getCourseFile(
+        _cacheKey,
+      );
+      if (await cacheFile.exists() && await cacheFile.length() > 1024) {
+        final bytes = await cacheFile.readAsBytes();
+        if (_hasValidPdfHeader(bytes)) {
           if (mounted) {
             setState(() {
               _pdfBytes = bytes;
@@ -154,8 +190,43 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
             });
           }
           return;
+        } else {
+          // Corrupted or HTML file in cache — delete and re-download
+          try {
+            await cacheFile.delete();
+          } catch (_) {}
+        }
+      }
+
+      // 2. Check if the course is an in-app asset (only when not opening a remote booklet)
+      final rawDownloadUrl = widget.isBooklet
+          ? (widget.course.bundlePdfUrl ?? '')
+          : (widget.course.pdfDownloadUrl ?? '');
+      if (rawDownloadUrl.startsWith('assets/') ||
+          rawDownloadUrl.startsWith('packages/')) {
+        try {
+          final byteData = await rootBundle.load(rawDownloadUrl);
+          final bytes = byteData.buffer.asUint8List();
+          if (_hasValidPdfHeader(bytes)) {
+            try {
+              if (!await cacheFile.parent.exists()) {
+                await cacheFile.parent.create(recursive: true);
+              }
+              await cacheFile.writeAsBytes(bytes);
+            } catch (_) {}
+
+            if (mounted) {
+              setState(() {
+                _pdfBytes = bytes;
+                _isLoading = false;
+              });
+            }
+            return;
+          }
         } catch (assetErr) {
-          debugPrint('Notice: unable to load asset "$rawDownloadUrl", falling back to network: $assetErr');
+          debugPrint(
+            'Notice: unable to load asset "$rawDownloadUrl", falling back to network: $assetErr',
+          );
         }
       }
 
@@ -166,19 +237,23 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
         final localFile = File(rawDownloadUrl);
         if (await localFile.exists()) {
           final bytes = await localFile.readAsBytes();
-          if (mounted) {
-            setState(() {
-              _pdfBytes = bytes;
-              _isLoading = false;
-            });
+          if (_hasValidPdfHeader(bytes)) {
+            if (mounted) {
+              setState(() {
+                _pdfBytes = bytes;
+                _isLoading = false;
+              });
+            }
+            return;
           }
-          return;
         }
       }
 
-      // 4. Fall back to secure remote streaming via Google Drive or HTTP
+      // 4. Fall back to secure remote streaming via Supabase Storage, Google Drive, or HTTP
       final streamUrl = _getStreamUrl();
-      if (streamUrl.isEmpty || (!streamUrl.startsWith('http://') && !streamUrl.startsWith('https://'))) {
+      if (streamUrl.isEmpty ||
+          (!streamUrl.startsWith('http://') &&
+              !streamUrl.startsWith('https://'))) {
         throw Exception('Support PDF non disponible pour ce cours.');
       }
 
@@ -200,6 +275,12 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       );
 
       final bytes = Uint8List.fromList(response.data!);
+      if (!_hasValidPdfHeader(bytes)) {
+        throw Exception(
+          'Le fichier téléchargé n\'est pas un document PDF valide.',
+        );
+      }
+
       if (!await cacheFile.parent.exists()) {
         await cacheFile.parent.create(recursive: true);
       }
@@ -215,7 +296,8 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _errorMessage = 'Impossible de charger le document sécurisé.\n(${e.toString().replaceAll(RegExp(r'https?://[^\s]+'), '...')})';
+          _errorMessage =
+              'Impossible de charger le document sécurisé.\n(${e.toString().replaceAll(RegExp(r'https?://[^\s]+'), '...')})';
         });
       }
     }
@@ -370,7 +452,7 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
           AnimatedBuilder(
             animation: OfflineCourseManager.instance,
             builder: (context, _) {
-              final isOffline = OfflineCourseManager.instance.isCourseAvailableOfflineSync(widget.course.id);
+              final isOffline = OfflineCourseManager.instance.isCourseAvailableOfflineSync(_cacheKey);
               if (isOffline) {
                 return Tooltip(
                   message: 'Cours enregistré en local (100% accessible hors-ligne)',
