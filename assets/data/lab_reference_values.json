@@ -1067,5 +1067,20 @@
     ],
     "created_at": "2026-11-06T20:58:16.024568+00:00",
     "updated_at": "2026-11-06T20:58:16.024582+00:00"
+  },
+  {
+    "id": "lab_cholinesterases",
+    "name": "Cholinestérases plasmatiques (ChE) et érythrocytaires (acétylcholinestérase)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "Plasmatiques (Butyrylcholinestérase) : 5300 - 12900 UI/L à 37°C | Érythrocytaires (AChE) : 30 - 45 UI/g d'Hb (ou selon technique spécifique)",
+    "unit": "UI/L (plasma) / UI/g Hb (globules rouges)",
+    "high_interpretation": "Élévation rare, observée en cas de syndrome néphrotique (synthèse hépatique augmentée de protéines), obésité, ou hyperlipidémie. Pas de retentissement aigu urgent.",
+    "low_interpretation": "Chute critique (< 50% de la base ou < 20-30% de la normale) évocatrice d'une intoxication aiguë aux insecticides organophosphorés (OP) ou carbamates (inhibition irréversible pour les OP). Autres causes de baisse des ChE plasmatiques : hépatopathies sévères (cirrhose, hépatite fulminante), dénutrition sévère, grossesse, génétique (variant atypique de butyrylcholinestérase induisant un bloc prolongé aux curares comme la suxaméthonium). Urgence vitale en réanimation pour les OP : risque de crise cholinergique majeure (bronchorrhée abondante, bronchospasme, bradycardie, détresse respiratoire) nécessitant l'administration immédiate d'Atropine et de pralidoxime (oximes).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le dosage des cholinestérases plasmatiques varie considérablement d'un individu à l'autre (variabilité interindividuelle importante). La valeur basale du patient est idéale mais rarement connue en urgence ; une baisse franche par rapport à la limite inférieure de la norme est l'élément clé.",
+      "Piège pharmacologique : Les inhibiteurs des cholinestérases (organophosphorés) inhibent à la fois la butyrylcholinestérase plasmatique (plus sensible, baisse rapide) et l'acétylcholinestérase érythrocytaire (reflète mieux l'activité synaptique/cérébrale et érythrocytaire). Ne pas se fier uniquement aux chiffres biologiques pour traiter une intoxication aiguë : la clinique (syndrome muscarinique, nicotinique et central) guide l'antidotothérapie en réanimation."
+    ],
+    "created_at": "2026-11-07T01:00:43.342576+00:00",
+    "updated_at": "2026-11-07T01:00:43.342589+00:00"
   }
 ]
