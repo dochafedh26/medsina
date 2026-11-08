@@ -916,9 +916,20 @@ class DashboardScreen extends StatelessWidget {
               visualDensity: VisualDensity.compact,
             ),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const MedsinaSynapseScreen()),
-              );
+              final user = context.read<AuthBloc>().state.user;
+              final bool hasAccess = user != null &&
+                  (user.isAdmin || user.tier.canAccessSynapse()) &&
+                  user.isSubscriptionActive;
+
+              if (!hasAccess) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
+                );
+              } else {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const MedsinaSynapseScreen()),
+                );
+              }
             },
             child: const Text(
               'Pratiquer',

@@ -103,6 +103,12 @@ extension SubscriptionTierExtension on SubscriptionTier {
     }
   }
 
+  bool canAccessSynapse() {
+    return this == SubscriptionTier.clinicalPro ||
+           this == SubscriptionTier.residentElite ||
+           this == SubscriptionTier.allAccess;
+  }
+
   bool canAccessClinical() {
     return this == SubscriptionTier.clinicalPro || this == SubscriptionTier.allAccess;
   }
