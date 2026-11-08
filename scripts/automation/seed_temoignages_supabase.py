@@ -41,9 +41,31 @@ def main():
         sys.exit(1)
 
     with open(JSON_PATH, "r", encoding="utf-8") as f:
-        items = json.load(f)
+        raw_items = json.load(f)
 
-    print(f"📦 Synchronisation de {len(items)} témoignages vers Supabase ({url})...")
+    # PostgREST exige que TOUS les objets d'une liste JSON aient exactement les mêmes clés
+    standard_keys = [
+        "id", "name", "rank_badge", "rank_number", "year", "faculty",
+        "is_recent_2026", "document_type", "target_url", "gdrive_folder_url",
+        "telegram_url", "gdrive_id", "extra_gdrive_id", "pdf_file",
+        "extra_pdf_file", "summary", "key_advices", "recommended_sources"
+    ]
+
+    normalized_items = []
+    for it in raw_items:
+        row = {}
+        for k in standard_keys:
+            val = it.get(k)
+            if k == "key_advices" and val is None:
+                val = []
+            elif k == "is_recent_2026" and val is None:
+                val = False
+            elif k == "rank_number" and val is None:
+                val = 99
+            row[k] = val
+        normalized_items.append(row)
+
+    print(f"📦 Synchronisation de {len(normalized_items)} témoignages vers Supabase ({url})...")
     endpoint = f"{url}/rest/v1/temoignages_conseils"
     headers = {
         "apikey": key,
@@ -52,11 +74,17 @@ def main():
         "Prefer": "resolution=merge-duplicates"
     }
 
-    resp = requests.post(endpoint, headers=headers, json=items)
-    if resp.status_code in (200, 201, 204):
-        print(f"✅ {len(items)} témoignages insérés / mis à jour avec succès dans Supabase !")
-    else:
-        print(f"⚠️ Erreur insertion Supabase ({resp.status_code}): {resp.text}")
+    # Insère un par un ou en batch normalisé
+    success_count = 0
+    for row in normalized_items:
+        r = requests.post(endpoint, headers=headers, json=row)
+        if r.status_code in (200, 201, 204):
+            success_count += 1
+        else:
+            print(f"⚠️ Erreur insertion {row.get('id')} ({r.status_code}): {r.text}")
+
+    print(f"✅ {success_count}/{len(normalized_items)} témoignages insérés / mis à jour avec succès dans Supabase !")
+    if success_count == 0:
         sys.exit(1)
 
 if __name__ == "__main__":
