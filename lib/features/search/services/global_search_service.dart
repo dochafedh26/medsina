@@ -12,6 +12,7 @@ import '../../revision/data/residency_repository.dart';
 import '../../revision/models/course_summary_model.dart';
 import '../../revision/models/module_model.dart';
 import '../../revision/models/qcm_model.dart';
+import '../../revision/models/temoignage_conseil_model.dart';
 import '../models/search_result_item.dart';
 
 class GlobalSearchService {
@@ -27,6 +28,7 @@ class GlobalSearchService {
   List<OnCallMemento> _mementos = [];
   List<EmergencyDrugModel> _drugs = [];
   List<LabValue> _labs = [];
+  List<TemoignageConseilItem> _temoignages = [];
   bool _isPrewarmed = false;
 
   /// Clinical calculators catalog for instant search
@@ -146,6 +148,7 @@ class GlobalSearchService {
         PracticalToolsRepository.getOnCallMementosAsync(),
         PracticalToolsRepository.getLabValuesAsync(),
         ClinicalRepository.fetchEmergencyDrugs(),
+        _loadTemoignagesAsync(),
       ]);
 
       _modules = futures[0] as List<MedicalModuleModel>;
@@ -153,6 +156,7 @@ class GlobalSearchService {
       _mementos = futures[2] as List<OnCallMemento>;
       _labs = futures[3] as List<LabValue>;
       _drugs = futures[4] as List<EmergencyDrugModel>;
+      _temoignages = futures[5] as List<TemoignageConseilItem>;
       _protocols = ClinicalRepository.getInitialProtocols();
 
       _isPrewarmed = true;
@@ -162,6 +166,17 @@ class GlobalSearchService {
       _protocols = ClinicalRepository.getInitialProtocols();
       _mementos = PracticalToolsRepository.getOnCallMementos();
       _labs = PracticalToolsRepository.getLabValues();
+      _loadTemoignagesAsync().then((list) => _temoignages = list);
+    }
+  }
+
+  Future<List<TemoignageConseilItem>> _loadTemoignagesAsync() async {
+    try {
+      final jsonStr = await rootBundle.loadString('assets/data/temoignages_conseils.json');
+      final list = json.decode(jsonStr) as List<dynamic>;
+      return list.map((e) => TemoignageConseilItem.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (_) {
+      return [];
     }
   }
 
@@ -570,6 +585,77 @@ class GlobalSearchService {
     if (filterType == null || filterType == SearchResultType.qcm) {
       final qcmResults = await _searchQcmsAsync(normQuery, queryTokens);
       results.addAll(qcmResults);
+    }
+
+    // -------------------------------------------------------------------------
+    // 10. TÉMOIGNAGES & CONSEILS DES MAJORS
+    // -------------------------------------------------------------------------
+    if (filterType == null || filterType == SearchResultType.temoignage) {
+      for (final tem in _temoignages) {
+        final normName = normalize(tem.name);
+        final normFaculty = normalize(tem.faculty);
+        final normBadge = normalize(tem.rankBadge);
+        final normSummary = normalize(tem.summary);
+        final normAdvices = tem.keyAdvices.map((a) => normalize(a)).join(' ');
+        final normSources = normalize(tem.recommendedSources);
+
+        int score = 0;
+        String matchSnippet = '';
+
+        if (normName.contains(normQuery) || normQuery.contains(normName)) {
+          score += 150;
+          matchSnippet = tem.summary;
+        } else if (normBadge.contains(normQuery)) {
+          score += 120;
+          matchSnippet = tem.summary;
+        } else if (normFaculty.contains(normQuery)) {
+          score += 90;
+          matchSnippet = tem.summary;
+        } else if (normSummary.contains(normQuery)) {
+          score += 80;
+          matchSnippet = extractSnippet(tem.summary, normQuery);
+        } else if (normSources.contains(normQuery)) {
+          score += 70;
+          matchSnippet = 'Sources recommandées : ${extractSnippet(tem.recommendedSources, normQuery)}';
+        } else if (normAdvices.contains(normQuery)) {
+          score += 65;
+          final matchedAdvice = tem.keyAdvices.firstWhere(
+            (a) => normalize(a).contains(normQuery),
+            orElse: () => tem.keyAdvices.first,
+          );
+          matchSnippet = 'Conseil d\'or : ${extractSnippet(matchedAdvice, normQuery)}';
+        } else {
+          bool allTokens = true;
+          for (final token in queryTokens) {
+            if (!normName.contains(token) &&
+                !normFaculty.contains(token) &&
+                !normBadge.contains(token) &&
+                !normSummary.contains(token) &&
+                !normAdvices.contains(token) &&
+                !normSources.contains(token)) {
+              allTokens = false;
+              break;
+            }
+          }
+          if (allTokens) {
+            score += 55;
+            matchSnippet = tem.summary;
+          }
+        }
+
+        if (score > 0) {
+          results.add(SearchResultItem(
+            id: 'temoignage_${tem.id}',
+            title: tem.name,
+            subtitle: '${tem.rankBadge} • ${tem.faculty}',
+            snippet: matchSnippet.isNotEmpty ? matchSnippet : tem.summary,
+            type: SearchResultType.temoignage,
+            relevanceScore: score,
+            tags: [tem.name, tem.rankBadge, 'temoignage', 'conseils', 'residanat', tem.year],
+            payload: tem,
+          ));
+        }
+      }
     }
 
     // Sort descending by relevanceScore

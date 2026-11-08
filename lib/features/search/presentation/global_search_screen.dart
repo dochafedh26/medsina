@@ -8,6 +8,7 @@ import '../../practical_tools/models/lab_value_model.dart';
 import '../../revision/models/course_summary_model.dart';
 import '../../revision/models/module_model.dart';
 import '../../revision/models/qcm_model.dart';
+import '../../revision/models/temoignage_conseil_model.dart';
 import '../../revision/presentation/course_pdf_viewer_screen.dart';
 import '../../revision/presentation/course_summary_screen.dart';
 import '../models/search_result_item.dart';
@@ -212,6 +213,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
       {'label': '🎯 QCMs', 'type': SearchResultType.qcm},
       {'label': '💊 Médicaments', 'type': SearchResultType.emergencyDrug},
       {'label': '🧮 Normes & Scores', 'type': SearchResultType.clinicalScore},
+      {'label': '💡 Témoignages & Conseils', 'type': SearchResultType.temoignage},
       {'label': '📖 Guide Medsina', 'type': SearchResultType.userGuide},
     ];
 
@@ -700,6 +702,8 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         return const Color(0xFF2563EB); // Royal Blue
       case SearchResultType.userGuide:
         return const Color(0xFF10B981); // Green
+      case SearchResultType.temoignage:
+        return const Color(0xFFF97316); // Amber Orange
     }
   }
 
@@ -775,7 +779,132 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
           ),
         );
         break;
+
+      case SearchResultType.temoignage:
+        final tem = item.payload as TemoignageConseilItem;
+        _handleTemoignageClick(tem);
+        break;
     }
+  }
+
+  void _handleTemoignageClick(TemoignageConseilItem tem) {
+    if (tem.assetPdfPath != null) {
+      final mockCourse = CourseModel(
+        id: tem.id,
+        moduleId: 'temoignages',
+        name: tem.name,
+        questionsCount: 0,
+        hasPdf: true,
+        pdfDownloadUrl: tem.assetPdfPath,
+        pdfDriveId: tem.gdriveId,
+      );
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => CoursePdfViewerScreen(
+            course: mockCourse,
+            moduleName: 'Témoignages & Conseils • ${tem.rankBadge}',
+          ),
+        ),
+      );
+    } else {
+      _showTemoignageDetailsModal(tem);
+    }
+  }
+
+  void _showTemoignageDetailsModal(TemoignageConseilItem tem) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.8,
+          maxChildSize: 0.95,
+          minChildSize: 0.5,
+          builder: (_, scrollCtrl) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: ListView(
+                controller: scrollCtrl,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF97316).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          tem.rankBadge,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                            color: Color(0xFFF97316),
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded),
+                        onPressed: () => Navigator.pop(ctx),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    tem.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  Text(
+                    tem.faculty,
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Parcours & Synthèse',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(tem.summary, style: const TextStyle(fontSize: 13, height: 1.4)),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Conseils d\'or des Majors',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 8),
+                  ...tem.keyAdvices.map((adv) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('💡 ', style: TextStyle(fontSize: 14)),
+                            Expanded(
+                              child: Text(adv, style: const TextStyle(fontSize: 12.5, height: 1.35)),
+                            ),
+                          ],
+                        ),
+                      )),
+                  if (tem.recommendedSources.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Sources Recommandées',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(tem.recommendedSources, style: const TextStyle(fontSize: 12.5, color: Color(0xFF0F766E))),
+                  ],
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   void _showQcmModal(QcmQuestion qcm) {

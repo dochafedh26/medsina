@@ -8,6 +8,7 @@ enum SearchResultType {
   labValue,
   clinicalScore,
   userGuide,
+  temoignage,
 }
 
 class SearchResultItem {
@@ -51,6 +52,8 @@ class SearchResultItem {
         return 'Score Clinique';
       case SearchResultType.userGuide:
         return 'Guide Medsina';
+      case SearchResultType.temoignage:
+        return 'Témoignage Major';
     }
   }
 
@@ -74,6 +77,8 @@ class SearchResultItem {
         return 'Calculer le score';
       case SearchResultType.userGuide:
         return 'Consulter le guide';
+      case SearchResultType.temoignage:
+        return 'Lire le témoignage';
     }
   }
 }
