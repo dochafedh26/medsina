@@ -27,6 +27,7 @@ import 'ota_update_dialog.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
+import '../../profile/presentation/modern_user_profile_screen.dart';
 import 'package:flutter/services.dart';
 
 class NavItemConfig {
@@ -489,7 +490,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                     ),
                     const SizedBox(height: 14),
                     InkWell(
-                      onTap: () => _showUserProfileModal(context, user),
+                      onTap: () => ModernUserProfileScreen.push(context),
                       borderRadius: BorderRadius.circular(14),
                       child: Container(
                         padding: const EdgeInsets.all(10),
@@ -505,26 +506,10 @@ class _MainScaffoldState extends State<MainScaffold> {
                           children: [
                             Row(
                               children: [
-                                Container(
-                                  width: 34,
-                                  height: 34,
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [AppTheme.clinicalNavy, AppTheme.primaryTeal],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    userName.isNotEmpty ? userName[0].toUpperCase() : 'M',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 13.5,
-                                    ),
-                                  ),
+                                UserAvatarView(
+                                  avatarUrl: user?.avatarUrl,
+                                  name: userName,
+                                  size: 34,
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
@@ -1393,28 +1378,12 @@ class _MainScaffoldState extends State<MainScaffold> {
           Tooltip(
             message: 'Mon Profil (${user?.fullName ?? "Médecin"})',
             child: InkWell(
-              onTap: () => _showUserProfileModal(context, user),
+              onTap: () => ModernUserProfileScreen.push(context),
               borderRadius: BorderRadius.circular(16),
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF0D9488), Color(0xFF0F766E)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  initial,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 12.5,
-                  ),
-                ),
+              child: UserAvatarView(
+                avatarUrl: user?.avatarUrl,
+                name: userName,
+                size: 28,
               ),
             ),
           ),
@@ -1541,17 +1510,14 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget _buildUserAvatarAction(BuildContext context, UserModel? user) {
     final userName = user?.fullName ?? 'M';
     return InkWell(
-      onTap: () => _showUserProfileModal(context, user),
+      onTap: () => ModernUserProfileScreen.push(context),
       borderRadius: BorderRadius.circular(20),
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: CircleAvatar(
-          radius: 17,
-          backgroundColor: AppTheme.primaryTeal,
-          child: Text(
-            userName.isNotEmpty ? userName[0].toUpperCase() : 'M',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-          ),
+        child: UserAvatarView(
+          avatarUrl: user?.avatarUrl,
+          name: userName,
+          size: 34,
         ),
       ),
     );
@@ -1659,26 +1625,27 @@ class _MainScaffoldState extends State<MainScaffold> {
               ),
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: AppTheme.primaryTeal,
-                    child: Text(
-                      user?.fullName.isNotEmpty == true ? user!.fullName[0].toUpperCase() : 'M',
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
+                  UserAvatarView(
+                    avatarUrl: user?.avatarUrl,
+                    name: user?.fullName ?? 'Médecin',
+                    size: 56,
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      ModernUserProfileScreen.push(context);
+                    },
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           user?.fullName ?? 'Médecin',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           user?.email ?? '',
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                          style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
                         ),
                         const SizedBox(height: 4),
                         Row(
@@ -1711,9 +1678,34 @@ class _MainScaffoldState extends State<MainScaffold> {
                       ],
                     ),
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.edit_note_rounded, color: AppTheme.primaryTeal, size: 26),
+                    tooltip: 'Modifier mon profil et photo',
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      ModernUserProfileScreen.push(context);
+                    },
+                  ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppTheme.primaryTeal),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.person_rounded, size: 16, color: AppTheme.primaryTeal),
+                  label: const Text('Ouvrir l\'Espace Profil Complet & Photo ➔', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    ModernUserProfileScreen.push(context);
+                  },
+                ),
+              ),
+              const SizedBox(height: 14),
               const Divider(),
               const SizedBox(height: 12),
 

@@ -15,6 +15,11 @@ class UserModel extends Equatable {
   final String? banReason;
   final int rejectedPaymentsCount;
   final int? studyYear; // 1 à 6 pour les étudiants en médecine
+  final String? avatarUrl;
+  final String? bio;
+  final String? phone;
+  final String? wilaya;
+  final String? residencyTargetYear; // Ex: '2027', '2028'
 
   const UserModel({
     required this.id,
@@ -30,6 +35,11 @@ class UserModel extends Equatable {
     this.banReason,
     this.rejectedPaymentsCount = 0,
     this.studyYear,
+    this.avatarUrl,
+    this.bio,
+    this.phone,
+    this.wilaya,
+    this.residencyTargetYear,
   });
 
   bool get isStudent {
@@ -81,6 +91,11 @@ class UserModel extends Equatable {
     String? banReason,
     int? rejectedPaymentsCount,
     int? studyYear,
+    String? avatarUrl,
+    String? bio,
+    String? phone,
+    String? wilaya,
+    String? residencyTargetYear,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -96,6 +111,11 @@ class UserModel extends Equatable {
       banReason: banReason ?? this.banReason,
       rejectedPaymentsCount: rejectedPaymentsCount ?? this.rejectedPaymentsCount,
       studyYear: studyYear ?? this.studyYear,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      bio: bio ?? this.bio,
+      phone: phone ?? this.phone,
+      wilaya: wilaya ?? this.wilaya,
+      residencyTargetYear: residencyTargetYear ?? this.residencyTargetYear,
     );
   }
 
@@ -121,6 +141,13 @@ class UserModel extends Equatable {
       'rejected_payments_count': rejectedPaymentsCount,
       'studyYear': studyYear,
       'study_year': studyYear,
+      'avatarUrl': avatarUrl,
+      'avatar_url': avatarUrl,
+      'bio': bio,
+      'phone': phone,
+      'wilaya': wilaya,
+      'residencyTargetYear': residencyTargetYear,
+      'residency_target_year': residencyTargetYear,
     };
   }
 
@@ -171,6 +198,11 @@ class UserModel extends Equatable {
       banReason: reason,
       rejectedPaymentsCount: rejections,
       studyYear: year,
+      avatarUrl: json['avatarUrl'] ?? json['avatar_url'],
+      bio: json['bio'],
+      phone: json['phone'],
+      wilaya: json['wilaya'],
+      residencyTargetYear: json['residencyTargetYear'] ?? json['residency_target_year'],
     );
   }
 
@@ -189,5 +221,10 @@ class UserModel extends Equatable {
         banReason,
         rejectedPaymentsCount,
         studyYear,
+        avatarUrl,
+        bio,
+        phone,
+        wilaya,
+        residencyTargetYear,
       ];
 }

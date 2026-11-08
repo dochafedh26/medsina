@@ -21,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<DemoLoginEvent>(_onDemoLogin);
     on<UpgradeTierEvent>(_onUpgradeTier);
     on<ActivateLicenseKeyEvent>(_onActivateLicenseKey);
+    on<UpdateUserProfileEvent>(_onUpdateUserProfile);
     on<LogoutEvent>(_onLogout);
     on<ClearAuthMessageEvent>(_onClearAuthMessage);
   }
@@ -91,6 +92,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               banReason: profile['ban_reason'],
               rejectedPaymentsCount: (profile['rejected_payments_count'] as num?)?.toInt() ?? 0,
               studyYear: (profile['study_year'] as num?)?.toInt() ?? (session.user.userMetadata?['study_year'] as num?)?.toInt(),
+              avatarUrl: profile['avatar_url'] ?? (session.user.userMetadata?['avatar_url'] as String?),
+              bio: profile['bio'] ?? (session.user.userMetadata?['bio'] as String?),
+              phone: profile['phone'] ?? (session.user.userMetadata?['phone'] as String?),
+              wilaya: profile['wilaya'] ?? (session.user.userMetadata?['wilaya'] as String?),
+              residencyTargetYear: profile['residency_target_year'] ?? (session.user.userMetadata?['residency_target_year'] as String?),
             );
 
             await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -215,6 +221,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           banReason: profileMap?['ban_reason'],
           rejectedPaymentsCount: (profileMap?['rejected_payments_count'] as num?)?.toInt() ?? 0,
           studyYear: (profileMap?['study_year'] as num?)?.toInt() ?? (supaUser.userMetadata?['study_year'] as num?)?.toInt(),
+          avatarUrl: profileMap?['avatar_url'] ?? (supaUser.userMetadata?['avatar_url'] as String?),
+          bio: profileMap?['bio'] ?? (supaUser.userMetadata?['bio'] as String?),
+          phone: profileMap?['phone'] ?? (supaUser.userMetadata?['phone'] as String?),
+          wilaya: profileMap?['wilaya'] ?? (supaUser.userMetadata?['wilaya'] as String?),
+          residencyTargetYear: profileMap?['residency_target_year'] ?? (supaUser.userMetadata?['residency_target_year'] as String?),
         );
 
         await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -452,6 +463,59 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       status: AuthStatus.authenticated,
       user: updated,
       successMessage: 'Licence validée avec succès ! ${fallbackTier.label} activé pour $days jours.',
+    ));
+  }
+
+  Future<void> _onUpdateUserProfile(UpdateUserProfileEvent event, Emitter<AuthState> emit) async {
+    final currentUser = state.user;
+    if (currentUser == null) return;
+
+    emit(state.copyWith(status: AuthStatus.loading, clearMessages: true));
+
+    final updated = currentUser.copyWith(
+      fullName: event.fullName.trim(),
+      medicalRole: event.medicalRole.trim(),
+      faculty: event.faculty.trim(),
+      studyYear: event.studyYear,
+      avatarUrl: event.avatarUrl,
+      bio: event.bio?.trim(),
+      phone: event.phone?.trim(),
+      wilaya: event.wilaya?.trim(),
+      residencyTargetYear: event.residencyTargetYear?.trim(),
+    );
+
+    // 1. Update local cache immediately
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_userPrefsKey, jsonEncode(updated.toJson()));
+    } catch (e) {
+      debugPrint('Local profile cache update error: $e');
+    }
+
+    // 2. Sync to Supabase Cloud profiles table if logged in
+    try {
+      if (currentUser.id.isNotEmpty && !currentUser.id.startsWith('demo_')) {
+        await SupabaseService.updateUserProfile(
+          userId: currentUser.id,
+          fullName: updated.fullName,
+          medicalRole: updated.medicalRole,
+          faculty: updated.faculty,
+          studyYear: updated.studyYear,
+          avatarUrl: updated.avatarUrl,
+          bio: updated.bio,
+          phone: updated.phone,
+          wilaya: updated.wilaya,
+          residencyTargetYear: updated.residencyTargetYear,
+        );
+      }
+    } catch (e) {
+      debugPrint('Cloud profile sync warning: $e');
+    }
+
+    emit(state.copyWith(
+      status: AuthStatus.authenticated,
+      user: updated,
+      successMessage: 'Votre profil médical a été mis à jour avec succès !',
     ));
   }
 

@@ -72,4 +72,41 @@ class ActivateLicenseKeyEvent extends AuthEvent {
 
 class LogoutEvent extends AuthEvent {}
 
+class UpdateUserProfileEvent extends AuthEvent {
+  final String fullName;
+  final String medicalRole;
+  final String faculty;
+  final int? studyYear;
+  final String? avatarUrl;
+  final String? bio;
+  final String? phone;
+  final String? wilaya;
+  final String? residencyTargetYear;
+
+  const UpdateUserProfileEvent({
+    required this.fullName,
+    required this.medicalRole,
+    required this.faculty,
+    this.studyYear,
+    this.avatarUrl,
+    this.bio,
+    this.phone,
+    this.wilaya,
+    this.residencyTargetYear,
+  });
+
+  @override
+  List<Object?> get props => [
+        fullName,
+        medicalRole,
+        faculty,
+        studyYear,
+        avatarUrl,
+        bio,
+        phone,
+        wilaya,
+        residencyTargetYear,
+      ];
+}
+
 class ClearAuthMessageEvent extends AuthEvent {}

@@ -186,6 +186,85 @@ class SupabaseService {
     }
   }
 
+  /// Update User Profile fields in Supabase
+  static Future<bool> updateUserProfile({
+    required String userId,
+    required String fullName,
+    required String medicalRole,
+    required String faculty,
+    int? studyYear,
+    String? avatarUrl,
+    String? bio,
+    String? phone,
+    String? wilaya,
+    String? residencyTargetYear,
+  }) async {
+    try {
+      final updateData = <String, dynamic>{
+        'full_name': fullName,
+        'medical_role': medicalRole,
+        'faculty': faculty,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      };
+      if (studyYear != null) updateData['study_year'] = studyYear;
+      if (avatarUrl != null) updateData['avatar_url'] = avatarUrl;
+      if (bio != null) updateData['bio'] = bio;
+      if (phone != null) updateData['phone'] = phone;
+      if (wilaya != null) updateData['wilaya'] = wilaya;
+      if (residencyTargetYear != null) updateData['residency_target_year'] = residencyTargetYear;
+
+      await client.from('profiles').update(updateData).eq('id', userId);
+      return true;
+    } catch (e) {
+      debugPrint('Error updating user profile in Supabase: $e');
+      return false;
+    }
+  }
+
+  /// Upload Profile Avatar to Supabase Storage ('avatars' or 'receipts' fallback)
+  static Future<String?> uploadProfileAvatar({
+    required String userId,
+    required String fileName,
+    required List<int> bytes,
+  }) async {
+    try {
+      final ext = fileName.split('.').last.toLowerCase();
+      final sanitizedExt = (ext == 'png' || ext == 'webp' || ext == 'jpeg') ? ext : 'jpg';
+      final path = 'user_$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.$sanitizedExt';
+      final mimeType = sanitizedExt == 'png'
+          ? 'image/png'
+          : (sanitizedExt == 'webp' ? 'image/webp' : 'image/jpeg');
+
+      // Try 'avatars' bucket first
+      try {
+        await client.storage.from('avatars').uploadBinary(
+          path,
+          Uint8List.fromList(bytes),
+          fileOptions: FileOptions(
+            contentType: mimeType,
+            upsert: true,
+          ),
+        );
+        return client.storage.from('avatars').getPublicUrl(path);
+      } catch (storageErr) {
+        debugPrint('Notice: "avatars" bucket upload failed, attempting fallback to "receipts": $storageErr');
+        // Fallback to 'receipts' bucket which exists
+        await client.storage.from('receipts').uploadBinary(
+          'avatars/$path',
+          Uint8List.fromList(bytes),
+          fileOptions: FileOptions(
+            contentType: mimeType,
+            upsert: true,
+          ),
+        );
+        return client.storage.from('receipts').getPublicUrl('avatars/$path');
+      }
+    } catch (e) {
+      debugPrint('Error uploading profile avatar: $e');
+      return null;
+    }
+  }
+
   // --- LICENSES & SUBSCRIPTIONS ---
 
   /// Redeem License Key via PostgreSQL RPC
