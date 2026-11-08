@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/network/supabase_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../models/module_model.dart';
 import '../models/temoignage_conseil_model.dart';
@@ -36,17 +37,56 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
   }
 
   Future<void> _loadItems() async {
+    final Map<String, TemoignageConseilItem> itemsMap = {};
+
+    // 1. Charge d'abord les témoignages locaux (embarqués dans l'App pour révision 100% hors-ligne)
     try {
       final jsonStr = await rootBundle
           .loadString('assets/data/temoignages_conseils.json');
       final list = json.decode(jsonStr) as List<dynamic>;
-      _allItems = list
-          .map((e) => TemoignageConseilItem.fromJson(e as Map<String, dynamic>))
-          .toList();
+      for (final e in list) {
+        if (e is Map<String, dynamic>) {
+          final item = TemoignageConseilItem.fromJson(e);
+          itemsMap[item.id] = item;
+        }
+      }
     } catch (e) {
-      debugPrint('Erreur chargement Témoignages & Conseils: $e');
+      debugPrint('Notice: Local temoignages_conseils.json load: $e');
+    }
+
+    if (mounted && itemsMap.isNotEmpty) {
+      final list = itemsMap.values.toList()
+        ..sort((a, b) => a.rankNumber.compareTo(b.rankNumber));
+      setState(() {
+        _allItems = list;
+        _isLoading = false;
+        _applyFilter();
+      });
+    }
+
+    // 2. Récupère en direct depuis la base de données Supabase Cloud
+    // Cela permet d'ajouter des témoignages sans republier l'application mobile !
+    try {
+      final remoteRows = await SupabaseService.fetchTemoignagesConseils();
+      if (remoteRows.isNotEmpty) {
+        for (final row in remoteRows) {
+          final item = TemoignageConseilItem.fromJson(row);
+          itemsMap[item.id] = item;
+        }
+        final mergedList = itemsMap.values.toList()
+          ..sort((a, b) => a.rankNumber.compareTo(b.rankNumber));
+        if (mounted) {
+          setState(() {
+            _allItems = mergedList;
+            _isLoading = false;
+            _applyFilter();
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Notice: Supabase fetchTemoignagesConseils error: $e');
     } finally {
-      if (mounted) {
+      if (mounted && _isLoading) {
         setState(() {
           _isLoading = false;
           _applyFilter();

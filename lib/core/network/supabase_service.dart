@@ -233,6 +233,20 @@ class SupabaseService {
     }
   }
 
+  /// Fetch all Témoignages & Conseils from Supabase Cloud table (temoignages_conseils)
+  static Future<List<Map<String, dynamic>>> fetchTemoignagesConseils() async {
+    try {
+      final response = await client
+          .from('temoignages_conseils')
+          .select('*')
+          .order('rank_number', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Notice: Error fetching temoignages_conseils from Supabase: $e');
+      return [];
+    }
+  }
+
   /// Fetch Questions for a specific course
   static Future<List<Map<String, dynamic>>> fetchCourseQuestions(String courseId) async {
     try {

@@ -1,0 +1,39 @@
+name: 🏆 Medsina - Sync Témoignages to Database
+
+on:
+  push:
+    paths:
+      - 'assets/data/temoignages_conseils.json'
+      - 'scripts/automation/seed_temoignages_supabase.py'
+      - '.github/workflows/medsina_sync_temoignages_db.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync-temoignages:
+    name: 🔄 Synchroniser Témoignages vers Supabase Cloud
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Installer requests
+        run: pip install requests
+
+      - name: ⚡ Exécuter la migration & synchronisation Supabase
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "🚀 Synchronisation des témoignages vers la table Supabase temoignages_conseils..."
+          python scripts/automation/seed_temoignages_supabase.py

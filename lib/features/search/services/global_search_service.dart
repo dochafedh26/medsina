@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/network/supabase_service.dart';
 import '../../clinical/data/clinical_repository.dart';
 import '../../clinical/models/cat_protocol_model.dart';
 import '../../clinical/models/emergency_drug_model.dart';
@@ -171,13 +172,32 @@ class GlobalSearchService {
   }
 
   Future<List<TemoignageConseilItem>> _loadTemoignagesAsync() async {
+    final Map<String, TemoignageConseilItem> map = {};
+
+    // 1. Local JSON asset
     try {
       final jsonStr = await rootBundle.loadString('assets/data/temoignages_conseils.json');
       final list = json.decode(jsonStr) as List<dynamic>;
-      return list.map((e) => TemoignageConseilItem.fromJson(e as Map<String, dynamic>)).toList();
-    } catch (_) {
-      return [];
-    }
+      for (final e in list) {
+        if (e is Map<String, dynamic>) {
+          final item = TemoignageConseilItem.fromJson(e);
+          map[item.id] = item;
+        }
+      }
+    } catch (_) {}
+
+    // 2. Supabase Cloud live database (enables adding testimonials without rebuilding mobile app)
+    try {
+      final remoteRows = await SupabaseService.fetchTemoignagesConseils();
+      for (final row in remoteRows) {
+        final item = TemoignageConseilItem.fromJson(row);
+        map[item.id] = item;
+      }
+    } catch (_) {}
+
+    final result = map.values.toList()
+      ..sort((a, b) => a.rankNumber.compareTo(b.rankNumber));
+    return result;
   }
 
   /// String normalizer removing accents, hyphens and lowercasing
