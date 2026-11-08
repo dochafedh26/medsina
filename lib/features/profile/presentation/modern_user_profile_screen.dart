@@ -15,6 +15,7 @@ import '../../auth/models/user_model.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
+import '../../../core/services/user_study_progress_service.dart';
 
 /// Predefined medical avatars with icons and color schemes
 class MedicalAvatarPreset {
@@ -345,6 +346,8 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
     _selectedMedicalRole = user?.medicalRole.isNotEmpty == true ? user!.medicalRole : 'Candidat Résidanat';
     _selectedStudyYear = user?.studyYear;
     _currentAvatarUrl = user?.avatarUrl;
+
+    UserStudyProgressService.instance.initialize();
   }
 
   @override
@@ -1394,106 +1397,883 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
     );
   }
 
-  /// 4. Bento Card: Statistics
+  /// 4. Bento Card: Real-time Study & Activity Progress
   Widget _buildBentoStatsCard(BuildContext context, UserModel? user, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: AppTheme.bentoCardDecoration(context, radius: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return ValueListenableBuilder<UserStudyProgress>(
+      valueListenable: UserStudyProgressService.instance.progressNotifier,
+      builder: (context, progress, _) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: AppTheme.bentoCardDecoration(context, radius: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.insights_rounded, color: Color(0xFFF59E0B), size: 20),
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.insights_rounded, color: Color(0xFFF59E0B), size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Activité & Entraînement Medsina',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                          ),
+                          Text(
+                            'Progrès en direct • Objectifs quotidiens',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.tune_rounded, size: 20),
+                    tooltip: 'Ajuster mes objectifs quotidiens',
+                    onPressed: () => _showDailyGoalsDialog(context, progress),
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              const Text(
-                'Activité & Entraînement Medsina',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              const SizedBox(height: 16),
+
+              // --- 1. HERO ACTION: VALIDER MA JOURNÉE DE RÉVISION ("Accomplir le jour") ---
+              _buildAccomplishDayHeroCard(context, progress, isDark),
+
+              const SizedBox(height: 16),
+
+              // --- 2. 7-DAY ACTIVITY HABIT TRACKER ---
+              _buildWeeklyActivityTracker(context, progress, isDark),
+
+              const SizedBox(height: 16),
+
+              // --- 3. BENTO 4-STAT GRID: QCMS, COURS, SÉRIE, OBJECTIFS ---
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildProgressStatItem(
+                      icon: Icons.checklist_rounded,
+                      title: 'QCMs Réalisés',
+                      value: '${progress.totalQcmSolved}',
+                      subtitle: '+${progress.todayQcmSolved} aujourd\'hui',
+                      color: AppTheme.primaryTeal,
+                      isDark: isDark,
+                      badgeText: progress.todayQcmSolved > 0 ? 'Actif' : null,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildProgressStatItem(
+                      icon: Icons.menu_book_rounded,
+                      title: 'Cours & Livrets',
+                      value: '${progress.totalCoursesCompleted}',
+                      subtitle: '+${progress.todayCoursesCompleted} aujourd\'hui',
+                      color: const Color(0xFF6366F1),
+                      isDark: isDark,
+                      onTap: () => _showCompletedCoursesListDialog(context, progress),
+                      badgeText: progress.completedCourseIds.isNotEmpty ? 'Liste' : null,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildProgressStatItem(
+                      icon: Icons.local_fire_department_rounded,
+                      title: 'Série Active',
+                      value: '${progress.currentStreak} j',
+                      subtitle: 'Record : ${progress.maxStreak} jours 🔥',
+                      color: const Color(0xFFEA580C),
+                      isDark: isDark,
+                      badgeText: progress.currentStreak >= 3 ? '🔥 Série' : null,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildProgressGoalItem(
+                      title: 'Objectif du jour',
+                      qcmDone: progress.todayQcmSolved,
+                      qcmGoal: progress.dailyQcmGoal,
+                      courseDone: progress.todayCoursesCompleted,
+                      courseGoal: progress.dailyCourseGoal,
+                      isDark: isDark,
+                      onTap: () => _showDailyGoalsDialog(context, progress),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 14),
+
+              // --- 4. ACTION BUTTONS: AJOUT MANUEL & VOIR COURS ---
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 10),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: BorderSide(
+                          color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                        ),
+                      ),
+                      icon: const Icon(Icons.add_task_rounded, size: 16, color: AppTheme.primaryTeal),
+                      label: const Text(
+                        'Enregistrer révision externe',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                      ),
+                      onPressed: () => _showAddExternalRevisionDialog(context),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      side: BorderSide(
+                        color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                      ),
+                    ),
+                    onPressed: () => _showCompletedCoursesListDialog(context, progress),
+                    child: const Text('Mes Cours ➔', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 14),
+        );
+      },
+    );
+  }
 
-          Row(
-            children: [
-              Expanded(
-                child: _buildMiniStat(
-                  icon: Icons.checklist_rounded,
-                  label: 'QCMs & EMDs',
-                  value: '14,200+',
-                  color: AppTheme.primaryTeal,
-                  isDark: isDark,
-                ),
+  /// Hero interactive card for validating today's study accomplishment
+  Widget _buildAccomplishDayHeroCard(
+    BuildContext context,
+    UserStudyProgress progress,
+    bool isDark,
+  ) {
+    final isAccomplished = progress.isTodayAccomplished;
+
+    if (!isAccomplished) {
+      return Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF0F766E), Color(0xFF0D9488), Color(0xFF14B8A6)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0D9488).withValues(alpha: 0.3),
+              blurRadius: 14,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: () async {
+              HapticFeedback.mediumImpact();
+              final success = await UserStudyProgressService.instance.toggleTodayAccomplished();
+              if (context.mounted && success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('🎉 Journée validée avec succès ! +50 XP fidélité ajoutés ✨'),
+                    backgroundColor: Color(0xFF059669),
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.check_circle_outline_rounded, color: Colors.white, size: 26),
+                  ),
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Valider ma Journée de Révision ✨',
+                          style: TextStyle(
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Indiquer le jour accompli • +50 XP fidélité',
+                          style: TextStyle(fontSize: 11, color: Colors.white70),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      'Accomplir ✅',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF0F766E),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _buildMiniStat(
-                  icon: Icons.menu_book_rounded,
-                  label: 'Fiches & Livrets',
-                  value: '47 Livrets',
-                  color: const Color(0xFF6366F1),
-                  isDark: isDark,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Already Accomplished today
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF059669).withValues(alpha: isDark ? 0.2 : 0.1),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.5), width: 1.2),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: const BoxDecoration(
+              color: Color(0xFF10B981),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.task_alt_rounded, color: Colors.white, size: 24),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Text(
+                      'Journée accomplie avec succès !',
+                      style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w900, color: Color(0xFF10B981)),
+                    ),
+                    SizedBox(width: 4),
+                    Text('🎉'),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _buildMiniStat(
-                  icon: Icons.cloud_sync_rounded,
-                  label: 'Cloud Sync',
-                  value: '100% OK',
-                  color: const Color(0xFF10B981),
-                  isDark: isDark,
+                const SizedBox(height: 2),
+                Text(
+                  'Série active de ${progress.currentStreak} jour${progress.currentStreak > 1 ? "s" : ""} consécutif${progress.currentStreak > 1 ? "s" : ""} 🔥',
+                  style: TextStyle(fontSize: 11, color: isDark ? Colors.white70 : const Color(0xFF334155)),
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey,
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+            ),
+            onPressed: () async {
+              await UserStudyProgressService.instance.toggleTodayAccomplished();
+            },
+            child: const Text('Modifier', style: TextStyle(fontSize: 11)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMiniStat({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
-    required bool isDark,
-  }) {
+  /// Weekly 7-day visual activity habit loop
+  Widget _buildWeeklyActivityTracker(
+    BuildContext context,
+    UserStudyProgress progress,
+    bool isDark,
+  ) {
+    final now = DateTime.now();
+    // Days of current week (Monday to Sunday)
+    final monday = now.subtract(Duration(days: now.weekday - 1));
+    final weekDays = List.generate(7, (i) => monday.add(Duration(days: i)));
+    final dayNames = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+
+    int accomplishedCount = 0;
+    for (final d in weekDays) {
+      if (progress.isDateAccomplished(d)) accomplishedCount++;
+    }
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.18)),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : const Color(0xFFE2E8F0),
+        ),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'SÉRIE DE CETTE SEMAINE',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.6,
+                  color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                ),
+              ),
+              Text(
+                '$accomplishedCount / 7 jours validés (${((accomplishedCount / 7) * 100).toInt()}%)',
+                style: const TextStyle(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.primaryTeal,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 9.5,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white60 : const Color(0xFF64748B),
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(7, (idx) {
+              final d = weekDays[idx];
+              final isDone = progress.isDateAccomplished(d);
+              final isToday = d.year == now.year && d.month == now.month && d.day == now.day;
+
+              return Column(
+                children: [
+                  Text(
+                    dayNames[idx],
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: isToday ? FontWeight.w900 : FontWeight.w600,
+                      color: isToday
+                          ? AppTheme.primaryTeal
+                          : (isDark ? Colors.white60 : const Color(0xFF64748B)),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isDone
+                          ? const Color(0xFF10B981)
+                          : (isToday
+                              ? AppTheme.primaryTeal.withValues(alpha: 0.15)
+                              : (isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0))),
+                      border: isToday
+                          ? Border.all(color: AppTheme.primaryTeal, width: 2)
+                          : null,
+                    ),
+                    alignment: Alignment.center,
+                    child: isDone
+                        ? const Icon(Icons.check_rounded, size: 18, color: Colors.white)
+                        : (isToday
+                            ? const Icon(Icons.star_rounded, size: 15, color: AppTheme.primaryTeal)
+                            : Text(
+                                '${d.day}',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                                ),
+                              )),
+                  ),
+                ],
+              );
+            }),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProgressStatItem({
+    required IconData icon,
+    required String title,
+    required String value,
+    required String subtitle,
+    required Color color,
+    required bool isDark,
+    VoidCallback? onTap,
+    String? badgeText,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withValues(alpha: 0.2)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: color, size: 18),
+                  ),
+                  if (badgeText != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        badgeText,
+                        style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: color),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+              ),
+              Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgressGoalItem({
+    required String title,
+    required int qcmDone,
+    required int qcmGoal,
+    required int courseDone,
+    required int courseGoal,
+    required bool isDark,
+    VoidCallback? onTap,
+  }) {
+    final qcmPct = (qcmDone / (qcmGoal > 0 ? qcmGoal : 1)).clamp(0.0, 1.0);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFF0284C7).withValues(alpha: 0.2)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0284C7).withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.flag_rounded, color: Color(0xFF0284C7), size: 18),
+                  ),
+                  Text(
+                    '${(qcmPct * 100).toInt()}%',
+                    style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: Color(0xFF0284C7)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '$qcmDone / $qcmGoal QCMs',
+                style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13),
+              ),
+              const SizedBox(height: 4),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: qcmPct,
+                  minHeight: 5,
+                  backgroundColor: isDark ? Colors.white10 : const Color(0xFFE2E8F0),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF0284C7)),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Cours : $courseDone / $courseGoal fait',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Dialog allowing students to manually record external study (polycopiés, hospital, library)
+  void _showAddExternalRevisionDialog(BuildContext context) {
+    final qcmController = TextEditingController(text: '15');
+    final courseController = TextEditingController(text: '1');
+    final specialtyController = TextEditingController(text: 'Cardiologie');
+
+    showDialog(
+      context: context,
+      builder: (dlgContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.add_task_rounded, color: AppTheme.primaryTeal),
+            SizedBox(width: 10),
+            Text('Révision Externe'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Ajoutez vos QCMs et cours révisés sur polycopié, à la bibliothèque ou en stage hospitalier.',
+                style: TextStyle(fontSize: 12.5),
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: qcmController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre de QCMs faits',
+                  prefixIcon: Icon(Icons.check_circle_outline_rounded),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: courseController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre de Cours / Livrets étudiés',
+                  prefixIcon: Icon(Icons.menu_book_rounded),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: specialtyController,
+                decoration: const InputDecoration(
+                  labelText: 'Discipline / Module révisé',
+                  prefixIcon: Icon(Icons.category_rounded),
+                  hintText: 'Ex: Cardiologie, Pneumologie...',
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dlgContext),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal),
+            onPressed: () async {
+              final q = int.tryParse(qcmController.text.trim()) ?? 0;
+              final c = int.tryParse(courseController.text.trim()) ?? 0;
+              final spec = specialtyController.text.trim();
+
+              if (q > 0 || c > 0) {
+                await UserStudyProgressService.instance.addManualStudyProgress(
+                  qcmCount: q,
+                  courseCount: c,
+                  discipline: spec.isNotEmpty ? spec : null,
+                );
+                if (dlgContext.mounted) Navigator.pop(dlgContext);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Progrès enregistré : +$q QCMs et +$c cours ajoutés ! ✨'),
+                      backgroundColor: AppTheme.primaryTeal,
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Enregistrer', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Dialog to customize daily study goals
+  void _showDailyGoalsDialog(BuildContext context, UserStudyProgress progress) {
+    final qcmGoalController = TextEditingController(text: '${progress.dailyQcmGoal}');
+    final courseGoalController = TextEditingController(text: '${progress.dailyCourseGoal}');
+
+    showDialog(
+      context: context,
+      builder: (dlgContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.tune_rounded, color: AppTheme.primaryTeal),
+            SizedBox(width: 10),
+            Text('Objectifs Quotidiens'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Définissez vos objectifs d\'entraînement journalier pour le Concours Résidanat.',
+              style: TextStyle(fontSize: 12.5),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: qcmGoalController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Objectif QCMs / Jour',
+                prefixIcon: Icon(Icons.flag_rounded),
+                hintText: 'Ex: 25 ou 50',
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: courseGoalController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Objectif Cours / Jour',
+                prefixIcon: Icon(Icons.menu_book_rounded),
+                hintText: 'Ex: 1 ou 2',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dlgContext),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryTeal),
+            onPressed: () async {
+              final q = int.tryParse(qcmGoalController.text.trim()) ?? 25;
+              final c = int.tryParse(courseGoalController.text.trim()) ?? 1;
+
+              await UserStudyProgressService.instance.updateDailyGoals(
+                qcmGoal: q,
+                courseGoal: c,
+              );
+              if (dlgContext.mounted) Navigator.pop(dlgContext);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Objectifs quotidiens mis à jour ! 🎯'),
+                    backgroundColor: AppTheme.primaryTeal,
+                  ),
+                );
+              }
+            },
+            child: const Text('Sauvegarder', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Dialog displaying list of completed courses
+  void _showCompletedCoursesListDialog(BuildContext context, UserStudyProgress progress) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final list = progress.completedCourseIds.toList();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => Container(
+        height: MediaQuery.of(sheetContext).size.height * 0.65,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6366F1).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.menu_book_rounded, color: Color(0xFF6366F1), size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Cours & Livrets Accomplis',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        '${progress.totalCoursesCompleted} cours et livrets maîtrisés',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close_rounded, size: 20),
+                  onPressed: () => Navigator.pop(sheetContext),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Divider(),
+            if (list.isEmpty)
+              const Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.auto_stories_outlined, size: 48, color: Colors.grey),
+                      SizedBox(height: 12),
+                      Text(
+                        'Aucun cours validé pour le moment',
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Révisez des cours dans le catalogue ou enregistrez une révision externe.',
+                        style: TextStyle(fontSize: 11, color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              Expanded(
+                child: ListView.separated(
+                  itemCount: list.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (ctx, idx) {
+                    final item = list[idx];
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.check_circle_rounded, color: Color(0xFF10B981), size: 18),
+                      ),
+                      title: Text(
+                        item,
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                      ),
+                      subtitle: const Text('Maîtrisé • Validé dans le profil', style: TextStyle(fontSize: 10.5)),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.grey),
+                        tooltip: 'Retirer de la liste',
+                        onPressed: () async {
+                          await UserStudyProgressService.instance.toggleCourseCompleted(item);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
