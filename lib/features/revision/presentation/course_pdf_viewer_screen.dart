@@ -8,9 +8,16 @@ import 'package:syncfusion_flutter_pdf/pdf.dart' as p;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../core/services/recent_activity_service.dart';
+import '../../../core/services/user_study_progress_service.dart';
 import '../models/module_model.dart';
 import '../services/offline_course_manager.dart';
+import '../services/user_qcm_annotation_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../bloc/revision_bloc.dart';
+import '../bloc/revision_event.dart';
 import 'course_summary_screen.dart';
+import 'qcm_study_screen.dart';
 
 class PdfSearchOccurrence {
   final int index;
@@ -72,6 +79,16 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
   List<PdfSearchOccurrence> _occurrences = [];
   int _selectedOccurrenceIndex = 0;
 
+  bool _hasShownCompletionPrompt = false;
+  final UserStudyProgressService _progressService = UserStudyProgressService.instance;
+  final UserQcmAnnotationService _annService = UserQcmAnnotationService.instance;
+
+  bool get _isCourseValidated {
+    final inProfile = _progressService.progress.completedCourseIds.contains(widget.course.id);
+    final inPlanner = _annService.getPlannerEntry(widget.course.id, moduleId: widget.course.moduleId).layer1Done;
+    return inProfile || inPlanner;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -80,6 +97,12 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       course: widget.course,
       moduleName: widget.moduleName,
     );
+    _progressService.initialize().then((_) {
+      if (mounted) setState(() {});
+    });
+    _annService.ensureInitialized().then((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -523,6 +546,49 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
                     moduleName: widget.moduleName,
                   ),
                 ),
+              );
+            },
+          ),
+          // Validation du cours (Couche 1 / Profil)
+          AnimatedBuilder(
+            animation: Listenable.merge([_progressService.progressNotifier, _annService]),
+            builder: (context, _) {
+              final isValidated = _isCourseValidated;
+              if (screenWidth >= 620) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                  child: isValidated
+                      ? OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFF10B981),
+                            side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          icon: const Icon(Icons.check_circle_rounded, size: 16, color: Color(0xFF10B981)),
+                          label: const Text('Validé ✓', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                          onPressed: _showCourseCompletionOptions,
+                        )
+                      : ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryTeal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          icon: const Icon(Icons.check_circle_outline_rounded, size: 16),
+                          label: const Text('Valider le cours', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                          onPressed: _validateCourseCompletion,
+                        ),
+                );
+              }
+              return IconButton(
+                icon: Icon(
+                  isValidated ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
+                  color: isValidated ? const Color(0xFF10B981) : AppTheme.primaryTeal,
+                ),
+                tooltip: isValidated ? 'Cours validé ✓' : 'Valider ce cours (+30 XP)',
+                onPressed: isValidated ? _showCourseCompletionOptions : _validateCourseCompletion,
               );
             },
           ),
@@ -977,6 +1043,14 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
         setState(() {
           _currentPage = details.newPageNumber;
         });
+        if (_pageCount > 0 && details.newPageNumber == _pageCount && !_hasShownCompletionPrompt) {
+          _hasShownCompletionPrompt = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              _showEndOfCourseCelebration();
+            }
+          });
+        }
       },
     );
 
@@ -1002,21 +1076,402 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       left: 0,
       right: 0,
       child: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.75),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2)),
-            ],
-          ),
-          child: Text(
-            '$_currentPage / $_pageCount',
-            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-          ),
+        child: AnimatedBuilder(
+          animation: Listenable.merge([_progressService.progressNotifier, _annService]),
+          builder: (context, _) {
+            final isValidated = _isCourseValidated;
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 3)),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$_currentPage / $_pageCount',
+                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(width: 1, height: 14, color: Colors.white24),
+                  const SizedBox(width: 10),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: isValidated ? _showCourseCompletionOptions : _validateCourseCompletion,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isValidated ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
+                            size: 15,
+                            color: isValidated ? const Color(0xFF34D399) : Colors.white70,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            isValidated ? 'Validé ✓' : 'Valider (+30 XP)',
+                            style: TextStyle(
+                              color: isValidated ? const Color(0xFF34D399) : Colors.white,
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Future<void> _validateCourseCompletion() async {
+    // 1. Enregistrement dans UserStudyProgressService (+30 XP, total, streak/daily goals)
+    await _progressService.markCourseCompleted(
+      widget.course.id,
+      courseTitle: widget.course.name,
+      module: widget.moduleName,
+    );
+
+    // 2. Validation de la Couche 1 dans le Study Planner (UserQcmAnnotationService)
+    final plannerEntry = _annService.getPlannerEntry(widget.course.id, moduleId: widget.course.moduleId);
+    if (!plannerEntry.layer1Done) {
+      await _annService.togglePlannerLayer(
+        courseId: widget.course.id,
+        moduleId: widget.course.moduleId,
+        layerIndex: 1,
+      );
+    }
+
+    if (mounted) {
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text('🎉 Cours "${widget.course.name}" validé ! (+30 XP)'),
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFF0F766E),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          action: widget.course.questionsCount > 0
+              ? SnackBarAction(
+                  label: 'QCM ➔',
+                  textColor: Colors.amber,
+                  onPressed: _startCourseQcm,
+                )
+              : null,
+        ),
+      );
+    }
+  }
+
+  Future<void> _unvalidateCourse() async {
+    await _progressService.toggleCourseCompleted(
+      widget.course.id,
+      courseTitle: widget.course.name,
+    );
+    final plannerEntry = _annService.getPlannerEntry(widget.course.id, moduleId: widget.course.moduleId);
+    if (plannerEntry.layer1Done) {
+      await _annService.togglePlannerLayer(
+        courseId: widget.course.id,
+        moduleId: widget.course.moduleId,
+        layerIndex: 1,
+      );
+    }
+    if (mounted) {
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Validation du cours annulée.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  void _startCourseQcm() {
+    final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+    context.read<RevisionBloc>().add(
+          OpenCourseQuestionsEvent(widget.course, resume: false, filterForStudent: isStudent),
+        );
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
+    );
+  }
+
+  void _showEndOfCourseCelebration() {
+    if (!mounted) return;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isValidated = _isCourseValidated;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppTheme.primaryTeal, Color(0xFF0284C7)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.emoji_events_rounded, color: Colors.white, size: 26),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Fin de Lecture du Support ! 🎉',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            widget.course.name,
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isValidated
+                        ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                        : const Color(0xFFF0FDFA),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isValidated ? const Color(0xFF10B981) : AppTheme.primaryTeal.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isValidated ? Icons.check_circle_rounded : Icons.star_rounded,
+                        color: isValidated ? const Color(0xFF10B981) : const Color(0xFFD97706),
+                        size: 24,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          isValidated
+                              ? 'Ce cours est déjà validé (Couche 1 enregistrée dans le Study Planner et votre Profil).'
+                              : 'Validez votre lecture pour enregistrer la Couche 1 dans le Study Planner et remporter +30 XP !',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isValidated ? const Color(0xFF047857) : const Color(0xFF0F766E),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (!isValidated) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryTeal,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      icon: const Icon(Icons.check_circle_rounded, size: 18),
+                      label: const Text(
+                        'Valider la Lecture du Cours (+30 XP)',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        _validateCourseCompletion();
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          side: BorderSide(color: const Color(0xFF8B5CF6).withValues(alpha: 0.4)),
+                        ),
+                        icon: const Icon(Icons.menu_book_rounded, color: Color(0xFF8B5CF6), size: 16),
+                        label: const Text(
+                          'Fiche Synthèse',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF8B5CF6)),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CourseSummaryScreen(
+                                course: widget.course,
+                                moduleName: widget.moduleName,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    if (widget.course.questionsCount > 0) ...[
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0284C7),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          ),
+                          icon: const Icon(Icons.play_circle_fill_rounded, size: 16),
+                          label: Text(
+                            'QCM (${widget.course.questionsCount})',
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(ctx);
+                            _startCourseQcm();
+                          },
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showCourseCompletionOptions() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.check_circle_rounded, color: Color(0xFF10B981), size: 28),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Cours Validé ✓',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            widget.course.name,
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'La Couche 1 (Lecture) est validée dans votre Study Planner et comptabilisée dans votre Profil (+30 XP).',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 16),
+                if (widget.course.questionsCount > 0)
+                  ListTile(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    tileColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF0FDF4),
+                    leading: const Icon(Icons.play_circle_fill_rounded, color: AppTheme.primaryTeal),
+                    title: const Text('Passer aux QCMs de ce cours', style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _startCourseQcm();
+                    },
+                  ),
+                const SizedBox(height: 8),
+                ListTile(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  leading: const Icon(Icons.undo_rounded, color: Colors.redAccent),
+                  title: const Text('Annuler la validation de ce cours', style: TextStyle(color: Colors.redAccent)),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _unvalidateCourse();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
