@@ -1127,5 +1127,20 @@
     ],
     "created_at": "2026-11-07T22:53:00.211368+00:00",
     "updated_at": "2026-11-07T22:53:00.211382+00:00"
+  },
+  {
+    "id": "lab_facteur_rhumatoide_anti_ccp",
+    "name": "Facteur Rhumatoïde (FR) & Anticorps Anti-CCP (ACPA)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "FR: < 20 UI/mL (Négatif) | Anti-CCP (ACPA): < 17-20 U/mL selon les techniques (Négatif)",
+    "unit": "UI/mL ou U/mL",
+    "high_interpretation": "Polyarthrite rhumatoïde (PR) : Le FR a une excellente sensibilité (60-80%) mais une faible spécificité (présent dans les infections chroniques, connectivites, sujets âgés). Les anti-CCP (ACPA) ont une excellente spécificité (95-98%) et une valeur pronostique majeure (marqueur d'erosions radiologiques précoces et de sévérité). Autres causes de FR élevé : Gougerot-Sjögren, LES, cryoglobulinémie, hépatite C, endocardite bactérienne subaiguë. Conduite à tenir : Consultation spécialisée rhumatologie, bilan radiographique des mains/poignets, initiation d'un traitement de fond (MTX) si PR avérée selon critères ACR/EULAR 2010.",
+    "low_interpretation": "Absence de signification pathologique. Une valeur basse ou négative n'exclue pas formellement une polyarthrite rhumatoïde (PR séronégative, présente dans 20-30% des cas au début de la maladie). Conduite à tenir : Répéter le dosage si forte suspicion clinique ou réévaluer l'imagerie (échographie articulaire avec Doppler ou IRM).",
+    "clinical_notes": [
+      "Piège diagnostique : Le FR peut être faussement positif chez le sujet âgé sain (jusqu'à 10-15% de faux positifs) et en cas d'hypergammaglobulinémie polyclonale (infections chroniques, cirrhose).",
+      "Association pronostique : L'association d'un FR positif et d'Anti-CCP positifs chez un patient avec une mono- ou polyarthrite signe une PR agressive à haut risque d'atteinte extra-articulaire et de destruction ostéo-articulaire rapide."
+    ],
+    "created_at": "2026-11-08T02:37:38.085184+00:00",
+    "updated_at": "2026-11-08T02:37:38.085197+00:00"
   }
 ]
