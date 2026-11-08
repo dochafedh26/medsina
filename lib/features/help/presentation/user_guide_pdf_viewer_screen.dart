@@ -13,6 +13,8 @@ import '../../practical_tools/presentation/practical_tools_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
+import '../../subscription/presentation/referral_screen.dart';
+import '../../profile/presentation/modern_user_profile_screen.dart';
 
 class UserGuidePdfViewerScreen extends StatefulWidget {
   final int? initialPage;
@@ -60,35 +62,49 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
     },
     {
       'page': 2,
-      'title': '2. Concours Résidanat & Banque de 19 000+ QCMs',
-      'icon': Icons.menu_book_rounded,
-      'color': Color(0xFF8B5CF6),
-      'desc': 'Banque exhaustive de QCMs classés par module, examens blancs, corrections détaillées avec justifications et mode concours.',
+      'title': '2. Espace Profil Médical & Suivi d\'Activité',
+      'icon': Icons.account_circle_rounded,
+      'color': Color(0xFF0D9488),
+      'desc': 'Validation journalière (« Accomplir le jour »), suivi des QCMs et cours complétés, objectifs quotidiens, série d\'assiduité (Streak) et sélection d\'avatars médicaux.',
     },
     {
       'page': 3,
-      'title': '3. Pratique Clinique & Conduites à Tenir (CAT)',
-      'icon': Icons.emergency_rounded,
-      'color': Color(0xFFEF4444),
-      'desc': 'Protocoles d\'urgences vitales, mémentos de garde de nuit, calculateurs de scores (Glasgow, Well, etc.) et normes bio.',
+      'title': '3. Concours Résidanat & Banque 19 000+ QCMs',
+      'icon': Icons.menu_book_rounded,
+      'color': Color(0xFF8B5CF6),
+      'desc': 'Banque exhaustive de QCMs classés par module, examens blancs, corrections détaillées avec justifications, flashcards FSRS et mode concours.',
     },
     {
       'page': 4,
-      'title': '4. IA Médicale, Vidal & Moteur Omnisearch',
-      'icon': Icons.psychology_rounded,
-      'color': Color(0xFF0284C7),
-      'desc': 'Recherche globale unifiée dans tous les PDFs avec raccourci Ctrl+K, analyse d\'ordonnance médicamenteuse et copilote IA.',
+      'title': '4. Livrets All-in-One & Témoignages Cloud',
+      'icon': Icons.auto_stories_rounded,
+      'color': Color(0xFF3B82F6),
+      'desc': '47 livrets téléchargeables avec fiches synthèses High-Yield, et base de données Cloud de retours d\'expérience de majors de résidanat.',
     },
     {
       'page': 5,
-      'title': '5. Formules, Tarifs & Abonnements',
-      'icon': Icons.workspace_premium_rounded,
-      'color': Color(0xFFF59E0B),
-      'desc': 'Pass Découverte, Pass Étudiant, Résident Élite, Clinique Pro et All-Access VIP. Paiement sécurisé CIB / EDAHABIA.',
+      'title': '5. Pratique Clinique & Conduites à Tenir (CAT)',
+      'icon': Icons.emergency_rounded,
+      'color': Color(0xFFEF4444),
+      'desc': 'Protocoles d\'urgences vitales, mémentos de garde hospitalière, calculateurs de scores (Glasgow, Wells, Cockcroft) et normes biologiques.',
     },
     {
       'page': 6,
-      'title': '6. Multiplateforme, Raccourcis & Support',
+      'title': '6. IA Médicale, Vidal Algérie & Omnisearch',
+      'icon': Icons.psychology_rounded,
+      'color': Color(0xFF0284C7),
+      'desc': 'Recherche transversale unifiée (Ctrl+K), analyse d\'ordonnances, détection d\'interactions et alertes contre-indications terrain.',
+    },
+    {
+      'page': 7,
+      'title': '7. Formules, Tarifs & Parrainage Confraternel',
+      'icon': Icons.workspace_premium_rounded,
+      'color': Color(0xFFF59E0B),
+      'desc': 'Pass Découverte, Pass Étudiant, Résident Élite, Clinique Pro et All-Access VIP. Système de parrainage confraternel (+7j VIP offerts).',
+    },
+    {
+      'page': 8,
+      'title': '8. Multiplateforme, Raccourcis & Support',
       'icon': Icons.devices_rounded,
       'color': Color(0xFF10B981),
       'desc': 'Compatibilité Android APK & Windows PC, raccourcis clavier, synchronisation multi-appareils et assistance officielle.',
@@ -695,7 +711,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                           ),
                         ),
                         Text(
-                          'SaaS & Révision Résidanat Blida 2027 • v1.0.16',
+                          'SaaS & Révision Résidanat Blida 2027 • v1.0.57',
                           style: TextStyle(color: Colors.white70, fontSize: 12),
                         ),
                       ],
@@ -847,7 +863,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
           children: [
             ActionChip(
               avatar: const Icon(Icons.cloud_off_rounded, size: 14),
-              label: const Text('Mode Hors-Ligne'),
+              label: const Text('Mode Hors-Ligne 100%'),
               onPressed: () {},
             ),
             ActionChip(
@@ -862,11 +878,14 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
           spacing: 8,
           children: [
             ActionChip(
-              avatar: const Icon(Icons.school_rounded, size: 14),
-              label: const Text('Catalogue Résidanat'),
-              onPressed: () => Navigator.of(ctx).push(
-                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
-              ),
+              avatar: const Icon(Icons.account_circle_rounded, size: 14),
+              label: const Text('Ouvrir mon Profil Médical'),
+              onPressed: () => ModernUserProfileScreen.push(ctx),
+            ),
+            ActionChip(
+              avatar: const Icon(Icons.task_alt_rounded, size: 14),
+              label: const Text('Valider ma Journée (Streak)'),
+              onPressed: () => ModernUserProfileScreen.push(ctx),
             ),
           ],
         );
@@ -875,8 +894,41 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
           spacing: 8,
           children: [
             ActionChip(
+              avatar: const Icon(Icons.school_rounded, size: 14),
+              label: const Text('Catalogue Résidanat (19 000+ QCMs)'),
+              onPressed: () => Navigator.of(ctx).push(
+                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+              ),
+            ),
+          ],
+        );
+      case 4:
+        return Wrap(
+          spacing: 8,
+          children: [
+            ActionChip(
+              avatar: const Icon(Icons.auto_stories_rounded, size: 14),
+              label: const Text('Consulter les 47 Livrets All-in-One'),
+              onPressed: () => Navigator.of(ctx).push(
+                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
+              ),
+            ),
+            ActionChip(
+              avatar: const Icon(Icons.record_voice_over_rounded, size: 14),
+              label: const Text('Témoignages de Majors (Cloud)'),
+              onPressed: () => Navigator.of(ctx).push(
+                MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
+              ),
+            ),
+          ],
+        );
+      case 5:
+        return Wrap(
+          spacing: 8,
+          children: [
+            ActionChip(
               avatar: const Icon(Icons.emergency_rounded, size: 14),
-              label: const Text('Protocoles CAT'),
+              label: const Text('Protocoles CAT d\'Urgence'),
               onPressed: () => Navigator.of(ctx).push(
                 MaterialPageRoute(builder: (_) => const ClinicalScreen()),
               ),
@@ -890,7 +942,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
             ),
           ],
         );
-      case 4:
+      case 6:
         return Wrap(
           spacing: 8,
           children: [
@@ -903,27 +955,34 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
             ),
           ],
         );
-      case 5:
+      case 7:
         return Wrap(
           spacing: 8,
           children: [
             ActionChip(
               avatar: const Icon(Icons.workspace_premium_rounded, size: 14),
-              label: const Text('Voir les Tarifs & Abonnements'),
+              label: const Text('Formules & Tarifs'),
               onPressed: () => Navigator.of(ctx).push(
                 MaterialPageRoute(builder: (_) => const SubscriptionPaywallScreen()),
               ),
             ),
+            ActionChip(
+              avatar: const Icon(Icons.group_add_rounded, size: 14),
+              label: const Text('Parrainage (+7j VIP)'),
+              onPressed: () => Navigator.of(ctx).push(
+                MaterialPageRoute(builder: (_) => const ReferralScreen()),
+              ),
+            ),
           ],
         );
-      case 6:
+      case 8:
       default:
         return Wrap(
           spacing: 8,
           children: [
             ActionChip(
               avatar: const Icon(Icons.telegram, size: 14),
-              label: const Text('Canal Telegram Officiel'),
+              label: const Text('Canal Telegram Officiel (@medsina_officiel)'),
               onPressed: () => launchUrl(
                 Uri.parse('https://t.me/medsina_officiel'),
                 mode: LaunchMode.externalApplication,

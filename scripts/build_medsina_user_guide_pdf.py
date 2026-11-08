@@ -439,7 +439,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
     <div class="cover-meta-item">
       <strong>Version Système</strong>
-      <span>Medsina v1.0.16 (Build Stable 2027)</span>
+      <span>Medsina v1.0.57 (Build Stable 2027)</span>
     </div>
     <div class="cover-meta-item">
       <strong>Portail Officiel</strong>
@@ -589,24 +589,44 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </div>
 
-  <h2>🚀 NOUVEAUTÉS MAJEURES « MEDSINA ULTRA » (v1.0.22)</h2>
+  <h2>🚀 ÉCOSYSTÈME COMPLET MEDSINA 2027 (v1.0.57)</h2>
   <div class="grid-3">
     <div class="card card-teal">
-      <div class="card-title">🎯 1. Moteur QCM Ultra</div>
+      <div class="card-title">👤 Espace Profil & Avatars</div>
       <div class="card-body">
-        Filtres par historique (<em>Mes Erreurs, Jamais vues, Favoris ⭐, Avec mes Notes 📝, Haute Tombabilité 🔥</em>), alerte anti-piège sur les questions négatives, <strong>statistiques par option (% A-E)</strong> et mode Examen Blanc chronométré (Tout ou Rien / Partiel).
-      </div>
-    </div>
-    <div class="card card-purple">
-      <div class="card-title">🧠 2. Flashcards FSRS v4.5</div>
-      <div class="card-body">
-        Algorithme de <strong>Répétition Espacée FSRS</strong> calculant stabilité, difficulté et rétention mémorielle. Convertissez n'importe quel QCM en Flashcard Recto/Verso en <strong>1 seul clic</strong> !
+        Identité complète (rôle médical, faculté, externat 1e-6e, wilaya, bio), <strong>import de photo de profil</strong> avec stockage Supabase Cloud et <strong>8 avatars médicaux préréglés</strong>.
       </div>
     </div>
     <div class="card card-blue">
-      <div class="card-title">📅 3. Study Planner 3 Couches</div>
+      <div class="card-title">🌟 Validation Journalière</div>
       <div class="card-body">
-        Tableau de suivi <strong>Couche 1 / Couche 2 / Couche 3 + % QCM</strong>, compte à rebours avant l'EMD ou le Concours de Résidanat, et recommandation quotidienne des <strong>3 cours les plus rentables</strong>.
+        Bouton <strong>« Accomplir le Jour »</strong> attribuant <strong>+50 XP fidélité</strong>, incrémentation de la <strong>série active (Streak 🔥)</strong> et tracker visuel des 7 jours de la semaine.
+      </div>
+    </div>
+    <div class="card card-purple">
+      <div class="card-title">📚 47 Livrets All-in-One</div>
+      <div class="card-body">
+        Catalogue spécifique de <strong>47 livrets de révision</strong> condensés High-Yield avec QCMs intégrés et cache hors-ligne autonome ultra-rapide.
+      </div>
+    </div>
+  </div>
+  <div class="grid-3" style="margin-top: 10px;">
+    <div class="card card-teal">
+      <div class="card-title">🏆 Témoignages Majors (Cloud)</div>
+      <div class="card-body">
+        Base Cloud Supabase de retours d'expérience authentiques (Dr. Bentegri, Dr. Djellata) avec recherche instantanée dans <strong>Omnisearch (Ctrl+K)</strong>.
+      </div>
+    </div>
+    <div class="card card-purple">
+      <div class="card-title">🧠 Flashcards FSRS v4.5</div>
+      <div class="card-body">
+        Algorithme de <strong>Répétition Espacée FSRS</strong> calculant stabilité et rétention. Conversion de n'importe quel QCM en Flashcard en <strong>1 clic</strong> !
+      </div>
+    </div>
+    <div class="card card-blue">
+      <div class="card-title">📅 Study Planner 3 Couches</div>
+      <div class="card-body">
+        Suivi <strong>Couche 1 (Lecture) / Couche 2 (Fiches) / Couche 3 (Annales)</strong>, simulateur J-X jusqu'au concours et priorités quotidiennes par IA.
       </div>
     </div>
   </div>
