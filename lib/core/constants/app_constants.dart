@@ -4,7 +4,7 @@ class AppConstants {
   static const String appName = 'Medsina';
   static const String appSubtitle = 'Plateforme Médicale Globale';
   static const String appTagline = 'Pratique Clinique • Formation Résidanat • Applications Pratiques';
-  static String appVersion = '1.0.48';
+  static String appVersion = '1.0.54';
   static final DateTime promoNov2026Start = DateTime.utc(2026, 11, 2, 0, 0, 0);
   static final DateTime promoNov2026End = DateTime.utc(2026, 11, 30, 23, 59, 59);
 
