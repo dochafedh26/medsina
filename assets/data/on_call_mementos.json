@@ -494,16 +494,16 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Assise stricte, monitorage complet (SpO2, PNI, ECG 12 dérivations), oxygénothérapie à haut débit (Lunettes 15L/min ou VNI/CPAP si détresse respiratoire persistante).",
-      "Étape 2 : Bilan biologique d'urgence au lit (NFS, Ionogramme sanguin, Urée, Créatinine, Troponine I, Gaz du sang, BnP ou NT-proBNP) et pose de 2 voies veineuses périphériques (VVP).",
-      "Étape 3 : Traitement vasodilatateur en urgence absolue : Trinitrine (Lénitral) en IVSE débutée à 1-3 mg/h ou en sublingual (spray) si PA très élevée (PAS > 180 mmHg) associée au Furosémide (Lasilix) 40 à 80 mg en IV directe.",
-      "Étape 4 : Surveillance armée (PA/15 min puis /h, diurèse horaire par sonde urinaire). Objectif : baisser la PAM de 25% dans la 1ère heure, puis stabiliser autour de 160/100 mmHg.",
-      "Étape 5 : PIÈGE MÉDICO-LÉGAL / CONTRE-INDICATION : Ne JAMAIS baisser brutalement la PA systolique de plus de 30-40% sous peine d'ischémie myocardique ou d'infarctus cérébral ischémique (AVC). Éviter les inhibiteurs calciques à action courte sublinguaux (Nifédipine)."
+      "Étape 1 : Assise stricte, monitorage complet (SpO2, PNI, ECG 12 dérivations), pose de 2 VVP de gros calibre et oxygénothérapie haut débit au masque à haute concentration (ou VNI en urgence si détresse respiratoire persistante).",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : Gaz du sang (GDS), Troponine ultrasensible, BNP/NT-proBNP, Ionogramme sanguin avec fonction rénale (Urée, Créatinine) et NFS.",
+      "Étape 3 : Traitement vasodilatateur et diurétique immédiat : Nicardipine (Loxen) IVSE à débuter à 1-2 mg/h (titrage strict pour baisser la PAM de 25% max en 1h) associé au Furosémide (Lasilix) IV direct : 40 à 80 mg (ou doubler la dose habituelle du patient).",
+      "Étape 4 : Surveillance armée (PA toutes les 5 à 10 min, diurèse horaire). Critères de transfert en réanimation : échec de la VNI, persistance d'une SpO2 < 90%, collapsus, ou nécessité de vasopresseurs.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne JAMAIS chuter brutalement la PA à des valeurs normales d'emblée (risque d'ischémie myocardique, mésentérique ou d'AVC par rupture d'autoregulation) et éviter les dérivés nitrés si sténose aortique serrée connue."
     ],
-    "scientific_references": "Consensus ESC 2023 Hypertension Artérielle / SFMU / SRLF / Recommandations MSPRH Algérie",
+    "scientific_references": "ESC Guidelines / SFMU / SRLF / Consensus Nationaux Algériens de Cardiologie",
     "is_active": true,
-    "created_at": "2026-10-31T05:53:24.968943+00:00",
-    "updated_at": "2026-10-31T05:53:24.968960+00:00"
+    "created_at": "2026-11-08T19:47:29.338829+00:00",
+    "updated_at": "2026-11-08T19:47:29.338841+00:00"
   },
   {
     "id": "memento_syndrome_meninge_aigu",
