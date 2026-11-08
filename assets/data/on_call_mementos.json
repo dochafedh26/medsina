@@ -331,22 +331,23 @@
   },
   {
     "id": "memento_hemorragie_digestive_rvo",
-    "title": "🩸 Hémorragie Digestive par RVO (Déchoquage)",
-    "category": "Gastro-entérologie / Réanimation",
+    "title": "🚨 Hémorragie Digestive par RVO (Varices Œsophagiennes)",
+    "category": "Urgences Médico-Chirurgicales & Réanimation",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Libération des voies aériennes, oxygénothérapie prudente, pose de 2 VVP de gros calibre (14G/16G), remplissage par cristalloïdes (sérum salé 0.9%) si collapsus, et évaluation stricte de la conscience (Glasgow). Intubation de protection si encéphalopathie sévère ou cataclysme hémorragique.",
-      "Étape 2 : Bilan biologique d'urgence immédiat : NFS, groupement ABO-Rh, test de Coombs indirect, bilan d'hémostase (TP, TCA, Fibrinogène), fonction rénale (Urée/Créat), ionogramme sanguin, bilan hépatique et gaz du sang.",
-      "Étape 3 : Thérapies vaso-actives immédiates avant la fibroscopie : Somatostatine (bolus de 250 µg puis 3 mg/24h au PSE) ou Terlipressine (Glypressin® : 2 mg IV direct puis 1 mg/4h). Antibiothérapie prophylaxie systématique par Ceftriaxone 1g/24h IV. Inhibiteur de la pompe à protons (Oméprazole 80 mg IV bolus puis 8 mg/h).",
-      "Étape 4 : Appel en urgence du gastro-entérologue de garde pour hémostase endoscopique (ligature élastique ou sclérose) sous 12h max. En cas d'échec ou d'hémorragie massive persistante : pose d'une sonde de Blakemore ou de Minnesota (tamponnement gastroduodénal, durée max 24h).",
-      "Étape 5 : Surveillance armée en réanimation / déchoquage : PA, FC, SpO2, diurèse horaire (sonde vésicale), contrôle de l'Hb (objectif > 7-8 g/dL avec transfusion de CGR prudente et culot plaquettaire/PFC si troubles de l'hémostase). Piège : éviter le remplissage massif par sérum salé qui aggrave l'hypertension portale et l'ascite."
+      "Étape 1 : Conditionnement immédiat au déchoquage, 2 VVP de gros calibre (16G-18G), oxygénothérapie, monitorage multiparamétrique et évaluation de l'état hémodynamique (choc hémorragique ?).",
+      "Étape 2 : Bilan biologique urgent au lit : NFS, groupement-isogroupe, Rh, tests croisés, bilan hépatique, urée, créatinine, TP, TCA, fibrinogène et gaz du sang.",
+      "Étape 3 : Thérapie d'urgence avant l'endoscopie : Remplissage prudent (éviter la sur-transfusion qui aggrave l'hypertension portale, objectif PAM > 65 mmHg, culots globulaires si Hb < 7-8 g/dL), Terlipressine (Glypressin) : 2 mg IV direct puis 1 mg/4h, et Antibiothérapie prophylaxie (Ceftriaxone 1g/24h IV).",
+      "Étape 4 : Hémostase endoscopique urgente (ligature élastique ou sclérose) dans les 12 heures après réanimation hémodynamique. En cas d'échec ou d'hémorragie massive : Sonde de Blakemore ou de Linton (tamponnement gastrique provisoire max 24h).",
+      "Étape 5 : Surveillance armée en réanimation ou USI : conscience, diurèse horaire, SpO2, récidive hémorragique (hématémèse, méléna, choc), encéphalopathie hépatique, et correction des troubles de la coagulation (PFC, plaquettes).",
+      "Étape 6 : Piège mortel / CI absolue : Ne jamais donner de culots globulaires de manière excessive sans contrôle (risque de rebond tensionnel et majoration du saignement) et attention à l'intubation trachéale en urgence chez le cirrhotique en encéphalopathie (risque d'inhalation massive)."
     ],
-    "scientific_references": "Consensus Baveno VII / SFMU / SRLF / Société Algérienne de Gastro-Entérologie",
+    "scientific_references": "Consensus Baveno VII / SFMU / SRLF / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-08T00:43:27.935792+00:00",
-    "updated_at": "2026-11-08T00:43:27.935804+00:00"
+    "created_at": "2026-11-08T23:46:53.959689+00:00",
+    "updated_at": "2026-11-08T23:46:53.959705+00:00"
   },
   {
     "id": "memento_asthme_aigu_grave",
