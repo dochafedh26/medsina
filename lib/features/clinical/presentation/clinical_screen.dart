@@ -12,6 +12,7 @@ import '../bloc/clinical_state.dart';
 import '../models/cat_protocol_model.dart';
 import '../models/clinical_calculator_model.dart';
 import '../models/emergency_drug_model.dart';
+import 'medsina_synapse_screen.dart';
 
 class ClinicalScreen extends StatefulWidget {
   final int initialTabIndex;
@@ -35,10 +36,10 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    final initialIdx = (widget.initialTabIndex >= 0 && widget.initialTabIndex < 3)
+    final initialIdx = (widget.initialTabIndex >= 0 && widget.initialTabIndex < 4)
         ? widget.initialTabIndex
         : 0;
-    _tabController = TabController(length: 3, vsync: this, initialIndex: initialIdx);
+    _tabController = TabController(length: 4, vsync: this, initialIndex: initialIdx);
     context.read<ClinicalBloc>().add(LoadClinicalDataEvent());
   }
 
@@ -157,6 +158,17 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
                     ],
                   ),
                 ),
+                Tab(
+                  height: 38,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.psychology_rounded, size: 15),
+                      SizedBox(width: 6),
+                      Text('Synapse (ECOS)'),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -167,6 +179,7 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
                 _ProtocolsTab(targetProtocolId: widget.targetProtocolId),
                 const _CalculatorsTab(),
                 _EmergencyDrugsTab(targetDrugQuery: widget.targetDrugQuery),
+                const MedsinaSynapseScreen(isEmbedded: true),
               ],
             ),
           ),
