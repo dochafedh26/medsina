@@ -574,7 +574,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
               Text(
                 isNarrow
                     ? 'Guide complet des fonctionnalités'
-                    : 'Guide complet des fonctionnalités • Version 2026-2027 (v1.0.58)',
+                    : 'Guide complet des fonctionnalités • Version 2026-2027 (v1.0.59)',
                 style: TextStyle(
                   fontSize: 11,
                   color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
@@ -729,7 +729,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                           ),
                         ),
                         Text(
-                          'SaaS & Révision Résidanat Blida 2027 • v1.0.58',
+                          'SaaS & Révision Résidanat Blida 2027 • v1.0.59',
                           style: TextStyle(color: Colors.white70, fontSize: 12),
                         ),
                       ],

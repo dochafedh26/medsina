@@ -8,6 +8,8 @@ import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
 import '../models/module_model.dart';
 import '../services/user_qcm_annotation_service.dart';
+import 'course_pdf_viewer_screen.dart';
+import 'course_summary_screen.dart';
 import 'qcm_study_screen.dart';
 
 class StudyPlannerScreen extends StatefulWidget {
@@ -321,55 +323,90 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
           ...top3.map((item) {
             final entry = _annService.getPlannerEntry(item.course.id);
             return Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Text(
-                      '🔥 ${item.course.questionsCount} QCM',
-                      style: const TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFFB45309),
+              padding: const EdgeInsets.only(bottom: 8),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () => _showCourseActionsSheet(
+                  context,
+                  course: item.course,
+                  moduleName: item.module.name,
+                  module: item.module,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.25)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          '🔥 ${item.course.questionsCount} QCM',
+                          style: const TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFFB45309),
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${item.module.name} • ${item.course.name}',
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              '${entry.completedLayersCount}/3 couches validées',
+                              style: TextStyle(fontSize: 10.5, color: Colors.grey.shade600),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          minimumSize: const Size(0, 30),
+                          side: BorderSide(color: const Color(0xFF0284C7).withValues(alpha: 0.5)),
+                        ),
+                        icon: const Icon(Icons.menu_book_rounded, size: 13, color: Color(0xFF0284C7)),
+                        label: const Text(
+                          'Cours',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF0284C7)),
+                        ),
+                        onPressed: () => _openCoursePdf(context, item.course, item.module.name),
+                      ),
+                      const SizedBox(width: 6),
+                      FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          backgroundColor: AppTheme.primaryTeal,
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          minimumSize: const Size(0, 30),
+                        ),
+                        icon: const Icon(Icons.play_circle_fill_rounded, size: 13, color: Colors.white),
+                        label: const Text(
+                          'QCM',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        onPressed: () => _startCourseQcm(context, item.course),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      '${item.module.name} • ${item.course.name}',
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text(
-                    '${entry.completedLayersCount}/3 couches',
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-                  ),
-                  const SizedBox(width: 6),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                    ),
-                    onPressed: () {
-                      final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
-                      context.read<RevisionBloc>().add(
-                            OpenCourseQuestionsEvent(item.course, resume: false, filterForStudent: isStudent),
-                          );
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-                      );
-                    },
-                    child: const Text('Lancer QCM →', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold)),
-                  ),
-                ],
+                ),
               ),
             );
           }),
@@ -459,50 +496,75 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        course.name,
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: course.questionsCount >= 25
-                            ? const Color(0xFFF59E0B).withValues(alpha: 0.16)
-                            : Colors.grey.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Text(
-                        '${course.questionsCount} QCM',
-                        style: TextStyle(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w700,
-                          color: course.questionsCount >= 25 ? const Color(0xFFB45309) : null,
+                InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () => _showCourseActionsSheet(
+                    context,
+                    course: course,
+                    moduleName: mod.name,
+                    module: mod,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.menu_book_rounded,
+                          size: 16,
+                          color: AppTheme.primaryTeal,
                         ),
-                      ),
-                    ),
-                    if (mastery > 0) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF10B981).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          'Maîtrise: $mastery%',
-                          style: const TextStyle(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF059669),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            course.name,
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
                           ),
                         ),
-                      ),
-                    ],
-                  ],
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: course.questionsCount >= 25
+                                ? const Color(0xFFF59E0B).withValues(alpha: 0.16)
+                                : Colors.grey.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            '${course.questionsCount} QCM',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                              color: course.questionsCount >= 25 ? const Color(0xFFB45309) : null,
+                            ),
+                          ),
+                        ),
+                        if (mastery > 0) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              'Maîtrise: $mastery%',
+                              style: const TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF059669),
+                              ),
+                            ),
+                          ),
+                        ],
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          size: 18,
+                          color: isDark ? Colors.white38 : Colors.grey.shade400,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Wrap(
@@ -541,18 +603,52 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                       ),
                     ),
                     ActionChip(
-                      avatar: const Icon(Icons.play_circle_outline_rounded, size: 15, color: AppTheme.primaryTeal),
-                      label: const Text('QCM', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                      avatar: const Icon(
+                        Icons.menu_book_rounded,
+                        size: 14,
+                        color: Color(0xFF0284C7),
+                      ),
+                      label: const Text(
+                        'Cours',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF0284C7)),
+                      ),
+                      tooltip: 'Ouvrir le support complet du cours (PDF)',
                       visualDensity: VisualDensity.compact,
-                      onPressed: () {
-                        final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
-                        context.read<RevisionBloc>().add(
-                              OpenCourseQuestionsEvent(course, resume: false, filterForStudent: isStudent),
-                            );
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-                        );
-                      },
+                      backgroundColor: const Color(0xFF0284C7).withValues(alpha: 0.1),
+                      side: BorderSide(color: const Color(0xFF0284C7).withValues(alpha: 0.3)),
+                      onPressed: () => _openCoursePdf(context, course, mod.name),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(
+                        Icons.article_outlined,
+                        size: 14,
+                        color: Color(0xFF8B5CF6),
+                      ),
+                      label: const Text(
+                        'Fiche',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF8B5CF6)),
+                      ),
+                      tooltip: 'Consulter la fiche de synthèse High-Yield',
+                      visualDensity: VisualDensity.compact,
+                      backgroundColor: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                      side: BorderSide(color: const Color(0xFF8B5CF6).withValues(alpha: 0.3)),
+                      onPressed: () => _openCourseSummary(context, course, mod.name),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(
+                        Icons.play_circle_outline_rounded,
+                        size: 14,
+                        color: AppTheme.primaryTeal,
+                      ),
+                      label: const Text(
+                        'QCM',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+                      ),
+                      tooltip: 'S\'entraîner aux QCMs du cours',
+                      visualDensity: VisualDensity.compact,
+                      backgroundColor: AppTheme.primaryTeal.withValues(alpha: 0.1),
+                      side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.3)),
+                      onPressed: () => _startCourseQcm(context, course),
                     ),
                   ],
                 ),
@@ -615,6 +711,354 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
     if (picked != null) {
       await _annService.setTargetExamDate(picked);
     }
+  }
+
+  void _openCoursePdf(BuildContext context, CourseModel course, String moduleName) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CoursePdfViewerScreen(
+          course: course,
+          moduleName: moduleName,
+        ),
+      ),
+    );
+  }
+
+  void _openCourseSummary(BuildContext context, CourseModel course, String moduleName) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CourseSummaryScreen(
+          course: course,
+          moduleName: moduleName,
+        ),
+      ),
+    );
+  }
+
+  void _startCourseQcm(BuildContext context, CourseModel course) {
+    final isStudent = context.read<AuthBloc>().state.user?.isStudent == true;
+    context.read<RevisionBloc>().add(
+          OpenCourseQuestionsEvent(course, resume: false, filterForStudent: isStudent),
+        );
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
+    );
+  }
+
+  void _showCourseActionsSheet(
+    BuildContext context, {
+    required CourseModel course,
+    required String moduleName,
+    required MedicalModuleModel module,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final mastery = _annService.getCourseMasteryPercent(course.id).round();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (modalContext, setModalState) {
+            final currentEntry = _annService.getPlannerEntry(course.id, moduleId: module.id);
+            return SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Handle bar
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 14),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+
+                    // Header
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.school_rounded, color: AppTheme.primaryTeal, size: 24),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                moduleName,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                course.name,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded),
+                          onPressed: () => Navigator.pop(ctx),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Badges
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '🔥 ${course.questionsCount} QCMs',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFB45309),
+                            ),
+                          ),
+                        ),
+                        if (mastery > 0)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Maîtrise: $mastery%',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF059669),
+                              ),
+                            ),
+                          ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '${currentEntry.completedLayersCount}/3 Couches',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.primaryTeal,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(),
+                    const SizedBox(height: 8),
+
+                    // Actions section
+                    Text(
+                      'ACCÉDER AU COURS & RÉVISIONS',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.8,
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // 1. Lire le cours (PDF)
+                    ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: const Color(0xFF0284C7).withValues(alpha: 0.25)),
+                      ),
+                      tileColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF0F9FF),
+                      leading: const CircleAvatar(
+                        backgroundColor: Color(0xFF0284C7),
+                        foregroundColor: Colors.white,
+                        radius: 18,
+                        child: Icon(Icons.picture_as_pdf_rounded, size: 18),
+                      ),
+                      title: const Text(
+                        'Lire le Cours (Support PDF)',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                      ),
+                      subtitle: const Text(
+                        'Support officiel complet (Couche 1 : Lecture & Compréhension)',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _openCoursePdf(context, course, moduleName);
+                      },
+                    ),
+                    const SizedBox(height: 8),
+
+                    // 2. Fiche de synthèse High-Yield
+                    ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: const Color(0xFF8B5CF6).withValues(alpha: 0.25)),
+                      ),
+                      tileColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFFAF5FF),
+                      leading: const CircleAvatar(
+                        backgroundColor: Color(0xFF8B5CF6),
+                        foregroundColor: Colors.white,
+                        radius: 18,
+                        child: Icon(Icons.menu_book_rounded, size: 18),
+                      ),
+                      title: const Text(
+                        'Fiche de Synthèse High-Yield',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                      ),
+                      subtitle: const Text(
+                        'Points clés, pièges & perles de concours (Couche 2 : Mémorisation)',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _openCourseSummary(context, course, moduleName);
+                      },
+                    ),
+                    const SizedBox(height: 8),
+
+                    // 3. Entraînement QCM
+                    ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.25)),
+                      ),
+                      tileColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF0FDFA),
+                      leading: const CircleAvatar(
+                        backgroundColor: AppTheme.primaryTeal,
+                        foregroundColor: Colors.white,
+                        radius: 18,
+                        child: Icon(Icons.play_arrow_rounded, size: 20),
+                      ),
+                      title: const Text(
+                        'S\'entraîner aux QCMs',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                      ),
+                      subtitle: Text(
+                        '${course.questionsCount} questions d\'annales corrigées (Couche 3 : Finale)',
+                        style: const TextStyle(fontSize: 11),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _startCourseQcm(context, course);
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+                    const Divider(),
+                    const SizedBox(height: 8),
+
+                    // Toggle Layers in Modal
+                    Text(
+                      'VALIDATION DES COUCHES D\'APPRENTISSAGE',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.8,
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildLayerCheckChip(
+                            label: 'Couche 1',
+                            checked: currentEntry.layer1Done,
+                            color: const Color(0xFF0284C7),
+                            onTap: () async {
+                              await _annService.togglePlannerLayer(
+                                courseId: course.id,
+                                moduleId: module.id,
+                                layerIndex: 1,
+                              );
+                              setModalState(() {});
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildLayerCheckChip(
+                            label: 'Couche 2',
+                            checked: currentEntry.layer2Done,
+                            color: const Color(0xFF8B5CF6),
+                            onTap: () async {
+                              await _annService.togglePlannerLayer(
+                                courseId: course.id,
+                                moduleId: module.id,
+                                layerIndex: 2,
+                              );
+                              setModalState(() {});
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildLayerCheckChip(
+                            label: 'Couche 3',
+                            checked: currentEntry.layer3Done,
+                            color: const Color(0xFF10B981),
+                            onTap: () async {
+                              await _annService.togglePlannerLayer(
+                                courseId: course.id,
+                                moduleId: module.id,
+                                layerIndex: 3,
+                              );
+                              setModalState(() {});
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }
 

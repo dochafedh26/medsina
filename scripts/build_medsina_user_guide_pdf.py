@@ -439,7 +439,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
     <div class="cover-meta-item">
       <strong>Version Système</strong>
-      <span>Medsina v1.0.58 (Build Stable 2027)</span>
+      <span>Medsina v1.0.59 (Build Stable 2027)</span>
     </div>
     <div class="cover-meta-item">
       <strong>Portail Officiel</strong>
@@ -589,7 +589,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </div>
 
-  <h2>🚀 ÉCOSYSTÈME COMPLET MEDSINA 2027 (v1.0.58)</h2>
+  <h2>🚀 ÉCOSYSTÈME COMPLET MEDSINA 2027 (v1.0.59)</h2>
   <div class="grid-3">
     <div class="card card-teal">
       <div class="card-title">👤 Espace Profil & Avatars</div>
