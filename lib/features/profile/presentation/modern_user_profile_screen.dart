@@ -525,21 +525,18 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
     try {
       setState(() => _isUploadingAvatar = true);
 
-      final result = await FilePicker.platform.pickFiles(
+      final file = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
-        withData: true,
-        allowMultiple: false,
       );
 
-      if (result == null || result.files.isEmpty) {
+      if (file == null) {
         setState(() => _isUploadingAvatar = false);
         return;
       }
 
-      final file = result.files.first;
-      final bytes = file.bytes;
-      if (bytes == null || bytes.isEmpty) {
+      final bytes = await file.readAsBytes();
+      if (bytes.isEmpty) {
         setState(() => _isUploadingAvatar = false);
         return;
       }
