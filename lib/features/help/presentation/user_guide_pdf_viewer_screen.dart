@@ -15,6 +15,7 @@ import '../../search/presentation/global_search_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../profile/presentation/modern_user_profile_screen.dart';
+import '../../../../core/widgets/medsina_logo.dart';
 
 class UserGuidePdfViewerScreen extends StatefulWidget {
   final int? initialPage;
@@ -25,7 +26,7 @@ class UserGuidePdfViewerScreen extends StatefulWidget {
     super.key,
     this.initialPage,
     this.initialSearchQuery,
-    this.initialTabIndex = 1,
+    this.initialTabIndex = 0,
   });
 
   static const String assetPath = 'assets/data/Medsina_Guide_Decouverte_Fonctionnalites.pdf';
@@ -114,10 +115,11 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
   @override
   void initState() {
     super.initState();
+    final effectiveInitialIndex = widget.initialPage != null ? 1 : widget.initialTabIndex.clamp(0, 1);
     _tabController = TabController(
       length: 2,
       vsync: this,
-      initialIndex: widget.initialTabIndex.clamp(0, 1),
+      initialIndex: effectiveInitialIndex,
     );
     _loadPdfBytes();
   }
@@ -538,41 +540,50 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
 
   Widget _buildTitleBar(bool isDark, double screenWidth) {
     final isNarrow = screenWidth < 460;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
-                'Documentation & Guide Medsina',
+        const MedsinaLogo.icon(size: 24),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      'Documentation & Guide Medsina',
+                      style: TextStyle(
+                        fontSize: isNarrow ? 14 : 15,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (screenWidth >= 440) ...[
+                    const SizedBox(width: 8),
+                    const ContainerBadge(label: 'OFFICIEL'),
+                  ],
+                ],
+              ),
+              Text(
+                isNarrow
+                    ? 'Guide complet des fonctionnalités'
+                    : 'Guide complet des fonctionnalités • Version 2026-2027 (v1.0.58)',
                 style: TextStyle(
-                  fontSize: isNarrow ? 14 : 15,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  fontSize: 11,
+                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-            ),
-            if (screenWidth >= 440) ...[
-              const SizedBox(width: 8),
-              const ContainerBadge(label: 'OFFICIEL'),
             ],
-          ],
-        ),
-        Text(
-          isNarrow
-              ? 'Guide complet des fonctionnalités'
-              : 'Guide complet des fonctionnalités • Version 2026-2027',
-          style: TextStyle(
-            fontSize: 11,
-            color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -690,12 +701,19 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    child: const Icon(Icons.verified_rounded, color: Colors.white, size: 26),
+                    child: const MedsinaLogo.icon(size: 28),
                   ),
                   const SizedBox(width: 12),
                   const Expanded(
@@ -711,7 +729,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                           ),
                         ),
                         Text(
-                          'SaaS & Révision Résidanat Blida 2027 • v1.0.57',
+                          'SaaS & Révision Résidanat Blida 2027 • v1.0.58',
                           style: TextStyle(color: Colors.white70, fontSize: 12),
                         ),
                       ],

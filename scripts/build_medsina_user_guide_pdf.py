@@ -4,8 +4,8 @@ import subprocess
 from pathlib import Path
 
 # Paths
-ROOT = Path(r"d:\REVISION RESIDANAT\ressources\residanat-blida-2027")
-MEDSINA = ROOT / "medsina"
+ROOT = Path(__file__).resolve().parent.parent
+MEDSINA = ROOT
 ASSETS = MEDSINA / "assets"
 
 def get_base64_img(rel_path):
@@ -439,7 +439,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
     <div class="cover-meta-item">
       <strong>Version Système</strong>
-      <span>Medsina v1.0.57 (Build Stable 2027)</span>
+      <span>Medsina v1.0.58 (Build Stable 2027)</span>
     </div>
     <div class="cover-meta-item">
       <strong>Portail Officiel</strong>
@@ -589,7 +589,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </div>
 
-  <h2>🚀 ÉCOSYSTÈME COMPLET MEDSINA 2027 (v1.0.57)</h2>
+  <h2>🚀 ÉCOSYSTÈME COMPLET MEDSINA 2027 (v1.0.58)</h2>
   <div class="grid-3">
     <div class="card card-teal">
       <div class="card-title">👤 Espace Profil & Avatars</div>
@@ -886,17 +886,41 @@ pdf_output_user = ROOT / "Medsina_Guide_Decouverte_Fonctionnalites.pdf"
 pdf_output_web = MEDSINA / "web" / "Medsina_Guide_Decouverte_Fonctionnalites.pdf"
 pdf_output_assets = MEDSINA / "assets" / "data" / "Medsina_Guide_Decouverte_Fonctionnalites.pdf"
 
-edge_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+browser_candidates = [
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+    "/usr/bin/google-chrome",
+    r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+]
+browser_path = None
+for b in browser_candidates:
+    if os.path.exists(b):
+        browser_path = b
+        break
+
+if not browser_path:
+    import shutil
+    for b_name in ["chromium", "chromium-browser", "google-chrome", "msedge"]:
+        which_b = shutil.which(b_name)
+        if which_b:
+            browser_path = which_b
+            break
+
+if not browser_path:
+    raise RuntimeError("No headless Chromium or Edge browser found to render PDF.")
+
 cmd = [
-    edge_path,
+    browser_path,
     "--headless",
+    "--no-sandbox",
     "--disable-gpu",
     "--no-pdf-header-footer",
     f"--print-to-pdf={pdf_output_user.resolve()}",
     str(html_path.resolve())
 ]
 
-print("Compiling PDF with Edge Headless...")
+print(f"Compiling PDF with {browser_path} Headless...")
 res = subprocess.run(cmd, capture_output=True, text=True)
 
 if pdf_output_user.exists():
@@ -915,3 +939,4 @@ else:
 
 if html_path.exists():
     html_path.unlink()
+
