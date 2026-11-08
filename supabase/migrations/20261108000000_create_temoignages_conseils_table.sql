@@ -45,6 +45,9 @@ DROP POLICY IF EXISTS "Enable update for temoignages_conseils" ON public.temoign
 CREATE POLICY "Enable update for temoignages_conseils" ON public.temoignages_conseils
   FOR UPDATE USING (true);
 
+-- Droits d'accès sur l'API PostgREST (Data API)
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.temoignages_conseils TO anon, authenticated, service_role;
+
 -- Index pour la performance des requêtes et filtres
 CREATE INDEX IF NOT EXISTS idx_temoignages_rank_number ON public.temoignages_conseils (rank_number);
 CREATE INDEX IF NOT EXISTS idx_temoignages_year ON public.temoignages_conseils (year);
