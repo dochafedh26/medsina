@@ -1157,5 +1157,20 @@
     ],
     "created_at": "2026-11-08T10:38:30.735178+00:00",
     "updated_at": "2026-11-08T10:38:30.735191+00:00"
+  },
+  {
+    "id": "lab_psa_total_libre",
+    "name": "Antigène Spécifique de la Prostate (PSA total et rapport PSA libre/PSA total)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "PSA total : < 4.0 ng/mL (valeurs seuils adaptées selon l'âge : 40-49 ans: < 2.5 | 50-59 ans: < 3.5 | 60-69 ans: < 4.5 | > 70 ans: < 6.5). Rapport PSA libre / PSA total (L/T) : > 0.20 (20%)",
+    "unit": "ng/mL (ou µg/L)",
+    "high_interpretation": "PSA total > 4.0 ng/mL ou rapport L/T bas (< 0.10 à 0.15) : Évoque en premier lieu une hypertrophie bénigne de la prostate (HBP), une prostatite aiguë/chronique, une rétention aiguë d'urine (RAU), ou un adénocarcinome prostatique. Seuil d'alerte : PSA > 10 ng/mL (forte probabilité de cancer) ou cinétique rapide (vélocité > 0.75 ng/mL/an). Conduite à tenir : Éliminer une infection urinaire, répéter le dosage à distance si cause transitoire, réaliser un toucher rectal (TR) et orienter vers l'urologue pour une éventuelle biopsie prostatique échoguidée.",
+    "low_interpretation": "PSA effondré ou indétectable : Situation physiologique normale chez l'homme jeune ou post-prostatectomie totale (le taux doit être indétectable, souvent < 0.05 ou 0.1 ng/mL, constituant le marqueur idéal de suivi de récidive biologique). N'a pas de signification pathologique par défaut.",
+    "clinical_notes": [
+      "Pièges pré-analytiques et faux positifs majeurs : Toute manipulation de la prostate fausse le PSA total (toucher rectal récent, échographie prostatique transrectale, sondage urinaire, cystoscopie, rétention aiguë d'urine, activité sexuelle récente ou prostatite aiguë). Toujours doser le PSA AVANT le TR ou attendre 48h à 4 semaines selon l'acte.",
+      "Interprétation du rapport PSA libre / PSA total : Plus le rapport est bas (< 0.15), plus le risque de cancer de la prostate est élevé pour une zone grise de PSA total comprise entre 4 et 10 ng/mL. Un rapport élevé (> 0.20) oriente plutôt vers une pathologie bénigne (HBP)."
+    ],
+    "created_at": "2026-11-08T17:09:53.611051+00:00",
+    "updated_at": "2026-11-08T17:09:53.611066+00:00"
   }
 ]
