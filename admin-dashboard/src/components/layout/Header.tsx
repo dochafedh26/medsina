@@ -28,6 +28,7 @@ import { NavigationTab } from '../../types/medsina';
 import logoLight from '../../assets/images/medsina-logo.png';
 import logoDark from '../../assets/images/medsina-logo-dark.png';
 import iconEmblem from '../../assets/images/medsina-icon.png';
+import defaultDoctorAvatar from '../../assets/images/doctor_avatar_male_1794207754386.jpg';
 
 interface HeaderProps {
   currentTab: NavigationTab;
@@ -135,14 +136,14 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex items-center justify-between gap-3 md:gap-8 px-3.5 sm:px-6 md:px-8 py-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+      <header className="sticky top-0 z-40 flex items-center justify-between gap-2 sm:gap-6 md:gap-8 px-2.5 sm:px-6 md:px-8 py-2.5 sm:py-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
         {/* Zone 1: Mobile Hamburger & Wordmark */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Mobile Hamburger Toggle Button */}
           <button
             onClick={toggleDrawer}
             aria-label="Ouvrir le menu de navigation"
-            className="md:hidden p-2 -ml-1 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+            className="md:hidden p-1.5 sm:p-2 -ml-0.5 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -152,10 +153,20 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-2 text-left hover:opacity-90 transition-opacity whitespace-nowrap cursor-pointer"
             title="MedSina — Console Administrateur"
           >
+            {/* Mobile emblem + title (compact, crisp, no overflow) */}
+            <div className="flex sm:hidden items-center gap-1.5">
+              <img 
+                src={iconEmblem} 
+                alt="MedSina" 
+                className="h-7 w-7 object-contain"
+              />
+              <span className="font-bold text-slate-900 dark:text-white text-base tracking-tight">MedSina</span>
+            </div>
+            {/* Tablet & Desktop full horizontal banner logo */}
             <img 
               src={isDarkMode ? logoDark : logoLight} 
               alt="Medsina" 
-              className="h-8 sm:h-9 w-auto object-contain max-w-[130px] sm:max-w-[160px]"
+              className="hidden sm:block h-8 sm:h-9 w-auto object-contain max-w-[130px] sm:max-w-[160px]"
             />
             <span className="hidden sm:inline-block text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800">
               Admin
@@ -186,12 +197,12 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Zone 3: Controls & Primary Action */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3 shrink-0">
-          {/* Quick Search */}
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-3 shrink-0">
+          {/* Quick Search - hidden on mobile header, accessible via drawer */}
           <button
             onClick={() => setShowSearchModal(true)}
             aria-label="Recherche rapide"
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
           >
             <Search className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Rechercher</span>
@@ -210,7 +221,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onRefresh}
               disabled={isRefreshing}
               title="Rafraîchir les données Supabase"
-              className="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
+              className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50 shrink-0"
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-teal-600' : ''}`} />
             </button>
@@ -220,7 +231,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onToggleDarkMode}
             aria-label="Changer le thème"
-            className="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
           >
             {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
           </button>
@@ -235,10 +246,10 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Admin User Profile & Sign Out */}
-          <div className="flex items-center gap-2 pl-1 sm:pl-2 sm:border-l border-slate-200 dark:border-slate-800">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden ring-1 ring-teal-500/40 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 pl-1 sm:pl-2 sm:border-l border-slate-200 dark:border-slate-800 shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center overflow-hidden ring-1 ring-teal-500/40 shrink-0 text-xs shadow-xs">
               <img
-                src={adminUser?.avatarUrl || "/src/assets/images/doctor_avatar_male_1794207754386.jpg"}
+                src={adminUser?.avatarUrl || defaultDoctorAvatar}
                 alt={adminUser?.fullName || "Dr. Hafedh"}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
@@ -246,6 +257,9 @@ export const Header: React.FC<HeaderProps> = ({
                   e.currentTarget.style.display = 'none';
                 }}
               />
+              <span className="select-none">
+                {(adminUser?.fullName || 'DH').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+              </span>
             </div>
             <div className="hidden lg:block text-left text-xs leading-tight">
               <p className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[120px]">
@@ -259,7 +273,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={onSignOut}
                 title="Se déconnecter de la console"
-                className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors cursor-pointer shrink-0"
               >
                 <LogOut className="w-4 h-4" />
               </button>
