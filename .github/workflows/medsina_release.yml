@@ -90,12 +90,13 @@ jobs:
       - name: 📦 Install dependencies
         run: flutter pub get
 
-      - name: 🛠️ Build APK
+      - name: 🛠️ Build APK (Universal + Split ABI for arm64)
         run: |
           VERSION="${{ inputs.version || github.ref_name }}"
           VERSION="${VERSION#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          echo "Building Android APK version $VERSION+$BUILD_NUM"
+          echo "Building Android split-per-abi APKs and universal APK version $VERSION+$BUILD_NUM..."
+          flutter build apk --release --split-per-abi --build-name=$VERSION --build-number=$BUILD_NUM
           flutter build apk --release --build-name=$VERSION --build-number=$BUILD_NUM
 
       - name: 🛠️ Build App Bundle (AAB)
@@ -109,6 +110,9 @@ jobs:
         run: |
           mkdir -p android-dist
           cp build/app/outputs/flutter-apk/app-release.apk android-dist/app-release.apk
+          if [ -f build/app/outputs/flutter-apk/app-arm64-v8a-release.apk ]; then
+            cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk android-dist/app-arm64-v8a-release.apk
+          fi
           cp build/app/outputs/bundle/release/app-release.aab android-dist/app-release.aab
 
       - name: 📤 Upload Android Artifacts
@@ -303,6 +307,7 @@ jobs:
           ls -laR dist-release
 
           # Reliably find and move files to dist-release root regardless of directory nesting
+          find dist-release -type f -name "*app-arm64-v8a-release.apk" -exec mv {} "dist-release/Medsina_v${TAG}_Android_arm64.apk" \;
           find dist-release -type f -name "*app-release.apk" -exec mv {} "dist-release/Medsina_v${TAG}_Android.apk" \;
           find dist-release -type f -name "*app-release.aab" -exec mv {} "dist-release/Medsina_v${TAG}_GooglePlay.aab" \;
           find dist-release -type f \( -name "*Windows_Setup.exe" -o -name "*Setup.exe" \) -exec mv {} "dist-release/Medsina_v${TAG}_Windows_Setup.exe" \;
@@ -407,8 +412,19 @@ jobs:
                           ftp.storbinary(f'STOR releases/{apk_file.name}', f)
                       with open(apk_file, 'rb') as f:
                           ftp.storbinary('STOR download/medsina.apk', f)
-                      apk_url = f'https://medsina.medevsync.com/releases/{apk_file.name}'
-                      print(f'✅ Android APK live at: {apk_url}')
+                      print(f'✅ Android APK mirrored on Octenium: https://medsina.medevsync.com/releases/{apk_file.name}')
+
+                  arm64_apk = Path(f'dist-release/Medsina_v{os.environ.get(\"VERSION\")}_Android_arm64.apk')
+                  if arm64_apk.exists():
+                      print('Uploading Android arm64 APK to Octenium...')
+                      with open(arm64_apk, 'rb') as f:
+                          ftp.storbinary(f'STOR releases/{arm64_apk.name}', f)
+                      with open(arm64_apk, 'rb') as f:
+                          ftp.storbinary('STOR download/medsina-arm64.apk', f)
+                      print(f'✅ Android arm64 APK mirrored on Octenium: https://medsina.medevsync.com/releases/{arm64_apk.name}')
+
+                  # Prioritize global fast CDN for Supabase OTA registration
+                  apk_url = f'https://github.com/{repo}/releases/download/{tag}/Medsina_v{version}_Android.apk'
 
                   win_file = Path(f'dist-release/Medsina_v{os.environ.get(\"VERSION\")}_Windows_Setup.exe')
                   if win_file.exists():

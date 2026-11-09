@@ -81,17 +81,21 @@ class _SamedisPedagogiquesScreenState extends State<SamedisPedagogiquesScreen> {
   }
 
   void _openPdfViewer(SamediPedagogiqueItem item) {
-    final driveId = item.gdriveLink != null && item.gdriveLink!.contains('/d/')
-        ? item.gdriveLink!.split('/d/')[1].split('/')[0].split('?')[0]
-        : null;
+    final effectiveDriveId = item.gdriveId ??
+        (item.gdriveLink != null && item.gdriveLink!.contains('/d/')
+            ? item.gdriveLink!.split('/d/')[1].split('/')[0].split('?')[0]
+            : null);
+
     final mockCourse = CourseModel(
       id: item.id,
       moduleId: item.module,
       name: item.title,
       questionsCount: 0,
       hasPdf: true,
-      pdfDownloadUrl: item.assetPath,
-      pdfDriveId: driveId,
+      pdfDownloadUrl: effectiveDriveId != null
+          ? 'https://drive.google.com/uc?export=download&id=$effectiveDriveId'
+          : item.assetPath,
+      pdfDriveId: effectiveDriveId,
     );
 
     Navigator.push(

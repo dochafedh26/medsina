@@ -11,7 +11,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # build by specifying --build-name and --build-number, respectively.
 # In Android, build-name is used as versionName while build-number used as versionCode.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number as CFBundleVersion.
-version: 1.0.65+82
+version: 1.0.66+83
 
 environment:
   sdk: ^3.13.2
@@ -75,8 +75,6 @@ flutter:
     - assets/data/
     - assets/data/qcms/
     - assets/drives/
-    - assets/data/samedis_pedagogiques/
-    - assets/data/temoignages/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

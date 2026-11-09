@@ -127,17 +127,39 @@ class OtaUpdateService {
     await prefs.setInt(_keyLastDismissedBuild, buildNumber);
   }
 
+  /// Resolves the available high-speed download mirrors in priority order (Fast CDN first, Octenium mirror second)
+  static List<String> resolveDownloadMirrors(AppReleaseModel release) {
+    final mirrors = <String>[];
+    final ver = release.versionName;
+
+    if (currentPlatform == 'android') {
+      // 1. High-speed global CDN (GitHub Releases)
+      mirrors.add('https://github.com/dochafedh26/medsina/releases/download/v$ver/Medsina_v${ver}_Android.apk');
+      // 2. Direct Octenium Server Mirror
+      final raw = release.downloadUrl.trim();
+      if (raw.isNotEmpty && !raw.contains('None') && !mirrors.contains(raw)) {
+        mirrors.add(raw);
+      }
+      mirrors.add('https://medsina.medevsync.com/releases/Medsina_v${ver}_Android.apk');
+      mirrors.add('https://medsina.medevsync.com/download/medsina.apk');
+    } else {
+      // Windows Desktop mirrors
+      mirrors.add('https://github.com/dochafedh26/medsina/releases/download/v$ver/Medsina_v${ver}_Windows_Setup.exe');
+      final raw = release.downloadUrl.trim();
+      if (raw.isNotEmpty && !raw.contains('None') && !mirrors.contains(raw)) {
+        mirrors.add(raw);
+      }
+      mirrors.add('https://medsina.medevsync.com/releases/Medsina_v${ver}_Windows_Setup.exe');
+      mirrors.add('https://medsina.medevsync.com/download/medsina-setup.exe');
+    }
+
+    return mirrors;
+  }
+
   /// Returns a valid, non-corrupted download URL fallback if the registered one contains invalid values
   static String sanitizeDownloadUrl(AppReleaseModel release) {
-    final raw = release.downloadUrl.trim();
-    if (raw.isEmpty || raw.contains('None')) {
-      if (currentPlatform == 'android') {
-        return 'https://github.com/dochafedh26/medsina/releases/download/v${release.versionName}/Medsina_v${release.versionName}_Android.apk';
-      } else {
-        return 'https://github.com/dochafedh26/medsina/releases/download/v${release.versionName}/Medsina_v${release.versionName}_Windows_Setup.exe';
-      }
-    }
-    return raw;
+    final mirrors = resolveDownloadMirrors(release);
+    return mirrors.isNotEmpty ? mirrors.first : release.downloadUrl.trim();
   }
 
   /// Downloads the update file and triggers the installation
@@ -149,7 +171,8 @@ class OtaUpdateService {
     required void Function(double progress) onProgress,
     required void Function(String statusMessage) onStatusChange,
   }) async {
-    final effectiveUrl = sanitizeDownloadUrl(release);
+    final mirrors = resolveDownloadMirrors(release);
+    final primaryUrl = mirrors.isNotEmpty ? mirrors.first : sanitizeDownloadUrl(release);
 
     // Record download telemetry on Supabase
     try {
@@ -162,7 +185,7 @@ class OtaUpdateService {
 
     if (kIsWeb || !Platform.isAndroid) {
       // Windows / Web / Desktop: open official download or web release page
-      final uri = Uri.parse(effectiveUrl);
+      final uri = Uri.parse(primaryUrl);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
         return true;
@@ -171,34 +194,67 @@ class OtaUpdateService {
     }
 
     // Android Direct APK download and in-app prompt
-    try {
-      onStatusChange('Préparation du téléchargement...');
-      final tempDir = await getTemporaryDirectory();
-      final apkPath = '${tempDir.path}/medsina_update_${release.versionName}_${release.buildNumber}.apk';
-      final file = File(apkPath);
+    final tempDir = await getTemporaryDirectory();
+    final apkPath = '${tempDir.path}/medsina_update_${release.versionName}_${release.buildNumber}.apk';
+    final file = File(apkPath);
 
-      if (await file.exists()) {
-        try {
-          await file.delete();
-        } catch (_) {}
+    bool downloadSucceeded = false;
+
+    for (int i = 0; i < mirrors.length; i++) {
+      final mirrorUrl = mirrors[i];
+      try {
+        if (await file.exists()) {
+          try {
+            await file.delete();
+          } catch (_) {}
+        }
+
+        final mirrorLabel = i == 0 ? 'CDN Haute Vitesse' : 'Serveur Miroir ${i}';
+        onStatusChange('Téléchargement ($mirrorLabel)...');
+
+        await _dio.download(
+          mirrorUrl,
+          apkPath,
+          options: Options(
+            followRedirects: true,
+            maxRedirects: 8,
+            receiveTimeout: const Duration(minutes: 5),
+            sendTimeout: const Duration(seconds: 30),
+          ),
+          onReceiveProgress: (received, total) {
+            if (total > 0) {
+              final progress = received / total;
+              onProgress(progress);
+            }
+          },
+        );
+
+        if (await file.exists() && await file.length() > 5 * 1024 * 1024) {
+          downloadSucceeded = true;
+          break;
+        }
+      } catch (e) {
+        debugPrint('Mirror $mirrorUrl failed: $e');
+        if (i == mirrors.length - 1 && !downloadSucceeded) {
+          // All mirrors failed, try direct browser fallback
+          onStatusChange('Téléchargement direct via navigateur...');
+          try {
+            final uri = Uri.parse(primaryUrl);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+              return true;
+            }
+          } catch (_) {}
+          return false;
+        }
       }
+    }
 
-      onStatusChange('Téléchargement de la mise à jour...');
-      await _dio.download(
-        effectiveUrl,
-        apkPath,
-        options: Options(
-          followRedirects: true,
-          maxRedirects: 5,
-        ),
-        onReceiveProgress: (received, total) {
-          if (total > 0) {
-            final progress = received / total;
-            onProgress(progress);
-          }
-        },
-      );
+    if (!downloadSucceeded) {
+      return false;
+    }
 
+    try {
       onStatusChange('Lancement de l\'installation...');
       final result = await OpenFilex.open(
         apkPath,
@@ -207,11 +263,11 @@ class OtaUpdateService {
 
       debugPrint('OpenFilex install result: ${result.type} - ${result.message}');
 
-      // If package installer didn't trigger cleanly (e.g. unknown sources blocked on Android), fallback to browser
+      // If package installer didn't trigger cleanly, fallback to browser
       if (result.type != ResultType.done) {
         debugPrint('OpenFilex non-done result (${result.message}), launching browser fallback...');
         onStatusChange('Ouverture du navigateur pour installer...');
-        final uri = Uri.parse(effectiveUrl);
+        final uri = Uri.parse(primaryUrl);
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
           return true;
@@ -221,10 +277,10 @@ class OtaUpdateService {
 
       return true;
     } catch (e) {
-      debugPrint('Error downloading or installing APK: $e');
+      debugPrint('Error triggering APK installer: $e');
       onStatusChange('Téléchargement direct via navigateur...');
       try {
-        final uri = Uri.parse(effectiveUrl);
+        final uri = Uri.parse(primaryUrl);
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
           return true;

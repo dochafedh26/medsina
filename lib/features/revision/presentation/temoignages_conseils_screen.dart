@@ -121,19 +121,32 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
   }
 
   void _openPdfViewer(TemoignageConseilItem item, {bool isExtra = false}) {
-    final pdfPath = isExtra ? item.extraAssetPdfPath : item.assetPdfPath;
-    if (pdfPath == null) return;
-
     final titleSuffix = isExtra ? ' (Complément)' : '';
     final driveId = isExtra ? item.extraGdriveId : item.gdriveId;
+    final pdfPath = isExtra ? item.extraAssetPdfPath : item.assetPdfPath;
+
+    final effectiveDriveId = driveId ??
+        (item.targetUrl != null && item.targetUrl!.contains('/d/')
+            ? item.targetUrl!.split('/d/')[1].split('/')[0].split('?')[0]
+            : null);
+
+    if (pdfPath == null && (effectiveDriveId == null || effectiveDriveId.isEmpty)) {
+      if (item.targetUrl != null && item.targetUrl!.isNotEmpty) {
+        _openExternalUrl(item.targetUrl!);
+      }
+      return;
+    }
+
     final mockCourse = CourseModel(
       id: '${item.id}${isExtra ? "_extra" : ""}',
       moduleId: 'temoignages',
       name: '${item.name}$titleSuffix',
       questionsCount: 0,
       hasPdf: true,
-      pdfDownloadUrl: pdfPath,
-      pdfDriveId: driveId,
+      pdfDownloadUrl: effectiveDriveId != null
+          ? 'https://drive.google.com/uc?export=download&id=$effectiveDriveId'
+          : (pdfPath ?? ''),
+      pdfDriveId: effectiveDriveId,
     );
 
     Navigator.push(
