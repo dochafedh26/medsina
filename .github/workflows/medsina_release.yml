@@ -456,6 +456,30 @@ jobs:
 
                       print(f'✅ Medsina Web successfully deployed to Octenium ({uploaded_count} files)!')
 
+                  # Deploy Admin Dashboard to /admin on Octenium hosting
+                  admin_dist = Path('admin-dashboard/dist')
+                  if admin_dist.exists():
+                      print('Deploying Medsina Admin Dashboard to https://medsina.medevsync.com/admin ...')
+                      try: ftp.mkd('admin')
+                      except Exception: pass
+                      admin_uploaded = 0
+                      for root, dirs, files in os.walk(admin_dist):
+                          rel = Path(root).relative_to(admin_dist).as_posix()
+                          remote_dir = 'admin' if rel == '.' else f'admin/{rel}'
+                          if remote_dir != 'admin':
+                              curr = ''
+                              for part in remote_dir.split('/'):
+                                  curr = f'{curr}/{part}'.strip('/')
+                                  try: ftp.mkd(curr)
+                                  except Exception: pass
+                          for file in files:
+                              local_path = Path(root) / file
+                              target_rem = f'{remote_dir}/{file}'.strip('/')
+                              with open(local_path, 'rb') as f:
+                                  ftp.storbinary(f'STOR {target_rem}', f)
+                              admin_uploaded += 1
+                      print(f'✅ Medsina Admin Dashboard successfully deployed to Octenium ({admin_uploaded} files)!')
+
                   ftp.quit()
               except Exception as e:
                   print(f'FTP upload error (falling back to GitHub URLs): {e}')

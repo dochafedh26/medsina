@@ -9,9 +9,9 @@ import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/models/user_model.dart';
-import '../../admin/presentation/admin_dashboard_screen.dart';
 import '../../clinical/presentation/clinical_screen.dart';
 import '../../dashboard/presentation/dashboard_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
 import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
@@ -285,17 +285,6 @@ class _MainScaffoldState extends State<MainScaffold> {
           ));
           break;
       }
-    }
-
-    if (isAdmin) {
-      items.add(const NavItemConfig(
-        label: 'Admin',
-        title: 'Console d\'Administration Medsina',
-        icon: Icons.admin_panel_settings_outlined,
-        selectedIcon: Icons.admin_panel_settings_rounded,
-        page: AdminDashboardScreen(),
-        isSpecial: true,
-      ));
     }
 
     return items;
@@ -1823,21 +1812,61 @@ class _MainScaffoldState extends State<MainScaffold> {
 
               if (user?.isAdmin == true) ...[
                 const SizedBox(height: 14),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFDC2626),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 11),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                    icon: const Icon(Icons.admin_panel_settings_rounded, size: 18),
-                    label: const Text('Ouvrir la Console Admin 🛡️', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      setState(() => _currentIndex = 4);
-                    },
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDC2626).withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFDC2626).withValues(alpha: 0.25)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.shield_rounded, color: Color(0xFFDC2626), size: 16),
+                          SizedBox(width: 6),
+                          Text(
+                            'CONSOLE D\'ADMINISTRATION',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFFDC2626),
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Accessible uniquement depuis l\'hébergement Octenium sécurisé avec authentification.',
+                        style: TextStyle(fontSize: 11.5, color: Colors.black87),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFDC2626),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                          label: const Text(
+                            'Ouvrir sur Octenium Web 🛡️',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
+                          ),
+                          onPressed: () async {
+                            Navigator.pop(ctx);
+                            final url = Uri.parse('https://medsina.medevsync.com/admin/');
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

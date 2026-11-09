@@ -1,0 +1,6 @@
+{
+  "name": "MedSina Admin Dashboard",
+  "description": "Modern AI-powered healthcare administration platform featuring interactive doctor & clinic directories, AI diagnostic scan analysis, telemedicine queues, and automated patient triage.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

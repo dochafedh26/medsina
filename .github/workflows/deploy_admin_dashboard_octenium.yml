@@ -1,0 +1,54 @@
+name: 🚀 Deploy Medsina Admin Dashboard to Octenium Hosting
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'admin-dashboard/**'
+      - '.github/workflows/deploy_admin_dashboard_octenium.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: 🛡️ Build & Deploy Admin Dashboard to Octenium
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: 'admin-dashboard/package.json'
+
+      - name: 📦 Install dependencies
+        working-directory: admin-dashboard
+        run: npm install --legacy-peer-deps
+
+      - name: ⚡ Build React / Vite Dashboard for Octenium (/admin/)
+        working-directory: admin-dashboard
+        env:
+          VITE_BASE_PATH: './'
+          VITE_SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          VITE_SUPABASE_ANON_KEY: 'sb_publishable_E2OrqFqG1MbxVpoLb50jvA_DmOeP-UR'
+          VITE_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run build
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🚀 Deploy to Octenium Hosting (medsina.medevsync.com/admin/)
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OCTENIUM_FTP_HOST: 'medevsync.com'
+          OCTENIUM_FTP_USER: ${{ secrets.OCTENIUM_FTP_USER }}
+          OCTENIUM_FTP_PASSWORD: ${{ secrets.OCTENIUM_FTP_PASSWORD }}
+        run: |
+          python scripts/automation/deploy_admin_dashboard_to_octenium.py

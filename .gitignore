@@ -68,3 +68,7 @@ assets/facebook/migration_cache/
 
 livrets_residanat_2027/
 
+# Node & Admin Dashboard
+node_modules/
+**/node_modules/
+admin-dashboard/dist/
