@@ -29,6 +29,7 @@ import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
 import '../../profile/presentation/modern_user_profile_screen.dart';
 import 'package:flutter/services.dart';
+import '../../../core/utils/admin_dashboard_launcher.dart';
 
 class NavItemConfig {
   final String label;
@@ -882,12 +883,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                   tooltip: 'Ouvrir Console Admin (Octenium)',
                   color: const Color(0xFFDC2626),
                   bgTint: const Color(0xFFDC2626).withValues(alpha: 0.15),
-                  onTap: () async {
-                    final url = Uri.parse('https://medsina.medevsync.com/admin/');
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
-                    }
-                  },
+                  onTap: () => AdminDashboardLauncher.openAdminDashboard(context),
                 ),
                 const SizedBox(width: 4),
               ],
@@ -1026,12 +1022,9 @@ class _MainScaffoldState extends State<MainScaffold> {
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          onPressed: () async {
+                          onPressed: () {
                             Navigator.pop(ctx);
-                            final url = Uri.parse('https://medsina.medevsync.com/admin/');
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url, mode: LaunchMode.externalApplication);
-                            }
+                            AdminDashboardLauncher.openAdminDashboard(context);
                           },
                           child: const Text('Ouvrir', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11.5)),
                         ),
@@ -1280,12 +1273,7 @@ class _MainScaffoldState extends State<MainScaffold> {
               'Console Admin 🛡️',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
             ),
-            onPressed: () async {
-              final url = Uri.parse('https://medsina.medevsync.com/admin/');
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url, mode: LaunchMode.externalApplication);
-              }
-            },
+            onPressed: () => AdminDashboardLauncher.openAdminDashboard(context),
           ),
           const SizedBox(width: 8),
         ],
@@ -1960,12 +1948,9 @@ class _MainScaffoldState extends State<MainScaffold> {
                             'Ouvrir sur Octenium Web 🛡️',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
                           ),
-                          onPressed: () async {
+                          onPressed: () {
                             Navigator.pop(ctx);
-                            final url = Uri.parse('https://medsina.medevsync.com/admin/');
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url, mode: LaunchMode.externalApplication);
-                            }
+                            AdminDashboardLauncher.openAdminDashboard(context);
                           },
                         ),
                       ),
