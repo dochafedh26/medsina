@@ -2137,5 +2137,28 @@
     "treatment_summary": "Urgence médicale absolue nécessitant une hospitalisation immédiate, la réalisation d'un bilan septique (hémocultures, NFS, CRP, PL) et l'instauration d'une antibiothérapie probabiliste par association Aminopénicilline + Aminoside.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-08T23:05:54.260412+00:00"
+  },
+  {
+    "course_id": "Blida_URGENCES_UMC_TD_TROUBLES_DE_LA_CONSCIENCE",
+    "course_name": "TD troubles de la conscience",
+    "module_id": "Blida_URGENCES_UMC",
+    "module_name": "Urgences (UMC)",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLe **trouble de la conscience** est une urgence diagnostique et thérapeutique absolue en milieu de réanimation et d'accueil des urgences (UMC).\n- **Vigilance** : État d'éveil (système activateur réticulé ascendant - SARA au niveau du tronc cérébral).\n- **Contenu de la conscience** : Fonctions cognitives et hémisphériques.\n- **Étiologies** : Neurologiques (lésionnelles, AVC, HIC, méningite) ou Non neurologiques (métaboliques, toxiques, anoxiques, endocriniennes).\n\n## 2. Démarche Diagnostique\n- **Urgences vitales immédiates** : Libération des voies aériennes (VAS), oxygénothérapie, contrôle de la ventilation et de la circulation (A-B-C).\n- **Examen neurologique initial** :\n  - Évaluation de la profondeur du coma via le **Score de Glasgow (GCS)** : ≤ 8 définit le coma (intubation prophylactique).\n  - Réactivité pupillaire (réflexe photomoteur), mouvements oculaires, réactivité motrice (symétrie, décortication, décérébration).\n- **Paraclinique de référence** :\n  - Glycémie capillaire immédiate (à éliminer en premier).\n  - Gaz du sang (GDS), ionogramme sanguin, fonction rénale, hépatique, calcémie.\n  - **TDM cérébrale sans injection** en urgence devant tout trouble de la conscience non étiqueté.\n  - Ponction lombaire (PL) si suspicion de méningite/encéphalite après imagerie éliminant une HIC.\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Locked-in syndrome** (syndrome de désaffiliation motrice) : Atteinte protubérantielle ventrale, malade conscient mais totalement quadriplégique et mutique (communication par clignement des yeux).\n- **Mutisme akinétique** : Lésions frontales bilatérales ou du SARA rostral (silencieux, immobile, yeux ouverts).\n- **État végétatif (syndrome d'éveil sans réponse)** : Présence de cycles veille-sommeil sans conscience de soi ni de l'environnement.\n- **Conversion hystérique** : Examen neurologique normal, réflexes cornéens conservés, résistance à l'ouverture des paupières.\n\n## 4. Stratégie Thérapeutique\n- **Mesures générales** : Position latérale de sécurité (PLS) si non intubé, décubitus dorsal tête surélevée à 30° si intubé. Protection cornéenne.\n- **Traitement étiologique et d'urgence** :\n  - **Hypoglycémie** : Sérum glucosé 30% (SG 30%) IV + Vitamine B1 (protocole encéphalopathie de Wernicke) si éthylisme.\n  - **Surdosage aux opiacés** : **Naloxone** (Narcan) IV.\n  - **Benzodiazépines** : **Flumazénil** (Anexate) (attention au risque de convulsions en cas de sevrage).\n  - **HTIC aiguë** : Mannitol 20% ou hypertonique, sédation, ventilation mécanique (hyperventilation transitoire).\n- **Contre-indications majeures** : Pas de ponction lombaire sans TDM cérébrale préalable en cas de signes de focalisation ou d'HTIC.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Complications de décubitus** : Pneumopathie d'inhalation, embolie pulmonaire, thrombose veineuse profonde (TVP), escarres, infections urinaires.\n- **Pronostic** : Dépend de l'étiologie initiale (meilleur pour les comas toxiques et métaboliques, réservé pour les comas anoxiques et lésionnels profonds).",
+    "key_takeaways": [
+      "Un score de Glasgow ≤ 8 impose l'intubation trachéale pour protection des voies aériennes.",
+      "La glycémie capillaire est le premier examen à réaliser devant tout trouble de la conscience.",
+      "Toute suspicion de coma non étiqueté nécessite une TDM cérébrale en urgence absolue.",
+      "Le Locked-in syndrome simule un coma mais le patient est pleinement conscient avec conservation des mouvements oculaires verticaux et du clignement.",
+      "Administration systématique de Vitamine B1 (Béall) avant tout apport de glucose chez le patient éthylique ou dénutri pour éviter une encéphalopathie de Wernicke."
+    ],
+    "exam_traps": [
+      "Piège Annales : Affirmer qu'un score de Glasgow à 8 ne nécessite pas forcément l'intubation (Faux, le seuil d'intubation est GCS ≤ 8).",
+      "Piège Traitement : Administrer du Flumazénil chez un épileptique connu ou un poly-intoxiqué (Contre-indication formelle : risque de déclencher des crises convulsives rebelles).",
+      "Piège Diagnostic : Réaliser une ponction lombaire en urgence sans imagerie cérébrale préalable devant un coma fébrile avec signe de focalisation (Risque d'engagement cérébral fatal)."
+    ],
+    "diagnostic_criteria": "Altération de la vigilance objectivée par un score de Glasgow ≤ 14 (ou coma strict si GCS ≤ 8), associée à une modification du contenu de la conscience, nécessitant une évaluation clinique et paraclinique immédiate pour éliminer les urgences neuro-métaboliques et chirurgicales.",
+    "treatment_summary": "Conditionnement immédiat (A-B-C), correction des urgences vitales métaboliques (glycémie, oxygénothérapie), intubation si GCS ≤ 8, et réalisation d'une TDM cérébrale suivie du traitement étiologique spécifique.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-09T02:56:38.199305+00:00"
   }
 ]
