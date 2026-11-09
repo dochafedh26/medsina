@@ -708,16 +708,17 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Bilan initial d'urgence (GDS, glycap, ionogramme, urée, créatinine, BU, ECG) et pose de 2 VVP de bon calibre au déchoquage avec début de l'expansion volémique par NaCl 0.9% (1000 mL en 1h, puis 500 mL/h les 2h suivantes).",
-      "Étape 2 : Insulinothérapie IV stricte dès confirmation (après élimination d'une hypokaliémie < 3.3 mmol/L) : Insuline ordinaire (Actrapid) à la seringue électrique à la dose fixe de 0.1 UI/kg/h (soit environ 7-10 UI/h) sans bolus initial.",
-      "Étape 3 : Gestion rigoureuse de la kaliémie : si K+ < 3.3 mmol/L, PAS d'insuline et supplémenter 20-40 mEq/h de KCl avant tout; si K+ entre 3.3 et 5.0 mmol/L, ajouter 20 mEq de KCl par litre de perfusion; si K+ > 5.0 mmol/L, pas de KCl immédiat mais contrôle horaire.",
-      "Étape 4 : Adjonction de G5% (500 mL/6h à 500 mL/h) dès que la glycémie atteint 2.5 g/L (250 mg/dL) pour éviter l'hypoglycémie et l'œdème cérébral, tout en maintenant l'insuline jusqu'à la levée de l'acidose (pH > 7.30, bicarbonates > 18 mmol/L).",
-      "Étape 5 : Surveillance armée horaire (conscience, GDS, glycémie capillaire, diurèse avec pose de sonde urinaire si trouble de conscience) et contre-indication absolue du bicarbonate de sodium sauf acidose profonde menaçante (pH < 7.0) ou hyperkaliémie maligne menaçante."
+      "Étape 1 : Conditionnement immédiat au déchoquage (2 VVP gros calibre, Scope, SaO2, ECG) et évaluation de la conscience (Glasgow). Glycémie capillaire et BU cétones en urgence.",
+      "Étape 2 : Bilan biologique indispensable : Ionogramme sanguin (avec Kaliémie et Natrémie corrigée), Urée, Créatinine, Gaz du sang (GDS), NFS, CRP, Troponine et Lactates.",
+      "Étape 3 : Réhydratation IV agressive par NaCl 0,9% (1000 mL en 1h, puis 500 mL/h les 2h suivantes) et Insulinothérapie IV continue à 0,1 UI/kg/h au PSE (Insuline rapide type Actrapid sans bolus initial).",
+      "Étape 4 : Gestion du Potassium : Si K+ < 3,3 mmol/L, STOP insuline et supplémenter (20-40 mmol/h) jusqu'à K+ > 3,3. Si K+ entre 3,3 et 5,2, ajouter 20 mmol de KCl par litre de perfusion.",
+      "Étape 5 : Surveillance armée horaire (glycémie capillaire, conscience) et ionogramme/GDS toutes les 4h. Intégration du G5% dès que glycémie < 2,5 g/L (13,9 mmol/L) pour maintenir l'insuline.",
+      "Étape 6 : Piège mortel : Ne JAMAIS administrer de bicarbonate de sodium en routine (sauf acidémie extrême pH < 6,9 menaçante) et éliminer un facteur déclenchant (Infection, IDM, Iatrogénie)."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / ADA / MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / ALMS Algérie",
     "is_active": true,
-    "created_at": "2026-11-07T10:22:46.476347+00:00",
-    "updated_at": "2026-11-07T10:22:46.476363+00:00"
+    "created_at": "2026-11-09T17:37:22.346992+00:00",
+    "updated_at": "2026-11-09T17:37:22.347008+00:00"
   },
   {
     "id": "memento_chalazion",
