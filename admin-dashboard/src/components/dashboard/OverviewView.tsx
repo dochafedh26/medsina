@@ -55,10 +55,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
             onClick={() => onNavigate('payments')}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 rounded-lg shadow-xs transition-colors cursor-pointer"
+            className="w-full sm:w-auto justify-center flex items-center gap-1.5 px-3.5 py-2 sm:py-1.5 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 rounded-lg shadow-xs transition-colors cursor-pointer"
           >
             <CreditCard className="w-3.5 h-3.5" />
             <span>Valider les Paiements ({pendingPayments.length})</span>

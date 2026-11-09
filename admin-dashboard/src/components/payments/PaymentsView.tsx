@@ -148,13 +148,13 @@ export const PaymentsView: React.FC<PaymentsViewProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono px-3 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 font-bold whitespace-nowrap">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
+          <span className="text-xs font-mono px-3 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 font-bold whitespace-nowrap flex-1 sm:flex-initial text-center">
             Validé : {financialMetrics.totalRevenue.toLocaleString()} DZD
           </span>
           <button
             onClick={() => setShowManualModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 rounded-lg shadow-2xs transition-colors cursor-pointer whitespace-nowrap"
+            className="flex-1 sm:flex-initial justify-center flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 rounded-lg shadow-2xs transition-colors cursor-pointer whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Paiement Manuel</span>

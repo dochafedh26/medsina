@@ -318,13 +318,16 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Admin Profile Banner in Drawer */}
             <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden ring-2 ring-teal-500/50 shrink-0">
+                <div className="w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center overflow-hidden ring-2 ring-teal-500/50 shrink-0 text-sm shadow-xs">
                   <img
-                    src={adminUser?.avatarUrl || "/src/assets/images/doctor_avatar_male_1794207754386.jpg"}
+                    src={adminUser?.avatarUrl || defaultDoctorAvatar}
                     alt={adminUser?.fullName || "Dr. Hafedh"}
                     className="w-full h-full object-cover"
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
+                  <span className="select-none">
+                    {(adminUser?.fullName || 'DH').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                  </span>
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-sm text-slate-900 dark:text-white truncate">

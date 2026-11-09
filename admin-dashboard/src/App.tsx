@@ -481,7 +481,7 @@ export default function App() {
         {/* Content Viewport */}
         <main className="flex-1 p-3.5 sm:p-5 md:p-6 lg:p-8 max-w-7xl mx-auto w-full overflow-x-hidden pb-28 md:pb-8">
           {/* Mobile Top Horizontal Pill Nav (< md) */}
-          <div className="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pb-3 mb-3">
+          <div className="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pb-2 mb-2 px-0.5 scroll-smooth">
             {mobileNavTabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = currentTab === tab.id;
