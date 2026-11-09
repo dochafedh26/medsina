@@ -91,6 +91,10 @@ class AdminUserItem extends Equatable {
   final String? referralCode;
   final String? avatarUrl;
   final DateTime? updatedAt;
+  final String? bio;
+  final String? phone;
+  final String? wilaya;
+  final String? residencyTargetYear;
 
   const AdminUserItem({
     required this.id,
@@ -110,7 +114,59 @@ class AdminUserItem extends Equatable {
     this.referralCode,
     this.avatarUrl,
     this.updatedAt,
+    this.bio,
+    this.phone,
+    this.wilaya,
+    this.residencyTargetYear,
   });
+
+  AdminUserItem copyWith({
+    String? id,
+    String? email,
+    String? fullName,
+    String? medicalRole,
+    String? faculty,
+    String? tier,
+    String? status,
+    DateTime? expiresAt,
+    bool? isAdmin,
+    bool? isBanned,
+    String? banReason,
+    int? rejectedPaymentsCount,
+    DateTime? createdAt,
+    int? studyYear,
+    String? referralCode,
+    String? avatarUrl,
+    DateTime? updatedAt,
+    String? bio,
+    String? phone,
+    String? wilaya,
+    String? residencyTargetYear,
+  }) {
+    return AdminUserItem(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      fullName: fullName ?? this.fullName,
+      medicalRole: medicalRole ?? this.medicalRole,
+      faculty: faculty ?? this.faculty,
+      tier: tier ?? this.tier,
+      status: status ?? this.status,
+      expiresAt: expiresAt ?? this.expiresAt,
+      isAdmin: isAdmin ?? this.isAdmin,
+      isBanned: isBanned ?? this.isBanned,
+      banReason: banReason ?? this.banReason,
+      rejectedPaymentsCount: rejectedPaymentsCount ?? this.rejectedPaymentsCount,
+      createdAt: createdAt ?? this.createdAt,
+      studyYear: studyYear ?? this.studyYear,
+      referralCode: referralCode ?? this.referralCode,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      updatedAt: updatedAt ?? this.updatedAt,
+      bio: bio ?? this.bio,
+      phone: phone ?? this.phone,
+      wilaya: wilaya ?? this.wilaya,
+      residencyTargetYear: residencyTargetYear ?? this.residencyTargetYear,
+    );
+  }
 
   factory AdminUserItem.fromJson(Map<String, dynamic> json) {
     final isBan = json['is_banned'] == true || json['isBanned'] == true;
@@ -141,11 +197,37 @@ class AdminUserItem extends Equatable {
       referralCode: json['referral_code'],
       avatarUrl: json['avatar_url'],
       updatedAt: json['updated_at'] != null ? DateTime.tryParse(json['updated_at']) : null,
+      bio: json['bio']?.toString(),
+      phone: json['phone']?.toString(),
+      wilaya: json['wilaya']?.toString(),
+      residencyTargetYear: json['residency_target_year']?.toString(),
     );
   }
 
   @override
-  List<Object?> get props => [id, email, fullName, medicalRole, faculty, tier, status, expiresAt, isAdmin, isBanned, banReason, rejectedPaymentsCount, createdAt, studyYear, referralCode, avatarUrl, updatedAt];
+  List<Object?> get props => [
+        id,
+        email,
+        fullName,
+        medicalRole,
+        faculty,
+        tier,
+        status,
+        expiresAt,
+        isAdmin,
+        isBanned,
+        banReason,
+        rejectedPaymentsCount,
+        createdAt,
+        studyYear,
+        referralCode,
+        avatarUrl,
+        updatedAt,
+        bio,
+        phone,
+        wilaya,
+        residencyTargetYear,
+      ];
 }
 
 class AdminLicenseItem extends Equatable {

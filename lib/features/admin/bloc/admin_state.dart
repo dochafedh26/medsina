@@ -17,6 +17,11 @@ class AdminState extends Equatable {
   final List<AnnouncementItem> announcements;
   final List<AdminFacebookPrompt> facebookPrompts;
   final String searchQuery;
+  final String userSortBy; // 'newest', 'oldest', 'name_asc', 'name_desc', 'tier', 'study_year'
+  final String userRoleFilter; // 'all', 'etudiant', 'externe', 'interne', 'resident', 'praticien'
+  final String userTierFilter; // 'all', 'all_access', 'resident_elite', 'clinical_pro', 'etudiant', 'free'
+  final String userStatusFilter; // 'all', 'active', 'suspended'
+  final int? userStudyYearFilter; // null or 1..6
   final String? errorMessage;
   final String? successMessage;
 
@@ -34,6 +39,11 @@ class AdminState extends Equatable {
     this.announcements = const [],
     this.facebookPrompts = const [],
     this.searchQuery = '',
+    this.userSortBy = 'newest',
+    this.userRoleFilter = 'all',
+    this.userTierFilter = 'all',
+    this.userStatusFilter = 'all',
+    this.userStudyYearFilter,
     this.errorMessage,
     this.successMessage,
   });
@@ -52,6 +62,12 @@ class AdminState extends Equatable {
     List<AnnouncementItem>? announcements,
     List<AdminFacebookPrompt>? facebookPrompts,
     String? searchQuery,
+    String? userSortBy,
+    String? userRoleFilter,
+    String? userTierFilter,
+    String? userStatusFilter,
+    int? userStudyYearFilter,
+    bool clearStudyYearFilter = false,
     String? errorMessage,
     String? successMessage,
     bool clearMessages = false,
@@ -70,6 +86,11 @@ class AdminState extends Equatable {
       announcements: announcements ?? this.announcements,
       facebookPrompts: facebookPrompts ?? this.facebookPrompts,
       searchQuery: searchQuery ?? this.searchQuery,
+      userSortBy: userSortBy ?? this.userSortBy,
+      userRoleFilter: userRoleFilter ?? this.userRoleFilter,
+      userTierFilter: userTierFilter ?? this.userTierFilter,
+      userStatusFilter: userStatusFilter ?? this.userStatusFilter,
+      userStudyYearFilter: clearStudyYearFilter ? null : (userStudyYearFilter ?? this.userStudyYearFilter),
       errorMessage: clearMessages ? null : (errorMessage ?? this.errorMessage),
       successMessage: clearMessages ? null : (successMessage ?? this.successMessage),
     );
@@ -90,8 +111,12 @@ class AdminState extends Equatable {
         announcements,
         facebookPrompts,
         searchQuery,
+        userSortBy,
+        userRoleFilter,
+        userTierFilter,
+        userStatusFilter,
+        userStudyYearFilter,
         errorMessage,
         successMessage,
       ];
 }
-

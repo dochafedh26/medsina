@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/network/supabase_service.dart';
 import '../models/admin_models.dart';
+import '../bloc/admin_bloc.dart';
+import '../bloc/admin_event.dart';
 
 /// Modal dialog providing a complete 360° overview of a Doctor's account,
 /// subscription, payments, medical credentials, and administrative actions.
@@ -278,6 +281,250 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
               child: isSaving
                   ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                   : const Text('Enregistrer'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditFullProfileDialog(BuildContext context, Map<String, dynamic> currentProfile, AdminUserItem u) {
+    final nameCtrl = TextEditingController(text: currentProfile['full_name'] ?? u.fullName);
+    final roleCtrl = TextEditingController(text: currentProfile['medical_role'] ?? u.medicalRole);
+    final facultyCtrl = TextEditingController(text: currentProfile['faculty'] ?? u.faculty);
+    final wilayaCtrl = TextEditingController(text: currentProfile['wilaya'] ?? u.wilaya ?? '');
+    final phoneCtrl = TextEditingController(text: currentProfile['phone'] ?? u.phone ?? '');
+    final targetYearCtrl = TextEditingController(text: currentProfile['residency_target_year'] ?? u.residencyTargetYear ?? '');
+    final bioCtrl = TextEditingController(text: currentProfile['bio'] ?? u.bio ?? '');
+
+    int? selectedStudyYear = _resolveStudyYear(currentProfile, u);
+    bool isSaving = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (dialogCtx, setModalState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.manage_accounts_rounded, color: AppTheme.primaryTeal),
+              SizedBox(width: 10),
+              Flexible(child: Text('Édition Administrative du Profil', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+            ],
+          ),
+          content: SizedBox(
+            width: 520,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Modifier directement les données officielles du médecin dans Supabase :',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 14),
+                  TextField(
+                    controller: nameCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Nom Complet du Médecin *',
+                      prefixIcon: Icon(Icons.person_rounded, size: 20),
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: roleCtrl,
+                          decoration: const InputDecoration(
+                            labelText: 'Rôle Médical *',
+                            prefixIcon: Icon(Icons.medical_services_rounded, size: 20),
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: DropdownButtonFormField<int?>(
+                          value: selectedStudyYear,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Année Cursus',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                          items: const [
+                            DropdownMenuItem(value: 1, child: Text('1ère Année')),
+                            DropdownMenuItem(value: 2, child: Text('2ème Année')),
+                            DropdownMenuItem(value: 3, child: Text('3ème Année')),
+                            DropdownMenuItem(value: 4, child: Text('4ème Année')),
+                            DropdownMenuItem(value: 5, child: Text('5ème Année')),
+                            DropdownMenuItem(value: 6, child: Text('6ème Année')),
+                            DropdownMenuItem(value: null, child: Text('Diplômé / Résident')),
+                          ],
+                          onChanged: (val) => setModalState(() => selectedStudyYear = val),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: facultyCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Faculté de Médecine *',
+                      prefixIcon: Icon(Icons.school_rounded, size: 20),
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: wilayaCtrl,
+                          decoration: const InputDecoration(
+                            labelText: 'Wilaya (ex: 09 Blida, 16 Alger)',
+                            prefixIcon: Icon(Icons.location_on_rounded, size: 20),
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: phoneCtrl,
+                          keyboardType: TextInputType.phone,
+                          decoration: const InputDecoration(
+                            labelText: 'Téléphone (ex: 0550123456)',
+                            prefixIcon: Icon(Icons.phone_rounded, size: 20),
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: targetYearCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Année Ciblée pour le Résidanat (ex: 2026, 2027)',
+                      prefixIcon: Icon(Icons.flag_rounded, size: 20),
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: bioCtrl,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: 'Bio / Note personnelle du Médecin',
+                      prefixIcon: Icon(Icons.description_rounded, size: 20),
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryTeal,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      final newName = nameCtrl.text.trim();
+                      final newRole = roleCtrl.text.trim();
+                      final newFaculty = facultyCtrl.text.trim();
+                      if (newName.isEmpty || newRole.isEmpty || newFaculty.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            backgroundColor: Color(0xFFDC2626),
+                            content: Text('Le nom, le rôle et la faculté sont requis.'),
+                          ),
+                        );
+                        return;
+                      }
+
+                      setModalState(() => isSaving = true);
+                      final ok = await SupabaseService.adminUpdateUserProfile(
+                        userId: widget.user.id,
+                        fullName: newName,
+                        medicalRole: newRole,
+                        faculty: newFaculty,
+                        studyYear: selectedStudyYear,
+                        wilaya: wilayaCtrl.text.trim().isNotEmpty ? wilayaCtrl.text.trim() : null,
+                        phone: phoneCtrl.text.trim().isNotEmpty ? phoneCtrl.text.trim() : null,
+                        residencyTargetYear: targetYearCtrl.text.trim().isNotEmpty ? targetYearCtrl.text.trim() : null,
+                        bio: bioCtrl.text.trim().isNotEmpty ? bioCtrl.text.trim() : null,
+                      );
+
+                      if (!ctx.mounted) return;
+                      Navigator.pop(ctx);
+
+                      if (ok) {
+                        setState(() {
+                          final p = _deepDetails['profile'] is Map
+                              ? Map<String, dynamic>.from(_deepDetails['profile'])
+                              : <String, dynamic>{};
+                          p['full_name'] = newName;
+                          p['medical_role'] = newRole;
+                          p['faculty'] = newFaculty;
+                          p['study_year'] = selectedStudyYear;
+                          p['wilaya'] = wilayaCtrl.text.trim();
+                          p['phone'] = phoneCtrl.text.trim();
+                          p['residency_target_year'] = targetYearCtrl.text.trim();
+                          p['bio'] = bioCtrl.text.trim();
+                          p['updated_at'] = DateTime.now().toUtc().toIso8601String();
+                          _deepDetails['profile'] = p;
+                        });
+
+                        try {
+                          context.read<AdminBloc>().add(AdminEditUserProfileEvent(
+                            userId: widget.user.id,
+                            fullName: newName,
+                            medicalRole: newRole,
+                            faculty: newFaculty,
+                            studyYear: selectedStudyYear,
+                            wilaya: wilayaCtrl.text.trim().isNotEmpty ? wilayaCtrl.text.trim() : null,
+                            phone: phoneCtrl.text.trim().isNotEmpty ? phoneCtrl.text.trim() : null,
+                            residencyTargetYear: targetYearCtrl.text.trim().isNotEmpty ? targetYearCtrl.text.trim() : null,
+                            bio: bioCtrl.text.trim().isNotEmpty ? bioCtrl.text.trim() : null,
+                          ));
+                        } catch (_) {}
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: const Color(0xFF16A34A),
+                            content: Text('Profil de $newName mis à jour avec succès dans Supabase !'),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            backgroundColor: Color(0xFFDC2626),
+                            content: Text('Erreur lors de la mise à jour du profil.'),
+                          ),
+                        );
+                      }
+                    },
+              child: isSaving
+                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                  : const Text('Enregistrer les modifications'),
             ),
           ],
         ),
@@ -697,7 +944,24 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        _buildSectionHeader('Profil Médical & Académique', Icons.local_hospital_outlined, isDark),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildSectionHeader('Profil Médical & Académique', Icons.local_hospital_outlined, isDark),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryTeal,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                elevation: 1,
+              ),
+              icon: const Icon(Icons.manage_accounts_rounded, size: 16),
+              label: const Text('Éditer le Profil', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              onPressed: () => _showEditFullProfileDialog(context, profile, u),
+            ),
+          ],
+        ),
         const SizedBox(height: 12),
         _buildInfoGrid([
           _InfoTile('Nom Complet', displayDoctorName, Icons.person_outline_rounded, isDark, onCopy: () => _copyToClipboard(displayDoctorName, 'Nom')),
@@ -718,6 +982,47 @@ class _DoctorProfileDetailsDialogState extends State<DoctorProfileDetailsDialog>
             ),
           ),
           _InfoTile('Code Parrainage', referralCode, Icons.loyalty_outlined, isDark, onCopy: () => _copyToClipboard(referralCode, 'Code Parrainage')),
+        ]),
+
+        const SizedBox(height: 20),
+        _buildSectionHeader('Coordonnées & Préparation Résidanat', Icons.contact_mail_outlined, isDark),
+        const SizedBox(height: 12),
+        _buildInfoGrid([
+          _InfoTile(
+            'Wilaya',
+            (profile['wilaya'] ?? u.wilaya)?.toString().isNotEmpty == true
+                ? (profile['wilaya'] ?? u.wilaya).toString()
+                : 'Non spécifiée',
+            Icons.location_on_outlined,
+            isDark,
+          ),
+          _InfoTile(
+            'Téléphone',
+            (profile['phone'] ?? u.phone)?.toString().isNotEmpty == true
+                ? (profile['phone'] ?? u.phone).toString()
+                : 'Non renseigné',
+            Icons.phone_outlined,
+            isDark,
+            onCopy: (profile['phone'] ?? u.phone)?.toString().isNotEmpty == true
+                ? () => _copyToClipboard((profile['phone'] ?? u.phone).toString(), 'Téléphone')
+                : null,
+          ),
+          _InfoTile(
+            'Cible Résidanat',
+            (profile['residency_target_year'] ?? u.residencyTargetYear)?.toString().isNotEmpty == true
+                ? 'Session ${(profile['residency_target_year'] ?? u.residencyTargetYear)}'
+                : 'Non définie',
+            Icons.flag_outlined,
+            isDark,
+          ),
+          _InfoTile(
+            'Bio / Statut',
+            (profile['bio'] ?? u.bio)?.toString().isNotEmpty == true
+                ? (profile['bio'] ?? u.bio).toString()
+                : 'Aucune bio renseignée',
+            Icons.notes_rounded,
+            isDark,
+          ),
         ]),
 
         const SizedBox(height: 20),

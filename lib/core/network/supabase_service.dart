@@ -144,11 +144,22 @@ class SupabaseService {
   /// Fetch User Profile and Subscription
   static Future<Map<String, dynamic>?> fetchUserProfileAndSubscription(String userId) async {
     try {
-      final profile = await client
+      final rawProfile = await client
           .from('profiles')
           .select()
           .eq('id', userId)
           .maybeSingle();
+
+      // Merge with currentUser metadata for seamless persistence
+      final Map<String, dynamic> profile = rawProfile != null ? Map<String, dynamic>.from(rawProfile) : <String, dynamic>{};
+      final userMeta = client.auth.currentUser?.userMetadata;
+      if (userMeta != null) {
+        userMeta.forEach((key, val) {
+          if (val != null && (profile[key] == null || profile[key].toString().trim().isEmpty)) {
+            profile[key] = val;
+          }
+        });
+      }
 
       var subscription = await client
           .from('subscriptions')
@@ -186,7 +197,7 @@ class SupabaseService {
     }
   }
 
-  /// Update User Profile fields in Supabase
+  /// Update User Profile fields in Supabase with resilient double persistence (Database + Auth UserMetadata)
   static Future<bool> updateUserProfile({
     required String userId,
     required String fullName,
@@ -199,6 +210,32 @@ class SupabaseService {
     String? wilaya,
     String? residencyTargetYear,
   }) async {
+    bool metadataUpdated = false;
+    bool dbUpdated = false;
+
+    // 1. Sync immediately to Supabase Auth User Metadata (survives session restarts)
+    try {
+      final userMeta = <String, dynamic>{
+        'full_name': fullName,
+        'medical_role': medicalRole,
+        'faculty': faculty,
+      };
+      if (studyYear != null) userMeta['study_year'] = studyYear;
+      if (avatarUrl != null) userMeta['avatar_url'] = avatarUrl;
+      if (bio != null) userMeta['bio'] = bio;
+      if (phone != null) userMeta['phone'] = phone;
+      if (wilaya != null) userMeta['wilaya'] = wilaya;
+      if (residencyTargetYear != null) userMeta['residency_target_year'] = residencyTargetYear;
+
+      if (client.auth.currentUser?.id == userId) {
+        await client.auth.updateUser(UserAttributes(data: userMeta));
+        metadataUpdated = true;
+      }
+    } catch (authErr) {
+      debugPrint('Notice: Supabase Auth updateUser metadata: $authErr');
+    }
+
+    // 2. Sync to public.profiles table
     try {
       final updateData = <String, dynamic>{
         'full_name': fullName,
@@ -213,10 +250,71 @@ class SupabaseService {
       if (wilaya != null) updateData['wilaya'] = wilaya;
       if (residencyTargetYear != null) updateData['residency_target_year'] = residencyTargetYear;
 
-      await client.from('profiles').update(updateData).eq('id', userId);
-      return true;
+      try {
+        await client.from('profiles').update(updateData).eq('id', userId);
+        dbUpdated = true;
+      } catch (colErr) {
+        debugPrint('Notice: full profiles update failed ($colErr). Retrying with core columns...');
+        final coreData = <String, dynamic>{
+          'full_name': fullName,
+          'medical_role': medicalRole,
+          'faculty': faculty,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        };
+        if (studyYear != null) coreData['study_year'] = studyYear;
+        if (avatarUrl != null) coreData['avatar_url'] = avatarUrl;
+        await client.from('profiles').update(coreData).eq('id', userId);
+        dbUpdated = true;
+      }
     } catch (e) {
-      debugPrint('Error updating user profile in Supabase: $e');
+      debugPrint('Error updating user profile in Supabase profiles: $e');
+    }
+
+    return dbUpdated || metadataUpdated;
+  }
+
+  /// Admin can update any doctor's profile directly
+  static Future<bool> adminUpdateUserProfile({
+    required String userId,
+    required String fullName,
+    required String medicalRole,
+    required String faculty,
+    int? studyYear,
+    String? wilaya,
+    String? phone,
+    String? residencyTargetYear,
+    String? bio,
+  }) async {
+    try {
+      final updateData = <String, dynamic>{
+        'full_name': fullName,
+        'medical_role': medicalRole,
+        'faculty': faculty,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      };
+      if (studyYear != null) updateData['study_year'] = studyYear;
+      if (wilaya != null) updateData['wilaya'] = wilaya;
+      if (phone != null) updateData['phone'] = phone;
+      if (residencyTargetYear != null) updateData['residency_target_year'] = residencyTargetYear;
+      if (bio != null) updateData['bio'] = bio;
+
+      try {
+        await client.from('profiles').update(updateData).eq('id', userId);
+        return true;
+      } catch (colErr) {
+        debugPrint('Admin update failed on full payload ($colErr), falling back to core...');
+        final coreData = <String, dynamic>{
+          'full_name': fullName,
+          'medical_role': medicalRole,
+          'faculty': faculty,
+          'updated_at': DateTime.now().toUtc().toIso8601String(),
+        };
+        if (studyYear != null) coreData['study_year'] = studyYear;
+        await client.from('profiles').update(coreData).eq('id', userId);
+        return true;
+      }
+    } catch (e) {
+      debugPrint('Admin update doctor profile error: $e');
       return false;
     }
   }
@@ -1068,39 +1166,79 @@ class SupabaseService {
   /// List Users for Admin Dashboard
   static Future<List<Map<String, dynamic>>> fetchAdminUsers() async {
     try {
-      final response = await client.rpc('admin_list_users');
-      final list = List<Map<String, dynamic>>.from(response);
-
-      // Enrich with study_year and sanitize malformed roles from profiles table
+      List<Map<String, dynamic>> list = [];
       try {
-        final profs = await client.from('profiles').select('id, study_year, medical_role');
-        final profileMap = <String, Map<String, dynamic>>{};
-        for (final p in profs) {
-          final pid = p['id']?.toString();
-          if (pid != null) profileMap[pid] = p;
-        }
+        final response = await client.rpc('admin_list_users');
+        list = List<Map<String, dynamic>>.from(response);
+      } catch (rpcErr) {
+        debugPrint('Notice: admin_list_users RPC failed or outdated ($rpcErr), falling back to profiles table join.');
+      }
 
-        for (final u in list) {
-          final uid = u['id']?.toString();
-          if (uid != null && profileMap.containsKey(uid)) {
-            final prof = profileMap[uid]!;
-            if (u['study_year'] == null && prof['study_year'] != null) {
-              u['study_year'] = prof['study_year'];
+      // If RPC failed or returned empty, query profiles with subscriptions
+      if (list.isEmpty) {
+        try {
+          final profs = await client.from('profiles').select('*, subscriptions(*)');
+          for (final p in profs) {
+            final map = Map<String, dynamic>.from(p);
+            final subs = map['subscriptions'];
+            if (subs is List && subs.isNotEmpty) {
+              final s = subs.first;
+              map['tier'] = s['tier'] ?? 'free';
+              map['status'] = s['status'] ?? 'active';
+              map['expires_at'] = s['expires_at'];
+            } else if (subs is Map) {
+              map['tier'] = subs['tier'] ?? 'free';
+              map['status'] = subs['status'] ?? 'active';
+              map['expires_at'] = subs['expires_at'];
+            } else {
+              map['tier'] = 'free';
+              map['status'] = 'active';
             }
-            final r = (u['medical_role'] ?? '').toString();
-            if (r.contains('(e Année)') || r.contains('(e Annee)')) {
-              final y = prof['study_year'] ?? u['study_year'];
-              u['medical_role'] = y != null
-                  ? 'Étudiant (e Année)'
-                  : 'Étudiant en Médecine';
+            list.add(map);
+          }
+        } catch (tableErr) {
+          debugPrint('Error direct profiles fallback: $tableErr');
+        }
+      } else {
+        // Enrich RPC results with full profile columns
+        try {
+          final profs = await client.from('profiles').select('id, study_year, medical_role, bio, phone, wilaya, residency_target_year, avatar_url');
+          final profileMap = <String, Map<String, dynamic>>{};
+          for (final p in profs) {
+            final pid = p['id']?.toString();
+            if (pid != null) profileMap[pid] = p;
+          }
+
+          for (final u in list) {
+            final uid = u['id']?.toString();
+            if (uid != null && profileMap.containsKey(uid)) {
+              final prof = profileMap[uid]!;
+              if (u['study_year'] == null && prof['study_year'] != null) {
+                u['study_year'] = prof['study_year'];
+              }
+              if (u['bio'] == null && prof['bio'] != null) u['bio'] = prof['bio'];
+              if (u['phone'] == null && prof['phone'] != null) u['phone'] = prof['phone'];
+              if (u['wilaya'] == null && prof['wilaya'] != null) u['wilaya'] = prof['wilaya'];
+              if (u['residency_target_year'] == null && prof['residency_target_year'] != null) {
+                u['residency_target_year'] = prof['residency_target_year'];
+              }
+              if (u['avatar_url'] == null && prof['avatar_url'] != null) u['avatar_url'] = prof['avatar_url'];
+
+              final r = (u['medical_role'] ?? '').toString();
+              if (r.contains('(e Année)') || r.contains('(e Annee)')) {
+                final y = prof['study_year'] ?? u['study_year'];
+                u['medical_role'] = y != null
+                    ? 'Étudiant (${y}e Année)'
+                    : 'Étudiant en Médecine';
+              }
             }
           }
-        }
-      } catch (_) {}
+        } catch (_) {}
+      }
 
       return list;
     } catch (e) {
-      debugPrint('Error fetching admin users: ');
+      debugPrint('Error fetching admin users: $e');
       return [];
     }
   }

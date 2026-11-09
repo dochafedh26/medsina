@@ -244,4 +244,62 @@ class UnrevokeLicenseKeyEvent extends AdminEvent {
   List<Object?> get props => [keyCode];
 }
 
+class UpdateUserSortAndFilterEvent extends AdminEvent {
+  final String? sortBy;
+  final String? roleFilter;
+  final String? tierFilter;
+  final String? statusFilter;
+  final int? studyYearFilter;
+  final bool resetFilters;
+
+  const UpdateUserSortAndFilterEvent({
+    this.sortBy,
+    this.roleFilter,
+    this.tierFilter,
+    this.statusFilter,
+    this.studyYearFilter,
+    this.resetFilters = false,
+  });
+
+  @override
+  List<Object?> get props => [sortBy, roleFilter, tierFilter, statusFilter, studyYearFilter, resetFilters];
+}
+
+class AdminEditUserProfileEvent extends AdminEvent {
+  final String userId;
+  final String fullName;
+  final String medicalRole;
+  final String faculty;
+  final int? studyYear;
+  final String? wilaya;
+  final String? phone;
+  final String? residencyTargetYear;
+  final String? bio;
+
+  const AdminEditUserProfileEvent({
+    required this.userId,
+    required this.fullName,
+    required this.medicalRole,
+    required this.faculty,
+    this.studyYear,
+    this.wilaya,
+    this.phone,
+    this.residencyTargetYear,
+    this.bio,
+  });
+
+  @override
+  List<Object?> get props => [
+        userId,
+        fullName,
+        medicalRole,
+        faculty,
+        studyYear,
+        wilaya,
+        phone,
+        residencyTargetYear,
+        bio,
+      ];
+}
+
 

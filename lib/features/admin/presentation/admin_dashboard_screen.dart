@@ -606,42 +606,259 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   }
 
   // --- TAB 2 : USERS & SUBSCRIPTIONS ---
+  String _getUserSortShortLabel(String sortBy) {
+    switch (sortBy) {
+      case 'oldest':
+        return 'Anciens';
+      case 'name_asc':
+        return 'Nom A-Z';
+      case 'name_desc':
+        return 'Nom Z-A';
+      case 'tier':
+        return 'VIP';
+      case 'study_year':
+        return 'Cursus';
+      case 'newest':
+      default:
+        return 'Récents';
+    }
+  }
+
+  Widget _buildFilterChoiceChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onSelected,
+    required bool isDark,
+  }) {
+    return FilterChip(
+      label: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+          color: isSelected
+              ? Colors.white
+              : (isDark ? Colors.white70 : const Color(0xFF334155)),
+        ),
+      ),
+      selected: isSelected,
+      selectedColor: AppTheme.primaryTeal,
+      backgroundColor: isDark ? AppTheme.darkSurfaceElevated : Colors.grey.shade100,
+      side: BorderSide(
+        color: isSelected
+            ? AppTheme.primaryTeal
+            : (isDark ? AppTheme.darkBorder : Colors.grey.shade300),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+      visualDensity: VisualDensity.compact,
+      showCheckmark: false,
+      onSelected: (_) => onSelected(),
+    );
+  }
+
   Widget _buildUsersTab(BuildContext context, AdminState state, bool isDark) {
     final users = state.filteredUsers;
+    final totalUsersCount = state.users.length;
+    final hasActiveFilters = state.userRoleFilter != 'all' ||
+        state.userTierFilter != 'all' ||
+        state.userStatusFilter != 'all' ||
+        state.userStudyYearFilter != null ||
+        state.userSortBy != 'newest';
 
     return Column(
       children: [
-        // Search bar
+        // Search and Sort Bar
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Rechercher un médecin par nom, email, rôle ou faculté...',
-              prefixIcon: const Icon(Icons.search_rounded),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear_rounded),
-                      onPressed: () {
-                        _searchController.clear();
-                        context.read<AdminBloc>().add(const SearchUsersEvent(''));
-                      },
-                    )
-                  : null,
-            ),
-            onChanged: (val) => context.read<AdminBloc>().add(SearchUsersEvent(val)),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Rechercher par nom, email, wilaya, rôle...',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear_rounded),
+                            onPressed: () {
+                              _searchController.clear();
+                              context.read<AdminBloc>().add(const SearchUsersEvent(''));
+                            },
+                          )
+                        : null,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  ),
+                  onChanged: (val) => context.read<AdminBloc>().add(SearchUsersEvent(val)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              PopupMenuButton<String>(
+                tooltip: 'Trier les profils',
+                icon: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.darkSurfaceElevated : Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: isDark ? AppTheme.darkBorder : Colors.grey.shade300),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.sort_rounded, size: 18, color: AppTheme.primaryTeal),
+                      const SizedBox(width: 4),
+                      Text(
+                        _getUserSortShortLabel(state.userSortBy),
+                        style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+                      ),
+                    ],
+                  ),
+                ),
+                initialValue: state.userSortBy,
+                onSelected: (val) {
+                  context.read<AdminBloc>().add(UpdateUserSortAndFilterEvent(sortBy: val));
+                },
+                itemBuilder: (ctx) => [
+                  const PopupMenuItem(
+                    value: 'newest',
+                    child: Row(children: [Icon(Icons.calendar_today_rounded, size: 16), SizedBox(width: 8), Text('Plus récents (défaut)')]),
+                  ),
+                  const PopupMenuItem(
+                    value: 'oldest',
+                    child: Row(children: [Icon(Icons.history_rounded, size: 16), SizedBox(width: 8), Text('Plus anciens')]),
+                  ),
+                  const PopupMenuItem(
+                    value: 'name_asc',
+                    child: Row(children: [Icon(Icons.sort_by_alpha_rounded, size: 16), SizedBox(width: 8), Text('Nom (A → Z)')]),
+                  ),
+                  const PopupMenuItem(
+                    value: 'name_desc',
+                    child: Row(children: [Icon(Icons.sort_by_alpha_rounded, size: 16), SizedBox(width: 8), Text('Nom (Z → A)')]),
+                  ),
+                  const PopupMenuItem(
+                    value: 'tier',
+                    child: Row(children: [Icon(Icons.stars_rounded, size: 16), SizedBox(width: 8), Text('Formule VIP d\'abord')]),
+                  ),
+                  const PopupMenuItem(
+                    value: 'study_year',
+                    child: Row(children: [Icon(Icons.school_rounded, size: 16), SizedBox(width: 8), Text('Année d\'Étude (6e → 1e)')]),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // Filter chips horizontal row
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            children: [
+              if (hasActiveFilters) ...[
+                ActionChip(
+                  avatar: const Icon(Icons.refresh_rounded, size: 14, color: Color(0xFFDC2626)),
+                  label: const Text('Réinitialiser filtres', style: TextStyle(fontSize: 11, color: Color(0xFFDC2626), fontWeight: FontWeight.bold)),
+                  backgroundColor: const Color(0xFFDC2626).withValues(alpha: 0.1),
+                  side: const BorderSide(color: Color(0xFFDC2626)),
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () {
+                    context.read<AdminBloc>().add(const UpdateUserSortAndFilterEvent(resetFilters: true));
+                  },
+                ),
+                const SizedBox(width: 6),
+              ],
+              _buildFilterChoiceChip(
+                label: 'Tous les rôles',
+                isSelected: state.userRoleFilter == 'all',
+                onSelected: () => context.read<AdminBloc>().add(const UpdateUserSortAndFilterEvent(roleFilter: 'all')),
+                isDark: isDark,
+              ),
+              const SizedBox(width: 6),
+              _buildFilterChoiceChip(
+                label: '🎓 Externes (4e-6e)',
+                isSelected: state.userRoleFilter == 'externe',
+                onSelected: () => context.read<AdminBloc>().add(const UpdateUserSortAndFilterEvent(roleFilter: 'externe')),
+                isDark: isDark,
+              ),
+              const SizedBox(width: 6),
+              _buildFilterChoiceChip(
+                label: '🏥 Internes',
+                isSelected: state.userRoleFilter == 'interne',
+                onSelected: () => context.read<AdminBloc>().add(const UpdateUserSortAndFilterEvent(roleFilter: 'interne')),
+                isDark: isDark,
+              ),
+              const SizedBox(width: 6),
+              _buildFilterChoiceChip(
+                label: '🌟 Résidents',
+                isSelected: state.userRoleFilter == 'resident',
+                onSelected: () => context.read<AdminBloc>().add(const UpdateUserSortAndFilterEvent(roleFilter: 'resident')),
+                isDark: isDark,
+              ),
+              const SizedBox(width: 6),
+              _buildFilterChoiceChip(
+                label: '⚕️ Praticiens',
+                isSelected: state.userRoleFilter == 'praticien',
+                onSelected: () => context.read<AdminBloc>().add(const UpdateUserSortAndFilterEvent(roleFilter: 'praticien')),
+                isDark: isDark,
+              ),
+              const SizedBox(width: 6),
+              _buildFilterChoiceChip(
+                label: '👑 VIP All-Access',
+                isSelected: state.userTierFilter == 'all_access',
+                onSelected: () => context.read<AdminBloc>().add(UpdateUserSortAndFilterEvent(
+                  tierFilter: state.userTierFilter == 'all_access' ? 'all' : 'all_access',
+                )),
+                isDark: isDark,
+              ),
+              const SizedBox(width: 6),
+              _buildFilterChoiceChip(
+                label: '📘 Pass Étudiant',
+                isSelected: state.userTierFilter == 'etudiant',
+                onSelected: () => context.read<AdminBloc>().add(UpdateUserSortAndFilterEvent(
+                  tierFilter: state.userTierFilter == 'etudiant' ? 'all' : 'etudiant',
+                )),
+                isDark: isDark,
+              ),
+              const SizedBox(width: 6),
+              _buildFilterChoiceChip(
+                label: '⚪ Essai Gratuit',
+                isSelected: state.userTierFilter == 'free',
+                onSelected: () => context.read<AdminBloc>().add(UpdateUserSortAndFilterEvent(
+                  tierFilter: state.userTierFilter == 'free' ? 'all' : 'free',
+                )),
+                isDark: isDark,
+              ),
+              const SizedBox(width: 6),
+              _buildFilterChoiceChip(
+                label: '⛔ Suspendus',
+                isSelected: state.userStatusFilter == 'suspended',
+                onSelected: () => context.read<AdminBloc>().add(UpdateUserSortAndFilterEvent(
+                  statusFilter: state.userStatusFilter == 'suspended' ? 'all' : 'suspended',
+                )),
+                isDark: isDark,
+              ),
+            ],
           ),
         ),
 
         // Count header
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${users.length} médecin(s) trouvé(s)',
+                '${users.length} sur $totalUsersCount médecin(s)',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey.shade500),
               ),
+              if (state.userSortBy != 'newest')
+                Text(
+                  'Tri: ${_getUserSortShortLabel(state.userSortBy)}',
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+                ),
             ],
           ),
         ),
@@ -655,7 +872,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     children: [
                       Icon(Icons.person_off_rounded, size: 48, color: Colors.grey.shade400),
                       const SizedBox(height: 12),
-                      const Text('Aucun médecin ne correspond à la recherche.'),
+                      const Text('Aucun médecin ne correspond aux filtres sélectionnés.'),
+                      if (hasActiveFilters) ...[
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: () => context.read<AdminBloc>().add(const UpdateUserSortAndFilterEvent(resetFilters: true)),
+                          child: const Text('Réinitialiser les filtres'),
+                        ),
+                      ],
                     ],
                   ),
                 )
@@ -946,6 +1170,77 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     ),
                   ],
                 ),
+                if (u.studyYear != null || (u.wilaya != null && u.wilaya!.isNotEmpty) || (u.phone != null && u.phone!.isNotEmpty) || (u.residencyTargetYear != null && u.residencyTargetYear!.isNotEmpty)) ...[
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: [
+                      if (u.studyYear != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2563EB).withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '${u.studyYear}e Année',
+                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                          ),
+                        ),
+                      if (u.wilaya != null && u.wilaya!.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.teal.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.location_on_rounded, size: 10, color: Colors.teal),
+                              const SizedBox(width: 2),
+                              Text(
+                                u.wilaya!,
+                                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.teal),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (u.phone != null && u.phone!.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.purple.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.phone_rounded, size: 10, color: Colors.purple),
+                              const SizedBox(width: 2),
+                              Text(
+                                u.phone!,
+                                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.purple),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (u.residencyTargetYear != null && u.residencyTargetYear!.isNotEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade900.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Cible ${u.residencyTargetYear}',
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.amber.shade900),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 8),
                 Wrap(
                   alignment: WrapAlignment.spaceBetween,

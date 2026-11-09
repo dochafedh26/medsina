@@ -25,6 +25,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<ArchiveEligibleReceiptsEvent>(_onArchiveEligibleReceipts);
     on<RevokeLicenseKeyEvent>(_onRevokeLicenseKey);
     on<UnrevokeLicenseKeyEvent>(_onUnrevokeLicenseKey);
+    on<UpdateUserSortAndFilterEvent>(_onUpdateUserSortAndFilter);
+    on<AdminEditUserProfileEvent>(_onAdminEditUserProfile);
   }
 
   void _onClearAdminMessage(ClearAdminMessageEvent event, Emitter<AdminState> emit) {
@@ -51,11 +53,21 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       final announcements = announcementsData.map((a) => AnnouncementItem.fromJson(a)).toList();
       final facebookPrompts = promptsData.map((p) => AdminFacebookPrompt.fromJson(p)).toList();
 
+      final filtered = _applyUserFilterAndSort(
+        users: users,
+        query: state.searchQuery,
+        sortBy: state.userSortBy,
+        roleFilter: state.userRoleFilter,
+        tierFilter: state.userTierFilter,
+        statusFilter: state.userStatusFilter,
+        studyYearFilter: state.userStudyYearFilter,
+      );
+
       emit(state.copyWith(
         status: AdminStatus.loaded,
         metrics: metrics,
         users: users,
-        filteredUsers: users,
+        filteredUsers: filtered,
         licenses: licenses,
         plans: plans,
         payments: payments,
@@ -74,19 +86,202 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
 
   void _onSearchUsers(SearchUsersEvent event, Emitter<AdminState> emit) {
     final query = event.query.trim().toLowerCase();
-    if (query.isEmpty) {
-      emit(state.copyWith(searchQuery: query, filteredUsers: state.users));
-      return;
+    final filtered = _applyUserFilterAndSort(
+      users: state.users,
+      query: query,
+      sortBy: state.userSortBy,
+      roleFilter: state.userRoleFilter,
+      tierFilter: state.userTierFilter,
+      statusFilter: state.userStatusFilter,
+      studyYearFilter: state.userStudyYearFilter,
+    );
+    emit(state.copyWith(searchQuery: query, filteredUsers: filtered));
+  }
+
+  void _onUpdateUserSortAndFilter(UpdateUserSortAndFilterEvent event, Emitter<AdminState> emit) {
+    final sortBy = event.resetFilters ? 'newest' : (event.sortBy ?? state.userSortBy);
+    final roleFilter = event.resetFilters ? 'all' : (event.roleFilter ?? state.userRoleFilter);
+    final tierFilter = event.resetFilters ? 'all' : (event.tierFilter ?? state.userTierFilter);
+    final statusFilter = event.resetFilters ? 'all' : (event.statusFilter ?? state.userStatusFilter);
+    final studyYearFilter = event.resetFilters ? null : (event.studyYearFilter ?? state.userStudyYearFilter);
+
+    final filtered = _applyUserFilterAndSort(
+      users: state.users,
+      query: state.searchQuery,
+      sortBy: sortBy,
+      roleFilter: roleFilter,
+      tierFilter: tierFilter,
+      statusFilter: statusFilter,
+      studyYearFilter: studyYearFilter,
+    );
+
+    emit(state.copyWith(
+      userSortBy: sortBy,
+      userRoleFilter: roleFilter,
+      userTierFilter: tierFilter,
+      userStatusFilter: statusFilter,
+      userStudyYearFilter: studyYearFilter,
+      clearStudyYearFilter: event.resetFilters,
+      filteredUsers: filtered,
+    ));
+  }
+
+  Future<void> _onAdminEditUserProfile(AdminEditUserProfileEvent event, Emitter<AdminState> emit) async {
+    emit(state.copyWith(status: AdminStatus.loading, clearMessages: true));
+    try {
+      final success = await SupabaseService.adminUpdateUserProfile(
+        userId: event.userId,
+        fullName: event.fullName,
+        medicalRole: event.medicalRole,
+        faculty: event.faculty,
+        studyYear: event.studyYear,
+        wilaya: event.wilaya,
+        phone: event.phone,
+        residencyTargetYear: event.residencyTargetYear,
+        bio: event.bio,
+      );
+
+      final updatedUsers = state.users.map((u) {
+        if (u.id == event.userId) {
+          return u.copyWith(
+            fullName: event.fullName,
+            medicalRole: event.medicalRole,
+            faculty: event.faculty,
+            studyYear: event.studyYear,
+            wilaya: event.wilaya,
+            phone: event.phone,
+            residencyTargetYear: event.residencyTargetYear,
+            bio: event.bio,
+            updatedAt: DateTime.now().toUtc(),
+          );
+        }
+        return u;
+      }).toList();
+
+      final filtered = _applyUserFilterAndSort(
+        users: updatedUsers,
+        query: state.searchQuery,
+        sortBy: state.userSortBy,
+        roleFilter: state.userRoleFilter,
+        tierFilter: state.userTierFilter,
+        statusFilter: state.userStatusFilter,
+        studyYearFilter: state.userStudyYearFilter,
+      );
+
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        users: updatedUsers,
+        filteredUsers: filtered,
+        successMessage: success
+            ? 'Profil de ${event.fullName} mis à jour avec succès dans la base Medsina !'
+            : 'Profil mis à jour en local.',
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: AdminStatus.loaded,
+        errorMessage: 'Erreur lors de la mise à jour du profil : $e',
+      ));
+    }
+  }
+
+  static List<AdminUserItem> _applyUserFilterAndSort({
+    required List<AdminUserItem> users,
+    required String query,
+    required String sortBy,
+    required String roleFilter,
+    required String tierFilter,
+    required String statusFilter,
+    required int? studyYearFilter,
+  }) {
+    var result = List<AdminUserItem>.from(users);
+
+    // 1. Text Search Filter
+    if (query.isNotEmpty) {
+      result = result.where((u) {
+        return u.fullName.toLowerCase().contains(query) ||
+            u.email.toLowerCase().contains(query) ||
+            u.faculty.toLowerCase().contains(query) ||
+            u.medicalRole.toLowerCase().contains(query) ||
+            (u.wilaya != null && u.wilaya!.toLowerCase().contains(query)) ||
+            (u.phone != null && u.phone!.contains(query));
+      }).toList();
     }
 
-    final filtered = state.users.where((u) {
-      return u.fullName.toLowerCase().contains(query) ||
-          u.email.toLowerCase().contains(query) ||
-          u.faculty.toLowerCase().contains(query) ||
-          u.medicalRole.toLowerCase().contains(query);
-    }).toList();
+    // 2. Role Filter
+    if (roleFilter != 'all') {
+      result = result.where((u) {
+        final r = u.medicalRole.toLowerCase();
+        switch (roleFilter) {
+          case 'etudiant':
+            return r.contains('étudiant') || r.contains('etudiant') || u.studyYear != null;
+          case 'externe':
+            return r.contains('externe') || (u.studyYear != null && u.studyYear! >= 4 && u.studyYear! <= 6);
+          case 'interne':
+            return r.contains('interne');
+          case 'resident':
+            return r.contains('résident') || r.contains('resident');
+          case 'praticien':
+            return r.contains('généraliste') || r.contains('specialiste') || r.contains('spécialiste') || r.contains('praticien') || r.contains('docteur');
+          default:
+            return true;
+        }
+      }).toList();
+    }
 
-    emit(state.copyWith(searchQuery: query, filteredUsers: filtered));
+    // 3. Tier Filter
+    if (tierFilter != 'all') {
+      result = result.where((u) => u.tier.toLowerCase() == tierFilter.toLowerCase()).toList();
+    }
+
+    // 4. Status Filter
+    if (statusFilter != 'all') {
+      result = result.where((u) {
+        if (statusFilter == 'suspended') return u.isBanned || u.status == 'suspended';
+        if (statusFilter == 'active') return !u.isBanned && u.status != 'suspended';
+        return true;
+      }).toList();
+    }
+
+    // 5. Study Year Filter
+    if (studyYearFilter != null) {
+      result = result.where((u) => u.studyYear == studyYearFilter).toList();
+    }
+
+    // 6. Sorting
+    result.sort((a, b) {
+      switch (sortBy) {
+        case 'oldest':
+          final aDate = a.createdAt ?? DateTime(2020);
+          final bDate = b.createdAt ?? DateTime(2020);
+          return aDate.compareTo(bDate);
+        case 'name_asc':
+          return a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase());
+        case 'name_desc':
+          return b.fullName.toLowerCase().compareTo(a.fullName.toLowerCase());
+        case 'tier':
+          final tierRank = {
+            'all_access': 5,
+            'resident_elite': 4,
+            'clinical_pro': 3,
+            'etudiant': 2,
+            'free': 1,
+          };
+          final aRank = tierRank[a.tier.toLowerCase()] ?? 0;
+          final bRank = tierRank[b.tier.toLowerCase()] ?? 0;
+          return bRank.compareTo(aRank);
+        case 'study_year':
+          final aY = a.studyYear ?? 0;
+          final bY = b.studyYear ?? 0;
+          return bY.compareTo(aY);
+        case 'newest':
+        default:
+          final aDate = a.createdAt ?? DateTime(2020);
+          final bDate = b.createdAt ?? DateTime(2020);
+          return bDate.compareTo(aDate);
+      }
+    });
+
+    return result;
   }
 
   void _onFilterPayments(FilterPaymentsEvent event, Emitter<AdminState> emit) {
