@@ -166,7 +166,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
       {/* Footer Info */}
       <div className="relative z-10 mt-8 text-center text-xs text-slate-500 flex items-center gap-4">
-        <span>Medsina v1.0.61</span>
+        <span>Medsina v1.0.62</span>
         <span>•</span>
         <span>Octenium Cloud VPS</span>
         <span>•</span>
