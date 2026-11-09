@@ -25,6 +25,9 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { NavigationTab } from '../../types/medsina';
+import logoLight from '../../assets/images/medsina-logo.png';
+import logoDark from '../../assets/images/medsina-logo-dark.png';
+import iconEmblem from '../../assets/images/medsina-icon.png';
 
 interface HeaderProps {
   currentTab: NavigationTab;
@@ -144,15 +147,17 @@ export const Header: React.FC<HeaderProps> = ({
             <Menu className="w-5 h-5" />
           </button>
 
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-600 dark:bg-teal-500 text-white flex items-center justify-center shadow-xs">
-            <Activity className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
-          </div>
           <button 
             onClick={() => handleSelectTab('overview')}
-            className="text-left font-bold text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white hover:opacity-90 transition-opacity whitespace-nowrap cursor-pointer flex items-center gap-1.5"
+            className="flex items-center gap-2 text-left hover:opacity-90 transition-opacity whitespace-nowrap cursor-pointer"
+            title="MedSina — Console Administrateur"
           >
-            <span>MedSina</span>
-            <span className="hidden sm:inline-block text-[10px] font-mono font-semibold uppercase px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800">
+            <img 
+              src={isDarkMode ? logoDark : logoLight} 
+              alt="Medsina" 
+              className="h-8 sm:h-9 w-auto object-contain max-w-[130px] sm:max-w-[160px]"
+            />
+            <span className="hidden sm:inline-block text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800">
               Admin
             </span>
           </button>
@@ -276,14 +281,15 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="fixed inset-y-0 left-0 w-full max-w-xs sm:max-w-sm bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-r border-slate-200 dark:border-slate-800 animate-in slide-in-from-left duration-250">
             {/* Drawer Header */}
             <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/50">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-xs">
-                  <Activity className="w-4 h-4 stroke-[2.2]" />
-                </div>
-                <div>
-                  <h2 className="font-bold text-slate-900 dark:text-white text-base">MedSina Admin</h2>
-                  <p className="text-[10px] text-slate-400 font-mono">Console d'administration v2.8</p>
-                </div>
+              <div className="flex items-center gap-2">
+                <img 
+                  src={isDarkMode ? logoDark : logoLight} 
+                  alt="Medsina Admin" 
+                  className="h-7 w-auto object-contain max-w-[130px]"
+                />
+                <span className="text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800">
+                  Admin
+                </span>
               </div>
 
               <button

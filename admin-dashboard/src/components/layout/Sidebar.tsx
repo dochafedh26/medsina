@@ -13,6 +13,7 @@ import {
   Database
 } from 'lucide-react';
 import { NavigationTab } from '../../types/medsina';
+import iconEmblem from '../../assets/images/medsina-icon.png';
 
 interface SidebarProps {
   currentTab: NavigationTab;
@@ -173,9 +174,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </span>
           <span className="text-[11px] font-mono tabular-nums">v2.8.4 OK</span>
         </div>
-        <p className="text-[11px] text-slate-400 dark:text-slate-500 pt-1">
-          Medsina Medical Suite · Blida, DZ
-        </p>
+        <div className="flex items-center gap-2 pt-1 text-slate-400 dark:text-slate-500">
+          <img src={iconEmblem} alt="" className="w-3.5 h-3.5 rounded-xs object-contain" />
+          <span className="text-[11px]">Medsina Medical Suite · Blida, DZ</span>
+        </div>
       </div>
     </aside>
   );

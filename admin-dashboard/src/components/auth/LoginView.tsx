@@ -13,6 +13,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { loginAdminWithEmail, AdminAuthProfile } from '../../services/supabase';
+import logoDark from '../../assets/images/medsina-logo-dark.png';
 
 interface LoginViewProps {
   onLoginSuccess: (admin: AdminAuthProfile) => void;
@@ -53,21 +54,24 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
       {/* Main Card */}
       <div className="w-full max-w-md relative z-10 bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl">
-        {/* Header / Brand */}
+        {/* Header / Real Medsina Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-teal-600 to-emerald-500 shadow-lg shadow-teal-500/20 mb-4 ring-4 ring-teal-500/10">
-            <Activity className="w-7 h-7 text-white stroke-[2.2]" />
+          <div className="flex justify-center items-center mb-4">
+            <img 
+              src={logoDark} 
+              alt="Medsina" 
+              className="h-12 sm:h-14 w-auto object-contain drop-shadow-md"
+            />
           </div>
 
           <div className="flex items-center justify-center gap-1.5 mb-1.5">
-            <span className="text-2xl font-black tracking-tight text-white">Medsina</span>
-            <span className="text-xs uppercase font-extrabold px-2 py-0.5 rounded-md bg-teal-500/20 text-teal-300 border border-teal-500/30">
-              Admin
+            <span className="text-xs uppercase font-extrabold px-2.5 py-0.5 rounded-md bg-teal-500/20 text-teal-300 border border-teal-500/30 font-mono tracking-wider">
+              Console Administrateur
             </span>
           </div>
 
-          <p className="text-xs text-slate-400">
-            Console d'administration hébergée sur l'infrastructure <span className="text-teal-400 font-semibold">Octenium</span>
+          <p className="text-xs text-slate-400 mt-2">
+            Plateforme médicale officielle hébergée sur <span className="text-teal-400 font-semibold">Octenium</span>
           </p>
         </div>
 
