@@ -479,7 +479,7 @@ export default function App() {
         />
 
         {/* Content Viewport */}
-        <main className="flex-1 p-3.5 sm:p-5 md:p-6 lg:p-8 max-w-7xl mx-auto w-full overflow-x-hidden pb-28 md:pb-8">
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 max-w-[1720px] mx-auto w-full overflow-x-hidden pb-28 md:pb-12">
           {/* Mobile Top Horizontal Pill Nav (< md) */}
           <div className="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pb-2 mb-2 px-0.5 scroll-smooth">
             {mobileNavTabs.map((tab) => {

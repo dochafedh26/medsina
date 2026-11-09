@@ -92,120 +92,128 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
       )}
 
       {/* 4 Primary Financial & User KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: Chiffre d'Affaires DZD */}
-        <div className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:shadow-md transition-all relative overflow-hidden group">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-emerald-500" />
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-            <span>Chiffre d'Affaires Validé</span>
-            <div className="flex items-center text-emerald-600 dark:text-emerald-400 font-medium">
-              <TrendingUp className="w-3.5 h-3.5 mr-0.5" />
+            <span className="font-medium">Chiffre d'Affaires Validé</span>
+            <div className="flex items-center text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-900/60">
+              <TrendingUp className="w-3.5 h-3.5 mr-1" />
               <span className="font-mono tabular-nums">+18.5%</span>
             </div>
           </div>
-          <p className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white mt-2">
-            {financialMetrics.totalRevenue.toLocaleString()} <span className="text-sm font-normal text-slate-500">DZD</span>
+          <p className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-slate-900 dark:text-white mt-3">
+            {financialMetrics.totalRevenue.toLocaleString()} <span className="text-sm font-normal text-slate-400 font-sans">DZD</span>
           </p>
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-2">
-            <span>{financialMetrics.approvedCount} transactions</span>
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <span className="font-medium text-slate-700 dark:text-slate-300">{financialMetrics.approvedCount} transactions</span>
             <span aria-hidden="true">·</span>
             <span className="text-amber-600 dark:text-amber-400 font-medium">{financialMetrics.pendingCount} en attente</span>
           </div>
         </div>
 
         {/* Card 2: Total Utilisateurs & Médecins */}
-        <div className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:shadow-md transition-all relative overflow-hidden group">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-            <span>Médecins & Étudiants Inscrits</span>
-            <span className="text-teal-600 dark:text-teal-400 font-medium text-[11px]">Algérie</span>
+            <span className="font-medium">Médecins & Étudiants Inscrits</span>
+            <span className="text-cyan-700 dark:text-cyan-300 font-semibold text-[11px] px-2 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/60 border border-cyan-200/60 dark:border-cyan-900/60">Algérie 🇩🇿</span>
           </div>
-          <p className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white mt-2">
+          <p className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-slate-900 dark:text-white mt-3">
             {metrics.totalUsers.toLocaleString()}
           </p>
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-2">
-            <span>Résidents : {metrics.residentElite}</span>
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <span>Résidents : <strong className="text-slate-700 dark:text-slate-300 font-mono">{metrics.residentElite}</strong></span>
             <span aria-hidden="true">·</span>
-            <span>VIP : {metrics.allAccess}</span>
+            <span>VIP : <strong className="text-teal-600 dark:text-teal-400 font-mono">{metrics.allAccess}</strong></span>
           </div>
         </div>
 
         {/* Card 3: Clés de Licence VIP */}
-        <div className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:shadow-md transition-all relative overflow-hidden group">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-indigo-500" />
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-            <span>Licences VIP & Codes</span>
-            <span className="text-teal-600 dark:text-teal-400 font-medium text-[11px]">{metrics.availableLicenses} libres</span>
+            <span className="font-medium">Licences VIP & Codes</span>
+            <span className="text-purple-700 dark:text-purple-300 font-semibold text-[11px] px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 border border-purple-200/60 dark:border-purple-900/60">{metrics.availableLicenses} libres</span>
           </div>
-          <p className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white mt-2">
-            {metrics.redeemedLicenses} <span className="text-sm font-normal text-slate-500">/ {metrics.totalLicenses}</span>
+          <p className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-slate-900 dark:text-white mt-3">
+            {metrics.redeemedLicenses} <span className="text-sm font-normal text-slate-400 font-sans">/ {metrics.totalLicenses}</span>
           </p>
           <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 mt-3 overflow-hidden">
             <div 
-              className="bg-teal-600 dark:bg-teal-400 h-full rounded-full transition-all"
-              style={{ width: `${(metrics.redeemedLicenses / metrics.totalLicenses) * 100}%` }}
+              className="bg-purple-600 dark:bg-purple-400 h-full rounded-full transition-all"
+              style={{ width: `${metrics.totalLicenses > 0 ? (metrics.redeemedLicenses / metrics.totalLicenses) * 100 : 0}%` }}
             />
           </div>
         </div>
 
         {/* Card 4: Téléchargements Octenium */}
-        <div className="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <div className="p-4 sm:p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:shadow-md transition-all relative overflow-hidden group">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-            <span>Téléchargements Octenium</span>
-            <span className="text-slate-600 dark:text-slate-300 font-medium text-[11px]">Multi-OS</span>
+            <span className="font-medium">Téléchargements Octenium</span>
+            <span className="text-amber-700 dark:text-amber-300 font-semibold text-[11px] px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900/60">Multi-OS</span>
           </div>
-          <p className="text-2xl font-bold font-mono tabular-nums text-slate-900 dark:text-white mt-2">
+          <p className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-slate-900 dark:text-white mt-3">
             {metrics.octeniumTotalDownloads.toLocaleString()}
           </p>
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-2">
-            <span>APK : {metrics.octeniumApkDownloads.toLocaleString()}</span>
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+            <span>APK : <strong className="text-slate-700 dark:text-slate-300 font-mono">{metrics.octeniumApkDownloads.toLocaleString()}</strong></span>
             <span aria-hidden="true">·</span>
-            <span>Windows : {metrics.octeniumWindowsDownloads.toLocaleString()}</span>
+            <span>Windows : <strong className="text-slate-700 dark:text-slate-300 font-mono">{metrics.octeniumWindowsDownloads.toLocaleString()}</strong></span>
           </div>
         </div>
       </div>
 
       {/* Tier Distribution Breakdown Strip */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs p-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3">
-          Répartition des Comptes par Formule d'Abonnement
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
-            <span className="text-[11px] text-slate-500 block">Essai Gratuit</span>
-            <span className="text-lg font-bold font-mono text-slate-800 dark:text-slate-200">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-3.5">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <span>Répartition des Praticiens par Formule</span>
+            <span className="text-slate-300 dark:text-slate-700">·</span>
+            <span className="font-normal font-mono text-slate-400">Total : {metrics.totalUsers} comptes</span>
+          </h2>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-800 hover:border-slate-300 transition-all">
+            <span className="text-[11px] text-slate-500 font-medium block">Essai Gratuit</span>
+            <span className="text-xl font-extrabold font-mono text-slate-800 dark:text-slate-200 mt-1 block">
               {metrics.freeTrials}
             </span>
-            <span className="text-[10px] text-slate-400 block mt-0.5">Accès limité</span>
+            <span className="text-[10px] text-slate-400 block mt-1">Accès découverte</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60">
-            <span className="text-[11px] text-blue-700 dark:text-blue-300 font-medium block">Formule Étudiant</span>
-            <span className="text-lg font-bold font-mono text-blue-900 dark:text-blue-200">
+          <div className="p-3.5 rounded-xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200/60 dark:border-blue-900/40 hover:border-blue-300 transition-all">
+            <span className="text-[11px] text-blue-700 dark:text-blue-300 font-semibold block">Formule Étudiant</span>
+            <span className="text-xl font-extrabold font-mono text-blue-900 dark:text-blue-200 mt-1 block">
               {metrics.etudiant}
             </span>
-            <span className="text-[10px] text-blue-600 dark:text-blue-400 block mt-0.5">Externat 4-6ème</span>
+            <span className="text-[10px] text-blue-600/80 dark:text-blue-400/80 block mt-1">Externat 4-6ème</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-sky-50/60 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900/60">
-            <span className="text-[11px] text-sky-700 dark:text-sky-300 font-medium block">Clinical Pro</span>
-            <span className="text-lg font-bold font-mono text-sky-900 dark:text-sky-200">
+          <div className="p-3.5 rounded-xl bg-cyan-50/50 dark:bg-cyan-950/30 border border-cyan-200/60 dark:border-cyan-900/40 hover:border-cyan-300 transition-all">
+            <span className="text-[11px] text-cyan-700 dark:text-cyan-300 font-semibold block">Clinical Pro</span>
+            <span className="text-xl font-extrabold font-mono text-cyan-900 dark:text-cyan-200 mt-1 block">
               {metrics.clinicalPro}
             </span>
-            <span className="text-[10px] text-sky-600 dark:text-sky-400 block mt-0.5">Cabinet & Praticiens</span>
+            <span className="text-[10px] text-cyan-600/80 dark:text-cyan-400/80 block mt-1">Cabinet & Praticiens</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-purple-50/60 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900/60">
-            <span className="text-[11px] text-purple-700 dark:text-purple-300 font-medium block">Résident Élite</span>
-            <span className="text-lg font-bold font-mono text-purple-900 dark:text-purple-200">
+          <div className="p-3.5 rounded-xl bg-purple-50/50 dark:bg-purple-950/30 border border-purple-200/60 dark:border-purple-900/40 hover:border-purple-300 transition-all">
+            <span className="text-[11px] text-purple-700 dark:text-purple-300 font-semibold block">Résident Élite</span>
+            <span className="text-xl font-extrabold font-mono text-purple-900 dark:text-purple-200 mt-1 block">
               {metrics.residentElite}
             </span>
-            <span className="text-[10px] text-purple-600 dark:text-purple-400 block mt-0.5">Concours Résidanat</span>
+            <span className="text-[10px] text-purple-600/80 dark:text-purple-400/80 block mt-1">Concours Résidanat</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-amber-50/60 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 col-span-2 sm:col-span-1">
-            <span className="text-[11px] text-amber-700 dark:text-amber-300 font-medium block">All-Access VIP</span>
-            <span className="text-lg font-bold font-mono text-amber-900 dark:text-amber-200">
+          <div className="p-3.5 rounded-xl bg-amber-50/60 dark:bg-amber-950/40 border border-amber-200/70 dark:border-amber-900/50 col-span-2 sm:col-span-1 hover:border-amber-300 transition-all">
+            <span className="text-[11px] text-amber-700 dark:text-amber-300 font-bold block">All-Access VIP</span>
+            <span className="text-xl font-extrabold font-mono text-amber-900 dark:text-amber-200 mt-1 block">
               {metrics.allAccess}
             </span>
-            <span className="text-[10px] text-amber-600 dark:text-amber-400 block mt-0.5">Complet + IA</span>
+            <span className="text-[10px] text-amber-600/90 dark:text-amber-400/90 block mt-1 font-medium">Médical Pro + IA Copilot</span>
           </div>
         </div>
       </div>
