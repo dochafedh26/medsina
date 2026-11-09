@@ -1205,5 +1205,20 @@
     ],
     "created_at": "2026-11-09T08:18:00.287970+00:00",
     "updated_at": "2026-11-09T08:18:00.287984+00:00"
+  },
+  {
+    "id": "lab_paracetamolemie",
+    "name": "Paracétamolémie (Dosage plasmatique du paracétamol)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "Zone thérapeutique: 10 - 20 mg/L (ou 66 - 132 µmol/L)",
+    "unit": "mg/L",
+    "high_interpretation": "Surdosage ou intoxication aiguë. À partir de 150-200 mg/L à H4 post-ingestion, risque majeur d'hépatite cytolytique fulminante par saturation de la glycurono-conjugaison et production massive du métabolite toxique NAPQI. Urgence vitale absolue : indication formelle à l'antidote (N-acétylcystéine - NAC) si la concentration se situe au-dessus de la ligne de traitement du nomogramme de Rumack-Matthew. Conduite à tenir : Évaluation de l'heure d'ingestion, début immédiat de la NAC IV si délai > 4h et selon nomogramme, contact centre antipoison, charbon actif si ingestion < 1h.",
+    "low_interpretation": "Absence d'intoxication aiguë aux doses usuelles. Une valeur basse ou indétectable (sauf si prise très récente < 4h) exclut une hépatotoxicité aiguë liée au paracétamol. Attention : une paracétamolémie nulle à distance d'une intoxication chronique ou tardive n'exclut pas une hépatotoxicité déjà constituée.",
+    "clinical_notes": [
+      "Piège pré-analytique : Le nomogramme de Rumack-Matthew n'est validé que pour une ingestion aiguë unique entre H4 et H24 post-ingestion. Il est inapplicable en cas d'intoxications chroniques (prises répétées sur plusieurs jours) ou si le délai d'ingestion est inconnu.",
+      "Règle thérapeutique : L'antidote (N-acétylcystéine) est d'autant plus efficace qu'il est administré tôt (dans les 8 premières heures). En cas de doute sur le délai d'ingestion ou de retard d'acheminement du dosage, débuter immédiatement la NAC en attendant le résultat."
+    ],
+    "created_at": "2026-11-09T18:58:38.610750+00:00",
+    "updated_at": "2026-11-09T18:58:38.610764+00:00"
   }
 ]
