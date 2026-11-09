@@ -131,18 +131,25 @@ class OfflineCourseManager extends ChangeNotifier {
     return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} Mo';
   }
 
-  /// Resolves direct stream download URL from Google Drive ID
+  /// Resolves direct stream download URL from Google Drive ID or URL
   String _getStreamUrl(CourseModel course) {
     final driveId = course.pdfDriveId ?? '';
     if (driveId.isNotEmpty && driveId.length > 10) {
-      return 'https://drive.google.com/uc?export=download&id=$driveId';
+      return 'https://drive.usercontent.google.com/download?id=$driveId&export=download&confirm=t';
     }
     final rawUrl = course.pdfDownloadUrl ?? '';
     if (rawUrl.contains('/d/')) {
       final parts = rawUrl.split('/d/');
       if (parts.length > 1) {
-        final id = parts[1].split('/')[0];
-        return 'https://drive.google.com/uc?export=download&id=$id';
+        final id = parts[1].split('/')[0].split('?')[0];
+        return 'https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t';
+      }
+    }
+    if (rawUrl.contains('drive.google.com/open?id=')) {
+      final uri = Uri.tryParse(rawUrl);
+      final id = uri?.queryParameters['id'];
+      if (id != null && id.isNotEmpty) {
+        return 'https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t';
       }
     }
     return rawUrl;

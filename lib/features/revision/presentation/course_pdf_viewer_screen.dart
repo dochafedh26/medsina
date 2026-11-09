@@ -129,7 +129,7 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       if (parts.length > 1) {
         final id = parts[1].split('/')[0].split('?')[0];
         if (id.isNotEmpty) {
-          return 'https://drive.google.com/uc?export=download&id=$id';
+          return 'https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t';
         }
       }
     }
@@ -137,7 +137,7 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       final uri = Uri.tryParse(trimmed);
       final id = uri?.queryParameters['id'];
       if (id != null && id.isNotEmpty) {
-        return 'https://drive.google.com/uc?export=download&id=$id';
+        return 'https://drive.usercontent.google.com/download?id=$id&export=download&confirm=t';
       }
     }
     return trimmed;
@@ -170,7 +170,7 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
     }
     final driveId = widget.course.pdfDriveId;
     if (driveId != null && driveId.isNotEmpty) {
-      return 'https://drive.google.com/uc?export=download&id=$driveId';
+      return 'https://drive.usercontent.google.com/download?id=$driveId&export=download&confirm=t';
     }
     final rawUrl = widget.course.pdfDownloadUrl ?? '';
     return _normalizeRemotePdfUrl(rawUrl);

@@ -93,7 +93,7 @@ class _SamedisPedagogiquesScreenState extends State<SamedisPedagogiquesScreen> {
       questionsCount: 0,
       hasPdf: true,
       pdfDownloadUrl: effectiveDriveId != null
-          ? 'https://drive.google.com/uc?export=download&id=$effectiveDriveId'
+          ? 'https://drive.usercontent.google.com/download?id=$effectiveDriveId&export=download&confirm=t'
           : item.assetPath,
       pdfDriveId: effectiveDriveId,
     );

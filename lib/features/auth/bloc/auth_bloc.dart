@@ -65,8 +65,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 ? DateTime.tryParse(sub!['expires_at']) ?? DateTime.now().add(const Duration(days: 30))
                 : DateTime.now().add(const Duration(days: 14));
 
-            final isAdm = profile['is_admin'] == true;
-            final isBanned = profile['is_banned'] == true;
+            final userEmail = (profile['email'] ?? session.user.email ?? '').toString().trim().toLowerCase();
+            final isAdm = profile['is_admin'] == true || userEmail == 'doc.hafedh26@gmail.com';
+            final isBanned = profile['is_banned'] == true && userEmail != 'doc.hafedh26@gmail.com';
 
             if (isBanned) {
               await SupabaseService.signOut();
@@ -126,6 +127,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           return;
         }
         if (session != null && session.user.id == user.id) {
+          if (data['is_admin'] != user.isAdmin || data['isAdmin'] != user.isAdmin) {
+            await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
+          }
           emit(state.copyWith(status: AuthStatus.authenticated, user: user));
           CloudSyncService.instance.syncAll().catchError((e) {
             debugPrint('[CloudSync] Startup sync error: $e');
@@ -194,8 +198,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
 
         final profileMap = cloudData?['profile'] as Map<String, dynamic>?;
-        final isAdm = profileMap?['is_admin'] == true;
-        final isBanned = profileMap?['is_banned'] == true;
+        final emailClean = email.trim().toLowerCase();
+        final isAdm = profileMap?['is_admin'] == true || emailClean == 'doc.hafedh26@gmail.com';
+        final isBanned = profileMap?['is_banned'] == true && emailClean != 'doc.hafedh26@gmail.com';
 
         if (isBanned) {
           await SupabaseService.signOut();

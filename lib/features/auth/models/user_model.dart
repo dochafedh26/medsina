@@ -10,7 +10,8 @@ class UserModel extends Equatable {
   final SubscriptionTier tier;
   final DateTime subscriptionExpiry;
   final String token;
-  final bool isAdmin;
+  final bool _isAdmin;
+  bool get isAdmin => _isAdmin || email.trim().toLowerCase() == 'doc.hafedh26@gmail.com';
   final bool isBanned;
   final String? banReason;
   final int rejectedPaymentsCount;
@@ -30,7 +31,7 @@ class UserModel extends Equatable {
     required this.tier,
     required this.subscriptionExpiry,
     required this.token,
-    this.isAdmin = false,
+    bool isAdmin = false,
     this.isBanned = false,
     this.banReason,
     this.rejectedPaymentsCount = 0,
@@ -40,7 +41,7 @@ class UserModel extends Equatable {
     this.phone,
     this.wilaya,
     this.residencyTargetYear,
-  });
+  }) : _isAdmin = isAdmin;
 
   bool get isStudent {
     final role = medicalRole.toLowerCase();
@@ -167,7 +168,8 @@ class UserModel extends Equatable {
       }
     }
 
-    final isAdm = json['isAdmin'] == true || json['is_admin'] == true;
+    final emailVal = (json['email'] ?? '').toString().trim().toLowerCase();
+    final isAdm = json['isAdmin'] == true || json['is_admin'] == true || emailVal == 'doc.hafedh26@gmail.com';
     final isBan = json['isBanned'] == true || json['is_banned'] == true;
     final reason = json['banReason'] ?? json['ban_reason'];
     final rejections = (json['rejectedPaymentsCount'] ?? json['rejected_payments_count'] as num?)?.toInt() ?? 0;
