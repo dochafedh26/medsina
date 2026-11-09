@@ -1173,5 +1173,21 @@
     ],
     "created_at": "2026-11-08T17:09:53.611051+00:00",
     "updated_at": "2026-11-08T17:09:53.611066+00:00"
+  },
+  {
+    "id": "lab_trou_anionique",
+    "name": "Trou anionique plasmatique et urinaire (TA / TAU)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "Plasmatique : 12 ± 4 mEq/L (ou mmol/L) | Urinaire : Variable (négatif ou positif selon le statut acido-basique)",
+    "unit": "mEq/L",
+    "high_interpretation": "TA plasmatique élevé (> 16 mEq/L) : Acidose métabolique à trou anionique élevé (MUDPILES : Méthanol, Urémie, DKA/Acidocétose diabétique, Paracétamol/Propylène glycol, Isoniazide/Inanition, Lacticose, Éthanol/Ethylène glycol, Salicylates). Urgence vitale selon pH et étiologie. TAU positif (> 0) : Acidose tubulaire rénale proximale (type 2) ou distale (type 1). Conduite à tenir : Gaz du sang, ionogramme complet, recherche de toxiques, fonction rénale.",
+    "low_interpretation": "TA plasmatique bas (< 8 mEq/L) : Rare, le plus souvent artéfactuel (hypoalbuminémie majeure, myélome multiple avec gamma monoclonale cationique, hypercalcémie ou hypermagnésémie sévère, intoxication au lithium). TAU négatif fort (< -20 mEq/L) : Perte rénale de bicarbonates ou diarrhée (réponse rénale adaptée avec ammoniurie augmentée et excrétion de NH4Cl).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'hypoalbuminémie abaisse artificiellement le trou anionique plasmatique (correction : ajouter 2.5 mEq/L au TA mesuré par tranche de 10 g/L d'albumine en moins sous la normale de 40 g/L).",
+      "Formule indispensable au concours : TA plasmatique = [Na+] - ([Cl-] + [HCO3-]). Formule alternative avec le potassium : [Na+ + K+] - ([Cl-] + [HCO3-]).",
+      "Calcul du TAU : [Na+ urinaire + K+ urinaire] - [Cl- urinaire]. Permet de différencier une origine rénale (TAU positif ou peu négatif) d'une origine extra-rénale (TAU très négatif) devant une acidose métabolique à trou anionique normal (hyperchlorémique)."
+    ],
+    "created_at": "2026-11-09T01:04:26.291129+00:00",
+    "updated_at": "2026-11-09T01:04:26.291145+00:00"
   }
 ]
