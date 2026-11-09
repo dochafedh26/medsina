@@ -217,9 +217,9 @@ export const AnnouncementsView: React.FC<AnnouncementsViewProps> = ({
 
       {/* Broadcast Announcement Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in-50 duration-150">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/50 shrink-0">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                 Diffuser une Nouvelle Annonce Système
               </h3>
@@ -228,7 +228,7 @@ export const AnnouncementsView: React.FC<AnnouncementsViewProps> = ({
               </button>
             </div>
 
-            <form onSubmit={handleCreateAnnouncement} className="space-y-3 text-xs">
+            <form onSubmit={handleCreateAnnouncement} className="p-4 sm:p-5 overflow-y-auto space-y-3 text-xs">
               <div>
                 <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Titre du Message

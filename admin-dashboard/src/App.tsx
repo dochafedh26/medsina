@@ -51,8 +51,21 @@ import {
   createNationalExamInSupabase
 } from './services/supabase';
 
+import { 
+  BarChart2, 
+  Users, 
+  CreditCard, 
+  Tag, 
+  Key, 
+  Award, 
+  Megaphone, 
+  Bot, 
+  Menu 
+} from 'lucide-react';
+
 export default function App() {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('overview');
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('medsina_theme');
@@ -328,6 +341,25 @@ export default function App() {
     }));
   };
 
+  const handleCreateManualPayment = (newPayment: PaymentItem) => {
+    setPayments(prev => [newPayment, ...prev]);
+    if (newPayment.status === 'approved') {
+      const days = newPayment.durationDays || 365;
+      const expiry = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      setUsers(currentUsers => currentUsers.map(u => {
+        if ((newPayment.userId && u.id === newPayment.userId) || u.email === newPayment.userEmail) {
+          return {
+            ...u,
+            tier: newPayment.tier,
+            status: 'active',
+            expiresAt: expiry
+          };
+        }
+        return u;
+      }));
+    }
+  };
+
   // User Actions
   const handleUpdateUser = async (updatedUser: AdminUserItem) => {
     setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
@@ -379,12 +411,24 @@ export default function App() {
     const current = announcements.find(a => a.id === id);
     const newStatus = !current?.isActive;
     setAnnouncements(prev => prev.map(a => a.id === id ? { ...a, isActive: newStatus } : a));
-    await toggleAnnouncementInSupabase(id, !newStatus);
+    await toggleAnnouncementInSupabase(id, newStatus);
   };
 
   // Counts for Badges
   const pendingPaymentsCount = payments.filter(p => p.status === 'pending').length;
   const availableLicensesCount = licenses.filter(l => !l.isRedeemed && !l.isRevoked).length;
+
+  // Mobile navigation tabs
+  const mobileNavTabs = [
+    { id: 'overview' as NavigationTab, label: 'KPIs', icon: BarChart2 },
+    { id: 'users' as NavigationTab, label: 'Médecins', icon: Users, badge: users.length },
+    { id: 'payments' as NavigationTab, label: 'Paiements CCP', icon: CreditCard, badge: pendingPaymentsCount > 0 ? pendingPaymentsCount : undefined },
+    { id: 'pricing' as NavigationTab, label: 'Tarifs DZD', icon: Tag },
+    { id: 'licenses' as NavigationTab, label: 'Licences VIP', icon: Key, badge: availableLicensesCount > 0 ? availableLicensesCount : undefined },
+    { id: 'exams' as NavigationTab, label: 'Concours', icon: Award },
+    { id: 'announcements' as NavigationTab, label: 'Annonces', icon: Megaphone },
+    { id: 'ai_agents' as NavigationTab, label: 'IA GitHub', icon: Bot },
+  ];
 
   // 1. Loading Splash
   if (isAuthChecking) {
@@ -416,6 +460,11 @@ export default function App() {
         onSignOut={handleSignOut}
         onRefresh={() => loadAllRealData(true)}
         isRefreshing={isRefreshing}
+        isMobileDrawerOpen={isMobileDrawerOpen}
+        onToggleMobileDrawer={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
+        onCloseMobileDrawer={() => setIsMobileDrawerOpen(false)}
+        totalUsersCount={users.length}
+        availableLicensesCount={availableLicensesCount}
       />
 
       {/* Main Layout */}
@@ -430,7 +479,38 @@ export default function App() {
         />
 
         {/* Content Viewport */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full overflow-x-hidden">
+        <main className="flex-1 p-3.5 sm:p-5 md:p-6 lg:p-8 max-w-7xl mx-auto w-full overflow-x-hidden pb-28 md:pb-8">
+          {/* Mobile Top Horizontal Pill Nav (< md) */}
+          <div className="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pb-3 mb-3">
+            {mobileNavTabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = currentTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setCurrentTab(tab.id)}
+                  className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                    isActive
+                      ? 'bg-teal-600 text-white dark:bg-teal-500 font-semibold shadow-xs'
+                      : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                  {tab.badge !== undefined && (
+                    <span className={`px-1.5 py-0.2 text-[10px] rounded-full font-mono font-semibold ${
+                      isActive 
+                        ? 'bg-white/20 text-white' 
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                    }`}>
+                      {tab.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
           {isLoadingData ? (
             <div className="flex flex-col items-center justify-center py-24 text-slate-500 dark:text-slate-400">
               <div className="w-8 h-8 border-3 border-teal-500 border-t-transparent rounded-full animate-spin mb-3" />
@@ -462,9 +542,11 @@ export default function App() {
                 <PaymentsView
                   payments={payments}
                   financialMetrics={financialMetrics}
+                  users={users}
                   onApprovePayment={handleApprovePayment}
                   onRejectPayment={handleRejectPayment}
                   onArchivePayment={handleArchivePayment}
+                  onCreateManualPayment={handleCreateManualPayment}
                 />
               )}
 
@@ -506,6 +588,80 @@ export default function App() {
           )}
         </main>
       </div>
+
+      {/* Mobile Bottom Dock (Screens < 768px) */}
+      <nav 
+        aria-label="Navigation mobile principale"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around shadow-lg"
+      >
+        {/* Tab 1: Overview */}
+        <button
+          onClick={() => setCurrentTab('overview')}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer ${
+            currentTab === 'overview'
+              ? 'text-teal-600 dark:text-teal-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <BarChart2 className="w-5 h-5 mb-0.5" />
+          <span>KPIs</span>
+        </button>
+
+        {/* Tab 2: Users */}
+        <button
+          onClick={() => setCurrentTab('users')}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer ${
+            currentTab === 'users'
+              ? 'text-teal-600 dark:text-teal-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Users className="w-5 h-5 mb-0.5" />
+          <span>Médecins</span>
+        </button>
+
+        {/* Tab 3: Payments with badge */}
+        <button
+          onClick={() => setCurrentTab('payments')}
+          className={`relative flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer ${
+            currentTab === 'payments'
+              ? 'text-teal-600 dark:text-teal-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <div className="relative">
+            <CreditCard className="w-5 h-5 mb-0.5" />
+            {pendingPaymentsCount > 0 && (
+              <span className="absolute -top-1 -right-2 px-1.5 py-0.2 bg-amber-500 text-white text-[9px] font-bold rounded-full animate-pulse">
+                {pendingPaymentsCount}
+              </span>
+            )}
+          </div>
+          <span>Paiements</span>
+        </button>
+
+        {/* Tab 4: Licenses */}
+        <button
+          onClick={() => setCurrentTab('licenses')}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer ${
+            currentTab === 'licenses'
+              ? 'text-teal-600 dark:text-teal-400 font-bold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+          }`}
+        >
+          <Key className="w-5 h-5 mb-0.5" />
+          <span>Licences</span>
+        </button>
+
+        {/* Tab 5: Menu Drawer */}
+        <button
+          onClick={() => setIsMobileDrawerOpen(true)}
+          className="flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+        >
+          <Menu className="w-5 h-5 mb-0.5" />
+          <span>Menu</span>
+        </button>
+      </nav>
     </div>
   );
 }

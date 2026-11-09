@@ -876,6 +876,21 @@ class _MainScaffoldState extends State<MainScaffold> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (user?.isAdmin == true) ...[
+                _buildDockIconButton(
+                  icon: Icons.shield_rounded,
+                  tooltip: 'Ouvrir Console Admin (Octenium)',
+                  color: const Color(0xFFDC2626),
+                  bgTint: const Color(0xFFDC2626).withValues(alpha: 0.15),
+                  onTap: () async {
+                    final url = Uri.parse('https://medsina.medevsync.com/admin/');
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                ),
+                const SizedBox(width: 4),
+              ],
               _buildDockIconButton(
                 icon: Icons.search_rounded,
                 tooltip: 'Recherche Globale (Omnisearch)',
@@ -959,6 +974,71 @@ class _MainScaffoldState extends State<MainScaffold> {
                   ],
                 ),
                 const SizedBox(height: 12),
+                if (context.read<AuthBloc>().state.user?.isAdmin == true) ...[
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDC2626).withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: const Color(0xFFDC2626).withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFDC2626).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.shield_rounded,
+                            color: Color(0xFFDC2626),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Console Admin Octenium 🛡️',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                  color: Color(0xFFDC2626),
+                                ),
+                              ),
+                              Text(
+                                'Validation reçus CCP, praticiens & licences',
+                                style: TextStyle(fontSize: 11, color: Colors.black54),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFDC2626),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () async {
+                            Navigator.pop(ctx);
+                            final url = Uri.parse('https://medsina.medevsync.com/admin/');
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                            }
+                          },
+                          child: const Text('Ouvrir', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11.5)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 GridView.count(
                   crossAxisCount: 2,
                   shrinkWrap: true,
@@ -1186,7 +1266,30 @@ class _MainScaffoldState extends State<MainScaffold> {
         ],
       ),
       actions: [
-        const SizedBox(width: 12),
+        if (user?.isAdmin == true) ...[
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDC2626),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            icon: const Icon(Icons.shield_rounded, size: 16),
+            label: const Text(
+              'Console Admin 🛡️',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            ),
+            onPressed: () async {
+              final url = Uri.parse('https://medsina.medevsync.com/admin/');
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
+        const SizedBox(width: 4),
         _buildModernActionDock(context, includeSearch: false),
         const SizedBox(width: 10),
         _buildTierBadge(context, tier),

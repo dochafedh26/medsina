@@ -155,9 +155,9 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
             {metrics.octeniumTotalDownloads.toLocaleString()}
           </p>
           <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-2">
-            <span>APK : 9,420</span>
+            <span>APK : {metrics.octeniumApkDownloads.toLocaleString()}</span>
             <span aria-hidden="true">·</span>
-            <span>Windows : 4,110</span>
+            <span>Windows : {metrics.octeniumWindowsDownloads.toLocaleString()}</span>
           </div>
         </div>
       </div>

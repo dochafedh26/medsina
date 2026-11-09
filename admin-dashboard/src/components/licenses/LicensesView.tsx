@@ -159,8 +159,86 @@ export const LicensesView: React.FC<LicensesViewProps> = ({
         </div>
       </div>
 
-      {/* Licenses Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs overflow-hidden">
+      {/* Mobile Licenses Card List (< md screens) */}
+      <div className="block md:hidden space-y-3">
+        {filteredLicenses.length === 0 ? (
+          <div className="p-6 text-center text-xs text-slate-400 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+            Aucune clé de licence trouvée pour ce filtre.
+          </div>
+        ) : (
+          filteredLicenses.map((lic) => {
+            const isRevoked = lic.isRevoked;
+            const isRedeemed = lic.isRedeemed && !lic.isRevoked;
+            return (
+              <div
+                key={lic.keyCode}
+                className="p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2.5"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-mono font-bold text-xs tabular-nums ${isRevoked ? 'line-through text-rose-500' : 'text-teal-600 dark:text-teal-400'}`}>
+                      {lic.keyCode}
+                    </span>
+                    <button
+                      onClick={() => handleCopy(lic.keyCode)}
+                      className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                      title="Copier le code"
+                    >
+                      {copiedKey === lic.keyCode ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                    isRevoked
+                      ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+                      : isRedeemed
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                      : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                  }`}>
+                    {isRevoked ? 'Révoquée' : isRedeemed ? 'Activée' : 'Disponible'}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <span className="font-semibold text-slate-800 dark:text-slate-200 uppercase text-[11px]">
+                    {lic.tier.replace('_', ' ')}
+                  </span>
+                  <span className="text-slate-500 dark:text-slate-400 text-[11px]">
+                    {lic.durationDays} Jours
+                  </span>
+                </div>
+
+                {isRedeemed && (
+                  <div className="p-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg text-xs space-y-0.5">
+                    <p className="font-bold text-slate-900 dark:text-white">{lic.redeemedUserName}</p>
+                    <p className="text-[11px] text-slate-400 font-mono">{lic.redeemedUserEmail} · {lic.redeemedAt}</p>
+                  </div>
+                )}
+
+                {isRevoked && (
+                  <p className="text-[11px] text-rose-500 italic">
+                    Raison : {lic.revocationReason || 'Non précisé'}
+                  </p>
+                )}
+
+                {!isRevoked && (
+                  <div className="flex justify-end pt-1">
+                    <button
+                      onClick={() => setKeyToRevoke(lic)}
+                      className="px-2.5 py-1 text-xs font-semibold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 rounded transition-colors cursor-pointer"
+                    >
+                      Révoquer cette clé
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Licenses Table (>= md screens) */}
+      <div className="hidden md:block bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
@@ -240,8 +318,8 @@ export const LicensesView: React.FC<LicensesViewProps> = ({
       {/* Generate Keys Modal */}
       {showGenerateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in-50 duration-150">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/50">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                 Générateur de Clés VIP Medsina
               </h3>
