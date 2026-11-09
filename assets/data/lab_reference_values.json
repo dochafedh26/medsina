@@ -1189,5 +1189,21 @@
     ],
     "created_at": "2026-11-09T01:04:26.291129+00:00",
     "updated_at": "2026-11-09T01:04:26.291145+00:00"
+  },
+  {
+    "id": "lab_pro_adm_il6_sepsis",
+    "name": "Pro-Adrénomédulline (Pro-ADM) et Interleukine-6 (IL-6)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "IL-6: < 7 pg/mL (Sepsis: > 100-1000 pg/mL) | Pro-ADM: < 0.5 nmol/L (Sepsis grave: > 1.5 nmol/L)",
+    "unit": "pg/mL (IL-6) et nmol/L (Pro-ADM)",
+    "high_interpretation": "IL-6 élevée : Marqueur précoce d'inflammation systémique et de sepsis bactérien (pic à 2-4h, avant la PCT et la CRP), valeur pronostique de choc septique et de dysfonction d'organe (SDRA, défaillance multiviscérale). Pro-ADM élevée : Reflète l'atteinte endotheliale et la sévérité hémodynamique, excellente valeur prédictive de mortalité en réanimation et d'orientation vers les soins intensifs (seuil d'urgence > 1.5 nmol/L nécessitant une réanimation volémique et une antibiothérapie probabiliste immédiate).",
+    "low_interpretation": "Valeurs basses ou normales : Excellente valeur prédictive négative (VPN) pour exclure un sepsis bactérien aigu ou une SIRS sévère à court terme, permettant de surseoir ou d'arrêter précocement une antibiothérapie (notamment en association avec la Procalcitonine).",
+    "clinical_notes": [
+      "Piège pré-analytique : L'IL-6 possède une demi-vie très courte (quelques minutes à 1 heure) et se dégrade rapidement à température ambiante ; le tube (EDTA ou sec) doit être centrifugé immédiatement et congelé si le dosage est différé.",
+      "Interaction médicamenteuse : Les antagonistes des récepteurs de l'IL-6 (ex: Tocilizumab) faussent les dosages endogènes et augmentent artificiellement la concentration circulante d'IL-6 libre.",
+      "Corrélation clinique : L'association Pro-ADM et IL-6 permet d'évaluer à la fois la charge inflammatoire précoce (IL-6) et la dysfonction endothéliale/sévérité hémodynamique (Pro-ADM), surpassant la CRP seule dans le monitorage du choc septique en réanimation."
+    ],
+    "created_at": "2026-11-09T08:18:00.287970+00:00",
+    "updated_at": "2026-11-09T08:18:00.287984+00:00"
   }
 ]
