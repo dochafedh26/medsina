@@ -351,23 +351,22 @@
   },
   {
     "id": "memento_asthme_aigu_grave",
-    "title": "⚡ Asthme Aigu Grave (AAG) aux UMC",
-    "category": "Détresse Respiratoire",
+    "title": "⚡ Asthme Aigu Grave (AAG) : Conduite à Tenir aux UMC",
+    "category": "Urgences Respiratoires",
     "icon_name": "air_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation clinique immédiate (parler par phrases hachées, tachypnée > 30/min, silence thoracique, cyanose, sueurs, mise en jeu des muscles accessoires). Oxygénothérapie haute concentration pour SpO2 > 92%.",
-      "Étape 2 : Nébulisations en urgence de Bêta-2 mimétiques d'action rapide (Salbutamol 5 mg dans 4 ml de NaCl 0,9%) associées à l'Ipratropium (0,5 mg) sur 15-20 min, renouvelables immédiatement.",
-      "Étape 3 : Corticothérapie systémique précoce par voie IV : Hémisuccinate d'Hydrocortisone (HSHC) 200 mg IV direct ou Méthylprednisolone (Solu-Medrol) 1 à 2 mg/kg IV.",
-      "Étape 4 : Si échec des nébulisations après 1h ou forme asphyxique : Sulfate de Magnésium (MgSO4) 2 g IV slow dans 100 ml de G5% ou NaCl 0,9% en 20 minutes + Salbutamol IV si voie veineuse stable.",
-      "Étape 5 : Surveillance armée (fréquence respiratoire, SpO2, DEP). Critères d'appel réanimation : épuisement respiratoire, silence thoracique, PaCO2 normale ou élevée (> 45 mmHg), acidose respiratoire, trouble de conscience.",
-      "Étape 6 : Piège absolu : Éviter absolument la sédation et l'intubation trachéale en première intention (risque d'arrêt cardiorespiratoire per-intubation élevé, préférer la VNI si disponible), et proscrire les antitussifs/sédatifs."
+      "Étape 1 : Évaluation immédiate de la gravité (incapacité à aligner 3 mots, DEP < 50% de la théorique, silence auscultatoire, cyanose, collapsus, trouble de la conscience). Oxygénothérapie haute concentration pour SpO2 > 92%.",
+      "Étape 2 : Nébulisations en urgence de Bêta-2 mimétiques à courte durée d'action (Salbutamol 5 mg) associées à un anticholinergique (Bromure d'Ipratropium 0,5 mg) dans 4 mL de NaCl 0,9% sous 6-8 L/min, renouvelables toutes les 20 min si besoin.",
+      "Étape 3 : Corticothérapie systémique précoce par voie IV : Hémisuccinate d'Hydrocortisone (HSHC) 200 mg IV direct ou Méthylprednisolone (Solumédrol) 1-2 mg/kg IV.",
+      "Étape 4 : En cas d'échec des nébulisations après 1h ou forme asphyxique : Sulfate de Magnésium (2 g IV slow dans 100 mL G5% sur 20 min) et préparation au transfert en Réanimation pour éventuelle ventilation mécanique (intubation séquentielle prudente).",
+      "Étape 5 : Piège médico-légal absolu : Ne JAMAIS administrer de sédatifs ou de morphiniques (dépression respiratoire fatale) et éviter la sur-prescription d'antibiotiques sans signe formel d'infection bactérienne."
     ],
-    "scientific_references": "Consensus SPLF / SRLF / GINA / MSPRH Algérie",
+    "scientific_references": "Consensus GINA / SRLF / SFMU / Recommandations MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-05T22:05:54.987436+00:00",
-    "updated_at": "2026-11-05T22:05:54.987451+00:00"
+    "created_at": "2026-11-10T01:37:14.773330+00:00",
+    "updated_at": "2026-11-10T01:37:14.773343+00:00"
   },
   {
     "id": "memento_pancreatite_aigue",
