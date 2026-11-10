@@ -7,6 +7,8 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/network/supabase_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../clinical/presentation/clinical_screen.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
@@ -30,6 +32,9 @@ class UserGuidePdfViewerScreen extends StatefulWidget {
   });
 
   static const String assetPath = 'assets/data/Medsina_Guide_Decouverte_Fonctionnalites.pdf';
+  static const String defaultGdriveId = '1JfS2J40ywxHJFJyPTdZuyRHYQZvoj-nN';
+  static const String defaultGdriveUrl = 'https://drive.google.com/uc?export=download&id=1JfS2J40ywxHJFJyPTdZuyRHYQZvoj-nN';
+  static const String gdriveViewUrl = 'https://drive.google.com/file/d/1JfS2J40ywxHJFJyPTdZuyRHYQZvoj-nN/view?usp=sharing';
   static const String remotePdfUrl = 'https://medsina.medevsync.com/Medsina_Guide_Decouverte_Fonctionnalites.pdf';
 
   @override
@@ -132,13 +137,55 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
     super.dispose();
   }
 
-  Future<void> _loadPdfBytes() async {
+  Future<void> _loadPdfBytes({bool forceRefresh = false}) async {
     setState(() {
       _isLoadingPdf = true;
       _pdfLoadError = null;
     });
 
-    // 1. Try RootBundle (Standard Flutter Assets)
+    File? cachedFile;
+    if (!kIsWeb) {
+      try {
+        final docDir = await getApplicationDocumentsDirectory();
+        cachedFile = File('${docDir.path}/medsina_user_guide_cached.pdf');
+        // 1. If local cache exists and not forcing refresh, load and display immediately
+        if (!forceRefresh && await cachedFile.exists()) {
+          final cachedBytes = await cachedFile.readAsBytes();
+          if (cachedBytes.lengthInBytes > 10000) {
+            if (mounted) {
+              setState(() {
+                _pdfBytes = cachedBytes;
+                _isLoadingPdf = false;
+              });
+            }
+            // Check for updates in background
+            _checkForCloudUpdate(cachedFile, cachedBytes.lengthInBytes);
+            return;
+          }
+        }
+      } catch (e) {
+        debugPrint('Cache check note: $e');
+      }
+    }
+
+    // 2. Fetch fresh PDF from Google Drive / Supabase Setting
+    final freshBytes = await _fetchFromCloudOrDrive();
+    if (freshBytes != null && freshBytes.lengthInBytes > 10000) {
+      if (mounted) {
+        setState(() {
+          _pdfBytes = freshBytes;
+          _isLoadingPdf = false;
+        });
+      }
+      if (cachedFile != null) {
+        try {
+          await cachedFile.writeAsBytes(freshBytes, flush: true);
+        } catch (_) {}
+      }
+      return;
+    }
+
+    // 3. Fallback: Local rootBundle asset (offline safety net)
     try {
       final byteData = await rootBundle.load(UserGuidePdfViewerScreen.assetPath);
       final bytes = byteData.buffer.asUint8List(
@@ -158,7 +205,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
       debugPrint('Notice: rootBundle.load failed for user guide: $e');
     }
 
-    // 2. Try Local File Paths (Windows Release / Working Directory fallback)
+    // 4. Fallback: Local Windows / executable paths
     try {
       final potentialPaths = [
         'assets/data/Medsina_Guide_Decouverte_Fonctionnalites.pdf',
@@ -186,33 +233,71 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
           }
         }
       }
-    } catch (e) {
-      debugPrint('Notice: Local file lookup failed: $e');
-    }
+    } catch (_) {}
 
-    // 3. Fallback: Network fetch from official Medsina Cloud
-    try {
-      final res = await http.get(Uri.parse(UserGuidePdfViewerScreen.remotePdfUrl));
-      if (res.statusCode == 200 && res.bodyBytes.isNotEmpty) {
-        if (mounted) {
-          setState(() {
-            _pdfBytes = res.bodyBytes;
-            _isLoadingPdf = false;
-          });
-        }
-        return;
-      }
-    } catch (e) {
-      debugPrint('Notice: Remote PDF fetch notice: $e');
-    }
-
-    // If all fail, record error
+    // If all fail, display error
     if (mounted) {
       setState(() {
         _isLoadingPdf = false;
-        _pdfLoadError = 'Impossible de charger le document PDF sur ce poste. Vous pouvez consulter la version interactive ci-dessous ou télécharger le fichier.';
+        _pdfLoadError = 'Impossible de charger le document PDF. Vous pouvez consulter la version interactive ci-dessous ou ouvrir le lien Google Drive.';
       });
     }
+  }
+
+  Future<Uint8List?> _fetchFromCloudOrDrive() async {
+    // 1. Check Supabase admin_system_settings for dynamic URL override
+    String targetUrl = UserGuidePdfViewerScreen.defaultGdriveUrl;
+    try {
+      final res = await SupabaseService.client
+          .from('admin_system_settings')
+          .select('setting_value')
+          .eq('setting_key', 'medsina_user_guide_url')
+          .maybeSingle();
+      if (res != null && res['setting_value'] != null && (res['setting_value'] as String).trim().isNotEmpty) {
+        targetUrl = (res['setting_value'] as String).trim();
+      }
+    } catch (_) {}
+
+    // 2. Fetch from Google Drive streaming download URL
+    try {
+      final response = await http.get(Uri.parse(targetUrl)).timeout(const Duration(seconds: 25));
+      if (response.statusCode == 200 && response.bodyBytes.lengthInBytes > 10000) {
+        return response.bodyBytes;
+      }
+    } catch (e) {
+      debugPrint('Notice: Google Drive fetch note: $e');
+    }
+
+    // 3. Failover: official Medsina CDN
+    try {
+      final response = await http.get(Uri.parse(UserGuidePdfViewerScreen.remotePdfUrl)).timeout(const Duration(seconds: 15));
+      if (response.statusCode == 200 && response.bodyBytes.lengthInBytes > 10000) {
+        return response.bodyBytes;
+      }
+    } catch (_) {}
+
+    return null;
+  }
+
+  Future<void> _checkForCloudUpdate(File cachedFile, int currentLength) async {
+    try {
+      final latestBytes = await _fetchFromCloudOrDrive();
+      if (latestBytes != null && latestBytes.lengthInBytes > 10000 && latestBytes.lengthInBytes != currentLength) {
+        await cachedFile.writeAsBytes(latestBytes, flush: true);
+        if (mounted) {
+          setState(() {
+            _pdfBytes = latestBytes;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: AppTheme.primaryTeal,
+              content: Text('Guide officiel mis à jour depuis Google Drive !'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (_) {}
   }
 
   void _onSearchUpdate() {
@@ -241,8 +326,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
     setState(() => _isExporting = true);
     try {
       if (kIsWeb) {
-        const url = 'Medsina_Guide_Decouverte_Fonctionnalites.pdf';
-        final uri = Uri.parse(url);
+        final uri = Uri.parse(UserGuidePdfViewerScreen.gdriveViewUrl);
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         Uint8List? bytes = _pdfBytes;
@@ -256,16 +340,20 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
 
         final result = await OpenFilex.open(file.path);
         if (result.type != ResultType.done && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ouverture externe: ${result.message}')),
-          );
+          final uri = Uri.parse(UserGuidePdfViewerScreen.gdriveViewUrl);
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Impossible d\'ouvrir le fichier externe : $e')),
-        );
+      try {
+        final uri = Uri.parse(UserGuidePdfViewerScreen.gdriveViewUrl);
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Impossible d\'ouvrir le fichier : $e')),
+          );
+        }
       }
     } finally {
       if (mounted) setState(() => _isExporting = false);
@@ -408,6 +496,12 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                 tooltip: 'Sommaire',
                 onPressed: _showTableOfContents,
               ),
+            // Refresh from Google Drive
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded),
+              tooltip: 'Actualiser depuis Google Drive',
+              onPressed: () => _loadPdfBytes(forceRefresh: true),
+            ),
             // On larger screens (>= 700px), show dark mode toggle directly
             if (screenWidth >= 700)
               IconButton(
@@ -449,6 +543,8 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                 onSelected: (val) {
                   if (val == 'toc') {
                     _showTableOfContents();
+                  } else if (val == 'refresh') {
+                    _loadPdfBytes(forceRefresh: true);
                   } else if (val == 'theme') {
                     setState(() => _isDarkMode = !_isDarkMode);
                   } else if (val == 'export') {
@@ -467,6 +563,16 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                         ],
                       ),
                     ),
+                  const PopupMenuItem(
+                    value: 'refresh',
+                    child: Row(
+                      children: [
+                        Icon(Icons.refresh_rounded, size: 20, color: AppTheme.primaryTeal),
+                        SizedBox(width: 12),
+                        Text('Actualiser le guide (Drive)', style: TextStyle(fontSize: 13)),
+                      ],
+                    ),
+                  ),
                   PopupMenuItem(
                     value: 'theme',
                     child: Row(
@@ -520,7 +626,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
             ),
             Tab(
               icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
-              text: screenWidth < 500 ? 'PDF Officiel (6 P.)' : 'Document PDF Officiel (6 P.)',
+              text: screenWidth < 500 ? 'PDF Officiel ($_pageCount P.)' : 'Document PDF Officiel ($_pageCount P.)',
             ),
           ],
         ),
@@ -716,11 +822,11 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                     child: const MedsinaLogo.icon(size: 28),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Medsina — Plateforme Médicale Globale',
                           style: TextStyle(
                             color: Colors.white,
@@ -729,8 +835,8 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                           ),
                         ),
                         Text(
-                          'SaaS & Révision Résidanat Blida 2027 • v1.0.59',
-                          style: TextStyle(color: Colors.white70, fontSize: 12),
+                          'SaaS & Révision Résidanat Blida 2027 • v${AppConstants.appVersion}',
+                          style: const TextStyle(color: Colors.white70, fontSize: 12),
                         ),
                       ],
                     ),
@@ -755,7 +861,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     ),
                     icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
-                    label: const Text('Ouvrir le PDF Officiel (6 P.)', style: TextStyle(fontWeight: FontWeight.bold)),
+                    label: Text('Ouvrir le PDF Officiel ($_pageCount P.)', style: const TextStyle(fontWeight: FontWeight.bold)),
                     onPressed: () => _tabController.animateTo(1),
                   ),
                   OutlinedButton.icon(
