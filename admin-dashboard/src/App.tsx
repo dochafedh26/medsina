@@ -218,6 +218,12 @@ export default function App() {
     let clinicalPro = 0;
     let residentElite = 0;
     let allAccess = 0;
+    let totalQcmSolved = 0;
+    let totalCoursesCompleted = 0;
+    let totalStudyHours = 0;
+    let onlineNowCount = 0;
+    let activeTodayCount = 0;
+    const platformCounts = { mobile: 0, windows: 0, web: 0 };
 
     for (const u of users) {
       const t = (u.tier || 'free').toLowerCase();
@@ -226,6 +232,19 @@ export default function App() {
       else if (t === 'resident_elite') residentElite++;
       else if (t === 'all_access') allAccess++;
       else freeTrials++;
+
+      if (u.progress?.totalQcmSolved) totalQcmSolved += u.progress.totalQcmSolved;
+      if (u.progress?.totalCoursesCompleted) totalCoursesCompleted += u.progress.totalCoursesCompleted;
+      if (u.progress?.totalTimeSpentSeconds) totalStudyHours += (u.progress.totalTimeSpentSeconds / 3600);
+      else if (u.telemetry?.connectionCount) totalStudyHours += (u.telemetry.connectionCount * 10 / 60);
+
+      if (u.telemetry?.isOnline) onlineNowCount++;
+      if (u.telemetry?.isActiveToday) activeTodayCount++;
+
+      const plats = u.telemetry?.platformsUsed || [];
+      if (plats.includes('android') || plats.includes('mobile')) platformCounts.mobile++;
+      if (plats.includes('windows')) platformCounts.windows++;
+      if (plats.includes('web')) platformCounts.web++;
     }
 
     const totalLicenses = licenses.length;
@@ -247,6 +266,12 @@ export default function App() {
       octeniumWindowsDownloads: octeniumStats.windows,
       octeniumWebVisits: octeniumStats.web,
       octeniumLastDownloadAt: octeniumStats.lastDownloadAt,
+      totalQcmSolved,
+      totalCoursesCompleted,
+      totalStudyHours: Math.round(totalStudyHours * 10) / 10,
+      onlineNowCount,
+      activeTodayCount,
+      platformCounts,
     };
   }, [users, licenses, octeniumStats]);
 
@@ -524,6 +549,7 @@ export default function App() {
                   financialMetrics={financialMetrics}
                   recentPayments={payments.slice(0, 5)}
                   upcomingExams={exams}
+                  users={users}
                   onNavigate={setCurrentTab}
                   onSelectPayment={() => setCurrentTab('payments')}
                 />

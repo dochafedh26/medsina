@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/app_constants.dart';
 import '../network/supabase_service.dart';
+import 'ota_update_service.dart';
 
 class UserLoyaltyStats {
   final int connectionCount;
@@ -268,6 +270,7 @@ class UserLoyaltyService {
     _sessionTimer?.cancel();
     _sessionTimer = Timer.periodic(const Duration(minutes: 1), (_) async {
       final cur = statsNotifier.value;
+      final newUsage = cur.totalUsageSeconds + 60;
       final updated = UserLoyaltyStats(
         connectionCount: cur.connectionCount,
         streakDays: cur.streakDays,
@@ -277,10 +280,15 @@ class UserLoyaltyService {
         lastActiveDate: cur.lastActiveDate,
         firstActiveDate: cur.firstActiveDate,
         activeDaysHistory: cur.activeDaysHistory,
-        totalUsageSeconds: cur.totalUsageSeconds + 60,
+        totalUsageSeconds: newUsage,
       );
       statsNotifier.value = updated;
       await _saveLocalStats(updated);
+
+      // Periodically sync heartbeat telemetry every 5 minutes to keep admin live dashboard active
+      if (newUsage % 300 == 0) {
+        _syncWithCloud(updated);
+      }
     });
   }
 
@@ -288,6 +296,9 @@ class UserLoyaltyService {
     try {
       final user = SupabaseService.currentUser;
       if (user == null) return;
+      final nowIso = DateTime.now().toUtc().toIso8601String();
+      final currentPlatform = OtaUpdateService.currentPlatform;
+      final currentVersion = AppConstants.appVersion;
 
       // 1. Update public.profiles columns if available
       try {
@@ -295,14 +306,14 @@ class UserLoyaltyService {
           'connection_count': s.connectionCount,
           'streak_days': s.streakDays,
           'max_streak_days': s.maxStreakDays,
-          'last_connection_at': DateTime.now().toIso8601String(),
+          'last_connection_at': nowIso,
           'loyalty_points': s.loyaltyPoints,
           'loyalty_level': s.loyaltyLevel,
           'total_usage_seconds': s.totalUsageSeconds,
         }).eq('id', user.id);
       } catch (_) {}
 
-      // 2. Also persist to user_cloud_sync (data_type = 'loyalty_tracker')
+      // 2. Also persist to user_cloud_sync (data_type = 'loyalty_tracker') with platform telemetry
       try {
         await SupabaseService.client.from('user_cloud_sync').upsert({
           'id': '${user.id}_loyalty_tracker',
@@ -318,8 +329,27 @@ class UserLoyaltyService {
             'first_active_date': s.firstActiveDate,
             'active_days_history': s.activeDaysHistory,
             'total_usage_seconds': s.totalUsageSeconds,
+            'platform': currentPlatform,
+            'app_version': currentVersion,
+            'last_active_at': nowIso,
           },
-          'updated_at': DateTime.now().toIso8601String(),
+          'updated_at': nowIso,
+        });
+      } catch (_) {}
+
+      // 3. Persist platform-specific session for multi-device tracking (Web, Windows, Android)
+      try {
+        await SupabaseService.client.from('user_cloud_sync').upsert({
+          'id': '${user.id}_platform_$currentPlatform',
+          'user_id': user.id,
+          'data_type': 'platform_session',
+          'payload': {
+            'platform': currentPlatform,
+            'app_version': currentVersion,
+            'last_active_at': nowIso,
+            'connection_count': s.connectionCount,
+          },
+          'updated_at': nowIso,
         });
       } catch (_) {}
     } catch (e) {

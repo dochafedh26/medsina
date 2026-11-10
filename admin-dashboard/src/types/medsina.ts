@@ -43,6 +43,16 @@ export interface AdminMetrics {
   octeniumWindowsDownloads: number;
   octeniumWebVisits: number;
   octeniumLastDownloadAt?: string;
+  totalQcmSolved?: number;
+  totalCoursesCompleted?: number;
+  totalStudyHours?: number;
+  onlineNowCount?: number;
+  activeTodayCount?: number;
+  platformCounts?: {
+    mobile: number;
+    windows: number;
+    web: number;
+  };
 }
 
 export interface FinancialMetrics {
@@ -54,11 +64,53 @@ export interface FinancialMetrics {
   rejectedCount: number;
 }
 
+export interface UserProgressMetrics {
+  totalQcmSolved: number;
+  todayQcmSolved: number;
+  totalCoursesCompleted: number; // PDF courses read / finished
+  todayCoursesCompleted: number;
+  completedCourseIds: string[];
+  averageAccuracy: number;
+  dailyQcmGoal: number;
+  dailyCourseGoal: number;
+  specialtyBreakdown: Record<string, number>;
+  coursesProgressList?: Array<{
+    courseId: string;
+    moduleId: string;
+    courseName: string;
+    isCompleted: boolean;
+    lastActiveAt?: string;
+    totalQuestions: number;
+    revealedQuestions: string[];
+    userAnswersCount?: number;
+  }>;
+  totalTimeSpentSeconds: number;
+  fsrsCardsCount?: number;
+  customSessionsCount?: number;
+}
+
+export interface UserConnectionTelemetry {
+  connectionCount: number;
+  streakDays: number;
+  maxStreakDays: number;
+  loyaltyPoints: number;
+  loyaltyLevel: string;
+  lastConnectionAt?: string;
+  lastActiveDate?: string;
+  firstActiveDate?: string;
+  activeDaysHistory: string[];
+  platformsUsed: Array<'web' | 'windows' | 'android' | 'mobile'>;
+  primaryPlatform: 'web' | 'windows' | 'android' | 'mobile';
+  isOnline: boolean; // Active within last 15 mins
+  isActiveToday: boolean;
+  appVersion?: string;
+}
+
 export interface AdminUserItem {
   id: string;
   email: string;
   fullName: string;
-  medicalRole: MedicalRole;
+  medicalRole: MedicalRole | string;
   faculty: string;
   tier: SubscriptionTier;
   status: 'active' | 'suspended' | 'expired';
@@ -68,6 +120,7 @@ export interface AdminUserItem {
   banReason?: string;
   rejectedPaymentsCount: number;
   createdAt: string;
+  updatedAt?: string;
   studyYear?: number;
   referralCode?: string;
   avatarUrl?: string;
@@ -75,6 +128,38 @@ export interface AdminUserItem {
   phone?: string;
   wilaya?: string;
   residencyTargetYear?: string;
+  progress?: UserProgressMetrics;
+  telemetry?: UserConnectionTelemetry;
+}
+
+export interface DoctorFullProfileDetails {
+  profile: AdminUserItem;
+  subscription?: {
+    id?: string;
+    tier: SubscriptionTier;
+    status: string;
+    expires_at?: string;
+    max_devices?: number;
+    created_at?: string;
+  };
+  payments: PaymentItem[];
+  licenseKeys: AdminLicenseItem[];
+  trialQuotas?: {
+    selected_free_modules?: string[];
+    qcm_sessions_used?: number;
+    prescription_analyses_used?: number;
+    lab_analyses_used?: number;
+    copilot_queries_used?: number;
+    has_used_trial?: boolean;
+    updated_at?: string;
+  };
+  progress: UserProgressMetrics;
+  telemetry: UserConnectionTelemetry;
+  cloudSyncRecords?: Array<{
+    data_type: string;
+    updated_at: string;
+    payload: any;
+  }>;
 }
 
 export interface PaymentItem {

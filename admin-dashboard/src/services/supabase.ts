@@ -9,7 +9,10 @@ import {
   AnnouncementItem,
   AdminFacebookPrompt,
   SubscriptionTier,
-  FinancialMetrics
+  FinancialMetrics,
+  DoctorFullProfileDetails,
+  UserProgressMetrics,
+  UserConnectionTelemetry
 } from '../types/medsina';
 
 // Supabase Configuration from Environment or Production Credentials
@@ -209,34 +212,282 @@ export async function fetchOcteniumStats(): Promise<{
   }
 }
 
+// --- ACADEMIC YEAR & STUDY ROLE RESOLVERS (FAITHFUL TO MEDSINA APP) ---
+
+export function resolveStudyYear(profile: any, user?: AdminUserItem): number | null {
+  if (profile?.study_year !== undefined && profile?.study_year !== null) {
+    const y = parseInt(profile.study_year.toString(), 10);
+    if (!isNaN(y) && y >= 1 && y <= 6) return y;
+  }
+  if (user?.studyYear !== undefined && user?.studyYear !== null) {
+    const y = typeof user.studyYear === 'number' ? user.studyYear : parseInt(user.studyYear, 10);
+    if (!isNaN(y) && y >= 1 && y <= 6) return y;
+  }
+
+  const combinedRole = `${profile?.medical_role || ''} ${user?.medicalRole || ''}`;
+  const match = combinedRole.match(/([1-6])\s*(?:e|è|eme|ère)?\s*ann/i);
+  if (match && match[1]) {
+    const y = parseInt(match[1], 10);
+    if (!isNaN(y)) return y;
+  }
+
+  const parenMatch = combinedRole.match(/\(\s*([1-6])/i);
+  if (parenMatch && parenMatch[1]) {
+    const y = parseInt(parenMatch[1], 10);
+    if (!isNaN(y)) return y;
+  }
+
+  return null;
+}
+
+export function cleanMedicalRole(rawRole: string, studyYear: number | null): string {
+  let cleaned = (rawRole || '').trim();
+  cleaned = cleaned.replace(/\([eè]?\s*ann[eé]e\)/gi, '').trim();
+
+  if (/étudiant|etudiant/i.test(cleaned)) {
+    if (studyYear) {
+      return `Étudiant (${studyYear}${studyYear === 1 ? 'ère' : 'ème'} Année)`;
+    }
+    return 'Étudiant en Médecine';
+  }
+  return cleaned.length > 0 ? cleaned : 'Médecin Praticien';
+}
+
+export function formatStudyYearDisplay(studyYear: number | null, medicalRole: string): string {
+  if (studyYear !== null && studyYear >= 1 && studyYear <= 6) {
+    return `${studyYear}${studyYear === 1 ? 'ère' : 'ème'} Année d'études (Cursus)`;
+  }
+  const lower = (medicalRole || '').toLowerCase();
+  if (lower.includes('étudiant') || lower.includes('etudiant') || lower.includes('externe')) {
+    return 'Étudiant (Année non renseignée)';
+  }
+  if (lower.includes('résident') || lower.includes('resident') || lower.includes('résidanat')) {
+    return 'Médecin Résident (Spécialité)';
+  }
+  if (lower.includes('interne')) {
+    return 'Interne en Médecine (7ème Année)';
+  }
+  return 'Diplômé / Praticien';
+}
+
 /**
- * Fetch all registered Medsina users with their subscription status
+ * Parses user_cloud_sync records to generate real-time Progress Metrics and Connection Telemetry
+ */
+export function parseUserCloudSync(
+  syncRecords: any[],
+  profile?: any
+): { progress: UserProgressMetrics; telemetry: UserConnectionTelemetry } {
+  let totalQcmSolved = 0;
+  let todayQcmSolved = 0;
+  let totalCoursesCompleted = 0;
+  let todayCoursesCompleted = 0;
+  let completedCourseIds: string[] = [];
+  let averageAccuracy = 0;
+  let dailyQcmGoal = 25;
+  let dailyCourseGoal = 1;
+  let specialtyBreakdown: Record<string, number> = {};
+  let totalTimeSpentSeconds = 0;
+  let fsrsCardsCount = 0;
+  let customSessionsCount = 0;
+  let coursesProgressList: any[] = [];
+
+  let connectionCount = Number(profile?.connection_count || 1);
+  let streakDays = Number(profile?.streak_days || 1);
+  let maxStreakDays = Number(profile?.max_streak_days || 1);
+  let loyaltyPoints = Number(profile?.loyalty_points || 10);
+  let loyaltyLevel = profile?.loyalty_level || 'Externe Studieux';
+  let lastActiveDate: string | undefined;
+  let firstActiveDate: string | undefined;
+  let activeDaysHistory: string[] = [];
+  let detectedPlatform: 'web' | 'windows' | 'android' | 'mobile' | undefined;
+  const platformsSet = new Set<'web' | 'windows' | 'android' | 'mobile'>();
+  let latestActivityTimestamp = profile?.updated_at || profile?.created_at;
+
+  for (const record of syncRecords) {
+    const payload = record.payload || {};
+    const updatedAt = record.updated_at;
+    if (updatedAt && (!latestActivityTimestamp || new Date(updatedAt) > new Date(latestActivityTimestamp))) {
+      latestActivityTimestamp = updatedAt;
+    }
+
+    if (record.data_type === 'loyalty_tracker') {
+      connectionCount = Math.max(connectionCount, Number(payload.connection_count || 1));
+      streakDays = Math.max(streakDays, Number(payload.streak_days || 1));
+      maxStreakDays = Math.max(maxStreakDays, Number(payload.max_streak_days || 1));
+      loyaltyPoints = Math.max(loyaltyPoints, Number(payload.loyalty_points || 10));
+      if (payload.loyalty_level) loyaltyLevel = payload.loyalty_level;
+      if (payload.total_usage_seconds) totalTimeSpentSeconds = Math.max(totalTimeSpentSeconds, Number(payload.total_usage_seconds));
+      if (payload.last_active_date) lastActiveDate = payload.last_active_date;
+      if (payload.first_active_date) firstActiveDate = payload.first_active_date;
+      if (Array.isArray(payload.active_days_history)) {
+        activeDaysHistory = Array.from(new Set([...activeDaysHistory, ...payload.active_days_history]));
+      }
+      if (payload.platform) {
+        const plat = payload.platform.toLowerCase();
+        if (plat.includes('win')) { platformsSet.add('windows'); detectedPlatform = 'windows'; }
+        else if (plat.includes('web')) { platformsSet.add('web'); detectedPlatform = 'web'; }
+        else if (plat.includes('android')) { platformsSet.add('android'); detectedPlatform = 'android'; }
+        else { platformsSet.add('mobile'); detectedPlatform = 'mobile'; }
+      }
+    } else if (record.data_type === 'study_progress' || record.data_type === 'user_study_progress') {
+      totalQcmSolved = Math.max(totalQcmSolved, Number(payload.totalQcmSolved || 0));
+      todayQcmSolved = Math.max(todayQcmSolved, Number(payload.todayQcmSolved || 0));
+      todayCoursesCompleted = Math.max(todayCoursesCompleted, Number(payload.todayCoursesCompleted || 0));
+      if (Array.isArray(payload.completedCourseIds)) {
+        completedCourseIds = Array.from(new Set([...completedCourseIds, ...payload.completedCourseIds]));
+      }
+      totalCoursesCompleted = Math.max(
+        totalCoursesCompleted, 
+        Number(payload.totalCoursesCompleted || 0),
+        completedCourseIds.length
+      );
+      if (payload.averageAccuracy) averageAccuracy = Number(payload.averageAccuracy);
+      if (payload.dailyQcmGoal) dailyQcmGoal = Number(payload.dailyQcmGoal);
+      if (payload.dailyCourseGoal) dailyCourseGoal = Number(payload.dailyCourseGoal);
+      if (payload.specialtyBreakdown && typeof payload.specialtyBreakdown === 'object') {
+        specialtyBreakdown = { ...specialtyBreakdown, ...payload.specialtyBreakdown };
+      }
+    } else if (record.data_type === 'course_progress') {
+      const items = Array.isArray(payload) ? payload : Object.values(payload);
+      coursesProgressList = items.map((c: any) => ({
+        courseId: c.courseId || '',
+        moduleId: c.moduleId || '',
+        courseName: c.courseName || c.courseId || 'Cours Médical',
+        isCompleted: !!c.isCompleted,
+        lastActiveAt: c.lastActiveAt,
+        totalQuestions: Number(c.totalQuestions || 0),
+        revealedQuestions: Array.isArray(c.revealedQuestions) ? c.revealedQuestions : [],
+        userAnswersCount: c.userAnswers ? Object.keys(c.userAnswers).length : 0,
+      }));
+      const completedFromList = coursesProgressList.filter(c => c.isCompleted).length;
+      totalCoursesCompleted = Math.max(totalCoursesCompleted, completedFromList, coursesProgressList.length > 0 && totalCoursesCompleted === 0 ? 1 : totalCoursesCompleted);
+    } else if (record.data_type === 'fsrs_flashcards') {
+      const items = Array.isArray(payload) ? payload : Object.keys(payload);
+      fsrsCardsCount = items.length;
+    } else if (record.data_type === 'custom_sessions') {
+      const items = Array.isArray(payload) ? payload : Object.keys(payload);
+      customSessionsCount = items.length;
+    } else if (record.data_type === 'platform_session') {
+      if (payload.platform) {
+        const plat = payload.platform.toLowerCase();
+        if (plat.includes('win')) { platformsSet.add('windows'); detectedPlatform = 'windows'; }
+        else if (plat.includes('web')) { platformsSet.add('web'); detectedPlatform = 'web'; }
+        else if (plat.includes('android')) { platformsSet.add('android'); detectedPlatform = 'android'; }
+        else { platformsSet.add('mobile'); detectedPlatform = 'mobile'; }
+      }
+    }
+  }
+
+  if (profile?.total_usage_seconds) {
+    totalTimeSpentSeconds = Math.max(totalTimeSpentSeconds, Number(profile.total_usage_seconds));
+  }
+
+  if (platformsSet.size === 0) {
+    platformsSet.add('android');
+    detectedPlatform = 'android';
+  }
+
+  const now = Date.now();
+  const lastActivityMs = latestActivityTimestamp ? new Date(latestActivityTimestamp).getTime() : 0;
+  const isOnline = lastActivityMs > 0 && (now - lastActivityMs) < (15 * 60 * 1000); // within 15 min
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const isActiveToday = isOnline || 
+    (lastActiveDate === todayStr) || 
+    (lastActivityMs > 0 && new Date(lastActivityMs).toISOString().slice(0, 10) === todayStr) ||
+    activeDaysHistory.includes(todayStr);
+
+  const progress: UserProgressMetrics = {
+    totalQcmSolved,
+    todayQcmSolved,
+    totalCoursesCompleted,
+    todayCoursesCompleted,
+    completedCourseIds,
+    averageAccuracy,
+    dailyQcmGoal,
+    dailyCourseGoal,
+    specialtyBreakdown,
+    coursesProgressList,
+    totalTimeSpentSeconds,
+    fsrsCardsCount,
+    customSessionsCount,
+  };
+
+  const telemetry: UserConnectionTelemetry = {
+    connectionCount,
+    streakDays,
+    maxStreakDays,
+    loyaltyPoints,
+    loyaltyLevel,
+    lastConnectionAt: latestActivityTimestamp,
+    lastActiveDate,
+    firstActiveDate,
+    activeDaysHistory,
+    platformsUsed: Array.from(platformsSet),
+    primaryPlatform: detectedPlatform || 'android',
+    isOnline,
+    isActiveToday,
+  };
+
+  return { progress, telemetry };
+}
+
+/**
+ * Fetch all registered Medsina users with their subscription status and live sync telemetry
  */
 export async function fetchRealUsers(): Promise<AdminUserItem[]> {
+  // First, fetch user cloud sync data for all users to enrich user metrics
+  const syncByUser = new Map<string, any[]>();
+  try {
+    const { data: allSync } = await supabaseAdmin.from('user_cloud_sync').select('*');
+    if (allSync && Array.isArray(allSync)) {
+      for (const row of allSync) {
+        if (!row.user_id) continue;
+        const list = syncByUser.get(row.user_id) || [];
+        list.push(row);
+        syncByUser.set(row.user_id, list);
+      }
+    }
+  } catch (err) {
+    console.warn('Error fetching all user_cloud_sync for overview:', err);
+  }
+
+  let usersList: AdminUserItem[] = [];
+
   try {
     const { data, error } = await supabase.rpc('admin_list_users');
     if (!error && Array.isArray(data) && data.length > 0) {
-      return data.map((u: any) => ({
-        id: u.id,
-        email: u.email || 'inconnu@medsina.dz',
-        fullName: u.full_name || 'Docteur',
-        medicalRole: u.medical_role || 'Médecin Généraliste',
-        faculty: u.faculty || 'Faculté de Médecine',
-        tier: (u.tier || 'free') as SubscriptionTier,
-        status: (u.is_banned ? 'suspended' : (u.status || 'active')) as 'active' | 'suspended' | 'expired',
-        expiresAt: u.expires_at || undefined,
-        isAdmin: !!u.is_admin,
-        isBanned: !!u.is_banned,
-        banReason: u.ban_reason || undefined,
-        rejectedPaymentsCount: u.rejected_payments_count || 0,
-        createdAt: u.created_at || new Date().toISOString(),
-        studyYear: u.study_year || undefined,
-        phone: u.phone || undefined,
-        wilaya: u.wilaya || undefined,
-        residencyTargetYear: u.residency_target_year || undefined,
-        bio: u.bio || undefined,
-        avatarUrl: u.avatar_url || undefined,
-      }));
+      usersList = data.map((u: any) => {
+        const userSync = syncByUser.get(u.id) || [];
+        const { progress, telemetry } = parseUserCloudSync(userSync, u);
+
+        return {
+          id: u.id,
+          email: u.email || 'inconnu@medsina.dz',
+          fullName: u.full_name || 'Docteur',
+          medicalRole: u.medical_role || 'Médecin Généraliste',
+          faculty: u.faculty || 'Faculté de Médecine',
+          tier: (u.tier || 'free') as SubscriptionTier,
+          status: (u.is_banned ? 'suspended' : (u.status || 'active')) as 'active' | 'suspended' | 'expired',
+          expiresAt: u.expires_at || undefined,
+          isAdmin: !!u.is_admin,
+          isBanned: !!u.is_banned,
+          banReason: u.ban_reason || undefined,
+          rejectedPaymentsCount: u.rejected_payments_count || 0,
+          createdAt: u.created_at || new Date().toISOString(),
+          updatedAt: u.updated_at,
+          studyYear: u.study_year || undefined,
+          phone: u.phone || undefined,
+          wilaya: u.wilaya || undefined,
+          residencyTargetYear: u.residency_target_year || undefined,
+          bio: u.bio || undefined,
+          avatarUrl: u.avatar_url || undefined,
+          referralCode: u.referral_code || `DR-${u.id.substring(0, 6).toUpperCase()}`,
+          progress,
+          telemetry,
+        };
+      });
+      return usersList;
     }
   } catch (err) {
     console.warn('admin_list_users fallback:', err);
@@ -252,6 +503,9 @@ export async function fetchRealUsers(): Promise<AdminUserItem[]> {
     if (!error && profs) {
       return profs.map((p: any) => {
         const sub = Array.isArray(p.subscriptions) ? p.subscriptions[0] : p.subscriptions;
+        const userSync = syncByUser.get(p.id) || [];
+        const { progress, telemetry } = parseUserCloudSync(userSync, p);
+
         return {
           id: p.id,
           email: p.email || 'candidat@medsina.dz',
@@ -266,12 +520,16 @@ export async function fetchRealUsers(): Promise<AdminUserItem[]> {
           banReason: p.ban_reason || undefined,
           rejectedPaymentsCount: p.rejected_payments_count || 0,
           createdAt: p.created_at || new Date().toISOString(),
+          updatedAt: p.updated_at,
           studyYear: p.study_year || undefined,
           phone: p.phone || undefined,
           wilaya: p.wilaya || undefined,
           residencyTargetYear: p.residency_target_year || undefined,
           bio: p.bio || undefined,
           avatarUrl: p.avatar_url || undefined,
+          referralCode: p.referral_code || `DR-${p.id.substring(0, 6).toUpperCase()}`,
+          progress,
+          telemetry,
         };
       });
     }
@@ -280,6 +538,167 @@ export async function fetchRealUsers(): Promise<AdminUserItem[]> {
   }
 
   return [];
+}
+
+/**
+ * Fetch complete 360° doctor profile for Admin (Identité, Cursus, Abonnement, Paiements, Licences, Quotas, Usage)
+ */
+export async function fetchDoctorFullProfileDetails(
+  userId: string,
+  userEmail: string
+): Promise<DoctorFullProfileDetails> {
+  const [
+    profileRes,
+    subRes,
+    paymentsRes,
+    licensesRes,
+    quotasRes,
+    syncRes
+  ] = await Promise.all([
+    supabaseAdmin.from('profiles').select('*').eq('id', userId).maybeSingle(),
+    supabaseAdmin.from('subscriptions').select('*').eq('user_id', userId).maybeSingle(),
+    supabaseAdmin
+      .from('payments')
+      .select('*')
+      .or(`user_id.eq.${userId},user_email.eq.${userEmail}`)
+      .order('created_at', { ascending: false }),
+    supabaseAdmin
+      .from('license_keys')
+      .select('*')
+      .eq('redeemed_by', userId)
+      .order('redeemed_at', { ascending: false }),
+    supabaseAdmin.from('user_trial_quotas').select('*').eq('user_id', userId).maybeSingle(),
+    supabaseAdmin.from('user_cloud_sync').select('*').eq('user_id', userId)
+  ]);
+
+  const p = profileRes.data || {};
+  const sub = subRes.data || {};
+  const paymentsList: PaymentItem[] = (paymentsRes.data || []).map((pay: any) => ({
+    id: pay.id,
+    userId: pay.user_id,
+    userEmail: pay.user_email || userEmail,
+    userName: pay.user_name || p.full_name || 'Docteur',
+    tier: (pay.tier || 'all_access') as SubscriptionTier,
+    durationDays: pay.duration_days || 365,
+    amount: Number(pay.amount || 0),
+    currency: pay.currency || 'DZD',
+    paymentMethod: pay.payment_method || 'baridimob',
+    receiptReference: pay.receipt_reference,
+    receiptUrl: pay.receipt_url,
+    receiptFileName: pay.receipt_file_name,
+    status: pay.status || 'pending',
+    paymentType: pay.payment_type || 'subscription',
+    bonusCredits: pay.bonus_credits || 0,
+    adminNotes: pay.admin_notes,
+    isArchived: !!pay.is_archived,
+    archiveDriveUrl: pay.archive_drive_url,
+    archiveDriveFolder: pay.archive_drive_folder,
+    archivedAt: pay.archived_at,
+    createdAt: pay.created_at || new Date().toISOString(),
+    updatedAt: pay.updated_at,
+  }));
+
+  const licenseKeysList: AdminLicenseItem[] = (licensesRes.data || []).map((l: any) => ({
+    keyCode: l.key_code,
+    tier: (l.tier || 'all_access') as SubscriptionTier,
+    durationDays: l.duration_days || 365,
+    isRedeemed: !!l.is_redeemed,
+    redeemedBy: l.redeemed_by,
+    redeemedAt: l.redeemed_at,
+    createdAt: l.created_at || new Date().toISOString(),
+    redeemedUserName: p.full_name,
+    redeemedUserEmail: p.email,
+    redeemedUserRole: p.medical_role,
+    expiresAt: l.redeemed_at && l.duration_days ? new Date(new Date(l.redeemed_at).getTime() + l.duration_days * 86400000).toISOString() : undefined,
+    isExpired: l.redeemed_at && l.duration_days ? new Date(new Date(l.redeemed_at).getTime() + l.duration_days * 86400000) < new Date() : false,
+    daysRemaining: l.duration_days || 365,
+    isRevoked: !!l.is_revoked,
+    revokedAt: l.revoked_at,
+  }));
+
+  const syncRecords = syncRes.data || [];
+  const { progress, telemetry } = parseUserCloudSync(syncRecords, p);
+
+  const profileItem: AdminUserItem = {
+    id: p.id || userId,
+    email: p.email || userEmail,
+    fullName: p.full_name || 'Docteur',
+    medicalRole: p.medical_role || 'Médecin Généraliste',
+    faculty: p.faculty || 'Faculté de Médecine',
+    tier: (sub.tier || 'free') as SubscriptionTier,
+    status: (p.is_banned ? 'suspended' : (sub.status || 'active')) as any,
+    expiresAt: sub.expires_at || undefined,
+    isAdmin: !!p.is_admin,
+    isBanned: !!p.is_banned,
+    banReason: p.ban_reason || undefined,
+    rejectedPaymentsCount: p.rejected_payments_count || 0,
+    createdAt: p.created_at || new Date().toISOString(),
+    updatedAt: p.updated_at,
+    studyYear: p.study_year || undefined,
+    referralCode: p.referral_code || `DR-${(p.id || userId).substring(0, 6).toUpperCase()}`,
+    avatarUrl: p.avatar_url || undefined,
+    bio: p.bio || undefined,
+    phone: p.phone || undefined,
+    wilaya: p.wilaya || undefined,
+    residencyTargetYear: p.residency_target_year || undefined,
+    progress,
+    telemetry,
+  };
+
+  return {
+    profile: profileItem,
+    subscription: sub.id ? {
+      id: sub.id,
+      tier: sub.tier || 'free',
+      status: sub.status || 'active',
+      expires_at: sub.expires_at,
+      max_devices: sub.max_devices || 3,
+      created_at: sub.created_at,
+    } : undefined,
+    payments: paymentsList,
+    licenseKeys: licenseKeysList,
+    trialQuotas: quotasRes.data ? {
+      selected_free_modules: quotasRes.data.selected_free_modules || [],
+      qcm_sessions_used: quotasRes.data.qcm_sessions_used || 0,
+      prescription_analyses_used: quotasRes.data.prescription_analyses_used || 0,
+      lab_analyses_used: quotasRes.data.lab_analyses_used || 0,
+      copilot_queries_used: quotasRes.data.copilot_queries_used || 0,
+      has_used_trial: !!quotasRes.data.has_used_trial,
+      updated_at: quotasRes.data.updated_at,
+    } : undefined,
+    progress,
+    telemetry,
+    cloudSyncRecords: syncRecords.map((r: any) => ({
+      data_type: r.data_type,
+      updated_at: r.updated_at,
+      payload: r.payload,
+    })),
+  };
+}
+
+/**
+ * Updates academic year and medical role directly in Supabase
+ */
+export async function updateDoctorAcademicLevel(
+  userId: string,
+  studyYear: number | null,
+  medicalRole: string
+): Promise<boolean> {
+  try {
+    const { error } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        study_year: studyYear,
+        medical_role: medicalRole,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId);
+
+    return !error;
+  } catch (err) {
+    console.error('Error updating doctor academic level:', err);
+    return false;
+  }
 }
 
 /**

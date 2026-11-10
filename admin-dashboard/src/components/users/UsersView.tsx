@@ -20,9 +20,19 @@ import {
   Edit2,
   Save,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Smartphone,
+  Monitor,
+  Globe,
+  Flame,
+  Activity,
+  BookOpen,
+  ListChecks,
+  Stethoscope
 } from 'lucide-react';
 import { AdminUserItem, SubscriptionTier, PaymentItem, AdminLicenseItem, MedicalRole } from '../../types/medsina';
+import { DoctorProfileModal } from './DoctorProfileModal';
+import { resolveStudyYear, formatStudyYearDisplay, updateUserProfileInSupabase } from '../../services/supabase';
 
 interface UsersViewProps {
   users: AdminUserItem[];
@@ -40,18 +50,10 @@ export const UsersView: React.FC<UsersViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRole, setSelectedRole] = useState<string>('All');
   const [selectedTier, setSelectedTier] = useState<string>('All');
+  const [selectedPlatform, setSelectedPlatform] = useState<string>('All');
+  const [selectedActivity, setSelectedActivity] = useState<string>('All');
   const [selectedUserForDetails, setSelectedUserForDetails] = useState<AdminUserItem | null>(null);
-  const [detailsTab, setDetailsTab] = useState<'identity' | 'subscription' | 'payments' | 'licenses'>('identity');
-  const [banReasonInput, setBanReasonInput] = useState('');
-  const [showBanModal, setShowBanModal] = useState(false);
-
-  // Edit user profile state
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editFullName, setEditFullName] = useState('');
-  const [editPhone, setEditPhone] = useState('');
-  const [editFaculty, setEditFaculty] = useState('');
-  const [editWilaya, setEditWilaya] = useState('');
-  const [editMedicalRole, setEditMedicalRole] = useState<MedicalRole>('Candidat Résidanat');
+  const [modalInitialTab, setModalInitialTab] = useState<'identity' | 'progress' | 'telemetry' | 'subscription' | 'payments' | 'licenses'>('identity');
 
   const roles = [
     'All',
@@ -69,12 +71,40 @@ export const UsersView: React.FC<UsersViewProps> = ({
       u.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       u.faculty.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (u.wilaya && u.wilaya.toLowerCase().includes(searchQuery.toLowerCase()));
+      (u.wilaya && u.wilaya.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (u.phone && u.phone.includes(searchQuery));
     
     const matchesRole = selectedRole === 'All' || u.medicalRole === selectedRole;
     const matchesTier = selectedTier === 'All' || u.tier === selectedTier;
 
-    return matchesSearch && matchesRole && matchesTier;
+    // Platform filter
+    let matchesPlatform = true;
+    if (selectedPlatform !== 'All') {
+      const platforms = u.telemetry?.platformsUsed || [];
+      if (selectedPlatform === 'android') {
+        matchesPlatform = platforms.includes('android') || platforms.includes('mobile');
+      } else if (selectedPlatform === 'windows') {
+        matchesPlatform = platforms.includes('windows');
+      } else if (selectedPlatform === 'web') {
+        matchesPlatform = platforms.includes('web');
+      }
+    }
+
+    // Activity filter
+    let matchesActivity = true;
+    if (selectedActivity !== 'All') {
+      if (selectedActivity === 'online') {
+        matchesActivity = !!u.telemetry?.isOnline;
+      } else if (selectedActivity === 'today') {
+        matchesActivity = !!u.telemetry?.isActiveToday;
+      } else if (selectedActivity === 'streak') {
+        matchesActivity = (u.telemetry?.streakDays || 0) > 1;
+      } else if (selectedActivity === 'inactive') {
+        matchesActivity = !u.telemetry?.isActiveToday && !u.telemetry?.isOnline;
+      }
+    }
+
+    return matchesSearch && matchesRole && matchesTier && matchesPlatform && matchesActivity;
   });
 
   const getTierBadge = (tier: SubscriptionTier) => {
@@ -92,100 +122,166 @@ export const UsersView: React.FC<UsersViewProps> = ({
     }
   };
 
-  const handleOpenDetails = (user: AdminUserItem, tab: 'identity' | 'subscription' = 'identity') => {
+  const handleOpenDetails = (
+    user: AdminUserItem, 
+    tab: 'identity' | 'progress' | 'telemetry' | 'subscription' | 'payments' | 'licenses' = 'identity'
+  ) => {
     setSelectedUserForDetails(user);
-    setDetailsTab(tab);
-    setIsEditingProfile(false);
-    setEditFullName(user.fullName);
-    setEditPhone(user.phone || '');
-    setEditFaculty(user.faculty || '');
-    setEditWilaya(user.wilaya || '');
-    setEditMedicalRole(user.medicalRole || 'Candidat Résidanat');
+    setModalInitialTab(tab);
   };
 
-  const handleSaveProfile = () => {
-    if (!selectedUserForDetails) return;
-    const updated: AdminUserItem = {
-      ...selectedUserForDetails,
-      fullName: editFullName,
-      phone: editPhone,
-      faculty: editFaculty,
-      wilaya: editWilaya,
-      medicalRole: editMedicalRole
-    };
+  const handleUserUpdatedFromModal = (updated: AdminUserItem) => {
     onUpdateUser(updated);
     setSelectedUserForDetails(updated);
-    setIsEditingProfile(false);
   };
 
-  const handleExtendSubscription = (user: AdminUserItem, daysToAdd: number) => {
-    const currentExpiry = user.expiresAt ? new Date(user.expiresAt) : new Date();
-    const newExpiry = new Date(currentExpiry.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
-    const updated = {
-      ...user,
-      status: 'active' as const,
-      expiresAt: newExpiry.toISOString().slice(0, 10)
-    };
-    onUpdateUser(updated);
-    if (selectedUserForDetails?.id === user.id) {
-      setSelectedUserForDetails(updated);
+  const [extendingUserId, setExtendingUserId] = useState<string | null>(null);
+
+  const formatExpirationDisplay = (expiresAt?: string) => {
+    if (!expiresAt) {
+      return {
+        formattedDate: 'Accès Illimité',
+        badgeText: 'Permanent',
+        status: 'lifetime' as const,
+        daysLeft: 9999,
+      };
+    }
+
+    try {
+      const expDate = new Date(expiresAt);
+      if (isNaN(expDate.getTime())) {
+        return {
+          formattedDate: expiresAt,
+          badgeText: expiresAt,
+          status: 'active' as const,
+          daysLeft: 0,
+        };
+      }
+
+      // Format date in French: "03 Déc 2026"
+      const formattedDate = expDate.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+
+      const now = Date.now();
+      const diffMs = expDate.getTime() - now;
+      const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+      if (daysLeft < 0) {
+        return {
+          formattedDate,
+          badgeText: `Expiré (${Math.abs(daysLeft)}j)`,
+          status: 'expired' as const,
+          daysLeft,
+        };
+      }
+
+      if (daysLeft <= 7) {
+        return {
+          formattedDate,
+          badgeText: daysLeft === 0 ? "Expire aujourd'hui" : `Dans ${daysLeft}j`,
+          status: 'warning' as const,
+          daysLeft,
+        };
+      }
+
+      return {
+        formattedDate,
+        badgeText: `${daysLeft}j restants`,
+        status: 'active' as const,
+        daysLeft,
+      };
+    } catch {
+      return {
+        formattedDate: expiresAt || 'Accès Illimité',
+        badgeText: 'Actif',
+        status: 'active' as const,
+        daysLeft: 30,
+      };
     }
   };
 
-  const handleChangeTier = (user: AdminUserItem, newTier: SubscriptionTier) => {
-    const updated = {
-      ...user,
-      tier: newTier,
-      status: 'active' as const
-    };
-    onUpdateUser(updated);
-    if (selectedUserForDetails?.id === user.id) {
-      setSelectedUserForDetails(updated);
+  const handleQuickExtend = async (user: AdminUserItem, daysToAdd: number = 30) => {
+    try {
+      setExtendingUserId(user.id);
+      const currentExpiry = user.expiresAt ? new Date(user.expiresAt) : new Date();
+      const baseDate = currentExpiry.getTime() < Date.now() ? new Date() : currentExpiry;
+      const newExp = new Date(baseDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+      const newExpIso = newExp.toISOString();
+
+      const updatedUser: AdminUserItem = {
+        ...user,
+        expiresAt: newExpIso,
+        status: 'active',
+      };
+
+      onUpdateUser(updatedUser);
+
+      // Persist to Supabase
+      await updateUserProfileInSupabase(user.id, {
+        expiresAt: newExpIso,
+        status: 'active',
+        tier: user.tier || 'all_access',
+      });
+    } catch (e) {
+      console.error('Error extending subscription:', e);
+    } finally {
+      setExtendingUserId(null);
     }
   };
 
-  const handleToggleBan = (user: AdminUserItem) => {
-    const updated = {
-      ...user,
-      isBanned: !user.isBanned,
-      status: (!user.isBanned ? 'suspended' : 'active') as 'suspended' | 'active',
-      banReason: !user.isBanned ? banReasonInput || 'Non-respect des conditions d\'utilisation' : undefined
-    };
-    onUpdateUser(updated);
-    setShowBanModal(false);
-    if (selectedUserForDetails?.id === user.id) {
-      setSelectedUserForDetails(updated);
+  const formatRelativeTime = (isoString?: string) => {
+    if (!isoString) return 'Inconnue';
+    try {
+      const ms = Date.now() - new Date(isoString).getTime();
+      if (ms < 0) return 'À l\'instant';
+      const mins = Math.floor(ms / (1000 * 60));
+      if (mins < 2) return 'À l\'instant';
+      if (mins < 60) return `Il y a ${mins} min`;
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return `Il y a ${hours}h`;
+      const days = Math.floor(hours / 24);
+      if (days < 30) return `Il y a ${days}j`;
+      return new Date(isoString).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+    } catch {
+      return isoString;
     }
   };
 
-  const userPayments = selectedUserForDetails 
-    ? payments.filter(p => p.userEmail === selectedUserForDetails.email || p.userId === selectedUserForDetails.id)
-    : [];
-
-  const userLicenses = selectedUserForDetails
-    ? licenses.filter(l => l.redeemedUserEmail === selectedUserForDetails.email || l.redeemedBy === selectedUserForDetails.id)
-    : [];
+  // Activity summary counts
+  const onlineCount = users.filter(u => u.telemetry?.isOnline).length;
+  const activeTodayCount = users.filter(u => u.telemetry?.isActiveToday).length;
 
   return (
     <div className="space-y-5">
       {/* View Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Médecins & Comptes Utilisateurs
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            <span>Médecins & Comptes Utilisateurs</span>
+            {onlineCount > 0 && (
+              <span className="flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                {onlineCount} en ligne
+              </span>
+            )}
           </h1>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Gestion 360° des praticiens, candidats résidanat, externes, abonnements et quotas.
+            Supervision 360°, suivi de l'usage en temps réel (PDFs lus, QCMs résolus), accès multi-plateformes (Web, Windows, Mobile).
           </p>
         </div>
 
-        <div className="text-xs font-mono text-slate-500 dark:text-slate-400">
-          Total : <strong className="text-slate-900 dark:text-white">{filteredUsers.length}</strong> comptes
+        <div className="flex items-center gap-3 text-xs font-mono text-slate-500 dark:text-slate-400">
+          <span>Actifs aujourd'hui : <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{activeTodayCount}</strong></span>
+          <span>·</span>
+          <span>Total : <strong className="text-slate-900 dark:text-white">{filteredUsers.length}</strong></span>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         {/* Search Input */}
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -193,12 +289,37 @@ export const UsersView: React.FC<UsersViewProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Rechercher nom, email, faculté (Alger, Blida, Constantine...), wilaya..."
+            placeholder="Rechercher nom, email, faculté (Alger, Blida, Constantine...), wilaya, téléphone..."
             className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-teal-500"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Platform Filter */}
+          <select
+            value={selectedPlatform}
+            onChange={(e) => setSelectedPlatform(e.target.value)}
+            className="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+          >
+            <option value="All">Toutes les plateformes</option>
+            <option value="android">📱 Application Mobile (Android)</option>
+            <option value="windows">💻 Application PC (Windows)</option>
+            <option value="web">🌐 Plateforme Web en ligne</option>
+          </select>
+
+          {/* Activity / Real-time filter */}
+          <select
+            value={selectedActivity}
+            onChange={(e) => setSelectedActivity(e.target.value)}
+            className="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+          >
+            <option value="All">Toutes les activités</option>
+            <option value="online">🟢 En ligne actuellement</option>
+            <option value="today">🟡 Actifs aujourd'hui</option>
+            <option value="streak">🔥 Avec Série de révision</option>
+            <option value="inactive">💤 Inactifs récemment</option>
+          </select>
+
           {/* Role Dropdown */}
           <select
             value={selectedRole}
@@ -227,7 +348,7 @@ export const UsersView: React.FC<UsersViewProps> = ({
       </div>
 
       {/* Mobile Card List (< md screens) */}
-      <div className="block md:hidden space-y-3">
+      <div className="block md:hidden space-y-3.5">
         {filteredUsers.length === 0 ? (
           <div className="p-6 text-center text-xs text-slate-400 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
             Aucun médecin trouvé pour cette recherche.
@@ -235,79 +356,191 @@ export const UsersView: React.FC<UsersViewProps> = ({
         ) : (
           filteredUsers.map((user) => {
             const tierInfo = getTierBadge(user.tier);
+            const isOnline = user.telemetry?.isOnline;
+            const isActiveToday = user.telemetry?.isActiveToday;
+            const platforms = user.telemetry?.platformsUsed || ['android'];
+            const resolvedYear = resolveStudyYear(user, user);
+            const expInfo = formatExpirationDisplay(user.expiresAt);
+            const isExtending = extendingUserId === user.id;
+
             return (
               <div
                 key={user.id}
                 onClick={() => handleOpenDetails(user, 'identity')}
-                className="p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2.5 cursor-pointer hover:border-teal-500/50 transition-colors"
+                className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-teal-500/50 transition-all cursor-pointer space-y-3"
               >
-                <div className="flex items-start justify-between gap-2.5">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden ring-1 ring-slate-300 dark:ring-slate-700 shrink-0">
-                      {user.avatarUrl ? (
-                        <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center font-bold text-xs text-slate-600 dark:text-slate-300">
-                          {user.fullName.slice(0, 2).toUpperCase()}
-                        </div>
-                      )}
+                {/* Header: Avatar, Name, Email, Tier Badge */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="relative shrink-0">
+                      <div className="w-11 h-11 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden ring-2 ring-slate-200 dark:ring-slate-700 shadow-2xs">
+                        {user.avatarUrl ? (
+                          <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="font-bold text-xs text-teal-800 dark:text-teal-200 font-mono">
+                            {user.fullName.slice(0, 2).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      {/* Realtime Live presence dot */}
+                      <span 
+                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-900 ${
+                          isOnline 
+                            ? 'bg-emerald-500 ring-2 ring-emerald-400/30 animate-pulse' 
+                            : (isActiveToday ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-600')
+                        }`}
+                        title={isOnline ? 'En ligne actuellement' : (isActiveToday ? 'Actif aujourd\'hui' : 'Hors ligne')}
+                      />
                     </div>
-                    <div className="min-w-0">
+
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-bold text-sm text-slate-900 dark:text-white truncate">
+                        <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate">
                           {user.fullName}
-                        </span>
+                        </h3>
                         {user.isAdmin && (
-                          <span className="text-[9px] font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950 px-1 py-0.2 rounded">
+                          <span className="text-[9px] font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/80 px-1.5 py-0.5 rounded border border-teal-200 dark:border-teal-800">
                             ADMIN
                           </span>
                         )}
                         {user.isBanned && (
-                          <span className="text-[9px] font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950 px-1 py-0.2 rounded">
+                          <span className="text-[9px] font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/80 px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-800">
                             BANNI
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-400 font-mono truncate">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate mt-0.5">
                         {user.email}
                       </p>
                     </div>
                   </div>
 
-                  <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border shrink-0 ${tierInfo.bg}`}>
+                  {/* Plan badge */}
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-bold border shrink-0 shadow-2xs ${tierInfo.bg}`}>
                     {tierInfo.label}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-300">
-                  <span className="font-medium truncate max-w-[170px]">
-                    {user.medicalRole}
-                  </span>
-                  <span className="text-slate-400 text-[11px] font-mono truncate max-w-[130px]">
-                    {user.faculty || 'Faculté non spécifiée'}
-                  </span>
+                {/* Role & Academic Year */}
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200 font-semibold truncate">
+                    <Stethoscope className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                    <span className="truncate">{user.medicalRole || 'Médecin Praticien'}</span>
+                    {resolvedYear && (
+                      <span className="text-[10.5px] font-bold text-teal-700 dark:text-teal-300 shrink-0 bg-teal-50 dark:bg-teal-950/80 px-1.5 py-0.5 rounded border border-teal-200 dark:border-teal-800/80">
+                        {resolvedYear}e Année
+                      </span>
+                    )}
+                  </div>
+                  {user.wilaya && (
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium shrink-0">
+                      📍 {user.wilaya}
+                    </span>
+                  )}
                 </div>
 
-                <div className="flex items-center justify-between text-xs pt-1 text-slate-400">
-                  <span className="font-mono text-[11px]">
-                    Validité : <strong className={user.status === 'active' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}>{user.expiresAt || 'Illimité'}</strong>
-                  </span>
-                  <div className="flex items-center gap-1.5">
+                {/* Faculté de Médecine: HIGH CONTRAST & CLEARLY VISIBLE */}
+                <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 shrink-0 shadow-2xs border border-teal-200 dark:border-teal-800">
+                    <GraduationCap className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-teal-700 dark:text-teal-300 block leading-tight">
+                      Faculté de rattachement
+                    </span>
+                    <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate mt-0.5">
+                      {user.faculty && user.faculty.trim().length > 0 ? user.faculty : 'Faculté non spécifiée'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Progress & Platforms Badges */}
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-slate-800/60">
+                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-medium">
+                    <span className="font-mono text-teal-600 dark:text-teal-400 font-bold bg-teal-50 dark:bg-teal-950/60 px-1.5 py-0.5 rounded text-[11px]">
+                      {user.progress?.totalQcmSolved || 0} QCM
+                    </span>
+                    <span className="font-mono text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded text-[11px]">
+                      {user.progress?.totalCoursesCompleted || 0} PDF
+                    </span>
+                    {(user.telemetry?.streakDays || 0) > 0 && (
+                      <span className="text-orange-500 font-bold text-[11px] flex items-center gap-0.5">
+                        <Flame className="w-3 h-3 inline" />
+                        {user.telemetry?.streakDays}j
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Platforms Icons */}
+                  <div className="flex items-center gap-1">
+                    {(platforms.includes('android') || platforms.includes('mobile')) && (
+                      <span className="p-1 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800" title="Application Mobile Android">
+                        <Smartphone className="w-3 h-3" />
+                      </span>
+                    )}
+                    {platforms.includes('windows') && (
+                      <span className="p-1 rounded bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-200 dark:border-sky-800" title="Application PC Windows">
+                        <Monitor className="w-3 h-3" />
+                      </span>
+                    )}
+                    {platforms.includes('web') && (
+                      <span className="p-1 rounded bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800" title="Plateforme Web">
+                        <Globe className="w-3 h-3" />
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Expiration Date & Actions (PROPERLY FORMATTED & HIGH CONTRAST) */}
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                          Expire le :
+                        </span>
+                        <span className={`text-xs font-bold font-mono ${
+                          expInfo.status === 'expired' 
+                            ? 'text-rose-600 dark:text-rose-400' 
+                            : expInfo.status === 'warning'
+                              ? 'text-amber-600 dark:text-amber-400'
+                              : 'text-emerald-600 dark:text-emerald-400'
+                        }`}>
+                          {expInfo.formattedDate}
+                        </span>
+                        <span className={`text-[9.5px] font-semibold px-1.5 py-0.2 rounded-full border ${
+                          expInfo.status === 'expired'
+                            ? 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                            : expInfo.status === 'warning'
+                              ? 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                              : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                        }`}>
+                          {expInfo.badgeText}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action buttons: +30j & Gérer */}
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleExtendSubscription(user, 30);
+                        handleQuickExtend(user, 30);
                       }}
-                      className="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 rounded text-[11px] font-medium"
+                      disabled={isExtending}
+                      title="Prolonger l'accès VIP de 30 jours"
+                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg text-xs font-bold transition-colors cursor-pointer border border-slate-200 dark:border-slate-700 disabled:opacity-50"
                     >
-                      +30j
+                      {isExtending ? '...' : '+30j'}
                     </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleOpenDetails(user, 'subscription');
+                        handleOpenDetails(user, 'identity');
                       }}
-                      className="px-2.5 py-1 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 hover:bg-teal-100 rounded text-[11px] font-semibold"
+                      className="px-3 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
                     >
                       Gérer
                     </button>
@@ -325,17 +558,25 @@ export const UsersView: React.FC<UsersViewProps> = ({
           <table className="w-full text-xs text-left">
             <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="py-3 px-4 font-semibold">Médecin / Étudiant</th>
-                <th className="py-3 px-4 font-semibold">Rôle Médical & Cursus</th>
+                <th className="py-3 px-4 font-semibold">Médecin / Praticien</th>
+                <th className="py-3 px-4 font-semibold">Rôle & Cursus</th>
                 <th className="py-3 px-4 font-semibold">Faculté & Wilaya</th>
-                <th className="py-3 px-4 font-semibold">Formule d'Accès</th>
-                <th className="py-3 px-4 font-semibold">Validité</th>
-                <th className="py-3 px-4 font-semibold text-right">Actions 360°</th>
+                <th className="py-3 px-4 font-semibold">Accès Plateformes</th>
+                <th className="py-3 px-4 font-semibold">Usage & Progression</th>
+                <th className="py-3 px-4 font-semibold">Validité & Formule</th>
+                <th className="py-3 px-4 font-semibold text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {filteredUsers.map((user) => {
                 const tierInfo = getTierBadge(user.tier);
+                const isOnline = user.telemetry?.isOnline;
+                const isActiveToday = user.telemetry?.isActiveToday;
+                const platforms = user.telemetry?.platformsUsed || ['android'];
+                const resolvedYear = resolveStudyYear(user, user);
+                const expInfo = formatExpirationDisplay(user.expiresAt);
+                const isExtending = extendingUserId === user.id;
+
                 return (
                   <tr 
                     key={user.id} 
@@ -345,15 +586,25 @@ export const UsersView: React.FC<UsersViewProps> = ({
                     {/* User Identity Column */}
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden ring-1 ring-slate-300 dark:ring-slate-700 shrink-0">
-                          {user.avatarUrl ? (
-                            <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
-                              {user.fullName.slice(0, 2).toUpperCase()}
-                            </div>
-                          )}
+                        <div className="relative shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden ring-1 ring-slate-300 dark:ring-slate-700">
+                            {user.avatarUrl ? (
+                              <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
+                                {user.fullName.slice(0, 2).toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          {/* Live presence dot */}
+                          <span 
+                            className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-white dark:border-slate-900 ${
+                              isOnline ? 'bg-emerald-500 animate-pulse' : (isActiveToday ? 'bg-amber-500' : 'bg-slate-400')
+                            }`}
+                            title={isOnline ? 'En ligne' : (isActiveToday ? 'Actif aujourd\'hui' : 'Hors ligne')}
+                          />
                         </div>
+
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
                             <span className="font-bold text-slate-900 dark:text-white truncate">
@@ -382,51 +633,147 @@ export const UsersView: React.FC<UsersViewProps> = ({
                       <p className="font-semibold text-slate-800 dark:text-slate-200">
                         {user.medicalRole}
                       </p>
-                      <p className="text-[11px] text-slate-400">
-                        {user.studyYear ? `${user.studyYear}ème Année` : user.residencyTargetYear ? `Cible : ${user.residencyTargetYear}` : 'Diplômé'}
+                      <p className="text-[11px] text-teal-600 dark:text-teal-400 font-medium">
+                        {resolvedYear ? `${resolvedYear}${resolvedYear === 1 ? 'ère' : 'ème'} Année Cursus` : (user.residencyTargetYear ? `Cible : ${user.residencyTargetYear}` : 'Diplômé / Résident')}
                       </p>
                     </td>
 
-                    {/* Faculty & Wilaya */}
+                    {/* Faculté & Wilaya Column (CLEARLY VISIBLE) */}
                     <td className="py-3.5 px-4">
-                      <p className="text-slate-800 dark:text-slate-200 truncate max-w-[200px]">
-                        {user.faculty}
-                      </p>
-                      <p className="text-[11px] text-slate-400 font-mono">
-                        {user.wilaya || 'Algérie'}
-                      </p>
+                      <div className="flex items-center gap-1.5">
+                        <GraduationCap className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                        <span className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[180px]">
+                          {user.faculty && user.faculty.trim().length > 0 ? user.faculty : 'Faculté non spécifiée'}
+                        </span>
+                      </div>
+                      {user.wilaya && (
+                        <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium ml-5 block">
+                          📍 {user.wilaya}
+                        </span>
+                      )}
                     </td>
 
-                    {/* Subscription Tier */}
+                    {/* Platforms Used Column (Web, Windows, Mobile) */}
                     <td className="py-3.5 px-4">
-                      <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold border ${tierInfo.bg}`}>
-                        {tierInfo.label}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        {(platforms.includes('android') || platforms.includes('mobile')) && (
+                          <span 
+                            className="p-1 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                            title="Application Mobile Android APK"
+                          >
+                            <Smartphone className="w-3.5 h-3.5" />
+                          </span>
+                        )}
+                        {platforms.includes('windows') && (
+                          <span 
+                            className="p-1 rounded-md bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-200 dark:border-sky-800"
+                            title="Application Bureau Windows PC"
+                          >
+                            <Monitor className="w-3.5 h-3.5" />
+                          </span>
+                        )}
+                        {platforms.includes('web') && (
+                          <span 
+                            className="p-1 rounded-md bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800"
+                            title="Plateforme Web en ligne"
+                          >
+                            <Globe className="w-3.5 h-3.5" />
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-1">
+                        {isOnline ? (
+                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                            En ligne
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            {formatRelativeTime(user.telemetry?.lastConnectionAt || user.createdAt)}
+                          </span>
+                        )}
+                      </div>
                     </td>
 
-                    {/* Validity & Expiration */}
-                    <td className="py-3.5 px-4 font-mono tabular-nums">
-                      <p className="text-slate-800 dark:text-slate-200">
-                        {user.expiresAt || 'Illimité'}
-                      </p>
-                      <span className={`text-[10px] font-semibold ${
-                        user.status === 'active' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'
-                      }`}>
-                        {user.status === 'active' ? 'Actif' : 'Expiré'}
-                      </span>
+                    {/* Progress & Usage (QCM, PDF Read, Streak) */}
+                    <td className="py-3.5 px-4">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono font-bold text-teal-600 dark:text-teal-400">
+                            {user.progress?.totalQcmSolved || 0} QCM
+                          </span>
+                          <span className="text-slate-300 dark:text-slate-700">·</span>
+                          <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                            {user.progress?.totalCoursesCompleted || 0} PDF
+                          </span>
+                        </div>
+                        {(user.telemetry?.streakDays || 0) > 0 ? (
+                          <span className="text-[10.5px] font-bold text-orange-500 flex items-center gap-0.5">
+                            <Flame className="w-3 h-3 inline" />
+                            {user.telemetry?.streakDays} jours consécutifs
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            {user.telemetry?.connectionCount || 1} session(s)
+                          </span>
+                        )}
+                      </div>
                     </td>
 
-                    {/* Action Button */}
+                    {/* Validité & Formule d'Accès Column */}
+                    <td className="py-3.5 px-4">
+                      <div className="space-y-1">
+                        <span className={`inline-block px-2 py-0.5 rounded text-[10.5px] font-bold border ${tierInfo.bg}`}>
+                          {tierInfo.label}
+                        </span>
+                        <div className="flex items-center gap-1 text-[11px] font-mono">
+                          <span className="text-slate-400">Exp :</span>
+                          <span className={`font-bold ${
+                            expInfo.status === 'expired' 
+                              ? 'text-rose-600 dark:text-rose-400' 
+                              : expInfo.status === 'warning'
+                                ? 'text-amber-600 dark:text-amber-400'
+                                : 'text-emerald-600 dark:text-emerald-400'
+                          }`}>
+                            {expInfo.formattedDate}
+                          </span>
+                        </div>
+                        <span className={`inline-block text-[9px] font-semibold px-1.5 py-0.2 rounded-full border ${
+                          expInfo.status === 'expired'
+                            ? 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300 border-rose-200'
+                            : expInfo.status === 'warning'
+                              ? 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border-amber-200'
+                              : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border-emerald-200'
+                        }`}>
+                          {expInfo.badgeText}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Action Buttons */}
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenDetails(user, 'subscription');
-                        }}
-                        className="px-2.5 py-1 text-xs font-semibold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 rounded-md transition-colors cursor-pointer"
-                      >
-                        Gérer Compte
-                      </button>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleQuickExtend(user, 30);
+                          }}
+                          disabled={isExtending}
+                          title="Prolonger de 30 jours"
+                          className="px-2 py-1 text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-md border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          {isExtending ? '...' : '+30j'}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenDetails(user, 'identity');
+                          }}
+                          className="px-2.5 py-1 text-xs font-semibold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 rounded-md transition-colors cursor-pointer"
+                        >
+                          Gérer
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -436,364 +783,16 @@ export const UsersView: React.FC<UsersViewProps> = ({
         </div>
       </div>
 
-      {/* 360° Doctor Profile Details Modal */}
+      {/* 360° Complete Doctor Profile Details Modal */}
       {selectedUserForDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs">
-          <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in-50 duration-150">
-            {/* Modal Header */}
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 shrink-0">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-full bg-slate-800 overflow-hidden ring-2 ring-teal-500 shrink-0">
-                  {selectedUserForDetails.avatarUrl ? (
-                    <img src={selectedUserForDetails.avatarUrl} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center font-bold">
-                      {selectedUserForDetails.fullName.slice(0, 2).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                    <span className="truncate">{selectedUserForDetails.fullName}</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-600/80 text-white shrink-0">
-                      {selectedUserForDetails.tier.toUpperCase()}
-                    </span>
-                  </h2>
-                  <p className="text-xs text-slate-400 font-mono truncate">
-                    {selectedUserForDetails.email} · {selectedUserForDetails.phone || 'Pas de tél'}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setSelectedUserForDetails(null)}
-                className="p-1 text-slate-400 hover:text-white cursor-pointer shrink-0"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* 4 Tabs Menu (Identité, Abonnement, Paiements, Licences) */}
-            <div className="flex items-center border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 px-4 text-xs font-medium overflow-x-auto no-scrollbar whitespace-nowrap shrink-0">
-              <button
-                onClick={() => setDetailsTab('identity')}
-                className={`py-2.5 px-3 border-b-2 cursor-pointer transition-colors shrink-0 ${
-                  detailsTab === 'identity'
-                    ? 'border-teal-600 text-teal-600 dark:text-teal-400 font-bold'
-                    : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Identité & Cursus
-              </button>
-              <button
-                onClick={() => setDetailsTab('subscription')}
-                className={`py-2.5 px-3 border-b-2 cursor-pointer transition-colors shrink-0 ${
-                  detailsTab === 'subscription'
-                    ? 'border-teal-600 text-teal-600 dark:text-teal-400 font-bold'
-                    : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Gestion Abonnement
-              </button>
-              <button
-                onClick={() => setDetailsTab('payments')}
-                className={`py-2.5 px-3 border-b-2 cursor-pointer transition-colors shrink-0 ${
-                  detailsTab === 'payments'
-                    ? 'border-teal-600 text-teal-600 dark:text-teal-400 font-bold'
-                    : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Paiements CCP ({userPayments.length})
-              </button>
-              <button
-                onClick={() => setDetailsTab('licenses')}
-                className={`py-2.5 px-3 border-b-2 cursor-pointer transition-colors shrink-0 ${
-                  detailsTab === 'licenses'
-                    ? 'border-teal-600 text-teal-600 dark:text-teal-400 font-bold'
-                    : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                Licences & Quotas ({userLicenses.length})
-              </button>
-            </div>
-
-            {/* Modal Body Container */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5">
-              {/* Tab 1: Identité & Cursus */}
-              {detailsTab === 'identity' && (
-                <div className="space-y-4 text-xs">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-                    <span className="font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide text-[11px]">
-                      Profil Médical du Praticien
-                    </span>
-                    <button
-                      onClick={() => setIsEditingProfile(!isEditingProfile)}
-                      className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/40 rounded-lg cursor-pointer"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                      <span>{isEditingProfile ? 'Annuler' : 'Modifier les informations'}</span>
-                    </button>
-                  </div>
-
-                  {isEditingProfile ? (
-                    <div className="space-y-3 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-800">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Nom Complet :</label>
-                          <input
-                            type="text"
-                            value={editFullName}
-                            onChange={(e) => setEditFullName(e.target.value)}
-                            className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Numéro Téléphone :</label>
-                          <input
-                            type="text"
-                            value={editPhone}
-                            onChange={(e) => setEditPhone(e.target.value)}
-                            placeholder="0550 12 34 56"
-                            className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                          <label className="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Rôle Médical :</label>
-                          <select
-                            value={editMedicalRole}
-                            onChange={(e) => setEditMedicalRole(e.target.value as any)}
-                            className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
-                          >
-                            {roles.filter(r => r !== 'All').map(r => (
-                              <option key={r} value={r}>{r}</option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Faculté :</label>
-                          <input
-                            type="text"
-                            value={editFaculty}
-                            onChange={(e) => setEditFaculty(e.target.value)}
-                            className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="font-semibold block mb-1 text-slate-700 dark:text-slate-300">Wilaya :</label>
-                          <input
-                            type="text"
-                            value={editWilaya}
-                            onChange={(e) => setEditWilaya(e.target.value)}
-                            className="w-full p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex justify-end pt-2">
-                        <button
-                          onClick={handleSaveProfile}
-                          className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg shadow-xs cursor-pointer"
-                        >
-                          <Save className="w-3.5 h-3.5" />
-                          <span>Enregistrer les modifications</span>
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                      <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800">
-                        <span className="text-[10px] text-slate-400 uppercase font-semibold block">Rôle Médical</span>
-                        <span className="font-bold text-slate-900 dark:text-white">{selectedUserForDetails.medicalRole}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800">
-                        <span className="text-[10px] text-slate-400 uppercase font-semibold block">Faculté de Médecine</span>
-                        <span className="font-bold text-slate-900 dark:text-white truncate block">{selectedUserForDetails.faculty}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800">
-                        <span className="text-[10px] text-slate-400 uppercase font-semibold block">Wilaya de Résidence</span>
-                        <span className="font-bold text-slate-900 dark:text-white">{selectedUserForDetails.wilaya || 'Non renseigné'}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800">
-                        <span className="text-[10px] text-slate-400 uppercase font-semibold block">Code Parrainage</span>
-                        <span className="font-mono font-bold text-teal-600 dark:text-teal-400">{selectedUserForDetails.referralCode || 'Aucun'}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedUserForDetails.bio && (
-                    <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800">
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold block mb-1">Biographie / Objectif</span>
-                      <p className="text-slate-700 dark:text-slate-300">{selectedUserForDetails.bio}</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Tab 2: Gestion Abonnement */}
-              {detailsTab === 'subscription' && (
-                <div className="space-y-4 text-xs">
-                  <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <span className="text-[11px] text-slate-400 font-semibold uppercase">Formule Actuelle</span>
-                      <p className="text-sm font-bold text-slate-900 dark:text-white">
-                        {getTierBadge(selectedUserForDetails.tier).label}
-                      </p>
-                      <p className="text-[11px] text-slate-500 font-mono mt-0.5">
-                        Expire le : {selectedUserForDetails.expiresAt || 'Non spécifié'}
-                      </p>
-                    </div>
-
-                    {/* Fast Tier Changer */}
-                    <select
-                      value={selectedUserForDetails.tier}
-                      onChange={(e) => handleChangeTier(selectedUserForDetails, e.target.value as SubscriptionTier)}
-                      className="px-3 py-2 text-xs bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 font-semibold cursor-pointer"
-                    >
-                      <option value="free">Passer en Gratuit</option>
-                      <option value="etudiant">Étudiant (4 500 DZD)</option>
-                      <option value="clinical_pro">Clinical Pro (9 000 DZD)</option>
-                      <option value="resident_elite">Résident Élite (12 000 DZD)</option>
-                      <option value="all_access">All-Access VIP (18 000 DZD)</option>
-                    </select>
-                  </div>
-
-                  {/* Quick Extension Buttons */}
-                  <div className="space-y-2">
-                    <span className="font-semibold text-slate-700 dark:text-slate-300">Prolongation Rapide de Validité</span>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        onClick={() => handleExtendSubscription(selectedUserForDetails, 30)}
-                        className="py-2.5 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 rounded-lg font-semibold cursor-pointer text-center"
-                      >
-                        +30 Jours
-                      </button>
-                      <button
-                        onClick={() => handleExtendSubscription(selectedUserForDetails, 180)}
-                        className="py-2.5 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 rounded-lg font-semibold cursor-pointer text-center"
-                      >
-                        +180 Jours
-                      </button>
-                      <button
-                        onClick={() => handleExtendSubscription(selectedUserForDetails, 365)}
-                        className="py-2.5 px-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-semibold cursor-pointer text-center shadow-xs"
-                      >
-                        +365 Jours (1 An)
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Account Status / Ban Toggle */}
-                  <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <div>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">Statut du Compte</span>
-                      <p className="text-[11px] text-slate-500">
-                        {selectedUserForDetails.isBanned ? 'Le compte est suspendu.' : 'Le compte est actif sans restriction.'}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => setShowBanModal(true)}
-                      className={`px-3 py-1.5 rounded-lg font-semibold text-xs transition-colors cursor-pointer ${
-                        selectedUserForDetails.isBanned
-                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 hover:bg-emerald-100'
-                          : 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300 hover:bg-rose-100 border border-rose-200 dark:border-rose-900'
-                      }`}
-                    >
-                      {selectedUserForDetails.isBanned ? 'Débloquer le Compte' : 'Suspendre / Bannir'}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 3: Paiements CCP */}
-              {detailsTab === 'payments' && (
-                <div className="space-y-3 text-xs">
-                  {userPayments.length === 0 ? (
-                    <p className="text-slate-500 text-center py-6">Aucun paiement enregistré pour ce médecin.</p>
-                  ) : (
-                    userPayments.map((p) => (
-                      <div key={p.id} className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-900 dark:text-white font-mono">{p.amount.toLocaleString()} DZD</span>
-                            <span className="text-[10px] uppercase font-mono text-slate-400">({p.paymentMethod})</span>
-                          </div>
-                          <p className="text-[11px] text-slate-500 font-mono mt-0.5">Réf : {p.receiptReference || 'Non spécifiée'}</p>
-                        </div>
-                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                          p.status === 'approved' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                        }`}>
-                          {p.status}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-
-              {/* Tab 4: Licences & Quotas */}
-              {detailsTab === 'licenses' && (
-                <div className="space-y-3 text-xs">
-                  {userLicenses.length === 0 ? (
-                    <p className="text-slate-500 text-center py-6">Aucune clé de licence VIP activée pour ce compte.</p>
-                  ) : (
-                    userLicenses.map((l, i) => (
-                      <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                        <div>
-                          <span className="font-bold font-mono text-teal-600 dark:text-teal-400">{l.keyCode}</span>
-                          <p className="text-[11px] text-slate-400">Activée le : {l.redeemedAt} · Durée : {l.durationDays}j</p>
-                        </div>
-                        <span className="text-[10px] font-mono text-emerald-600 font-semibold">Active</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Ban / Suspension Confirmation Modal */}
-      {showBanModal && selectedUserForDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              {selectedUserForDetails.isBanned ? 'Débloquer le compte ?' : 'Confirmer la suspension du médecin'}
-            </h3>
-            {!selectedUserForDetails.isBanned && (
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Motif de la suspension (notifié au médecin)
-                </label>
-                <textarea
-                  rows={2}
-                  value={banReasonInput}
-                  onChange={(e) => setBanReasonInput(e.target.value)}
-                  placeholder="e.g. Faux bordereau de paiement CCP, partage de compte..."
-                  className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-white"
-                />
-              </div>
-            )}
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                onClick={() => setShowBanModal(false)}
-                className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-800 cursor-pointer"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={() => handleToggleBan(selectedUserForDetails)}
-                className="px-4 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg cursor-pointer"
-              >
-                Confirmer l'action
-              </button>
-            </div>
-          </div>
-        </div>
+        <DoctorProfileModal
+          user={selectedUserForDetails}
+          payments={payments}
+          licenses={licenses}
+          initialTab={modalInitialTab}
+          onClose={() => setSelectedUserForDetails(null)}
+          onUpdateUser={handleUserUpdatedFromModal}
+        />
       )}
     </div>
   );
