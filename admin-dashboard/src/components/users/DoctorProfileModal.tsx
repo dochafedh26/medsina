@@ -52,6 +52,7 @@ import {
   cleanMedicalRole, 
   formatStudyYearDisplay 
 } from '../../services/supabase';
+import { getUserActivityInfo } from './UsersView';
 
 interface DoctorProfileModalProps {
   user: AdminUserItem;
@@ -378,6 +379,7 @@ export const DoctorProfileModal: React.FC<DoctorProfileModalProps> = ({
   };
 
   const tierBadge = getTierBadge(activeUser.tier);
+  const userActivity = getUserActivityInfo(activeUser);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
@@ -422,12 +424,10 @@ export const DoctorProfileModal: React.FC<DoctorProfileModalProps> = ({
                   <span className={`px-2 py-0.5 text-[10.5px] font-bold rounded-md border uppercase tracking-wide ${tierBadge.bg}`}>
                     {tierBadge.label}
                   </span>
-                  {activeTelemetry.isOnline && (
-                    <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 rounded-md">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                      En ligne
-                    </span>
-                  )}
+                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-bold rounded-md border ${userActivity.badgeClass}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${userActivity.dotClass}`} />
+                    <span>{userActivity.label}</span>
+                  </span>
                   {activeUser.isAdmin && (
                     <span className="px-2 py-0.5 text-[10px] font-bold bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800 rounded-md">
                       👑 Admin

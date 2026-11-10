@@ -28,11 +28,136 @@ import {
   Activity,
   BookOpen,
   ListChecks,
-  Stethoscope
+  Stethoscope,
+  Zap,
+  UserCheck,
+  UserX,
+  ArrowUpDown,
+  Copy,
+  Check,
+  Sparkles
 } from 'lucide-react';
 import { AdminUserItem, SubscriptionTier, PaymentItem, AdminLicenseItem, MedicalRole } from '../../types/medsina';
 import { DoctorProfileModal } from './DoctorProfileModal';
 import { resolveStudyYear, formatStudyYearDisplay, updateUserProfileInSupabase } from '../../services/supabase';
+
+export type UserActivitySegment = 'all' | 'online' | 'frequent' | 'regular' | 'occasional' | 'inactive' | 'dormant';
+
+export interface UserActivityDetail {
+  segment: UserActivitySegment;
+  label: string;
+  sublabel: string;
+  badgeClass: string;
+  dotClass: string;
+  daysSinceActive: number;
+  isFrequent: boolean;
+  isInactive: boolean;
+}
+
+export function getUserActivityInfo(user: AdminUserItem): UserActivityDetail {
+  const isOnline = !!user.telemetry?.isOnline;
+  const isActiveToday = !!user.telemetry?.isActiveToday;
+  const streak = user.telemetry?.streakDays || 0;
+  const connectionCount = user.telemetry?.connectionCount || 0;
+  const qcmSolved = user.progress?.totalQcmSolved || 0;
+  const coursesCompleted = user.progress?.totalCoursesCompleted || 0;
+  
+  const lastActiveTimestamp = user.telemetry?.lastConnectionAt || user.updatedAt || user.createdAt;
+  const now = Date.now();
+  let msSinceActive = 9999999999;
+  if (lastActiveTimestamp) {
+    const t = new Date(lastActiveTimestamp).getTime();
+    if (!isNaN(t)) {
+      msSinceActive = Math.max(0, now - t);
+    }
+  }
+
+  const hoursSinceActive = msSinceActive / (1000 * 3600);
+  const daysSinceActive = Math.floor(hoursSinceActive / 24);
+
+  // 1. Online: actively connected within 15 min
+  if (isOnline) {
+    return {
+      segment: 'online',
+      label: 'En ligne',
+      sublabel: 'Connecté maintenant',
+      badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
+      dotClass: 'bg-emerald-500 animate-pulse',
+      daysSinceActive,
+      isFrequent: true,
+      isInactive: false,
+    };
+  }
+
+  // 2. Frequent (Daily / Heavy users)
+  // Active today, active in last 48h, streak >= 2, or regular daily usage
+  if (isActiveToday || hoursSinceActive < 48 || streak >= 2 || (connectionCount >= 4 && daysSinceActive <= 3)) {
+    return {
+      segment: 'frequent',
+      label: 'Très Actif (Quotidien)',
+      sublabel: streak > 1 ? `Série ${streak}j 🔥` : (isActiveToday ? "Actif aujourd'hui" : 'Actif il y a 24-48h'),
+      badgeClass: 'bg-teal-50 text-teal-800 dark:bg-teal-950/80 dark:text-teal-200 border-teal-300 dark:border-teal-800',
+      dotClass: 'bg-teal-500',
+      daysSinceActive,
+      isFrequent: true,
+      isInactive: false,
+    };
+  }
+
+  // 3. Regular (Weekly active: connected in last 7 days)
+  if (daysSinceActive <= 7) {
+    return {
+      segment: 'regular',
+      label: 'Régulier (Semaine)',
+      sublabel: `Actif il y a ${daysSinceActive === 0 ? '1' : daysSinceActive}j`,
+      badgeClass: 'bg-sky-50 text-sky-800 dark:bg-sky-950/80 dark:text-sky-200 border-sky-300 dark:border-sky-800',
+      dotClass: 'bg-sky-500',
+      daysSinceActive,
+      isFrequent: false,
+      isInactive: false,
+    };
+  }
+
+  // 4. Occasional (Connected in last 8-30 days)
+  if (daysSinceActive <= 30) {
+    return {
+      segment: 'occasional',
+      label: 'Occasionnel',
+      sublabel: `Actif il y a ${daysSinceActive}j`,
+      badgeClass: 'bg-amber-50 text-amber-800 dark:bg-amber-950/80 dark:text-amber-200 border-amber-300 dark:border-amber-800',
+      dotClass: 'bg-amber-500',
+      daysSinceActive,
+      isFrequent: false,
+      isInactive: false,
+    };
+  }
+
+  // 5. Dormant (Account created without meaningful progress or usage)
+  if (connectionCount <= 1 && qcmSolved === 0 && coursesCompleted === 0) {
+    return {
+      segment: 'dormant',
+      label: 'Dormant (Jamais actif)',
+      sublabel: '0 QCM · Compte non utilisé',
+      badgeClass: 'bg-rose-50 text-rose-800 dark:bg-rose-950/80 dark:text-rose-200 border-rose-300 dark:border-rose-800',
+      dotClass: 'bg-rose-500',
+      daysSinceActive,
+      isFrequent: false,
+      isInactive: true,
+    };
+  }
+
+  // 6. Inactive (> 30 days without connection)
+  return {
+    segment: 'inactive',
+    label: `Inactif (${daysSinceActive}j)`,
+    sublabel: 'Praticien à relancer',
+    badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border-slate-300 dark:border-slate-700',
+    dotClass: 'bg-slate-400',
+    daysSinceActive,
+    isFrequent: false,
+    isInactive: true,
+  };
+}
 
 interface UsersViewProps {
   users: AdminUserItem[];
@@ -51,7 +176,9 @@ export const UsersView: React.FC<UsersViewProps> = ({
   const [selectedRole, setSelectedRole] = useState<string>('All');
   const [selectedTier, setSelectedTier] = useState<string>('All');
   const [selectedPlatform, setSelectedPlatform] = useState<string>('All');
-  const [selectedActivity, setSelectedActivity] = useState<string>('All');
+  const [selectedActivitySegment, setSelectedActivitySegment] = useState<UserActivitySegment>('all');
+  const [sortBy, setSortBy] = useState<string>('activity_recent');
+  const [copiedContactId, setCopiedContactId] = useState<string | null>(null);
   const [selectedUserForDetails, setSelectedUserForDetails] = useState<AdminUserItem | null>(null);
   const [modalInitialTab, setModalInitialTab] = useState<'identity' | 'progress' | 'telemetry' | 'subscription' | 'payments' | 'licenses'>('identity');
 
@@ -65,6 +192,17 @@ export const UsersView: React.FC<UsersViewProps> = ({
   ];
 
   const tiers = ['All', 'free', 'etudiant', 'clinical_pro', 'resident_elite', 'all_access'];
+
+  // Global activity counts for top pills & KPI summary
+  const activityCounts = {
+    all: users.length,
+    online: users.filter(u => getUserActivityInfo(u).segment === 'online').length,
+    frequent: users.filter(u => getUserActivityInfo(u).segment === 'frequent').length,
+    regular: users.filter(u => getUserActivityInfo(u).segment === 'regular').length,
+    occasional: users.filter(u => getUserActivityInfo(u).segment === 'occasional').length,
+    inactive: users.filter(u => getUserActivityInfo(u).segment === 'inactive').length,
+    dormant: users.filter(u => getUserActivityInfo(u).segment === 'dormant').length,
+  };
 
   const filteredUsers = users.filter((u) => {
     const matchesSearch = 
@@ -90,21 +228,50 @@ export const UsersView: React.FC<UsersViewProps> = ({
       }
     }
 
-    // Activity filter
-    let matchesActivity = true;
-    if (selectedActivity !== 'All') {
-      if (selectedActivity === 'online') {
-        matchesActivity = !!u.telemetry?.isOnline;
-      } else if (selectedActivity === 'today') {
-        matchesActivity = !!u.telemetry?.isActiveToday;
-      } else if (selectedActivity === 'streak') {
-        matchesActivity = (u.telemetry?.streakDays || 0) > 1;
-      } else if (selectedActivity === 'inactive') {
-        matchesActivity = !u.telemetry?.isActiveToday && !u.telemetry?.isOnline;
-      }
+    // Activity Segment filter
+    if (selectedActivitySegment !== 'all') {
+      const info = getUserActivityInfo(u);
+      if (selectedActivitySegment === 'online' && info.segment !== 'online') return false;
+      if (selectedActivitySegment === 'frequent' && info.segment !== 'frequent') return false;
+      if (selectedActivitySegment === 'regular' && info.segment !== 'regular') return false;
+      if (selectedActivitySegment === 'occasional' && info.segment !== 'occasional') return false;
+      if (selectedActivitySegment === 'inactive' && info.segment !== 'inactive') return false;
+      if (selectedActivitySegment === 'dormant' && info.segment !== 'dormant') return false;
     }
 
-    return matchesSearch && matchesRole && matchesTier && matchesPlatform && matchesActivity;
+    return matchesSearch && matchesRole && matchesTier && matchesPlatform;
+  });
+
+  // Apply sorting
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    if (sortBy === 'activity_recent') {
+      const aOnline = a.telemetry?.isOnline ? 1 : 0;
+      const bOnline = b.telemetry?.isOnline ? 1 : 0;
+      if (aOnline !== bOnline) return bOnline - aOnline;
+      const aTime = new Date(a.telemetry?.lastConnectionAt || a.updatedAt || a.createdAt).getTime();
+      const bTime = new Date(b.telemetry?.lastConnectionAt || b.updatedAt || b.createdAt).getTime();
+      return bTime - aTime;
+    }
+    if (sortBy === 'activity_frequent') {
+      const aScore = (a.telemetry?.streakDays || 0) * 10 + (a.telemetry?.connectionCount || 0) + (a.progress?.totalQcmSolved || 0);
+      const bScore = (b.telemetry?.streakDays || 0) * 10 + (b.telemetry?.connectionCount || 0) + (b.progress?.totalQcmSolved || 0);
+      return bScore - aScore;
+    }
+    if (sortBy === 'activity_inactive') {
+      const aInfo = getUserActivityInfo(a);
+      const bInfo = getUserActivityInfo(b);
+      return bInfo.daysSinceActive - aInfo.daysSinceActive;
+    }
+    if (sortBy === 'qcm_desc') {
+      return (b.progress?.totalQcmSolved || 0) - (a.progress?.totalQcmSolved || 0);
+    }
+    if (sortBy === 'courses_desc') {
+      return (b.progress?.totalCoursesCompleted || 0) - (a.progress?.totalCoursesCompleted || 0);
+    }
+    if (sortBy === 'name_asc') {
+      return a.fullName.localeCompare(b.fullName);
+    }
+    return 0;
   });
 
   const getTierBadge = (tier: SubscriptionTier) => {
@@ -158,7 +325,6 @@ export const UsersView: React.FC<UsersViewProps> = ({
         };
       }
 
-      // Format date in French: "03 Déc 2026"
       const formattedDate = expDate.toLocaleDateString('fr-FR', {
         day: '2-digit',
         month: 'short',
@@ -232,13 +398,21 @@ export const UsersView: React.FC<UsersViewProps> = ({
     }
   };
 
+  const handleCopyContact = (user: AdminUserItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const contact = user.phone ? `${user.fullName} (${user.email} - ${user.phone})` : `${user.fullName} (${user.email})`;
+    navigator.clipboard.writeText(contact);
+    setCopiedContactId(user.id);
+    setTimeout(() => setCopiedContactId(null), 2000);
+  };
+
   const formatRelativeTime = (isoString?: string) => {
     if (!isoString) return 'Inconnue';
     try {
       const ms = Date.now() - new Date(isoString).getTime();
-      if (ms < 0) return 'À l\'instant';
+      if (ms < 0) return "À l'instant";
       const mins = Math.floor(ms / (1000 * 60));
-      if (mins < 2) return 'À l\'instant';
+      if (mins < 2) return "À l'instant";
       if (mins < 60) return `Il y a ${mins} min`;
       const hours = Math.floor(mins / 60);
       if (hours < 24) return `Il y a ${hours}h`;
@@ -250,8 +424,7 @@ export const UsersView: React.FC<UsersViewProps> = ({
     }
   };
 
-  // Activity summary counts
-  const onlineCount = users.filter(u => u.telemetry?.isOnline).length;
+  const onlineCount = activityCounts.online;
   const activeTodayCount = users.filter(u => u.telemetry?.isActiveToday).length;
 
   return (
@@ -269,18 +442,211 @@ export const UsersView: React.FC<UsersViewProps> = ({
             )}
           </h1>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Supervision 360°, suivi de l'usage en temps réel (PDFs lus, QCMs résolus), accès multi-plateformes (Web, Windows, Mobile).
+            Supervision 360°, suivi de l'usage en temps réel (PDFs lus, QCMs résolus), segmentation actifs/fréquents/inactifs et accès multi-plateformes.
           </p>
         </div>
 
         <div className="flex items-center gap-3 text-xs font-mono text-slate-500 dark:text-slate-400">
           <span>Actifs aujourd'hui : <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{activeTodayCount}</strong></span>
           <span>·</span>
-          <span>Total : <strong className="text-slate-900 dark:text-white">{filteredUsers.length}</strong></span>
+          <span>Total : <strong className="text-slate-900 dark:text-white">{sortedUsers.length} / {users.length}</strong></span>
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
+      {/* --- 4 INTERACTIVE ACTIVITY & ENGAGEMENT KPI CARDS --- */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Card 1: En ligne & Aujourd'hui */}
+        <div 
+          onClick={() => setSelectedActivitySegment(selectedActivitySegment === 'online' ? 'all' : 'online')}
+          className={`p-3.5 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+            selectedActivitySegment === 'online'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-500 ring-2 ring-emerald-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-300'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-200 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>En Ligne Live</span>
+            </span>
+            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">
+              Live
+            </span>
+          </div>
+          <p className="text-xl sm:text-2xl font-extrabold font-mono text-emerald-900 dark:text-emerald-100 mt-1.5">
+            {activityCounts.online} <span className="text-xs font-normal text-slate-500">connectés</span>
+          </p>
+          <p className="text-[10.5px] text-emerald-700 dark:text-emerald-300 mt-1 font-medium">
+            {activeTodayCount} actif(s) sur les dernières 24h
+          </p>
+        </div>
+
+        {/* Card 2: Très Actifs (Quotidien & Fréquents) */}
+        <div 
+          onClick={() => setSelectedActivitySegment(selectedActivitySegment === 'frequent' ? 'all' : 'frequent')}
+          className={`p-3.5 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+            selectedActivitySegment === 'frequent'
+              ? 'bg-teal-50 dark:bg-teal-950/40 border-teal-500 ring-2 ring-teal-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-teal-300'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-teal-800 dark:text-teal-200 flex items-center gap-1.5">
+              <Flame className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <span>Très Actifs (Fréquents)</span>
+            </span>
+            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-300">
+              Assidus
+            </span>
+          </div>
+          <p className="text-xl sm:text-2xl font-extrabold font-mono text-teal-900 dark:text-teal-100 mt-1.5">
+            {activityCounts.frequent} <span className="text-xs font-normal text-slate-500">médecins</span>
+          </p>
+          <p className="text-[10.5px] text-teal-700 dark:text-teal-300 mt-1 font-medium">
+            Utilisent l'app souvent (Série & QCMs)
+          </p>
+        </div>
+
+        {/* Card 3: Réguliers (Semaine) */}
+        <div 
+          onClick={() => setSelectedActivitySegment(selectedActivitySegment === 'regular' ? 'all' : 'regular')}
+          className={`p-3.5 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+            selectedActivitySegment === 'regular'
+              ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-500 ring-2 ring-sky-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-sky-300'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-sky-800 dark:text-sky-200 flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+              <span>Réguliers (7 jours)</span>
+            </span>
+            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300">
+              Hebdo
+            </span>
+          </div>
+          <p className="text-xl sm:text-2xl font-extrabold font-mono text-sky-900 dark:text-sky-100 mt-1.5">
+            {activityCounts.regular} <span className="text-xs font-normal text-slate-500">médecins</span>
+          </p>
+          <p className="text-[10.5px] text-sky-700 dark:text-sky-300 mt-1 font-medium">
+            Connectés au cours des 7 derniers jours
+          </p>
+        </div>
+
+        {/* Card 4: Inactifs & Dormants (À relancer) */}
+        <div 
+          onClick={() => setSelectedActivitySegment(selectedActivitySegment === 'inactive' ? 'all' : 'inactive')}
+          className={`p-3.5 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+            selectedActivitySegment === 'inactive' || selectedActivitySegment === 'dormant'
+              ? 'bg-slate-100 dark:bg-slate-800/80 border-slate-400 ring-2 ring-slate-400/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-400'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <UserX className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+              <span>Inactifs & Dormants</span>
+            </span>
+            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              À Relancer
+            </span>
+          </div>
+          <p className="text-xl sm:text-2xl font-extrabold font-mono text-slate-900 dark:text-slate-100 mt-1.5">
+            {activityCounts.inactive + activityCounts.dormant} <span className="text-xs font-normal text-slate-500">comptes</span>
+          </p>
+          <p className="text-[10.5px] text-slate-500 dark:text-slate-400 mt-1 font-medium truncate">
+            {activityCounts.dormant} dormants (0 QCM) · {activityCounts.inactive} sans accès &gt;30j
+          </p>
+        </div>
+      </div>
+
+      {/* --- QUICK SEGMENT TABS / PILLS BAR --- */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <button
+          onClick={() => setSelectedActivitySegment('all')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'all'
+              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+          }`}
+        >
+          Tous ({activityCounts.all})
+        </button>
+
+        <button
+          onClick={() => setSelectedActivitySegment('online')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'online'
+              ? 'bg-emerald-600 text-white shadow-2xs'
+              : 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 hover:bg-emerald-100 border border-emerald-200/80 dark:border-emerald-800'
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>En Ligne ({activityCounts.online})</span>
+        </button>
+
+        <button
+          onClick={() => setSelectedActivitySegment('frequent')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'frequent'
+              ? 'bg-teal-600 text-white shadow-2xs'
+              : 'bg-teal-50 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300 hover:bg-teal-100 border border-teal-200/80 dark:border-teal-800'
+          }`}
+        >
+          <Flame className="w-3.5 h-3.5 text-orange-500" />
+          <span>Très Actifs / Fréquents ({activityCounts.frequent})</span>
+        </button>
+
+        <button
+          onClick={() => setSelectedActivitySegment('regular')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'regular'
+              ? 'bg-sky-600 text-white shadow-2xs'
+              : 'bg-sky-50 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 hover:bg-sky-100 border border-sky-200/80 dark:border-sky-800'
+          }`}
+        >
+          <Zap className="w-3.5 h-3.5" />
+          <span>Réguliers (7j) ({activityCounts.regular})</span>
+        </button>
+
+        <button
+          onClick={() => setSelectedActivitySegment('occasional')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'occasional'
+              ? 'bg-amber-600 text-white shadow-2xs'
+              : 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 hover:bg-amber-100 border border-amber-200/80 dark:border-amber-800'
+          }`}
+        >
+          <Clock className="w-3.5 h-3.5" />
+          <span>Occasionnels ({activityCounts.occasional})</span>
+        </button>
+
+        <button
+          onClick={() => setSelectedActivitySegment('inactive')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'inactive'
+              ? 'bg-slate-700 text-white shadow-2xs'
+              : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200 border border-slate-200 dark:border-slate-700'
+          }`}
+        >
+          <UserX className="w-3.5 h-3.5" />
+          <span>Inactifs (&gt;30j) ({activityCounts.inactive})</span>
+        </button>
+
+        <button
+          onClick={() => setSelectedActivitySegment('dormant')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'dormant'
+              ? 'bg-rose-600 text-white shadow-2xs'
+              : 'bg-rose-50 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 hover:bg-rose-100 border border-rose-200/80 dark:border-rose-800'
+          }`}
+        >
+          <AlertTriangle className="w-3.5 h-3.5" />
+          <span>Dormants (0 session) ({activityCounts.dormant})</span>
+        </button>
+      </div>
+
+      {/* Filter, Search & Sorting Bar */}
       <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         {/* Search Input */}
         <div className="relative flex-1">
@@ -295,6 +661,23 @@ export const UsersView: React.FC<UsersViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Sorting Dropdown */}
+          <div className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <ArrowUpDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="text-xs bg-transparent text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
+            >
+              <option value="activity_recent">Dernière activité (Plus récent)</option>
+              <option value="activity_frequent">Fréquence d'usage (Assiduité)</option>
+              <option value="activity_inactive">Inactifs d'abord (Pour relance)</option>
+              <option value="qcm_desc">QCMs résolus (Décroissant)</option>
+              <option value="courses_desc">Supports PDF lus (Décroissant)</option>
+              <option value="name_asc">Nom alphabétique (A-Z)</option>
+            </select>
+          </div>
+
           {/* Platform Filter */}
           <select
             value={selectedPlatform}
@@ -305,19 +688,6 @@ export const UsersView: React.FC<UsersViewProps> = ({
             <option value="android">📱 Application Mobile (Android)</option>
             <option value="windows">💻 Application PC (Windows)</option>
             <option value="web">🌐 Plateforme Web en ligne</option>
-          </select>
-
-          {/* Activity / Real-time filter */}
-          <select
-            value={selectedActivity}
-            onChange={(e) => setSelectedActivity(e.target.value)}
-            className="px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
-          >
-            <option value="All">Toutes les activités</option>
-            <option value="online">🟢 En ligne actuellement</option>
-            <option value="today">🟡 Actifs aujourd'hui</option>
-            <option value="streak">🔥 Avec Série de révision</option>
-            <option value="inactive">💤 Inactifs récemment</option>
           </select>
 
           {/* Role Dropdown */}
@@ -349,15 +719,14 @@ export const UsersView: React.FC<UsersViewProps> = ({
 
       {/* Mobile Card List (< md screens) */}
       <div className="block md:hidden space-y-3.5">
-        {filteredUsers.length === 0 ? (
+        {sortedUsers.length === 0 ? (
           <div className="p-6 text-center text-xs text-slate-400 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-            Aucun médecin trouvé pour cette recherche.
+            Aucun médecin trouvé pour ce filtre d'activité ou recherche.
           </div>
         ) : (
-          filteredUsers.map((user) => {
+          sortedUsers.map((user) => {
             const tierInfo = getTierBadge(user.tier);
-            const isOnline = user.telemetry?.isOnline;
-            const isActiveToday = user.telemetry?.isActiveToday;
+            const userActivity = getUserActivityInfo(user);
             const platforms = user.telemetry?.platformsUsed || ['android'];
             const resolvedYear = resolveStudyYear(user, user);
             const expInfo = formatExpirationDisplay(user.expiresAt);
@@ -367,7 +736,11 @@ export const UsersView: React.FC<UsersViewProps> = ({
               <div
                 key={user.id}
                 onClick={() => handleOpenDetails(user, 'identity')}
-                className="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-teal-500/50 transition-all cursor-pointer space-y-3"
+                className={`p-4 bg-white dark:bg-slate-900 rounded-2xl border shadow-xs hover:shadow-md transition-all cursor-pointer space-y-3 ${
+                  userActivity.segment === 'online'
+                    ? 'border-emerald-300 dark:border-emerald-800/80 ring-1 ring-emerald-500/20'
+                    : (userActivity.isInactive ? 'border-slate-200 dark:border-slate-800 opacity-90' : 'border-slate-200 dark:border-slate-800')
+                }`}
               >
                 {/* Header: Avatar, Name, Email, Tier Badge */}
                 <div className="flex items-start justify-between gap-3">
@@ -382,14 +755,10 @@ export const UsersView: React.FC<UsersViewProps> = ({
                           </span>
                         )}
                       </div>
-                      {/* Realtime Live presence dot */}
+                      {/* Realtime presence dot */}
                       <span 
-                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-900 ${
-                          isOnline 
-                            ? 'bg-emerald-500 ring-2 ring-emerald-400/30 animate-pulse' 
-                            : (isActiveToday ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-600')
-                        }`}
-                        title={isOnline ? 'En ligne actuellement' : (isActiveToday ? 'Actif aujourd\'hui' : 'Hors ligne')}
+                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-900 ${userActivity.dotClass}`}
+                        title={userActivity.label}
                       />
                     </div>
 
@@ -418,6 +787,22 @@ export const UsersView: React.FC<UsersViewProps> = ({
                   {/* Plan badge */}
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-bold border shrink-0 shadow-2xs ${tierInfo.bg}`}>
                     {tierInfo.label}
+                  </span>
+                </div>
+
+                {/* Activity & Frequency Status Bar (CLEARLY HIGHLIGHTED) */}
+                <div className="flex items-center justify-between text-xs p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10.5px] font-bold border ${userActivity.badgeClass}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${userActivity.dotClass}`} />
+                      <span>{userActivity.label}</span>
+                    </span>
+                    <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium truncate">
+                      {userActivity.sublabel}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-mono shrink-0">
+                    {formatRelativeTime(user.telemetry?.lastConnectionAt || user.createdAt)}
                   </span>
                 </div>
 
@@ -522,8 +907,18 @@ export const UsersView: React.FC<UsersViewProps> = ({
                     </div>
                   </div>
 
-                  {/* Action buttons: +30j & Gérer */}
+                  {/* Action buttons: Relancer, +30j & Gérer */}
                   <div className="flex items-center gap-1.5 shrink-0">
+                    {userActivity.isInactive && (
+                      <button
+                        onClick={(e) => handleCopyContact(user, e)}
+                        title="Copier les coordonnées pour relance email / tél"
+                        className="px-2 py-1 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-200 rounded-lg text-xs font-bold transition-colors cursor-pointer border border-amber-200 dark:border-amber-800 flex items-center gap-1"
+                      >
+                        {copiedContactId === user.id ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                        <span>{copiedContactId === user.id ? 'Copié' : 'Relancer'}</span>
+                      </button>
+                    )}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -559,6 +954,7 @@ export const UsersView: React.FC<UsersViewProps> = ({
             <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="py-3 px-4 font-semibold">Médecin / Praticien</th>
+                <th className="py-3 px-4 font-semibold">Activité & Fréquence</th>
                 <th className="py-3 px-4 font-semibold">Rôle & Cursus</th>
                 <th className="py-3 px-4 font-semibold">Faculté & Wilaya</th>
                 <th className="py-3 px-4 font-semibold">Accès Plateformes</th>
@@ -568,10 +964,9 @@ export const UsersView: React.FC<UsersViewProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {filteredUsers.map((user) => {
+              {sortedUsers.map((user) => {
                 const tierInfo = getTierBadge(user.tier);
-                const isOnline = user.telemetry?.isOnline;
-                const isActiveToday = user.telemetry?.isActiveToday;
+                const userActivity = getUserActivityInfo(user);
                 const platforms = user.telemetry?.platformsUsed || ['android'];
                 const resolvedYear = resolveStudyYear(user, user);
                 const expInfo = formatExpirationDisplay(user.expiresAt);
@@ -598,10 +993,8 @@ export const UsersView: React.FC<UsersViewProps> = ({
                           </div>
                           {/* Live presence dot */}
                           <span 
-                            className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-white dark:border-slate-900 ${
-                              isOnline ? 'bg-emerald-500 animate-pulse' : (isActiveToday ? 'bg-amber-500' : 'bg-slate-400')
-                            }`}
-                            title={isOnline ? 'En ligne' : (isActiveToday ? 'Actif aujourd\'hui' : 'Hors ligne')}
+                            className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-white dark:border-slate-900 ${userActivity.dotClass}`}
+                            title={userActivity.label}
                           />
                         </div>
 
@@ -624,6 +1017,24 @@ export const UsersView: React.FC<UsersViewProps> = ({
                           <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                             {user.email}
                           </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* NEW: Activité & Fréquence d'utilisation Column */}
+                    <td className="py-3.5 px-4">
+                      <div className="space-y-1">
+                        <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10.5px] font-bold border ${userActivity.badgeClass}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${userActivity.dotClass}`} />
+                          <span>{userActivity.label}</span>
+                        </span>
+                        <div className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
+                          {userActivity.sublabel}
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono">
+                          {formatRelativeTime(user.telemetry?.lastConnectionAt || user.createdAt)}
+                          <span className="mx-1">·</span>
+                          {user.telemetry?.connectionCount || 1} session(s)
                         </div>
                       </div>
                     </td>
@@ -678,18 +1089,6 @@ export const UsersView: React.FC<UsersViewProps> = ({
                             title="Plateforme Web en ligne"
                           >
                             <Globe className="w-3.5 h-3.5" />
-                          </span>
-                        )}
-                      </div>
-                      <div className="mt-1">
-                        {isOnline ? (
-                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                            En ligne
-                          </span>
-                        ) : (
-                          <span className="text-[10px] text-slate-400 font-mono">
-                            {formatRelativeTime(user.telemetry?.lastConnectionAt || user.createdAt)}
                           </span>
                         )}
                       </div>
@@ -753,6 +1152,16 @@ export const UsersView: React.FC<UsersViewProps> = ({
                     {/* Action Buttons */}
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        {userActivity.isInactive && (
+                          <button
+                            onClick={(e) => handleCopyContact(user, e)}
+                            title="Copier les coordonnées pour relance email / tél"
+                            className="px-2 py-1 text-xs font-semibold text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 rounded-md border border-amber-200 dark:border-amber-800 transition-colors cursor-pointer flex items-center gap-1"
+                          >
+                            {copiedContactId === user.id ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                            <span>{copiedContactId === user.id ? 'Copié' : 'Relancer'}</span>
+                          </button>
+                        )}
                         <button
                           onClick={(e) => {
                             e.stopPropagation();

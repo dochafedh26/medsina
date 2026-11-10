@@ -17,7 +17,10 @@ import {
   Flame,
   Activity,
   BookOpen,
-  ListChecks
+  ListChecks,
+  Zap,
+  UserCheck,
+  UserX
 } from 'lucide-react';
 import { 
   AdminMetrics, 
@@ -27,6 +30,7 @@ import {
   NavigationTab,
   AdminUserItem
 } from '../../types/medsina';
+import { getUserActivityInfo } from '../users/UsersView';
 
 interface OverviewViewProps {
   metrics: AdminMetrics;
@@ -48,6 +52,23 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
   onSelectPayment
 }) => {
   const pendingPayments = recentPayments.filter(p => p.status === 'pending');
+
+  const frequentDoctors = users.filter(u => {
+    const act = getUserActivityInfo(u);
+    return act.segment === 'online' || act.segment === 'frequent';
+  });
+  const regularDoctors = users.filter(u => getUserActivityInfo(u).segment === 'regular');
+  const occasionalDoctors = users.filter(u => getUserActivityInfo(u).segment === 'occasional');
+  const inactiveDoctors = users.filter(u => {
+    const act = getUserActivityInfo(u);
+    return act.segment === 'inactive' || act.segment === 'dormant';
+  });
+
+  const totalDoctors = Math.max(1, users.length);
+  const frequentPct = Math.round((frequentDoctors.length / totalDoctors) * 100);
+  const regularPct = Math.round((regularDoctors.length / totalDoctors) * 100);
+  const occasionalPct = Math.round((occasionalDoctors.length / totalDoctors) * 100);
+  const inactivePct = Math.max(0, 100 - frequentPct - regularPct - occasionalPct);
 
   return (
     <div className="space-y-6">
@@ -329,6 +350,79 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Engagement & Frequency Visual Breakdown Bar */}
+        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+            <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+              <Zap className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <span>Assiduité & Répartition de l'Activité Médicale</span>
+            </span>
+            <span className="text-[11px] text-slate-500 font-mono">
+              {frequentDoctors.length} très assidus ({frequentPct}%) · {inactiveDoctors.length} inactifs ({inactivePct}%)
+            </span>
+          </div>
+
+          {/* Multi-segment Progress Bar */}
+          <div className="w-full h-3 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden flex shadow-inner">
+            <div 
+              style={{ width: `${frequentPct}%` }} 
+              className="bg-teal-500 hover:bg-teal-400 transition-all cursor-pointer" 
+              title={`Très Actifs / Fréquents: ${frequentDoctors.length} (${frequentPct}%)`}
+              onClick={() => onNavigate('users')}
+            />
+            <div 
+              style={{ width: `${regularPct}%` }} 
+              className="bg-sky-500 hover:bg-sky-400 transition-all cursor-pointer" 
+              title={`Réguliers (7j): ${regularDoctors.length} (${regularPct}%)`}
+              onClick={() => onNavigate('users')}
+            />
+            <div 
+              style={{ width: `${occasionalPct}%` }} 
+              className="bg-amber-500 hover:bg-amber-400 transition-all cursor-pointer" 
+              title={`Occasionnels: ${occasionalDoctors.length} (${occasionalPct}%)`}
+              onClick={() => onNavigate('users')}
+            />
+            <div 
+              style={{ width: `${inactivePct}%` }} 
+              className="bg-slate-400 hover:bg-slate-300 transition-all cursor-pointer" 
+              title={`Inactifs & Dormants: ${inactiveDoctors.length} (${inactivePct}%)`}
+              onClick={() => onNavigate('users')}
+            />
+          </div>
+
+          {/* Legend Chips */}
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] pt-1 border-t border-slate-200/60 dark:border-slate-800">
+            <button 
+              onClick={() => onNavigate('users')}
+              className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-teal-600 cursor-pointer"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-teal-500 shrink-0" />
+              <span>Très Actifs ({frequentDoctors.length})</span>
+            </button>
+            <button 
+              onClick={() => onNavigate('users')}
+              className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-sky-600 cursor-pointer"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0" />
+              <span>Réguliers 7j ({regularDoctors.length})</span>
+            </button>
+            <button 
+              onClick={() => onNavigate('users')}
+              className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-amber-600 cursor-pointer"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
+              <span>Occasionnels ({occasionalDoctors.length})</span>
+            </button>
+            <button 
+              onClick={() => onNavigate('users')}
+              className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 hover:text-rose-600 cursor-pointer"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-400 shrink-0" />
+              <span>Inactifs / Dormants ({inactiveDoctors.length})</span>
+            </button>
           </div>
         </div>
 
