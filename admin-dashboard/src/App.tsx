@@ -76,6 +76,37 @@ export default function App() {
     return false;
   });
 
+  // Collapsible Sidebar State with localStorage persistence & responsive default
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('medsina_sidebar_collapsed');
+      if (saved !== null) return saved === 'true';
+      // Default collapsed on tablet / smaller screens (< 1280px) to maximize data view
+      return window.innerWidth < 1280;
+    }
+    return false;
+  });
+
+  const toggleSidebarCollapsed = useCallback(() => {
+    setIsSidebarCollapsed(prev => {
+      const next = !prev;
+      localStorage.setItem('medsina_sidebar_collapsed', String(next));
+      return next;
+    });
+  }, []);
+
+  // Global keyboard shortcut: Ctrl+B / Cmd+B to toggle sidebar collapse
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        toggleSidebarCollapsed();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [toggleSidebarCollapsed]);
+
   // Authentication State
   const [adminUser, setAdminUser] = useState<AdminAuthProfile | null>(null);
   const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
@@ -513,6 +544,8 @@ export default function App() {
         onCloseMobileDrawer={() => setIsMobileDrawerOpen(false)}
         totalUsersCount={users.length}
         availableLicensesCount={availableLicensesCount}
+        isSidebarCollapsed={isSidebarCollapsed}
+        onToggleSidebarCollapse={toggleSidebarCollapsed}
       />
 
       {/* Main Layout */}
@@ -524,6 +557,8 @@ export default function App() {
           pendingPaymentsCount={pendingPaymentsCount}
           availableLicensesCount={availableLicensesCount}
           totalUsersCount={users.length}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={toggleSidebarCollapsed}
         />
 
         {/* Content Viewport */}

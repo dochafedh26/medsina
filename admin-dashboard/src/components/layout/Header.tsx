@@ -22,7 +22,9 @@ import {
   LogOut,
   Radio,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import { NavigationTab } from '../../types/medsina';
 import logoLight from '../../assets/images/medsina-logo.png';
@@ -51,6 +53,8 @@ interface HeaderProps {
   onCloseMobileDrawer?: () => void;
   totalUsersCount?: number;
   availableLicensesCount?: number;
+  isSidebarCollapsed?: boolean;
+  onToggleSidebarCollapse?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -68,7 +72,9 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleMobileDrawer,
   onCloseMobileDrawer,
   totalUsersCount = 43,
-  availableLicensesCount = 264
+  availableLicensesCount = 264,
+  isSidebarCollapsed = false,
+  onToggleSidebarCollapse
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -172,6 +178,23 @@ export const Header: React.FC<HeaderProps> = ({
               Admin
             </span>
           </button>
+
+          {/* Desktop/Tablet Sidebar Collapse Toggle */}
+          {onToggleSidebarCollapse && (
+            <button
+              type="button"
+              onClick={onToggleSidebarCollapse}
+              aria-label={isSidebarCollapsed ? "Développer le menu latéral" : "Réduire le menu latéral"}
+              title={isSidebarCollapsed ? "Développer le menu latéral (Ctrl+B)" : "Réduire le menu latéral (Ctrl+B)"}
+              className="hidden md:flex items-center justify-center p-1.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0 ml-1"
+            >
+              {isSidebarCollapsed ? (
+                <PanelLeftOpen className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4" />
+              )}
+            </button>
+          )}
 
           {/* Breadcrumb / Current Module Indicator on Ultra-wide Desktop */}
           <div className="hidden 2xl:flex items-center gap-1.5 pl-3 border-l border-slate-200 dark:border-slate-800 text-xs">
