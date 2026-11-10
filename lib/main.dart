@@ -124,6 +124,7 @@ class AuthGate extends StatelessWidget {
             return const MainScaffold();
           case AuthStatus.unauthenticated:
           case AuthStatus.error:
+          case AuthStatus.inactivitySuspended:
             return const AuthScreen();
           case AuthStatus.loading:
           case AuthStatus.initial:

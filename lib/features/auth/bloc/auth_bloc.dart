@@ -235,6 +235,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final profileMap = cloudData?['profile'] as Map<String, dynamic>?;
         final emailClean = email.trim().toLowerCase();
         final isAdm = profileMap?['is_admin'] == true || emailClean == 'doc.hafedh26@gmail.com';
+        final isBanned = profileMap?['is_banned'] == true && emailClean != 'doc.hafedh26@gmail.com';
         final banReason = profileMap?['ban_reason']?.toString();
         final isInactiveSuspended = profileMap?['is_inactive_suspended'] == true ||
             (isBanned && (banReason?.toLowerCase().contains('inactiv') ?? false));
