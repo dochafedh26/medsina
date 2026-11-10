@@ -1,0 +1,53 @@
+name: 🏥 Medsina Synapse - Générateur de Cas Cliniques ECOS (2x/jour)
+
+on:
+  schedule:
+    # Exécution 2 fois par jour : 06:00 UTC (07:00 Alger) et 18:00 UTC (19:00 Alger)
+    - cron: '0 6,18 * * *'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Motif du déclenchement manuel'
+        required: false
+        default: 'Génération manuelle de cas clinique Synapse'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  generate-synapse-case:
+    name: 🩺 Génération Cas Clinique ECOS Medsina Library
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Installer les dépendances
+        run: |
+          pip install requests urllib3
+
+      - name: ⚡ Exécuter le générateur de cas ECOS Synapse
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OCTENIUM_FTP_HOST: 'medevsync.com'
+          OCTENIUM_FTP_USER: 'rnhgnubg'
+          OCTENIUM_FTP_PASSWORD: ${{ secrets.OCTENIUM_FTP_PASSWORD }}
+        run: |
+          python scripts/automation/generate_synapse_clinical_case.py
+
+      - name: 📢 Résumé du cas clinique généré
+        run: |
+          echo "### 🏥 Nouveau Cas Clinique ECOS Medsina Synapse généré avec succès ! ✨" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source** : Bibliothèque de cours Medsina 2027" >> $GITHUB_STEP_SUMMARY
+          echo "- **Destination** : Base de données Supabase (\`synapse_cases\`) & Octenium (\`medsina.medevsync.com/synapse/cases.json\`)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fréquence** : 2 fois par jour (07:00 & 19:00 Algérie)" >> $GITHUB_STEP_SUMMARY
