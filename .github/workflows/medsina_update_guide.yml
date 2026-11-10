@@ -1,0 +1,88 @@
+name: 📖 Medsina - Mise à Jour du Guide Découverte PDF
+
+on:
+  workflow_dispatch:
+    inputs:
+      gdrive_file_id:
+        description: 'Google Drive File ID du guide PDF officiel'
+        required: true
+        default: '1JfS2J40ywxHJFJyPTdZuyRHYQZvoj-nN'
+        type: string
+      commit_asset:
+        description: 'Sauvegarder et committer le nouveau PDF dans le repo (assets/data/)'
+        required: false
+        default: true
+        type: boolean
+      update_supabase:
+        description: 'Synchroniser les paramètres OTA dans Supabase (admin_system_settings)'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  update-guide:
+    name: 🔄 Synchronisation du Guide Medsina (Drive & Cloud)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Récupérer le code source
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: 🐍 Configurer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: ⚡ Exécuter le script de mise à jour du guide
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          GDRIVE_ID="${{ inputs.gdrive_file_id || '1JfS2J40ywxHJFJyPTdZuyRHYQZvoj-nN' }}"
+          ARGS="--gdrive-id $GDRIVE_ID"
+          
+          if [ "${{ inputs.commit_asset }}" = "false" ]; then
+            ARGS="$ARGS --no-download"
+          fi
+          
+          if [ "${{ inputs.update_supabase }}" = "false" ]; then
+            ARGS="$ARGS --no-supabase"
+          fi
+
+          python scripts/automation/update_medsina_guide.py $ARGS
+
+      - name: 💾 Enregistrer le PDF mis à jour dans le dépôt Git
+        if: inputs.commit_asset != false
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          if [ -n "$(git status --porcelain assets/data/Medsina_Guide_Decouverte_Fonctionnalites.pdf)" ]; then
+            git add assets/data/Medsina_Guide_Decouverte_Fonctionnalites.pdf
+            git commit -m "chore(guide): sync updated Medsina user guide PDF from Google Drive [skip ci]"
+            git push origin main
+            echo "✅ PDF committé et poussé sur la branche main."
+          else
+            echo "ℹ️ Aucune modification détectée dans le binaire du PDF."
+          fi
+
+      - name: 📊 Résumé d'exécution
+        run: |
+          GDRIVE_ID="${{ inputs.gdrive_file_id || '1JfS2J40ywxHJFJyPTdZuyRHYQZvoj-nN' }}"
+          cat << 'EOF' >> $GITHUB_STEP_SUMMARY
+          ## 📖 Guide Découverte Medsina — Synchronisation Terminée
+
+          - **Google Drive ID** : `$GDRIVE_ID`
+          - **Lien de visualisation** : [Voir sur Google Drive](https://drive.google.com/file/d/$GDRIVE_ID/view?usp=sharing)
+          - **Streaming direct** : `https://drive.google.com/uc?export=download&id=$GDRIVE_ID`
+          - **Mise à jour Supabase** : ${{ inputs.update_supabase }}
+          - **Asset Git hors-ligne** : ${{ inputs.commit_asset }}
+
+          Les utilisateurs de l'application (Android, Windows, Web) recevront automatiquement cette nouvelle version sans avoir besoin d'attendre un rebuild complet de l'application.
+          EOF
