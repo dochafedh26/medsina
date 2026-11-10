@@ -128,8 +128,35 @@ export interface AdminUserItem {
   phone?: string;
   wilaya?: string;
   residencyTargetYear?: string;
+  isInactiveSuspended?: boolean;
+  inactiveSuspendedAt?: string;
+  lastReactivatedAt?: string;
+  reactivationCount?: number;
+  lastConnectionAt?: string;
   progress?: UserProgressMetrics;
   telemetry?: UserConnectionTelemetry;
+}
+
+export interface SuspensionLogItem {
+  id: string;
+  userId: string;
+  email?: string;
+  fullName?: string;
+  medicalRole?: string;
+  eventType: 'inactivity_suspended' | 'reactivation_requested' | 'reactivation_validated' | 'admin_override' | string;
+  reason?: string;
+  daysInactive?: number;
+  lastConnectionAt?: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+}
+
+export interface SuspensionMonitoringStats {
+  suspendedInactivityCount: number;
+  warningCount: number;
+  totalReactivations: number;
+  fraudBannedCount: number;
+  recentLogs: SuspensionLogItem[];
 }
 
 export interface DoctorFullProfileDetails {

@@ -110,3 +110,12 @@ class UpdateUserProfileEvent extends AuthEvent {
 }
 
 class ClearAuthMessageEvent extends AuthEvent {}
+
+class ReactivateAccountRequestedEvent extends AuthEvent {
+  final String userId;
+
+  const ReactivateAccountRequestedEvent({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}

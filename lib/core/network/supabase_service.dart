@@ -2122,6 +2122,71 @@ class SupabaseService {
     }
   }
 
+  /// Request and auto-validate account reactivation for users suspended due to inactivity (7+ days)
+  static Future<Map<String, dynamic>> requestAccountReactivation(String userId) async {
+    try {
+      try {
+        final res = await client.rpc('request_and_reactivate_account', params: {
+          'p_user_id': userId,
+        });
+        if (res != null && res is Map) {
+          final resMap = Map<String, dynamic>.from(res);
+          return {
+            'success': resMap['success'] == true,
+            'message': resMap['message']?.toString() ?? 'Compte réactivé avec succès !',
+          };
+        }
+      } catch (rpcErr) {
+        debugPrint('request_and_reactivate_account RPC fallback: $rpcErr');
+      }
+
+      // Direct fallback
+      final now = DateTime.now().toUtc().toIso8601String();
+      await client.from('profiles').update({
+        'is_inactive_suspended': false,
+        'is_banned': false,
+        'ban_reason': null,
+        'banned_at': null,
+        'inactive_suspended_at': null,
+        'last_reactivated_at': now,
+        'last_connection_at': now,
+        'updated_at': now,
+      }).eq('id', userId);
+
+      await client.from('subscriptions').update({
+        'status': 'active',
+        'updated_at': now,
+      }).eq('user_id', userId);
+
+      return {
+        'success': true,
+        'message': 'Compte réactivé avec succès ! Bon retour Docteur.',
+      };
+    } catch (e) {
+      debugPrint('Error reactivating account: $e');
+      return {
+        'success': false,
+        'message': 'Erreur lors de la réactivation : $e',
+      };
+    }
+  }
+
+  /// Trigger 7-day inactivity suspension check (Admin / System feature)
+  static Future<Map<String, dynamic>> checkAndSuspendInactiveUsers({int daysThreshold = 7}) async {
+    try {
+      final res = await client.rpc('check_and_suspend_inactive_users', params: {
+        'p_days_threshold': daysThreshold,
+      });
+      if (res != null && res is Map) {
+        return Map<String, dynamic>.from(res);
+      }
+      return {'success': true, 'suspended_count': 0};
+    } catch (e) {
+      debugPrint('Error checking inactive users: $e');
+      return {'success': false, 'error': e.toString()};
+    }
+  }
+
   /// Update user's study year and medical role (Admin feature)
   static Future<bool> updateUserStudyYear({
     required String userId,

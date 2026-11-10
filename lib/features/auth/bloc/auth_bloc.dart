@@ -24,6 +24,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateUserProfileEvent>(_onUpdateUserProfile);
     on<LogoutEvent>(_onLogout);
     on<ClearAuthMessageEvent>(_onClearAuthMessage);
+    on<ReactivateAccountRequestedEvent>(_onReactivateAccountRequested);
   }
 
   void _onClearAuthMessage(ClearAuthMessageEvent event, Emitter<AuthState> emit) {
@@ -68,8 +69,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             final userEmail = (profile['email'] ?? session.user.email ?? '').toString().trim().toLowerCase();
             final isAdm = profile['is_admin'] == true || userEmail == 'doc.hafedh26@gmail.com';
             final isBanned = profile['is_banned'] == true && userEmail != 'doc.hafedh26@gmail.com';
+            final banReason = profile['ban_reason']?.toString();
+            final isInactiveSuspended = profile['is_inactive_suspended'] == true ||
+                (isBanned && (banReason?.toLowerCase().contains('inactiv') ?? false));
 
             if (isBanned) {
+              if (isInactiveSuspended) {
+                final suspendedUser = UserModel(
+                  id: userId,
+                  fullName: profile['full_name'] ?? session.user.email?.split('@').first ?? 'Dr. Medsina',
+                  email: profile['email'] ?? session.user.email ?? '',
+                  medicalRole: profile['medical_role'] ?? 'Candidat Résidanat',
+                  faculty: profile['faculty'] ?? 'Faculté de Médecine de Blida',
+                  tier: tier,
+                  subscriptionExpiry: expiry,
+                  token: session.accessToken,
+                  isAdmin: isAdm,
+                  isBanned: true,
+                  banReason: banReason,
+                  isInactiveSuspended: true,
+                  reactivationCount: (profile['reactivation_count'] as num?)?.toInt() ?? 0,
+                  rejectedPaymentsCount: (profile['rejected_payments_count'] as num?)?.toInt() ?? 0,
+                  studyYear: (profile['study_year'] as num?)?.toInt() ?? (session.user.userMetadata?['study_year'] as num?)?.toInt(),
+                  avatarUrl: profile['avatar_url'] ?? (session.user.userMetadata?['avatar_url'] as String?),
+                  bio: profile['bio'] ?? (session.user.userMetadata?['bio'] as String?),
+                  phone: profile['phone'] ?? (session.user.userMetadata?['phone'] as String?),
+                  wilaya: profile['wilaya'] ?? (session.user.userMetadata?['wilaya'] as String?),
+                  residencyTargetYear: profile['residency_target_year'] ?? (session.user.userMetadata?['residency_target_year'] as String?),
+                );
+                emit(state.copyWith(
+                  status: AuthStatus.inactivitySuspended,
+                  user: suspendedUser,
+                  errorMessage: 'Votre compte Medsina est momentanément suspendu suite à 7 jours d\'inactivité.',
+                ));
+                return;
+              }
+
               await SupabaseService.signOut();
               await prefs.remove(_userPrefsKey);
               emit(state.copyWith(
@@ -200,9 +235,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final profileMap = cloudData?['profile'] as Map<String, dynamic>?;
         final emailClean = email.trim().toLowerCase();
         final isAdm = profileMap?['is_admin'] == true || emailClean == 'doc.hafedh26@gmail.com';
-        final isBanned = profileMap?['is_banned'] == true && emailClean != 'doc.hafedh26@gmail.com';
+        final banReason = profileMap?['ban_reason']?.toString();
+        final isInactiveSuspended = profileMap?['is_inactive_suspended'] == true ||
+            (isBanned && (banReason?.toLowerCase().contains('inactiv') ?? false));
 
         if (isBanned) {
+          if (isInactiveSuspended) {
+            final suspendedUser = UserModel(
+              id: supaUser.id,
+              fullName: fullName,
+              email: email,
+              medicalRole: medicalRole,
+              faculty: faculty,
+              tier: tier,
+              subscriptionExpiry: expiry,
+              token: authResponse.session?.accessToken ?? '',
+              isAdmin: isAdm,
+              isBanned: true,
+              banReason: banReason,
+              isInactiveSuspended: true,
+              reactivationCount: (profileMap?['reactivation_count'] as num?)?.toInt() ?? 0,
+              rejectedPaymentsCount: (profileMap?['rejected_payments_count'] as num?)?.toInt() ?? 0,
+              studyYear: (profileMap?['study_year'] as num?)?.toInt() ?? (supaUser.userMetadata?['study_year'] as num?)?.toInt(),
+              avatarUrl: profileMap?['avatar_url'] ?? (supaUser.userMetadata?['avatar_url'] as String?),
+              bio: profileMap?['bio'] ?? (supaUser.userMetadata?['bio'] as String?),
+              phone: profileMap?['phone'] ?? (supaUser.userMetadata?['phone'] as String?),
+              wilaya: profileMap?['wilaya'] ?? (supaUser.userMetadata?['wilaya'] as String?),
+              residencyTargetYear: profileMap?['residency_target_year'] ?? (supaUser.userMetadata?['residency_target_year'] as String?),
+            );
+            emit(state.copyWith(
+              status: AuthStatus.inactivitySuspended,
+              user: suspendedUser,
+              errorMessage: 'Votre compte Medsina est momentanément suspendu suite à 7 jours d\'inactivité.',
+            ));
+            return;
+          }
+
           await SupabaseService.signOut();
           await prefs.remove(_userPrefsKey);
           emit(state.copyWith(
@@ -529,5 +597,61 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userPrefsKey);
     emit(const AuthState(status: AuthStatus.unauthenticated));
+  }
+
+  Future<void> _onReactivateAccountRequested(
+    ReactivateAccountRequestedEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(status: AuthStatus.loading));
+    try {
+      final res = await SupabaseService.requestAccountReactivation(event.userId);
+      if (res['success'] == true) {
+        final prefs = await SharedPreferences.getInstance();
+        final cloudData = await SupabaseService.fetchUserProfileAndSubscription(event.userId);
+        final profile = cloudData?['profile'] as Map<String, dynamic>? ?? {};
+        final sub = cloudData?['subscription'] as Map<String, dynamic>?;
+
+        final current = state.user;
+        final updatedUser = (current ?? UserModel(
+          id: event.userId,
+          fullName: profile['full_name'] ?? 'Dr. Medsina',
+          email: profile['email'] ?? '',
+          medicalRole: profile['medical_role'] ?? 'Médecin Généraliste',
+          faculty: profile['faculty'] ?? 'Faculté de Médecine de Blida',
+          tier: _mapTier(sub?['tier']),
+          subscriptionExpiry: DateTime.now().add(const Duration(days: 30)),
+          token: SupabaseService.currentSession?.accessToken ?? '',
+        )).copyWith(
+          isBanned: false,
+          isInactiveSuspended: false,
+          banReason: null,
+          reactivationCount: (current?.reactivationCount ?? 0) + 1,
+        );
+
+        await prefs.setString(_userPrefsKey, jsonEncode(updatedUser.toJson()));
+        emit(state.copyWith(
+          status: AuthStatus.authenticated,
+          user: updatedUser,
+          successMessage: res['message'] ?? 'Ravi de vous revoir Docteur ! Votre compte a été réactivé avec succès.',
+        ));
+
+        CloudSyncService.instance.syncAll().catchError((e) {
+          debugPrint('[CloudSync] Post-reactivation sync error: $e');
+          return false;
+        });
+      } else {
+        emit(state.copyWith(
+          status: AuthStatus.inactivitySuspended,
+          errorMessage: res['message'] ?? 'Impossible de réactiver automatiquement ce compte.',
+        ));
+      }
+    } catch (e) {
+      debugPrint('Reactivation error: $e');
+      emit(state.copyWith(
+        status: AuthStatus.inactivitySuspended,
+        errorMessage: 'Erreur lors de la réactivation : $e',
+      ));
+    }
   }
 }

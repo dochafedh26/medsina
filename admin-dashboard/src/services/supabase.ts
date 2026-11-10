@@ -12,7 +12,9 @@ import {
   FinancialMetrics,
   DoctorFullProfileDetails,
   UserProgressMetrics,
-  UserConnectionTelemetry
+  UserConnectionTelemetry,
+  SuspensionLogItem,
+  SuspensionMonitoringStats
 } from '../types/medsina';
 
 // Supabase Configuration from Environment or Production Credentials
@@ -301,7 +303,7 @@ export function parseUserCloudSync(
   let activeDaysHistory: string[] = [];
   let detectedPlatform: 'web' | 'windows' | 'android' | 'mobile' | undefined;
   const platformsSet = new Set<'web' | 'windows' | 'android' | 'mobile'>();
-  let latestActivityTimestamp = profile?.updated_at || profile?.created_at;
+  let latestActivityTimestamp = profile?.last_connection_at || profile?.updated_at || profile?.created_at;
 
   for (const record of syncRecords) {
     const payload = record.payload || {};
@@ -483,6 +485,11 @@ export async function fetchRealUsers(): Promise<AdminUserItem[]> {
           bio: u.bio || undefined,
           avatarUrl: u.avatar_url || undefined,
           referralCode: u.referral_code || `DR-${u.id.substring(0, 6).toUpperCase()}`,
+          isInactiveSuspended: !!u.is_inactive_suspended || (!!u.is_banned && (u.ban_reason || '').toLowerCase().includes('inactiv')),
+          inactiveSuspendedAt: u.inactive_suspended_at || undefined,
+          lastReactivatedAt: u.last_reactivated_at || undefined,
+          reactivationCount: Number(u.reactivation_count || 0),
+          lastConnectionAt: u.last_connection_at || undefined,
           progress,
           telemetry,
         };
@@ -528,6 +535,11 @@ export async function fetchRealUsers(): Promise<AdminUserItem[]> {
           bio: p.bio || undefined,
           avatarUrl: p.avatar_url || undefined,
           referralCode: p.referral_code || `DR-${p.id.substring(0, 6).toUpperCase()}`,
+          isInactiveSuspended: !!p.is_inactive_suspended || (!!p.is_banned && (p.ban_reason || '').toLowerCase().includes('inactiv')),
+          inactiveSuspendedAt: p.inactive_suspended_at || undefined,
+          lastReactivatedAt: p.last_reactivated_at || undefined,
+          reactivationCount: Number(p.reactivation_count || 0),
+          lastConnectionAt: p.last_connection_at || undefined,
           progress,
           telemetry,
         };
@@ -1158,6 +1170,202 @@ export async function unbanUserInSupabase(userId: string): Promise<boolean> {
   } catch (e) {
     console.error('Error unbanning user:', e);
     return false;
+  }
+}
+
+/**
+ * Reactivate an inactive-suspended user (calls RPC with fallback)
+ */
+export async function reactivateUserInSupabase(userId: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const { data, error } = await supabase.rpc('request_and_reactivate_account', { p_user_id: userId });
+    if (!error && data && typeof data === 'object') {
+      return { success: !!data.success, message: data.message || 'Compte réactivé avec succès.' };
+    }
+  } catch (err) {
+    console.warn('request_and_reactivate_account RPC fallback:', err);
+  }
+
+  // Direct fallback
+  try {
+    const now = new Date().toISOString();
+    await supabaseAdmin
+      .from('profiles')
+      .update({
+        is_inactive_suspended: false,
+        is_banned: false,
+        ban_reason: null,
+        banned_at: null,
+        inactive_suspended_at: null,
+        last_reactivated_at: now,
+        last_connection_at: now,
+        updated_at: now,
+      })
+      .eq('id', userId);
+
+    await supabaseAdmin
+      .from('subscriptions')
+      .update({ status: 'active', updated_at: now })
+      .eq('user_id', userId);
+
+    return { success: true, message: 'Compte réactivé avec succès.' };
+  } catch (e: any) {
+    console.error('Error reactivating user in fallback:', e);
+    return { success: false, message: e.message || 'Erreur lors de la réactivation' };
+  }
+}
+
+/**
+ * Trigger 7-day inactivity check & suspension across all users
+ */
+export async function triggerInactivitySuspensionCheck(daysThreshold: number = 7): Promise<{ success: boolean; count: number; message: string }> {
+  try {
+    const { data, error } = await supabase.rpc('check_and_suspend_inactive_users', { p_days_threshold: daysThreshold });
+    if (!error && data) {
+      return {
+        success: true,
+        count: Number(data.suspended_count || 0),
+        message: `${data.suspended_count || 0} compte(s) inactif(s) depuis >= ${daysThreshold} jours ont été suspendus momentanément.`
+      };
+    }
+  } catch (err) {
+    console.warn('check_and_suspend_inactive_users RPC error:', err);
+  }
+
+  // Client-side fallback
+  try {
+    const now = Date.now();
+    const thresholdMs = daysThreshold * 24 * 3600 * 1000;
+    const { data: profs, error } = await supabaseAdmin
+      .from('profiles')
+      .select('id, email, full_name, created_at, last_connection_at, is_banned, is_admin')
+      .eq('is_banned', false);
+
+    if (error || !profs) throw error || new Error('Impossible de charger les profils');
+
+    let count = 0;
+    for (const p of profs) {
+      if (p.is_admin || (p.email && p.email.toLowerCase().includes('doc.hafedh26'))) continue;
+      const lastActive = p.last_connection_at ? new Date(p.last_connection_at).getTime() : new Date(p.created_at).getTime();
+      if (now - lastActive >= thresholdMs) {
+        const days = Math.floor((now - lastActive) / (24 * 3600 * 1000));
+        await supabaseAdmin
+          .from('profiles')
+          .update({
+            is_inactive_suspended: true,
+            is_banned: true,
+            ban_reason: `Compte suspendu pour inactivité (${days} jours sans connexion)`,
+            inactive_suspended_at: new Date().toISOString(),
+            banned_at: new Date().toISOString(),
+          })
+          .eq('id', p.id);
+        count++;
+      }
+    }
+
+    return {
+      success: true,
+      count,
+      message: `${count} compte(s) inactif(s) depuis >= ${daysThreshold} jours suspendus (mode direct).`
+    };
+  } catch (e: any) {
+    return { success: false, count: 0, message: e.message || 'Erreur lors de la vérification' };
+  }
+}
+
+/**
+ * Fetch suspension & reactivation monitoring metrics + recent audit logs
+ */
+export async function fetchSuspensionMonitoringData(): Promise<SuspensionMonitoringStats> {
+  try {
+    const { data, error } = await supabase.rpc('admin_get_suspension_stats_and_logs');
+    if (!error && data) {
+      return {
+        suspendedInactivityCount: Number(data.suspended_inactivity_count || 0),
+        warningCount: Number(data.warning_count || 0),
+        totalReactivations: Number(data.total_reactivations || 0),
+        fraudBannedCount: Number(data.fraud_banned_count || 0),
+        recentLogs: Array.isArray(data.recent_logs)
+          ? data.recent_logs.map((l: any) => ({
+              id: l.id,
+              userId: l.user_id,
+              email: l.email,
+              fullName: l.full_name,
+              medicalRole: l.medical_role,
+              eventType: l.event_type,
+              reason: l.reason,
+              daysInactive: l.days_inactive,
+              lastConnectionAt: l.last_connection_at,
+              metadata: l.metadata,
+              createdAt: l.created_at,
+            }))
+          : [],
+      };
+    }
+  } catch (err) {
+    console.warn('admin_get_suspension_stats_and_logs fallback:', err);
+  }
+
+  // Direct table queries fallback
+  try {
+    const [profilesRes, logsRes] = await Promise.all([
+      supabaseAdmin.from('profiles').select('id, email, is_banned, ban_reason, is_inactive_suspended, last_connection_at, created_at, reactivation_count'),
+      supabaseAdmin.from('user_suspension_logs').select('*').order('created_at', { ascending: false }).limit(50),
+    ]);
+
+    const profs = profilesRes.data || [];
+    const logs = logsRes.data || [];
+    const now = Date.now();
+
+    let suspendedInactivityCount = 0;
+    let warningCount = 0;
+    let fraudBannedCount = 0;
+    let totalReactivations = 0;
+
+    for (const p of profs) {
+      totalReactivations += Number(p.reactivation_count || 0);
+      const isInactiveSusp = p.is_inactive_suspended || (p.is_banned && (p.ban_reason || '').toLowerCase().includes('inactiv'));
+      if (isInactiveSusp) {
+        suspendedInactivityCount++;
+      } else if (p.is_banned) {
+        fraudBannedCount++;
+      } else {
+        const lastActive = p.last_connection_at ? new Date(p.last_connection_at).getTime() : new Date(p.created_at).getTime();
+        const days = (now - lastActive) / (24 * 3600 * 1000);
+        if (days >= 5 && days < 7) {
+          warningCount++;
+        }
+      }
+    }
+
+    return {
+      suspendedInactivityCount,
+      warningCount,
+      totalReactivations,
+      fraudBannedCount,
+      recentLogs: logs.map((l: any) => ({
+        id: l.id,
+        userId: l.user_id,
+        email: l.email,
+        fullName: l.full_name,
+        medicalRole: l.medical_role,
+        eventType: l.event_type,
+        reason: l.reason,
+        daysInactive: l.days_inactive,
+        lastConnectionAt: l.last_connection_at,
+        metadata: l.metadata,
+        createdAt: l.created_at,
+      })),
+    };
+  } catch (e) {
+    console.error('Error fetching suspension monitoring fallback:', e);
+    return {
+      suspendedInactivityCount: 0,
+      warningCount: 0,
+      totalReactivations: 0,
+      fraudBannedCount: 0,
+      recentLogs: [],
+    };
   }
 }
 

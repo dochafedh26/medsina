@@ -123,10 +123,12 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       builder: (context, state) {
         final isLoading = state.status == AuthStatus.loading;
 
-        final authBentoCard = Container(
-          decoration: AppTheme.bentoCardDecoration(context, radius: 24),
-          padding: const EdgeInsets.all(26),
-          child: Column(
+        final authBentoCard = state.status == AuthStatus.inactivitySuspended
+            ? _buildInactivitySuspendedCard(context, state, isDark, isLoading)
+            : Container(
+                decoration: AppTheme.bentoCardDecoration(context, radius: 24),
+                padding: const EdgeInsets.all(26),
+                child: Column(
             children: [
               // Pill-segmented Tabs
               Container(
@@ -1166,6 +1168,141 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInactivitySuspendedCard(
+    BuildContext context,
+    AuthState state,
+    bool isDark,
+    bool isLoading,
+  ) {
+    final user = state.user;
+
+    return Container(
+      decoration: AppTheme.bentoCardDecoration(context, radius: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.35), width: 2),
+            ),
+            child: const Icon(
+              Icons.pause_circle_filled_rounded,
+              color: Color(0xFFD97706),
+              size: 42,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFEF3C7),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFFDE68A)),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.timer_outlined, size: 14, color: Color(0xFF92400E)),
+                SizedBox(width: 6),
+                Text(
+                  'INACTIVITÉ (7 JOURS SANS CONNEXION)',
+                  style: TextStyle(
+                    color: Color(0xFF92400E),
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Compte Momentanément Suspendu',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Bonjour ${user?.fullName ?? "Docteur"},\nVotre compte Medsina a été momentanément suspendu par mesure de sécurité suite à une inactivité de plus de 7 jours. Vos accès, séries, statistiques et cours restent préservés.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.5,
+              color: isDark ? Colors.white70 : const Color(0xFF475569),
+            ),
+          ),
+          const SizedBox(height: 26),
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton.icon(
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      if (user != null && user.id.isNotEmpty) {
+                        context.read<AuthBloc>().add(
+                              ReactivateAccountRequestedEvent(userId: user.id),
+                            );
+                      }
+                    },
+              icon: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.bolt_rounded, color: Colors.white, size: 24),
+              label: Text(
+                isLoading ? 'Validation en cours...' : 'Demander la réactivation de mon compte',
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0D9488),
+                elevation: 2,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '⚡ La validation de votre demande est automatique et immédiate.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontStyle: FontStyle.italic,
+              color: isDark ? Colors.tealAccent.shade100 : const Color(0xFF0F766E),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () {
+              context.read<AuthBloc>().add(LogoutEvent());
+            },
+            child: Text(
+              'Se connecter avec un autre compte',
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white60 : const Color(0xFF64748B),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

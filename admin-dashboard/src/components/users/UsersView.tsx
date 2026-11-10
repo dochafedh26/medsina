@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, 
   Search, 
@@ -35,13 +35,42 @@ import {
   ArrowUpDown,
   Copy,
   Check,
-  Sparkles
+  Sparkles,
+  PauseCircle,
+  RotateCcw,
+  FileText,
+  RefreshCw,
+  Info
 } from 'lucide-react';
-import { AdminUserItem, SubscriptionTier, PaymentItem, AdminLicenseItem, MedicalRole } from '../../types/medsina';
+import { 
+  AdminUserItem, 
+  SubscriptionTier, 
+  PaymentItem, 
+  AdminLicenseItem, 
+  MedicalRole,
+  SuspensionLogItem,
+  SuspensionMonitoringStats
+} from '../../types/medsina';
 import { DoctorProfileModal } from './DoctorProfileModal';
-import { resolveStudyYear, formatStudyYearDisplay, updateUserProfileInSupabase } from '../../services/supabase';
+import { 
+  resolveStudyYear, 
+  formatStudyYearDisplay, 
+  updateUserProfileInSupabase,
+  fetchSuspensionMonitoringData,
+  triggerInactivitySuspensionCheck,
+  reactivateUserInSupabase
+} from '../../services/supabase';
 
-export type UserActivitySegment = 'all' | 'online' | 'frequent' | 'regular' | 'occasional' | 'inactive' | 'dormant';
+export type UserActivitySegment = 
+  | 'all' 
+  | 'online' 
+  | 'frequent' 
+  | 'regular' 
+  | 'occasional' 
+  | 'inactive' 
+  | 'dormant'
+  | 'suspended_inactivity'
+  | 'suspended_fraud';
 
 export interface UserActivityDetail {
   segment: UserActivitySegment;
@@ -74,6 +103,35 @@ export function getUserActivityInfo(user: AdminUserItem): UserActivityDetail {
 
   const hoursSinceActive = msSinceActive / (1000 * 3600);
   const daysSinceActive = Math.floor(hoursSinceActive / 24);
+
+  // 0. Suspended for Inactivity (7 days without connection)
+  const isInactiveSusp = !!user.isInactiveSuspended || (!!user.isBanned && (user.banReason || '').toLowerCase().includes('inactiv'));
+  if (isInactiveSusp) {
+    return {
+      segment: 'suspended_inactivity',
+      label: `Suspendu (Inactif ${daysSinceActive}j)`,
+      sublabel: user.inactiveSuspendedAt ? 'En attente reconnexion' : 'Suspendu momentanément (7j)',
+      badgeClass: 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-200 border-amber-300 dark:border-amber-700',
+      dotClass: 'bg-amber-500',
+      daysSinceActive,
+      isFrequent: false,
+      isInactive: true,
+    };
+  }
+
+  // 0.5. Banned for Fraud / Administrative Security
+  if (user.isBanned) {
+    return {
+      segment: 'suspended_fraud',
+      label: 'Banni (Fraude / Sécurité)',
+      sublabel: user.banReason || 'Paiement non conforme',
+      badgeClass: 'bg-rose-100 text-rose-900 dark:bg-rose-950/80 dark:text-rose-200 border-rose-300 dark:border-rose-800',
+      dotClass: 'bg-rose-600',
+      daysSinceActive,
+      isFrequent: false,
+      isInactive: true,
+    };
+  }
 
   // 1. Online: actively connected within 15 min
   if (isOnline) {
@@ -182,6 +240,95 @@ export const UsersView: React.FC<UsersViewProps> = ({
   const [selectedUserForDetails, setSelectedUserForDetails] = useState<AdminUserItem | null>(null);
   const [modalInitialTab, setModalInitialTab] = useState<'identity' | 'progress' | 'telemetry' | 'subscription' | 'payments' | 'licenses'>('identity');
 
+  // Suspension & Reactivation Monitoring State
+  const [suspensionStats, setSuspensionStats] = useState<SuspensionMonitoringStats | null>(null);
+  const [isLoadingSuspension, setIsLoadingSuspension] = useState<boolean>(false);
+  const [isCheckingInactivity, setIsCheckingInactivity] = useState<boolean>(false);
+  const [reactivatingUserId, setReactivatingUserId] = useState<string | null>(null);
+  const [showAuditLogsDrawer, setShowAuditLogsDrawer] = useState<boolean>(false);
+  const [inactivityNotice, setInactivityNotice] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+
+  const loadSuspensionMonitoring = async () => {
+    setIsLoadingSuspension(true);
+    try {
+      const stats = await fetchSuspensionMonitoringData();
+      setSuspensionStats(stats);
+    } catch (e) {
+      console.error('Error loading suspension monitoring:', e);
+    } finally {
+      setIsLoadingSuspension(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSuspensionMonitoring();
+  }, []);
+
+  const handleTriggerInactivityCheck = async () => {
+    setIsCheckingInactivity(true);
+    setInactivityNotice(null);
+    try {
+      const res = await triggerInactivitySuspensionCheck(7);
+      if (res.success) {
+        setInactivityNotice({
+          type: 'success',
+          message: res.message || 'Vérification d\'inactivité exécutée avec succès.'
+        });
+        await loadSuspensionMonitoring();
+      } else {
+        setInactivityNotice({
+          type: 'error',
+          message: res.message || 'Erreur lors de la vérification d\'inactivité.'
+        });
+      }
+    } catch (err: any) {
+      setInactivityNotice({
+        type: 'error',
+        message: err.message || 'Une erreur est survenue lors de la vérification.'
+      });
+    } finally {
+      setIsCheckingInactivity(false);
+    }
+  };
+
+  const handleQuickReactivate = async (user: AdminUserItem, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setReactivatingUserId(user.id);
+    try {
+      const res = await reactivateUserInSupabase(user.id);
+      if (res.success) {
+        const updated: AdminUserItem = {
+          ...user,
+          status: 'active',
+          isBanned: false,
+          isInactiveSuspended: false,
+          banReason: undefined,
+          reactivationCount: (user.reactivationCount || 0) + 1,
+          lastReactivatedAt: new Date().toISOString(),
+          lastConnectionAt: new Date().toISOString(),
+        };
+        onUpdateUser(updated);
+        setInactivityNotice({
+          type: 'success',
+          message: `Compte de ${user.fullName} réactivé avec succès (validation automatique validée).`
+        });
+        await loadSuspensionMonitoring();
+      } else {
+        setInactivityNotice({
+          type: 'error',
+          message: res.message || 'Impossible de réactiver ce compte.'
+        });
+      }
+    } catch (err: any) {
+      setInactivityNotice({
+        type: 'error',
+        message: `Erreur : ${err.message || err}`
+      });
+    } finally {
+      setReactivatingUserId(null);
+    }
+  };
+
   const roles = [
     'All',
     'Candidat Résidanat',
@@ -202,6 +349,8 @@ export const UsersView: React.FC<UsersViewProps> = ({
     occasional: users.filter(u => getUserActivityInfo(u).segment === 'occasional').length,
     inactive: users.filter(u => getUserActivityInfo(u).segment === 'inactive').length,
     dormant: users.filter(u => getUserActivityInfo(u).segment === 'dormant').length,
+    suspended_inactivity: users.filter(u => getUserActivityInfo(u).segment === 'suspended_inactivity').length,
+    suspended_fraud: users.filter(u => getUserActivityInfo(u).segment === 'suspended_fraud').length,
   };
 
   const filteredUsers = users.filter((u) => {
@@ -237,6 +386,8 @@ export const UsersView: React.FC<UsersViewProps> = ({
       if (selectedActivitySegment === 'occasional' && info.segment !== 'occasional') return false;
       if (selectedActivitySegment === 'inactive' && info.segment !== 'inactive') return false;
       if (selectedActivitySegment === 'dormant' && info.segment !== 'dormant') return false;
+      if (selectedActivitySegment === 'suspended_inactivity' && info.segment !== 'suspended_inactivity') return false;
+      if (selectedActivitySegment === 'suspended_fraud' && info.segment !== 'suspended_fraud') return false;
     }
 
     return matchesSearch && matchesRole && matchesTier && matchesPlatform;
@@ -453,6 +604,233 @@ export const UsersView: React.FC<UsersViewProps> = ({
         </div>
       </div>
 
+      {/* Inactivity & Suspension Notification Banner */}
+      {inactivityNotice && (
+        <div className={`p-3 rounded-xl border flex items-center justify-between text-xs font-medium transition-all ${
+          inactivityNotice.type === 'success' 
+            ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800'
+            : inactivityNotice.type === 'error'
+              ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200 border-rose-300 dark:border-rose-800'
+              : 'bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-200 border-sky-300 dark:border-sky-800'
+        }`}>
+          <div className="flex items-center gap-2">
+            {inactivityNotice.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            )}
+            <span>{inactivityNotice.message}</span>
+          </div>
+          <button 
+            onClick={() => setInactivityNotice(null)}
+            className="p-1 hover:opacity-75 cursor-pointer text-slate-500"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* --- AUTOMATED 7-DAY INACTIVITY & REACTIVATION MONITORING DASHBOARD PANEL --- */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50/70 via-slate-50 to-teal-50/60 dark:from-amber-950/20 dark:via-slate-900 dark:to-teal-950/20 border border-amber-200/80 dark:border-amber-900/50 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-amber-200/50 dark:border-slate-800">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/15 dark:bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-700 dark:text-amber-300 shrink-0">
+              <PauseCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm md:text-base font-bold text-slate-900 dark:text-white">
+                  Monitoring Inactivité (7 Jours) & Réactivations Automatiques
+                </h2>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300 border border-amber-300 dark:border-amber-700">
+                  Automatisé
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                Règle : suspension momentanée si &gt;= 7j d'inactivité · Réactivation immédiate et auto-validée dès reconnexion du médecin.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={handleTriggerInactivityCheck}
+              disabled={isCheckingInactivity}
+              className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              title="Scanner tous les comptes et suspendre ceux inactifs depuis plus de 7 jours"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isCheckingInactivity ? 'animate-spin' : ''}`} />
+              <span>{isCheckingInactivity ? 'Vérification en cours...' : 'Vérifier Inactivité (7j)'}</span>
+            </button>
+
+            <button
+              onClick={() => setShowAuditLogsDrawer(!showAuditLogsDrawer)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border cursor-pointer flex items-center gap-1.5 ${
+                showAuditLogsDrawer
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-slate-900'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+              <span>Journal d'Audit ({suspensionStats?.recentLogs.length || 0})</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 3 Real-time Monitoring Indicators */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+          {/* Stat 1: Suspendus Inactivité */}
+          <div 
+            onClick={() => setSelectedActivitySegment(selectedActivitySegment === 'suspended_inactivity' ? 'all' : 'suspended_inactivity')}
+            className={`p-3 rounded-xl border transition-all cursor-pointer ${
+              selectedActivitySegment === 'suspended_inactivity'
+                ? 'bg-amber-100/70 dark:bg-amber-950/60 border-amber-500 ring-2 ring-amber-500/30'
+                : 'bg-white/80 dark:bg-slate-800/60 border-amber-200/70 dark:border-slate-700 hover:border-amber-400'
+            }`}
+          >
+            <div className="flex items-center justify-between text-[11px] font-bold text-amber-800 dark:text-amber-200">
+              <span className="flex items-center gap-1.5">
+                <PauseCircle className="w-3.5 h-3.5 text-amber-600" />
+                <span>Suspendus Momentanément (7j)</span>
+              </span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200">
+                En Pause
+              </span>
+            </div>
+            <p className="text-xl font-extrabold font-mono text-amber-900 dark:text-amber-100 mt-1">
+              {activityCounts.suspended_inactivity} <span className="text-xs font-normal text-slate-500">comptes</span>
+            </p>
+            <p className="text-[10.5px] text-amber-700 dark:text-amber-300 mt-0.5">
+              Accès en pause · Se réactivent automatiquement à la connexion
+            </p>
+          </div>
+
+          {/* Stat 2: En Risque Inactivité (5-6j) */}
+          <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700">
+            <div className="flex items-center justify-between text-[11px] font-bold text-slate-700 dark:text-slate-300">
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-orange-500" />
+                <span>En Pré-Alerte (5-6 jours)</span>
+              </span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300">
+                Bientôt 7j
+              </span>
+            </div>
+            <p className="text-xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">
+              {suspensionStats?.warningCount ?? 0} <span className="text-xs font-normal text-slate-500">praticiens</span>
+            </p>
+            <p className="text-[10.5px] text-slate-500 dark:text-slate-400 mt-0.5">
+              Non connectés depuis 5 à 6 jours (suspension imminente)
+            </p>
+          </div>
+
+          {/* Stat 3: Total Réactivations Automatiques */}
+          <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/60 border border-teal-200/70 dark:border-slate-700">
+            <div className="flex items-center justify-between text-[11px] font-bold text-teal-800 dark:text-teal-200">
+              <span className="flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-teal-600" />
+                <span>Réactivations Automatiques Validées</span>
+              </span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-100 dark:bg-teal-900/60 text-teal-800 dark:text-teal-300">
+                Succès
+              </span>
+            </div>
+            <p className="text-xl font-extrabold font-mono text-teal-900 dark:text-teal-100 mt-1">
+              {suspensionStats?.totalReactivations ?? users.reduce((acc, u) => acc + (u.reactivationCount || 0), 0)}{' '}
+              <span className="text-xs font-normal text-slate-500">validations</span>
+            </p>
+            <p className="text-[10.5px] text-teal-700 dark:text-teal-300 mt-0.5">
+              Demandes immédiatement approuvées sans blocage
+            </p>
+          </div>
+        </div>
+
+        {/* Collapsible Live Audit Logs Drawer */}
+        {showAuditLogsDrawer && (
+          <div className="mt-4 pt-3 border-t border-amber-200/60 dark:border-slate-800">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-teal-600" />
+                <span>Journal d'Audit en Direct des Suspensions & Réactivations</span>
+              </h3>
+              <button
+                onClick={loadSuspensionMonitoring}
+                className="text-[11px] text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 cursor-pointer font-medium"
+              >
+                <RefreshCw className={`w-3 h-3 ${isLoadingSuspension ? 'animate-spin' : ''}`} />
+                <span>Actualiser le journal</span>
+              </button>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xs max-h-72 overflow-y-auto">
+              {!suspensionStats || suspensionStats.recentLogs.length === 0 ? (
+                <div className="p-4 text-center text-xs text-slate-400">
+                  Aucun événement de suspension ou réactivation enregistré pour le moment.
+                </div>
+              ) : (
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-slate-50 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800 sticky top-0">
+                    <tr>
+                      <th className="py-2 px-3 font-semibold">Date & Heure</th>
+                      <th className="py-2 px-3 font-semibold">Médecin / Praticien</th>
+                      <th className="py-2 px-3 font-semibold">Événement</th>
+                      <th className="py-2 px-3 font-semibold">Inactivité</th>
+                      <th className="py-2 px-3 font-semibold">Détails / Motif</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {suspensionStats.recentLogs.map((log) => {
+                      const isSuspension = log.eventType === 'inactivity_suspended';
+                      return (
+                        <tr key={log.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                          <td className="py-2 px-3 font-mono text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                            {new Date(log.createdAt).toLocaleString('fr-FR', {
+                              day: '2-digit',
+                              month: 'short',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </td>
+                          <td className="py-2 px-3">
+                            <span className="font-bold text-slate-900 dark:text-slate-100 block">
+                              {log.fullName || 'Docteur'}
+                            </span>
+                            <span className="text-[10.5px] font-mono text-slate-500 dark:text-slate-400">
+                              {log.email}
+                            </span>
+                          </td>
+                          <td className="py-2 px-3">
+                            {isSuspension ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+                                <PauseCircle className="w-3 h-3" />
+                                Suspension Auto (7j)
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300 border border-teal-300 dark:border-teal-800">
+                                <Zap className="w-3 h-3 text-teal-600" />
+                                Réactivation Validée
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-2 px-3 font-mono text-[11px] text-slate-600 dark:text-slate-300">
+                            {log.daysInactive !== undefined && log.daysInactive > 0
+                              ? `${log.daysInactive} jours`
+                              : '0j (Reconnexion)'}
+                          </td>
+                          <td className="py-2 px-3 text-[11px] text-slate-600 dark:text-slate-300">
+                            {log.reason || 'Conforme à la politique d\'inactivité Medsina'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* --- 4 INTERACTIVE ACTIVITY & ENGAGEMENT KPI CARDS --- */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Card 1: En ligne & Aujourd'hui */}
@@ -642,7 +1020,31 @@ export const UsersView: React.FC<UsersViewProps> = ({
           }`}
         >
           <AlertTriangle className="w-3.5 h-3.5" />
-          <span>Dormants (0 session) ({activityCounts.dormant})</span>
+          <span>Dormants ({activityCounts.dormant})</span>
+        </button>
+
+        <button
+          onClick={() => setSelectedActivitySegment('suspended_inactivity')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'suspended_inactivity'
+              ? 'bg-amber-600 text-white shadow-2xs ring-2 ring-amber-400/50'
+              : 'bg-amber-100/70 text-amber-900 dark:bg-amber-950/60 dark:text-amber-200 hover:bg-amber-200 border border-amber-300 dark:border-amber-800'
+          }`}
+        >
+          <PauseCircle className="w-3.5 h-3.5 text-amber-700 dark:text-amber-300" />
+          <span>⏸️ Suspendus Inactivité 7j ({activityCounts.suspended_inactivity})</span>
+        </button>
+
+        <button
+          onClick={() => setSelectedActivitySegment('suspended_fraud')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            selectedActivitySegment === 'suspended_fraud'
+              ? 'bg-rose-700 text-white shadow-2xs'
+              : 'bg-rose-100/70 text-rose-900 dark:bg-rose-950/60 dark:text-rose-200 hover:bg-rose-200 border border-rose-300 dark:border-rose-800'
+          }`}
+        >
+          <Ban className="w-3.5 h-3.5 text-rose-700 dark:text-rose-300" />
+          <span>🛡️ Bannis Fraude ({activityCounts.suspended_fraud})</span>
         </button>
       </div>
 
@@ -772,9 +1174,19 @@ export const UsersView: React.FC<UsersViewProps> = ({
                             ADMIN
                           </span>
                         )}
-                        {user.isBanned && (
+                        {user.isInactiveSuspended && (
+                          <span className="text-[9px] font-mono font-bold text-amber-800 dark:text-amber-200 bg-amber-100 dark:bg-amber-950/80 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-800">
+                            ⏸️ SUSPENDU 7J
+                          </span>
+                        )}
+                        {!user.isInactiveSuspended && user.isBanned && (
                           <span className="text-[9px] font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/80 px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-800">
                             BANNI
+                          </span>
+                        )}
+                        {(user.reactivationCount || 0) > 0 && (
+                          <span className="text-[9px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                            ⚡ {user.reactivationCount}x réactivé
                           </span>
                         )}
                       </div>
@@ -907,9 +1319,20 @@ export const UsersView: React.FC<UsersViewProps> = ({
                     </div>
                   </div>
 
-                  {/* Action buttons: Relancer, +30j & Gérer */}
+                  {/* Action buttons: Reactivate, Relancer, +30j & Gérer */}
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {userActivity.isInactive && (
+                    {userActivity.segment === 'suspended_inactivity' && (
+                      <button
+                        onClick={(e) => handleQuickReactivate(user, e)}
+                        disabled={reactivatingUserId === user.id}
+                        title="Valider la réactivation immédiate du compte"
+                        className="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-2xs flex items-center gap-1 disabled:opacity-50"
+                      >
+                        {reactivatingUserId === user.id ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                        <span>Réactiver</span>
+                      </button>
+                    )}
+                    {userActivity.isInactive && userActivity.segment !== 'suspended_inactivity' && (
                       <button
                         onClick={(e) => handleCopyContact(user, e)}
                         title="Copier les coordonnées pour relance email / tél"
@@ -1008,9 +1431,19 @@ export const UsersView: React.FC<UsersViewProps> = ({
                                 ADMIN
                               </span>
                             )}
-                            {user.isBanned && (
-                              <span className="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950 px-1 py-0.2 rounded">
+                            {user.isInactiveSuspended && (
+                              <span className="text-[10px] font-mono font-bold text-amber-800 dark:text-amber-200 bg-amber-100 dark:bg-amber-950 px-1 py-0.2 rounded border border-amber-300 dark:border-amber-800">
+                                ⏸️ SUSPENDU 7J
+                              </span>
+                            )}
+                            {!user.isInactiveSuspended && user.isBanned && (
+                              <span className="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950 px-1 py-0.2 rounded border border-rose-200 dark:border-rose-800">
                                 BANNI
+                              </span>
+                            )}
+                            {(user.reactivationCount || 0) > 0 && (
+                              <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-1 py-0.2 rounded border border-emerald-200 dark:border-emerald-800">
+                                ⚡ {user.reactivationCount}x réactivé
                               </span>
                             )}
                           </div>
@@ -1149,10 +1582,21 @@ export const UsersView: React.FC<UsersViewProps> = ({
                       </div>
                     </td>
 
-                    {/* Action Buttons */}
+                    {/* Action Buttons: Reactivate, Relancer, +30j & Gérer */}
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        {userActivity.isInactive && (
+                        {userActivity.segment === 'suspended_inactivity' && (
+                          <button
+                            onClick={(e) => handleQuickReactivate(user, e)}
+                            disabled={reactivatingUserId === user.id}
+                            title="Valider la réactivation immédiate du compte"
+                            className="px-2.5 py-1 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-md transition-colors cursor-pointer shadow-2xs flex items-center gap-1 disabled:opacity-50"
+                          >
+                            {reactivatingUserId === user.id ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                            <span>Réactiver</span>
+                          </button>
+                        )}
+                        {userActivity.isInactive && userActivity.segment !== 'suspended_inactivity' && (
                           <button
                             onClick={(e) => handleCopyContact(user, e)}
                             title="Copier les coordonnées pour relance email / tél"

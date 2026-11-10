@@ -14,6 +14,10 @@ class UserModel extends Equatable {
   bool get isAdmin => _isAdmin || email.trim().toLowerCase() == 'doc.hafedh26@gmail.com';
   final bool isBanned;
   final String? banReason;
+  final bool isInactiveSuspended;
+  final DateTime? inactiveSuspendedAt;
+  final DateTime? lastReactivatedAt;
+  final int reactivationCount;
   final int rejectedPaymentsCount;
   final int? studyYear; // 1 à 6 pour les étudiants en médecine
   final String? avatarUrl;
@@ -34,6 +38,10 @@ class UserModel extends Equatable {
     bool isAdmin = false,
     this.isBanned = false,
     this.banReason,
+    this.isInactiveSuspended = false,
+    this.inactiveSuspendedAt,
+    this.lastReactivatedAt,
+    this.reactivationCount = 0,
     this.rejectedPaymentsCount = 0,
     this.studyYear,
     this.avatarUrl,
@@ -90,6 +98,10 @@ class UserModel extends Equatable {
     bool? isAdmin,
     bool? isBanned,
     String? banReason,
+    bool? isInactiveSuspended,
+    DateTime? inactiveSuspendedAt,
+    DateTime? lastReactivatedAt,
+    int? reactivationCount,
     int? rejectedPaymentsCount,
     int? studyYear,
     String? avatarUrl,
@@ -110,6 +122,10 @@ class UserModel extends Equatable {
       isAdmin: isAdmin ?? this.isAdmin,
       isBanned: isBanned ?? this.isBanned,
       banReason: banReason ?? this.banReason,
+      isInactiveSuspended: isInactiveSuspended ?? this.isInactiveSuspended,
+      inactiveSuspendedAt: inactiveSuspendedAt ?? this.inactiveSuspendedAt,
+      lastReactivatedAt: lastReactivatedAt ?? this.lastReactivatedAt,
+      reactivationCount: reactivationCount ?? this.reactivationCount,
       rejectedPaymentsCount: rejectedPaymentsCount ?? this.rejectedPaymentsCount,
       studyYear: studyYear ?? this.studyYear,
       avatarUrl: avatarUrl ?? this.avatarUrl,
@@ -138,6 +154,14 @@ class UserModel extends Equatable {
       'is_banned': isBanned,
       'banReason': banReason,
       'ban_reason': banReason,
+      'isInactiveSuspended': isInactiveSuspended,
+      'is_inactive_suspended': isInactiveSuspended,
+      'inactiveSuspendedAt': inactiveSuspendedAt?.toIso8601String(),
+      'inactive_suspended_at': inactiveSuspendedAt?.toIso8601String(),
+      'lastReactivatedAt': lastReactivatedAt?.toIso8601String(),
+      'last_reactivated_at': lastReactivatedAt?.toIso8601String(),
+      'reactivationCount': reactivationCount,
+      'reactivation_count': reactivationCount,
       'rejectedPaymentsCount': rejectedPaymentsCount,
       'rejected_payments_count': rejectedPaymentsCount,
       'studyYear': studyYear,
@@ -172,6 +196,12 @@ class UserModel extends Equatable {
     final isAdm = json['isAdmin'] == true || json['is_admin'] == true || emailVal == 'doc.hafedh26@gmail.com';
     final isBan = json['isBanned'] == true || json['is_banned'] == true;
     final reason = json['banReason'] ?? json['ban_reason'];
+    final isInactiveSusp = json['isInactiveSuspended'] == true ||
+        json['is_inactive_suspended'] == true ||
+        (isBan && (reason?.toString().toLowerCase().contains('inactiv') ?? false));
+    final inactiveAtStr = json['inactiveSuspendedAt'] ?? json['inactive_suspended_at'];
+    final reactivatedAtStr = json['lastReactivatedAt'] ?? json['last_reactivated_at'];
+    final reactCount = (json['reactivationCount'] ?? json['reactivation_count'] as num?)?.toInt() ?? 0;
     final rejections = (json['rejectedPaymentsCount'] ?? json['rejected_payments_count'] as num?)?.toInt() ?? 0;
     
     // Parse study year from direct property or derive from role
@@ -198,6 +228,10 @@ class UserModel extends Equatable {
       isAdmin: isAdm,
       isBanned: isBan,
       banReason: reason,
+      isInactiveSuspended: isInactiveSusp,
+      inactiveSuspendedAt: inactiveAtStr != null ? DateTime.tryParse(inactiveAtStr.toString()) : null,
+      lastReactivatedAt: reactivatedAtStr != null ? DateTime.tryParse(reactivatedAtStr.toString()) : null,
+      reactivationCount: reactCount,
       rejectedPaymentsCount: rejections,
       studyYear: year,
       avatarUrl: json['avatarUrl'] ?? json['avatar_url'],
@@ -221,6 +255,10 @@ class UserModel extends Equatable {
         isAdmin,
         isBanned,
         banReason,
+        isInactiveSuspended,
+        inactiveSuspendedAt,
+        lastReactivatedAt,
+        reactivationCount,
         rejectedPaymentsCount,
         studyYear,
         avatarUrl,

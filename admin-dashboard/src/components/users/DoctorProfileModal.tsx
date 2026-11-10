@@ -34,7 +34,9 @@ import {
   Search,
   Lock,
   Unlock,
-  ChevronRight
+  ChevronRight,
+  PauseCircle,
+  Zap
 } from 'lucide-react';
 import { 
   AdminUserItem, 
@@ -50,7 +52,8 @@ import {
   updateDoctorAcademicLevel,
   resolveStudyYear, 
   cleanMedicalRole, 
-  formatStudyYearDisplay 
+  formatStudyYearDisplay,
+  reactivateUserInSupabase
 } from '../../services/supabase';
 import { getUserActivityInfo } from './UsersView';
 
@@ -352,6 +355,42 @@ export const DoctorProfileModal: React.FC<DoctorProfileModalProps> = ({
     }
   };
 
+  const [isReactivating, setIsReactivating] = useState<boolean>(false);
+
+  const handleReactivateDoctor = async () => {
+    setIsReactivating(true);
+    try {
+      const res = await reactivateUserInSupabase(activeUser.id);
+      if (res.success) {
+        const updated: AdminUserItem = {
+          ...activeUser,
+          status: 'active',
+          isBanned: false,
+          isInactiveSuspended: false,
+          banReason: undefined,
+          reactivationCount: (activeUser.reactivationCount || 0) + 1,
+          lastReactivatedAt: new Date().toISOString(),
+          lastConnectionAt: new Date().toISOString(),
+        };
+        onUpdateUser(updated);
+        if (deepDetails) {
+          setDeepDetails({
+            ...deepDetails,
+            profile: updated
+          });
+        }
+        setCopyFeedback('Compte réactivé avec succès !');
+        setTimeout(() => setCopyFeedback(null), 3000);
+      } else {
+        alert(res.message || 'Erreur lors de la réactivation');
+      }
+    } catch (e: any) {
+      alert(`Erreur: ${e.message || e}`);
+    } finally {
+      setIsReactivating(false);
+    }
+  };
+
   const formatSecondsToHours = (totalSec: number) => {
     if (!totalSec || totalSec <= 0) return '0 min';
     const hours = Math.floor(totalSec / 3600);
@@ -489,12 +528,42 @@ export const DoctorProfileModal: React.FC<DoctorProfileModalProps> = ({
             </div>
           )}
 
-          {/* Warning Banners */}
-          {activeUser.isBanned && (
+          {/* Inactivity Suspension Banner */}
+          {(activeUser.isInactiveSuspended || (activeUser.isBanned && (activeUser.banReason || '').toLowerCase().includes('inactiv'))) && (
+            <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-amber-900 dark:text-amber-200">
+              <div className="flex items-center gap-2.5">
+                <PauseCircle className="w-5 h-5 text-amber-600 shrink-0" />
+                <div>
+                  <div className="flex items-center gap-2 font-bold">
+                    <span>COMPTE SUSPENDU POUR INACTIVITÉ (7 JOURS)</span>
+                    {(activeUser.reactivationCount || 0) > 0 && (
+                      <span className="px-1.5 py-0.2 rounded text-[10px] bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200 font-mono">
+                        Réactivé {activeUser.reactivationCount}x
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-amber-800/80 dark:text-amber-300/80 mt-0.5">
+                    {activeUser.banReason || 'Compte suspendu momentanément pour inactivité. Se réactive automatiquement dès la reconnexion.'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleReactivateDoctor}
+                disabled={isReactivating}
+                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold transition-colors cursor-pointer shadow-2xs flex items-center gap-1.5 shrink-0 disabled:opacity-50 text-xs"
+              >
+                {isReactivating ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
+                <span>Réactiver le Compte</span>
+              </button>
+            </div>
+          )}
+
+          {/* Permanent Fraud/Admin Ban Banner */}
+          {activeUser.isBanned && !activeUser.isInactiveSuspended && !(activeUser.banReason || '').toLowerCase().includes('inactiv') && (
             <div className="mt-3 p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 rounded-lg flex items-center justify-between text-xs text-rose-800 dark:text-rose-200">
               <div className="flex items-center gap-2">
                 <Ban className="w-4 h-4 text-rose-600 shrink-0" />
-                <span><strong>COMPTE SUSPENDU :</strong> {activeUser.banReason || 'Motif administratif'}</span>
+                <span><strong>COMPTE SUSPENDU (FRAUDE / PAIEMENT) :</strong> {activeUser.banReason || 'Motif administratif'}</span>
               </div>
               <button
                 onClick={() => setShowBanModal(true)}
