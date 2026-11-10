@@ -7,6 +7,7 @@ import '../data/course_summary_repository.dart';
 import '../models/course_summary_model.dart';
 import '../models/module_model.dart';
 import 'course_pdf_viewer_screen.dart';
+import 'course_mindmap_screen.dart';
 import 'qcm_study_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/revision_bloc.dart';
@@ -36,7 +37,7 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _loadSummary();
   }
 
@@ -152,6 +153,21 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
             },
           ),
           IconButton(
+            icon: const Icon(Icons.account_tree_rounded, color: Color(0xFF8B5CF6)),
+            tooltip: 'Mind Map 🧠 (Carte Mentale)',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CourseMindmapScreen(
+                    course: widget.course,
+                    moduleName: widget.moduleName,
+                  ),
+                ),
+              );
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.forum_outlined),
             tooltip: 'Commentaires & Notes du Cours',
             onPressed: () {
@@ -180,6 +196,7 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
             Tab(icon: Icon(Icons.article_rounded, size: 20), text: 'Fiche Synthèse'),
             Tab(icon: Icon(Icons.star_rounded, size: 20), text: 'Points Clés'),
             Tab(icon: Icon(Icons.warning_amber_rounded, size: 20), text: 'Pièges Concours'),
+            Tab(icon: Icon(Icons.account_tree_rounded, size: 20), text: 'Mind Map 🧠'),
           ],
         ),
       ),
@@ -203,6 +220,7 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
                     _buildMarkdownTab(),
                     _buildKeyTakeawaysTab(),
                     _buildExamTrapsTab(),
+                    _buildMindMapTab(isDark),
                   ],
                 ),
     );
@@ -586,6 +604,137 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildMindMapTab(bool isDark) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: const Color(0xFF8B5CF6).withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                  width: 2,
+                ),
+              ),
+              child: const Icon(
+                Icons.account_tree_rounded,
+                size: 56,
+                color: Color(0xFF8B5CF6),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Mind Map Décisionnelle 2027',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
+                color: isDark ? Colors.white : const Color(0xFF0F172A),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Arbre de décision clinique, flux diagnostique et thérapeutique optimisé pour le Concours de Résidanat.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12.5,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                ),
+              ),
+              child: Column(
+                children: [
+                  _buildMindmapFeatureRow(
+                    Icons.touch_app_rounded,
+                    'Navigation tactile interactive par branches',
+                    const Color(0xFF0284C7),
+                    isDark,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMindmapFeatureRow(
+                    Icons.fullscreen_rounded,
+                    'Aperçu vectoriel plein écran Format Paysage A3',
+                    const Color(0xFF8B5CF6),
+                    isDark,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMindmapFeatureRow(
+                    Icons.cloud_done_rounded,
+                    'Stockage Cloud Google Drive & 100% Hors-Ligne',
+                    const Color(0xFF10B981),
+                    isDark,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF8B5CF6),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 3,
+              ),
+              icon: const Icon(Icons.account_tree_rounded),
+              label: const Text(
+                'Ouvrir la Mind Map du Cours 🧠',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CourseMindmapScreen(
+                      course: widget.course,
+                      moduleName: widget.moduleName,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMindmapFeatureRow(
+      IconData icon, String text, Color color, bool isDark) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: color),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

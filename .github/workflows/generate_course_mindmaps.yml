@@ -1,0 +1,78 @@
+name: Generate Medsina Course Mind Maps & Library Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      course_id:
+        description: 'Specific Course ID (or "all")'
+        required: false
+        default: 'all'
+      limit:
+        description: 'Maximum number of courses to process'
+        required: false
+        default: '10'
+  repository_dispatch:
+    types: [generate_course_mindmap]
+  schedule:
+    # Run every Sunday at 03:00 AM UTC
+    - cron: '0 3 * * 0'
+
+permissions:
+  contents: write
+
+jobs:
+  build-mindmaps:
+    name: Build Mind Maps & Populate Medsina Library
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install PDF & Cloud Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install reportlab requests google-api-python-client google-auth
+
+      - name: Run Course Mind Map Generator
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GDRIVE_MINDMAPS_FOLDER_ID: ${{ secrets.GDRIVE_MINDMAPS_FOLDER_ID || '1N0FwWtB1i9SDP8LVE0RqcFmx7chckTeC' }}
+        run: |
+          EXTRA_ARGS=""
+          if [ "${{ github.event.inputs.course_id }}" != "" ] && [ "${{ github.event.inputs.course_id }}" != "all" ]; then
+            EXTRA_ARGS="--course-id ${{ github.event.inputs.course_id }}"
+          else
+            EXTRA_ARGS="--course-id all --limit ${{ github.event.inputs.limit || '10' }}"
+          fi
+
+          echo "🚀 Running Mind Map generator with args: $EXTRA_ARGS"
+          python scripts/automation/generate_course_mindmaps.py $EXTRA_ARGS
+
+      - name: Commit and Push Updated Library Catalog
+        run: |
+          git config --local user.email "bot@medsina.app"
+          git config --local user.name "Medsina Mindmap Bot"
+          git add assets/data/modules_catalog_47.json assets/data/course_mindmaps.json assets/mindmaps/*.pdf || true
+          if git diff --staged --quiet; then
+            echo "ℹ️ No changes in library files to commit."
+          else
+            git commit -m "feat(mindmap): auto-populate Medsina library with Google Drive mindmaps [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          fi
+
+      - name: Upload Generated Mind Maps as GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mindmaps-residanat-2027-pdf
+          path: assets/mindmaps/*.pdf
+          retention-days: 30

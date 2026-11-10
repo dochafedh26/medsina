@@ -25,7 +25,11 @@
         "pdf_file_size": null,
         "sync_status": "pending",
         "last_synced_at": null,
-        "teacher": null
+        "teacher": null,
+        "mindmap_drive_id": "1kC0eibQ9cO8mXFW5K2rEGXOGZz483va6",
+        "mindmap_pdf_url": "https://drive.google.com/file/d/1kC0eibQ9cO8mXFW5K2rEGXOGZz483va6/view?usp=drivesdk",
+        "has_mindmap": true,
+        "mindmap_generated_at": "2026-11-10T20:46:54Z"
       },
       {
         "id": "c_cardio_sca",
@@ -42,7 +46,11 @@
         "pdf_file_size": null,
         "sync_status": "pending",
         "last_synced_at": null,
-        "teacher": null
+        "teacher": null,
+        "mindmap_drive_id": "1CBPEuXWJQodxrq7g0nyIt3Y1HvHMThjW",
+        "mindmap_pdf_url": "https://drive.google.com/file/d/1CBPEuXWJQodxrq7g0nyIt3Y1HvHMThjW/view?usp=drivesdk",
+        "has_mindmap": true,
+        "mindmap_generated_at": "2026-11-10T20:58:40Z"
       },
       {
         "id": "c_cardio_valvulo",

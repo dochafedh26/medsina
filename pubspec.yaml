@@ -75,6 +75,7 @@ flutter:
     - assets/data/
     - assets/data/qcms/
     - assets/drives/
+    - assets/mindmaps/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

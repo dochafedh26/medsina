@@ -222,9 +222,12 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       }
 
       // 2. Check if the course is an in-app asset (only when not opening a remote booklet)
-      final rawDownloadUrl = widget.isBooklet
-          ? (widget.course.bundlePdfUrl ?? '')
-          : (widget.course.pdfDownloadUrl ?? '');
+      final rawDownloadUrl = widget.customPdfUrl != null &&
+              widget.customPdfUrl!.isNotEmpty
+          ? widget.customPdfUrl!
+          : (widget.isBooklet
+              ? (widget.course.bundlePdfUrl ?? '')
+              : (widget.course.pdfDownloadUrl ?? ''));
       if (rawDownloadUrl.startsWith('assets/') ||
           rawDownloadUrl.startsWith('packages/')) {
         try {

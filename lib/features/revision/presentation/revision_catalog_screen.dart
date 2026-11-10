@@ -15,6 +15,7 @@ import '../models/module_model.dart';
 import '../models/revision_session_model.dart';
 import 'course_pdf_viewer_screen.dart';
 import 'course_summary_screen.dart';
+import 'course_mindmap_screen.dart';
 import '../../exam/models/exam_session_model.dart';
 import '../../exam/presentation/exam_runner_screen.dart';
 import 'custom_session_builder_dialog.dart';
@@ -2675,6 +2676,45 @@ class _CourseTile extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => CourseSummaryScreen(
+                        course: course,
+                        moduleName: moduleName,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF8B5CF6),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 6,
+                  ),
+                  minimumSize: const Size(0, 32),
+                ),
+                icon: Icon(
+                  isLocked
+                      ? Icons.lock_outline_rounded
+                      : Icons.account_tree_rounded,
+                  size: 14,
+                ),
+                label: const Text(
+                  'Mind Map 🧠',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onPressed: () {
+                  if (isLocked) {
+                    _showPaywallPrompt(context, lockReason);
+                    return;
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CourseMindmapScreen(
                         course: course,
                         moduleName: moduleName,
                       ),

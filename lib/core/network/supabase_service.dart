@@ -410,6 +410,21 @@ class SupabaseService {
     }
   }
 
+  /// Fetch all courses that have a generated Mind Map PDF
+  static Future<List<Map<String, dynamic>>> fetchGeneratedMindmapCourses() async {
+    try {
+      final response = await client
+          .from('courses')
+          .select('*')
+          .or('mindmap_pdf_url.not.is.null,mindmap_drive_id.not.is.null,has_mindmap.eq.true')
+          .order('display_order', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Notice: Error fetching generated mindmap courses: $e');
+      return [];
+    }
+  }
+
   /// Fetch all Témoignages & Conseils from Supabase Cloud table (temoignages_conseils)
   static Future<List<Map<String, dynamic>>> fetchTemoignagesConseils() async {
     try {

@@ -151,7 +151,20 @@ Elle fusionne en une interface unique, moderne et ultra-fluide :
 
 ---
 
-### 12. 🤝 Fidélité & Programme de Parrainage
+### 12. 🧠 Mind Maps Décisionnelles & Arbres Cliniques Vectoriels (Google Drive Cloud 5 To)
+- **Arborescences Cliniques Visuelles Haute Résolution** :
+  - Mind Maps vectorielles au format Paysage A3/A4 structurées pour chaque cours du programme officiel de Résidanat.
+  - Branches cliniques standardisées : *1. Physiopathologie & Classification*, *2. Démarche Diagnostique & Seuils ECG*, *3. Arbre Décisionnel de Reperfusion / Prise en Charge*, *4. Thérapeutique d'Urgence*, *5. Ordonnance Long Cours (BASIC)*, *6. Pièges Concours & Vigilance Annales*.
+- **Expérience Hybride dans l'Application** :
+  - **Arbre Interactif Tactile** : exploration nodale, recherche instantanée dans les branches et mémentos diagnostic/traitement.
+  - **Visionneuse Vectorielle HD Plein Écran** : zoom fluide, surlignage et consultation hors-ligne isolée.
+- **Pipeline Automatisé GitHub Actions & Google Drive** :
+  - Stockage permanent sur le Google Drive officiel Medsina (`Mindmaps_Residanat_2027`) évitant la saturation des quotas locaux.
+  - Synchronisation automatique avec la base Supabase et le catalogue d'assets en mode 100% Hors-Ligne.
+
+---
+
+### 13. 🤝 Fidélité & Programme de Parrainage
 - **Système de Rangs Médicaux** : progression au fil des révisions :
   - *Externe Studieux* ➔ *Interne Assidu* ➔ *Résident Major* ➔ *Chef de Clinique Élite* ➔ *Légende Médicale*.
 - **Parrainage Confraternel** : partagez votre code de parrainage et bénéficiez de **+7 jours d'accès All-Access VIP offerts** pour chaque confrère parrainé.

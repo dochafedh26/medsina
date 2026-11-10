@@ -14,6 +14,10 @@ class CourseModel extends Equatable {
   final bool isHypertombable;
   final List<String> residanatYears;
   final String? teacher;
+  final String? mindmapPdfUrl;
+  final String? mindmapDriveId;
+  final bool hasMindmap;
+  final String? mindmapGeneratedAt;
 
   const CourseModel({
     required this.id,
@@ -29,6 +33,10 @@ class CourseModel extends Equatable {
     this.isHypertombable = false,
     this.residanatYears = const [],
     this.teacher,
+    this.mindmapPdfUrl,
+    this.mindmapDriveId,
+    this.hasMindmap = false,
+    this.mindmapGeneratedAt,
   });
 
   double get progressPercentage =>
@@ -48,6 +56,10 @@ class CourseModel extends Equatable {
     bool? isHypertombable,
     List<String>? residanatYears,
     String? teacher,
+    String? mindmapPdfUrl,
+    String? mindmapDriveId,
+    bool? hasMindmap,
+    String? mindmapGeneratedAt,
   }) {
     return CourseModel(
       id: id ?? this.id,
@@ -63,12 +75,20 @@ class CourseModel extends Equatable {
       isHypertombable: isHypertombable ?? this.isHypertombable,
       residanatYears: residanatYears ?? this.residanatYears,
       teacher: teacher ?? this.teacher,
+      mindmapPdfUrl: mindmapPdfUrl ?? this.mindmapPdfUrl,
+      mindmapDriveId: mindmapDriveId ?? this.mindmapDriveId,
+      hasMindmap: hasMindmap ?? this.hasMindmap,
+      mindmapGeneratedAt: mindmapGeneratedAt ?? this.mindmapGeneratedAt,
     );
   }
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
     final rawQuestionsCount = (json['questions_count'] ?? json['questionsCount'] ?? 0) as int;
     final rawQcmCount = (json['qcm_count'] ?? json['qcmCount'] ?? 0) as int;
+    final rawMmUrl = (json['mindmap_pdf_url'] ?? json['mindmapPdfUrl']) as String?;
+    final rawMmDriveId = (json['mindmap_drive_id'] ?? json['mindmapDriveId']) as String?;
+    final rawHasMm = (json['has_mindmap'] ?? json['hasMindmap'] ?? (rawMmUrl != null || rawMmDriveId != null)) as bool;
+
     return CourseModel(
       id: json['id'] as String,
       moduleId: (json['module_id'] ?? json['moduleId'] ?? '') as String,
@@ -87,6 +107,10 @@ class CourseModel extends Equatable {
               ? (json['residanatYears'] as List).map((e) => e.toString()).toList()
               : const [],
       teacher: (json['teacher'] ?? json['professor']) as String?,
+      mindmapPdfUrl: rawMmUrl,
+      mindmapDriveId: rawMmDriveId,
+      hasMindmap: rawHasMm,
+      mindmapGeneratedAt: (json['mindmap_generated_at'] ?? json['mindmapGeneratedAt'])?.toString(),
     );
   }
 
@@ -104,6 +128,10 @@ class CourseModel extends Equatable {
         'is_hypertombable': isHypertombable,
         'residanat_years': residanatYears,
         'teacher': teacher,
+        'mindmap_pdf_url': mindmapPdfUrl,
+        'mindmap_drive_id': mindmapDriveId,
+        'has_mindmap': hasMindmap,
+        'mindmap_generated_at': mindmapGeneratedAt,
       };
 
   @override
@@ -121,6 +149,10 @@ class CourseModel extends Equatable {
         isHypertombable,
         residanatYears,
         teacher,
+        mindmapPdfUrl,
+        mindmapDriveId,
+        hasMindmap,
+        mindmapGeneratedAt,
       ];
 }
 
