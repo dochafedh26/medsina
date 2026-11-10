@@ -1188,15 +1188,17 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const Spacer(),
-        Flexible(
+        const SizedBox(width: 16),
+        Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
             ),
             textAlign: TextAlign.end,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ),
