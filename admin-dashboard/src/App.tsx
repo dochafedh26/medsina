@@ -28,6 +28,7 @@ import {
 import { INITIAL_FACEBOOK_PROMPTS } from './data/mockData';
 
 import {
+  supabase,
   getCurrentAdminSession,
   signOutAdmin,
   AdminAuthProfile,
@@ -116,10 +117,32 @@ export default function App() {
     }
   }, [isDarkMode]);
 
-  // Check persistent session on startup
+  // Check persistent session on startup & SSO tokens
   useEffect(() => {
     async function initAuth() {
       setIsAuthChecking(true);
+
+      // Handle SSO Token from Medsina Desktop / Mobile App
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token') || params.get('access_token');
+        const refreshToken = params.get('refresh_token') || '';
+
+        if (token) {
+          const { error } = await supabase.auth.setSession({
+            access_token: token,
+            refresh_token: refreshToken,
+          });
+          if (!error) {
+            // Clean sensitive tokens from URL address bar
+            const cleanUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
+          }
+        }
+      } catch (ssoErr) {
+        console.error('SSO initialization error:', ssoErr);
+      }
+
       const { user } = await getCurrentAdminSession();
       if (user) {
         setAdminUser(user);

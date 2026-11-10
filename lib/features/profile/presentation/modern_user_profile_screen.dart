@@ -989,6 +989,13 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
             ),
             const Divider(height: 20),
             _buildInfoRow(
+              icon: Icons.alternate_email_rounded,
+              label: 'Adresse Email',
+              value: user?.email.isNotEmpty == true ? user!.email : 'Non renseigné',
+              isDark: isDark,
+            ),
+            const Divider(height: 20),
+            _buildInfoRow(
               icon: Icons.medical_services_rounded,
               label: 'Rôle Médical',
               value: user?.medicalRole ?? 'Candidat Résidanat',
@@ -1241,7 +1248,7 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        tier.label,
+                        tier == SubscriptionTier.allAccess ? 'Medsina All-Access VIP' : tier.label,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -1249,7 +1256,9 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
                         ),
                       ),
                       Text(
-                        'Accès Illimité Medsina 2027',
+                        tier == SubscriptionTier.allAccess
+                            ? 'Accès Intégral Illimité • Tout Inclus'
+                            : 'Accès Illimité Medsina 2027',
                         style: TextStyle(fontSize: 11, color: isDark ? Colors.white60 : const Color(0xFF64748B)),
                       ),
                     ],

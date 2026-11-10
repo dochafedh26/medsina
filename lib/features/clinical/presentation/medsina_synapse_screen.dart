@@ -11,7 +11,7 @@ class MedsinaSynapseScreen extends StatelessWidget {
   final bool isEmbedded;
   const MedsinaSynapseScreen({super.key, this.isEmbedded = false});
 
-  static const String synapseUrl = 'https://medsina.medevsync.com/synapse';
+  static const String synapseUrl = 'https://medsina.medevsync.com/synapse/';
 
   Future<void> _launchSimulation(BuildContext context) async {
     final user = context.read<AuthBloc>().state.user;
@@ -28,7 +28,7 @@ class MedsinaSynapseScreen extends StatelessWidget {
 
     final token = SupabaseService.client.auth.currentSession?.accessToken;
     final finalUrl = (token != null && token.isNotEmpty)
-        ? '$synapseUrl?token=$token'
+        ? '$synapseUrl?token=${Uri.encodeComponent(token)}'
         : synapseUrl;
 
     final uri = Uri.parse(finalUrl);

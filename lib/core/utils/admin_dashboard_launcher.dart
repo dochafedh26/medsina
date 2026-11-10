@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../network/supabase_service.dart';
 import '../../features/admin/presentation/admin_dashboard_screen.dart';
 
 /// Centralized launcher for the Medsina Admin Dashboard.
@@ -12,7 +13,15 @@ class AdminDashboardLauncher {
   static const String adminUrl = 'https://medsina.medevsync.com/admin/';
 
   static Future<void> openAdminDashboard(BuildContext context) async {
-    final uri = Uri.parse(adminUrl);
+    final session = SupabaseService.client.auth.currentSession;
+    final token = session?.accessToken;
+    final refreshToken = session?.refreshToken;
+
+    final fullUrl = (token != null && token.isNotEmpty)
+        ? '$adminUrl?token=${Uri.encodeComponent(token)}&refresh_token=${Uri.encodeComponent(refreshToken ?? '')}'
+        : adminUrl;
+
+    final uri = Uri.parse(fullUrl);
     bool launched = false;
 
     // 1. Attempt launching with external application (preferred browser)

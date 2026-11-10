@@ -36,10 +36,10 @@ def build_dashboard():
     # Verify node_modules
     if not (DASHBOARD_DIR / "node_modules").exists():
         log("Installation des dépendances npm...", "📦")
-        subprocess.run(["npm", "install", "--legacy-peer-deps"], cwd=DASHBOARD_DIR, check=True)
+        subprocess.run(["npm", "install", "--legacy-peer-deps"], cwd=DASHBOARD_DIR, shell=True, check=True)
 
     log("Exécution de 'npm run build'...", "⚡")
-    subprocess.run(["npm", "run", "build"], cwd=DASHBOARD_DIR, check=True)
+    subprocess.run(["npm", "run", "build"], cwd=DASHBOARD_DIR, shell=True, check=True)
     if not DIST_DIR.exists():
         raise RuntimeError(f"Le dossier dist n'a pas été généré dans {DASHBOARD_DIR}")
     log(f"Compilation réussie ! ({len(list(DIST_DIR.rglob('*')))} fichiers générés)", "✅")
