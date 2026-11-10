@@ -1,9 +1,9 @@
 name: 📚 Medsina - Résumés Automatiques de Cours (Horaire)
 
 on:
-  schedule:
-    # Déclenché chaque heure à la minute 40 (24 fiches résumés complètes par 24h)
-    - cron: '40 * * * *'
+#   schedule:
+#     # Déclenché chaque heure à la minute 40 (24 fiches résumés complètes par 24h)
+#     - cron: '40 * * * *'
   workflow_dispatch:
     inputs:
       course_id:

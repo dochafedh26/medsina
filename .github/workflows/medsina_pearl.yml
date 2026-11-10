@@ -1,9 +1,9 @@
 name: 💡 Medsina - Perle du Jour & Pièges
 
 on:
-  schedule:
-    # Déclenché une fois par jour à 03:53 UTC (Perle du Jour unique quotidienne)
-    - cron: '53 3 * * *'
+#   schedule:
+#     # Déclenché une fois par jour à 03:53 UTC (Perle du Jour unique quotidienne)
+#     - cron: '53 3 * * *'
   workflow_dispatch:
     inputs:
       course_id:

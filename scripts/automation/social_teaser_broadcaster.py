@@ -392,6 +392,30 @@ def publish_to_telegram(
         return False
 
 
+def is_social_broadcasting_allowed() -> bool:
+    """Vérifie si les publications sociales (Facebook & Telegram) sont autorisées."""
+    # 1. Variable d'environnement explicite
+    env_disable = os.environ.get("DISABLE_SOCIAL_BROADCAST", "").strip().lower()
+    if env_disable in ("1", "true", "yes", "on"):
+        return False
+
+    # 2. Kill-switch Supabase dans admin_system_settings
+    try:
+        url = f"{SUPABASE_URL}/rest/v1/admin_system_settings?setting_key=in.(pause_all_social_publications,social_publishing_enabled)&select=setting_key,setting_value"
+        headers = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+        r = requests.get(url, headers=headers, timeout=5)
+        if r.status_code == 200:
+            settings = {x["setting_key"]: x["setting_value"] for x in r.json() if isinstance(x, dict)}
+            if settings.get("pause_all_social_publications", "").lower() in ("true", "1", "yes"):
+                return False
+            if settings.get("social_publishing_enabled", "").lower() in ("false", "0", "no"):
+                return False
+    except Exception:
+        pass
+
+    return True
+
+
 def broadcast_content_teaser(
     content_type: str,
     data: Dict[str, Any],
@@ -405,9 +429,6 @@ def broadcast_content_teaser(
     3. Diffuse sur Facebook Page Blida, Facebook Page MedevSync et Telegram
     4. Met à jour latest_facebook_published_post dans Supabase
     """
-    print(f"\n📢 DIFFUSION DU TEASER CLINIQUE ({content_type.upper()}) EN LIGHT THEME MODERNE")
-    print("-" * 65)
-
     results = {
         "content_type": content_type,
         "title": data.get("title") or data.get("name") or data.get("dci"),
@@ -417,6 +438,13 @@ def broadcast_content_teaser(
         "facebook_medevsync_post_id": None,
         "telegram_success": False
     }
+
+    if not is_social_broadcasting_allowed():
+        print(f"\n🛑 [PAUSE GLOBALE] Diffusion sociale suspendue pour {content_type.upper()} (Kill-switch Facebook/Telegram actif).")
+        return results
+
+    print(f"\n📢 DIFFUSION DU TEASER CLINIQUE ({content_type.upper()}) EN LIGHT THEME MODERNE")
+    print("-" * 65)
 
     # 1. Generate modern light banner image
     temp_dir = tempfile.gettempdir()

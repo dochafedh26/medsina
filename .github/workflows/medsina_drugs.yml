@@ -1,9 +1,9 @@
 name: 💊 Medsina - Urgences & DCI Algérie
 
 on:
-  schedule:
-    # Déclenché chaque heure à la minute 50 (24 fiches urgences & DCI par 24h)
-    - cron: '50 * * * *'
+#   schedule:
+#     # Déclenché chaque heure à la minute 50 (24 fiches urgences & DCI par 24h)
+#     - cron: '50 * * * *'
   workflow_dispatch:
     inputs:
       dci:

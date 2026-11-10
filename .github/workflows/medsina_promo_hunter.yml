@@ -1,11 +1,11 @@
 name: 🎯 Medsina - Chasseur Promo Telegram & Assistant Facebook
 
 on:
-  schedule:
-    # 2 fois par jour aux heures de pointe étudiante (Heure Algérie UTC+1) :
-    # 11:00 UTC (12:00 Algérie) : Détection & Réponses Entraide Médicale
-    # 19:00 UTC (20:00 Algérie) : Session du soir
-    - cron: '0 11,19 * * *'
+#   schedule:
+#     # 2 fois par jour aux heures de pointe étudiante (Heure Algérie UTC+1) :
+#     # 11:00 UTC (12:00 Algérie) : Détection & Réponses Entraide Médicale
+#     # 19:00 UTC (20:00 Algérie) : Session du soir
+#     - cron: '0 11,19 * * *'
   workflow_dispatch:
     inputs:
       target:

@@ -27,6 +27,23 @@ SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get(
 )
 
 
+def is_facebook_publishing_allowed() -> bool:
+    env_disable = os.environ.get("DISABLE_FACEBOOK_BROADCAST", "").strip().lower() or                   os.environ.get("DISABLE_SOCIAL_BROADCAST", "").strip().lower()
+    if env_disable in ("1", "true", "yes", "on"):
+        return False
+    try:
+        url = f"{SUPABASE_URL}/rest/v1/admin_system_settings?setting_key=in.(pause_all_social_publications,social_publishing_enabled)&select=setting_key,setting_value"
+        req = urllib.request.Request(url, headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"})
+        with urllib.request.urlopen(req, timeout=4) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            settings = {x["setting_key"]: x["setting_value"] for x in data if isinstance(x, dict)}
+            if settings.get("pause_all_social_publications", "").lower() in ("true", "1", "yes") or                settings.get("social_publishing_enabled", "").lower() in ("false", "0", "no"):
+                return False
+    except Exception:
+        pass
+    return True
+
+
 def get_all_facebook_pages() -> List[Dict[str, str]]:
     pages_config = [
         {
@@ -133,6 +150,9 @@ def add_followers_comment(
 
 def publish_photo_to_page(page_id: str, token: str, caption: str, image_url: str) -> Dict[str, Any]:
     """Publie une photo HD avec légende sur la page Facebook via le endpoint Graph API /photos."""
+    if not is_facebook_publishing_allowed():
+        print(f"🛑 [PAUSE GLOBALE] Publication Facebook photo annulée pour {page_id} (Kill-switch actif).")
+        return {"success": False, "skipped": True, "reason": "killswitch"}
     if check_duplicate_or_flood:
         is_dup, reason = check_duplicate_or_flood(page_id, caption, cooldown_minutes=90)
         if is_dup:
@@ -167,6 +187,9 @@ def publish_photo_to_page(page_id: str, token: str, caption: str, image_url: str
 
 
 def publish_to_page_feed(page_id: str, token: str, message: str, link: Optional[str] = None) -> Dict[str, Any]:
+    if not is_facebook_publishing_allowed():
+        print(f"🛑 [PAUSE GLOBALE] Publication Facebook feed annulée pour {page_id} (Kill-switch actif).")
+        return {"success": False, "skipped": True, "reason": "killswitch"}
     if check_duplicate_or_flood:
         is_dup, reason = check_duplicate_or_flood(page_id, message, cooldown_minutes=90)
         if is_dup:

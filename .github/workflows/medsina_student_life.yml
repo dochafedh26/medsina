@@ -1,9 +1,9 @@
 name: 👨‍🏫 Medsina - Vie Réelle de l'Étudiant (MedsinaTeacher 1e-6e)
 
 on:
-  schedule:
-    # 07:00 UTC = 08:00 Algérie (Matin : Lit du Malade & Tour de Salle)
-    - cron: '0 7 * * *'
+#   schedule:
+#     # 07:00 UTC = 08:00 Algérie (Matin : Lit du Malade & Tour de Salle)
+#     - cron: '0 7 * * *'
     # 13:00 UTC = 14:00 Algérie (Après-Midi : Séance d'Amphi & Piège EMD)
     - cron: '0 13 * * *'
     # 18:00 UTC = 19:00 Algérie (Soirée : Défi Flash EMD & Compte à Rebours)

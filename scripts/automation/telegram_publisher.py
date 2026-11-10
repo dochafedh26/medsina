@@ -355,6 +355,28 @@ def send_telegram_broadcast(
     1. Sur le canal officiel (@medsina_officiel)
     2. Dans le bon Topic du supergroupe communautaire MEDSINA-COMMUNITY
     """
+    # 0. Global kill-switch check
+    env_disable = os.environ.get("DISABLE_TELEGRAM_BROADCAST", "").strip().lower() or \
+                  os.environ.get("DISABLE_SOCIAL_BROADCAST", "").strip().lower()
+    if env_disable in ("1", "true", "yes", "on"):
+        print("🛑 [PAUSE GLOBALE] Publication Telegram annulée (Kill-switch d'environnement actif).")
+        return {"success": False, "channel_sent": False, "community_sent": False, "reason": "killswitch"}
+
+    try:
+        supabase_url = os.environ.get("SUPABASE_URL", "https://qzfssrhhuorljftpdvjm.supabase.co")
+        supabase_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
+        if supabase_key:
+            url = f"{supabase_url}/rest/v1/admin_system_settings?setting_key=in.(pause_all_social_publications,social_publishing_enabled)&select=setting_key,setting_value"
+            headers = {"apikey": supabase_key, "Authorization": f"Bearer {supabase_key}"}
+            r = requests.get(url, headers=headers, timeout=4)
+            if r.status_code == 200:
+                settings = {x["setting_key"]: x["setting_value"] for x in r.json() if isinstance(x, dict)}
+                if settings.get("pause_all_social_publications", "").lower() in ("true", "1", "yes") or \
+                   settings.get("social_publishing_enabled", "").lower() in ("false", "0", "no"):
+                    print("🛑 [PAUSE GLOBALE] Publication Telegram annulée (Kill-switch Supabase actif).")
+                    return {"success": False, "channel_sent": False, "community_sent": False, "reason": "killswitch_supabase"}
+    except Exception:
+        pass
     creds = get_telegram_credentials()
     token = (bot_token or creds.get("bot_token", "")).strip()
     channel = (channel_id or creds.get("channel_id", "")).strip()

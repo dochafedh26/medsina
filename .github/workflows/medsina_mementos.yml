@@ -1,9 +1,9 @@
 name: 🌙 Medsina - Mémentos de Garde Hospitalière
 
 on:
-  schedule:
-    # Déclenché chaque heure à la minute 20 (24 mémentos réflexes de garde par 24h)
-    - cron: '20 * * * *'
+#   schedule:
+#     # Déclenché chaque heure à la minute 20 (24 mémentos réflexes de garde par 24h)
+#     - cron: '20 * * * *'
   workflow_dispatch:
     inputs:
       memento:

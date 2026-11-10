@@ -1,12 +1,12 @@
 name: 📢 Medsina & MedevSync - Publication Multicanal (3 Pages FB & Telegram) Officielle (Auto 3x/Jour)
 
 on:
-  schedule:
-    # 3 publications automatiques quotidiennes (Heure Algérie UTC+1) :
-    # 06:00 UTC (07:00 Algérie) : 🎯 QCM Annales Réelles du Concours (Quiz du matin)
-    # 12:00 UTC (13:00 Algérie) : 🩺 Mémento Clinique & Conduite à Tenir d'Urgence
-    # 18:00 UTC (19:00 Algérie) : 🚀 Promo Application Medsina & Téléchargement
-    - cron: '0 6,12,18 * * *'
+#   schedule:
+#     # 3 publications automatiques quotidiennes (Heure Algérie UTC+1) :
+#     # 06:00 UTC (07:00 Algérie) : 🎯 QCM Annales Réelles du Concours (Quiz du matin)
+#     # 12:00 UTC (13:00 Algérie) : 🩺 Mémento Clinique & Conduite à Tenir d'Urgence
+#     # 18:00 UTC (19:00 Algérie) : 🚀 Promo Application Medsina & Téléchargement
+#     - cron: '0 6,12,18 * * *'
   workflow_dispatch:
     inputs:
       type:
