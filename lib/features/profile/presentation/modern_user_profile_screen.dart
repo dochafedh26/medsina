@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -708,7 +707,6 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
       builder: (context, authState) {
         final user = authState.user;
         final tier = user?.tier ?? SubscriptionTier.free;
-        final userName = user?.fullName ?? 'Médecin Medsina';
 
         return Scaffold(
           backgroundColor: isDark ? AppTheme.darkBackground : AppTheme.lightBackground,

@@ -11,7 +11,6 @@ import '../../auth/bloc/auth_state.dart';
 import '../../auth/models/user_model.dart';
 import '../../clinical/presentation/clinical_screen.dart';
 import '../../dashboard/presentation/dashboard_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
 import '../../prescription/presentation/prescription_analysis_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
