@@ -1,9 +1,9 @@
 name: 🌙 Medsina - Mémentos de Garde Hospitalière
 
 on:
-#   schedule:
-#     # Déclenché chaque heure à la minute 20 (24 mémentos réflexes de garde par 24h)
-#     - cron: '20 * * * *'
+  schedule:
+    # Déclenché chaque heure à la minute 20 (24 mémentos réflexes de garde par 24h)
+    - cron: '20 * * * *'
   workflow_dispatch:
     inputs:
       memento:
@@ -43,6 +43,9 @@ jobs:
 
       - name: 🩺 Exécuter l Agent Médical MedsinaPilot (Mémentos de Garde)
         env:
+          DISABLE_SOCIAL_BROADCAST: 'true'
+          DISABLE_FACEBOOK_BROADCAST: 'true'
+          DISABLE_TELEGRAM_BROADCAST: 'true'
           SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -78,4 +81,3 @@ jobs:
             git pull --rebase origin main || true
             git push origin main
           fi
-

@@ -28,9 +28,9 @@ on:
         default: false
   repository_dispatch:
     types: [generate_course_bundle]# 
-#   schedule:
-#     # Run every night at 02:00 AM UTC
-#     - cron: '0 2 * * *'
+  schedule:
+    # Run every night at 02:00 AM UTC
+    - cron: '0 2 * * *'
 
 jobs:
   build-booklets:
@@ -54,6 +54,9 @@ jobs:
 
       - name: Run Course Revision Booklet Generator
         env:
+          DISABLE_SOCIAL_BROADCAST: 'true'
+          DISABLE_FACEBOOK_BROADCAST: 'true'
+          DISABLE_TELEGRAM_BROADCAST: 'true'
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://qzfssrhhuorljftpdvjm.supabase.co' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}

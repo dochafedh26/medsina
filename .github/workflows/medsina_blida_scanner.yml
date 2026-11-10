@@ -1,9 +1,9 @@
 name: 🔍 Medsina - Scanner Telegram & Google Drive (Médecine Blida)
 
 on:
-#   schedule:
-#     # Exécution automatique toutes les 12 heures (07h15 et 19h15 UTC)
-#     - cron: '15 7,19 * * *'
+  schedule:
+    # Exécution automatique toutes les 12 heures (07h15 et 19h15 UTC)
+    - cron: '15 7,19 * * *'
   workflow_dispatch:
     inputs:
       target:
@@ -43,6 +43,9 @@ jobs:
 
       - name: 🔍 Exécuter le Scanner Telegram & Google Drive (File d'attente Admin)
         env:
+          DISABLE_SOCIAL_BROADCAST: 'true'
+          DISABLE_FACEBOOK_BROADCAST: 'true'
+          DISABLE_TELEGRAM_BROADCAST: 'true'
           SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

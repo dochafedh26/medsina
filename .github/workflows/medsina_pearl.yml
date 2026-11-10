@@ -1,9 +1,9 @@
 name: 💡 Medsina - Perle du Jour & Pièges
 
 on:
-#   schedule:
-#     # Déclenché une fois par jour à 03:53 UTC (Perle du Jour unique quotidienne)
-#     - cron: '53 3 * * *'
+  schedule:
+    # Déclenché une fois par jour à 03:53 UTC (Perle du Jour unique quotidienne)
+    - cron: '53 3 * * *'
   workflow_dispatch:
     inputs:
       course_id:
@@ -43,6 +43,9 @@ jobs:
 
       - name: 🩺 Exécuter l Agent Médical MedsinaPilot (Perle)
         env:
+          DISABLE_SOCIAL_BROADCAST: 'true'
+          DISABLE_FACEBOOK_BROADCAST: 'true'
+          DISABLE_TELEGRAM_BROADCAST: 'true'
           SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -77,4 +80,3 @@ jobs:
             git commit -m "chore(automation): sync autonomous daily pearls [skip ci]"
             git push
           fi
-
