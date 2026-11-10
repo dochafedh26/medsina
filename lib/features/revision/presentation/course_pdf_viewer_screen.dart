@@ -16,8 +16,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
+import '../models/pdf_annotation_model.dart';
+import '../services/pdf_annotation_service.dart';
 import 'course_summary_screen.dart';
 import 'qcm_study_screen.dart';
+
+enum ReadingComfortMode { day, sepia, night }
+enum AnnotationToolMode { none, highlighter, stickyNote, pen }
 
 class PdfSearchOccurrence {
   final int index;
@@ -69,6 +74,13 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
   int _currentPage = 1;
   int _pageCount = 0;
   bool _isDarkMode = false;
+  ReadingComfortMode _readingComfortMode = ReadingComfortMode.day;
+  bool _isSinglePageLayout = false;
+  bool _showAnnotationToolbar = true;
+  AnnotationToolMode _currentToolMode = AnnotationToolMode.none;
+  String _selectedColorHex = '#FACC15';
+  List<PdfDrawingPoint> _currentStroke = [];
+  final PdfAnnotationService _annotationService = PdfAnnotationService.instance;
 
   // Search State
   bool _isSearching = false;
@@ -102,6 +114,11 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
     });
     _annService.ensureInitialized().then((_) {
       if (mounted) setState(() {});
+    });
+    _annotationService.ensureInitialized().then((_) {
+      _annotationService.getAnnotations(_cacheKey).then((_) {
+        if (mounted) setState(() {});
+      });
     });
   }
 
@@ -596,6 +613,14 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
             },
           ),
           if (!_isLoading && _pdfBytes != null) ...[
+            IconButton(
+              icon: Icon(
+                _showAnnotationToolbar ? Icons.draw_rounded : Icons.edit_off_rounded,
+                color: _showAnnotationToolbar ? AppTheme.primaryTeal : null,
+              ),
+              tooltip: _showAnnotationToolbar ? 'Masquer la barre Acrobat' : 'Afficher la barre Acrobat',
+              onPressed: () => setState(() => _showAnnotationToolbar = !_showAnnotationToolbar),
+            ),
             if (!_isSearching)
               IconButton(
                 icon: const Icon(Icons.search_rounded),
@@ -606,7 +631,12 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
               IconButton(
                 icon: Icon(_isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
                 tooltip: _isDarkMode ? 'Mode Clair' : 'Mode Nuit',
-                onPressed: () => setState(() => _isDarkMode = !_isDarkMode),
+                onPressed: () {
+                  setState(() {
+                    _isDarkMode = !_isDarkMode;
+                    _readingComfortMode = _isDarkMode ? ReadingComfortMode.night : ReadingComfortMode.day;
+                  });
+                },
               ),
             if (isDesktop) ...[
               IconButton(
@@ -626,10 +656,49 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
                 tooltip: 'Plus d\'options',
                 onSelected: (val) {
                   if (val == 'theme') {
-                    setState(() => _isDarkMode = !_isDarkMode);
+                    setState(() {
+                      _isDarkMode = !_isDarkMode;
+                      _readingComfortMode = _isDarkMode ? ReadingComfortMode.night : ReadingComfortMode.day;
+                    });
+                  } else if (val == 'comfort') {
+                    _showReadingComfortModal();
+                  } else if (val == 'jump') {
+                    _showJumpToPageDialog();
+                  } else if (val == 'notes') {
+                    _showCourseNotesList();
                   }
                 },
                 itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'comfort',
+                    child: const Row(
+                      children: [
+                        Icon(Icons.auto_stories_rounded, size: 20, color: AppTheme.primaryTeal),
+                        SizedBox(width: 12),
+                        Text('Confort de Lecture (Sépia/Nuit)', style: TextStyle(fontSize: 13)),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'jump',
+                    child: const Row(
+                      children: [
+                        Icon(Icons.tag_rounded, size: 20, color: AppTheme.primaryTeal),
+                        SizedBox(width: 12),
+                        Text('Aller à la page...', style: TextStyle(fontSize: 13)),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'notes',
+                    child: const Row(
+                      children: [
+                        Icon(Icons.sticky_note_2_rounded, size: 20, color: Color(0xFFCA8A04)),
+                        SizedBox(width: 12),
+                        Text('Notes & Post-Its du Cours', style: TextStyle(fontSize: 13)),
+                      ],
+                    ),
+                  ),
                   PopupMenuItem(
                     value: 'theme',
                     child: Row(
@@ -655,6 +724,14 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       body: Stack(
         children: [
           _buildBody(),
+          if (!_isLoading && _pdfBytes != null) _buildAnnotationOverlay(),
+          if (!_isLoading && _pdfBytes != null && _showAnnotationToolbar)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _buildAcrobatToolbar(),
+            ),
           if (!_isLoading && _pdfBytes != null) _buildPageFooter(),
           if (_isSearching && _showResultsPanel) _buildResultsSidePanel(),
         ],
@@ -1024,7 +1101,8 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       controller: _pdfController,
       canShowScrollHead: false,
       canShowScrollStatus: false,
-      enableDoubleTapZooming: true,
+      enableDoubleTapZooming: _currentToolMode == AnnotationToolMode.none,
+      pageLayoutMode: _isSinglePageLayout ? PdfPageLayoutMode.single : PdfPageLayoutMode.continuous,
       currentSearchTextHighlightColor: const Color(0xFFFFBF00).withValues(alpha: 0.85),
       otherSearchTextHighlightColor: const Color(0xFFFFFF00).withValues(alpha: 0.45),
       onDocumentLoaded: (PdfDocumentLoadedDetails details) {
@@ -1057,14 +1135,24 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
       },
     );
 
-    // Dark mode invert filter
-    if (_isDarkMode) {
+    // Reading Comfort Filter (Night OLED, Sepia warm paper, or Day normal)
+    if (_readingComfortMode == ReadingComfortMode.night || _isDarkMode) {
       viewer = ColorFiltered(
         colorFilter: const ColorFilter.matrix([
           -1.0, 0.0, 0.0, 0.0, 255.0, // R
           0.0, -1.0, 0.0, 0.0, 255.0, // G
           0.0, 0.0, -1.0, 0.0, 255.0, // B
           0.0, 0.0, 0.0, 1.0, 0.0,    // A
+        ]),
+        child: viewer,
+      );
+    } else if (_readingComfortMode == ReadingComfortMode.sepia) {
+      viewer = ColorFiltered(
+        colorFilter: const ColorFilter.matrix([
+          0.94, 0.05, 0.0, 0.0, 15.0,
+          0.05, 0.89, 0.0, 0.0, 10.0,
+          0.0, 0.05, 0.76, 0.0, -5.0,
+          0.0, 0.0, 0.0, 1.0, 0.0,
         ]),
         child: viewer,
       );
@@ -1095,9 +1183,23 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    '$_currentPage / $_pageCount',
-                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: _showJumpToPageDialog,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.tag_rounded, size: 13, color: Colors.white70),
+                          const SizedBox(width: 3),
+                          Text(
+                            '$_currentPage / $_pageCount',
+                            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Container(width: 1, height: 14, color: Colors.white24),
@@ -1476,5 +1578,1054 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
         );
       },
     );
+  }
+
+  // --- ACROBAT / FOXIT READER ADVANCED SUITE ---
+
+  Widget _buildAcrobatToolbar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final notesCount = _annotationService.getNotesForCourse(_cacheKey).length;
+    final colors = ['#FACC15', '#22C55E', '#38BDF8', '#F43F5E', '#FB923C'];
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B).withOpacity(0.95) : Colors.white.withOpacity(0.95),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.white12 : Colors.black12,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _toolModeButton(
+              mode: AnnotationToolMode.none,
+              icon: Icons.pan_tool_rounded,
+              label: 'Nav',
+              tooltip: 'Navigation & Zoom (pan)',
+            ),
+            _toolModeButton(
+              mode: AnnotationToolMode.pen,
+              icon: Icons.edit_rounded,
+              label: 'Stylet',
+              tooltip: 'Dessin libre & schémas',
+            ),
+            _toolModeButton(
+              mode: AnnotationToolMode.highlighter,
+              icon: Icons.brush_rounded,
+              label: 'Surligneur',
+              tooltip: 'Surlignage fluorescent',
+            ),
+            _toolModeButton(
+              mode: AnnotationToolMode.stickyNote,
+              icon: Icons.note_alt_rounded,
+              label: 'Post-It',
+              tooltip: 'Ajouter un post-it médical',
+            ),
+
+            if (_currentToolMode == AnnotationToolMode.pen ||
+                _currentToolMode == AnnotationToolMode.highlighter) ...[
+              Container(
+                height: 20,
+                width: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 6),
+                color: isDark ? Colors.white24 : Colors.black12,
+              ),
+              ...colors.map((c) {
+                final isSelected = _selectedColorHex == c;
+                final col = _DrawingPainter.parseHex(c);
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedColorHex = c),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: isSelected ? 22 : 18,
+                    height: isSelected ? 22 : 18,
+                    decoration: BoxDecoration(
+                      color: col,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected ? Colors.white : Colors.transparent,
+                        width: 2,
+                      ),
+                      boxShadow: isSelected
+                          ? [BoxShadow(color: col.withOpacity(0.6), blurRadius: 6)]
+                          : null,
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(width: 4),
+              IconButton(
+                icon: const Icon(Icons.undo_rounded, size: 18),
+                tooltip: 'Annuler la dernière annotation',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                onPressed: () async {
+                  final list = _annotationService.getAnnotationsForPage(_cacheKey, _currentPage);
+                  if (list.isNotEmpty) {
+                    await _annotationService.removeAnnotation(_cacheKey, list.last.id);
+                    if (mounted) setState(() {});
+                  }
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_sweep_rounded, size: 18, color: Colors.redAccent),
+                tooltip: 'Effacer la page actuelle',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                onPressed: () async {
+                  await _annotationService.clearPageAnnotations(_cacheKey, _currentPage);
+                  if (mounted) setState(() {});
+                },
+              ),
+            ],
+
+            Container(
+              height: 20,
+              width: 1,
+              margin: const EdgeInsets.symmetric(horizontal: 6),
+              color: isDark ? Colors.white24 : Colors.black12,
+            ),
+
+            IconButton(
+              icon: Icon(
+                _readingComfortMode == ReadingComfortMode.sepia
+                    ? Icons.auto_stories_rounded
+                    : (_readingComfortMode == ReadingComfortMode.night
+                        ? Icons.nightlight_round
+                        : Icons.wb_sunny_rounded),
+                size: 19,
+                color: _readingComfortMode == ReadingComfortMode.sepia
+                    ? const Color(0xFFD97706)
+                    : (_readingComfortMode == ReadingComfortMode.night
+                        ? const Color(0xFF8B5CF6)
+                        : null),
+              ),
+              tooltip: 'Modes de confort de lecture (Jour, Sépia, Nuit)',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              onPressed: _showReadingComfortModal,
+            ),
+
+            IconButton(
+              icon: const Icon(Icons.tag_rounded, size: 19),
+              tooltip: 'Aller directement à une page',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              onPressed: _showJumpToPageDialog,
+            ),
+
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.sticky_note_2_outlined, size: 19),
+                  tooltip: 'Liste des Post-Its du cours',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  onPressed: _showCourseNotesList,
+                ),
+                if (notesCount > 0)
+                  Positioned(
+                    right: 4,
+                    top: 4,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFCA8A04),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '$notesCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+
+            IconButton(
+              icon: const Icon(Icons.bookmarks_rounded, size: 19),
+              tooltip: 'Sommaire & Signets',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+              onPressed: _showBookmarksSheet,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _toolModeButton({
+    required AnnotationToolMode mode,
+    required IconData icon,
+    required String label,
+    required String tooltip,
+  }) {
+    final isSelected = _currentToolMode == mode;
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: () => setState(() => _currentToolMode = mode),
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.primaryTeal : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 16,
+                color: isSelected ? Colors.white : null,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? Colors.white : null,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAnnotationOverlay() {
+    final pageAnnotations = _annotationService.getAnnotationsForPage(_cacheKey, _currentPage);
+    final notes = pageAnnotations.where((a) => a.type == PdfAnnotationType.note).toList();
+
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: _currentToolMode == AnnotationToolMode.pen ||
+                  _currentToolMode == AnnotationToolMode.highlighter
+              ? GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onPanStart: (details) {
+                    setState(() {
+                      _currentStroke = [
+                        PdfDrawingPoint(details.localPosition.dx, details.localPosition.dy)
+                      ];
+                    });
+                  },
+                  onPanUpdate: (details) {
+                    setState(() {
+                      _currentStroke.add(
+                        PdfDrawingPoint(details.localPosition.dx, details.localPosition.dy)
+                      );
+                    });
+                  },
+                  onPanEnd: (details) async {
+                    if (_currentStroke.length >= 2) {
+                      final annotation = PdfAnnotationModel(
+                        id: 'ann_${DateTime.now().millisecondsSinceEpoch}',
+                        courseId: _cacheKey,
+                        pageNumber: _currentPage,
+                        type: _currentToolMode == AnnotationToolMode.highlighter
+                            ? PdfAnnotationType.highlight
+                            : PdfAnnotationType.drawing,
+                        colorHex: _selectedColorHex,
+                        points: List.from(_currentStroke),
+                        strokeWidth: _currentToolMode == AnnotationToolMode.highlighter ? 18.0 : 3.5,
+                        createdAt: DateTime.now(),
+                      );
+                      await _annotationService.addAnnotation(annotation);
+                      setState(() {
+                        _currentStroke = [];
+                      });
+                    }
+                  },
+                  child: CustomPaint(
+                    painter: _DrawingPainter(
+                      savedAnnotations: pageAnnotations,
+                      activeStroke: _currentStroke,
+                      activeColor: _DrawingPainter.parseHex(_selectedColorHex),
+                    ),
+                  ),
+                )
+              : _currentToolMode == AnnotationToolMode.stickyNote
+                  ? GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapUp: (details) {
+                        _promptAddStickyNote(details.localPosition.dx, details.localPosition.dy);
+                      },
+                      child: CustomPaint(
+                        painter: _DrawingPainter(
+                          savedAnnotations: pageAnnotations,
+                          activeStroke: const [],
+                          activeColor: Colors.transparent,
+                        ),
+                      ),
+                    )
+                  : IgnorePointer(
+                      child: CustomPaint(
+                        painter: _DrawingPainter(
+                          savedAnnotations: pageAnnotations,
+                          activeStroke: const [],
+                          activeColor: Colors.transparent,
+                        ),
+                      ),
+                    ),
+        ),
+
+        ...notes.map((note) {
+          final pt = note.points.isNotEmpty ? note.points.first : const PdfDrawingPoint(20, 80);
+          return Positioned(
+            left: pt.x.clamp(8.0, (MediaQuery.of(context).size.width - 140).clamp(8.0, 1000.0)),
+            top: pt.y.clamp(60.0, (MediaQuery.of(context).size.height - 120).clamp(60.0, 1500.0)),
+            child: GestureDetector(
+              onTap: () => _showStickyNoteDetail(note),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF08A),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFCA8A04), width: 1.5),
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.sticky_note_2_rounded, size: 14, color: Color(0xFF854D0E)),
+                    const SizedBox(width: 4),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 110),
+                      child: Text(
+                        note.noteText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF854D0E),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  void _promptAddStickyNote(double x, double y) {
+    final noteController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          title: Row(
+            children: [
+              const Icon(Icons.sticky_note_2_rounded, color: Color(0xFFCA8A04)),
+              const SizedBox(width: 8),
+              Text(
+                'Note Médicale • Page $_currentPage',
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: TextField(
+            controller: noteController,
+            autofocus: true,
+            maxLines: 4,
+            decoration: InputDecoration(
+              hintText: 'Notez une perle, un piège d\'annale, une posologie...',
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFCA8A04),
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                final text = noteController.text.trim();
+                if (text.isNotEmpty) {
+                  final note = PdfAnnotationModel(
+                    id: 'note_${DateTime.now().millisecondsSinceEpoch}',
+                    courseId: _cacheKey,
+                    pageNumber: _currentPage,
+                    type: PdfAnnotationType.note,
+                    colorHex: _selectedColorHex,
+                    noteText: text,
+                    points: [PdfDrawingPoint(x, y)],
+                    createdAt: DateTime.now(),
+                  );
+                  await _annotationService.addAnnotation(note);
+                  if (mounted) setState(() {});
+                }
+                Navigator.pop(ctx);
+              },
+              child: const Text('Enregistrer le Post-It'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showStickyNoteDetail(PdfAnnotationModel note) {
+    final editController = TextEditingController(text: note.noteText);
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          title: Row(
+            children: [
+              const Icon(Icons.sticky_note_2_rounded, color: Color(0xFFCA8A04)),
+              const SizedBox(width: 8),
+              Text(
+                'Post-It • Page ${note.pageNumber}',
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: editController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Créé le ${note.createdAt.day}/${note.createdAt.month} à ${note.createdAt.hour}h${note.createdAt.minute.toString().padLeft(2, '0')}',
+                style: const TextStyle(fontSize: 11, color: Colors.grey),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+              onPressed: () async {
+                await _annotationService.removeAnnotation(_cacheKey, note.id);
+                if (mounted) setState(() {});
+                Navigator.pop(ctx);
+              },
+              child: const Text('Supprimer'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primaryTeal,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                final updated = note.copyWith(noteText: editController.text.trim());
+                await _annotationService.removeAnnotation(_cacheKey, note.id);
+                await _annotationService.addAnnotation(updated);
+                if (mounted) setState(() {});
+                Navigator.pop(ctx);
+              },
+              child: const Text('Enregistrer'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showJumpToPageDialog() {
+    int target = _currentPage;
+    final controller = TextEditingController(text: '$_currentPage');
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setDialogState) {
+            final maxP = _pageCount > 0 ? _pageCount : 1;
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              title: const Row(
+                children: [
+                  Icon(Icons.tag_rounded, color: AppTheme.primaryTeal),
+                  SizedBox(width: 8),
+                  Text('Aller à la page', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Document de $maxP pages'),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove_circle_outline_rounded),
+                        onPressed: target > 1
+                            ? () {
+                                setDialogState(() {
+                                  target--;
+                                  controller.text = '$target';
+                                });
+                              }
+                            : null,
+                      ),
+                      SizedBox(
+                        width: 70,
+                        child: TextField(
+                          controller: controller,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onChanged: (val) {
+                            final p = int.tryParse(val);
+                            if (p != null && p >= 1 && p <= maxP) {
+                              setDialogState(() => target = p);
+                            }
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle_outline_rounded),
+                        onPressed: target < maxP
+                            ? () {
+                                setDialogState(() {
+                                  target++;
+                                  controller.text = '$target';
+                                });
+                              }
+                            : null,
+                      ),
+                    ],
+                  ),
+                  if (maxP > 1) ...[
+                    const SizedBox(height: 10),
+                    Slider(
+                      value: target.toDouble().clamp(1.0, maxP.toDouble()),
+                      min: 1.0,
+                      max: maxP.toDouble(),
+                      divisions: maxP > 1 ? maxP - 1 : 1,
+                      activeColor: AppTheme.primaryTeal,
+                      onChanged: (val) {
+                        setDialogState(() {
+                          target = val.round();
+                          controller.text = '$target';
+                        });
+                      },
+                    ),
+                  ],
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Annuler'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryTeal,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    if (target >= 1 && target <= maxP) {
+                      _pdfController.jumpToPage(target);
+                    }
+                  },
+                  child: const Text('Aller'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showReadingComfortModal() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Confort de Lecture & Affichage',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 14),
+
+                    Row(
+                      children: [
+                        _buildModeCard(
+                          label: 'Jour',
+                          icon: Icons.wb_sunny_rounded,
+                          color: const Color(0xFF0284C7),
+                          isSelected: _readingComfortMode == ReadingComfortMode.day,
+                          onTap: () {
+                            setState(() {
+                              _readingComfortMode = ReadingComfortMode.day;
+                              _isDarkMode = false;
+                            });
+                            setSheetState(() {});
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        _buildModeCard(
+                          label: 'Sépia Chaud',
+                          icon: Icons.auto_stories_rounded,
+                          color: const Color(0xFFD97706),
+                          isSelected: _readingComfortMode == ReadingComfortMode.sepia,
+                          onTap: () {
+                            setState(() {
+                              _readingComfortMode = ReadingComfortMode.sepia;
+                              _isDarkMode = false;
+                            });
+                            setSheetState(() {});
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        _buildModeCard(
+                          label: 'Nuit OLED',
+                          icon: Icons.nightlight_round,
+                          color: const Color(0xFF8B5CF6),
+                          isSelected: _readingComfortMode == ReadingComfortMode.night,
+                          onTap: () {
+                            setState(() {
+                              _readingComfortMode = ReadingComfortMode.night;
+                              _isDarkMode = true;
+                            });
+                            setSheetState(() {});
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+                    const Divider(),
+                    SwitchListTile(
+                      title: const Text('Mode Page par Page', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5)),
+                      subtitle: Text(
+                        _isSinglePageLayout ? 'Une seule page à la fois' : 'Défilement vertical continu (recommandé)',
+                        style: const TextStyle(fontSize: 11.5),
+                      ),
+                      value: _isSinglePageLayout,
+                      activeColor: AppTheme.primaryTeal,
+                      onChanged: (val) {
+                        setState(() => _isSinglePageLayout = val);
+                        setSheetState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildModeCard({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: isSelected ? color.withOpacity(0.15) : Colors.grey.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isSelected ? color : Colors.transparent,
+              width: 2,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: isSelected ? color : Colors.grey, size: 24),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? color : null,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showCourseNotesList() {
+    final notes = _annotationService.getNotesForCourse(_cacheKey);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (ctx) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.75,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const Icon(Icons.sticky_note_2_rounded, color: AppTheme.primaryTeal),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Notes & Post-Its du Cours (${notes.length})',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const Divider(),
+              if (notes.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.note_add_rounded, size: 48, color: Colors.grey.withOpacity(0.5)),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Aucun post-it sur ce cours',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Activez l\'outil Post-It 📌 dans la barre d\'outils et touchez la page pour ajouter une note médicale.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: notes.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final n = notes[index];
+                      return Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFFEF9C3),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFCA8A04).withOpacity(0.4)),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFCA8A04),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                'P. ${n.pageNumber}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    n.noteText,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? Colors.white : const Color(0xFF713F12),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${n.createdAt.day}/${n.createdAt.month}/${n.createdAt.year} à ${n.createdAt.hour}h${n.createdAt.minute.toString().padLeft(2, '0')}',
+                                    style: TextStyle(
+                                      fontSize: 10.5,
+                                      color: isDark ? Colors.white54 : const Color(0xFFA16207),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+                              tooltip: 'Aller à cette page',
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                _pdfController.jumpToPage(n.pageNumber);
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.redAccent),
+                              tooltip: 'Supprimer la note',
+                              onPressed: () async {
+                                await _annotationService.removeAnnotation(_cacheKey, n.id);
+                                if (mounted) setState(() {});
+                                Navigator.pop(ctx);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showBookmarksSheet() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final total = _pageCount > 0 ? _pageCount : 1;
+
+    final sections = [
+      {'title': '1. Début & Introduction', 'page': 1, 'icon': Icons.play_arrow_rounded},
+      {'title': '2. Épidémiologie & Rappels', 'page': (total * 0.15).ceil().clamp(1, total), 'icon': Icons.insights_rounded},
+      {'title': '3. Diagnostic Positif & Clinique', 'page': (total * 0.35).ceil().clamp(1, total), 'icon': Icons.medical_services_rounded},
+      {'title': '4. Examens Complémentaires & Bilan', 'page': (total * 0.55).ceil().clamp(1, total), 'icon': Icons.biotech_rounded},
+      {'title': '5. Traitement & Thérapeutique', 'page': (total * 0.75).ceil().clamp(1, total), 'icon': Icons.medication_rounded},
+      {'title': '6. Évolution & Pronostic', 'page': total, 'icon': Icons.flag_rounded},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Row(
+                  children: [
+                    Icon(Icons.bookmarks_rounded, color: AppTheme.primaryTeal),
+                    SizedBox(width: 8),
+                    Text(
+                      'Sommaire & Navigation Rapide',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ...sections.map((sec) {
+                  final page = sec['page'] as int;
+                  final isCurrent = _currentPage == page;
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(sec['icon'] as IconData, color: isCurrent ? AppTheme.primaryTeal : Colors.grey),
+                    title: Text(
+                      sec['title'] as String,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
+                        color: isCurrent ? AppTheme.primaryTeal : null,
+                      ),
+                    ),
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isCurrent ? AppTheme.primaryTeal.withOpacity(0.15) : Colors.grey.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'P. $page',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isCurrent ? AppTheme.primaryTeal : null,
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _pdfController.jumpToPage(page);
+                    },
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DrawingPainter extends CustomPainter {
+  final List<PdfAnnotationModel> savedAnnotations;
+  final List<PdfDrawingPoint> activeStroke;
+  final Color activeColor;
+
+  _DrawingPainter({
+    required this.savedAnnotations,
+    required this.activeStroke,
+    required this.activeColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final ann in savedAnnotations) {
+      if (ann.points.length < 2) continue;
+      final color = parseHex(ann.colorHex);
+      final isHighlighter = ann.type == PdfAnnotationType.highlight;
+
+      final paint = Paint()
+        ..color = isHighlighter ? color.withOpacity(0.35) : color.withOpacity(0.9)
+        ..strokeWidth = isHighlighter ? 18.0 : ann.strokeWidth
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..style = PaintingStyle.stroke;
+
+      final path = Path();
+      path.moveTo(ann.points.first.x, ann.points.first.y);
+      for (int i = 1; i < ann.points.length; i++) {
+        path.lineTo(ann.points[i].x, ann.points[i].y);
+      }
+      canvas.drawPath(path, paint);
+    }
+
+    if (activeStroke.length >= 2) {
+      final paint = Paint()
+        ..color = activeColor.withOpacity(0.9)
+        ..strokeWidth = 3.5
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..style = PaintingStyle.stroke;
+
+      final path = Path();
+      path.moveTo(activeStroke.first.x, activeStroke.first.y);
+      for (int i = 1; i < activeStroke.length; i++) {
+        path.lineTo(activeStroke[i].x, activeStroke[i].y);
+      }
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DrawingPainter oldDelegate) => true;
+
+  static Color parseHex(String hex) {
+    try {
+      final clean = hex.replaceAll('#', '');
+      return Color(int.parse('FF$clean', radix: 16));
+    } catch (_) {
+      return const Color(0xFFFACC15);
+    }
   }
 }

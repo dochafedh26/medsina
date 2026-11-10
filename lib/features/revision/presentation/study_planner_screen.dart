@@ -8,8 +8,10 @@ import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
 import '../models/module_model.dart';
 import '../services/user_qcm_annotation_service.dart';
+import 'active_study_plan_widget.dart';
 import 'course_pdf_viewer_screen.dart';
 import 'course_summary_screen.dart';
+import 'laureate_study_plans_sheet.dart';
 import 'qcm_study_screen.dart';
 
 class StudyPlannerScreen extends StatefulWidget {
@@ -100,6 +102,11 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                 ),
                 actions: [
                   TextButton.icon(
+                    icon: const Icon(Icons.workspace_premium_rounded, size: 17, color: Color(0xFFF59E0B)),
+                    label: const Text('Plans Lauréats', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    onPressed: () => LaureateStudyPlansSheet.show(context),
+                  ),
+                  TextButton.icon(
                     icon: const Icon(Icons.event_available_rounded, size: 17),
                     label: const Text('Échéance', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                     onPressed: () => _pickTargetExamDate(context),
@@ -110,6 +117,10 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
               body: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  // 0. Plan de Révision des Lauréats & Objectifs Quotidiens
+                  const ActiveStudyPlanWidget(),
+                  const SizedBox(height: 16),
+
                   // 1. Countdown & Cadence Calculator Banner
                   _buildCadenceOverviewCard(
                     context,
