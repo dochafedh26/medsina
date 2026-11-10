@@ -276,16 +276,24 @@ def generate_mindmap_pdf(mindmap_data: Dict[str, Any], output_pdf_path: Path) ->
     c.drawCentredString(115, height - 51, "MEDSINA 2027")
 
     # Titre du Cours au Centre
-    c.setFont("Helvetica-Bold", 19)
-    c.setFillColor(COLOR_WHITE)
     course_title = mindmap_data["course_name"]
-    c.drawCentredString(width / 2, height - 48, f"MIND MAP : {course_title.upper()}")
+    full_header_title = f"MIND MAP : {course_title.upper()}"
+    if len(full_header_title) > 52:
+        header_font_size = 14
+    elif len(full_header_title) > 40:
+        header_font_size = 16
+    else:
+        header_font_size = 18
+
+    c.setFont("Helvetica-Bold", header_font_size)
+    c.setFillColor(COLOR_WHITE)
+    c.drawCentredString(width / 2, height - 48, full_header_title)
 
     # Module & Catégorie
-    c.setFont("Helvetica", 11)
+    c.setFont("Helvetica", 10.5)
     c.setFillColor(COLOR_GOLD)
     module_label = f"Module de {mindmap_data['module_name']} • Préparation Officielle Concours de Résidanat"
-    c.drawCentredString(width / 2, height - 70, module_label)
+    c.drawCentredString(width / 2, height - 68, module_label)
 
     # Badge de droite : Mode 100% Hors-Ligne & Cloud Drive
     draw_rounded_rect(c, width - 215, height - 72, 170, 34, 8, colors.HexColor("#065F46"), colors.HexColor("#10B981"), 1)
@@ -296,28 +304,39 @@ def generate_mindmap_pdf(mindmap_data: Dict[str, Any], output_pdf_path: Path) ->
     # 3. NŒUD CENTRAL (Hub Principal)
     cx = width / 2
     cy = height / 2 - 20
-    hub_w = 260
-    hub_h = 100
+    hub_w = 280
+    hub_h = 125
 
     draw_rounded_rect(c, cx - hub_w / 2, cy - hub_h / 2, hub_w, hub_h, 16, colors.HexColor("#1E293B"), COLOR_GOLD, 3)
 
-    # Contenu du Hub
-    draw_rounded_rect(c, cx - hub_w / 2 + 10, cy + hub_h / 2 - 28, hub_w - 20, 20, 6, COLOR_GOLD, COLOR_GOLD, 0)
+    # Badge Orange Supérieur : CŒUR DU SUJET CLINIQUE (bien calé en haut)
+    badge_w = 170
+    badge_h = 22
+    badge_y = cy + hub_h / 2 - badge_h - 10
+    draw_rounded_rect(c, cx - badge_w / 2, badge_y, badge_w, badge_h, 6, COLOR_GOLD, COLOR_GOLD, 0)
     c.setFillColor(colors.HexColor("#78350F"))
-    c.setFont("Helvetica-Bold", 10)
-    c.drawCentredString(cx, cy + hub_h / 2 - 23, "CŒUR DU SUJET CLINIQUE")
+    c.setFont("Helvetica-Bold", 9.5)
+    c.drawCentredString(cx, badge_y + 6.5, "CŒUR DU SUJET CLINIQUE")
 
+    # Titre du Cours dans le Hub (positionné nettement sous le badge orange pour supprimer tout chevauchement)
     c.setFillColor(COLOR_WHITE)
-    c.setFont("Helvetica-Bold", 13)
+    c.setFont("Helvetica-Bold", 12.5)
     wrapped_hub_title = wrap_text(mindmap_data["course_name"], 26)
-    title_start_y = cy + 10 if len(wrapped_hub_title) == 1 else cy + 18
-    for line in wrapped_hub_title[:2]:
-        c.drawCentredString(cx, title_start_y, line)
-        title_start_y -= 16
+    
+    if len(wrapped_hub_title) == 1:
+        c.drawCentredString(cx, cy + 5, wrapped_hub_title[0])
+    elif len(wrapped_hub_title) == 2:
+        c.drawCentredString(cx, cy + 12, wrapped_hub_title[0])
+        c.drawCentredString(cx, cy - 4, wrapped_hub_title[1])
+    else:
+        c.drawCentredString(cx, cy + 18, wrapped_hub_title[0])
+        c.drawCentredString(cx, cy + 3, wrapped_hub_title[1])
+        c.drawCentredString(cx, cy - 12, wrapped_hub_title[2])
 
-    c.setFont("Helvetica", 9)
+    # Sous-titre du Hub (calé proprement en bas)
+    c.setFont("Helvetica", 8.5)
     c.setFillColor(COLOR_MUTED)
-    c.drawCentredString(cx, cy - 35, "Algorithme & Notions Haute Tombabilité")
+    c.drawCentredString(cx, cy - hub_h / 2 + 14, "Algorithme & Notions Haute Tombabilité")
 
     # 4. DISPOSITION DES BRANCHES AUTOUR DU HUB
     branches = mindmap_data["branches"]
