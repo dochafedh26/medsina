@@ -1220,5 +1220,20 @@
     ],
     "created_at": "2026-11-09T18:58:38.610750+00:00",
     "updated_at": "2026-11-09T18:58:38.610764+00:00"
+  },
+  {
+    "id": "lab_anca_pr3_mpo",
+    "name": "Anticorps Anticytoplasme des PNN (ANCA : Anti-PR3 et Anti-MPO)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Négatif (Titre < seuil de positivité du laboratoire, généralement < 1/20 en IFI ou < 10-20 UI/mL en ELISA)",
+    "unit": "UI/mL ou Rapport de dilution",
+    "high_interpretation": "Positivité évocatrice de vascularite nécrosante systémique associée aux ANCA. Anti-PR3 (c-ANCA) : fortement associé à la Granulomatose avec Polyangéite (GPA / Maladie de Wegener). Anti-MPO (p-ANCA) : associé à la Polyangéite Microscopique (PAM), au Churg-Strauss (EGPA) et à la Glomérulonéphrite extra-capillaire pauci-immune. Conduite à tenir : Urgence néphrologique/interniste si atteinte viscérale menaçante (pulmonaire ou rénale), confirmation histologique indispensable, bilan d'extension (créatininémie, BU, Rx thorax ou TDM thoracique, NFS).",
+    "low_interpretation": "Négatif. Ne <b>exclut pas formellement</b> une vascularite à ANCA (sensibilité de l'ELISA d'environ 70-90% selon l'atteinte, surtout en phase précoce ou localisée). Les ANCA peuvent être exceptionnellement positifs (souvent à taux faibles ou atypiques) au cours d'infections chroniques, de maladies inflammatoires chroniques de l'intestin (MICI), de cirrhose biliaire primitive ou sous certains médicaments (ex: propylthiouracile, minocycline).",
+    "clinical_notes": [
+      "Piège pré-analytique / technique : La double approche (dépistage par Immunofluorescence Indirecte - IFI couplée à des ELISA spécifiques anti-PR3 et anti-MPO) est la règle internationale. Une IFI positive sans spécificité PR3/MPO (p-ANCA atypique) n'a pas de valeur pour les vascularites systémiques.",
+      "Corrélation clinique indispensable : Un taux élevé d'ANCA (surtout PR3) signe un risque fort de rechute, mais le suivi sériel quantitatif des ANCA pour guider l'adaptation thérapeutique en phase de rémission reste controversé (recommandations EULAR)."
+    ],
+    "created_at": "2026-11-10T02:19:54.257192+00:00",
+    "updated_at": "2026-11-10T02:19:54.257208+00:00"
   }
 ]
