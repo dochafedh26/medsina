@@ -11,7 +11,9 @@ import '../models/samedi_pedagogique_model.dart';
 import 'course_pdf_viewer_screen.dart';
 
 class SamedisPedagogiquesScreen extends StatefulWidget {
-  const SamedisPedagogiquesScreen({super.key});
+  final String? initialSearchQuery;
+
+  const SamedisPedagogiquesScreen({super.key, this.initialSearchQuery});
 
   @override
   State<SamedisPedagogiquesScreen> createState() =>
@@ -28,6 +30,9 @@ class _SamedisPedagogiquesScreenState extends State<SamedisPedagogiquesScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialSearchQuery != null && widget.initialSearchQuery!.trim().isNotEmpty) {
+      _searchController.text = widget.initialSearchQuery!.trim();
+    }
     _loadItems();
     _searchController.addListener(_applyFilter);
   }
