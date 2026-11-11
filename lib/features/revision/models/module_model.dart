@@ -66,6 +66,8 @@ class CourseModel extends Equatable {
   bool isPdfOnlyCourse({bool hasSummary = false}) =>
       hasAnyPdf && !hasAnyMindmap && questionsCount == 0 && !hasSummary;
 
+  bool get isHighYield => isHypertombable || questionsCount >= 20;
+
   double get progressPercentage =>
       questionsCount > 0 ? (completedQuestions / questionsCount).clamp(0.0, 1.0) : 0.0;
 
