@@ -1235,5 +1235,20 @@
     ],
     "created_at": "2026-11-10T02:19:54.257192+00:00",
     "updated_at": "2026-11-10T02:19:54.257208+00:00"
+  },
+  {
+    "id": "lab_svo2_scvo2",
+    "name": "Gazométrie du sang veineux mêlé (SvO2) et central (ScvO2)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "SvO2 : 65 - 75 % | ScvO2 (VCS) : 70 - 80 %",
+    "unit": "% (Saturation en oxygène)",
+    "high_interpretation": "SvO2/ScvO2 élevée (> 80 %) : Extraction tissulaire effondrée de l'O2. Causes : Choc distributif (septique hyperdynamique précoce), shunt artério-veineux (fistules), hypoxie cellulaire inhibant l'utilisation du glucose/O2 (ex: intoxication au cyanure), mort cérébrale (extraction cérébrale nulle), ou cathéter de Swan-Ganz mal positionné (dans le VD ou une artère pulmonaire distale en zone de West 1). Conduite à tenir : Rechercher une septe/choc septique, éliminer une intoxication au cyanure, vérifier la position du cathéter (Swan-Ganz ou KTC).",
+    "low_interpretation": "SvO2/ScvO2 basse (< 65 %) : Augmentation de l'extraction tissulaire en réponse à un transport inadéquat de l'O2 (DO2). Causes : Choc hypovolémique (hémorragie), choc cardiogénique (infarctus étendu, trouble du rythme), choc obstructif (embolie pulmonaire massive, tamponnade), anémie sévère (baisse du contenu artériolaire en O2), hypoxémie sévère (PaO2 effondrée), ou hypermétabolisme (frissons, fièvre, détresse respiratoire avec travail respiratoire excessif). Seuil d'urgence vitale : < 50 % (ischémie tissulaire imminente, risque d'arrêt cardiaque par hypoxie réfractaire). Conduite à tenir immédiate : Remplissage vasculaire guidé par l'échographie, inotropes (dobutamine si dysfonction myocardique), transfusion sanguine si Hb < 7-8 g/dL, sédation-curarisation et ventilation mécanique pour baisser la consommation d'O2 (VO2).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le sang veineux central (ScvO2 prélevé par cathéter jugulaire interne ou sous-clavier) est systématiquement supérieur de 2 à 5 % au sang veineux mêlé (SvO2 prélevé à l'artère pulmonaire via Swan-Ganz) en raison d'un drainage supérieur moins extracteur au repos, mais les deux tendent à se rapprocher en cas de choc sévère.",
+      "Règle d'or de réanimation (Équation de Fick) : Une baisse de la SvO2/ScvO2 reflète soit une baisse du débit cardiaque, soit une baisse de l'hémoglobine, soit une baisse de la SaO2, soit une augmentation de la consommation tissulaire (VO2)."
+    ],
+    "created_at": "2026-11-11T00:09:34.083671+00:00",
+    "updated_at": "2026-11-11T00:09:34.083688+00:00"
   }
 ]
