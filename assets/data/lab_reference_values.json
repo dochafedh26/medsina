@@ -1282,5 +1282,20 @@
     ],
     "created_at": "2026-11-11T15:31:05.544657+00:00",
     "updated_at": "2026-11-11T15:31:05.544670+00:00"
+  },
+  {
+    "id": "electrophorese_hemoglobine",
+    "name": "Électrophorèse de l'Hémoglobine (HbA, HbA2, HbF, HbS)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "HbA: 96.5 - 98.5% | HbA2: 1.5 - 3.5% | HbF: < 1.0% (adulte) | HbS: 0%",
+    "unit": "%",
+    "high_interpretation": "Présence anormale ou élévation de fractions pathologiques : HbS > 50% (Drépanocytose homozygote SS) ou 35-45% (Trait drépanocytaire AS associé à HbA). HbA2 élevée (> 4.0%) : Bêta-thalassémie mineure (hétérozygote). HbF très élevée (10-100%) : Bêta-thalassémie majeure (anémie de Cooley) ou persistance héréditaire de l'hémoglobine fœtale (PHHF). Urgence vitale : Crise vaso-occlusive aiguë, syndrome thoracique aigu, séquestration splénique chez le drépanocytaire (nécessité de transfusion/échange transfusionnel si Hb < 5 g/dL ou signes de défaillance d'organe).",
+    "low_interpretation": "Taux d'HbA effondré ou absent : Thalassémies majeures (absence totale d'HbA dans la béta-thalassémie homozygote ou formes sévères). Taux d'HbA2 abaissé : Alpha-thalassémie (traits alpha-thalassémiques ou délétions de gènes alpha). Urgence clinique : Anémie sévère profonde menaçant le pronostic vital, décompensation cardiaque sur anémie chronique.",
+    "clinical_notes": [
+      "Piège pré-analytique : Une transfusion sanguine récente (moins de 3 mois) fausse totalement l'électrophorèse en introduisant de l'HbA exogène chez un patient drépanocytaire (SS), masquant le profil de base.",
+      "Piège diagnostique : Une carence martiale associée (très fréquente en Algérie) peut faussement abaisser le taux d'HbA2 dans la bêta-thalassémie mineure, normalisant faussement le profil. Il faut corriger le fer avant d'éliminer une bêta-thalassémie."
+    ],
+    "created_at": "2026-11-11T22:54:47.582395+00:00",
+    "updated_at": "2026-11-11T22:54:47.582413+00:00"
   }
 ]
