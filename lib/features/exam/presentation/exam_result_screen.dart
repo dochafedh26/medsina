@@ -5,6 +5,7 @@ import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../revision/models/flashcard_fsrs_model.dart';
+import '../../revision/presentation/flashcards_fsrs_screen.dart';
 import '../models/exam_session_model.dart';
 
 class ExamResultScreen extends StatefulWidget {
@@ -84,14 +85,27 @@ class _ExamResultScreenState extends State<ExamResultScreen> with SingleTickerPr
   }
 
   Future<void> _createFlashcardFromQuestion(ExamQuestionResult res) async {
-    await FlashcardFsrsService.instance.createFromQuestion(res.question);
+    final card = await FlashcardFsrsService.instance.createFromQuestion(res.question);
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Flashcard FSRS créée avec succès pour la révision espacée !'),
+        SnackBar(
+          content: const Text('🧠 Flashcard FSRS créée avec succès pour la révision espacée !'),
           backgroundColor: AppTheme.primaryTeal,
           behavior: SnackBarBehavior.floating,
+          action: SnackBarAction(
+            label: 'Ouvrir ➔',
+            textColor: Colors.amberAccent,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FlashcardsFsrsScreen(initialCardId: card.id),
+                ),
+              );
+            },
+          ),
+          duration: const Duration(seconds: 4),
         ),
       );
     }

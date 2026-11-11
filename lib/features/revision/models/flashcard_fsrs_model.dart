@@ -175,6 +175,18 @@ class FlashcardFsrsService extends ChangeNotifier {
     return _cards.any((c) => c.linkedQuestionId == questionId);
   }
 
+  FlashcardFsrsItem? getCardForQuestion(String questionId) {
+    final idx = _cards.indexWhere((c) => c.linkedQuestionId == questionId);
+    return idx != -1 ? _cards[idx] : null;
+  }
+
+  Future<void> removeByQuestionId(String questionId) async {
+    await ensureInitialized();
+    _cards.removeWhere((c) => c.linkedQuestionId == questionId);
+    await _persist();
+    notifyListeners();
+  }
+
   /// Creates an FSRS Flashcard directly from a QCM question in 1 click.
   Future<FlashcardFsrsItem> createFromQuestion(QcmQuestion q) async {
     await ensureInitialized();

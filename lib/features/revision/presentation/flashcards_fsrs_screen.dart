@@ -4,7 +4,12 @@ import '../../../core/theme/app_theme.dart';
 import '../models/flashcard_fsrs_model.dart';
 
 class FlashcardsFsrsScreen extends StatefulWidget {
-  const FlashcardsFsrsScreen({super.key});
+  final String? initialCardId;
+
+  const FlashcardsFsrsScreen({
+    super.key,
+    this.initialCardId,
+  });
 
   @override
   State<FlashcardsFsrsScreen> createState() => _FlashcardsFsrsScreenState();
@@ -12,15 +17,86 @@ class FlashcardsFsrsScreen extends StatefulWidget {
 
 class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
   final FlashcardFsrsService _service = FlashcardFsrsService.instance;
+  final TextEditingController _searchController = TextEditingController();
+
+  FlashcardFsrsItem? _activeCardOverride;
   bool _isAnswerVisible = false;
   int _sessionReviewedCount = 0;
+  bool _isCramMode = false;
+  int _cramIndex = 0;
+  String _selectedStatusFilter = 'all'; // 'all', 'due', 'new', 'learning', 'mature'
+  String _selectedModuleFilter = 'all';
+  bool _showGuide = false;
 
   @override
   void initState() {
     super.initState();
     _service.ensureInitialized().then((_) {
-      if (mounted) setState(() {});
+      if (mounted) {
+        if (widget.initialCardId != null) {
+          final found = _service.cards.where((c) => c.id == widget.initialCardId).firstOrNull;
+          if (found != null) {
+            _activeCardOverride = found;
+          }
+        }
+        setState(() {});
+      }
     });
+    _searchController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<FlashcardFsrsItem> _getFilteredCards() {
+    final query = _searchController.text.trim().toLowerCase();
+    return _service.cards.where((card) {
+      final matchesQuery = query.isEmpty ||
+          card.front.toLowerCase().contains(query) ||
+          card.back.toLowerCase().contains(query) ||
+          card.courseName.toLowerCase().contains(query) ||
+          card.moduleId.toLowerCase().contains(query);
+
+      final matchesStatus = switch (_selectedStatusFilter) {
+        'due' => card.isDueNow,
+        'new' => card.state == FsrsCardState.newCard,
+        'learning' => card.state == FsrsCardState.learning,
+        'mature' => card.isMature,
+        _ => true,
+      };
+
+      final matchesModule = _selectedModuleFilter == 'all' ||
+          card.moduleId.toLowerCase() == _selectedModuleFilter.toLowerCase();
+
+      return matchesQuery && matchesStatus && matchesModule;
+    }).toList();
+  }
+
+  List<String> _extractAvailableModules() {
+    final modules = <String>{};
+    for (final c in _service.cards) {
+      if (c.moduleId.trim().isNotEmpty) {
+        modules.add(c.moduleId.trim());
+      }
+    }
+    return modules.toList()..sort();
+  }
+
+  FlashcardFsrsItem? _resolveActiveCard(List<FlashcardFsrsItem> dueList) {
+    if (_activeCardOverride != null) {
+      return _activeCardOverride;
+    }
+    if (_isCramMode) {
+      final allFiltered = _getFilteredCards();
+      if (allFiltered.isNotEmpty && _cramIndex < allFiltered.length) {
+        return allFiltered[_cramIndex];
+      }
+      return null;
+    }
+    return dueList.isNotEmpty ? dueList.first : null;
   }
 
   @override
@@ -32,24 +108,34 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
       builder: (context, _) {
         final stats = _service.getStatsSummary();
         final dueList = _service.dueCards;
-        final activeCard = dueList.isNotEmpty ? dueList.first : null;
+        final activeCard = _resolveActiveCard(dueList);
+        final filteredCards = _getFilteredCards();
+        final availableModules = _extractAvailableModules();
 
         return Scaffold(
           appBar: AppBar(
             title: const Row(
               children: [
-                Icon(Icons.psychology_alt_rounded, color: Color(0xFF8B5CF6), size: 22),
+                Icon(Icons.psychology_alt_rounded, color: Color(0xFF8B5CF6), size: 24),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Répétition Espacée FSRS & Flashcards',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15.5),
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
             actions: [
+              IconButton(
+                icon: Icon(
+                  _showGuide ? Icons.help_rounded : Icons.help_outline_rounded,
+                  color: const Color(0xFF8B5CF6),
+                ),
+                tooltip: 'Guide de Réutilisation FSRS',
+                onPressed: () => setState(() => _showGuide = !_showGuide),
+              ),
               FilledButton.tonalIcon(
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF8B5CF6).withValues(alpha: 0.14),
@@ -57,7 +143,7 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
                   visualDensity: VisualDensity.compact,
                 ),
                 icon: const Icon(Icons.add_rounded, size: 18),
-                label: const Text('Nouvelle Carte', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                label: const Text('Créer', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 onPressed: () => _showCreateCardDialog(context),
               ),
               const SizedBox(width: 10),
@@ -66,24 +152,35 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              // 0. Guide Banner (Collapsible)
+              if (_showGuide) ...[
+                _buildHowToReuseGuide(isDark),
+                const SizedBox(height: 16),
+              ],
+
               // 1. FSRS Metrics Header Card
               _buildFsrsMetricsBanner(stats, isDark),
               const SizedBox(height: 18),
 
               // 2. Active Review Deck Area
               if (activeCard != null)
-                _buildActiveReviewCard(context, activeCard, dueList.length, isDark)
+                _buildActiveReviewCard(
+                  context,
+                  activeCard,
+                  _isCramMode ? (filteredCards.length - _cramIndex) : dueList.length,
+                  isDark,
+                )
               else
                 _buildAllCaughtUpCard(context, stats, isDark),
 
               const SizedBox(height: 24),
 
-              // 3. All Cards Deck Browser
+              // 3. Card Library Browser Header & Search Filter
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Bibliothèque de Cartes FSRS (${_service.cards.length})',
+                    'Bibliothèque de Cartes (${_service.cards.length})',
                     style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
                   ),
                   if (_sessionReviewedCount > 0)
@@ -105,11 +202,226 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
                 ],
               ),
               const SizedBox(height: 10),
-              ..._service.cards.map((card) => _buildDeckItemTile(context, card, isDark)),
+
+              // Search Input Field
+              TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Rechercher par question, cours ou mot-clé...',
+                  prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear_rounded, size: 18),
+                          onPressed: () => _searchController.clear(),
+                        )
+                      : null,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  filled: true,
+                  fillColor: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Status Filter Chips
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildFilterChip('Toutes (${_service.cards.length})', 'all'),
+                    const SizedBox(width: 6),
+                    _buildFilterChip('🔥 À réviser (${stats['dueToday']})', 'due'),
+                    const SizedBox(width: 6),
+                    _buildFilterChip('🆕 Nouvelles (${stats['new']})', 'new'),
+                    const SizedBox(width: 6),
+                    _buildFilterChip('⏳ En cours (${stats['learning']})', 'learning'),
+                    const SizedBox(width: 6),
+                    _buildFilterChip('🏆 Matures (${stats['mature']})', 'mature'),
+                  ],
+                ),
+              ),
+
+              // Module Filter Chips (if multiple modules)
+              if (availableModules.length > 1) ...[
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ActionChip(
+                        label: Text(
+                          'Tous modules',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: _selectedModuleFilter == 'all' ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                        backgroundColor: _selectedModuleFilter == 'all'
+                            ? AppTheme.primaryTeal.withValues(alpha: 0.15)
+                            : null,
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () => setState(() => _selectedModuleFilter = 'all'),
+                      ),
+                      const SizedBox(width: 6),
+                      ...availableModules.map((mod) => Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: ActionChip(
+                              label: Text(
+                                mod,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: _selectedModuleFilter.toLowerCase() == mod.toLowerCase()
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                              backgroundColor: _selectedModuleFilter.toLowerCase() == mod.toLowerCase()
+                                  ? AppTheme.primaryTeal.withValues(alpha: 0.15)
+                                  : null,
+                              visualDensity: VisualDensity.compact,
+                              onPressed: () => setState(() => _selectedModuleFilter = mod),
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 12),
+
+              // Card List
+              if (filteredCards.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      Icon(Icons.inbox_rounded, size: 40, color: Colors.grey.shade400),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Aucune carte trouvée pour ce filtre.',
+                        style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                ...filteredCards.map((card) => _buildDeckItemTile(context, card, isDark)),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildFilterChip(String label, String value) {
+    final isSelected = _selectedStatusFilter == value;
+    return ChoiceChip(
+      label: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11.5,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+          color: isSelected ? Colors.white : null,
+        ),
+      ),
+      selected: isSelected,
+      selectedColor: const Color(0xFF7C3AED),
+      visualDensity: VisualDensity.compact,
+      onSelected: (selected) {
+        if (selected) setState(() => _selectedStatusFilter = value);
+      },
+    );
+  }
+
+  Widget _buildHowToReuseGuide(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF8B5CF6).withValues(alpha: isDark ? 0.15 : 0.08),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF8B5CF6).withValues(alpha: 0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.school_rounded, color: Color(0xFF7C3AED), size: 20),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'Comment Réutiliser vos Flashcards FSRS au Quotidien ?',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close_rounded, size: 18),
+                onPressed: () => setState(() => _showGuide = false),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _buildGuideStep(
+            '1',
+            'Création depuis les QCMs',
+            'Quand vous ratez un QCM ou tombez sur un piège, cliquez sur « Créer Flashcard 🧠 ». La carte s\'ajoute immédiatement ici.',
+          ),
+          _buildGuideStep(
+            '2',
+            'Session quotidienne de 5 à 10 min',
+            'Chaque matin ou soir, ouvrez l\'onglet Flashcards. FSRS affiche uniquement les cartes arrivées à échéance mémorielle.',
+          ),
+          _buildGuideStep(
+            '3',
+            'Notation du rappel actif',
+            'Lisez le Recto, réfléchissez à la réponse, puis révélez le Verso. Notez honnêtement : « À revoir » (<10 min), « Difficile » (1-2j), « Bien » (3-5j) ou « Facile » (7-14j).',
+          ),
+          _buildGuideStep(
+            '4',
+            'Mode Révision Libre / Cramming avant Examen',
+            'Avant un concours blanc ou un partiel, lancez la Révision Libre pour revoir toutes vos cartes d\'un coup sans attendre l\'échéance FSRS !',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuideStep(String number, String title, String description) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 10,
+            backgroundColor: const Color(0xFF7C3AED),
+            child: Text(
+              number,
+              style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: const TextStyle(fontSize: 12, height: 1.35, color: Colors.black87),
+                children: [
+                  TextSpan(
+                    text: '$title : ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(text: description),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -206,11 +518,16 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
     int remainingCount,
     bool isDark,
   ) {
+    final isOverride = _activeCardOverride != null;
+
     return Card(
       elevation: isDark ? 0 : 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: const Color(0xFF8B5CF6).withValues(alpha: 0.4), width: 1.4),
+        side: BorderSide(
+          color: isOverride ? const Color(0xFF10B981) : const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+          width: isOverride ? 2.0 : 1.4,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -240,10 +557,18 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  '$remainingCount carte(s) due(s)',
-                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Colors.grey.shade500),
-                ),
+                if (isOverride)
+                  ActionChip(
+                    avatar: const Icon(Icons.close_rounded, size: 14),
+                    label: const Text('Retour file d\'attente', style: TextStyle(fontSize: 10)),
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => setState(() => _activeCardOverride = null),
+                  )
+                else
+                  Text(
+                    _isCramMode ? 'Mode Cramming • $remainingCount restante(s)' : '$remainingCount carte(s) due(s)',
+                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Colors.grey.shade500),
+                  ),
               ],
             ),
             const SizedBox(height: 16),
@@ -347,6 +672,12 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
             setState(() {
               _isAnswerVisible = false;
               _sessionReviewedCount++;
+              if (_activeCardOverride != null) {
+                _activeCardOverride = null;
+              }
+              if (_isCramMode) {
+                _cramIndex++;
+              }
             });
           }
         },
@@ -386,18 +717,53 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
       ),
       child: Column(
         children: [
-          const Icon(Icons.verified_rounded, color: Color(0xFF10B981), size: 46),
+          const Icon(Icons.verified_rounded, color: Color(0xFF10B981), size: 48),
           const SizedBox(height: 10),
           const Text(
             'Bravo ! Toutes vos Flashcards du jour sont révisées 🎉',
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15.5),
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
           ),
           const SizedBox(height: 6),
           Text(
-            'Convertissez des QCM en Flashcards en 1 clic pendant vos sessions d\'entraînement ou ajoutez vos propres cartes.',
+            'Votre mémoire à long terme est à jour selon l\'algorithme FSRS. Vous pouvez continuer à ficher des QCM ou lancer une révision libre sans attendre !',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 12.5, color: Colors.grey.shade500),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            children: [
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF7C3AED),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                icon: const Icon(Icons.bolt_rounded, size: 18),
+                label: const Text('Mode Révision Libre (Cramming)', style: TextStyle(fontWeight: FontWeight.bold)),
+                onPressed: () {
+                  setState(() {
+                    _isCramMode = true;
+                    _cramIndex = 0;
+                  });
+                },
+              ),
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF7C3AED),
+                  side: const BorderSide(color: Color(0xFF7C3AED)),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                icon: const Icon(Icons.add_rounded, size: 18),
+                label: const Text('Créer une Carte Manuelle', style: TextStyle(fontWeight: FontWeight.bold)),
+                onPressed: () => _showCreateCardDialog(context),
+              ),
+            ],
           ),
         ],
       ),
@@ -405,6 +771,13 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
   }
 
   Widget _buildDeckItemTile(BuildContext context, FlashcardFsrsItem card, bool isDark) {
+    final statusColor = card.isDueNow
+        ? const Color(0xFFEA580C)
+        : (card.isMature ? const Color(0xFF10B981) : const Color(0xFF0284C7));
+    final statusLabel = card.isDueNow
+        ? 'À réviser'
+        : (card.isMature ? 'Mature (${card.stability.toStringAsFixed(0)}j)' : 'En cours');
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       elevation: 0,
@@ -414,20 +787,211 @@ class _FlashcardsFsrsScreenState extends State<FlashcardsFsrsScreen> {
       ),
       child: ListTile(
         dense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        onTap: () => _showCardDetailsModal(context, card),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: statusColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            card.linkedQuestionId != null ? Icons.style_rounded : Icons.edit_note_rounded,
+            color: statusColor,
+            size: 18,
+          ),
+        ),
         title: Text(
           card.front.replaceAll('\n', ' ').replaceAll('**', ''),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5),
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
         ),
-        subtitle: Text(
-          '${card.courseName} • Stabilité: ${card.stability}j • Difficulté: ${card.difficulty}/10',
-          style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+        subtitle: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              decoration: BoxDecoration(
+                color: statusColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                statusLabel,
+                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: statusColor),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '${card.moduleId} • ${card.courseName}',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.redAccent),
-          tooltip: 'Supprimer la carte',
-          onPressed: () => _service.deleteCard(card.id),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.play_arrow_rounded, size: 20, color: Color(0xFF7C3AED)),
+              tooltip: 'Réviser cette carte',
+              onPressed: () {
+                setState(() {
+                  _activeCardOverride = card;
+                  _isAnswerVisible = false;
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.redAccent),
+              tooltip: 'Supprimer la carte',
+              onPressed: () => _service.deleteCard(card.id),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCardDetailsModal(BuildContext context, FlashcardFsrsItem card) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.85,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0F172A) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.style_rounded, color: Color(0xFF7C3AED), size: 22),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        card.courseName.isNotEmpty ? card.courseName : 'Flashcard Personnelle',
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        'Module: ${card.moduleId} • Répétitions: ${card.reps} • Stabilité: ${card.stability.toStringAsFixed(1)}j',
+                        style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ],
+            ),
+            const Divider(height: 20),
+            Expanded(
+              child: ListView(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('RECTO (QUESTION) :', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
+                        const SizedBox(height: 6),
+                        MarkdownBody(data: card.front),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withValues(alpha: isDark ? 0.15 : 0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('VERSO (RÉPONSE & EXPLICATION) :', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF047857))),
+                        const SizedBox(height: 6),
+                        MarkdownBody(data: card.back),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7C3AED),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.play_arrow_rounded),
+                    label: const Text('Réviser cette Carte Maintenant', style: TextStyle(fontWeight: FontWeight.bold)),
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      setState(() {
+                        _activeCardOverride = card;
+                        _isAnswerVisible = false;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filledTonal(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.red.withValues(alpha: 0.12),
+                    foregroundColor: Colors.red,
+                  ),
+                  icon: const Icon(Icons.delete_outline_rounded),
+                  tooltip: 'Supprimer',
+                  onPressed: () async {
+                    await _service.deleteCard(card.id);
+                    if (ctx.mounted) Navigator.pop(ctx);
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

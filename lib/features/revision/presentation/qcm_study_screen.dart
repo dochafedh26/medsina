@@ -12,6 +12,7 @@ import '../models/flashcard_fsrs_model.dart';
 import '../models/module_model.dart';
 import '../models/qcm_model.dart';
 import '../services/user_qcm_annotation_service.dart';
+import 'flashcards_fsrs_screen.dart';
 import 'qcm_official_proof_sheet.dart';
 
 class QcmStudyScreen extends StatelessWidget {
@@ -597,15 +598,33 @@ class QcmStudyScreen extends StatelessWidget {
                   ),
                   visualDensity: VisualDensity.compact,
                   onPressed: () async {
-                    await FlashcardFsrsService.instance.createFromQuestion(q);
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          backgroundColor: Color(0xFF7C3AED),
-                          content: Text('🧠 Question ajoutée à vos Flashcards FSRS (Répétition Espacée) !'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
+                    if (hasFlashcard) {
+                      _showFlashcardPreviewModal(context, q);
+                    } else {
+                      final card = await FlashcardFsrsService.instance.createFromQuestion(q);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: const Color(0xFF7C3AED),
+                            content: const Text('🧠 Flashcard créée & ajoutée à votre deck FSRS !'),
+                            action: SnackBarAction(
+                              label: 'Ouvrir ➔',
+                              textColor: Colors.amberAccent,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => FlashcardsFsrsScreen(
+                                      initialCardId: card.id,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            duration: const Duration(seconds: 4),
+                          ),
+                        );
+                      }
                     }
                   },
                 ),
@@ -696,6 +715,167 @@ class QcmStudyScreen extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  void _showFlashcardPreviewModal(BuildContext context, QcmQuestion q) {
+    final card = FlashcardFsrsService.instance.getCardForQuestion(q.id);
+    if (card == null) return;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.85,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0F172A) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.psychology_alt_rounded, color: Color(0xFF7C3AED), size: 24),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Flashcard FSRS du QCM',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        '${card.moduleId} • ${card.courseName}',
+                        style: TextStyle(fontSize: 11.5, color: Colors.grey.shade500),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ],
+            ),
+            const Divider(height: 20),
+            Expanded(
+              child: ListView(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'RECTO (QUESTION) :',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 6),
+                        MarkdownBody(data: card.front),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withValues(alpha: isDark ? 0.15 : 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'VERSO (RÉPONSE VALIDÉE & EXPLICATION) :',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF047857)),
+                        ),
+                        const SizedBox(height: 6),
+                        MarkdownBody(data: card.back),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7C3AED),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.school_rounded, size: 18),
+                    label: const Text('Ouvrir dans le Hub Flashcards', style: TextStyle(fontWeight: FontWeight.bold)),
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => FlashcardsFsrsScreen(initialCardId: card.id),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filledTonal(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.red.withValues(alpha: 0.12),
+                    foregroundColor: Colors.red,
+                  ),
+                  icon: const Icon(Icons.delete_outline_rounded),
+                  tooltip: 'Supprimer de mes Flashcards',
+                  onPressed: () async {
+                    await FlashcardFsrsService.instance.removeByQuestionId(q.id);
+                    if (ctx.mounted) Navigator.pop(ctx);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Flashcard retirée de votre deck.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
