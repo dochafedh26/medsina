@@ -37,3 +37,5 @@ jobs:
         run: |
           echo "🚀 Synchronisation des témoignages vers la table Supabase temoignages_conseils..."
           python scripts/automation/seed_temoignages_supabase.py
+          echo "🚀 Mise à jour du build number OTA dans app_releases..."
+          python scripts/automation/patch_release_build_number.py

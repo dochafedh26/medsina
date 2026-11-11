@@ -54,6 +54,32 @@ class OtaUpdateService {
     return 'unknown';
   }
 
+  /// Normalizes build number to handle Flutter split APK offsets (1000 for armv7, 2000 for arm64, 3000 for x86_64)
+  static int normalizeBuildNumber(int build) {
+    if (build >= 1000) {
+      return build % 1000;
+    }
+    return build;
+  }
+
+  /// Compares semantic versions (e.g. "1.0.77" > "1.0.76")
+  static bool isVersionNewer(String remoteVer, String currentVer) {
+    try {
+      final cleanRemote = remoteVer.replaceAll(RegExp(r'^[^\d]*'), '');
+      final cleanCurrent = currentVer.replaceAll(RegExp(r'^[^\d]*'), '');
+      final rParts = cleanRemote.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+      final cParts = cleanCurrent.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+      final len = rParts.length > cParts.length ? rParts.length : cParts.length;
+      for (int i = 0; i < len; i++) {
+        final r = i < rParts.length ? rParts[i] : 0;
+        final c = i < cParts.length ? cParts[i] : 0;
+        if (r > c) return true;
+        if (r < c) return false;
+      }
+    } catch (_) {}
+    return false;
+  }
+
   /// Checks if an OTA update is available for the current app
   static Future<UpdateCheckResult> checkForUpdates({
     bool ignoreDismissed = false,
@@ -76,13 +102,20 @@ class OtaUpdateService {
 
       final release = AppReleaseModel.fromJson(releaseData);
 
-      // Check if remote build is strictly newer than current app build
-      if (release.buildNumber > currentBuild) {
+      final normRemote = normalizeBuildNumber(release.buildNumber);
+      final normCurrent = normalizeBuildNumber(currentBuild);
+
+      final isNewerVer = isVersionNewer(release.versionName, currentVersion);
+      final isNewerBuild = release.buildNumber > currentBuild || normRemote > normCurrent;
+
+      // Check if remote version or build is strictly newer than current app
+      if (isNewerVer || isNewerBuild) {
         // If not ignoring dismissed builds, check if user chose to skip this optional build
         if (!ignoreDismissed && !release.isMandatory) {
           final prefs = await SharedPreferences.getInstance();
           final dismissedBuild = prefs.getInt(_keyLastDismissedBuild) ?? 0;
-          if (dismissedBuild >= release.buildNumber) {
+          if (dismissedBuild >= release.buildNumber ||
+              (dismissedBuild >= 1000 && normalizeBuildNumber(dismissedBuild) >= normRemote)) {
             return UpdateCheckResult(
               status: UpdateCheckStatus.upToDate,
               latestRelease: release,
@@ -92,7 +125,9 @@ class OtaUpdateService {
           }
         }
 
-        final isMandatory = release.isMandatory || currentBuild < release.minSupportedBuild;
+        final isMandatory = release.isMandatory ||
+            currentBuild < release.minSupportedBuild ||
+            normCurrent < normalizeBuildNumber(release.minSupportedBuild);
 
         return UpdateCheckResult(
           status: isMandatory

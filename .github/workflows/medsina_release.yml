@@ -504,15 +504,18 @@ jobs:
           notes = '''${{ inputs.release_notes || 'Mise à jour officielle de Medsina.' }}'''
           is_mandatory = '${{ inputs.is_mandatory }}'.lower() == 'true'
 
+          # For Android, register with 2000 + build so ARM64 split ABI devices (versionCode 2000+) detect updates cleanly
+          android_build = 2000 + build if build < 1000 else build
+
           records = [
               {
                   'platform': 'android',
                   'version_name': version,
-                  'build_number': build,
+                  'build_number': android_build,
                   'release_notes': notes,
                   'download_url': apk_url,
                   'is_mandatory': is_mandatory,
-                  'min_supported_build': build if is_mandatory else 1,
+                  'min_supported_build': android_build if is_mandatory else 1,
                   'is_active': True
               },
               {
