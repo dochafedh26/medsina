@@ -1266,5 +1266,21 @@
     ],
     "created_at": "2026-11-11T06:54:56.359463+00:00",
     "updated_at": "2026-11-11T06:54:56.359476+00:00"
+  },
+  {
+    "id": "lab_facteurs_coagulation_v_viii_willebrand",
+    "name": "Facteurs de la coagulation (Facteur V, Facteur VIII, Facteur Willebrand)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "Facteur V: 70 - 120% | Facteur VIII: 50 - 150% | Facteur Willebrand (Ag et Activité): 50 - 150%",
+    "unit": "% (ou UI/dL)",
+    "high_interpretation": "Facteur VIII et Willebrand élevés : Réaction inflammatoire aiguë (protéines de l'phase aiguë), stress, grossesse, exercice physique, état pro-thrombotique (risque thrombo-veineux accru pour le FVIII > 150%). Pas de seuil d'urgence vitale directe par excès, mais marqueur de risque thrombotique.",
+    "low_interpretation": "Facteur V bas (< 30%) : Insuffisance hépatocellulaire sévère ou CIVD (pronostic vital engagé, risque hémorragique majeur). Facteur VIII bas (< 40%) : Hémophilie A (transmission liée au X, sévérité selon le taux : <1% sévère, 1-5% modéré, 5-40% mineur). Facteur Willebrand bas (< 50%) : Maladie de Willebrand (la plus fréquente des maladies hémorragiques constitutionnelles, types 1, 2 ou 3). Conduite à tenir immédiate en cas de saignement : transfusion de PFC, cryoprécipités, concentrates de FVIII ou facteur Willebrand, ou Desmopressine (Minirin) selon l'étiologie.",
+    "clinical_notes": [
+      "Le Facteur V est exclusivement synthétisé par le foie : c'est le meilleur marqueur de synthèse hépatique en réanimation (il n'est pas dépendant de la vitamine K, contrairement au FII, FVII, FIX et FX).",
+      "Le Facteur VIII est un réactant de phase aiguë synthétisé par les cellules endothéliales et complexé au Facteur Willebrand qui le protège de la protéolyse ; une fausse baisse du FVIII peut masquer une maladie de Willebrand de type 2N ou être liée à un prélèvement traumatique.",
+      "Piège pré-analytique majeur : Le prélèvement pour l'hémostase doit être réalisé sur tube citrate de sodium 0,109 M (3,2%), rempli exactement jusqu'au trait (ratio 9 volumes de sang pour 1 volume d'anticoagulant), acheminé immédiatement au laboratoire à température ambiante pour éviter l'activation ou la dégradation in vitro."
+    ],
+    "created_at": "2026-11-11T15:31:05.544657+00:00",
+    "updated_at": "2026-11-11T15:31:05.544670+00:00"
   }
 ]
