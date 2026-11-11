@@ -87,12 +87,12 @@ export async function getCurrentAdminSession(): Promise<{ user: AdminAuthProfile
 
     return {
       user: {
-        id: profile.id,
-        email: profile.email || user.email || '',
-        fullName: profile.full_name || 'Dr. Hafedh',
-        medicalRole: profile.medical_role || 'Administrateur Medsina',
+        id: profile?.id || user.id,
+        email: profile?.email || user.email || '',
+        fullName: profile?.full_name || 'Dr. Hafedh',
+        medicalRole: profile?.medical_role || 'Administrateur Medsina',
         isAdmin: true,
-        avatarUrl: profile.avatar_url,
+        avatarUrl: profile?.avatar_url,
       },
       session
     };
@@ -1500,3 +1500,360 @@ export async function createNationalExamInSupabase(exam: NationalExamModel): Pro
     return false;
   }
 }
+
+// =========================================================================
+// --- BLIDA RESOURCE SCANNER & ADMIN VALIDATION QUEUE (TELEGRAM & DRIVE) ---
+// =========================================================================
+
+export interface DiscoveredBlidaResource {
+  id: string;
+  title: string;
+  resource_type?: string; // 'pdf_course' | 'qcm_exam' | 'drive_folder' | 'telegram_post' | 'mindmap' | 'other'
+  source_type?: string;   // 'telegram' | 'gdrive' | 'google_drive'
+  source_origin?: string;
+  source_channel_or_folder?: string;
+  source_url?: string;
+  url?: string;
+  gdrive_file_id?: string | null;
+  suggested_module?: string;
+  suggested_module_id?: string | null;
+  suggested_course_id?: string | null;
+  study_year?: string | null;
+  ai_summary?: string | null;
+  description?: string | null;
+  file_size_bytes?: number | null;
+  status: 'pending' | 'approved' | 'rejected';
+  discovered_at: string;
+  reviewed_at?: string | null;
+  external_id_hash?: string;
+}
+
+const BLIDA_QUEUE_SETTING_KEY = 'discovered_blida_resources_queue';
+const BLIDA_SOURCES_SETTING_KEY = 'blida_scanner_sources';
+
+export const DEFAULT_BLIDA_SCANNER_SOURCES = JSON.stringify({
+  telegram_channels: [
+    "fmb_blida",
+    "medecine_blida",
+    "residanat_blida",
+    "preprsdblida",
+    "medsina_dz",
+    "qcm_medecine_dz",
+    "Samedispedigogique2027DrKare",
+    "mbset_blida"
+  ],
+  google_drive_folders: [
+    "https://drive.google.com/drive/folders/1UjaxyXp8pU56jlz-F7K-MGECj2pheF21",
+    "https://drive.google.com/drive/folders/1JYDVaU42brJ3TQPRGbrO90L5a_FSK6Q4",
+    "https://drive.google.com/drive/folders/1Bka0eECqgf1A0Iyu9VSsfPgBAzDcPa_w",
+    "https://drive.google.com/drive/folders/1P_qrApYN84T6jlu1qwxPzHvlWVOnGqVd",
+    "https://drive.google.com/drive/folders/1q6cZ52JWDRrIOhCmL0TclGBTv_u0aaIq",
+    "https://drive.google.com/drive/folders/1-4j0fd19TOa4jyAFeIIzbh6zIu085O5q",
+    "https://drive.google.com/drive/folders/1aAngO0Y0gX-LfMR-JQqxqauVHCPZUVJ5",
+    "https://drive.google.com/drive/folders/1jdJczV8lu7Wvu_2k6KLfIltVxN_T6P3f",
+    "https://drive.google.com/drive/folders/1888ecPxZRrxbhzjdb3hSFGv23yzvExjz",
+    "https://drive.google.com/drive/folders/1VyQT2OAOxxlnEc2uWRqJ9IJQAhx3PkQo",
+    "https://drive.google.com/drive/folders/1j0G8NAA4cCPYqSAY3y-icIHWN88UYsnx",
+    "https://drive.google.com/drive/folders/1Bi6qBMDqz593h06PePPaT-GtOov6lKZZ",
+    "https://drive.google.com/drive/folders/1-NgPKBA4PNC8SVNotO9-qvK1yVoqhhvw",
+    "https://drive.google.com/drive/folders/1Xnlf_q1v-VhVB7Sl5197pXZX-TlzuAAV"
+  ],
+  keywords: [
+    "Blida",
+    "FMB",
+    "QCM",
+    "EMD",
+    "Rattrapage",
+    "Résidanat",
+    "Corrigé",
+    "CHU Frantz Fanon",
+    "Dr. Mahdaoui",
+    "Dr.MAHDAOUI",
+    "Mahdaoui",
+    "Zeemed",
+    "Dr KARE",
+    "SP2026",
+    "SP2027",
+    "Samedis Pédagogiques",
+    "MBset"
+  ]
+}, null, 2);
+
+/**
+ * Get setting value from admin_system_settings
+ */
+export async function getAdminSetting(key: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('admin_system_settings')
+      .select('setting_value')
+      .eq('setting_key', key)
+      .maybeSingle();
+    if (error || !data) return null;
+    return data.setting_value || null;
+  } catch (err) {
+    console.warn(`Error getting admin setting ${key}:`, err);
+    return null;
+  }
+}
+
+/**
+ * Save setting value into admin_system_settings
+ */
+export async function saveAdminSetting(key: string, value: string, description?: string): Promise<boolean> {
+  try {
+    const payload: any = {
+      setting_key: key,
+      setting_value: value,
+      updated_at: new Date().toISOString(),
+    };
+    if (description) payload.description = description;
+
+    const { error } = await supabaseAdmin
+      .from('admin_system_settings')
+      .upsert(payload);
+    return !error;
+  } catch (err) {
+    console.error(`Error saving admin setting ${key}:`, err);
+    return false;
+  }
+}
+
+/**
+ * Retrieve JSON configuration of watched Telegram channels & Google Drive folders
+ */
+export async function getBlidaScannerSources(): Promise<string> {
+  const val = await getAdminSetting(BLIDA_SOURCES_SETTING_KEY);
+  if (val && val.trim().length > 0) {
+    return val.trim();
+  }
+  return DEFAULT_BLIDA_SCANNER_SOURCES;
+}
+
+/**
+ * Save JSON configuration of watched Telegram channels & Google Drive folders
+ */
+export async function saveBlidaScannerSources(jsonConfig: string): Promise<boolean> {
+  return await saveAdminSetting(
+    BLIDA_SOURCES_SETTING_KEY,
+    jsonConfig.trim(),
+    'Sources Telegram et Google Drive surveillées par le scanner Médecine Blida'
+  );
+}
+
+/**
+ * Helper to normalize raw resource item properties
+ */
+function normalizeBlidaResource(item: any): DiscoveredBlidaResource {
+  const id = (item.id || item.external_id_hash || `res_${Math.random().toString(36).substring(2, 9)}`).toString();
+  const title = (item.title || 'Ressource sans titre').toString();
+  const source_type = (item.source_type || (item.url?.includes('drive.google') ? 'gdrive' : 'telegram')).toString();
+  const source_channel_or_folder = (item.source_channel_or_folder || item.source_origin || '').toString();
+  const url = (item.url || item.source_url || '').toString();
+  const resource_type = (item.resource_type || (url.includes('drive.google') ? 'gdrive_folder' : 'telegram_post')).toString();
+  const suggested_module = (item.suggested_module || item.suggested_course_id || 'Médecine Blida').toString();
+  const ai_summary = (item.ai_summary || item.description || '').toString();
+  const status = (item.status === 'approved' || item.status === 'rejected' ? item.status : 'pending') as 'pending' | 'approved' | 'rejected';
+
+  return {
+    id,
+    title,
+    resource_type,
+    source_type,
+    source_origin: item.source_origin || source_channel_or_folder,
+    source_channel_or_folder,
+    source_url: item.source_url || url,
+    url,
+    gdrive_file_id: item.gdrive_file_id || null,
+    suggested_module,
+    suggested_module_id: item.suggested_module_id || null,
+    suggested_course_id: item.suggested_course_id || null,
+    study_year: item.study_year || null,
+    ai_summary,
+    description: item.description || ai_summary,
+    file_size_bytes: item.file_size_bytes || null,
+    status,
+    discovered_at: item.discovered_at || new Date().toISOString(),
+    reviewed_at: item.reviewed_at || null,
+    external_id_hash: item.external_id_hash || undefined,
+  };
+}
+
+/**
+ * Fetch discovered Blida resources filtered by status ('pending', 'approved', 'rejected', or 'all')
+ */
+export async function fetchDiscoveredBlidaResources(
+  status: 'pending' | 'approved' | 'rejected' | 'all' = 'pending'
+): Promise<DiscoveredBlidaResource[]> {
+  // 1. Try dedicated table `discovered_blida_resources`
+  try {
+    let query = supabaseAdmin.from('discovered_blida_resources').select('*');
+    if (status !== 'all') {
+      query = query.eq('status', status);
+    }
+    const { data, error } = await query.order('discovered_at', { ascending: false }).limit(250);
+    if (!error && data && data.length > 0) {
+      return data.map(normalizeBlidaResource);
+    }
+  } catch (err) {
+    console.warn('Note: discovered_blida_resources table query fallback to admin_system_settings:', err);
+  }
+
+  // 2. Fallback to `admin_system_settings` ('discovered_blida_resources_queue')
+  try {
+    const rawJson = await getAdminSetting(BLIDA_QUEUE_SETTING_KEY);
+    if (rawJson && rawJson.trim().length > 0) {
+      const decoded = JSON.parse(rawJson);
+      if (Array.isArray(decoded)) {
+        const filtered = decoded
+          .filter((item: any) => {
+            if (status === 'all') return true;
+            return (item.status || 'pending') === status;
+          })
+          .map(normalizeBlidaResource);
+        return filtered;
+      }
+    }
+  } catch (err) {
+    console.warn('Error reading discovered_blida_resources_queue setting:', err);
+  }
+
+  return [];
+}
+
+/**
+ * Approve or reject a single discovered resource
+ */
+export async function updateDiscoveredBlidaResourceStatus(
+  idOrHash: string,
+  newStatus: 'approved' | 'rejected'
+): Promise<boolean> {
+  const nowIso = new Date().toISOString();
+  let updatedTable = false;
+  let updatedSetting = false;
+
+  // 1. Attempt update on dedicated table
+  try {
+    const { error } = await supabaseAdmin
+      .from('discovered_blida_resources')
+      .update({
+        status: newStatus,
+        reviewed_at: nowIso,
+      })
+      .or(`id.eq.${idOrHash},external_id_hash.eq.${idOrHash}`);
+    if (!error) updatedTable = true;
+  } catch (err) {
+    console.warn('Note: update discovered_blida_resources table error:', err);
+  }
+
+  // 2. Also update JSON queue in admin_system_settings to stay synced
+  try {
+    const rawJson = await getAdminSetting(BLIDA_QUEUE_SETTING_KEY);
+    if (rawJson && rawJson.trim().length > 0) {
+      const decoded = JSON.parse(rawJson);
+      if (Array.isArray(decoded)) {
+        let changed = false;
+        const updatedList = decoded.map((item: any) => {
+          if (item && typeof item === 'object') {
+            const itemId = (item.id || '').toString();
+            const itemHash = (item.external_id_hash || '').toString();
+            if (itemId === idOrHash || itemHash === idOrHash) {
+              changed = true;
+              return {
+                ...item,
+                status: newStatus,
+                reviewed_at: nowIso,
+              };
+            }
+          }
+          return item;
+        });
+
+        if (changed) {
+          updatedSetting = await saveAdminSetting(
+            BLIDA_QUEUE_SETTING_KEY,
+            JSON.stringify(updatedList),
+            'File d\'attente de validation Admin des ressources Blida (Telegram & Google Drive)'
+          );
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Error updating blida queue setting:', err);
+  }
+
+  return updatedTable || updatedSetting;
+}
+
+/**
+ * Batch approve or reject discovered resources
+ */
+export async function updateDiscoveredBlidaResourcesBatch(
+  idsOrHashes: string[],
+  newStatus: 'approved' | 'rejected'
+): Promise<number> {
+  if (!idsOrHashes.length) return 0;
+  const idSet = new Set(idsOrHashes);
+  const nowIso = new Date().toISOString();
+  let tableUpdatedCount = 0;
+
+  // 1. Attempt batch update on dedicated table in chunks of 50
+  try {
+    for (let i = 0; i < idsOrHashes.length; i += 50) {
+      const chunk = idsOrHashes.slice(i, i + 50);
+      const { error } = await supabaseAdmin
+        .from('discovered_blida_resources')
+        .update({
+          status: newStatus,
+          reviewed_at: nowIso,
+        })
+        .in('id', chunk);
+      if (!error) {
+        tableUpdatedCount += chunk.length;
+      }
+    }
+  } catch (err) {
+    console.warn('Error batch updating discovered_blida_resources table:', err);
+  }
+
+  // 2. Also update the JSON queue in admin_system_settings
+  let settingAffected = 0;
+  try {
+    const rawJson = await getAdminSetting(BLIDA_QUEUE_SETTING_KEY);
+    if (rawJson && rawJson.trim().length > 0) {
+      const decoded = JSON.parse(rawJson);
+      if (Array.isArray(decoded)) {
+        let changed = false;
+        const updatedList = decoded.map((item: any) => {
+          if (item && typeof item === 'object') {
+            const itemId = (item.id || '').toString();
+            const itemHash = (item.external_id_hash || '').toString();
+            if (idSet.has(itemId) || idSet.has(itemHash)) {
+              changed = true;
+              settingAffected++;
+              return {
+                ...item,
+                status: newStatus,
+                reviewed_at: nowIso,
+              };
+            }
+          }
+          return item;
+        });
+
+        if (changed) {
+          await saveAdminSetting(
+            BLIDA_QUEUE_SETTING_KEY,
+            JSON.stringify(updatedList),
+            'File d\'attente de validation Admin des ressources Blida (Telegram & Google Drive)'
+          );
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Error updating batch discovered_blida_resources_queue setting:', err);
+  }
+
+  return tableUpdatedCount > 0 ? tableUpdatedCount : (settingAffected > 0 ? settingAffected : idsOrHashes.length);
+}
+
