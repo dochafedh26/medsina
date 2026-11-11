@@ -61,7 +61,8 @@ import {
   updateDiscoveredBlidaResourcesBatch,
   getBlidaScannerSources,
   saveBlidaScannerSources,
-  DEFAULT_BLIDA_SCANNER_SOURCES
+  DEFAULT_BLIDA_SCANNER_SOURCES,
+  fetchBlidaQueueCounts
 } from '../../services/supabase';
 
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
@@ -124,6 +125,12 @@ export const GitHubAgentsView: React.FC = () => {
   const [selectedBlidaResourceIds, setSelectedBlidaResourceIds] = useState<string[]>([]);
   const [isProcessingBatchBlida, setIsProcessingBatchBlida] = useState(false);
   const [isScanningBlida, setIsScanningBlida] = useState(false);
+  const [queueCounts, setQueueCounts] = useState<{ pending: number; approved: number; rejected: number; all: number }>({
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+    all: 0,
+  });
 
   // Sources config modal
   const [isSourcesModalOpen, setIsSourcesModalOpen] = useState(false);
@@ -186,13 +193,17 @@ export const GitHubAgentsView: React.FC = () => {
     }
   };
 
-  // Load Blida Validation Queue
+  // Load Blida Validation Queue & Counts
   const loadBlidaQueue = useCallback(async (statusOverride?: 'pending' | 'approved' | 'rejected' | 'all') => {
     const status = statusOverride || blidaQueueFilterStatus;
     setIsLoadingBlidaQueue(true);
     try {
-      const items = await fetchDiscoveredBlidaResources(status);
+      const [items, counts] = await Promise.all([
+        fetchDiscoveredBlidaResources(status),
+        fetchBlidaQueueCounts(),
+      ]);
       setDiscoveredResources(items);
+      setQueueCounts(counts);
       setSelectedBlidaResourceIds([]);
     } catch (err: any) {
       console.error('Error loading blida queue:', err);
@@ -327,12 +338,26 @@ export const GitHubAgentsView: React.FC = () => {
     const actionLabel = newStatus === 'approved' ? 'Approbation' : 'Rejet';
     addLog(`${actionLabel} de la ressource "${resource.title}"...`, 'info');
 
-    const success = await updateDiscoveredBlidaResourceStatus(resource.id, newStatus);
-    if (success) {
-      addLog(`✅ Ressource "${resource.title}" marquée comme ${newStatus === 'approved' ? 'Approuvée' : 'Rejetée'}.`, 'success');
+    // 1. Optimistic UI update: immediately remove from current list if filtering by specific status
+    setDiscoveredResources((prev) => {
+      if (blidaQueueFilterStatus !== 'all' && blidaQueueFilterStatus !== newStatus) {
+        return prev.filter((r) => r.id !== resource.id);
+      }
+      return prev.map((r) => (r.id === resource.id ? { ...r, status: newStatus } : r));
+    });
+
+    try {
+      const success = await updateDiscoveredBlidaResourceStatus(resource.id, newStatus);
+      if (success) {
+        addLog(`✅ Ressource "${resource.title}" marquée comme ${newStatus === 'approved' ? 'Approuvée' : 'Rejetée'}.`, 'success');
+        fetchBlidaQueueCounts().then(setQueueCounts);
+      } else {
+        addLog(`⚠️ Échec de mise à jour pour "${resource.title}". Rechargement...`, 'warn');
+        loadBlidaQueue();
+      }
+    } catch (err: any) {
+      addLog(`❌ Erreur mise à jour : ${err?.message || err}`, 'error');
       loadBlidaQueue();
-    } else {
-      addLog(`⚠️ Échec de mise à jour pour "${resource.title}".`, 'warn');
     }
   };
 
@@ -342,12 +367,23 @@ export const GitHubAgentsView: React.FC = () => {
     const count = selectedBlidaResourceIds.length;
     addLog(`Traitement par lot de ${count} ressource(s) -> ${newStatus}...`, 'info');
 
+    const selectedSet = new Set(selectedBlidaResourceIds);
+    setDiscoveredResources((prev) => {
+      if (blidaQueueFilterStatus !== 'all' && blidaQueueFilterStatus !== newStatus) {
+        return prev.filter((r) => !selectedSet.has(r.id));
+      }
+      return prev.map((r) => (selectedSet.has(r.id) ? { ...r, status: newStatus } : r));
+    });
+    setSelectedBlidaResourceIds([]);
+
     try {
-      const affected = await updateDiscoveredBlidaResourcesBatch(selectedBlidaResourceIds, newStatus);
+      const affected = await updateDiscoveredBlidaResourcesBatch(Array.from(selectedSet), newStatus);
       addLog(`✅ ${affected} ressource(s) validée(s) comme ${newStatus === 'approved' ? 'Approuvée(s)' : 'Rejetée(s)'} sur Supabase Cloud !`, 'success');
+      fetchBlidaQueueCounts().then(setQueueCounts);
       await loadBlidaQueue();
     } catch (err: any) {
       addLog(`❌ Erreur lot Blida : ${err?.message || err}`, 'error');
+      await loadBlidaQueue();
     } finally {
       setIsProcessingBatchBlida(false);
     }
@@ -748,10 +784,10 @@ export const GitHubAgentsView: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
               <div className="flex flex-wrap items-center gap-1.5">
                 {[
-                  { key: 'pending' as const, label: 'En attente ⏳', color: 'border-amber-400 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' },
-                  { key: 'approved' as const, label: 'Approuvés ✅', color: 'border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' },
-                  { key: 'rejected' as const, label: 'Rejetés ❌', color: 'border-rose-400 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300' },
-                  { key: 'all' as const, label: 'Tous', color: 'border-sky-400 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300' },
+                  { key: 'pending' as const, label: `En attente ⏳ (${queueCounts.pending})`, color: 'border-amber-400 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' },
+                  { key: 'approved' as const, label: `Approuvés ✅ (${queueCounts.approved})`, color: 'border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' },
+                  { key: 'rejected' as const, label: `Rejetés ❌ (${queueCounts.rejected})`, color: 'border-rose-400 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300' },
+                  { key: 'all' as const, label: `Tous (${queueCounts.all})`, color: 'border-sky-400 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300' },
                 ].map((f) => (
                   <button
                     key={f.key}

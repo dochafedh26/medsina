@@ -1740,7 +1740,7 @@ export async function updateDiscoveredBlidaResourceStatus(
         status: newStatus,
         reviewed_at: nowIso,
       })
-      .or(`id.eq.${idOrHash},external_id_hash.eq.${idOrHash}`);
+      .eq('id', idOrHash);
     if (!error) updatedTable = true;
   } catch (err) {
     console.warn('Note: update discovered_blida_resources table error:', err);
@@ -1783,6 +1783,54 @@ export async function updateDiscoveredBlidaResourceStatus(
   }
 
   return updatedTable || updatedSetting;
+}
+
+/**
+ * Fetch total counts for Blida queue (pending, approved, rejected, all)
+ */
+export async function fetchBlidaQueueCounts(): Promise<{ pending: number; approved: number; rejected: number; all: number }> {
+  try {
+    const [allRes, pendingRes, approvedRes, rejectedRes] = await Promise.all([
+      supabaseAdmin.from('discovered_blida_resources').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('discovered_blida_resources').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabaseAdmin.from('discovered_blida_resources').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
+      supabaseAdmin.from('discovered_blida_resources').select('*', { count: 'exact', head: true }).eq('status', 'rejected'),
+    ]);
+
+    const all = allRes.count ?? 0;
+    const pending = pendingRes.count ?? 0;
+    const approved = approvedRes.count ?? 0;
+    const rejected = rejectedRes.count ?? 0;
+
+    if (all > 0) {
+      return { pending, approved, rejected, all };
+    }
+  } catch (err) {
+    console.warn('Error fetching blida table counts, fallback to queue setting:', err);
+  }
+
+  // Fallback to admin_system_settings
+  try {
+    const rawJson = await getAdminSetting(BLIDA_QUEUE_SETTING_KEY);
+    if (rawJson) {
+      const decoded = JSON.parse(rawJson);
+      if (Array.isArray(decoded)) {
+        let pending = 0;
+        let approved = 0;
+        let rejected = 0;
+        decoded.forEach((item: any) => {
+          if (item?.status === 'approved') approved++;
+          else if (item?.status === 'rejected') rejected++;
+          else pending++;
+        });
+        return { pending, approved, rejected, all: decoded.length };
+      }
+    }
+  } catch (err) {
+    console.warn('Error parsing queue setting counts:', err);
+  }
+
+  return { pending: 0, approved: 0, rejected: 0, all: 0 };
 }
 
 /**
