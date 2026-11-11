@@ -919,16 +919,15 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation initiale (Airway, Breathing, Circulation), score de Glasgow, recherche de signes de gravité (coma, détresse respiratoire, collapsus, troubles du rythme).",
-      "Étape 2 : Bilan biologique d'urgence au déchoquage : GDS, ionogramme sanguin, urée, créatinine, glycémie capillaire, troponine, bilan hépatique, TP/TCA, et paracétamolémie / salicylémie si délai > 4h.",
-      "Étape 3 : Antidotes de 1ère intention : Naloxone (0,4 mg IV si coma/bradypnée aux opiacés, titration), Flumazénil CONTRE-INDIQUÉ si poly-intoxication (risque de convulsion fatale), Charbon activé (50g per os si ingestion < 1h et patient conscient/protégé).",
-      "Étape 4 : Mesures symptomatiques : Remplissage vasculaire (NaCl 0.9%) si hypotension, Alcalinisation (Bicarbonate de sodium 1.4%) si élargissement des QRS > 120 ms (intoxication aux tricycliques), surveillance scope continu.",
-      "Étape 5 : Critères d'appel réanimation et transfert : Glasgow < 8, instabilité hémodynamique réfractaire, acidose sévère (pH < 7.20), convulsions répétés ou état de mal épileptique.",
-      "Étape 6 : Piège médico-légal et réགe d'or : Ne jamais faire vomir un patient intoxiqué (risque de pneumopathie d'inhalation caustique/chimique) et garder systématiquement les emballages de médicaments."
+      "Étape 1 : Évaluation sécuritaire et vitale (ABCDE), Glasgow, recherche de signes de choc, détresse respiratoire ou troubles du rythme (ECG immédiat).",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : Glycémie capillaire, Gaz du sang (GDS), Ionogramme sanguin, Urée, Créatinine, Bilan hépatique et Taux de Prothrombine (TP).",
+      "Étape 3 : Antidotes de première intention si toxique identifié : Naloxone (0,4 mg IV) si coma/hypoventilation aux opiacés ; Flumazénil CONTRE-INDIQUÉ si poly-intox ou épilepsie ; Charbon activé 50g per os si ingestion < 1h et patient conscient/protégé.",
+      "Étape 4 : Mesures de réanimation et surveillance armée : Monitorage continu, pose d'une VVP de bon calibre, sondage urinaire si besoin, transfert immédiat en réanimation si instabilité hémodynamique, troubles de la conscience (Glasgow < 8) ou convulsions.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne jamais provoquer de vomissements (risque d'inhalation) et éviter le flumazénil en aveugle dans les poly-intoxications (risque de levée de protection anti-comitiale et arrêt cardiaque réfractaire)."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Toxicologie / MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / Centre Anti-Poison d'Algérie (CAP Algérie)",
     "is_active": true,
-    "created_at": "2026-11-09T06:46:44.256585+00:00",
-    "updated_at": "2026-11-09T06:46:44.256595+00:00"
+    "created_at": "2026-11-11T00:04:57.441058+00:00",
+    "updated_at": "2026-11-11T00:04:57.441070+00:00"
   }
 ]
