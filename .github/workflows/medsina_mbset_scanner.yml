@@ -1,0 +1,79 @@
+name: ⚡ Medsina - Scanner API & Simulations MBset (Concours Résidanat)
+
+on:
+  schedule:
+    # Exécution automatique toutes les 12 heures (08h30 et 20h30 UTC)
+    - cron: '30 8,20 * * *'
+  workflow_dispatch:
+    inputs:
+      limit_categories:
+        description: 'Nombre de modules à scanner (par défaut 25)'
+        required: false
+        default: '25'
+        type: string
+      limit_items:
+        description: 'Nombre maximum de nouvelles ressources à injecter (par défaut 50)'
+        required: false
+        default: '50'
+        type: string
+
+concurrency:
+  group: medsina-mbset-scanner-automation
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  scan-mbset-resources:
+    name: ⚡ Scan API, QCMs & Simulations MBset
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Récupérer le code Medsina
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurer l'environnement Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'scripts/automation/requirements.txt'
+
+      - name: 📦 Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/automation/requirements.txt
+
+      - name: ⚡ Exécuter le Scanner MBset (File d'attente Admin Medsina)
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MBSET_EMAIL: ${{ secrets.MBSET_EMAIL }}
+          MBSET_PASSWORD: ${{ secrets.MBSET_PASSWORD }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          LIMIT_CAT="${{ inputs.limit_categories }}"
+          LIMIT_ITEMS="${{ inputs.limit_items }}"
+          [ -z "$LIMIT_CAT" ] && LIMIT_CAT="25"
+          [ -z "$LIMIT_ITEMS" ] && LIMIT_ITEMS="50"
+          
+          CMD="python scripts/automation/mbset_resource_scanner.py --limit-categories $LIMIT_CAT --limit-items $LIMIT_ITEMS"
+          echo "🚀 Exécution : $CMD"
+          eval $CMD
+
+      - name: 💾 Synchroniser le cache JSON des découvertes MBset
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -f assets/data/discovered_blida_resources.json ]; then
+            git add assets/data/discovered_blida_resources.json
+          fi
+          if git diff --staged --quiet; then
+            echo "Aucune nouvelle ressource JSON MBset à valider."
+          else
+            git commit -m "chore(automation): sync discovered mbset qcm and simulation resources [skip ci]"
+            git pull --rebase origin main || true
+            git push origin main
+          fi

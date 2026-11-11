@@ -338,7 +338,37 @@ export const GITHUB_AGENTS_CATALOG: GitHubAgentDef[] = [
     ],
   },
 
-  // --- 4. VEILLE, RESSOURCES & DONNÉES (2 agents) ---
+  // --- 4. VEILLE, RESSOURCES & DONNÉES (3 agents) ---
+  {
+    id: 'mbset_scanner',
+    title: 'Scanner API & Simulations MBset (Concours Résidanat)',
+    shortTitle: 'Scanner MBset API',
+    category: 'resources',
+    categoryLabel: 'Veille & Ressources',
+    workflowFile: 'medsina_mbset_scanner.yml',
+    script: 'scripts/automation/mbset_resource_scanner.py',
+    description: 'Surveillance continue de l\'API MBset (api.mbset.com, app.mbset.com, banques de QCMs, simulations de concours résidanat et fiches de principes) avec validation admin.',
+    defaultCadence: '2 fois par jour (08h30 & 20h30 UTC)',
+    badgeColor: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900',
+    accentColor: '#6366f1',
+    iconName: 'Zap',
+    inputs: [
+      {
+        key: 'limit_categories',
+        label: 'Nombre de modules à scanner (par défaut 25)',
+        placeholder: 'ex: 25',
+        defaultValue: '25',
+        type: 'text',
+      },
+      {
+        key: 'limit_items',
+        label: 'Nombre maximum de nouvelles ressources à injecter',
+        placeholder: 'ex: 50',
+        defaultValue: '50',
+        type: 'text',
+      },
+    ],
+  },
   {
     id: 'blida_scanner',
     title: 'Scanner Telegram & Google Drive (Médecine Blida)',

@@ -125,6 +125,7 @@ export const GitHubAgentsView: React.FC = () => {
   const [selectedBlidaResourceIds, setSelectedBlidaResourceIds] = useState<string[]>([]);
   const [isProcessingBatchBlida, setIsProcessingBatchBlida] = useState(false);
   const [isScanningBlida, setIsScanningBlida] = useState(false);
+  const [isScanningMbset, setIsScanningMbset] = useState(false);
   const [queueCounts, setQueueCounts] = useState<{ pending: number; approved: number; rejected: number; all: number }>({
     pending: 0,
     approved: 0,
@@ -408,6 +409,29 @@ export const GitHubAgentsView: React.FC = () => {
       addLog(`❌ Erreur déclenchement scanner : ${err?.message || err}`, 'error');
     } finally {
       setIsScanningBlida(false);
+    }
+  };
+
+  const handleTriggerMbsetScannerNow = async () => {
+    setIsScanningMbset(true);
+    addLog('⚡ Lancement immédiat du Scanner API & Simulations MBset (Concours Résidanat)...', 'info');
+
+    try {
+      const res = await dispatchGitHubWorkflow('medsina_mbset_scanner.yml', {});
+      if (res.success) {
+        addLog('✅ Robot Scanner MBset déclenché avec succès sur GitHub Actions ! Rafraîchissement prévu dans 15 secondes...', 'success');
+        setTimeout(() => {
+          loadBlidaQueue();
+          fetchBlidaQueueCounts().then(setQueueCounts);
+          handleRefreshRuns();
+        }, 15000);
+      } else {
+        addLog(`⚠️ Scanner MBset : ${res.message}`, 'warn');
+      }
+    } catch (err: any) {
+      addLog(`❌ Erreur déclenchement scanner MBset : ${err?.message || err}`, 'error');
+    } finally {
+      setIsScanningMbset(false);
     }
   };
 
@@ -754,17 +778,37 @@ export const GitHubAgentsView: React.FC = () => {
                 <button
                   onClick={handleTriggerScannerNow}
                   disabled={isScanningBlida}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 rounded-lg transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 rounded-lg transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                  title="Lancer le scanner Telegram et Google Drive (Médecine Blida)"
                 >
                   {isScanningBlida ? (
                     <>
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      <span>Scan en cours...</span>
+                      <span>Scan Telegram...</span>
                     </>
                   ) : (
                     <>
                       <Radio className="w-3.5 h-3.5" />
-                      <span>Scanner Maintenant</span>
+                      <span>Scanner Telegram / Drive</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={handleTriggerMbsetScannerNow}
+                  disabled={isScanningMbset}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 rounded-lg transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                  title="Lancer le scanner d'API MBset (Simulations QCM, polycopiés et principes d'examen)"
+                >
+                  {isScanningMbset ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Scan MBset...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-3.5 h-3.5" />
+                      <span>Scanner MBset ⚡</span>
                     </>
                   )}
                 </button>
@@ -876,24 +920,39 @@ export const GitHubAgentsView: React.FC = () => {
                   : 'Aucune ressource trouvée pour ce filtre.'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
-                Cliquez sur "Scanner Maintenant" pour lancer une inspection automatisée des canaux Telegram et Google Drive.
+                Cliquez sur l'un des robots scanners ci-dessous pour lancer une inspection automatisée des canaux Telegram, dossiers Google Drive ou de l'API MBset.
               </p>
-              <button
-                onClick={handleTriggerScannerNow}
-                disabled={isScanningBlida}
-                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-lg transition-colors cursor-pointer"
-              >
-                <Radio className="w-4 h-4" />
-                <span>Scanner Maintenant</span>
-              </button>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                <button
+                  onClick={handleTriggerScannerNow}
+                  disabled={isScanningBlida}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <Radio className="w-4 h-4" />
+                  <span>Scanner Telegram / Drive</span>
+                </button>
+                <button
+                  onClick={handleTriggerMbsetScannerNow}
+                  disabled={isScanningMbset}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <Zap className="w-4 h-4" />
+                  <span>Scanner MBset ⚡</span>
+                </button>
+              </div>
             </div>
           ) : (
             <div className="space-y-3">
               {discoveredResources.map((item) => {
                 const isSelected = selectedBlidaResourceIds.includes(item.id);
+                const isMbset = (item.source_type || '').includes('mbset') || (item.url || '').includes('mbset') || (item.source_origin || '').toLowerCase().includes('mbset');
                 const isDrive = (item.source_type || '').includes('drive') || (item.url || '').includes('drive.google');
-                const sourceColor = isDrive ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-800' : 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 border-sky-300 dark:border-sky-800';
-                const sourceLabel = isDrive ? 'Google Drive' : 'Telegram';
+                const sourceColor = isMbset
+                  ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 border-indigo-300 dark:border-indigo-800'
+                  : isDrive
+                  ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-800'
+                  : 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 border-sky-300 dark:border-sky-800';
+                const sourceLabel = isMbset ? 'MBset Platform' : isDrive ? 'Google Drive' : 'Telegram';
 
                 let typeLabel = 'Ressource';
                 let typeColor = 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 dark:border-indigo-800';
