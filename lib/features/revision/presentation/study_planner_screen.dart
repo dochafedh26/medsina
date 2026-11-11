@@ -6,9 +6,11 @@ import '../../auth/bloc/auth_bloc.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
+import '../data/course_summary_repository.dart';
 import '../models/module_model.dart';
 import '../services/user_qcm_annotation_service.dart';
 import 'active_study_plan_widget.dart';
+import 'course_mindmap_screen.dart';
 import 'course_pdf_viewer_screen.dart';
 import 'course_summary_screen.dart';
 import 'laureate_study_plans_sheet.dart';
@@ -24,12 +26,16 @@ class StudyPlannerScreen extends StatefulWidget {
 class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
   final UserQcmAnnotationService _annService = UserQcmAnnotationService.instance;
   String _searchQuery = '';
+  CourseContentFilter _contentFilter = CourseContentFilter.all;
   bool _onlyHighYield = false;
   bool _onlyIncomplete = false;
 
   @override
   void initState() {
     super.initState();
+    CourseSummaryRepository.loadAllSummariesAsync().then((_) {
+      if (mounted) setState(() {});
+    });
     _annService.ensureInitialized().then((_) {
       if (mounted) setState(() {});
     });
@@ -162,13 +168,55 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                     runSpacing: 6,
                     children: [
                       FilterChip(
-                        label: const Text('🔥 Cours à Haute Tombabilité (>20 QCM)', style: TextStyle(fontSize: 11.5)),
+                        avatar: const Icon(Icons.apps_rounded, size: 14),
+                        label: const Text('Tous formats', style: TextStyle(fontSize: 11.5)),
+                        selected: _contentFilter == CourseContentFilter.all,
+                        selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
+                        visualDensity: VisualDensity.compact,
+                        onSelected: (_) => setState(() => _contentFilter = CourseContentFilter.all),
+                      ),
+                      FilterChip(
+                        avatar: const Icon(Icons.verified_rounded, size: 14, color: Color(0xFF0D9488)),
+                        label: const Text('✨ Complet 360°', style: TextStyle(fontSize: 11.5)),
+                        selected: _contentFilter == CourseContentFilter.complete,
+                        selectedColor: const Color(0xFF0D9488).withValues(alpha: 0.2),
+                        visualDensity: VisualDensity.compact,
+                        onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.complete : CourseContentFilter.all),
+                      ),
+                      FilterChip(
+                        avatar: const Icon(Icons.picture_as_pdf_rounded, size: 14, color: Color(0xFF64748B)),
+                        label: const Text('📄 PDF Seul', style: TextStyle(fontSize: 11.5)),
+                        selected: _contentFilter == CourseContentFilter.pdfOnly,
+                        selectedColor: const Color(0xFF64748B).withValues(alpha: 0.2),
+                        visualDensity: VisualDensity.compact,
+                        onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.pdfOnly : CourseContentFilter.all),
+                      ),
+                      FilterChip(
+                        avatar: const Icon(Icons.account_tree_rounded, size: 14, color: Color(0xFF8B5CF6)),
+                        label: const Text('🧠 Avec Mind Map', style: TextStyle(fontSize: 11.5)),
+                        selected: _contentFilter == CourseContentFilter.withMindmap,
+                        selectedColor: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                        visualDensity: VisualDensity.compact,
+                        onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.withMindmap : CourseContentFilter.all),
+                      ),
+                      FilterChip(
+                        avatar: const Icon(Icons.menu_book_rounded, size: 14, color: Color(0xFF2563EB)),
+                        label: const Text('📋 Avec Fiche', style: TextStyle(fontSize: 11.5)),
+                        selected: _contentFilter == CourseContentFilter.withSummary,
+                        selectedColor: const Color(0xFF2563EB).withValues(alpha: 0.2),
+                        visualDensity: VisualDensity.compact,
+                        onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.withSummary : CourseContentFilter.all),
+                      ),
+                      FilterChip(
+                        avatar: const Icon(Icons.local_fire_department_rounded, size: 14, color: Color(0xFFF59E0B)),
+                        label: const Text('🔥 Hypertombable (>20 QCM)', style: TextStyle(fontSize: 11.5)),
                         selected: _onlyHighYield,
-                        selectedColor: const Color(0xFFF59E0B).withValues(alpha: 0.18),
+                        selectedColor: const Color(0xFFF59E0B).withValues(alpha: 0.2),
                         visualDensity: VisualDensity.compact,
                         onSelected: (v) => setState(() => _onlyHighYield = v),
                       ),
                       FilterChip(
+                        avatar: const Icon(Icons.hourglass_top_rounded, size: 14, color: AppTheme.primaryTeal),
                         label: const Text('⏳ Non terminés (< 3 couches)', style: TextStyle(fontSize: 11.5)),
                         selected: _onlyIncomplete,
                         selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.16),
@@ -443,6 +491,33 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
         final entry = _annService.getPlannerEntry(c.id);
         if (entry.completedLayersCount >= 3) return false;
       }
+
+      final hasSummary = CourseSummaryRepository.hasSummarySync(c.id);
+      switch (_contentFilter) {
+        case CourseContentFilter.all:
+          break;
+        case CourseContentFilter.complete:
+          if (!c.isCompleteCourse(hasSummary: hasSummary)) return false;
+          break;
+        case CourseContentFilter.pdfOnly:
+          if (!c.isPdfOnlyCourse(hasSummary: hasSummary)) return false;
+          break;
+        case CourseContentFilter.withMindmap:
+          if (!c.hasAnyMindmap) return false;
+          break;
+        case CourseContentFilter.withSummary:
+          if (!hasSummary) return false;
+          break;
+        case CourseContentFilter.withQcm:
+          if (c.questionsCount == 0) return false;
+          break;
+        case CourseContentFilter.highYield:
+          if (!c.isHighYield) return false;
+          break;
+        case CourseContentFilter.incomplete:
+          if (c.isCompleteCourse(hasSummary: hasSummary)) return false;
+          break;
+      }
       return true;
     }).toList();
 
@@ -464,7 +539,7 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
       ),
       child: ExpansionTile(
         key: PageStorageKey('planner_${mod.id}'),
-        initiallyExpanded: _searchQuery.isNotEmpty,
+        initiallyExpanded: _searchQuery.isNotEmpty || _contentFilter != CourseContentFilter.all,
         title: Row(
           children: [
             Expanded(
@@ -647,6 +722,22 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                     ),
                     ActionChip(
                       avatar: const Icon(
+                        Icons.account_tree_rounded,
+                        size: 14,
+                        color: Color(0xFF8B5CF6),
+                      ),
+                      label: const Text(
+                        'Mind Map',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF8B5CF6)),
+                      ),
+                      tooltip: 'Visualiser la Mind Map conceptuelle',
+                      visualDensity: VisualDensity.compact,
+                      backgroundColor: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                      side: BorderSide(color: const Color(0xFF8B5CF6).withValues(alpha: 0.3)),
+                      onPressed: () => _openCourseMindmap(context, course, mod.name),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(
                         Icons.play_circle_outline_rounded,
                         size: 14,
                         color: AppTheme.primaryTeal,
@@ -739,6 +830,17 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CourseSummaryScreen(
+          course: course,
+          moduleName: moduleName,
+        ),
+      ),
+    );
+  }
+
+  void _openCourseMindmap(BuildContext context, CourseModel course, String moduleName) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CourseMindmapScreen(
           course: course,
           moduleName: moduleName,
         ),
@@ -876,6 +978,55 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                               ),
                             ),
                           ),
+                        Builder(
+                          builder: (_) {
+                            final hasSummary = CourseSummaryRepository.hasSummarySync(course.id);
+                            final isComplete = course.isCompleteCourse(hasSummary: hasSummary);
+                            final isPdfOnly = course.isPdfOnlyCourse(hasSummary: hasSummary);
+
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (isComplete)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    margin: const EdgeInsets.only(right: 6),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [Color(0xFF0D9488), Color(0xFF10B981)],
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: const Text(
+                                      '✨ 360° Complet',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                if (isPdfOnly)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    margin: const EdgeInsets.only(right: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey.shade100,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      '📄 PDF Seul',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueGrey.shade800,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
@@ -963,6 +1114,35 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                       onTap: () {
                         Navigator.pop(ctx);
                         _openCourseSummary(context, course, moduleName);
+                      },
+                    ),
+                    const SizedBox(height: 8),
+
+                    // 2bis. Mind Map Conceptuelle
+                    ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: const Color(0xFF8B5CF6).withValues(alpha: 0.25)),
+                      ),
+                      tileColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFFAF5FF),
+                      leading: const CircleAvatar(
+                        backgroundColor: Color(0xFF8B5CF6),
+                        foregroundColor: Colors.white,
+                        radius: 18,
+                        child: Icon(Icons.account_tree_rounded, size: 18),
+                      ),
+                      title: const Text(
+                        'Mind Map Conceptuelle',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                      ),
+                      subtitle: const Text(
+                        'Arborescence & Cartographie visuelle interactive (Couche 2 : Vision globale)',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _openCourseMindmap(context, course, moduleName);
                       },
                     ),
                     const SizedBox(height: 8),

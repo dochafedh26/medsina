@@ -9,8 +9,10 @@ import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
 import '../models/flashcard_fsrs_model.dart';
+import '../models/module_model.dart';
 import '../models/qcm_model.dart';
 import '../services/user_qcm_annotation_service.dart';
+import 'qcm_official_proof_sheet.dart';
 
 class QcmStudyScreen extends StatelessWidget {
   const QcmStudyScreen({super.key});
@@ -340,7 +342,7 @@ class QcmStudyScreen extends StatelessWidget {
 
                     // Revealed: Explanation & Result Box
                     if (isRevealed) ...[
-                      _buildExplanationCard(context, q, state.isCurrentAnswerFullyCorrect),
+                      _buildExplanationCard(context, q, state.isCurrentAnswerFullyCorrect, state.selectedCourse),
                     ],
                   ],
                 ),
@@ -698,7 +700,7 @@ class QcmStudyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExplanationCard(BuildContext context, QcmQuestion q, bool isFullyCorrect) {
+  Widget _buildExplanationCard(BuildContext context, QcmQuestion q, bool isFullyCorrect, [CourseModel? selectedCourse]) {
     return Container(
       margin: const EdgeInsets.only(top: 14),
       padding: const EdgeInsets.all(16),
@@ -779,6 +781,30 @@ class QcmStudyScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
+          // Bouton Vérification Officielle & Sources (Crédibilité & Preuve)
+          Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0F766E),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.verified_user_rounded, size: 18),
+              label: const Text(
+                'Vérifier la Réponse dans les Sources Officielles 🔍',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              onPressed: () => QcmOfficialProofSheet.show(
+                context,
+                question: q,
+                course: selectedCourse,
+              ),
+            ),
+          ),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(

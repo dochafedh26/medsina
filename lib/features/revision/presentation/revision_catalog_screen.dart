@@ -10,6 +10,7 @@ import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../bloc/revision_state.dart';
+import '../data/course_summary_repository.dart';
 import '../data/residency_repository.dart';
 import '../models/module_model.dart';
 import '../models/revision_session_model.dart';
@@ -44,6 +45,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
   late TabController _tabController;
   String _searchQuery = '';
   String _selectedCategory = 'Tous';
+  CourseContentFilter _selectedCourseFilter = CourseContentFilter.all;
   bool _initializedCategory = false;
 
   final List<String> _defaultCategories = [
@@ -61,8 +63,33 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
     _tabController.addListener(() {
       if (mounted) setState(() {});
     });
+    CourseSummaryRepository.loadAllSummariesAsync().then((_) {
+      if (mounted) setState(() {});
+    });
     context.read<RevisionBloc>().add(LoadModulesEvent());
     context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
+  }
+
+  bool _courseMatchesFilter(CourseModel c, CourseContentFilter filter) {
+    final hasSummary = CourseSummaryRepository.hasSummarySync(c.id);
+    switch (filter) {
+      case CourseContentFilter.all:
+        return true;
+      case CourseContentFilter.complete:
+        return c.isCompleteCourse(hasSummary: hasSummary);
+      case CourseContentFilter.pdfOnly:
+        return c.isPdfOnlyCourse(hasSummary: hasSummary);
+      case CourseContentFilter.withMindmap:
+        return c.hasAnyMindmap;
+      case CourseContentFilter.withSummary:
+        return hasSummary;
+      case CourseContentFilter.withQcm:
+        return c.questionsCount > 0;
+      case CourseContentFilter.highYield:
+        return c.isHighYield;
+      case CourseContentFilter.incomplete:
+        return !c.isCompleteCourse(hasSummary: hasSummary);
+    }
   }
 
   @override
@@ -766,23 +793,38 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
               );
             }
 
-            final matchesSearch =
-                _searchQuery.isEmpty ||
-                m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                m.courses.any(
-                  (c) =>
-                      c.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                      (c.teacher != null &&
-                          c.teacher!
-                              .toLowerCase()
-                              .contains(_searchQuery.toLowerCase())),
-                );
-            return matchesCat && matchesSearch;
+            if (!matchesCat) return false;
+
+            return m.courses.any((c) {
+              final matchesSearch =
+                  _searchQuery.isEmpty ||
+                  m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                  c.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                  (c.teacher != null &&
+                      c.teacher!
+                          .toLowerCase()
+                          .contains(_searchQuery.toLowerCase()));
+              final matchesFilter = _courseMatchesFilter(c, _selectedCourseFilter);
+              return matchesSearch && matchesFilter;
+            });
           }).toList();
 
           final totalVisibleCourses = filteredModules.fold<int>(
             0,
-            (sum, m) => sum + m.totalCourses,
+            (sum, m) {
+              final matchingCount = m.courses.where((c) {
+                final matchesSearch =
+                    _searchQuery.isEmpty ||
+                    m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                    c.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                    (c.teacher != null &&
+                        c.teacher!
+                            .toLowerCase()
+                            .contains(_searchQuery.toLowerCase()));
+                return matchesSearch && _courseMatchesFilter(c, _selectedCourseFilter);
+              }).length;
+              return sum + matchingCount;
+            },
           );
 
           return LayoutBuilder(
@@ -1261,7 +1303,51 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                             .toList(),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
+                // Course Content Filters Bar (Complet 360°, PDF Seul, Mind Map, Fiche, QCM, etc.)
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildCourseFilterChip(
+                        CourseContentFilter.all,
+                        'Tous les Cours',
+                        Icons.apps_rounded,
+                      ),
+                      _buildCourseFilterChip(
+                        CourseContentFilter.complete,
+                        '✨ Complet 360°',
+                        Icons.verified_rounded,
+                      ),
+                      _buildCourseFilterChip(
+                        CourseContentFilter.pdfOnly,
+                        '📄 PDF Seul',
+                        Icons.picture_as_pdf_rounded,
+                      ),
+                      _buildCourseFilterChip(
+                        CourseContentFilter.withMindmap,
+                        '🧠 Mind Map',
+                        Icons.account_tree_rounded,
+                      ),
+                      _buildCourseFilterChip(
+                        CourseContentFilter.withSummary,
+                        '📋 Fiche Synthèse',
+                        Icons.menu_book_rounded,
+                      ),
+                      _buildCourseFilterChip(
+                        CourseContentFilter.withQcm,
+                        '🎯 Avec QCMs',
+                        Icons.quiz_rounded,
+                      ),
+                      _buildCourseFilterChip(
+                        CourseContentFilter.highYield,
+                        '🔥 Hypertombable',
+                        Icons.local_fire_department_rounded,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Wrap(
                   alignment: WrapAlignment.spaceBetween,
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -1450,6 +1536,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                   module: module,
                   activeProgresses: state.activeCourseProgresses,
                   searchQuery: _searchQuery,
+                  courseFilter: _selectedCourseFilter,
                 );
               }, childCount: filteredModules.length),
             ),
@@ -1846,6 +1933,56 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
       onSelected: (_) => setState(() => _selectedCategory = cat),
     );
   }
+
+  Widget _buildCourseFilterChip(
+    CourseContentFilter filter,
+    String label,
+    IconData icon,
+  ) {
+    final isSelected = _selectedCourseFilter == filter;
+    Color activeColor = AppTheme.primaryTeal;
+    if (filter == CourseContentFilter.complete) {
+      activeColor = const Color(0xFF0D9488);
+    } else if (filter == CourseContentFilter.pdfOnly) {
+      activeColor = const Color(0xFF64748B);
+    } else if (filter == CourseContentFilter.withMindmap) {
+      activeColor = const Color(0xFF8B5CF6);
+    } else if (filter == CourseContentFilter.withSummary) {
+      activeColor = const Color(0xFF2563EB);
+    } else if (filter == CourseContentFilter.highYield) {
+      activeColor = const Color(0xFFEA580C);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: FilterChip(
+        avatar: Icon(
+          icon,
+          size: 14,
+          color: isSelected ? Colors.white : activeColor,
+        ),
+        label: Text(label),
+        selected: isSelected,
+        selectedColor: activeColor,
+        checkmarkColor: Colors.white,
+        backgroundColor: activeColor.withValues(alpha: 0.08),
+        labelStyle: TextStyle(
+          color: isSelected ? Colors.white : activeColor,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+          fontSize: 11.5,
+        ),
+        side: BorderSide(
+          color: isSelected ? activeColor : activeColor.withValues(alpha: 0.35),
+        ),
+        visualDensity: VisualDensity.compact,
+        onSelected: (_) {
+          setState(() {
+            _selectedCourseFilter = filter;
+          });
+        },
+      ),
+    );
+  }
 }
 
 class _CustomSessionCard extends StatelessWidget {
@@ -2134,11 +2271,13 @@ class _ModuleCard extends StatefulWidget {
   final MedicalModuleModel module;
   final Map<String, CourseRevisionProgress> activeProgresses;
   final String searchQuery;
+  final CourseContentFilter courseFilter;
 
   const _ModuleCard({
     required this.module,
     required this.activeProgresses,
     this.searchQuery = '',
+    this.courseFilter = CourseContentFilter.all,
   });
 
   @override
@@ -2379,21 +2518,42 @@ class _ModuleCardState extends State<_ModuleCard> {
                 ],
               ),
             ),
-            if (_expanded || widget.searchQuery.isNotEmpty) ...[
+            if (_expanded ||
+                widget.searchQuery.isNotEmpty ||
+                widget.courseFilter != CourseContentFilter.all) ...[
               const Divider(height: 24),
               Builder(
                 builder: (context) {
-                  final displayedCourses = widget.searchQuery.isEmpty ||
-                          m.name.toLowerCase().contains(widget.searchQuery.toLowerCase())
-                      ? m.courses
-                      : m.courses
-                          .where((c) =>
-                              c.name.toLowerCase().contains(widget.searchQuery.toLowerCase()) ||
-                              (c.teacher != null &&
-                                  c.teacher!
-                                      .toLowerCase()
-                                      .contains(widget.searchQuery.toLowerCase())))
-                          .toList();
+                  final displayedCourses = m.courses.where((c) {
+                    final matchesSearch = widget.searchQuery.isEmpty ||
+                        m.name.toLowerCase().contains(widget.searchQuery.toLowerCase()) ||
+                        c.name.toLowerCase().contains(widget.searchQuery.toLowerCase()) ||
+                        (c.teacher != null &&
+                            c.teacher!
+                                .toLowerCase()
+                                .contains(widget.searchQuery.toLowerCase()));
+                    if (!matchesSearch) return false;
+
+                    final hasSummary = CourseSummaryRepository.hasSummarySync(c.id);
+                    switch (widget.courseFilter) {
+                      case CourseContentFilter.all:
+                        return true;
+                      case CourseContentFilter.complete:
+                        return c.isCompleteCourse(hasSummary: hasSummary);
+                      case CourseContentFilter.pdfOnly:
+                        return c.isPdfOnlyCourse(hasSummary: hasSummary);
+                      case CourseContentFilter.withMindmap:
+                        return c.hasAnyMindmap;
+                      case CourseContentFilter.withSummary:
+                        return hasSummary;
+                      case CourseContentFilter.withQcm:
+                        return c.questionsCount > 0;
+                      case CourseContentFilter.highYield:
+                        return c.isHighYield;
+                      case CourseContentFilter.incomplete:
+                        return !c.isCompleteCourse(hasSummary: hasSummary);
+                    }
+                  }).toList();
 
                   return ListView.separated(
                     shrinkWrap: true,
@@ -2523,6 +2683,10 @@ class _CourseTile extends StatelessWidget {
         builder: (context, constraints) {
           final isNarrow = constraints.maxWidth < 480;
 
+          final hasSummary = CourseSummaryRepository.hasSummarySync(course.id);
+          final isComplete = course.isCompleteCourse(hasSummary: hasSummary);
+          final isPdfOnly = course.isPdfOnlyCourse(hasSummary: hasSummary);
+
           final titleSection = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -2560,9 +2724,109 @@ class _CourseTile extends StatelessWidget {
                   ],
                 ],
               ),
+              const SizedBox(height: 3),
+              Wrap(
+                spacing: 5,
+                runSpacing: 4,
+                children: [
+                  if (isComplete)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0D9488), Color(0xFF10B981)],
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.verified_rounded, size: 10, color: Colors.white),
+                          SizedBox(width: 3),
+                          Text(
+                            '✨ 360° Complet',
+                            style: TextStyle(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (isPdfOnly)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey.shade100,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.blueGrey.shade300, width: 0.8),
+                      ),
+                      child: Text(
+                        '📄 PDF Seul',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.blueGrey.shade800,
+                        ),
+                      ),
+                    ),
+                  if (course.hasAnyMindmap)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF8B5CF6).withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Text(
+                        '🧠 Mind Map',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF7C3AED),
+                        ),
+                      ),
+                    ),
+                  if (hasSummary)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryTeal.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Text(
+                        '📋 Fiche',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.primaryTeal,
+                        ),
+                      ),
+                    ),
+                  if (course.isHighYield)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(color: Colors.red.shade200, width: 0.8),
+                      ),
+                      child: Text(
+                        '🔥 Hypertombable',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.red.shade800,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
               const SizedBox(height: 2),
               Text(
-                '${course.questionsCount} questions officielles de concours',
+                course.questionsCount > 0
+                    ? '${course.questionsCount} questions officielles de concours'
+                    : 'Support de cours officiel (PDF)',
                 style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
               ),
               if (course.teacher != null && course.teacher!.isNotEmpty) ...[
@@ -2896,8 +3160,44 @@ class _CourseTile extends StatelessWidget {
                     );
                   },
                 ),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
+              if (course.questionsCount == 0)
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF475569),
+                    side: const BorderSide(color: Color(0xFF94A3B8)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    minimumSize: const Size(0, 32),
+                  ),
+                  icon: const Icon(Icons.picture_as_pdf_rounded, size: 14),
+                  label: const Text(
+                    'Lire PDF',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: () {
+                    if (isLocked) {
+                      _showPaywallPrompt(context, lockReason);
+                      return;
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CoursePdfViewerScreen(
+                          course: course,
+                          moduleName: moduleName,
+                        ),
+                      ),
+                    );
+                  },
+                )
+              else
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
                   backgroundColor: isLocked
                       ? Colors.grey.shade400
                       : (isPaused

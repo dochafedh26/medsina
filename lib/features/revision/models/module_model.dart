@@ -1,4 +1,15 @@
 import 'package:equatable/equatable.dart';
+ 
+enum CourseContentFilter {
+  all,
+  complete,
+  pdfOnly,
+  withMindmap,
+  withSummary,
+  withQcm,
+  highYield,
+  incomplete,
+}
 
 class CourseModel extends Equatable {
   final String id;
@@ -38,6 +49,22 @@ class CourseModel extends Equatable {
     this.hasMindmap = false,
     this.mindmapGeneratedAt,
   });
+
+  bool get hasAnyPdf =>
+      hasPdf ||
+      (pdfDownloadUrl != null && pdfDownloadUrl!.isNotEmpty) ||
+      (pdfDriveId != null && pdfDriveId!.isNotEmpty);
+
+  bool get hasAnyMindmap =>
+      hasMindmap ||
+      (mindmapPdfUrl != null && mindmapPdfUrl!.isNotEmpty) ||
+      (mindmapDriveId != null && mindmapDriveId!.isNotEmpty);
+
+  bool isCompleteCourse({bool hasSummary = false}) =>
+      hasAnyPdf && hasAnyMindmap && (questionsCount > 0 || hasSummary);
+
+  bool isPdfOnlyCourse({bool hasSummary = false}) =>
+      hasAnyPdf && !hasAnyMindmap && questionsCount == 0 && !hasSummary;
 
   double get progressPercentage =>
       questionsCount > 0 ? (completedQuestions / questionsCount).clamp(0.0, 1.0) : 0.0;

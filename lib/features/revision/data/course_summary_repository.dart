@@ -10,7 +10,15 @@ import '../models/module_model.dart';
 
 class CourseSummaryRepository {
   static final Map<String, CourseSummaryModel> _cache = {};
+  static final Set<String> _knownSummaryIds = {};
   static bool _hasLoadedLocal = false;
+
+  /// Synchronous check whether a course has a summary
+  static bool hasSummarySync(String courseId) {
+    if (_cache.containsKey(courseId)) return true;
+    if (_knownSummaryIds.contains(courseId)) return true;
+    return false;
+  }
 
   /// Loads all available course summaries, prioritizing Supabase Cloud with fallback to local JSON.
   static Future<Map<String, CourseSummaryModel>> loadAllSummariesAsync({
@@ -29,6 +37,7 @@ class CourseSummaryRepository {
           if (item is Map<String, dynamic>) {
             final model = CourseSummaryModel.fromJson(item);
             _cache[model.courseId] = model;
+            _knownSummaryIds.add(model.courseId);
           }
         }
         _hasLoadedLocal = true;
@@ -43,6 +52,7 @@ class CourseSummaryRepository {
       for (final row in remoteRows) {
         final model = CourseSummaryModel.fromJson(row);
         _cache[model.courseId] = model;
+        _knownSummaryIds.add(model.courseId);
       }
     } catch (e) {
       debugPrint('Notice: Supabase course_summaries fetch failed: $e');
