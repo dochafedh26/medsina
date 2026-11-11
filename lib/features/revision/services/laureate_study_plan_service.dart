@@ -456,6 +456,26 @@ class LaureateStudyPlanService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Update the target exam deadline for the active plan
+  Future<void> updateTargetExamDate(DateTime date) async {
+    if (_activeProgress == null) return;
+    _activeProgress = UserStudyPlanProgress(
+      planId: _activeProgress!.planId,
+      enrolledAt: _activeProgress!.enrolledAt,
+      targetExamDate: date,
+      completedCoursesCount: _activeProgress!.completedCoursesCount,
+      completedQcmsCount: _activeProgress!.completedQcmsCount,
+      remindersEnabled: _activeProgress!.remindersEnabled,
+      reminderHour: _activeProgress!.reminderHour,
+      reminderMinute: _activeProgress!.reminderMinute,
+      lastActiveDateIso: _activeProgress!.lastActiveDateIso,
+      todayCompletedCourseIds: _activeProgress!.todayCompletedCourseIds,
+      todayCompletedQcms: _activeProgress!.todayCompletedQcms,
+    );
+    await _saveProgress();
+    notifyListeners();
+  }
+
   /// Update daily reminder settings
   Future<void> updateReminderSettings({
     required bool enabled,

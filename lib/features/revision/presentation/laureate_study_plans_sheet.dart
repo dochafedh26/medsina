@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../models/laureate_study_plan_model.dart';
 import '../services/laureate_study_plan_service.dart';
+import '../services/realistic_course_schedule_service.dart';
+import '../services/user_qcm_annotation_service.dart';
 
 class LaureateStudyPlansSheet extends StatefulWidget {
   final VoidCallback? onPlanSelected;
@@ -25,6 +27,7 @@ class _LaureateStudyPlansSheetState extends State<LaureateStudyPlansSheet> {
   final LaureateStudyPlanService _planService = LaureateStudyPlanService.instance;
   String? _selectedPlanId;
   TimeOfDay _reminderTime = const TimeOfDay(hour: 20, minute: 0);
+  DateTime _targetExamDate = DateTime(2027, 10, 20);
 
   @override
   void initState() {
@@ -36,6 +39,9 @@ class _LaureateStudyPlansSheetState extends State<LaureateStudyPlansSheet> {
         hour: _planService.activeProgress!.reminderHour,
         minute: _planService.activeProgress!.reminderMinute,
       );
+      _targetExamDate = _planService.activeProgress!.targetExamDate;
+    } else {
+      _targetExamDate = UserQcmAnnotationService.instance.targetExamDate;
     }
   }
 
@@ -148,7 +154,7 @@ class _LaureateStudyPlansSheetState extends State<LaureateStudyPlansSheet> {
 
           // Bottom Action Bar
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
               border: Border(
@@ -157,48 +163,89 @@ class _LaureateStudyPlansSheetState extends State<LaureateStudyPlansSheet> {
                 ),
               ),
             ),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // Reminder settings button
-                InkWell(
-                  onTap: _pickReminderTime,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: isDark ? Colors.white24 : Colors.black12,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.alarm_rounded,
-                            size: 18, color: AppTheme.primaryTeal),
-                        const SizedBox(width: 6),
-                        Text(
-                          _reminderTime.format(context),
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
+                Row(
+                  children: [
+                    // Target date picker button
+                    Expanded(
+                      child: InkWell(
+                        onTap: _pickTargetExamDate,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isDark ? Colors.white24 : Colors.black12,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.event_available_rounded,
+                                  size: 16, color: AppTheme.primaryTeal),
+                              const SizedBox(width: 5),
+                              Expanded(
+                                child: Text(
+                                  'Échéance : ${_targetExamDate.day.toString().padLeft(2, '0')}/${_targetExamDate.month.toString().padLeft(2, '0')}/${_targetExamDate.year}',
+                                  style: const TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+
+                    // Reminder settings button
+                    InkWell(
+                      onTap: _pickReminderTime,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: isDark ? Colors.white24 : Colors.black12,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.alarm_rounded,
+                                size: 16, color: AppTheme.primaryTeal),
+                            const SizedBox(width: 5),
+                            Text(
+                              _reminderTime.format(context),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(height: 10),
 
                 // Adopt button
-                Expanded(
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryTeal,
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: const EdgeInsets.symmetric(vertical: 13),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -217,9 +264,11 @@ class _LaureateStudyPlansSheetState extends State<LaureateStudyPlansSheet> {
                       if (_selectedPlanId == null) return;
                       await _planService.enrollInPlan(
                         planId: _selectedPlanId!,
+                        targetExamDate: _targetExamDate,
                         reminderHour: _reminderTime.hour,
                         reminderMinute: _reminderTime.minute,
                       );
+                      await RealisticCourseScheduleService.instance.setTargetDeadline(_targetExamDate);
                       widget.onPlanSelected?.call();
                       if (context.mounted) {
                         Navigator.of(context).pop();
@@ -233,7 +282,7 @@ class _LaureateStudyPlansSheetState extends State<LaureateStudyPlansSheet> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
-                                    'Plan de révision activé avec succès ! Rappel quotidien à ${_reminderTime.format(context)}.',
+                                    'Plan activé avec succès ! Planning calculé jusqu\'au ${_targetExamDate.day.toString().padLeft(2, '0')}/${_targetExamDate.month.toString().padLeft(2, '0')}/${_targetExamDate.year}.',
                                     style: const TextStyle(fontWeight: FontWeight.w600),
                                   ),
                                 ),
@@ -519,6 +568,21 @@ class _LaureateStudyPlansSheetState extends State<LaureateStudyPlansSheet> {
     );
     if (picked != null) {
       setState(() => _reminderTime = picked);
+    }
+  }
+
+  Future<void> _pickTargetExamDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _targetExamDate,
+      firstDate: DateTime.now().add(const Duration(days: 1)),
+      lastDate: DateTime.now().add(const Duration(days: 730)),
+      helpText: "SÉLECTIONNER LA DATE D'ÉCHÉANCE DU CONCOURS",
+      cancelText: 'Annuler',
+      confirmText: 'Valider',
+    );
+    if (picked != null) {
+      setState(() => _targetExamDate = picked);
     }
   }
 }

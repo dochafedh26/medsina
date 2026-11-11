@@ -15,6 +15,8 @@ import 'course_pdf_viewer_screen.dart';
 import 'course_summary_screen.dart';
 import 'laureate_study_plans_sheet.dart';
 import 'qcm_study_screen.dart';
+import '../services/realistic_course_schedule_service.dart';
+import 'widgets/realistic_course_schedule_widget.dart';
 
 class StudyPlannerScreen extends StatefulWidget {
   const StudyPlannerScreen({super.key});
@@ -25,6 +27,7 @@ class StudyPlannerScreen extends StatefulWidget {
 
 class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
   final UserQcmAnnotationService _annService = UserQcmAnnotationService.instance;
+  int _viewMode = 0; // 0: Planning Réaliste (Timing Réel & Échéance), 1: Matrice par Modules (3 Couches)
   String _searchQuery = '';
   CourseContentFilter _contentFilter = CourseContentFilter.all;
   bool _onlyHighYield = false;
@@ -125,110 +128,224 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
                 children: [
                   // 0. Plan de Révision des Lauréats & Objectifs Quotidiens
                   const ActiveStudyPlanWidget(),
-                  const SizedBox(height: 16),
-
-                  // 1. Countdown & Cadence Calculator Banner
-                  _buildCadenceOverviewCard(
-                    context,
-                    totalCourses: allCourses.length,
-                    layer1Done: layer1Total,
-                    layer2Done: layer2Total,
-                    layer3Done: layer3Total,
-                    globalPct: globalPct,
-                    isDark: isDark,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // 2. Diagnostic IA : Top 3 High-Yield Courses to study today
-                  if (top3Recommendations.isNotEmpty) ...[
-                    _buildTopRecommendationsCard(context, top3Recommendations, isDark),
-                    const SizedBox(height: 18),
-                  ],
-
-                  // 3. Search & Filters
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                            hintText: 'Rechercher un module ou un cours...',
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                          ),
-                          onChanged: (v) => setState(() => _searchQuery = v),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
-                    children: [
-                      FilterChip(
-                        avatar: const Icon(Icons.apps_rounded, size: 14),
-                        label: const Text('Tous formats', style: TextStyle(fontSize: 11.5)),
-                        selected: _contentFilter == CourseContentFilter.all,
-                        selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (_) => setState(() => _contentFilter = CourseContentFilter.all),
-                      ),
-                      FilterChip(
-                        avatar: const Icon(Icons.verified_rounded, size: 14, color: Color(0xFF0D9488)),
-                        label: const Text('✨ Complet 360°', style: TextStyle(fontSize: 11.5)),
-                        selected: _contentFilter == CourseContentFilter.complete,
-                        selectedColor: const Color(0xFF0D9488).withValues(alpha: 0.2),
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.complete : CourseContentFilter.all),
-                      ),
-                      FilterChip(
-                        avatar: const Icon(Icons.picture_as_pdf_rounded, size: 14, color: Color(0xFF64748B)),
-                        label: const Text('📄 PDF Seul', style: TextStyle(fontSize: 11.5)),
-                        selected: _contentFilter == CourseContentFilter.pdfOnly,
-                        selectedColor: const Color(0xFF64748B).withValues(alpha: 0.2),
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.pdfOnly : CourseContentFilter.all),
-                      ),
-                      FilterChip(
-                        avatar: const Icon(Icons.account_tree_rounded, size: 14, color: Color(0xFF8B5CF6)),
-                        label: const Text('🧠 Avec Mind Map', style: TextStyle(fontSize: 11.5)),
-                        selected: _contentFilter == CourseContentFilter.withMindmap,
-                        selectedColor: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.withMindmap : CourseContentFilter.all),
-                      ),
-                      FilterChip(
-                        avatar: const Icon(Icons.menu_book_rounded, size: 14, color: Color(0xFF2563EB)),
-                        label: const Text('📋 Avec Fiche', style: TextStyle(fontSize: 11.5)),
-                        selected: _contentFilter == CourseContentFilter.withSummary,
-                        selectedColor: const Color(0xFF2563EB).withValues(alpha: 0.2),
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.withSummary : CourseContentFilter.all),
-                      ),
-                      FilterChip(
-                        avatar: const Icon(Icons.local_fire_department_rounded, size: 14, color: Color(0xFFF59E0B)),
-                        label: const Text('🔥 Hypertombable (>20 QCM)', style: TextStyle(fontSize: 11.5)),
-                        selected: _onlyHighYield,
-                        selectedColor: const Color(0xFFF59E0B).withValues(alpha: 0.2),
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (v) => setState(() => _onlyHighYield = v),
-                      ),
-                      FilterChip(
-                        avatar: const Icon(Icons.hourglass_top_rounded, size: 14, color: AppTheme.primaryTeal),
-                        label: const Text('⏳ Non terminés (< 3 couches)', style: TextStyle(fontSize: 11.5)),
-                        selected: _onlyIncomplete,
-                        selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.16),
-                        visualDensity: VisualDensity.compact,
-                        onSelected: (v) => setState(() => _onlyIncomplete = v),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 14),
 
-                  // 4. Modules & 3-Layer Courses Matrix
-                  ...allModules.map((mod) => _buildModulePlannerCard(context, mod, isDark)),
+                  // Mode Switcher: Planning Réaliste vs Matrice par Modules
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: isDark ? Colors.white12 : Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(9),
+                            onTap: () => setState(() => _viewMode = 0),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 9),
+                              decoration: BoxDecoration(
+                                color: _viewMode == 0
+                                    ? AppTheme.primaryTeal
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(9),
+                                boxShadow: _viewMode == 0
+                                    ? [
+                                        BoxShadow(
+                                          color: AppTheme.primaryTeal.withValues(alpha: 0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        )
+                                      ]
+                                    : null,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.calendar_month_rounded,
+                                    size: 16,
+                                    color: _viewMode == 0
+                                        ? Colors.white
+                                        : (isDark ? Colors.white70 : Colors.black87),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Planning des Cours (Timing Réel)',
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: _viewMode == 0
+                                          ? Colors.white
+                                          : (isDark ? Colors.white70 : Colors.black87),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(9),
+                            onTap: () => setState(() => _viewMode = 1),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 9),
+                              decoration: BoxDecoration(
+                                color: _viewMode == 1
+                                    ? AppTheme.primaryTeal
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(9),
+                                boxShadow: _viewMode == 1
+                                    ? [
+                                        BoxShadow(
+                                          color: AppTheme.primaryTeal.withValues(alpha: 0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        )
+                                      ]
+                                    : null,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.view_module_rounded,
+                                    size: 16,
+                                    color: _viewMode == 1
+                                        ? Colors.white
+                                        : (isDark ? Colors.white70 : Colors.black87),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Matrice par Modules (3 Couches)',
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: _viewMode == 1
+                                          ? Colors.white
+                                          : (isDark ? Colors.white70 : Colors.black87),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (_viewMode == 0) ...[
+                    // 1. Interactive Realistic Course Schedule (Calendar & Real timing)
+                    RealisticCourseScheduleWidget(allModules: allModules),
+                  ] else ...[
+                    // 1. Countdown & Cadence Calculator Banner
+                    _buildCadenceOverviewCard(
+                      context,
+                      totalCourses: allCourses.length,
+                      layer1Done: layer1Total,
+                      layer2Done: layer2Total,
+                      layer3Done: layer3Total,
+                      globalPct: globalPct,
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 2. Diagnostic IA : Top 3 High-Yield Courses to study today
+                    if (top3Recommendations.isNotEmpty) ...[
+                      _buildTopRecommendationsCard(context, top3Recommendations, isDark),
+                      const SizedBox(height: 18),
+                    ],
+
+                    // 3. Search & Filters
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                              hintText: 'Rechercher un module ou un cours...',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            ),
+                            onChanged: (v) => setState(() => _searchQuery = v),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      children: [
+                        FilterChip(
+                          avatar: const Icon(Icons.apps_rounded, size: 14),
+                          label: const Text('Tous formats', style: TextStyle(fontSize: 11.5)),
+                          selected: _contentFilter == CourseContentFilter.all,
+                          selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
+                          visualDensity: VisualDensity.compact,
+                          onSelected: (_) => setState(() => _contentFilter = CourseContentFilter.all),
+                        ),
+                        FilterChip(
+                          avatar: const Icon(Icons.verified_rounded, size: 14, color: Color(0xFF0D9488)),
+                          label: const Text('✨ Complet 360°', style: TextStyle(fontSize: 11.5)),
+                          selected: _contentFilter == CourseContentFilter.complete,
+                          selectedColor: const Color(0xFF0D9488).withValues(alpha: 0.2),
+                          visualDensity: VisualDensity.compact,
+                          onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.complete : CourseContentFilter.all),
+                        ),
+                        FilterChip(
+                          avatar: const Icon(Icons.picture_as_pdf_rounded, size: 14, color: Color(0xFF64748B)),
+                          label: const Text('📄 PDF Seul', style: TextStyle(fontSize: 11.5)),
+                          selected: _contentFilter == CourseContentFilter.pdfOnly,
+                          selectedColor: const Color(0xFF64748B).withValues(alpha: 0.2),
+                          visualDensity: VisualDensity.compact,
+                          onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.pdfOnly : CourseContentFilter.all),
+                        ),
+                        FilterChip(
+                          avatar: const Icon(Icons.account_tree_rounded, size: 14, color: Color(0xFF8B5CF6)),
+                          label: const Text('🧠 Avec Mind Map', style: TextStyle(fontSize: 11.5)),
+                          selected: _contentFilter == CourseContentFilter.withMindmap,
+                          selectedColor: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                          visualDensity: VisualDensity.compact,
+                          onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.withMindmap : CourseContentFilter.all),
+                        ),
+                        FilterChip(
+                          avatar: const Icon(Icons.menu_book_rounded, size: 14, color: Color(0xFF2563EB)),
+                          label: const Text('📋 Avec Fiche', style: TextStyle(fontSize: 11.5)),
+                          selected: _contentFilter == CourseContentFilter.withSummary,
+                          selectedColor: const Color(0xFF2563EB).withValues(alpha: 0.2),
+                          visualDensity: VisualDensity.compact,
+                          onSelected: (v) => setState(() => _contentFilter = v ? CourseContentFilter.withSummary : CourseContentFilter.all),
+                        ),
+                        FilterChip(
+                          avatar: const Icon(Icons.local_fire_department_rounded, size: 14, color: Color(0xFFF59E0B)),
+                          label: const Text('🔥 Hypertombable (>20 QCM)', style: TextStyle(fontSize: 11.5)),
+                          selected: _onlyHighYield,
+                          selectedColor: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                          visualDensity: VisualDensity.compact,
+                          onSelected: (v) => setState(() => _onlyHighYield = v),
+                        ),
+                        FilterChip(
+                          avatar: const Icon(Icons.hourglass_top_rounded, size: 14, color: AppTheme.primaryTeal),
+                          label: const Text('⏳ Non terminés (< 3 couches)', style: TextStyle(fontSize: 11.5)),
+                          selected: _onlyIncomplete,
+                          selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.16),
+                          visualDensity: VisualDensity.compact,
+                          onSelected: (v) => setState(() => _onlyIncomplete = v),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+
+                    // 4. Modules & 3-Layer Courses Matrix
+                    ...allModules.map((mod) => _buildModulePlannerCard(context, mod, isDark)),
+                  ],
                 ],
               ),
             );
@@ -809,9 +926,13 @@ class _StudyPlannerScreenState extends State<StudyPlannerScreen> {
       initialDate: _annService.targetExamDate,
       firstDate: DateTime.now().add(const Duration(days: 1)),
       lastDate: DateTime.now().add(const Duration(days: 730)),
+      helpText: "SÉLECTIONNER LA DATE D'ÉCHÉANCE DU CONCOURS",
+      cancelText: 'Annuler',
+      confirmText: 'Valider',
     );
     if (picked != null) {
-      await _annService.setTargetExamDate(picked);
+      await RealisticCourseScheduleService.instance.setTargetDeadline(picked);
+      if (mounted) setState(() {});
     }
   }
 

@@ -1,8 +1,19 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../auth/bloc/auth_bloc.dart';
+import '../bloc/revision_bloc.dart';
+import '../bloc/revision_event.dart';
+import '../data/residency_repository.dart';
 import '../models/laureate_study_plan_model.dart';
+import '../models/module_model.dart';
 import '../services/laureate_study_plan_service.dart';
+import '../services/realistic_course_schedule_service.dart';
+import '../services/user_qcm_annotation_service.dart';
+import 'course_pdf_viewer_screen.dart';
 import 'laureate_study_plans_sheet.dart';
+import 'qcm_study_screen.dart';
 
 class ActiveStudyPlanWidget extends StatelessWidget {
   final VoidCallback? onPlanChanged;
@@ -103,6 +114,21 @@ class ActiveStudyPlanWidget extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Icon(Icons.event_available_rounded, size: 12, color: accentColor),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Échéance : ${progress.targetExamDate.day.toString().padLeft(2, '0')}/${progress.targetExamDate.month.toString().padLeft(2, '0')}/${progress.targetExamDate.year} • J-${math.max(1, progress.targetExamDate.difference(DateTime.now()).inDays)}',
+                                style: TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: accentColor,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -197,6 +223,172 @@ class ActiveStudyPlanWidget extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+
+                    // Scheduled Courses Today from Realistic Schedule
+                    Builder(
+                      builder: (ctx) {
+                        final allModules = ctx.read<RevisionBloc>().state.modules.isNotEmpty
+                            ? ctx.read<RevisionBloc>().state.modules
+                            : ResidencyRepository.getModules();
+                        final schedulePlan = RealisticCourseScheduleService.instance.generateSchedule(
+                          allModules: allModules,
+                          targetExamDate: progress.targetExamDate,
+                          activePlan: plan,
+                          annotationService: UserQcmAnnotationService.instance,
+                        );
+                        final todayItems = schedulePlan.todayCourses;
+
+                        if (todayItems.isEmpty) return const SizedBox.shrink();
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 14),
+                            Row(
+                              children: [
+                                Icon(Icons.calendar_today_rounded, size: 14, color: accentColor),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    'Cours au programme aujourd\'hui (${todayItems.where((c) => c.isCompleted).length}/${todayItems.length})',
+                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            ...todayItems.map((item) {
+                              final isDone = item.isCompleted;
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 6),
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                                decoration: BoxDecoration(
+                                  color: isDone
+                                      ? (isDark
+                                          ? const Color(0xFF064E3B).withValues(alpha: 0.2)
+                                          : const Color(0xFFECFDF5))
+                                      : (isDark ? Colors.white.withValues(alpha: 0.04) : Colors.white),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: isDone
+                                        ? const Color(0xFF10B981).withValues(alpha: 0.4)
+                                        : (isDark ? Colors.white12 : Colors.grey.shade300),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    InkWell(
+                                      borderRadius: BorderRadius.circular(6),
+                                      onTap: () async {
+                                        await RealisticCourseScheduleService.instance.toggleCourseCompletion(
+                                          courseId: item.course.id,
+                                          moduleId: item.module.id,
+                                        );
+                                      },
+                                      child: Icon(
+                                        isDone
+                                            ? Icons.check_circle_rounded
+                                            : Icons.radio_button_unchecked_rounded,
+                                        size: 20,
+                                        color: isDone ? const Color(0xFF10B981) : Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.module.name,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: accentColor,
+                                            ),
+                                          ),
+                                          Text(
+                                            item.course.name,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              decoration: isDone ? TextDecoration.lineThrough : null,
+                                              color: isDone ? Colors.grey : null,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    InkWell(
+                                      borderRadius: BorderRadius.circular(6),
+                                      onTap: () {
+                                        Navigator.of(ctx).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => CoursePdfViewerScreen(
+                                              course: item.course,
+                                              moduleName: item.module.name,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF0284C7).withValues(alpha: 0.12),
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: const Text(
+                                          'Cours',
+                                          style: TextStyle(
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF0284C7),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    InkWell(
+                                      borderRadius: BorderRadius.circular(6),
+                                      onTap: () {
+                                        final isStudent = ctx.read<AuthBloc>().state.user?.isStudent == true;
+                                        ctx.read<RevisionBloc>().add(
+                                              OpenCourseQuestionsEvent(
+                                                item.course,
+                                                resume: false,
+                                                filterForStudent: isStudent,
+                                              ),
+                                            );
+                                        Navigator.of(ctx).push(
+                                          MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: const Text(
+                                          'QCM',
+                                          style: TextStyle(
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.primaryTeal,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 14),
 
