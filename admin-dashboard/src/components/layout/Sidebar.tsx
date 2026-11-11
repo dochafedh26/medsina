@@ -90,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'ai_agents' as NavigationTab,
       label: 'Agents IA GitHub',
       icon: Bot,
-      badge: 'Octenium'
+      badge: '18 Actifs'
     }
   ];
 

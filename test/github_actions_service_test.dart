@@ -10,9 +10,9 @@ void main() {
   });
 
   group('GitHubActionsService Tests', () {
-    test('All 8 autonomous agents are registered with valid workflow definitions', () {
+    test('All 18 autonomous agents are registered with valid workflow definitions', () {
       final agents = GitHubActionsService.availableAgents;
-      expect(agents.length, 8);
+      expect(agents.length, 18);
 
       final workflows = agents.map((a) => a.workflowFile).toList();
       expect(workflows, contains('medsina_summaries_4h.yml'));
@@ -23,6 +23,16 @@ void main() {
       expect(workflows, contains('medsina_automation.yml'));
       expect(workflows, contains('medsina_facebook.yml'));
       expect(workflows, contains('medsina_lab.yml'));
+      expect(workflows, contains('medsina_blida_scanner.yml'));
+      expect(workflows, contains('medsina_promo_hunter.yml'));
+      expect(workflows, contains('medsina_student_life.yml'));
+      expect(workflows, contains('generate_course_bundles.yml'));
+      expect(workflows, contains('medsina_synapse_case_generator.yml'));
+      expect(workflows, contains('generate_course_mindmaps.yml'));
+      expect(workflows, contains('medsina_sync_temoignages_db.yml'));
+      expect(workflows, contains('medsina_update_guide.yml'));
+      expect(workflows, contains('deploy_admin_dashboard_octenium.yml'));
+      expect(workflows, contains('medsina_release.yml'));
 
       for (final agent in agents) {
         expect(agent.title.isNotEmpty, true);
