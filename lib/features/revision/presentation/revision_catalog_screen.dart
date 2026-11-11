@@ -2559,7 +2559,7 @@ class _ModuleCardState extends State<_ModuleCard> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: displayedCourses.length,
-                    separatorBuilder: (_, index) => const Divider(height: 1),
+                    separatorBuilder: (_, index) => const SizedBox(height: 4),
                     itemBuilder: (context, i) {
                       final course = displayedCourses[i];
                       return _CourseTile(
@@ -2677,171 +2677,191 @@ class _CourseTile extends StatelessWidget {
 
     final isPaused = progress != null && !progress!.isCompleted;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isNarrow = constraints.maxWidth < 480;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final isNarrow = constraints.maxWidth < 850;
 
-          final hasSummary = CourseSummaryRepository.hasSummarySync(course.id);
-          final isComplete = course.isCompleteCourse(hasSummary: hasSummary);
-          final isPdfOnly = course.isPdfOnlyCourse(hasSummary: hasSummary);
+        final hasSummary = CourseSummaryRepository.hasSummarySync(course.id);
+        final isComplete = course.isCompleteCourse(hasSummary: hasSummary);
+        final isPdfOnly = course.isPdfOnlyCourse(hasSummary: hasSummary);
 
-          final titleSection = Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
+        final titleSection = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                Text(
+                  course.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+                if (isPaused)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.shade100,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.amber.shade300,
+                        width: 0.8,
+                      ),
+                    ),
                     child: Text(
-                      course.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                      '⏸️ En pause (${progress!.currentQuestionIndex + 1}/${progress!.totalQuestions})',
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        color: Colors.amber.shade900,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  if (isPaused) ...[
-                    const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.shade100,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        '⏸️ En pause (${progress!.currentQuestionIndex + 1}/${progress!.totalQuestions})',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.amber.shade900,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+              ],
+            ),
+            const SizedBox(height: 5),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                if (isComplete)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
                     ),
-                  ],
-                ],
-              ),
-              const SizedBox(height: 3),
-              Wrap(
-                spacing: 5,
-                runSpacing: 4,
-                children: [
-                  if (isComplete)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF0D9488), Color(0xFF10B981)],
-                        ),
-                        borderRadius: BorderRadius.circular(6),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0D9488), Color(0xFF10B981)],
                       ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.verified_rounded, size: 10, color: Colors.white),
-                          SizedBox(width: 3),
-                          Text(
-                            '✨ 360° Complet',
-                            style: TextStyle(
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                            ),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.verified_rounded, size: 10, color: Colors.white),
+                        SizedBox(width: 3),
+                        Text(
+                          '✨ 360° Complet',
+                          style: TextStyle(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
-                    ),
-                  if (isPdfOnly)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade100,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.blueGrey.shade300, width: 0.8),
-                      ),
-                      child: Text(
-                        '📄 PDF Seul',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.blueGrey.shade800,
                         ),
+                      ],
+                    ),
+                  ),
+                if (isPdfOnly)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blueGrey.shade100,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.blueGrey.shade300,
+                        width: 0.8,
                       ),
                     ),
-                  if (course.hasAnyMindmap)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF8B5CF6).withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: const Text(
-                        '🧠 Mind Map',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF7C3AED),
-                        ),
+                    child: Text(
+                      '📄 PDF Seul',
+                      style: TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.blueGrey.shade800,
                       ),
                     ),
-                  if (hasSummary)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryTeal.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: const Text(
-                        '📋 Fiche',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          color: AppTheme.primaryTeal,
-                        ),
+                  ),
+                if (course.hasAnyMindmap)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const Text(
+                      '🧠 Mind Map',
+                      style: TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF7C3AED),
                       ),
                     ),
-                  if (course.isHighYield)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Colors.red.shade200, width: 0.8),
-                      ),
-                      child: Text(
-                        '🔥 Hypertombable',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.red.shade800,
-                        ),
+                  ),
+                if (hasSummary)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryTeal.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const Text(
+                      '📋 Fiche',
+                      style: TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.primaryTeal,
                       ),
                     ),
-                ],
-              ),
-              const SizedBox(height: 2),
-              Text(
-                course.questionsCount > 0
-                    ? '${course.questionsCount} questions officielles de concours'
-                    : 'Support de cours officiel (PDF)',
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
-              ),
-              if (course.teacher != null && course.teacher!.isNotEmpty) ...[
-                const SizedBox(height: 3),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.person_pin_rounded,
-                      size: 13,
-                      color: Colors.teal.shade600,
+                  ),
+                if (course.isHighYield)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 2,
                     ),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Colors.red.shade200,
+                        width: 0.8,
+                      ),
+                    ),
+                    child: Text(
+                      '🔥 Hypertombable',
+                      style: TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.red.shade800,
+                      ),
+                    ),
+                  ),
+                Text(
+                  course.questionsCount > 0
+                      ? '${course.questionsCount} questions officielles de concours'
+                      : 'Support de cours officiel (PDF)',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                ),
+                if (course.teacher != null && course.teacher!.isNotEmpty) ...[
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.person_pin_rounded,
+                        size: 13,
+                        color: Colors.teal.shade600,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
                         course.teacher!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -2851,12 +2871,13 @@ class _CourseTile extends StatelessWidget {
                           color: Colors.teal.shade700,
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ],
-            ],
-          );
+            ),
+          ],
+        );
 
           final actionButtons = Wrap(
             spacing: 6,
@@ -3269,26 +3290,47 @@ class _CourseTile extends StatelessWidget {
             ],
           );
 
-          if (isNarrow) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                titleSection,
-                const SizedBox(height: 8),
-                actionButtons,
-              ],
-            );
-          }
-
-          return Row(
-            children: [
-              Expanded(child: titleSection),
-              const SizedBox(width: 12),
-              actionButtons,
-            ],
+          return Container(
+            margin: const EdgeInsets.only(bottom: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.03)
+                  : const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? Colors.white12 : const Color(0xFFE2E8F0),
+                width: 0.8,
+              ),
+            ),
+            child: isNarrow
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      titleSection,
+                      const SizedBox(height: 10),
+                      actionButtons,
+                    ],
+                  )
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: titleSection,
+                      ),
+                      const SizedBox(width: 14),
+                      Flexible(
+                        flex: 6,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: actionButtons,
+                        ),
+                      ),
+                    ],
+                  ),
           );
         },
-      ),
-    );
+      );
   }
 }
