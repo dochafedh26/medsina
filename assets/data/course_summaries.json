@@ -2229,5 +2229,28 @@
     "treatment_summary": "Association d'une psychothérapie de type TCC et d'un traitement de fond par ISRS/IRSNA, complété si besoin par une courte cure de benzodiazépines en phase aiguë.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-10T04:18:23.861408+00:00"
+  },
+  {
+    "course_id": "Blida_PNEUMOLOGIE_TD_RADIOGRAPHIE_DU_THORAX",
+    "course_name": "TD Radiographie du thorax",
+    "module_id": "Blida_PNEUMOLOGIE",
+    "module_name": "Pneumologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLa **radiographie du thorax (RX Thorax)** est l'examen d'imagerie de première intention en pathologie respiratoire. Elle repose sur l'atténuation différentielle des rayons X selon la densité des tissus traversés :\n- **Air (très noir / radiolucent)** : densité gazeuse.\n- **Graisse** : densité intermédiaire.\n- **Eau / Tissus mous / Liquide** : densité hydrique (gris).\n- **Os / Calcium** : densité calcique (blanc).\n- **Métal** : densité métallique (blanc dense).\n\n## 2. Démarche Diagnostique\n### Analyse rigoureuse (Méthode ABCDE)\n1. **Qualité du cliché (I-P-A-N-O)** :\n   - **I**ndication & Identification.\n   - **P**énétration (on doit deviner les corps vertébraux rétro-cardiaques).\n   - **A**ppreciation de la rotation (les épineuses doivent être équidistantes des extrémités claviculaires médiales).\n   - **N**iveau d'inspiration (comptage des arcs costaux : **6ème arc costal antérieur** ou **10ème arc costal postérieur** bien visualisés sur la ligne mi-claviculaire).\n   - **O**bjectifs (cliché de face, en inspiration profonde, **en postéro-antérieure (PA)** par défaut).\n2. **Analyse anatomique systématisée** :\n   - **Parties molles et squelette** (recherche de lyse, fracture costale, ostéophytes).\n   - **Médiastin et trachée** (centrage, élargissement, silhouette cardiaque).\n   - **Coupules diaphragmatiques** (position, effacement des angles costo-phréniques).\n   - **Parenchyme pulmonaire** (comparaison droite/gauche, recherche d'opacités ou d'hyperclartés).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Opacité alvéolaire vs interstitielle** :\n  - Alvéolaire : systématisée, floue, tendance à la confluence, bronchogramme aérique, respecte les scissures.\n  - Interstitielle : réticulaire, nodulaire ou réticulo-nodulaire, non systématisée.\n- **Épanchement Pleural Liquidien (EPL)** :\n  - Opacité dense, homogène, non systématisée, à limite supérieure floue (ligne de Damoiseau), comblant l'angle costo-phrénique.\n- **Pneumothorax** :\n  - Hyperclarté sans trame vasculaire, séparée du poumon collapsé par la **ligne pleurale viscérale**.\n\n## 4. Stratégie Thérapeutique (en lien avec l'imagerie)\n- La RX thorax guide la prise en charge urgente : **Drainage thoracique** en urgence devant un pneumothorax compressif ou un épanchement pleural compressif/abondant.\n- Indication de la **TDM thoracique** devant toute anomalie suspecte, discordance radio-clinique, ou bilan d'extension de néoplasie pulmonaire.\n\n## 5. Évolution, Pronostic & Complications majeures\n- Signes de gravité radiologiques à reconnaître immédiatement :\n  - **Déviation controlatérale** du médiastin (Pneumothorax compressif, épanchement liquidien massif).\n  - **Signe de la silhouette positif** (effacement des contours du cœur ou des coupoles) indiquant le siège de l'opacité (ex: lobe moyen ou lingula pour le bord droit ou gauche du cœur).",
+    "key_takeaways": [
+      "Un cliché de face de bonne qualité doit montrer au moins 6 arcs costaux antérieurs ou 10 postérieurs en inspiration profonde.",
+      "Le signe de la silhouette permet de localiser une opacité : deux opacités de même densité en contact intime effacent leurs limites respectives.",
+      "La ligne de Damoiseau est pathognomonique de l'épanchement pleural liquidien franc de moyenne abondance.",
+      "Devant un pneumothorax, la ligne pleurale viscérale est visible et la trame vasculaire est absente en dehors de cette ligne.",
+      "Le cliché de profil (gauche de préférence) est indispensable pour préciser la localisation lobaire ou scissurale d'une opacité pulmonaire."
+    ],
+    "exam_traps": [
+      "Piège Annales : Réaliser un cliché de face en position couchée (antéro-postérieure / AP) entraîne une fausse cardiomégalie et une mauvaise appréciation des bases pulmonaires.",
+      "Piège Traitement : Oublier de rechercher un déplacement trachéal ou médiastinal (urgence médico-chirurgicale vitale).",
+      "Piège Diagnostic : Confondre un pli cutané ou un artéfact vestimentaire avec un pneumothorax ou une ligne pleurale."
+    ],
+    "diagnostic_criteria": "Analyse rigoureuse d'un cliché thoracique PA en inspiration profonde, vérifiant les critères de qualité (I-P-A-N-O) et identifiant les syndromes radiologiques élémentaires (alvéolaire, interstitiel, pleural, bronchique, pariétal ou médiastinal).",
+    "treatment_summary": "La radiographie thoracique est un examen diagnostique. Le traitement dépend de l'étiologie identifiée, allant de la simple surveillance à l'évacuation en urgence (drainage) en cas de syndrome de compresseur médiastinal.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-11T00:13:44.178494+00:00"
   }
 ]
