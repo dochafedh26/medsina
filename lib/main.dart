@@ -8,6 +8,7 @@ import 'core/constants/app_constants.dart';
 import 'core/network/supabase_service.dart';
 import 'core/services/user_loyalty_service.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_controller.dart';
 import 'core/widgets/medsina_logo.dart';
 import 'features/admin/bloc/admin_bloc.dart';
 import 'features/auth/bloc/auth_bloc.dart';
@@ -16,7 +17,9 @@ import 'features/auth/bloc/auth_state.dart';
 import 'features/auth/presentation/auth_screen.dart';
 import 'features/clinical/bloc/clinical_bloc.dart';
 import 'features/navigation/presentation/main_scaffold.dart';
+import 'features/notifications/services/fcm_service.dart';
 import 'features/notifications/services/realtime_notification_service.dart';
+import 'features/notifications/services/smart_reminder_service.dart';
 import 'features/revision/bloc/revision_bloc.dart';
 
 void main() async {
@@ -72,9 +75,13 @@ void main() async {
       userId: activeUserId,
       isAdmin: isAdmin,
     );
+    await SmartReminderService.instance.initialize();
+    await FcmService.instance.initialize(userId: activeUserId);
   } catch (e) {
     debugPrint('Realtime Notification initialization notice: $e');
   }
+
+  await ThemeController.instance.initialize();
 
   runApp(const MedsinaApp());
 }
@@ -99,13 +106,32 @@ class MedsinaApp extends StatelessWidget {
           create: (_) => AdminBloc(),
         ),
       ],
-      child: MaterialApp(
-        title: 'Medsina — Plateforme Médicale Globale',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        home: const AuthGate(),
+      child: AnimatedBuilder(
+        animation: ThemeController.instance,
+        builder: (context, _) {
+          final tc = ThemeController.instance;
+          return MaterialApp(
+            title: 'Medsina — Plateforme Médicale Globale',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: tc.isNightShiftActive
+                ? AppTheme.nightShiftTheme
+                : AppTheme.darkTheme,
+            themeMode: tc.themeMode,
+            builder: (context, child) {
+              final mq = MediaQuery.of(context);
+              final clampedScale = mq.textScaler.clamp(
+                minScaleFactor: 1.0,
+                maxScaleFactor: 1.35,
+              );
+              return MediaQuery(
+                data: mq.copyWith(textScaler: clampedScale),
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+            home: const AuthGate(),
+          );
+        },
       ),
     );
   }

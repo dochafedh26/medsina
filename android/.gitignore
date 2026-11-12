@@ -7,8 +7,9 @@ gradle-wrapper.jar
 GeneratedPluginRegistrant.java
 .cxx/
 
-# Keystore configuration
+# Keystore configuration (never commit keystores or passwords)
 key.properties
+*.keystore
+*.jks
 **/*.keystore
 **/*.jks
-!**/upload-keystore.jks

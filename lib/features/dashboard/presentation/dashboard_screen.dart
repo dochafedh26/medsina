@@ -7,16 +7,25 @@ import '../../../core/network/supabase_service.dart';
 import '../../../core/services/recent_activity_service.dart';
 import '../../../core/services/user_loyalty_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/medsina_colors.dart';
+import '../../../core/theme/theme_controller.dart';
 import '../../../core/utils/admin_dashboard_launcher.dart';
+import '../../achievements/presentation/achievements_screen.dart';
 import '../../ai_assistant/presentation/study_coach_screen.dart';
+import '../../analytics/presentation/performance_analytics_screen.dart';
+import '../../atlas/presentation/clinical_atlas_screen.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../clinical/presentation/case_simulator_screen.dart';
 import '../../externat/presentation/externat_catalog_screen.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
+import '../../focus/presentation/focus_timer_screen.dart';
 import '../../group_revision/presentation/group_revision_hub_screen.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 import '../../national_exam/presentation/national_exams_list_screen.dart';
+import '../../notifications/services/smart_reminder_service.dart';
+import '../../revision/presentation/audio_revision_screen.dart';
+import '../../revision/presentation/error_notebook_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
@@ -214,6 +223,11 @@ class DashboardScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     _buildQuickAccessCards(context, tier, isExpired),
                   ],
+
+                  const SizedBox(height: 26),
+
+                  // ROW 4.5: Outils & Progression Avancée (Analytics, Erreurs, Focus, Atlas, Succès, Audio)
+                  _buildAdvancedToolsSection(context),
 
                   const SizedBox(height: 26),
 
@@ -1547,7 +1561,66 @@ class DashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  badge,
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      badge,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4.5),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B).withValues(alpha: 0.22),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: const Color(0xFFF59E0B).withValues(alpha: 0.55),
+                          ),
+                        ),
+                        child: Text(
+                          '⏳ J-${SmartReminderService.computeDaysUntil(SmartReminderService.defaultExamDate)} • Concours Blida',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9.8,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      Semantics(
+                        button: true,
+                        label: 'Basculer le mode Garde de Nuit AMOLED',
+                        child: InkWell(
+                          onTap: () => ThemeController.instance.toggleNightShift(),
+                          borderRadius: BorderRadius.circular(999),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4.5),
+                            decoration: BoxDecoration(
+                              color: ThemeController.instance.isNightShiftActive
+                                  ? const Color(0xFFF59E0B)
+                                  : Colors.white.withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.25),
+                              ),
+                            ),
+                            child: Text(
+                              ThemeController.instance.isNightShiftActive
+                                  ? '🌙 Garde de Nuit ON'
+                                  : '🌙 Garde de Nuit',
+                              style: TextStyle(
+                                color: ThemeController.instance.isNightShiftActive
+                                    ? Colors.black
+                                    : Colors.white,
+                                fontSize: 9.8,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 11),
                   Text(
                     'Bonjour, $name',
@@ -2638,6 +2711,155 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAdvancedToolsSection(BuildContext context) {
+    final mc = context.mc;
+    final tools = [
+      (
+        title: 'Analytique',
+        subtitle: 'Radar, courbe 30j/90j & lacunes',
+        icon: Icons.insights_rounded,
+        color: mc.accent,
+        screen: const PerformanceAnalyticsScreen(),
+      ),
+      (
+        title: 'Carnet d\'Erreurs',
+        subtitle: 'QCMs manqués & FSRS en 1 clic',
+        icon: Icons.rule_folder_rounded,
+        color: mc.error,
+        screen: const ErrorNotebookScreen(),
+      ),
+      (
+        title: 'Focus Pomodoro',
+        subtitle: 'Minuteur 25/5, 50/10 & XP',
+        icon: Icons.timer_rounded,
+        color: mc.info,
+        screen: const FocusTimerScreen(),
+      ),
+      (
+        title: 'Atlas Clinique',
+        subtitle: 'ECG, Radio, TDM & Dermato',
+        icon: Icons.biotech_rounded,
+        color: const Color(0xFF8B5CF6),
+        screen: const ClinicalAtlasScreen(),
+      ),
+      (
+        title: 'Badges & Succès',
+        subtitle: '8 trophées médicaux & XP',
+        icon: Icons.emoji_events_rounded,
+        color: mc.warning,
+        screen: const AchievementsScreen(),
+      ),
+      (
+        title: 'Révision Audio',
+        subtitle: 'Perles & FSRS mains libres',
+        icon: Icons.headphones_rounded,
+        color: mc.success,
+        screen: const AudioRevisionScreen(),
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader(
+          context,
+          title: 'Outils de Performance & Atlas',
+          badge: 'NOUVEAU',
+          icon: Icons.rocket_launch_rounded,
+        ),
+        const SizedBox(height: 12),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final crossAxisCount = constraints.maxWidth >= 820
+                ? 3
+                : (constraints.maxWidth >= 460 ? 2 : 1);
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: tools.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                mainAxisExtent: 86,
+              ),
+              itemBuilder: (context, index) {
+                final t = tools[index];
+                return Semantics(
+                  button: true,
+                  label: '${t.title} : ${t.subtitle}',
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => t.screen),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(18),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: mc.surface,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: mc.border),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: t.color.withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(t.icon, color: t.color, size: 22),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  t.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                        color: mc.textPrimary,
+                                      ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  t.subtitle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    color: mc.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(Icons.chevron_right_rounded,
+                              size: 18, color: mc.textSecondary),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 }

@@ -70,22 +70,27 @@ jobs:
             echo "class AppSecrets { static const String geminiApiKey = ''; static const String githubPat = ''; }" > lib/core/config/app_secrets.dart
           fi
 
-      - name: 🔑 Configure Android Release Signing Key
+      - name: 🔑 Configure Android Release Signing Key (GitHub Secrets)
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
           mkdir -p android/app
-          cat << 'EOF' > android/key.properties
-          storePassword=medsina2027
-          keyPassword=medsina2027
-          keyAlias=upload
-          storeFile=upload-keystore.jks
-          EOF
-          if [ -f android/app/upload-keystore.jks ]; then
-            cp android/app/upload-keystore.jks android/upload-keystore.jks
-            echo "✅ Verified upload-keystore.jks is present in android/app and copied to android/"
-          else
-            echo "❌ CRITICAL: upload-keystore.jks not found in android/app!"
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ]; then
+            echo "❌ CRITICAL: Missing Android signing secrets (ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_PASSWORD, ANDROID_KEY_ALIAS)."
             exit 1
           fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          cp android/app/upload-keystore.jks android/upload-keystore.jks
+          cat << EOF > android/key.properties
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+          echo "✅ Decoded Android release keystore from GitHub Secrets"
 
       - name: 📦 Install dependencies
         run: flutter pub get

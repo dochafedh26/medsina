@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'medsina_colors.dart';
 
 class AppTheme {
   // Medical Primary & Brand Colors (2026 Clinical Navy + Emerald System)
@@ -204,6 +205,7 @@ class AppTheme {
     );
 
     return base.copyWith(
+      extensions: const [MedsinaColors.light],
       textTheme: _buildTextTheme(base.textTheme, const Color(0xFF0F172A), const Color(0xFF64748B)),
       cardTheme: CardThemeData(
         color: lightSurface,
@@ -288,6 +290,7 @@ class AppTheme {
     );
 
     return base.copyWith(
+      extensions: const [MedsinaColors.dark],
       textTheme: _buildTextTheme(base.textTheme, Colors.white, const Color(0xFF94A3B8)),
       cardTheme: CardThemeData(
         color: darkSurface,
@@ -350,6 +353,93 @@ class AppTheme {
       ),
       dividerTheme: const DividerThemeData(
         color: darkBorder,
+        thickness: 1,
+        space: 1,
+      ),
+    );
+  }
+
+  /// Mode "Garde de Nuit" : Noir pur AMOLED (#000000) + Ambre doux anti-fatigue oculaire.
+  static ThemeData get nightShiftTheme {
+    const nc = MedsinaColors.nightShift;
+    final base = ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      fontFamily: GoogleFonts.inter().fontFamily,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: nc.accent,
+        brightness: Brightness.dark,
+        primary: nc.accent,
+        secondary: const Color(0xFFD97706),
+        surface: nc.surface,
+      ),
+      scaffoldBackgroundColor: nc.background,
+    );
+
+    return base.copyWith(
+      extensions: const [MedsinaColors.nightShift],
+      textTheme: _buildTextTheme(base.textTheme, nc.textPrimary, nc.textSecondary),
+      cardTheme: CardThemeData(
+        color: nc.surface,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: nc.border, width: 1),
+        ),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: nc.background,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
+        centerTitle: false,
+        titleTextStyle: GoogleFonts.plusJakartaSans(
+          fontSize: 18,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.3,
+          color: nc.textPrimary,
+        ),
+        iconTheme: IconThemeData(color: nc.accent),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: nc.accent,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 14),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: nc.accent,
+          side: BorderSide(color: nc.accent),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          textStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 14),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: nc.surfaceElevated,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: nc.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: nc.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: nc.accent, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+      dividerTheme: DividerThemeData(
+        color: nc.border,
         thickness: 1,
         space: 1,
       ),
