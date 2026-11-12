@@ -96,15 +96,15 @@ jobs:
           VERSION="${VERSION#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
           echo "Building Android split-per-abi APKs and universal APK version $VERSION+$BUILD_NUM..."
-          flutter build apk --release --split-per-abi --build-name=$VERSION --build-number=$BUILD_NUM
-          flutter build apk --release --build-name=$VERSION --build-number=$BUILD_NUM
+          flutter build apk --release --split-per-abi --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM
+          flutter build apk --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM
 
       - name: 🛠️ Build App Bundle (AAB)
         run: |
           VERSION="${{ inputs.version || github.ref_name }}"
           VERSION="${VERSION#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          flutter build appbundle --release --build-name=$VERSION --build-number=$BUILD_NUM
+          flutter build appbundle --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM
 
       - name: 📦 Prepare Android Deliverables
         run: |
