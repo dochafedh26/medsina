@@ -73,7 +73,6 @@ flutter:
   assets:
     - assets/
     - assets/data/
-    - assets/data/qcms/
     - assets/drives/
     - assets/mindmaps/
 

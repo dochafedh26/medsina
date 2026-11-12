@@ -709,14 +709,13 @@ class GlobalSearchService {
 
     for (final modId in candidateModuleIds.take(3)) {
       try {
-        final safeModId = modId.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_');
-        final path = 'assets/data/qcms/$safeModId.json';
-        final jsonStr = await rootBundle.loadString(path);
-        final rawList = jsonDecode(jsonStr) as List<dynamic>;
+        final rawList = await SupabaseService.fetchQuestionsForModules(
+          moduleIds: [modId],
+          limit: 30,
+        );
 
         int countFound = 0;
         for (final item in rawList) {
-          if (item is! Map<String, dynamic>) continue;
           final question = QcmQuestion.fromJson(item);
           final normQ = normalize(question.questionText);
           final normExpl = normalize(question.explanation);

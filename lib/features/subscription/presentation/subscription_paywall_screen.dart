@@ -496,7 +496,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                           SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Remise spéciale 2 ans appliquée : jusqu\'à -35% d\'économie sur tous les abonnements !',
+                              'Remise spéciale 2 ans appliquée : -20% d\'économie immédiate sur tous les forfaits !',
                               style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFF6D28D9)),
                             ),
                           ),

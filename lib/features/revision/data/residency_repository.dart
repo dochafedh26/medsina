@@ -85,57 +85,45 @@ class ResidencyRepository {
         .replaceAll(RegExp(r'[^a-z0-9]'), '');
   }
 
-  /// Loads official questions specifically for the selected course.
-  /// 1. Tries Supabase if live questions exist.
-  /// 2. Loads bundled JSON asset for that module from `assets/data/qcms/<module_id>.json`.
-  /// 3. Filters exclusively for the specified course.
+  /// Loads official questions specifically for the selected course from Supabase Cloud.
+  /// Enforces server-side Row Level Security (RLS) rules based on user subscription & study year.
   static Future<List<QcmQuestion>> getQuestionsForCourseAsync(CourseModel course) async {
-    // 1. Try fetching live from Supabase
+    final safeModId = _sanitizeModuleId(course.moduleId);
+
+    // 1. Check in-memory session cache first for fast repeat access
+    final cached = _moduleQuestionsCache[safeModId];
+    if (cached != null && cached.isNotEmpty) {
+      final byId = cached.where((q) => q.courseId == course.id).toList();
+      if (byId.isNotEmpty) return byId;
+
+      final targetNorm = _normalize(course.name);
+      final byName = cached.where((q) => _normalize(q.courseName) == targetNorm).toList();
+      if (byName.isNotEmpty) return byName;
+    }
+
+    // 2. Fetch live questions from Supabase Cloud (RLS protected)
     try {
       final supaData = await SupabaseService.fetchCourseQuestions(course.id);
       if (supaData.isNotEmpty) {
-        return supaData.map((q) => QcmQuestion.fromJson(q)).toList();
+        final questions = supaData.map((q) => QcmQuestion.fromJson(q)).toList();
+        
+        // Cache questions in session memory
+        final list = _moduleQuestionsCache.putIfAbsent(safeModId, () => []);
+        for (final q in questions) {
+          if (!list.any((existing) => existing.id == q.id)) {
+            list.add(q);
+          }
+        }
+        return questions;
       }
-    } catch (_) {}
-
-    // 2. Load from local bundled module JSON
-    final safeModId = _sanitizeModuleId(course.moduleId);
-    List<QcmQuestion>? modQuestions = _moduleQuestionsCache[safeModId];
-
-    if (modQuestions == null) {
-      try {
-        final path = 'assets/data/qcms/$safeModId.json';
-        final jsonStr = await rootBundle.loadString(path);
-        final list = jsonDecode(jsonStr) as List<dynamic>;
-        modQuestions = list.map((item) => QcmQuestion.fromJson(item as Map<String, dynamic>)).toList();
-        _moduleQuestionsCache[safeModId] = modQuestions;
-      } catch (e) {
-        // Fallback: search in any other loaded or common module caches
-        modQuestions = [];
-      }
+    } catch (e) {
+      debugPrint('[ResidencyRepository] Error fetching course questions from Supabase: $e');
     }
-
-    // 3. Match questions by exact course.id
-    final byId = modQuestions.where((q) => q.courseId == course.id).toList();
-    if (byId.isNotEmpty) return byId;
-
-    // 4. Match questions by normalized course title
-    final targetNorm = _normalize(course.name);
-    final byName = modQuestions.where((q) => _normalize(q.courseName) == targetNorm).toList();
-    if (byName.isNotEmpty) return byName;
-
-    // 5. Match by substring / keyword containment
-    final byFuzzy = modQuestions.where((q) {
-      final qNorm = _normalize(q.courseName);
-      if (qNorm.isEmpty || targetNorm.isEmpty) return false;
-      return qNorm.contains(targetNorm) || targetNorm.contains(qNorm);
-    }).toList();
-    if (byFuzzy.isNotEmpty) return byFuzzy;
 
     return [];
   }
 
-  /// Synchronous fallback helper for course questions
+  /// Synchronous fallback helper for course questions from memory cache
   static List<QcmQuestion> getQuestionsForCourse(String courseId) {
     for (final list in _moduleQuestionsCache.values) {
       final match = list.where((q) => q.courseId == courseId).toList();
@@ -144,7 +132,8 @@ class ResidencyRepository {
     return [];
   }
 
-  /// Loads and aggregates questions across multiple courses & modules for custom revision sessions.
+  /// Loads and aggregates questions across multiple courses & modules from Supabase Cloud.
+  /// Server-side RLS guarantees that only entitled questions (unlocked study year or free sample) are returned.
   static Future<List<QcmQuestion>> getQuestionsForMultipleCoursesAsync({
     required List<String> courseIds,
     required List<String> moduleIds,
@@ -153,45 +142,36 @@ class ResidencyRepository {
     List<String>? allowedTypes,
   }) async {
     final allQuestions = <QcmQuestion>[];
-    final courseIdSet = courseIds.toSet();
 
-    for (final modId in moduleIds.toSet()) {
-      final safeModId = _sanitizeModuleId(modId);
-      List<QcmQuestion>? modQuestions = _moduleQuestionsCache[safeModId];
+    try {
+      final supaData = await SupabaseService.fetchQuestionsForModules(
+        moduleIds: moduleIds,
+        courseIds: courseIds.isNotEmpty ? courseIds : null,
+        limit: limit > 0 ? limit * 2 : -1,
+      );
 
-      if (modQuestions == null) {
-        try {
-          final path = 'assets/data/qcms/$safeModId.json';
-          final jsonStr = await rootBundle.loadString(path);
-          final list = jsonDecode(jsonStr) as List<dynamic>;
-          modQuestions = list.map((item) => QcmQuestion.fromJson(item as Map<String, dynamic>)).toList();
-          _moduleQuestionsCache[safeModId] = modQuestions;
-        } catch (_) {
-          modQuestions = [];
+      if (supaData.isNotEmpty) {
+        for (final raw in supaData) {
+          final q = QcmQuestion.fromJson(raw);
+
+          // Exclure les questions sans propositions (ex: QROCs sans choix)
+          if (q.options.isEmpty) continue;
+
+          // Filtrer selon les types autorisés (ex: qcs, qcm, casClinique)
+          if (allowedTypes != null && allowedTypes.isNotEmpty) {
+            final typeName = q.type.name.toLowerCase();
+            final matchesType = allowedTypes.any((at) {
+              final normAt = at.toLowerCase();
+              return normAt == typeName || (normAt == 'casclinique' && typeName == 'casclinique');
+            });
+            if (!matchesType) continue;
+          }
+
+          allQuestions.add(q);
         }
       }
-
-      final filtered = modQuestions.where((q) {
-        final matchesCourse = courseIdSet.isEmpty || courseIdSet.contains(q.courseId);
-        if (!matchesCourse) return false;
-
-        // Exclure impérativement les questions sans propositions (ex: QROCs sans choix)
-        if (q.options.isEmpty) return false;
-
-        // Filtrer selon les types autorisés (ex: qcs, qcm, casClinique)
-        if (allowedTypes != null && allowedTypes.isNotEmpty) {
-          final typeName = q.type.name.toLowerCase();
-          final matchesType = allowedTypes.any((at) {
-            final normAt = at.toLowerCase();
-            return normAt == typeName || (normAt == 'casclinique' && typeName == 'casclinique');
-          });
-          if (!matchesType) return false;
-        }
-
-        return true;
-      });
-
-      allQuestions.addAll(filtered);
+    } catch (e) {
+      debugPrint('[ResidencyRepository] Error loading multiple questions from Supabase: $e');
     }
 
     if (shuffle) {

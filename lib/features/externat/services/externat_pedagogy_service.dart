@@ -311,7 +311,7 @@ Fournis-lui un guide pratique express pour son tour de salle en format JSON stri
       }
     }
 
-    // 2. Asynchronously load real QCMs from assets/data/qcms/Blida_*.json
+    // 2. Asynchronously load real QCMs from Supabase Cloud via ResidencyRepository
     List<QcmQuestion> collected = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
       courseIds: const [],
       moduleIds: targetModuleIds.toList(),

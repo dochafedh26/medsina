@@ -439,16 +439,41 @@ class SupabaseService {
     }
   }
 
-  /// Fetch Questions for a specific course
+  /// Fetch Questions for a specific course from Supabase Cloud (with RLS enforcement)
   static Future<List<Map<String, dynamic>>> fetchCourseQuestions(String courseId) async {
     try {
       final response = await client
           .from('qcm_questions')
-          .select('*, qcm_options(*)')
+          .select('*')
           .eq('course_id', courseId);
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       debugPrint('Error fetching course questions: $e');
+      return [];
+    }
+  }
+
+  /// Fetch Questions for multiple courses and modules from Supabase Cloud (with RLS enforcement)
+  static Future<List<Map<String, dynamic>>> fetchQuestionsForModules({
+    required List<String> moduleIds,
+    List<String>? courseIds,
+    int limit = -1,
+  }) async {
+    try {
+      var query = client.from('qcm_questions').select('*');
+      if (moduleIds.isNotEmpty) {
+        query = query.inFilter('module_id', moduleIds);
+      }
+      if (courseIds != null && courseIds.isNotEmpty) {
+        query = query.inFilter('course_id', courseIds);
+      }
+      if (limit > 0) {
+        query = query.limit(limit);
+      }
+      final response = await query;
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching questions for modules: $e');
       return [];
     }
   }

@@ -41,6 +41,8 @@ class QcmQuestion extends Equatable {
   final bool? explicitIsInverse;
   final Map<String, int>? explicitOptionStats;
   final String? examTrap;
+  final int? studyYear;
+  final bool isFreeSample;
 
   const QcmQuestion({
     required this.id,
@@ -59,6 +61,8 @@ class QcmQuestion extends Equatable {
     this.explicitIsInverse,
     this.explicitOptionStats,
     this.examTrap,
+    this.studyYear,
+    this.isFreeSample = false,
   });
 
   /// Detects whether this question asks for a FALSE / EXCEPT ("sauf une", "fausse", "(FS)") statement.
@@ -150,27 +154,29 @@ class QcmQuestion extends Equatable {
 
     return QcmQuestion(
       id: json['id']?.toString() ?? '',
-      moduleId: json['moduleId']?.toString() ?? '',
-      courseId: json['courseId']?.toString() ?? '',
-      courseName: json['courseName']?.toString() ?? '',
+      moduleId: (json['moduleId'] ?? json['module_id'])?.toString() ?? '',
+      courseId: (json['courseId'] ?? json['course_id'])?.toString() ?? '',
+      courseName: (json['courseName'] ?? json['course_name'])?.toString() ?? '',
       type: parseType(json['type']),
-      questionText: json['questionText']?.toString() ?? '',
-      clinicalCaseText: json['clinicalCaseText']?.toString(),
-      options: (json['options'] as List<dynamic>?)
+      questionText: (json['questionText'] ?? json['question_text'])?.toString() ?? '',
+      clinicalCaseText: (json['clinicalCaseText'] ?? json['clinical_case'] ?? json['clinical_case_text'])?.toString(),
+      options: ((json['options'] ?? json['qcm_options']) as List<dynamic>?)
               ?.map((o) => QcmOption.fromJson(o as Map<String, dynamic>))
               .toList() ??
           [],
-      correctAnswers: (json['correctAnswers'] as List<dynamic>?)
+      correctAnswers: ((json['correctAnswers'] ?? json['correct_answers']) as List<dynamic>?)
               ?.map((a) => a.toString())
               .toList() ??
           [],
       explanation: json['explanation']?.toString() ?? '',
-      source: json['source']?.toString() ?? 'Concours',
+      source: json['source']?.toString() ?? 'Concours Résidanat Blida',
       year: (json['year'] is num) ? (json['year'] as num).toInt() : 2024,
       reusedYears: parsedReused,
       explicitIsInverse: json['isInverse'] is bool ? json['isInverse'] as bool : null,
       explicitOptionStats: parsedStats,
       examTrap: json['examTrap']?.toString(),
+      studyYear: (json['study_year'] ?? json['studyYear'] as num?)?.toInt(),
+      isFreeSample: json['is_free_sample'] == true || json['isFreeSample'] == true,
     );
   }
 

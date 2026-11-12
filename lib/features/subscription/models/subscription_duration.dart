@@ -6,7 +6,7 @@ enum SubscriptionDuration {
   threeMonths(days: 90, label: '3 Mois', shortLabel: '3 mois', discountPercent: 16),
   sixMonths(days: 180, label: '6 Mois', shortLabel: '6 mois', discountPercent: 30),
   oneYear(days: 365, label: '1 An', shortLabel: '1 an', discountPercent: 58, badge: 'MEILLEUR CHOIX'),
-  twoYears(days: 730, label: '2 Ans', shortLabel: '2 ans', discountPercent: 35, badge: '-35% PROMO 2 ANS');
+  twoYears(days: 730, label: '2 Ans', shortLabel: '2 ans', discountPercent: 20, badge: '-20% PROMO 2 ANS');
 
   final int days;
   final String label;

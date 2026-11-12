@@ -1,0 +1,59 @@
+name: 🚀 Medsina - Import Sécurisé Banque 19 305 QCM vers Supabase Cloud
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Exécuter en mode simulation (true/false)'
+        required: false
+        default: 'false'
+        type: boolean
+      batch_size:
+        description: 'Taille des lots d\'insertion (par défaut 500)'
+        required: false
+        default: '500'
+        type: string
+
+concurrency:
+  group: medsina-qcm-import
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  import-qcms:
+    name: 📦 Import des 19 305 QCM dans public.qcm_questions
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Récupérer le code Medsina
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurer Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'scripts/automation/requirements.txt'
+
+      - name: 📦 Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/automation/requirements.txt
+
+      - name: 🚀 Lancer l'import des QCM vers Supabase
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          DRY_ARG=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            DRY_ARG="--dry-run"
+          fi
+          
+          BATCH_ARG="--batch-size ${{ inputs.batch_size }}"
+          
+          echo "🚀 Lancement de l'import : python scripts/automation/import_qcms_to_supabase.py assets/data/qcms $BATCH_ARG $DRY_ARG"
+          python scripts/automation/import_qcms_to_supabase.py assets/data/qcms $BATCH_ARG $DRY_ARG
