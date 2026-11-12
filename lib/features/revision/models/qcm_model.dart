@@ -174,8 +174,9 @@ class QcmQuestion extends Equatable {
       reusedYears: parsedReused,
       explicitIsInverse: json['isInverse'] is bool ? json['isInverse'] as bool : null,
       explicitOptionStats: parsedStats,
-      examTrap: json['examTrap']?.toString(),
-      studyYear: (json['study_year'] ?? json['studyYear'] as num?)?.toInt(),
+      studyYear: (json['study_year'] is num)
+          ? (json['study_year'] as num).toInt()
+          : ((json['studyYear'] is num) ? (json['studyYear'] as num).toInt() : null),
       isFreeSample: json['is_free_sample'] == true || json['isFreeSample'] == true,
     );
   }

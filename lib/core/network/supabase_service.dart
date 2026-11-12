@@ -460,17 +460,14 @@ class SupabaseService {
     int limit = -1,
   }) async {
     try {
-      var query = client.from('qcm_questions').select('*');
+      var filterQuery = client.from('qcm_questions').select('*');
       if (moduleIds.isNotEmpty) {
-        query = query.inFilter('module_id', moduleIds);
+        filterQuery = filterQuery.inFilter('module_id', moduleIds);
       }
       if (courseIds != null && courseIds.isNotEmpty) {
-        query = query.inFilter('course_id', courseIds);
+        filterQuery = filterQuery.inFilter('course_id', courseIds);
       }
-      if (limit > 0) {
-        query = query.limit(limit);
-      }
-      final response = await query;
+      final response = limit > 0 ? await filterQuery.limit(limit) : await filterQuery;
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       debugPrint('Error fetching questions for modules: $e');
