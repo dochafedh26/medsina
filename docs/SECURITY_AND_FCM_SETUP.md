@@ -23,5 +23,5 @@ Le service `FcmService` (`lib/features/notifications/services/fcm_service.dart`)
 
 Pour activer la réception réelle des notifications push :
 1. Créez un projet sur [Firebase Console](https://console.firebase.google.com/) avec le package Android `com.medsina.medsina`.
-2. Téléchargez `google-services.json` et placez-le dans `android/app/google-services.json` (ou injectez-le via secret CI `GOOGLE_SERVICES_JSON_BASE64`).
+2. Téléchargez `google-services.json` et placez-le dans `android/app/google-services.json` (ou injectez-le via secret CI `FIREBASE_GOOGLE_SERVICES_JSON`).
 3. Appliquez la migration Supabase `supabase/migrations/20261112120000_fcm_and_clinical_atlas.sql` pour créer la table `fcm_tokens` et `clinical_atlas_cases`.

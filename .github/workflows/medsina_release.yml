@@ -91,11 +91,11 @@ jobs:
           storeFile=upload-keystore.jks
           EOF
           echo "✅ Decoded Android release keystore from GitHub Secrets"
-          if [ -n "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
-            echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 --decode > android/app/google-services.json
+          if [ -n "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}" ]; then
+            echo "${{ secrets.FIREBASE_GOOGLE_SERVICES_JSON }}" | base64 --decode > android/app/google-services.json
             echo "✅ Decoded google-services.json for FCM"
           else
-            echo "ℹ️ GOOGLE_SERVICES_JSON_BASE64 not set (FCM disabled in this build)"
+            echo "ℹ️ FIREBASE_GOOGLE_SERVICES_JSON not set (FCM disabled in this build)"
           fi
 
       - name: 📦 Install dependencies
