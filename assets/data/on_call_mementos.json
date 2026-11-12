@@ -938,15 +938,16 @@
     "color_hex": "#0284C7",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluer le degré de déshydratation (légère <5%, modérée 5-9%, sévère ≥10%) et rechercher les signes de choc (marbrures, tachycardie, TRC > 3s, oligurie).",
-      "Étape 2 : Poser une voie veineuse périphérique (ou voie intra-osseuse si échec x2 en <90s). Prélever : GDS, ionogramme sanguin, urée, créatininémie, glycémique capillaire.",
-      "Étape 3 : En cas de choc hypovolémique, bolus de NaCl 0,9% : 20 mL/kg en 15-20 minutes, renouvelable 1 fois si persistance du choc. Si pas de choc, calculer la réhydratation sur 24h (Déficit + Besoins de base) avec SSI 0,9% + G5% + KCl 2g/L selon iono.",
-      "Étape 4 : Surveillance armée (diurèse horaire > 1 mL/kg/h, conscience, paramètres hémodynamiques). Critères de transfert en réanimation pédiatrique : échec du remplissage, coma, acidose sévère (pH < 7,15).",
-      "Étape 5 : Piège médico-légal et thérapeutique : Ne JAMAIS administrer de bolus de KCl pur IV direct (risque d'arrêt cardiaque iatrogène) et exclure une cause chirurgicale ou une acidose métabolique congénitale avant de forcer les apports."
+      "Étape 1 : Évaluer la sévérité (score de Gorelik ou clinique) : pli cutané, fontanelle déprimée, sécheresse des muqueuses, marbrures, TRC > 3s (collapsus = urgence vitale).",
+      "Étape 2 : Poser une voie veineuse périphérique (VVP) ou intra-osseuse (TIO) immédiate si choc. Bilan urgent : Glycémie capillaire, Ionogramme sanguin, Urée, Créatinine, Gaz du sang (recherche acidose métabolique).",
+      "Étape 3 : En cas de choc hypovolémique : Remplissage vasculaire par NaCl 0,9% ou Ringer Lactate à raison de 20 ml/kg en 20 minutes, renouvelable 1 à 2 fois si persistance des signes de choc.",
+      "Étape 4 : Pour la réhydratation de maintenance + déficit : Utiliser du Sérum Glucosé 5% + NaCl 0,9% (ou solution type iso-oncotique pédiatrique selon disponibilité) en couvrant les besoins basaux et la correction du déficit sur 24h.",
+      "Étape 5 : Surveillance armée au déchoquage : Contrôle de la diurèse (objectif > 1 ml/kg/h), de la conscience, des constantes (FC, TA, FR) et ionogramme de contrôle à H6-H12. Alerte réanimation si acidose sévère (pH < 7.15) ou échec du remplissage.",
+      "Étape 6 : Piège médico-légal / CI : Ne jamais administrer de potassium (KCl) dans les solutés de réhydratation tant que la diurèse n'est pas vérifiée et documentée (risque d'hyperkaliémie fatale)."
     ],
-    "scientific_references": "Recommandations ESPGHAN / SFMU / Société Algérienne de Pédiatrie",
+    "scientific_references": "Recommandations ESPGHAN / SFMU / Consensus National Pédiatrie MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-11T22:02:29.097068+00:00",
-    "updated_at": "2026-11-11T22:02:29.097083+00:00"
+    "created_at": "2026-11-12T03:04:52.914052+00:00",
+    "updated_at": "2026-11-12T03:04:52.914067+00:00"
   }
 ]
