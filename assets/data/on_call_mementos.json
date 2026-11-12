@@ -410,21 +410,22 @@
   {
     "id": "memento_traumatisme_cranien",
     "title": "🧠 Traumatisme Crânien : Scanner & Urgences",
-    "category": "Neurologie / UMC",
-    "icon_name": "bolt_rounded",
+    "category": "Neuro-Traumatologie",
+    "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation initiale immédiate (Score de Glasgow GCS, réactivité pupillaire, saturation O2, PAS) et recherche de signes de gravité clinique (céphalées progressives, vomissements répétés, amnésie post-traumatique, trouble de la conscience, crise convulsivante, signe de focalisation, otorragie ou rhinorrhée).",
-      "Étape 2 : Indication formelle de TDM cérébrale sans injection en urgence (Règles canadiennes ou New Orleans) : GCS < 15 à 2h, suspicion de fracture crânienne (déprimée ou de la base), âge > 65 ans, prise d'antiagragulants ou d'AVK, vomissements répétés (> 2 épisodes), amnésie rétrograde > 30 min, mécanisme violent (AVP à haute vitesse, chute > 1 mètre ou 5 marches).",
-      "Étape 3 : Conditionnement et gestes d'urgence : Pose de 2 voies veineuses périphériques (VVP) de bon calibre, monitorage continu (SpO2, PNI, ECG), oxygénothérapie pour maintenir SpO2 > 94%, immobilisation cervicale stricte (collier cervical) tant que le rachis n'est pas dégagé.",
-      "Étape 4 : Surveillance armée et critères de transfert : Réévaluation neurologique rapprochée (toutes les 15 min en zone de déchoquage). Tout score de Glasgow en baisse, installation d'une mydriase unilatérale ou bilatérale, ou aggravation hémodynamique impose un appel immédiat au réanimateur de garde pour intubation et sédation (Propofol 1-2 mg/kg ou Midazolam 0.1-0.2 mg/kg + Fentanyl 2-3 µg/kg) et déchocage.",
-      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne JAMAIS administrer d'anticoagulants, d'antiagragulants ou d'AINS avant d'avoir éliminé une lésion intracrânienne au scanner. Ne jamais poser de sonde nasogastrique en cas de suspicion de fracture de l'étage moyen ou antérieur de la base du crâne (risque de passage intracrânien)."
+      "Étape 1 : Évaluation initiale immédiate (Score de Glasgow GCS, réactivité pupillaire, recherche de signes de focalisation, otorragie ou rhinorrhée de LCR).",
+      "Étape 2 : Indication formelle de TDM cérébrale sans injection en urgence (GCS < 15 à H2 post-choc, amnésie post-traumatique > 30 min, vomissements répétés, âge > 65 ans, anticoagulant/antiplaquettaire, céphalées violentes, signes neurologiques focaux).",
+      "Étape 3 : Conditionnement et réanimation initiale (Oxygénothérapie pour SpO2 > 94%, immobilisation cervicale stricte par collier, abord veineux périphérique, correction immédiate d'une hypotension systolique PAS < 100 mmHg).",
+      "Étape 4 : Gestion spécifique en cas d'engagement cérébral imminent ou de mydriase unilatérale (Hyperventilation brève si hernie, Mannitol 20% 1g/kg IV ou Sérum Salé Hypertonique 7.5% 2-3 ml/kg, appel immédiat du neurochirurgien de garde et du réanimateur).",
+      "Étape 5 : Surveillance armée en salle d'observation des UMC pendant au moins 6 heures si GCS à 15 (réévaluation horaire du GCS, des pupilles, et de la conscience avant toute décision de sortie avec consignes écrites).",
+      "Étape 6 : Piège médico-légal absolu (Interdiction formelle de réaliser une ponction lombaire et de prescrire des sédatifs ou morphiniques puissants avant l'élimination formelle d'une lésion chirurgicale au TDM cérébral)."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / Collège Français de Médecine d'Urgence / MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Médecine d'Urgence (SAMU) / MSPRH",
     "is_active": true,
-    "created_at": "2026-11-03T06:56:39.617174+00:00",
-    "updated_at": "2026-11-03T06:56:39.617189+00:00"
+    "created_at": "2026-11-12T19:59:39.961173+00:00",
+    "updated_at": "2026-11-12T19:59:39.961189+00:00"
   },
   {
     "id": "memento_acr_adulte",
