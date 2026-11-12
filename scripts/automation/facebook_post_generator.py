@@ -519,7 +519,11 @@ def record_used_qcm_id(qcm_id: str):
 
 def load_real_qcm(topic: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Charge un QCM réel depuis assets/data/qcms/*.json selon le sujet ou au hasard."""
-    assets_dir = Path(__file__).resolve().parents[2] / "assets" / "data" / "qcms"
+    assets_dir = Path(__file__).resolve().parents[2] / "database" / "raw_qcms"
+    if not assets_dir.exists():
+        assets_dir = Path(__file__).resolve().parents[2] / "assets" / "data" / "qcms"
+    if not assets_dir.exists():
+        assets_dir = Path("database/raw_qcms")
     if not assets_dir.exists():
         assets_dir = Path("assets/data/qcms")
     if not assets_dir.exists():

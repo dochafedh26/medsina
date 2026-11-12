@@ -42,21 +42,22 @@ sys.path.insert(0, str(SCRIPT_DIR))
 
 from booklet_notification_broadcaster import get_credentials
 
-def get_assets_data_dir() -> Path:
+def get_qcms_dir() -> Path:
     candidates = [
-        WORKSPACE_ROOT / "assets" / "data",
-        WORKSPACE_ROOT / "medsina" / "assets" / "data",
-        Path("assets/data"),
-        Path("medsina/assets/data"),
-        SCRIPT_DIR.parents[1] / "assets" / "data",
+        WORKSPACE_ROOT / "database" / "raw_qcms",
+        WORKSPACE_ROOT / "medsina" / "database" / "raw_qcms",
+        Path("database/raw_qcms"),
+        Path("medsina/database/raw_qcms"),
+        WORKSPACE_ROOT / "assets" / "data" / "qcms",
+        Path("assets/data/qcms"),
     ]
     for c in candidates:
-        if c.exists() and (c / "qcms").exists():
+        if c.exists():
             return c
     return candidates[0]
 
-DATA_DIR = get_assets_data_dir()
-QCMS_DIR = DATA_DIR / "qcms"
+DATA_DIR = WORKSPACE_ROOT / "assets" / "data" if (WORKSPACE_ROOT / "assets" / "data").exists() else Path("assets/data")
+QCMS_DIR = get_qcms_dir()
 SUMMARIES_FILE = DATA_DIR / "course_summaries.json"
 
 # Remplacements d'indices et exposants fréquents en médecine

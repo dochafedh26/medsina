@@ -436,15 +436,15 @@ def push_to_supabase_queue(
 
     # 4. Save local JSON cache for offline / repo sync
     try:
-        assets_dir = ROOT_DIR / "assets" / "data"
-        if assets_dir.exists():
-            cache_file = assets_dir / "discovered_blida_resources.json"
-            existing_cache = []
-            if cache_file.exists():
-                try:
-                    existing_cache = json.loads(cache_file.read_text(encoding="utf-8"))
-                except Exception:
-                    existing_cache = []
+        cache_dir = Path(__file__).resolve().parent / "cache"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_file = cache_dir / "discovered_blida_resources.json"
+        existing_cache = []
+        if cache_file.exists():
+            try:
+                existing_cache = json.loads(cache_file.read_text(encoding="utf-8"))
+            except Exception:
+                existing_cache = []
             merged_cache = new_items + existing_cache
             seen_cache = set()
             deduped_cache = []

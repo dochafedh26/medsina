@@ -817,15 +817,14 @@ def push_to_admin_queue(
     except Exception:
         pass
 
-    # 4. Save local JSON cache for offline / repo sync
     try:
-        assets_dir = Path(__file__).resolve().parents[2] / "assets" / "data"
-        if assets_dir.exists():
-            cache_file = assets_dir / "discovered_blida_resources.json"
-            cache_file.write_text(
-                json.dumps(merged_queue, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
+        cache_dir = Path(__file__).resolve().parent / "cache"
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_file = cache_dir / "discovered_blida_resources.json"
+        cache_file.write_text(
+            json.dumps(merged_queue, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
     except Exception:
         pass
 

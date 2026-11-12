@@ -82,7 +82,9 @@ def resolve_resource_path(sub_rel: str) -> Path:
             return c
     return candidates[0]
 
-QCMS_DIR = resolve_resource_path("assets/data/qcms")
+QCMS_DIR = resolve_resource_path("database/raw_qcms")
+if not QCMS_DIR.exists():
+    QCMS_DIR = resolve_resource_path("assets/data/qcms")
 SUMMARIES_FILE = resolve_resource_path("assets/data/course_summaries.json")
 
 # Palette de couleurs Medsina Résidanat 2027

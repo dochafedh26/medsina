@@ -192,7 +192,7 @@ def push_batch_to_supabase(
 
 def main():
     parser = argparse.ArgumentParser(description="Medsina — Import des 19 305 QCM vers Supabase")
-    parser.add_argument("folder", nargs="?", default="assets/data/qcms", help="Dossier contenant les fichiers JSON")
+    parser.add_argument("folder", nargs="?", default="database/raw_qcms", help="Dossier contenant les fichiers JSON")
     parser.add_argument("--dry-run", action="store_true", help="Valide l'import localement sans envoyer au Cloud")
     parser.add_argument("--batch-size", type=int, default=BATCH_SIZE, help="Taille des lots d'insertion")
     parser.add_argument("--limit-files", type=int, default=0, help="Limiter le nombre de fichiers à importer (tests)")

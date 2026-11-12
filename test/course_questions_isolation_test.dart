@@ -6,7 +6,7 @@ import 'package:medsina/features/revision/models/qcm_model.dart';
 void main() {
   group('Course-Specific QCM Isolation Tests', () {
     test('Muscles de la hanche et de la cuisse loads its own anatomical questions', () {
-      final file = File('assets/data/qcms/Blida_ANATOMIE_1_ERE.json');
+      final file = File('database/raw_qcms/Blida_ANATOMIE_1_ERE.json');
       expect(file.existsSync(), isTrue);
 
       final content = file.readAsStringSync();
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('Cardiologie module questions are segregated into Blida_CARDIOLOGIE.json', () {
-      final file = File('assets/data/qcms/Blida_CARDIOLOGIE.json');
+      final file = File('database/raw_qcms/Blida_CARDIOLOGIE.json');
       expect(file.existsSync(), isTrue);
 
       final content = file.readAsStringSync();

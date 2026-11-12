@@ -67,8 +67,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -f assets/data/discovered_blida_resources.json ]; then
-            git add assets/data/discovered_blida_resources.json
+          if [ -f scripts/automation/cache/discovered_blida_resources.json ]; then
+            git add scripts/automation/cache/discovered_blida_resources.json
           fi
           if git diff --staged --quiet; then
             echo "Aucune nouvelle ressource JSON MBset à valider."

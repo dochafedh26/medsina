@@ -178,8 +178,11 @@ def pick_real_qcm_challenge_for_year(year: int) -> Dict[str, Any]:
     Lit directement les fichiers JSON officiels (`assets/data/qcms/Blida_*.json`)
     pour l'année d'étude ciblée et sélectionne de façon déterministe (par date du jour)
     le module et le cours réel du Défi de 20H Externat.
-    """
-    qcms_dir = REPO_ROOT / "assets" / "data" / "qcms"
+    qcms_dir = REPO_ROOT / "database" / "raw_qcms"
+    if not qcms_dir.exists():
+        qcms_dir = REPO_ROOT / "assets" / "data" / "qcms"
+    if not qcms_dir.exists():
+        qcms_dir = Path("database/raw_qcms")
     if not qcms_dir.exists():
         qcms_dir = Path("assets/data/qcms")
 

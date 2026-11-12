@@ -55,5 +55,5 @@ jobs:
           
           BATCH_ARG="--batch-size ${{ inputs.batch_size }}"
           
-          echo "🚀 Lancement de l'import : python scripts/automation/import_qcms_to_supabase.py assets/data/qcms $BATCH_ARG $DRY_ARG"
-          python scripts/automation/import_qcms_to_supabase.py assets/data/qcms $BATCH_ARG $DRY_ARG
+          echo "🚀 Lancement de l'import : python scripts/automation/import_qcms_to_supabase.py database/raw_qcms $BATCH_ARG $DRY_ARG"
+          python scripts/automation/import_qcms_to_supabase.py database/raw_qcms $BATCH_ARG $DRY_ARG
