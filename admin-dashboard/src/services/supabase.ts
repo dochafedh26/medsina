@@ -1540,7 +1540,8 @@ export const DEFAULT_BLIDA_SCANNER_SOURCES = JSON.stringify({
     "medsina_dz",
     "qcm_medecine_dz",
     "Samedispedigogique2027DrKare",
-    "mbset_blida"
+    "mbset_blida",
+    "TOSAVELIVESTOGETHER"
   ],
   google_drive_folders: [
     "https://drive.google.com/drive/folders/1UjaxyXp8pU56jlz-F7K-MGECj2pheF21",

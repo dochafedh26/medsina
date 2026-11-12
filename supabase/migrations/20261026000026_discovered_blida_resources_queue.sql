@@ -81,7 +81,7 @@ WITH CHECK (
 INSERT INTO public.admin_system_settings (setting_key, setting_value, description)
 VALUES (
   'blida_scanner_sources',
-  '@medsina_officiel, @residanat_blida, @medecine_blida, https://drive.google.com/drive/folders/1___jg3oAyaBm-REwGb68q_XTN5dKWX2E',
+  '@medsina_officiel, @residanat_blida, @medecine_blida, @TOSAVELIVESTOGETHER, https://drive.google.com/drive/folders/1___jg3oAyaBm-REwGb68q_XTN5dKWX2E',
   'Liste des canaux publics Telegram (@username) et dossiers Google Drive surveillés par le scanner Blida'
 )
 ON CONFLICT (setting_key) DO NOTHING;

@@ -50,9 +50,11 @@ DEFAULT_SOURCES = [
     "@fmb_blida",
     "@Samedispedigogique2027DrKare",
     "@mbset_blida",
+    "@TOSAVELIVESTOGETHER",
     "https://t.me/preprsdblida",
     "https://t.me/Samedispedigogique2027DrKare",
     "https://t.me/mbset_blida",
+    "https://t.me/tosavelivestogether",
     "https://drive.google.com/drive/folders/1___jg3oAyaBm-REwGb68q_XTN5dKWX2E",
     # --- Drives Officiels Faculte de Medecine Blida & Promotions ---
     "https://drive.google.com/drive/folders/1fPjicGWf2sFz5oJ6nTxWExlT5FggBVml",  # Drives BLIDA General

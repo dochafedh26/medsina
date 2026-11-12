@@ -112,6 +112,7 @@ TARGET_CHANNELS_GROUPS = [
     "preprsdblida",
     "externat_medecine",
     "qcm_medecine",
+    "tosavelivestogether",
 ]
 
 
