@@ -69,8 +69,9 @@ as $$
           -- Année d'étude principale de l'étudiant
           (p.study_year is not null and p.study_year = p_study_year)
           -- Si Pass 2 Ans : accès également à l'année n+1 (ex: 3ème + 4ème)
+          -- Détecté par une durée d'abonnement >= 700 jours (environ 2 ans)
           or (
-            (coalesce(s.duration, '') ilike '%two%' or (s.expires_at - s.starts_at) >= interval '700 days')
+            (s.expires_at - coalesce(s.starts_at, s.created_at)) >= interval '700 days'
             and p.study_year is not null
             and (p.study_year + 1) = p_study_year
           )
