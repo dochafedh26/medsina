@@ -13,3 +13,6 @@ key.properties
 *.jks
 **/*.keystore
 **/*.jks
+
+# Firebase config (injected via GOOGLE_SERVICES_JSON_BASE64 in CI)
+**/google-services.json
