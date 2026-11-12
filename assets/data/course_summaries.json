@@ -2298,5 +2298,28 @@
     "treatment_summary": "Anticoagulation curative immédiate (HBPM, Fondaparinux ou HNF) relayée par AVK ou AOD. En cas d'EP grave avec choc, indication en urgence à la thrombolyse intraveineuse.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-11T22:15:07.402228+00:00"
+  },
+  {
+    "course_id": "Blida_PEDIATRIE_ALIMENTATION_DU_NOURRISSON_SAIN",
+    "course_name": "Alimentation du nourrisson sain",
+    "module_id": "Blida_PEDIATRIE",
+    "module_name": "Pédiatrie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\n- L'alimentation du nourrisson sain englobe la période allant de la naissance à l'âge de 3 ans, avec une importance capitale durant les 1000 premiers jours.\n- **Allaitement maternel exclusif** recommandé jusqu'à l'âge de 6 mois révolus (OMS) : apporte tous les nutriments, facteurs immunitaires (IgA sécrétoires, lactoferrine) et favorise le lien mère-enfant.\n- Immaturité digestive initiale : perméabilité intestinale, déficit transitoire en enzymes pancréatiques et biliaires durant les premiers mois, nécessitant une progression adaptée.\n- Besoins hydriques élevés : **100 à 150 ml/kg/jour** chez le nourrisson.\n\n## 2. Démarche Diagnostique & Évaluation\n- Évaluation nutritionnelle basée sur les courbes OMS de croissance pondérale, staturale et du périmètre crânien.\n- Enquête diététique précise : type de lait, volume, technique de préparation des biberons (1 mesure rase pour 30 ml d'eau), introduction de la diversification.\n- Signes de bonne tolérance et de satiété : prise de poids régulière (**20-30 g/jour** les 3 premiers mois), 6 à 8 couches mouillées par jour, éveillé et tonique.\n\n## 3. Formes d'alimentation & Diversification\n- **Allaitement maternel** : à la demande, exclusif jusqu'à 6 mois. Supplémentation systématique en **Vitamine D** (400 à 800 UI/j) et en **Vitamine K** (selon protocoles nationaux à la naissance).\n- **Alimentation lactée artificielle** : laits 1er âge (0-6 mois), puis laits 2e âge (suites) à partir de 6 mois.\n- **Diversification alimentaire (DAP)** : débutée entre 4 et 6 mois révolus (jamais avant 4 mois, pas après 6 mois).\n  - Introduction progressive des fruits et légumes (cuits, mixés, sans sel ni sucre ajouté).\n  - Introduction des protéines (viande, poisson, œuf) dès 6 mois en petite quantité (**10 g/j** soit 2 cuillères à café).\n  - Introduction précoce des allergènes majeurs (arachide, œuf, gluten) entre 4 et 12 mois pour prévenir les allergies.\n- Lait de vache entier déconseillé avant l'âge de **1 an** (risque de carence en fer et de surcharge rénale).\n\n## 4. Stratégie & Supplémentations\n- **Vitamine D** : obligatoire chez tout nourrisson (400 UI/j si allaitement artificiel enrichi, 800-1000 UI/j si allaitement maternel exclusif).\n- **Fer** : supplémentation préventive chez le prématuré ou le nourrisson né de mère carencée.\n- Eau de source ou eau minérale faiblement minéralisée, pauvre en sodium et nitrates pour la reconstitution des biberons.\n\n## 5. Évolution, Complications & Prévention\n- Troubles fonctionnels digestifs fréquents : coliques du nourrisson, régurgitations simples (reflux physiologique).\n- Complications de carence : rachitisme carentiel (carence en vitamine D), anémie ferriprive.\n- Complications de surcharge : obésité infantile précoce liée à un excès de protéines ou de sucres simples.",
+    "key_takeaways": [
+      "L'allaitement maternel exclusif est recommandé jusqu'à 6 mois révolus.",
+      "La diversification alimentaire doit impérativement débuter entre 4 et 6 mois, jamais avant 4 mois.",
+      "La supplémentation en Vitamine D est systématique pour tout nourrisson, quelle que soit son alimentation.",
+      "Le lait de vache entier est formellement contre-indiqué avant l'âge de 1 an en raison du risque de micro-saignements digestifs et d'anémie.",
+      "Les besoins hydriques du nourrisson sain sont de 100 à 150 ml/kg/jour."
+    ],
+    "exam_traps": [
+      "Piège Annales : Proposer l'introduction du lait de vache entier à 6 mois (Faux, c'est à 1 an).",
+      "Piège Traitement : Oublier la supplémentation en vitamine D sous prétexte que le nourrisson reçoit un lait artificiel (la quantité peut être insuffisante selon les apports totaux, mais en pratique d'internat, la vitamine D est toujours systématique).",
+      "Piège Diagnostic : Confondre les âges limites de la diversification : jamais avant 4 mois (immaturité rénale et digestive) et pas après 6 mois (risque de carences et d'allergies)."
+    ],
+    "diagnostic_criteria": "Évaluation de l'état nutritionnel par les courbes de croissance OMS et l'enquête alimentaire, corrélée aux acquisitions psychomotrices et aux apports hydriques et caloriques adaptés à l'âge.",
+    "treatment_summary": "Promotion de l'allaitement maternel exclusif jusqu'à 6 mois, diversification menée entre 4 et 6 mois, et supplémentation systématique en vitamine D.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-12T20:23:58.230263+00:00"
   }
 ]
