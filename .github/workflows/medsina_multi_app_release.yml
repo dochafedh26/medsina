@@ -91,10 +91,14 @@ jobs:
       - name: Resolve workspace
         run: flutter pub get
       - name: Ensure Android platform scaffolding
-        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
         run: |
-          if [ ! -d "android" ]; then
-            flutter create --platforms=android --org com.medevsync .
+          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
+          APP_NAME="${{ needs.resolve-app.outputs.app_name }}"
+          if [ ! -d "$APP_DIR/android" ]; then
+            cp -r android "$APP_DIR/android"
+            if [ "$APP_NAME" != "medsina_all_in_one" ]; then
+              sed -i "s/applicationId = \"com.medsina.medsina\"/applicationId = \"com.medevsync.$APP_NAME\"/" "$APP_DIR/android/app/build.gradle.kts"
+            fi
           fi
       - name: Build Android APK
         working-directory: ${{ needs.resolve-app.outputs.app_dir }}
