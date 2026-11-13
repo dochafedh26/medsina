@@ -870,9 +870,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
                     ),
                     icon: const Icon(Icons.search_rounded, size: 16),
                     label: const Text('Tester Omnisearch (Ctrl+K)', style: TextStyle(fontWeight: FontWeight.bold)),
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
-                    ),
+                    onPressed: () => MedsinaFeatureRegistry.instance.dispatchRoute(context, 'global_search'),
                   ),
                 ],
               ),
@@ -1017,9 +1015,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
             ActionChip(
               avatar: const Icon(Icons.school_rounded, size: 14),
               label: const Text('Catalogue Résidanat (19 000+ QCMs)'),
-              onPressed: () => Navigator.of(ctx).push(
-                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
-              ),
+              onPressed: () => MedsinaFeatureRegistry.instance.dispatchRoute(ctx, 'residanat_catalog'),
             ),
           ],
         );
@@ -1030,16 +1026,12 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
             ActionChip(
               avatar: const Icon(Icons.auto_stories_rounded, size: 14),
               label: const Text('Consulter les 47 Livrets All-in-One'),
-              onPressed: () => Navigator.of(ctx).push(
-                MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()),
-              ),
+              onPressed: () => MedsinaFeatureRegistry.instance.dispatchRoute(ctx, 'residanat_catalog'),
             ),
             ActionChip(
               avatar: const Icon(Icons.record_voice_over_rounded, size: 14),
               label: const Text('Témoignages de Majors (Cloud)'),
-              onPressed: () => Navigator.of(ctx).push(
-                MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
-              ),
+              onPressed: () => MedsinaFeatureRegistry.instance.dispatchRoute(ctx, 'global_search'),
             ),
           ],
         );
@@ -1050,16 +1042,12 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
             ActionChip(
               avatar: const Icon(Icons.emergency_rounded, size: 14),
               label: const Text('Protocoles CAT d\'Urgence'),
-              onPressed: () => Navigator.of(ctx).push(
-                MaterialPageRoute(builder: (_) => const ClinicalScreen()),
-              ),
+              onPressed: () => MedsinaFeatureRegistry.instance.dispatchRoute(ctx, 'clinical_home'),
             ),
             ActionChip(
               avatar: const Icon(Icons.handyman_rounded, size: 14),
               label: const Text('Mémentos de Garde'),
-              onPressed: () => Navigator.of(ctx).push(
-                MaterialPageRoute(builder: (_) => const PracticalToolsScreen()),
-              ),
+              onPressed: () => MedsinaFeatureRegistry.instance.dispatchRoute(ctx, 'practical_tools'),
             ),
           ],
         );
@@ -1070,9 +1058,7 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
             ActionChip(
               avatar: const Icon(Icons.search_rounded, size: 14),
               label: const Text('Lancer Omnisearch (Ctrl+K)'),
-              onPressed: () => Navigator.of(ctx).push(
-                MaterialPageRoute(builder: (_) => const GlobalSearchScreen()),
-              ),
+              onPressed: () => MedsinaFeatureRegistry.instance.dispatchRoute(ctx, 'global_search'),
             ),
           ],
         );

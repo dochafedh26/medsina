@@ -20,6 +20,89 @@ import 'package:medsina_core/features/notifications/services/fcm_service.dart';
 import 'package:medsina_core/features/notifications/services/realtime_notification_service.dart';
 import 'package:medsina_core/features/notifications/services/smart_reminder_service.dart';
 import 'package:medsina_study_engine/features/revision/bloc/revision_bloc.dart';
+import 'package:medsina_study_engine/features/revision/models/module_model.dart';
+import 'package:medsina_study_engine/study_engine_bootstrap.dart';
+import 'package:medsina_core/core/interfaces/feature_contracts.dart';
+import 'package:medsina_clinical_pkg/features/clinical/presentation/clinical_screen.dart';
+import 'package:medsina_clinical_pkg/features/prescription/presentation/prescription_analysis_screen.dart';
+import 'package:medsina_practical_tools/features/lab_analysis/presentation/lab_analysis_screen.dart';
+import 'package:medsina_practical_tools/features/practical_tools/presentation/practical_tools_screen.dart';
+import 'package:medsina_residanat_pkg/features/revision/presentation/course_mindmap_screen.dart';
+import 'package:medsina_residanat_pkg/features/revision/presentation/course_summary_screen.dart';
+import 'package:medsina_residanat_pkg/features/revision/presentation/revision_catalog_screen.dart';
+import 'package:medsina_residanat_pkg/features/revision/presentation/samedis_pedagogiques_screen.dart';
+import 'features/search/presentation/global_search_screen.dart';
+
+void _registerAllInOneRoutes() {
+  MedsinaFeatureRegistry.instance.appId = 'medsina_all';
+  registerStudyEngineContracts();
+  final registry = MedsinaFeatureRegistry.instance;
+  registry.registerRouteHandler('global_search', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const GlobalSearchScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('residanat_catalog', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('clinical_home', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const ClinicalScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('practical_tools', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const PracticalToolsScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('course_summary', (ctx, args) async {
+    final course = args['course'] as CourseModel?;
+    if (course == null || !ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) => CourseSummaryScreen(course: course, moduleName: args['moduleName'] as String?),
+    ));
+    return true;
+  });
+  registry.registerRouteHandler('course_mindmap', (ctx, args) async {
+    final course = args['course'] as CourseModel?;
+    if (course == null || !ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => CourseMindmapScreen(course: course)));
+    return true;
+  });
+  registry.registerRouteHandler('samedis_pedagogiques', (ctx, args) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) => SamedisPedagogiquesScreen(initialSearchQuery: args['initialSearchQuery'] as String? ?? ''),
+    ));
+    return true;
+  });
+  registry.registerRouteHandler('activity:clinicalProtocol', (ctx, data) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) => ClinicalScreen(initialTabIndex: 0, targetProtocolId: data['protocolId'] as String? ?? 'cat_sca_st_plus'),
+    ));
+    return true;
+  });
+  registry.registerRouteHandler('activity:prescriptionVidal', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const PrescriptionAnalysisScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('activity:labAnalysis', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const LabAnalysisScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('activity:emergencyDrug', (ctx, data) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) => ClinicalScreen(initialTabIndex: 2, targetDrugQuery: data['drugName'] as String? ?? ''),
+    ));
+    return true;
+  });
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

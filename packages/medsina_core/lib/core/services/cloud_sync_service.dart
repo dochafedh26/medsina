@@ -70,4 +70,21 @@ class CloudSyncService extends ChangeNotifier {
       return false;
     }
   }
+
+  /// Fire-and-forget helper to push a specific data_type asynchronously upon local modification.
+  void notifyLocalChange(String dataType, dynamic payload) {
+    final user = SupabaseService.currentUser;
+    if (user == null) return;
+
+    SupabaseService.upsertUserSyncData(
+      userId: user.id,
+      dataType: dataType,
+      payload: payload,
+    ).then((ok) {
+      if (ok) {
+        _lastSyncTime = DateTime.now();
+        notifyListeners();
+      }
+    });
+  }
 }

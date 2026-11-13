@@ -188,7 +188,11 @@ class _ModularScaffoldState extends State<_ModularScaffold> {
             action: SnackBarAction(
               label: 'Télécharger',
               onPressed: () {
-                OtaUpdateService.downloadAndInstall(check.latestRelease!);
+                OtaUpdateService.startUpdateProcess(
+                  check.latestRelease!,
+                  onProgress: (_) {},
+                  onStatusChange: (_) {},
+                );
               },
             ),
           ),

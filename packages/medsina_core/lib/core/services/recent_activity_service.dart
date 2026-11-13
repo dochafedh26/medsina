@@ -73,7 +73,7 @@ class RecentActivityService {
   // --- RECORD ACTIONS ---
 
   Future<void> recordCourseView({
-    required CourseModel course,
+    required dynamic course,
     String? moduleName,
   }) async {
     try {
