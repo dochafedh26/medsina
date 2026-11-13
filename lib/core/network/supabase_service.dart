@@ -395,13 +395,14 @@ class SupabaseService {
     }
   }
 
-  /// Fetch all courses that have a generated All-in-One Livret PDF (bundle_pdf_url != null)
+  /// Fetch all courses that have an Admin-approved All-in-One Livret PDF
   static Future<List<Map<String, dynamic>>> fetchGeneratedBookletCourses() async {
     try {
       final response = await client
           .from('courses')
           .select('*')
           .not('bundle_pdf_url', 'is', null)
+          .eq('bundle_validation_status', 'approved')
           .order('bundle_generated_at', ascending: false);
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {

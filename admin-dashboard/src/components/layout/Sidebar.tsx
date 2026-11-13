@@ -87,6 +87,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       badge: undefined
     },
     {
+      id: 'booklets' as NavigationTab,
+      label: 'Livrets & Validation',
+      icon: BookOpen,
+      badge: 'Admin'
+    },
+    {
       id: 'ai_agents' as NavigationTab,
       label: 'Agents IA GitHub',
       icon: Bot,

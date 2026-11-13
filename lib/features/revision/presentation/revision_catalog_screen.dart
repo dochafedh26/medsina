@@ -2884,8 +2884,7 @@ class _CourseTile extends StatelessWidget {
             runSpacing: 6,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              if (course.bundlePdfUrl != null &&
-                  course.bundlePdfUrl!.isNotEmpty)
+              if (course.hasPublishedBooklet)
                 FilledButton.icon(
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFFEA580C),

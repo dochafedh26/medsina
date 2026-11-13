@@ -22,6 +22,9 @@ class CourseModel extends Equatable {
   final int completedQuestions;
   final String? bundlePdfUrl;
   final String? bundleGeneratedAt;
+  final String? bundleValidationStatus;
+  final String? bundleAdminNotes;
+  final bool bundleHasMindmap;
   final bool isHypertombable;
   final List<String> residanatYears;
   final String? teacher;
@@ -41,6 +44,9 @@ class CourseModel extends Equatable {
     this.completedQuestions = 0,
     this.bundlePdfUrl,
     this.bundleGeneratedAt,
+    this.bundleValidationStatus,
+    this.bundleAdminNotes,
+    this.bundleHasMindmap = false,
     this.isHypertombable = false,
     this.residanatYears = const [],
     this.teacher,
@@ -49,6 +55,13 @@ class CourseModel extends Equatable {
     this.hasMindmap = false,
     this.mindmapGeneratedAt,
   });
+
+  bool get isBundleApproved => bundleValidationStatus == 'approved';
+
+  bool get hasPublishedBooklet =>
+      isBundleApproved &&
+      bundlePdfUrl != null &&
+      bundlePdfUrl!.trim().isNotEmpty;
 
   bool get hasAnyPdf =>
       hasPdf ||
@@ -82,6 +95,9 @@ class CourseModel extends Equatable {
     int? completedQuestions,
     String? bundlePdfUrl,
     String? bundleGeneratedAt,
+    String? bundleValidationStatus,
+    String? bundleAdminNotes,
+    bool? bundleHasMindmap,
     bool? isHypertombable,
     List<String>? residanatYears,
     String? teacher,
@@ -101,6 +117,9 @@ class CourseModel extends Equatable {
       completedQuestions: completedQuestions ?? this.completedQuestions,
       bundlePdfUrl: bundlePdfUrl ?? this.bundlePdfUrl,
       bundleGeneratedAt: bundleGeneratedAt ?? this.bundleGeneratedAt,
+      bundleValidationStatus: bundleValidationStatus ?? this.bundleValidationStatus,
+      bundleAdminNotes: bundleAdminNotes ?? this.bundleAdminNotes,
+      bundleHasMindmap: bundleHasMindmap ?? this.bundleHasMindmap,
       isHypertombable: isHypertombable ?? this.isHypertombable,
       residanatYears: residanatYears ?? this.residanatYears,
       teacher: teacher ?? this.teacher,
@@ -129,6 +148,9 @@ class CourseModel extends Equatable {
       completedQuestions: (json['completedQuestions'] ?? 0) as int,
       bundlePdfUrl: (json['bundle_pdf_url'] ?? json['bundlePdfUrl']) as String?,
       bundleGeneratedAt: (json['bundle_generated_at'] ?? json['bundleGeneratedAt'])?.toString(),
+      bundleValidationStatus: (json['bundle_validation_status'] ?? json['bundleValidationStatus']) as String?,
+      bundleAdminNotes: (json['bundle_admin_notes'] ?? json['bundleAdminNotes']) as String?,
+      bundleHasMindmap: (json['bundle_has_mindmap'] ?? json['bundleHasMindmap'] ?? false) as bool,
       isHypertombable: (json['is_hypertombable'] ?? json['isHypertombable'] ?? false) as bool,
       residanatYears: (json['residanat_years'] is List)
           ? (json['residanat_years'] as List).map((e) => e.toString()).toList()
@@ -154,6 +176,9 @@ class CourseModel extends Equatable {
         'completedQuestions': completedQuestions,
         'bundle_pdf_url': bundlePdfUrl,
         'bundle_generated_at': bundleGeneratedAt,
+        'bundle_validation_status': bundleValidationStatus,
+        'bundle_admin_notes': bundleAdminNotes,
+        'bundle_has_mindmap': bundleHasMindmap,
         'is_hypertombable': isHypertombable,
         'residanat_years': residanatYears,
         'teacher': teacher,
@@ -175,6 +200,9 @@ class CourseModel extends Equatable {
         completedQuestions,
         bundlePdfUrl,
         bundleGeneratedAt,
+        bundleValidationStatus,
+        bundleAdminNotes,
+        bundleHasMindmap,
         isHypertombable,
         residanatYears,
         teacher,

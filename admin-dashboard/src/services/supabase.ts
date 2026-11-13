@@ -1906,3 +1906,75 @@ export async function updateDiscoveredBlidaResourcesBatch(
   return tableUpdatedCount > 0 ? tableUpdatedCount : (settingAffected > 0 ? settingAffected : idsOrHashes.length);
 }
 
+// --- LIVRETS DE RÉVISION : VALIDATION HUMAINE ADMIN ---
+
+export async function fetchBookletsForValidation(): Promise<AdminBookletItem[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('courses')
+      .select(
+        'id, name, module_id, bundle_pdf_url, bundle_generated_at, bundle_validation_status, bundle_admin_notes, bundle_reviewed_at, bundle_has_mindmap, is_hypertombable, residanat_years, qcm_count, has_pdf, has_mindmap'
+      )
+      .not('bundle_pdf_url', 'is', null)
+      .order('bundle_generated_at', { ascending: false });
+
+    if (error || !data) {
+      console.error('Error fetching booklets for validation:', error);
+      return [];
+    }
+
+    return data.map((row: any) => ({
+      id: row.id,
+      name: row.name || row.id,
+      moduleId: row.module_id || '',
+      bundlePdfUrl: row.bundle_pdf_url,
+      bundleGeneratedAt: row.bundle_generated_at || undefined,
+      bundleValidationStatus: (row.bundle_validation_status || 'pending_review') as BookletValidationStatus,
+      bundleAdminNotes: row.bundle_admin_notes || undefined,
+      bundleReviewedAt: row.bundle_reviewed_at || undefined,
+      bundleHasMindmap: Boolean(row.bundle_has_mindmap),
+      isHypertombable: Boolean(row.is_hypertombable),
+      residanatYears: Array.isArray(row.residanat_years) ? row.residanat_years.map(String) : [],
+      qcmCount: Number(row.qcm_count || 0),
+      hasPdf: Boolean(row.has_pdf),
+      hasMindmap: Boolean(row.has_mindmap),
+    }));
+  } catch (err) {
+    console.error('Exception fetching booklets for validation:', err);
+    return [];
+  }
+}
+
+export async function updateBookletValidationStatus(
+  courseId: string,
+  status: BookletValidationStatus,
+  adminNotes?: string,
+  adminId?: string
+): Promise<boolean> {
+  try {
+    const payload: Record<string, any> = {
+      bundle_validation_status: status,
+      bundle_admin_notes: adminNotes?.trim() ? adminNotes.trim() : null,
+      bundle_reviewed_at: new Date().toISOString(),
+    };
+    if (adminId) {
+      payload.bundle_reviewed_by = adminId;
+    }
+
+    const { error } = await supabaseAdmin
+      .from('courses')
+      .update(payload)
+      .eq('id', courseId);
+
+    if (error) {
+      console.error('Error updating booklet validation status:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('Exception updating booklet validation status:', err);
+    return false;
+  }
+}
+
+

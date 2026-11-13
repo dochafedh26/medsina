@@ -4,16 +4,23 @@
 =============================================================================
 MEDSINA — GÉNÉRATEUR AUTOMATIQUE DE LIVRETS DE RÉVISION « RÉSIDANAT 2027 »
 =============================================================================
-Crée un Livret PDF All-in-One pour chaque cours éligible :
+Crée un Livret PDF All-in-One pour chaque cours éligible (SI ET SEULEMENT SI
+tous les éléments requis sont présents : Cours officiel, Fiche de synthèse,
+Pièges concours, Mindmap, QCM et Corrigé type) :
 1. Couverture Premium Concours 2027 avec Badge Hypertombable et années de concours
-2. Fiche de Synthèse (Points Clés, Pièges Concours, Diagnostic & Traitement)
-3. Cours Officiel complet (Polycopié de faculté / drive fusionné)
-4. Banque de QCMs d'Entraînement SANS correction (Mode Examen Blanc)
-5. Corrigé Type & Grille de Correction (Dernière Page avec Perles Cliniques)
+2. Section 1 : Fiche de Synthèse (Points Clés, Pièges Concours, Diagnostic & Traitement)
+3. Section 2 : Mind Map Visuelle & Arbre Décisionnel
+4. Section 3 : Cours Officiel complet (Polycopié de faculté / drive fusionné)
+5. Section 4 : Banque de QCMs d'Entraînement SANS correction (Mode Examen Blanc)
+6. Section 5 : Corrigé Type & Grille de Correction (Dernière Page avec Perles Cliniques)
+
+Validation Humaine :
+- Tout livret généré est enregistré avec `bundle_validation_status = 'pending_review'`.
+- Il n'est publié aux étudiants et diffusé qu'après approbation de l'Admin.
 
 Stockage :
-- Supabase Storage : bucket 'residanat_2027_livrets'
-- Table Supabase : 'courses' (bundle_pdf_url, is_hypertombable, residanat_years, qcm_count)
+- Google Drive / Supabase Storage : bucket 'residanat_2027_livrets'
+- Table Supabase : 'courses' (bundle_pdf_url, bundle_validation_status, bundle_has_mindmap, ...)
 =============================================================================
 """
 
@@ -86,6 +93,8 @@ QCMS_DIR = resolve_resource_path("database/raw_qcms")
 if not QCMS_DIR.exists():
     QCMS_DIR = resolve_resource_path("assets/data/qcms")
 SUMMARIES_FILE = resolve_resource_path("assets/data/course_summaries.json")
+MINDMAPS_JSON_FILE = resolve_resource_path("assets/data/course_mindmaps.json")
+MINDMAPS_DIR = resolve_resource_path("assets/mindmaps")
 
 # Palette de couleurs Medsina Résidanat 2027
 COLOR_WHITE = colors.HexColor("#FFFFFF")
@@ -179,45 +188,165 @@ def get_supabase_credentials() -> Tuple[str, str]:
 
 
 # -----------------------------------------------------------------------------
-# 3. Téléchargement du PDF de cours (Google Drive ou URL directe)
+# 3. Téléchargement et Validation du PDF (Cours Officiel ou Mindmap)
 # -----------------------------------------------------------------------------
-def download_course_raw_pdf(pdf_url: str, dest_path: Path) -> bool:
-    if not pdf_url or str(pdf_url).lower() == "none":
+def _is_valid_pdf_file(pdf_path: Path) -> bool:
+    """Vérifie que le fichier existe, n'est pas vide et s'ouvre proprement avec PyMuPDF."""
+    if not pdf_path.exists() or pdf_path.stat().st_size < 512:
+        return False
+    try:
+        doc = pymupdf.open(str(pdf_path))
+        page_count = len(doc)
+        doc.close()
+        return page_count > 0
+    except Exception:
         return False
 
-    session = requests.Session()
-    # Cas 1 : Lien Google Drive
-    drive_match = re.search(r"[-_\w]{25,}", pdf_url)
-    if "drive.google.com" in pdf_url and drive_match:
-        fid = drive_match.group(0)
-        dl_url = f"https://drive.google.com/uc?export=download&id={fid}"
-        try:
-            r = session.get(dl_url, stream=True, timeout=25)
-            # Gestion du token de confirmation pour gros fichiers
-            for k, v in r.cookies.items():
-                if k.startswith("download_warning"):
-                    dl_url = f"https://drive.google.com/uc?export=download&confirm={v}&id={fid}"
-                    r = session.get(dl_url, stream=True, timeout=25)
-                    break
 
-            if r.status_code == 200 and (r.content.startswith(b"%PDF") or "pdf" in r.headers.get("content-type", "")):
-                dest_path.write_bytes(r.content)
-                return True
-        except Exception as e:
-            print(f"   ⚠️ Erreur téléchargement Google Drive ({fid}): {e}")
+def download_course_raw_pdf(
+    pdf_url: Optional[str],
+    dest_path: Path,
+    supabase_url: str = "",
+    pdf_drive_id: Optional[str] = None
+) -> bool:
+    raw_url = str(pdf_url).strip() if pdf_url and str(pdf_url).lower() != "none" else ""
+    drive_id = str(pdf_drive_id).strip() if pdf_drive_id and str(pdf_drive_id).lower() != "none" else ""
+
+    if not raw_url and drive_id:
+        raw_url = f"https://drive.google.com/uc?export=download&id={drive_id}"
+
+    if not raw_url:
+        return False
+
+    # Si chemin relatif Supabase Storage (ex: Blida_CARDIOLOGIE/cours.pdf)
+    if not raw_url.startswith("http://") and not raw_url.startswith("https://"):
+        if supabase_url:
+            clean_rel = raw_url.lstrip("/")
+            raw_url = f"{supabase_url}/storage/v1/object/public/course-documents/{clean_rel}"
+        else:
             return False
 
-    # Cas 2 : Téléchargement direct
+    session = requests.Session()
+
+    # Cas 1 : Lien Google Drive
+    drive_match = re.search(r"(?:/d/|id=)([-_\w]{20,})", raw_url) or re.search(r"[-_\w]{25,}", raw_url)
+    if ("drive.google.com" in raw_url or "docs.google.com" in raw_url) and drive_match:
+        fid = drive_match.group(1) if drive_match.lastindex else drive_match.group(0)
+        candidates = [
+            f"https://drive.google.com/uc?export=download&id={fid}",
+            f"https://drive.usercontent.google.com/download?id={fid}&export=download&confirm=t",
+        ]
+        for dl_url in candidates:
+            try:
+                r = session.get(dl_url, stream=True, timeout=30)
+                for k, v in r.cookies.items():
+                    if k.startswith("download_warning"):
+                        confirm_url = f"https://drive.google.com/uc?export=download&confirm={v}&id={fid}"
+                        r = session.get(confirm_url, stream=True, timeout=30)
+                        break
+
+                if r.status_code == 200 and (r.content.startswith(b"%PDF") or "application/pdf" in r.headers.get("content-type", "").lower()):
+                    dest_path.write_bytes(r.content)
+                    if _is_valid_pdf_file(dest_path):
+                        return True
+            except Exception as e:
+                print(f"   ⚠️ Erreur téléchargement Google Drive ({fid}): {e}")
+        return False
+
+    # Cas 2 : Téléchargement direct HTTP/HTTPS
     try:
-        r = session.get(pdf_url, stream=True, timeout=25)
-        if r.status_code == 200 and (r.content.startswith(b"%PDF") or "pdf" in r.headers.get("content-type", "")):
+        r = session.get(raw_url, stream=True, timeout=30)
+        if r.status_code == 200 and (r.content.startswith(b"%PDF") or "application/pdf" in r.headers.get("content-type", "").lower()):
             dest_path.write_bytes(r.content)
-            return True
+            return _is_valid_pdf_file(dest_path)
     except Exception as e:
-        print(f"   ⚠️ Erreur téléchargement direct ({pdf_url}): {e}")
+        print(f"   ⚠️ Erreur téléchargement direct ({raw_url}): {e}")
         return False
 
     return False
+
+
+_LOCAL_MINDMAPS_CACHE = None
+
+def get_course_mindmap_data(
+    course: Dict[str, Any],
+    supabase_url: str,
+    supabase_key: str
+) -> Optional[Dict[str, Any]]:
+    """Récupère les données Mindmap depuis Supabase `course_mindmaps`, `courses`, ou `course_mindmaps.json`."""
+    global _LOCAL_MINDMAPS_CACHE
+    course_id = course["id"]
+    course_name = course.get("name", "")
+    result: Dict[str, Any] = {}
+
+    # 1. Supabase table course_mindmaps
+    if supabase_url and supabase_key:
+        try:
+            headers = {"apikey": supabase_key, "Authorization": f"Bearer {supabase_key}"}
+            r = requests.get(f"{supabase_url}/rest/v1/course_mindmaps?course_id=eq.{course_id}", headers=headers, timeout=10)
+            if r.status_code == 200 and r.json():
+                result = dict(r.json()[0])
+        except Exception:
+            pass
+
+    # 2. Fallback local course_mindmaps.json
+    if not result and MINDMAPS_JSON_FILE.exists():
+        if _LOCAL_MINDMAPS_CACHE is None:
+            try:
+                _LOCAL_MINDMAPS_CACHE = json.loads(MINDMAPS_JSON_FILE.read_text(encoding="utf-8"))
+            except Exception:
+                _LOCAL_MINDMAPS_CACHE = {}
+
+        if isinstance(_LOCAL_MINDMAPS_CACHE, dict):
+            if course_id in _LOCAL_MINDMAPS_CACHE:
+                result = dict(_LOCAL_MINDMAPS_CACHE[course_id])
+            else:
+                c_id_lower = course_id.lower().strip()
+                c_name_lower = course_name.lower().strip()
+                for k, v in _LOCAL_MINDMAPS_CACHE.items():
+                    if not isinstance(v, dict):
+                        continue
+                    v_id = str(v.get("course_id", k)).lower().strip()
+                    v_name = str(v.get("course_name", "")).lower().strip()
+                    if v_id == c_id_lower or (c_name_lower and v_name == c_name_lower):
+                        result = dict(v)
+                        break
+
+    # Compléter avec les champs de la table `courses`
+    mm_pdf_url = result.get("mindmap_pdf_url") or course.get("mindmap_pdf_url")
+    mm_drive_id = result.get("mindmap_drive_id") or course.get("mindmap_drive_id")
+    pdf_file = result.get("pdf_file")
+    local_pdf_path: Optional[Path] = None
+    if pdf_file:
+        cand = MINDMAPS_DIR / pdf_file
+        if cand.exists():
+            local_pdf_path = cand
+    if not local_pdf_path and MINDMAPS_DIR.exists():
+        cand = MINDMAPS_DIR / f"{course_id}_mindmap.pdf"
+        if cand.exists():
+            local_pdf_path = cand
+
+    branches = result.get("branches") or []
+    if isinstance(branches, str):
+        try:
+            branches = json.loads(branches)
+        except Exception:
+            branches = []
+
+    has_branches = isinstance(branches, list) and len(branches) > 0
+    has_pdf_ref = bool(mm_pdf_url or mm_drive_id or local_pdf_path)
+
+    if not has_branches and not has_pdf_ref:
+        return None
+
+    return {
+        "branches": branches,
+        "diagnostic_criteria": result.get("diagnostic_criteria"),
+        "treatment_summary": result.get("treatment_summary"),
+        "mindmap_pdf_url": mm_pdf_url,
+        "mindmap_drive_id": mm_drive_id,
+        "local_pdf_path": str(local_pdf_path) if local_pdf_path else None,
+    }
 
 
 # -----------------------------------------------------------------------------
@@ -569,9 +698,10 @@ def build_reportlab_booklet(
     toc_data = [
         [Paragraph("<b>STRUCTURE DU LIVRET DE RÉVISION :</b>", ParagraphStyle("TOCHead", fontName="Helvetica-Bold", fontSize=11, textColor=COLOR_PRIMARY_NAVY))],
         [Paragraph("<b>Section 1 :</b> Fiche de Synthèse & Pièges Concours (Mémorisation rapide)", body_style)],
-        [Paragraph("<b>Section 2 :</b> Cours & Polycopié Officiel de la Faculté", body_style)],
-        [Paragraph(f"<b>Section 3 :</b> Entraînement QCMs SANS correction ({len(qcms)} Questions réelles)", body_style)],
-        [Paragraph("<b>Section 4 :</b> Grille Officielle du Corrigé Type & Perles Cliniques (Dernière Page)", body_style)],
+        [Paragraph("<b>Section 2 :</b> Mind Map Visuelle & Arbre Décisionnel", body_style)],
+        [Paragraph("<b>Section 3 :</b> Cours & Polycopié Officiel de la Faculté", body_style)],
+        [Paragraph(f"<b>Section 4 :</b> Entraînement QCMs SANS correction ({len(qcms)} Questions réelles)", body_style)],
+        [Paragraph("<b>Section 5 :</b> Grille Officielle du Corrigé Type & Perles Cliniques (Dernière Page)", body_style)],
     ]
     t_toc = Table(toc_data, colWidths=[500])
     t_toc.setStyle(TableStyle([
@@ -675,21 +805,62 @@ def build_reportlab_booklet(
                 ("ROUNDEDCORNERS", [6, 6, 6, 6]),
             ]))
             story.append(t_dt)
-    else:
-        story.append(Paragraph("<i>Fiche de synthèse en cours d'enrichissement pour ce cours. Référez-vous au polycopié complet ci-dessous.</i>", body_style))
 
     story.append(Spacer(1, 20))
     story.append(PageBreak())
 
     # =========================================================================
-    # SECTION 2 : TRANSITION VERS LE COURS OFFICIEL
+    # SECTION 2 : MIND MAP VISUELLE & ARBRE DÉCISIONNEL
     # =========================================================================
-    # (Le cours officiel sera intercalé ici lors de la fusion PyMuPDF)
+    story.append(Paragraph("SECTION 2 — MIND MAP VISUELLE & ARBRE DÉCISIONNEL", section_h1))
+    story.append(HRFlowable(width="100%", thickness=1.5, color=COLOR_CYAN_ACCENT, spaceAfter=10))
+    story.append(Paragraph(
+        f"<b>Carte Mentale Structurée :</b> {clean_reportlab_text(course_name)}",
+        ParagraphStyle("MMSub", fontName="Helvetica-Bold", fontSize=10.5, textColor=COLOR_PRIMARY_NAVY, spaceAfter=10)
+    ))
+
+    branches = (mindmap_data or {}).get("branches") or []
+    if branches:
+        for b_idx, branch in enumerate(branches, start=1):
+            b_title = clean_reportlab_text(branch.get("title", f"Branche {b_idx}"))
+            b_items = branch.get("items") or []
+            branch_rows = [[Paragraph(f"<b>{b_idx}. {b_title}</b>", ParagraphStyle("MMBranchH", fontName="Helvetica-Bold", fontSize=10, textColor=COLOR_WHITE))]]
+            for it in b_items:
+                branch_rows.append([Paragraph(f"• {clean_reportlab_text(it)}", bullet_style)])
+            t_branch = Table(branch_rows, colWidths=[500])
+            t_branch.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), COLOR_ROYAL_BLUE),
+                ("BACKGROUND", (0, 1), (-1, -1), COLOR_CARD_BG),
+                ("BOX", (0, 0), (-1, -1), 1, COLOR_CARD_BORDER),
+                ("TOPPADDING", (0, 0), (-1, -1), 5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+                ("LEFTPADDING", (0, 0), (-1, -1), 10),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+                ("ROUNDEDCORNERS", [6, 6, 6, 6]),
+            ]))
+            story.append(KeepTogether([t_branch, Spacer(1, 8)]))
+    else:
+        story.append(Paragraph("<i>La carte mentale HD vectorielle est jointe ci-après.</i>", body_style))
+
+    story.append(PageBreak())
 
     # =========================================================================
-    # SECTION 3 : QCMs D'ENTRAÎNEMENT SANS CORRECTION
+    # SECTION 3 : COURS & POLYCOPIÉ OFFICIEL DE LA FACULTÉ
     # =========================================================================
-    story.append(Paragraph("SECTION 3 — BANQUE DE QCMs D'ENTRAÎNEMENT", section_h1))
+    story.append(Paragraph("SECTION 3 — COURS & POLYCOPIÉ OFFICIEL DE LA FACULTÉ", section_h1))
+    story.append(HRFlowable(width="100%", thickness=1.5, color=COLOR_ROYAL_BLUE, spaceAfter=12))
+    story.append(Paragraph(
+        f"Support officiel complet pour <b>{clean_reportlab_text(course_name)}</b> (Module : {clean_reportlab_text(module_name)}). "
+        "Les pages suivantes reproduisent intégralement le polycopié officiel de la faculté.",
+        body_style
+    ))
+    story.append(PageBreak())
+    # (Les pages du cours officiel seront intercalées ici lors de la fusion PyMuPDF, juste avant la Section 4)
+
+    # =========================================================================
+    # SECTION 4 : QCMs D'ENTRAÎNEMENT SANS CORRECTION
+    # =========================================================================
+    story.append(Paragraph("SECTION 4 — BANQUE DE QCMs D'ENTRAÎNEMENT", section_h1))
     story.append(HRFlowable(width="100%", thickness=1.5, color=COLOR_ROYAL_BLUE, spaceAfter=8))
     story.append(Paragraph("<b>Mode Examen Blanc :</b> Répondez aux questions en cochant les cases sans consulter la dernière page. Notez vos réponses sur une feuille séparée pour mesurer votre score brut.", ParagraphStyle("ModeExamen", fontName="Helvetica-Oblique", fontSize=9.5, textColor=COLOR_SLATE_MUTED, spaceAfter=14)))
 
@@ -723,9 +894,9 @@ def build_reportlab_booklet(
     story.append(PageBreak())
 
     # =========================================================================
-    # SECTION 4 : DERNIÈRE PAGE — GRILLE DE CORRECTION OFFICIELLE (CORRIGÉ TYPE)
+    # SECTION 5 : DERNIÈRE PAGE — GRILLE DE CORRECTION OFFICIELLE (CORRIGÉ TYPE)
     # =========================================================================
-    story.append(Paragraph("SECTION 4 — CORRIGÉ TYPE & GRILLE OFFICIELLE", section_h1))
+    story.append(Paragraph("SECTION 5 — CORRIGÉ TYPE & GRILLE OFFICIELLE", section_h1))
     story.append(HRFlowable(width="100%", thickness=1.5, color=COLOR_EMERALD, spaceAfter=8))
     story.append(Paragraph("<b>Auto-évaluation :</b> Vérifiez vos réponses ci-dessous. Calculez votre score selon le barème officiel du Concours (Tout ou Rien ou Pondéré).", ParagraphStyle("AutoEval", fontName="Helvetica-Oblique", fontSize=9.5, textColor=COLOR_SLATE_MUTED, spaceAfter=14)))
 
@@ -790,58 +961,78 @@ def build_reportlab_booklet(
 # -----------------------------------------------------------------------------
 # 7. Fusion avec le Cours Officiel (PyMuPDF)
 # -----------------------------------------------------------------------------
+def _clean_third_party_footers(doc_course: Any):
+    """Purge automatique des pieds de page tiers (MBset / liens / logos)."""
+    white_pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 30, 25), 0)
+    white_pix.clear_with(255)
+    for page in doc_course:
+        for img in page.get_images():
+            if img[2] == 30 and img[3] == 25:
+                try:
+                    page.replace_image(img[0], pixmap=white_pix)
+                except Exception:
+                    pass
+        for r in page.search_for("mbset"):
+            if r.y1 > page.rect.height * 0.65:
+                page.draw_rect(pymupdf.Rect(r.x0 - 3, r.y0 - 3, r.x1 + 3, r.y1 + 3), color=(1, 1, 1), fill=(1, 1, 1), overlay=True)
+        pw, ph = page.rect.width, page.rect.height
+        page.draw_rect(pymupdf.Rect(pw / 2 - 60, ph - 30, pw / 2 + 60, ph - 5), color=(1, 1, 1), fill=(1, 1, 1), overlay=True)
+        for l in page.get_links():
+            if "mbset" in l.get("uri", "").lower():
+                page.delete_link(l)
+
+
 def merge_reportlab_and_course_pdf(
     reportlab_pdf_path: Path,
     course_raw_pdf_path: Optional[Path],
-    final_output_path: Path
+    final_output_path: Path,
+    mindmap_pdf_path: Optional[Path] = None
 ):
     """
-    Insère le cours officiel (PDF) immédiatement après la Section 1 (Fiche de Synthèse)
-    et avant la Section 3 (QCMs d'Entraînement).
+    Insère :
+    1. La Mind Map PDF (si disponible) dans la Section 2 (juste avant "SECTION 3 — COURS").
+    2. Le Cours Officiel PDF dans la Section 3 (juste avant "SECTION 4 — BANQUE DE QCMs").
     """
     doc_main = pymupdf.open(str(reportlab_pdf_path))
 
-    if not course_raw_pdf_path or not course_raw_pdf_path.exists():
-        # Pas de cours officiel à fusionner : sauvegarder directement
-        doc_main.save(str(final_output_path))
-        doc_main.close()
-        return
-
     try:
-        doc_course = pymupdf.open(str(course_raw_pdf_path))
-        # Déterminer où commence la Section 3
-        # On recherche le texte "SECTION 3" dans doc_main
-        insert_page_idx = 2  # Par défaut après la page 2 (Couverture + Fiche)
-        for page_idx in range(len(doc_main)):
-            txt = doc_main[page_idx].get_text("text")
-            if "SECTION 3" in txt:
-                insert_page_idx = page_idx
-                break
+        # 1. Insertion Mind Map PDF avant Section 3
+        if mindmap_pdf_path and mindmap_pdf_path.exists() and _is_valid_pdf_file(mindmap_pdf_path):
+            doc_mm = pymupdf.open(str(mindmap_pdf_path))
+            mm_insert_idx = None
+            for page_idx in range(len(doc_main)):
+                txt = doc_main[page_idx].get_text("text")
+                if "SECTION 3" in txt and "COURS" in txt:
+                    mm_insert_idx = page_idx
+                    break
+            if mm_insert_idx is not None:
+                doc_main.insert_pdf(doc_mm, start_at=mm_insert_idx)
+            doc_mm.close()
 
-        # Purge automatique des pieds de page tiers (MBset / liens / logos)
-        white_pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 30, 25), 0)
-        white_pix.clear_with(255)
-        for page in doc_course:
-            for img in page.get_images():
-                if img[2] == 30 and img[3] == 25:
-                    try:
-                        page.replace_image(img[0], pixmap=white_pix)
-                    except Exception:
-                        pass
-            for r in page.search_for("mbset"):
-                if r.y1 > page.rect.height * 0.65:
-                    page.draw_rect(pymupdf.Rect(r.x0 - 3, r.y0 - 3, r.x1 + 3, r.y1 + 3), color=(1, 1, 1), fill=(1, 1, 1), overlay=True)
-            # Patch blanc au bas de page centré
-            pw, ph = page.rect.width, page.rect.height
-            page.draw_rect(pymupdf.Rect(pw/2 - 60, ph - 30, pw/2 + 60, ph - 5), color=(1, 1, 1), fill=(1, 1, 1), overlay=True)
-            for l in page.get_links():
-                if "mbset" in l.get("uri", "").lower():
-                    page.delete_link(l)
+        # 2. Insertion Cours Officiel PDF avant Section 4
+        if course_raw_pdf_path and course_raw_pdf_path.exists() and _is_valid_pdf_file(course_raw_pdf_path):
+            doc_course = pymupdf.open(str(course_raw_pdf_path))
+            course_insert_idx = None
+            for page_idx in range(len(doc_main)):
+                txt = doc_main[page_idx].get_text("text")
+                if "SECTION 4" in txt and "QCM" in txt:
+                    course_insert_idx = page_idx
+                    break
+            if course_insert_idx is None:
+                # Fallback : après la page Section 3
+                for page_idx in range(len(doc_main)):
+                    txt = doc_main[page_idx].get_text("text")
+                    if "SECTION 3" in txt and "COURS" in txt:
+                        course_insert_idx = page_idx + 1
+                        break
+            if course_insert_idx is None:
+                course_insert_idx = min(3, len(doc_main))
 
-        # Insérer les pages du polycopié à insert_page_idx
-        doc_main.insert_pdf(doc_course, start_at=insert_page_idx)
+            _clean_third_party_footers(doc_course)
+            doc_main.insert_pdf(doc_course, start_at=course_insert_idx)
+            doc_course.close()
+
         doc_main.save(str(final_output_path))
-        doc_course.close()
         doc_main.close()
     except Exception as e:
         print(f"   ⚠️ Erreur lors de la fusion PyMuPDF : {e}. Utilisation du PDF généré direct.")
@@ -860,7 +1051,8 @@ def upload_bundle_to_supabase(
     supabase_key: str,
     is_hyper: bool,
     residanat_sessions: List[str],
-    qcm_count: int
+    qcm_count: int,
+    bundle_has_mindmap: bool = True
 ) -> Optional[str]:
     bucket = "residanat_2027_livrets"
     storage_filename = f"{module_id}/{course_id}_Livret_Residanat_2027.pdf"
@@ -883,7 +1075,7 @@ def upload_bundle_to_supabase(
         public_url = f"{supabase_url}/storage/v1/object/public/{bucket}/{storage_filename}"
         print(f"   ☁️ Livret téléversé avec succès dans Supabase Storage : {public_url}")
 
-        # Mise à jour de la table courses
+        # Mise à jour de la table courses (statut pending_review pour validation humaine Admin)
         patch_url = f"{supabase_url}/rest/v1/courses?id=eq.{course_id}"
         patch_headers = {
             "apikey": supabase_key,
@@ -897,10 +1089,13 @@ def upload_bundle_to_supabase(
             "is_hypertombable": is_hyper,
             "residanat_years": residanat_sessions,
             "qcm_count": qcm_count,
+            "bundle_validation_status": "pending_review",
+            "bundle_has_mindmap": bundle_has_mindmap,
+            "bundle_reviewed_at": None,
         }
         r_db = requests.patch(patch_url, headers=patch_headers, json=patch_body, timeout=15)
         if r_db.status_code in (200, 204):
-            print(f"   ✅ Table courses mise à jour pour {course_id} !")
+            print(f"   ✅ Table courses mise à jour (statut: pending_review) pour {course_id} !")
         else:
             print(f"   ⚠️ Avis mise à jour DB ({r_db.status_code}): {r_db.text}")
 
@@ -913,6 +1108,19 @@ def upload_bundle_to_supabase(
 # -----------------------------------------------------------------------------
 # 9. Pipeline Principal de Traitement d'un Cours
 # -----------------------------------------------------------------------------
+def _parse_json_list(val: Any) -> List[Any]:
+    if isinstance(val, list):
+        return [x for x in val if str(x).strip()]
+    if isinstance(val, str) and val.strip():
+        try:
+            parsed = json.loads(val)
+            if isinstance(parsed, list):
+                return [x for x in parsed if str(x).strip()]
+        except Exception:
+            return [val.strip()]
+    return []
+
+
 def process_single_course(
     course: Dict[str, Any],
     supabase_url: str,
@@ -920,7 +1128,8 @@ def process_single_course(
     output_dir: Path,
     dry_run: bool = False,
     broadcast: bool = False,
-    showcase: bool = False
+    showcase: bool = False,
+    hypertombable_only: bool = False
 ) -> Optional[Dict[str, Any]]:
     cid = course["id"]
     cname = course.get("name", cid)
@@ -931,63 +1140,157 @@ def process_single_course(
     print(f"   Module : {mid}")
     print("=" * 65)
 
-    # 1. Extraction Fiche de Synthèse
+    # 1. Extraction Fiche de Synthèse & Pièges Concours
     summary = get_course_summary_data(cid, cname, supabase_url, supabase_key)
-    has_summary = summary is not None
-    print(f"   • Fiche de Synthèse : {'Présente' if has_summary else 'Absente'}")
+    summary_md = str((summary or {}).get("summary_markdown") or "").strip()
+    has_fiche_synthese = (
+        summary is not None
+        and len(summary_md) >= 30
+        and "en cours d'enrichissement" not in summary_md.lower()
+    )
+    exam_traps = _parse_json_list((summary or {}).get("exam_traps"))
+    has_piege_concours = len(exam_traps) > 0
 
-    # 2. Extraction QCMs
+    print(f"   • Fiche de Synthèse : {'✅ Présente' if has_fiche_synthese else '❌ Absente / Incomplète'}")
+    print(f"   • Pièges Concours   : {'✅ Présents (' + str(len(exam_traps)) + ')' if has_piege_concours else '❌ Absents'}")
+
+    # 2. Extraction Mindmap
+    mindmap_data = get_course_mindmap_data(course, supabase_url, supabase_key)
+    has_mindmap_branches = bool(mindmap_data and isinstance(mindmap_data.get("branches"), list) and len(mindmap_data["branches"]) > 0)
+
+    # 3. Extraction QCMs & Corrigé Type
     qcms = get_course_qcms(cid, cname, mid)
-    print(f"   • Banque de QCMs : {len(qcms)} QCMs trouvés")
+    valid_qcms = [
+        q for q in qcms
+        if (q.get("questionText") or q.get("question")) and (q.get("options") or [])
+    ]
+    qcms_with_answers = [
+        q for q in valid_qcms
+        if (q.get("correctAnswers") or q.get("answer"))
+    ]
+    has_qcm = len(valid_qcms) > 0
+    has_corrige_type = has_qcm and (len(qcms_with_answers) == len(valid_qcms))
 
-    # 3. Analyse Tombabilité
-    is_hyper, sessions, total_qcms = analyze_hypertombable(qcms)
+    print(f"   • Banque de QCMs    : {'✅ ' + str(len(valid_qcms)) + ' QCMs' if has_qcm else '❌ Aucun QCM'}")
+    print(f"   • Corrigé Type      : {'✅ Complet (' + str(len(qcms_with_answers)) + '/' + str(len(valid_qcms)) + ')' if has_corrige_type else '❌ Manquant ou incomplet'}")
+
+    # 4. Analyse Tombabilité
+    is_hyper, sessions, _ = analyze_hypertombable(valid_qcms)
+    if hypertombable_only and not is_hyper:
+        print("   ⏭️ Cours ignoré (--hypertombable-only actif).")
+        return None
+
     if is_hyper:
         print(f"   🔥 STATUT : HYPERTOMBABLE AU CONCOURS ({len(sessions)} sessions : {', '.join(sessions[:5])})")
     else:
         print("   📘 STATUT : Standard du Programme")
 
-    # Création du dossier temporaire
+    # Vérification préalable rapide avant téléchargement si un des éléments textuels manque déjà
+    pre_missing = []
+    if not has_fiche_synthese:
+        pre_missing.append("Fiche de synthèse")
+    if not has_piege_concours:
+        pre_missing.append("Piège Concours")
+    if not has_qcm:
+        pre_missing.append("QCM")
+    if not has_corrige_type:
+        pre_missing.append("Corrigé type")
+    if not mindmap_data:
+        pre_missing.append("Mindmap")
+
+    if pre_missing:
+        print(f"   ⛔ GÉNÉRATION REFUSÉE — Éléments requis manquants : {', '.join(pre_missing)}")
+        return None
+
+    # Création du dossier temporaire pour télécharger & vérifier le PDF du Cours Officiel + Mindmap PDF
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
 
-        # 4. Téléchargement du cours PDF officiel
+        # 5. Téléchargement & Validation du Cours Officiel PDF
         course_pdf_url = course.get("pdf_url") or course.get("pdf_storage_path")
+        course_drive_id = course.get("pdf_drive_id")
         course_raw_pdf = tmp_path / "course_raw.pdf"
-        downloaded = False
-        if course_pdf_url:
-            print(f"   📥 Téléchargement du polycopié officiel...")
-            downloaded = download_course_raw_pdf(course_pdf_url, course_raw_pdf)
-            if downloaded:
-                print(f"   ✅ Polycopié téléchargé ({course_raw_pdf.stat().st_size} octets)")
+        has_cours_officiel = False
+        if course_pdf_url or course_drive_id:
+            print("   📥 Téléchargement et vérification du polycopié officiel...")
+            has_cours_officiel = download_course_raw_pdf(
+                pdf_url=course_pdf_url,
+                dest_path=course_raw_pdf,
+                supabase_url=supabase_url,
+                pdf_drive_id=course_drive_id,
+            )
+            if has_cours_officiel:
+                print(f"   ✅ Cours Officiel validé ({course_raw_pdf.stat().st_size} octets)")
+            else:
+                print("   ❌ Cours Officiel introuvable ou PDF invalide")
 
-        # 5. Rendu ReportLab
+        # 6. Téléchargement / Résolution du Mindmap PDF (si disponible)
+        mindmap_pdf_path: Optional[Path] = None
+        if mindmap_data:
+            local_mm = mindmap_data.get("local_pdf_path")
+            if local_mm and _is_valid_pdf_file(Path(local_mm)):
+                mindmap_pdf_path = Path(local_mm)
+            elif mindmap_data.get("mindmap_pdf_url") or mindmap_data.get("mindmap_drive_id"):
+                mm_dl = tmp_path / "mindmap_raw.pdf"
+                if download_course_raw_pdf(
+                    pdf_url=mindmap_data.get("mindmap_pdf_url"),
+                    dest_path=mm_dl,
+                    supabase_url=supabase_url,
+                    pdf_drive_id=mindmap_data.get("mindmap_drive_id"),
+                ):
+                    mindmap_pdf_path = mm_dl
+
+        has_mindmap = has_mindmap_branches or (mindmap_pdf_path is not None)
+        print(f"   • Mindmap           : {'✅ Présente' if has_mindmap else '❌ Absente'}")
+
+        # CONDITION STRICTE : SI ET SEULEMENT SI TOUS LES 6 ÉLÉMENTS SONT PRÉSENTS
+        missing_final = []
+        if not has_cours_officiel:
+            missing_final.append("Cours officiel")
+        if not has_fiche_synthese:
+            missing_final.append("Fiche de synthèse")
+        if not has_piege_concours:
+            missing_final.append("Piège Concours")
+        if not has_mindmap:
+            missing_final.append("Mindmap")
+        if not has_qcm:
+            missing_final.append("QCM")
+        if not has_corrige_type:
+            missing_final.append("Corrigé type")
+
+        if missing_final:
+            print(f"   ⛔ GÉNÉRATION REFUSÉE — Éléments requis manquants : {', '.join(missing_final)}")
+            return None
+
+        # 7. Rendu ReportLab
         reportlab_out = tmp_path / "reportlab_sections.pdf"
-        print(f"   🎨 Génération ReportLab (Couverture + Synthèse + QCMs + Corrigé type)...")
+        print("   🎨 Génération ReportLab (Couverture + Synthèse + Mindmap + Transition Cours + QCMs + Corrigé type)...")
         build_reportlab_booklet(
             output_pdf_path=reportlab_out,
             course_data={"name": cname, "module_name": mid, "module_id": mid},
             summary_data=summary,
-            qcms=qcms,
+            qcms=valid_qcms,
             is_hyper=is_hyper,
-            residanat_sessions=sessions
+            residanat_sessions=sessions,
+            mindmap_data=mindmap_data
         )
 
-        # 6. Fusion avec le polycopié
+        # 8. Fusion avec le Mindmap PDF et le Polycopié Officiel
         final_filename = f"{mid}_{cid}_Livret_Residanat_2027.pdf"
         final_filename = re.sub(r'[\\/*?:"<>| ]', "_", final_filename)
         final_local_pdf = output_dir / final_filename
 
-        print(f"   📑 Fusion finale du Livret...")
+        print("   📑 Fusion finale du Livret (Mindmap + Cours Officiel)...")
         merge_reportlab_and_course_pdf(
             reportlab_pdf_path=reportlab_out,
-            course_raw_pdf_path=course_raw_pdf if downloaded else None,
-            final_output_path=final_local_pdf
+            course_raw_pdf_path=course_raw_pdf,
+            final_output_path=final_local_pdf,
+            mindmap_pdf_path=mindmap_pdf_path
         )
 
         print(f"   🎉 Livret PDF généré avec succès ({final_local_pdf.stat().st_size} octets) : {final_local_pdf.name}")
 
-        # 7. Upload & Hébergement Google Drive (Prioritaire pour économiser Supabase)
+        # 9. Upload & Hébergement Google Drive (Prioritaire pour économiser Supabase)
         bundle_url = None
         if not dry_run:
             if upload_booklet_to_gdrive:
@@ -1008,7 +1311,8 @@ def process_single_course(
                             supabase_key=supabase_key,
                             is_hyper=is_hyper,
                             residanat_sessions=sessions,
-                            qcm_count=len(qcms)
+                            qcm_count=len(valid_qcms),
+                            bundle_has_mindmap=True
                         )
                 except Exception as e:
                     print(f"   ⚠️ Upload Google Drive notice : {e}")
@@ -1024,26 +1328,14 @@ def process_single_course(
                     supabase_key=supabase_key,
                     is_hyper=is_hyper,
                     residanat_sessions=sessions,
-                    qcm_count=len(qcms)
+                    qcm_count=len(valid_qcms),
+                    bundle_has_mindmap=True
                 )
 
-        # 8. Diffusion Multicanale (In-App, FB 4 pages, Telegram)
+        # 10. Validation Humaine Obligatoire avant Publication / Diffusion
         broadcast_res = None
-        if broadcast and bundle_url and broadcast_residanat_bundle:
-            try:
-                broadcast_res = broadcast_residanat_bundle(
-                    course_id=cid,
-                    course_name=cname,
-                    module_id=mid,
-                    bundle_url=bundle_url,
-                    is_hypertombable=is_hyper,
-                    residanat_sessions=sessions,
-                    qcm_count=len(qcms),
-                    is_showcase=showcase,
-                    dry_run=dry_run
-                )
-            except Exception as e:
-                print(f"   ⚠️ Notice diffusion multicanale : {e}")
+        if broadcast and bundle_url:
+            print("   ⏸️ Diffusion publique différée : le livret est en attente de validation humaine par l'Admin (statut: pending_review).")
 
         return {
             "course_id": cid,
@@ -1051,8 +1343,10 @@ def process_single_course(
             "module_id": mid,
             "is_hypertombable": is_hyper,
             "residanat_sessions": sessions,
-            "qcms_count": len(qcms),
-            "has_course_pdf": downloaded,
+            "qcms_count": len(valid_qcms),
+            "has_course_pdf": has_cours_officiel,
+            "has_mindmap": has_mindmap,
+            "validation_status": "pending_review",
             "local_path": str(final_local_pdf),
             "bundle_url": bundle_url,
             "broadcast": broadcast_res
@@ -1069,7 +1363,7 @@ def main():
     parser.add_argument("--limit", type=int, default=10, help="Nombre max de cours à traiter en mode batch (défaut: 10)")
     parser.add_argument("--hypertombable-only", action="store_true", default=False, help="Filtrer uniquement les cours hypertombables")
     parser.add_argument("--dry-run", action="store_true", default=False, help="Générer en local sans upload Supabase")
-    parser.add_argument("--broadcast", action="store_true", default=False, help="Diffuser in-app, Facebook (4 pages) et Telegram")
+    parser.add_argument("--broadcast", action="store_true", default=False, help="Diffuser in-app, Facebook (4 pages) et Telegram (uniquement après validation Admin)")
     parser.add_argument("--showcase", action="store_true", default=False, help="Mode Showcase : inclure le lien direct du livret dans le post public")
     parser.add_argument("--output-dir", type=str, default=str(WORKSPACE_ROOT / "livrets_residanat_2027"), help="Dossier de sortie local")
     args = parser.parse_args()
@@ -1082,23 +1376,24 @@ def main():
     print("=" * 70)
     print("🚀 MEDSINA — AGENT GÉNÉRATEUR DE LIVRETS DE RÉVISION RÉSIDANAT 2027")
     print(f"📁 Dossier de sortie : {out_dir.resolve()}")
-    print(f"⚙️ Mode              : {'DRY RUN (Local uniquement)' if args.dry_run else 'OFFICIEL (Upload Supabase actif)'}")
+    print(f"⚙️ Mode              : {'DRY RUN (Local uniquement)' if args.dry_run else 'OFFICIEL (Upload Supabase en attente de validation Admin)'}")
     print("=" * 70)
 
     # Récupérer les cours
     headers = {"apikey": supabase_key, "Authorization": f"Bearer {supabase_key}"}
+    select_cols = "id,name,module_id,has_pdf,pdf_url,pdf_drive_id,pdf_storage_path,questions_count,mindmap_pdf_url,mindmap_drive_id,has_mindmap"
     if args.course_id:
-        r = requests.get(f"{supabase_url}/rest/v1/courses?id=eq.{args.course_id}", headers=headers).json()
+        r = requests.get(f"{supabase_url}/rest/v1/courses?id=eq.{args.course_id}&select={select_cols}", headers=headers).json()
         target_courses = r if isinstance(r, list) and r else [{"id": args.course_id, "name": args.course_id, "module_id": "General"}]
     else:
-        # Récupérer les cours ayant soit un pdf soit des QCMs
-        r = requests.get(f"{supabase_url}/rest/v1/courses?select=id,name,module_id,has_pdf,pdf_url,pdf_storage_path,questions_count&limit={args.limit * 3}", headers=headers).json()
+        limit_query = 1000 if args.all else args.limit * 4
+        r = requests.get(f"{supabase_url}/rest/v1/courses?select={select_cols}&limit={limit_query}", headers=headers).json()
         target_courses = r if isinstance(r, list) else []
 
     results = []
     processed_count = 0
     for c in target_courses:
-        if processed_count >= args.limit:
+        if not args.all and processed_count >= args.limit:
             break
         res = process_single_course(
             course=c,
@@ -1107,7 +1402,8 @@ def main():
             output_dir=out_dir,
             dry_run=args.dry_run,
             broadcast=args.broadcast,
-            showcase=args.showcase
+            showcase=args.showcase,
+            hypertombable_only=args.hypertombable_only
         )
         if res:
             results.append(res)
@@ -1115,11 +1411,11 @@ def main():
 
     print("\n" + "=" * 70)
     print("📊 BILAN DE LA GÉNÉRATION DES LIVRETS :")
-    print(f"• Cours traités : {len(results)}")
+    print(f"• Cours éligibles générés : {len(results)}")
     print(f"• Livrets Hypertombables 🔥 : {sum(1 for r in results if r['is_hypertombable'])}")
     for r in results:
         status_tag = "🔥 HYPERTOMBABLE" if r["is_hypertombable"] else "📘 Standard"
-        print(f"  - [{status_tag}] {r['course_name']} ({r['qcms_count']} QCMs)")
+        print(f"  - [{status_tag}] {r['course_name']} ({r['qcms_count']} QCMs) [Statut: {r['validation_status']}]")
         if r["bundle_url"]:
             print(f"    ☁️ URL : {r['bundle_url']}")
     print("=" * 70)

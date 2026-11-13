@@ -11,7 +11,31 @@ export type NavigationTab =
   | 'licenses' 
   | 'exams' 
   | 'announcements' 
+  | 'booklets'
   | 'ai_agents';
+
+export type BookletValidationStatus =
+  | 'pending_review'
+  | 'changes_requested'
+  | 'approved'
+  | 'rejected';
+
+export interface AdminBookletItem {
+  id: string;
+  name: string;
+  moduleId: string;
+  bundlePdfUrl: string;
+  bundleGeneratedAt?: string;
+  bundleValidationStatus: BookletValidationStatus;
+  bundleAdminNotes?: string;
+  bundleReviewedAt?: string;
+  bundleHasMindmap: boolean;
+  isHypertombable: boolean;
+  residanatYears: string[];
+  qcmCount: number;
+  hasPdf: boolean;
+  hasMindmap: boolean;
+}
 
 export type SubscriptionTier = 
   | 'free' 

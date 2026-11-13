@@ -334,7 +334,7 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Livret All-in-One Concours 2027 Card
-          if (widget.course.isHypertombable || widget.course.bundlePdfUrl != null)
+          if (widget.course.isHypertombable || widget.course.hasPublishedBooklet)
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               padding: const EdgeInsets.all(14),
@@ -755,7 +755,7 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
       child: SafeArea(
         child: Row(
           children: [
-            if (widget.course.bundlePdfUrl != null) ...[
+            if (widget.course.hasPublishedBooklet) ...[
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(

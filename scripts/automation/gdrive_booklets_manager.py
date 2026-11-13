@@ -169,9 +169,10 @@ def update_course_in_supabase_with_gdrive(
     supabase_key: str,
     is_hyper: bool,
     residanat_sessions: list,
-    qcm_count: int
+    qcm_count: int,
+    bundle_has_mindmap: bool = True
 ) -> bool:
-    """Met à jour les colonnes bundle_pdf_url et métadonnées dans la table courses."""
+    """Met à jour les colonnes bundle_pdf_url et métadonnées dans la table courses (en attente de validation Admin)."""
     headers = {
         "apikey": supabase_key,
         "Authorization": f"Bearer {supabase_key}",
@@ -183,12 +184,15 @@ def update_course_in_supabase_with_gdrive(
         "bundle_generated_at": "now()",
         "is_hypertombable": is_hyper,
         "residanat_years": residanat_sessions,
-        "qcm_count": qcm_count
+        "qcm_count": qcm_count,
+        "bundle_validation_status": "pending_review",
+        "bundle_has_mindmap": bundle_has_mindmap,
+        "bundle_reviewed_at": None
     }
     url = f"{supabase_url}/rest/v1/courses?id=eq.{course_id}"
     resp = requests.patch(url, headers=headers, json=payload, timeout=15)
     if resp.status_code in (200, 204):
-        print(f"   ✅ [Supabase] Cours mis à jour avec le lien Google Drive ({gdrive_link})")
+        print(f"   ✅ [Supabase] Cours mis à jour (statut: pending_review) avec le lien Google Drive ({gdrive_link})")
         return True
     else:
         print(f"   ⚠️ [Supabase] Erreur mise à jour cours ({resp.status_code}) : {resp.text}")

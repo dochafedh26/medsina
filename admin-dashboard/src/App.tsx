@@ -9,6 +9,7 @@ import { LicensesView } from './components/licenses/LicensesView';
 import { NationalExamsView } from './components/exams/NationalExamsView';
 import { AnnouncementsView } from './components/announcements/AnnouncementsView';
 import { GitHubAgentsView } from './components/agents/GitHubAgentsView';
+import { BookletsValidationView } from './components/booklets/BookletsValidationView';
 import { LoginView } from './components/auth/LoginView';
 
 import { 
@@ -663,6 +664,10 @@ export default function App() {
                   onAddAnnouncement={handleAddAnnouncement}
                   onToggleAnnouncement={handleToggleAnnouncement}
                 />
+              )}
+
+              {currentTab === 'booklets' && (
+                <BookletsValidationView adminId={adminUser?.id} />
               )}
 
               {currentTab === 'ai_agents' && (

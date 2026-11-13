@@ -53,7 +53,7 @@ class _LivretsCatalogScreenState extends State<LivretsCatalogScreen> {
       final rows = await SupabaseService.fetchGeneratedBookletCourses();
       final loaded = rows
           .map((r) => CourseModel.fromJson(r))
-          .where((c) => c.bundlePdfUrl != null && c.bundlePdfUrl!.trim().isNotEmpty)
+          .where((c) => c.hasPublishedBooklet)
           .toList();
       if (mounted) {
         setState(() {
@@ -122,7 +122,7 @@ class _LivretsCatalogScreenState extends State<LivretsCatalogScreen> {
 
     // 1. From live Supabase query
     for (final c in _cloudBooklets) {
-      if (c.bundlePdfUrl != null && c.bundlePdfUrl!.trim().isNotEmpty) {
+      if (c.hasPublishedBooklet) {
         final modId = c.moduleId == 'mod_cardio' ? 'Blida_CARDIOLOGIE' : c.moduleId;
         final normalizedCourse = c.copyWith(moduleId: modId);
         byId[c.id] = _BookletCatalogItem(
@@ -135,7 +135,7 @@ class _LivretsCatalogScreenState extends State<LivretsCatalogScreen> {
     // 2. Merge any from RevisionBloc state.modules
     for (final mod in stateModules) {
       for (final c in mod.courses) {
-        if (c.bundlePdfUrl != null && c.bundlePdfUrl!.trim().isNotEmpty) {
+        if (c.hasPublishedBooklet) {
           final existing = byId[c.id];
           if (existing == null) {
             byId[c.id] = _BookletCatalogItem(
