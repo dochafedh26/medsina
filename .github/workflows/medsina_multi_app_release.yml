@@ -22,14 +22,20 @@ on:
           - android
           - web
           - windows
+      publish_release:
+        description: 'Publish GitHub Release with APK/AAB/Web/Windows assets'
+        required: false
+        type: boolean
+        default: true
   push:
-    branches:
-      - 'feat/multi-app-modular-split'
     tags:
       - 'residanat-v*'
       - 'clinique-v*'
       - 'externat-v*'
       - 'all-v*'
+
+permissions:
+  contents: write
 
 jobs:
   resolve-app:
@@ -37,7 +43,12 @@ jobs:
     outputs:
       app_name: ${{ steps.set_app.outputs.app_name }}
       app_dir: ${{ steps.set_app.outputs.app_dir }}
+      app_label: ${{ steps.set_app.outputs.app_label }}
+      version: ${{ steps.set_app.outputs.version }}
+      build_num: ${{ steps.set_app.outputs.build_num }}
+      tag: ${{ steps.set_app.outputs.tag }}
     steps:
+      - uses: actions/checkout@v4
       - id: set_app
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -51,8 +62,29 @@ jobs:
           else
             APP="medsina_all_in_one"
           fi
+
+          case "$APP" in
+            medsina_residanat) LABEL="Medsina_Residanat"; PREFIX="residanat" ;;
+            medsina_clinique)  LABEL="Medsina_Clinique";  PREFIX="clinique" ;;
+            medsina_externat)  LABEL="Medsina_Externat";  PREFIX="externat" ;;
+            *)                 LABEL="Medsina";           PREFIX="all" ;;
+          esac
+
+          RAW_VER=$(grep '^version:' "apps/$APP/pubspec.yaml" | awk '{print $2}')
+          VER="${RAW_VER%%+*}"
+          BUILD="${RAW_VER##*+}"
+          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref_name }}" == *-v* ]]; then
+            TAG="${{ github.ref_name }}"
+          else
+            TAG="${PREFIX}-v${VER}"
+          fi
+
           echo "app_name=$APP" >> "$GITHUB_OUTPUT"
           echo "app_dir=apps/$APP" >> "$GITHUB_OUTPUT"
+          echo "app_label=$LABEL" >> "$GITHUB_OUTPUT"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "build_num=$BUILD" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
   analyze-and-test:
     needs: resolve-app
@@ -100,13 +132,25 @@ jobs:
               sed -i "s/applicationId = \"com.medsina.medsina\"/applicationId = \"com.medevsync.$APP_NAME\"/" "$APP_DIR/android/app/build.gradle.kts"
             fi
           fi
-      - name: Build Android APK
+      - name: Build Universal APK, Split arm64 APK, and AAB
         working-directory: ${{ needs.resolve-app.outputs.app_dir }}
-        run: flutter build apk --release --split-per-abi
+        run: |
+          flutter build apk --release
+          flutter build apk --release --split-per-abi
+          flutter build appbundle --release
+      - name: Stage Android release deliverables
+        run: |
+          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
+          LABEL="${{ needs.resolve-app.outputs.app_label }}"
+          VER="${{ needs.resolve-app.outputs.version }}"
+          mkdir -p dist-android
+          cp "$APP_DIR/build/app/outputs/flutter-apk/app-release.apk" "dist-android/${LABEL}_v${VER}_Android.apk"
+          cp "$APP_DIR/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk" "dist-android/${LABEL}_v${VER}_Android_arm64.apk"
+          cp "$APP_DIR/build/app/outputs/bundle/release/app-release.aab" "dist-android/${LABEL}_v${VER}_GooglePlay.aab"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ needs.resolve-app.outputs.app_name }}-android
-          path: ${{ needs.resolve-app.outputs.app_dir }}/build/app/outputs/flutter-apk/*.apk
+          path: dist-android/*
 
   build-web:
     needs: [resolve-app, analyze-and-test]
@@ -124,15 +168,84 @@ jobs:
       - name: Resolve workspace
         run: flutter pub get
       - name: Ensure Web platform scaffolding
-        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
         run: |
-          if [ ! -d "web" ]; then
-            flutter create --platforms=web --org com.medevsync .
+          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
+          if [ ! -d "$APP_DIR/web" ]; then
+            cp -r web "$APP_DIR/web"
           fi
       - name: Build Web
         working-directory: ${{ needs.resolve-app.outputs.app_dir }}
         run: flutter build web --release
+      - name: Archive Web ZIP
+        run: |
+          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
+          LABEL="${{ needs.resolve-app.outputs.app_label }}"
+          VER="${{ needs.resolve-app.outputs.version }}"
+          mkdir -p dist-web
+          (cd "$APP_DIR/build/web" && zip -r "../../../../dist-web/${LABEL}_v${VER}_Web.zip" .)
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ needs.resolve-app.outputs.app_name }}-web
-          path: ${{ needs.resolve-app.outputs.app_dir }}/build/web
+          path: dist-web/*
+
+  build-windows:
+    needs: [resolve-app, analyze-and-test]
+    if: ${{ github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'windows' }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Bootstrap secrets
+        shell: pwsh
+        run: |
+          Copy-Item "packages/medsina_core/lib/core/config/app_secrets.dart.example" "packages/medsina_core/lib/core/config/app_secrets.dart"
+      - name: Resolve workspace
+        run: flutter pub get
+      - name: Ensure Windows platform scaffolding
+        shell: pwsh
+        run: |
+          $appDir = "${{ needs.resolve-app.outputs.app_dir }}"
+          if (-not (Test-Path "$appDir/windows")) {
+            Copy-Item -Recurse "windows" "$appDir/windows"
+          }
+      - name: Build Windows Release
+        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
+        run: flutter build windows --release
+      - name: Archive Windows Portable ZIP
+        shell: pwsh
+        run: |
+          $appDir = "${{ needs.resolve-app.outputs.app_dir }}"
+          $label = "${{ needs.resolve-app.outputs.app_label }}"
+          $ver = "${{ needs.resolve-app.outputs.version }}"
+          New-Item -ItemType Directory -Force -Path "dist-windows" | Out-Null
+          Compress-Archive -Path "$appDir/build/windows/x64/runner/Release/*" -DestinationPath "dist-windows/${label}_v${ver}_Windows_Portable.zip" -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.resolve-app.outputs.app_name }}-windows
+          path: dist-windows/*
+
+  publish-release:
+    needs: [resolve-app, build-android, build-web, build-windows]
+    if: ${{ always() && (needs.build-android.result == 'success' || needs.build-web.result == 'success' || needs.build-windows.result == 'success') && (github.event_name == 'push' || inputs.publish_release == true) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-release
+          merge-multiple: true
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.resolve-app.outputs.tag }}
+          name: "${{ needs.resolve-app.outputs.app_label }} v${{ needs.resolve-app.outputs.version }} (Build ${{ needs.resolve-app.outputs.build_num }})"
+          draft: false
+          prerelease: false
+          files: dist-release/*
+          body: |
+            ## ${{ needs.resolve-app.outputs.app_label }} v${{ needs.resolve-app.outputs.version }} (Build ${{ needs.resolve-app.outputs.build_num }})
+
+            Plateforme modulaire Medsina — build multi-plateforme (Android APK / arm64 / AAB, Web, Windows Portable).
