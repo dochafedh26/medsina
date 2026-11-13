@@ -1,6 +1,6 @@
 name: medsina_externat
 description: Medsina Étudiant — Cursus Médical & Externat (1ère - 6ème Année), EMDs & Normes.
-version: 1.0.82+107
+version: 1.0.83+108
 publish_to: none
 resolution: workspace
 

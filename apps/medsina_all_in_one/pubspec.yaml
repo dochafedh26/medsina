@@ -1,6 +1,6 @@
 name: medsina_all_in_one
 description: Medsina All-Access — Plateforme Médicale Globale (Résidanat, Clinique, Externat & Vidal).
-version: 1.0.82+107
+version: 1.0.83+108
 publish_to: none
 resolution: workspace
 

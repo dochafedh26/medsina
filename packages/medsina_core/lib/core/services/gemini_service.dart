@@ -732,4 +732,159 @@ N'utilise AUCUNE balise LaTeX. Utilise du texte Unicode pur (ex: ≥, ≤, µg, 
       return null;
     });
   }
+
+  static final Map<String, List<Map<String, dynamic>>> _indicationSearchCache = {};
+  static final Map<String, Map<String, dynamic>> _internationalEquivCache = {};
+
+  /// Vidal-style "Recherche par indication": returns recommended DCIs for a clinical indication/pathology.
+  static Future<List<Map<String, dynamic>>> searchDrugsByIndicationWithAi(String indication) async {
+    final cleanKey = indication.trim().toUpperCase();
+    if (cleanKey.isEmpty) return [];
+    if (_indicationSearchCache.containsKey(cleanKey)) {
+      return _indicationSearchCache[cleanKey]!;
+    }
+
+    final result = await _executeWithConcurrencyAndPacing(() async {
+      final prompt = '''
+Tu es le référentiel pharmacologique Vidal & Nomenclature Algérienne MSPRH.
+Un médecin ou étudiant recherche des médicaments par indication thérapeutique : "$indication".
+Liste les 6 à 8 principales molécules (DCI en MAJUSCULES sans accents si possible, ex: AMOXICILLINE, RAMIPRIL, METFORMINE) recommandées en pratique clinique pour cette indication.
+
+Réponds STRICTEMENT avec un JSON valide (aucun markdown) :
+{
+  "results": [
+    {
+      "dci": "NOM DCI EN MAJUSCULES",
+      "therapeutic_class": "Classe pharmacologique (ex: IEC, Antibiotique Bêta-lactamine)",
+      "line_of_treatment": "1ère intention / 2ème intention / Adjuvant",
+      "usual_dosage": "Posologie usuelle adulte concise",
+      "key_precaution": "Précaution ou contre-indication majeure en 1 phrase"
+    }
+  ]
+}
+''';
+
+      final requestData = {
+        'contents': [
+          {
+            'parts': [
+              {'text': prompt}
+            ]
+          }
+        ],
+        'generationConfig': {
+          'temperature': 0.15,
+          'responseMimeType': 'application/json',
+        }
+      };
+
+      for (final model in _modelCascade) {
+        try {
+          final url = '$_baseUrl/$model:generateContent?key=$apiKey';
+          final response = await _dio.post(
+            url,
+            options: Options(headers: {'Content-Type': 'application/json'}),
+            data: requestData,
+          );
+
+          if (response.statusCode == 200) {
+            final data = response.data is String ? jsonDecode(response.data) : response.data;
+            final candidates = data['candidates'] as List?;
+            if (candidates != null && candidates.isNotEmpty) {
+              final parts = candidates[0]['content']?['parts'] as List?;
+              if (parts != null && parts.isNotEmpty) {
+                final raw = parts[0]['text'] as String?;
+                if (raw != null) {
+                  final clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
+                  final parsed = jsonDecode(clean) as Map<String, dynamic>;
+                  final list = (parsed['results'] as List?)
+                          ?.map((e) => Map<String, dynamic>.from(e as Map))
+                          .toList() ??
+                      <Map<String, dynamic>>[];
+                  _indicationSearchCache[cleanKey] = list;
+                  return list;
+                }
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Gemini indication search exception with $model: $e');
+        }
+      }
+      return <Map<String, dynamic>>[];
+    });
+
+    return result ?? <Map<String, dynamic>>[];
+  }
+
+  /// Vidal-style "Équivalences internationales / Convertisseur DC": maps a foreign/French brand name to its DCI.
+  static Future<Map<String, dynamic>?> resolveInternationalEquivalentWithAi(String foreignBrand) async {
+    final cleanKey = foreignBrand.trim().toUpperCase();
+    if (cleanKey.isEmpty) return null;
+    if (_internationalEquivCache.containsKey(cleanKey)) {
+      return _internationalEquivCache[cleanKey];
+    }
+
+    return _executeWithConcurrencyAndPacing(() async {
+      final prompt = '''
+Tu es le convertisseur d'équivalences internationales Vidal (France / Europe / USA ↔ Algérie MSPRH).
+Le médecin recherche l'équivalent du médicament étranger suivant : "$foreignBrand".
+
+Réponds STRICTEMENT avec un JSON valide (aucun markdown) :
+{
+  "foreign_name": "$foreignBrand",
+  "country_origin": "France / International",
+  "dci": "DCI EXACTE EN MAJUSCULES (ex: PARACETAMOL, ACIDE ACETYLSALICYLIQUE, PHLOROGLUCINOL)",
+  "search_keyword": "Mot-clé DCI court sans sel pour la recherche catalogue (ex: AMOXICILLINE, OMEPRAZOLE)",
+  "pharmacological_class": "Classe pharmacologique",
+  "notes": "Précision utile sur le dosage ou les équivalents courants en Algérie"
+}
+''';
+
+      final requestData = {
+        'contents': [
+          {
+            'parts': [
+              {'text': prompt}
+            ]
+          }
+        ],
+        'generationConfig': {
+          'temperature': 0.1,
+          'responseMimeType': 'application/json',
+        }
+      };
+
+      for (final model in _modelCascade) {
+        try {
+          final url = '$_baseUrl/$model:generateContent?key=$apiKey';
+          final response = await _dio.post(
+            url,
+            options: Options(headers: {'Content-Type': 'application/json'}),
+            data: requestData,
+          );
+
+          if (response.statusCode == 200) {
+            final data = response.data is String ? jsonDecode(response.data) : response.data;
+            final candidates = data['candidates'] as List?;
+            if (candidates != null && candidates.isNotEmpty) {
+              final parts = candidates[0]['content']?['parts'] as List?;
+              if (parts != null && parts.isNotEmpty) {
+                final raw = parts[0]['text'] as String?;
+                if (raw != null) {
+                  final clean = raw.replaceAll('```json', '').replaceAll('```', '').trim();
+                  final parsed = jsonDecode(clean) as Map<String, dynamic>;
+                  _internationalEquivCache[cleanKey] = parsed;
+                  return parsed;
+                }
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Gemini international equiv exception with $model: $e');
+        }
+      }
+      return null;
+    });
+  }
 }

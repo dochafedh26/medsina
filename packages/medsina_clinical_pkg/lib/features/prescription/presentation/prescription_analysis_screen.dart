@@ -15,6 +15,7 @@ import '../data/algerian_nomenclature_repository.dart';
 import '../data/terrain_contraindication_repository.dart';
 import '../data/vidal_interaction_repository.dart';
 import '../models/algerian_drug_model.dart';
+import 'vidal_drug_explorer_sheet.dart';
 
 class PrescribedDrugItem {
   final String name;
@@ -167,10 +168,15 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
     }
   }
 
+  DrugSearchMode _searchMode = DrugSearchMode.all;
+
   void _onSearchChangedText(String val) {
     final text = val.trim();
     if (text.isNotEmpty) {
-      final results = AlgerianNomenclatureRepository.search(text, limit: 12);
+      final results = AlgerianNomenclatureRepository.advancedSearch(
+        DrugSearchFilter(query: text, mode: _searchMode),
+        limit: 15,
+      );
       setState(() {
         _searchResults = results;
         _showSuggestions = results.isNotEmpty;
@@ -181,6 +187,33 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
         _showSuggestions = false;
       });
     }
+  }
+
+  void _openVidalExplorer({int initialTabIndex = 0}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => VidalDrugExplorerSheet(
+        initialTabIndex: initialTabIndex,
+        prescribedDrugNames: _prescribedDrugs.map((d) => d.name.toLowerCase()).toSet(),
+        onAddDrug: _addDrugFromCatalog,
+        onShowMonograph: (drug) => _showDrugMonographSheet(
+          context,
+          PrescribedDrugItem(
+            name: drug.brand,
+            activeDci: drug.dci,
+            dosage: drug.dosage,
+            form: drug.form,
+            lab: drug.lab,
+            packaging: drug.packaging,
+            liste: drug.liste,
+            pays: drug.pays,
+            regNum: drug.regNum,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -1007,12 +1040,48 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
 
                   const SizedBox(height: 12),
 
+                  // Vidal-style Search Mode Selector + Explorer Launch Bar
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final entry in const [
+                          (DrugSearchMode.all, 'Tout'),
+                          (DrugSearchMode.brand, 'Spécialité'),
+                          (DrugSearchMode.dci, 'DCI'),
+                          (DrugSearchMode.laboratory, 'Labo'),
+                        ])
+                          Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: ChoiceChip(
+                              label: Text(entry.$2, style: const TextStyle(fontSize: 11)),
+                              selected: _searchMode == entry.$1,
+                              selectedColor: AppTheme.primaryTeal.withValues(alpha: 0.2),
+                              visualDensity: VisualDensity.compact,
+                              onSelected: (_) {
+                                setState(() => _searchMode = entry.$1);
+                                if (_customDrugController.text.trim().isNotEmpty) {
+                                  _onSearchChangedText(_customDrugController.text);
+                                }
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
                   // Autocomplete Input field
                   TextField(
                     controller: _customDrugController,
                     onChanged: _onSearchChangedText,
                     decoration: InputDecoration(
-                      hintText: 'Rechercher un médicament (ex: Sintrom, Rifampicine)...',
+                      hintText: _searchMode == DrugSearchMode.dci
+                          ? 'Rechercher par DCI (ex: Acénocoumarol, Amoxicilline)...'
+                          : _searchMode == DrugSearchMode.laboratory
+                              ? 'Rechercher par laboratoire (ex: El Kendi, Saidal)...'
+                              : 'Rechercher un médicament (ex: Sintrom, Rifampicine)...',
                       prefixIcon: const Icon(Icons.search_rounded),
                       suffixIcon: _customDrugController.text.isNotEmpty
                           ? IconButton(
@@ -1027,6 +1096,51 @@ class _PrescriptionAnalysisScreenState extends State<PrescriptionAnalysisScreen>
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     onSubmitted: _addCustomDrug,
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Vidal Explorer Quick-Access Pills
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ActionChip(
+                          avatar: const Icon(Icons.tune_rounded, size: 15, color: AppTheme.primaryTeal),
+                          label: const Text('Filtres & Spécialités', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => _openVidalExplorer(initialTabIndex: 0),
+                        ),
+                        const SizedBox(width: 6),
+                        ActionChip(
+                          avatar: const Icon(Icons.science_rounded, size: 15, color: Color(0xFF2563EB)),
+                          label: const Text('Annuaire DCI', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => _openVidalExplorer(initialTabIndex: 1),
+                        ),
+                        const SizedBox(width: 6),
+                        ActionChip(
+                          avatar: const Icon(Icons.category_rounded, size: 15, color: Color(0xFFD97706)),
+                          label: const Text('Classes (28)', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => _openVidalExplorer(initialTabIndex: 2),
+                        ),
+                        const SizedBox(width: 6),
+                        ActionChip(
+                          avatar: const Icon(Icons.business_rounded, size: 15, color: Color(0xFF7C3AED)),
+                          label: const Text('Laboratoires', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => _openVidalExplorer(initialTabIndex: 3),
+                        ),
+                        const SizedBox(width: 6),
+                        ActionChip(
+                          avatar: const Icon(Icons.public_rounded, size: 15, color: Color(0xFF059669)),
+                          label: const Text('Indication / Équiv.', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () => _openVidalExplorer(initialTabIndex: 4),
+                        ),
+                      ],
+                    ),
                   ),
 
                   // Autocomplete Suggestions Dropdown

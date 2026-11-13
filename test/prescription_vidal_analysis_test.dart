@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medsina/features/prescription/data/algerian_nomenclature_repository.dart';
+import 'package:medsina/features/prescription/data/therapeutic_classes.dart';
 import 'package:medsina/features/prescription/data/vidal_interaction_repository.dart';
 import 'package:medsina/features/prescription/data/terrain_contraindication_repository.dart';
 import 'package:medsina/features/prescription/presentation/prescription_analysis_screen.dart';
@@ -274,6 +275,41 @@ void main() {
 
       // Drug should be added as a chip
       expect(find.text('Médicaments dans l\'ordonnance à analyser :'), findsOneWidget);
+    });
+
+    test('Vidal-style multi-criteria search, DCI directory, labs, and therapeutic classes work', () async {
+      await AlgerianNomenclatureRepository.loadCatalog();
+
+      // 1. Therapeutic class filter (06 = Cardiologie)
+      final cardioDrugs = AlgerianNomenclatureRepository.advancedSearch(
+        const DrugSearchFilter(therapeuticClassPrefix: '06'),
+        limit: 20,
+      );
+      expect(cardioDrugs.isNotEmpty, true);
+      expect(cardioDrugs.every((d) => d.code.startsWith('06')), true);
+
+      // 2. Facet filter: Generic + Liste I
+      final genericListe1 = AlgerianNomenclatureRepository.advancedSearch(
+        const DrugSearchFilter(drugType: 'GE', liste: 'LISTE I'),
+        limit: 20,
+      );
+      expect(genericListe1.isNotEmpty, true);
+      expect(genericListe1.every((d) => d.type.toUpperCase() == 'GE'), true);
+
+      // 3. DCI directory & Equivalents converter
+      final dcis = AlgerianNomenclatureRepository.getUniqueDcis(query: 'ACENOCOUMAROL');
+      expect(dcis.isNotEmpty, true);
+      final equivalents = AlgerianNomenclatureRepository.getEquivalentsForDci('ACENOCOUMAROL');
+      expect(equivalents.isNotEmpty, true);
+
+      // 4. Laboratories directory
+      final labs = AlgerianNomenclatureRepository.getUniqueLaboratories(query: 'EL KENDI');
+      expect(labs.isNotEmpty, true);
+
+      // 5. Therapeutic class counts cover MSPRH prefixes
+      final counts = AlgerianNomenclatureRepository.getTherapeuticClassCounts();
+      expect(counts['06'] != null && counts['06']! > 0, true);
+      expect(TherapeuticClasses.fromCode('06 A 002')?.codePrefix, equals('06'));
     });
   });
 }
