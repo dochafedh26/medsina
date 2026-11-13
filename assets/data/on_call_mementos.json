@@ -933,21 +933,20 @@
   {
     "id": "memento_pediatrie_deshydratation",
     "title": "💧 Pédiatrie : Déshydratation Aiguë & Réhydratation IV",
-    "category": "Pédiatrie d'Urgence",
+    "category": "Pédiatrie & Urgences",
     "icon_name": "child_care_rounded",
     "color_hex": "#0284C7",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluer la sévérité (score de Gorelik ou clinique) : pli cutané, fontanelle déprimée, sécheresse des muqueuses, marbrures, TRC > 3s (collapsus = urgence vitale).",
-      "Étape 2 : Poser une voie veineuse périphérique (VVP) ou intra-osseuse (TIO) immédiate si choc. Bilan urgent : Glycémie capillaire, Ionogramme sanguin, Urée, Créatinine, Gaz du sang (recherche acidose métabolique).",
-      "Étape 3 : En cas de choc hypovolémique : Remplissage vasculaire par NaCl 0,9% ou Ringer Lactate à raison de 20 ml/kg en 20 minutes, renouvelable 1 à 2 fois si persistance des signes de choc.",
-      "Étape 4 : Pour la réhydratation de maintenance + déficit : Utiliser du Sérum Glucosé 5% + NaCl 0,9% (ou solution type iso-oncotique pédiatrique selon disponibilité) en couvrant les besoins basaux et la correction du déficit sur 24h.",
-      "Étape 5 : Surveillance armée au déchoquage : Contrôle de la diurèse (objectif > 1 ml/kg/h), de la conscience, des constantes (FC, TA, FR) et ionogramme de contrôle à H6-H12. Alerte réanimation si acidose sévère (pH < 7.15) ou échec du remplissage.",
-      "Étape 6 : Piège médico-légal / CI : Ne jamais administrer de potassium (KCl) dans les solutés de réhydratation tant que la diurèse n'est pas vérifiée et documentée (risque d'hyperkaliémie fatale)."
+      "Étape 1 : Évaluer l'urgence vitale et le degré de déshydratation (légère <5%, modérée 5-9%, sévère ≥10%). Signes de choc : tachycardie, TRC > 3s, marbrures, oligurie, conscience altérée.",
+      "Étape 2 : Poser une voie veineuse périphérique (VVP) immédiate ou un accès intra-osseux (IO) en cas d'échec à 2 min. Prélèvement : GDS, ionogramme sanguin, urée, créatinine, glycémique capillaire.",
+      "Étape 3 : Urgence vitale / Choc hypovolémique : Remplissage vasculaire par NaCl 0,9% : 20 mL/kg en 20 min renouvelable 1 fois. Si pas de choc : Calcul du déficit et plan de réhydratation IV (Sérum Glucosé 5% + NaCl 0,9% + KCl selon diurèse).",
+      "Étape 4 : Surveillance rapprochée (Fréquence cardiaque, PA, TRC, état de conscience, courbe pondérale, diurèse horaire). Critères de transfert en réanimation pédiatrique : échec du remplissage, acidose sévère (pH < 7,15), convulsions, coma.",
+      "Étape 5 : Piège thérapeutique : Ne jamais réhydrater trop rapidement sans évaluer la natrémie (risque d'œdème cérébral en cas d'hyponatrémie aigue corrigée trop vite). Interdiction d'administrer du KCl avant la reprise de la diurèse."
     ],
-    "scientific_references": "Recommandations ESPGHAN / SFMU / Consensus National Pédiatrie MSPRH Algérie",
+    "scientific_references": "Consensus ESPGHAN / SFMU / Recommandations MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-12T03:04:52.914052+00:00",
-    "updated_at": "2026-11-12T03:04:52.914067+00:00"
+    "created_at": "2026-11-13T16:29:42.894496+00:00",
+    "updated_at": "2026-11-13T16:29:42.894509+00:00"
   }
 ]
