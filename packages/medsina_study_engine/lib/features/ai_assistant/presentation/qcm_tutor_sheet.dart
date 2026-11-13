@@ -1,0 +1,516 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:medsina_core/core/constants/app_constants.dart';
+import 'package:medsina_core/core/services/ai_quota_service.dart';
+import 'package:medsina_core/core/services/free_trial_quota_service.dart';
+import 'package:medsina_core/core/services/gemini_service.dart';
+import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/utils/medical_text_formatter.dart';
+import 'package:medsina_core/core/widgets/medsina_logo.dart';
+import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
+import '../../revision/models/qcm_model.dart';
+import 'package:medsina_core/features/subscription/presentation/ai_quota_exhausted_dialog.dart';
+
+class MedsinaPilotSheet extends StatefulWidget {
+  final QcmQuestion question;
+
+  const MedsinaPilotSheet({super.key, required this.question});
+
+  static void show(BuildContext context, QcmQuestion question) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => MedsinaPilotSheet(question: question),
+    );
+  }
+
+  @override
+  State<MedsinaPilotSheet> createState() => _MedsinaPilotSheetState();
+}
+
+typedef QcmTutorSheet = MedsinaPilotSheet;
+
+class _MedsinaPilotSheetState extends State<MedsinaPilotSheet> {
+  final TextEditingController _queryController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  bool _isLoading = false;
+  String? _response;
+  String _activeQuestionAsked = '';
+  StreamSubscription<String>? _streamSub;
+
+  final List<String> _suggestedPrompts = [
+    '💡 Explique-moi les pièges classiques de ce QCM',
+    '❌ Pourquoi les autres propositions sont-elles fausses ?',
+    '📑 Rappelle-moi le consensus officiel sur ce sujet',
+    '🩺 Quelle est la CAT pratique en urgence ?',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Automatically trigger the first explanation on open
+    _askPilot('Explique-moi en détail la justification médicale de cette question et pourquoi la réponse ${widget.question.correctAnswers.join(", ")} est la bonne.');
+  }
+
+  @override
+  void dispose() {
+    _streamSub?.cancel();
+    _queryController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _askPilot(String query) async {
+    if (query.trim().isEmpty) return;
+
+    final user = context.read<AuthBloc>().state.user;
+    if (user?.tier == SubscriptionTier.free) {
+      if (!FreeTrialQuotaService.instance.canUseCopilot(user)) {
+        FreeTrialQuotaService.showQuotaLimitDialog(
+          context,
+          featureTitle: 'Limite MedsinaPilot Atteinte',
+          message: 'Le Pass Découverte inclut 1 requête MedsinaPilot offerte. Pour échanger sans limite 24/7 avec votre tuteur de révision, abonnez-vous à l\'un de nos plans.',
+        );
+        return;
+      }
+      FreeTrialQuotaService.instance.consumeCopilotQuery(user);
+    } else {
+      final quotaRes = await AiQuotaService.instance.checkAndConsume(user);
+      if (!quotaRes.allowed) {
+        if (mounted) {
+          AiQuotaExhaustedDialog.show(
+            context,
+            dailyLimit: quotaRes.dailyLimit,
+            dailyUsed: quotaRes.dailyUsed,
+            bonusRemaining: quotaRes.bonusRemaining,
+          );
+        }
+        return;
+      }
+    }
+
+    await _streamSub?.cancel();
+
+    setState(() {
+      _isLoading = true;
+      _activeQuestionAsked = query;
+      _response = '';
+    });
+
+    final optionsList = widget.question.options.map((o) => '${o.key}. ${o.text}').toList();
+
+    try {
+      final stream = GeminiService.streamExplainQcm(
+        questionTitle: widget.question.questionText,
+        optionsText: optionsList,
+        correctKeys: widget.question.correctAnswers,
+        userQuery: query,
+        courseName: widget.question.courseName,
+        moduleId: widget.question.moduleId,
+      );
+
+      _streamSub = stream.listen(
+        (chunk) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _response = (_response ?? '') + chunk;
+            });
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_scrollController.hasClients) {
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
+          }
+        },
+        onError: (e) {
+          if (mounted) {
+            setState(() {
+              _response = 'Erreur lors de la communication avec MedsinaPilot: $e';
+              _isLoading = false;
+            });
+          }
+        },
+        onDone: () {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _response = 'Erreur lors de la communication avec MedsinaPilot: $e';
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final size = MediaQuery.of(context).size;
+    final isDesktop = size.width > 800;
+
+    final sheetContent = Container(
+      height: size.height * 0.90,
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Drag handle
+          Center(
+            child: Container(
+              width: 44,
+              height: 4,
+              margin: const EdgeInsets.only(top: 12, bottom: 8),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade400,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+
+          // Header
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 16, 12),
+            child: Row(
+              children: [
+                const MedsinaLogo.icon(size: 36),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            'MedsinaPilot 🩺',
+                            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryTeal.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'Gemini IA',
+                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.primaryTeal),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDCFCE7),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.verified_rounded, size: 10, color: Color(0xFF16A34A)),
+                                SizedBox(width: 4),
+                                Text(
+                                  'medsina_ressources (Drive) • HAS / ESC',
+                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFF16A34A)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  tooltip: 'Fermer',
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+
+          // Content scroll area
+          Expanded(
+            child: ListView(
+              controller: _scrollController,
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+              children: [
+                // Question summary card
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isDark ? AppTheme.darkBorder : Colors.grey.shade200,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.help_outline_rounded, size: 16, color: AppTheme.primaryTeal),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Question analysée :',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey.shade600),
+                          ),
+                          const Spacer(),
+                          Text(
+                            'Réponse : ${widget.question.correctAnswers.join(", ")}',
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF10B981)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        widget.question.questionText,
+                        style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w500),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Suggested Prompts Horizontal Scroll
+                SizedBox(
+                  height: 38,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _suggestedPrompts.length,
+                    separatorBuilder: (_, index) => const SizedBox(width: 8),
+                    itemBuilder: (ctx, i) {
+                      final prompt = _suggestedPrompts[i];
+                      return ActionChip(
+                        label: Text(prompt, style: const TextStyle(fontSize: 11.5)),
+                        onPressed: _isLoading ? null : () => _askPilot(prompt),
+                        backgroundColor: isDark ? AppTheme.darkSurfaceElevated : Colors.grey.shade100,
+                        side: BorderSide(color: isDark ? AppTheme.darkBorder : Colors.grey.shade300),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+
+                // Active question badge
+                if (_activeQuestionAsked.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      'Question posée : "$_activeQuestionAsked"',
+                      style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey.shade500),
+                    ),
+                  ),
+
+                // AI Response Area
+                if (_isLoading && (_response == null || _response!.isEmpty))
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: CircularProgressIndicator(strokeWidth: 3, color: AppTheme.primaryTeal),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            'MedsinaPilot analyse le cas et les consensus médicaux...',
+                            style: TextStyle(fontSize: 12.5, color: Colors.grey.shade500),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else if (_response != null && _response!.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF0FDF4),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isDark ? AppTheme.darkBorder : const Color(0xFFBBF7D0),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.verified_rounded, size: 18, color: Color(0xFF16A34A)),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'Analyse Médicale de MedsinaPilot :',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF166534)),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.copy_rounded, size: 16),
+                              tooltip: 'Copier l\'explication',
+                              color: const Color(0xFF16A34A),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(text: _response!));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Explication copiée dans le presse-papiers !'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 16),
+                        MarkdownBody(
+                          data: MedicalTextFormatter.clean(_response!),
+                          selectable: true,
+                          styleSheet: MarkdownStyleSheet(
+                            p: TextStyle(
+                              fontSize: 14,
+                              height: 1.6,
+                              color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
+                            ),
+                            h1: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              color: isDark ? const Color(0xFF86EFAC) : const Color(0xFF15803D),
+                            ),
+                            h2: TextStyle(
+                              fontSize: 15.5,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? const Color(0xFF86EFAC) : const Color(0xFF166534),
+                            ),
+                            h3: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+                            ),
+                            strong: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : const Color(0xFF0F172A),
+                            ),
+                            listBullet: TextStyle(
+                              color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                            listIndent: 22.0,
+                            blockSpacing: 10.0,
+                            blockquotePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            blockquoteDecoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF0FDF4),
+                              borderRadius: BorderRadius.circular(8),
+                              border: const Border(left: BorderSide(color: Color(0xFF16A34A), width: 4)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
+
+          // Custom question input bar
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, MediaQuery.of(context).viewInsets.bottom + 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _queryController,
+                    enabled: !_isLoading,
+                    decoration: InputDecoration(
+                      hintText: 'Posez une question à MedsinaPilot...',
+                      hintStyle: const TextStyle(fontSize: 13),
+                      filled: true,
+                      fillColor: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFF1F5F9),
+                      isDense: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide.none,
+                      ),
+                      prefixIcon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
+                    ),
+                    onSubmitted: (val) {
+                      if (val.trim().isNotEmpty) {
+                        _askPilot(val.trim());
+                        _queryController.clear();
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                IconButton.filled(
+                  icon: const Icon(Icons.send_rounded, size: 18),
+                  style: IconButton.styleFrom(backgroundColor: AppTheme.primaryTeal),
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          final text = _queryController.text.trim();
+                          if (text.isNotEmpty) {
+                            _askPilot(text);
+                            _queryController.clear();
+                          }
+                        },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (isDesktop) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 880),
+          child: sheetContent,
+        ),
+      );
+    }
+
+    return sheetContent;
+  }
+}
+

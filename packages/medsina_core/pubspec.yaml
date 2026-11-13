@@ -1,0 +1,43 @@
+name: medsina_core
+description: Shared foundation for all Medsina apps (theme, auth, supabase, subscription, notifications, profile, core interfaces).
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  dio: ^5.11.1
+  equatable: ^3.0.0
+  firebase_core: ^5.1.0
+  firebase_messaging: ^17.0.1
+  flutter_bloc: ^9.1.1
+  flutter_local_notifications: ^23.0.1
+  flutter_markdown: ^0.7.7+1
+  google_fonts: ^9.0.0
+  http: ^1.2.0
+  intl: ^0.20.3
+  open_filex: ^4.7.0
+  package_info_plus: ^10.2.2
+  path_provider: ^2.1.6
+  provider: ^6.1.5+1
+  shared_preferences: ^2.5.6
+  supabase_flutter: ^2.18.2
+  syncfusion_flutter_pdf: ^35.1.39
+  syncfusion_flutter_pdfviewer: ^35.1.39
+  url_launcher: ^6.3.3
+  file_picker: ^13.1.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/medsina-logo.png
+    - assets/medsina-logo-dark.png
+    - assets/medsina-icon.png
+    - assets/app_launcher_icon.png
+    - assets/app_launcher_foreground.png
+    - assets/data/Medsina_Guide_Decouverte_Fonctionnalites.pdf

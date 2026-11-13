@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../network/supabase_service.dart';
-import '../../features/admin/presentation/admin_dashboard_screen.dart';
 
 /// Centralized launcher for the Medsina Admin Dashboard.
 ///
 /// Reliably opens the production web dashboard on Octenium with
-/// fallback support for platformDefault, in-app browser, and the in-app
-/// AdminDashboardScreen.
+/// fallback support for platformDefault and in-app browser.
 class AdminDashboardLauncher {
   static const String adminUrl = 'https://medsina.medevsync.com/admin/';
 
@@ -49,29 +47,23 @@ class AdminDashboardLauncher {
       }
     }
 
-    // 4. If all external launchers fail, fall back to in-app screen or provide copy snackbar
+    // 4. If all external launchers fail, provide copy snackbar
     if (!launched && context.mounted) {
-      try {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
-        );
-      } catch (_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: const Color(0xFFDC2626),
-            content: const Text(
-              'Impossible d\'ouvrir le navigateur. URL : $adminUrl',
-            ),
-            action: SnackBarAction(
-              label: 'Copier',
-              textColor: Colors.white,
-              onPressed: () {
-                Clipboard.setData(const ClipboardData(text: adminUrl));
-              },
-            ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFDC2626),
+          content: const Text(
+            'Impossible d\'ouvrir le navigateur. URL : $adminUrl',
           ),
-        );
-      }
+          action: SnackBarAction(
+            label: 'Copier',
+            textColor: Colors.white,
+            onPressed: () {
+              Clipboard.setData(const ClipboardData(text: adminUrl));
+            },
+          ),
+        ),
+      );
     }
   }
 }

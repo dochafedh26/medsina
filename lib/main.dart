@@ -10,7 +10,6 @@ import 'core/services/user_loyalty_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_controller.dart';
 import 'core/widgets/medsina_logo.dart';
-import 'features/admin/bloc/admin_bloc.dart';
 import 'features/auth/bloc/auth_bloc.dart';
 import 'features/auth/bloc/auth_event.dart';
 import 'features/auth/bloc/auth_state.dart';
@@ -101,9 +100,6 @@ class MedsinaApp extends StatelessWidget {
         ),
         BlocProvider<RevisionBloc>(
           create: (_) => RevisionBloc(),
-        ),
-        BlocProvider<AdminBloc>(
-          create: (_) => AdminBloc(),
         ),
       ],
       child: AnimatedBuilder(

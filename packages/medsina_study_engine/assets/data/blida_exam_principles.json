@@ -1,0 +1,361 @@
+{
+  "Blida_ANATOMIE_1_ERE_ARTICULATION_DE_LA_CHEVILLE_ET_DU_PIED": {
+    "categoryId": "Blida_ANATOMIE_1_ERE",
+    "categoryName": "Anatomie (1 ère)",
+    "subcategoryId": "Blida_ANATOMIE_1_ERE_ARTICULATION_DE_LA_CHEVILLE_ET_DU_PIED",
+    "subcategoryName": "Articulation de la cheville et du pied",
+    "principles": [
+      {
+        "id": "57889f86-b4e1-4977-be03-08a4fd81277b",
+        "tier": "essential",
+        "title": "Principe de congruence/repérage des surfaces tibio-tarsiennes (cheville)",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "La paroi latérale de la surface tibio-fibulaire ne correspond pas à la malléole tibiale (médiale) — piège fréquent à cette question.",
+        "citations": [],
+        "mechanism": "Repérer une articulation par ses **faces osseuses correspondantes** (tibia ↔ malléole médiale, talus/calcanéus ↔ surfaces spécifiques) → seules les surfaces réellement en vis-à-vis répondent à la question → les distracteurs sont des surfaces osseuses non correspondantes (ex. malléole latérale, tenon astragalien, corps du calcanéus).",
+        "testAnswer": "On ne coche que les surfaces qui sont réellement en correspondance anatomique pour l’articulation décrite : la surface articulaire du tibia (pilon tibial) et la surface articulaire de la malléole médiale/interne. Les propositions ne correspondant pas au couple de surfaces (malléole latérale, corps du calcanéus, ou tenon astragalien) sont éliminées.",
+        "derivations": [
+          "La paroi supérieure de la surface tibio-fibulaire du tibia correspond à la <span class=\"pr-key\"><strong>face inférieure du pilon tibial</strong></span> (surface articulaire dédiée).",
+          "La paroi médiale de cette surface est verticale et se rapporte à la <span class=\"pr-key\"><strong>malléole interne (médiale)</strong></span> ; la <span class=\"pr-warn\"><strong>malléole tibiale n'est pas la paroi latérale</strong></span> (erreur de correspondance).",
+          "La surface articulaire du tibia (face inférieure/pilon tibial) est impliquée dans l'articulation ; le corps du calcanéus et le <span class=\"pr-warn\"><strong>tenon astragalien</strong></span> sont des erreurs de correspondance à ne pas sélectionner.",
+          "Les repères osseux en vis-à-vis dans cette articulation sont l'épiphyse distale, la surface articulaire du tibia et la surface articulaire de la <span class=\"pr-key\"><strong>malléole interne</strong></span> ; la <span class=\"pr-warn\"><strong>malléole latérale</strong></span> n'en fait pas partie."
+        ],
+        "questionIds": [
+          "268692",
+          "268835",
+          "268931"
+        ],
+        "testQuestion": "Given «Principe de congruence/repérage des surfaces tibio-tarsiennes (cheville)», predict what happens when on te propose de cocher des surfaces articulaire (tibia, malléole interne) versus des distracteurs (malléole latérale, corps du calcanéus).",
+        "caseQuestionIds": []
+      },
+      {
+        "id": "2d0e7193-0c46-40c3-95c9-e4ce9de46723",
+        "tier": "essential",
+        "title": "Architecture ligamentaire et moyens d’union de la cheville (stabilité → mouvements)",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "L'articulation sub-talaire unit le talus (astragale) et le calcanéus. L'articulation médio-tarsienne n'est **pas** synonyme de l'articulation de <span class=\"pr-warn\"><strong>Lisfranc</strong></span> (qui est tarso-métatarsienne).",
+        "citations": [],
+        "mechanism": "Moyens d'union (capsule + ligaments) organisés en plans → stabilisent les surfaces de la mortaise tibio-fibulaire avec le talus → guident l'amplitude : la cheville permet des mouvements de <span class=\"pr-key\"><strong>flexion plantaire/dorsale</strong></span>, couplés aux articulations sous-talienne et du tarse.",
+        "testAnswer": "Altération des ligaments latéraux externes → perte de guidage/stabilité latérale → augmentation de la laxité et déstabilisation de la mortaise talo-crurale/astragale → mouvements moins contrôlés en flexion/extension et majoration des sollicitations compensatoires (couplage avec sous-talienne/tarse).",
+        "derivations": [
+          "La capsule est un manchon **épais en avant et en arrière** → stabilité de l'articulation talo-crurale.",
+          "Le ligament <span class=\"pr-key\"><strong>deltoïde (médial)</strong></span> est **superficiel** et naît de l'apex de la malléole médiale → stabilisation médiale.",
+          "Le ligament <span class=\"pr-key\"><strong>fibulo-calcanéen</strong></span> naît du bord antérieur de la malléole latérale et s'étend jusqu'à la face latérale du calcanéus ; <span class=\"pr-warn\"><strong>le faisceau talo-fibulaire postérieur ne se termine ni sur le calcanéus ni sur le col du talus</strong></span> — à ne pas confondre. L'ensemble stabilise l'articulation, couplée aux mouvements de flexion plantaire/dorsale autour d'un axe transversal, et aux articulations sous-talienne et du tarse."
+        ],
+        "questionIds": [
+          "268611",
+          "268693",
+          "268723",
+          "268766",
+          "268836",
+          "268839",
+          "590207",
+          "590208"
+        ],
+        "testQuestion": "Given «Architecture ligamentaire et moyens d’union de la cheville (stabilité → mouvements)», predict what happens when on altère le ligament latéral externe (ligaments fibulo-calcanéen/fibulo-astragaliens) ?",
+        "caseQuestionIds": []
+      }
+    ],
+    "updatedAt": "2026-10-26T18:54:59Z"
+  },
+  "Blida_ANATOMIE_1_ERE_VEINES_ET_LYMPHATIQUES_DU_MEMBRE_SUP": {
+    "categoryId": "Blida_ANATOMIE_1_ERE",
+    "categoryName": "Anatomie (1 ère)",
+    "subcategoryId": "Blida_ANATOMIE_1_ERE_VEINES_ET_LYMPHATIQUES_DU_MEMBRE_SUP",
+    "subcategoryName": "Veines et lymphatiques du membre sup",
+    "principles": [
+      {
+        "id": "64534d62-75f8-4b61-acb4-d3ad535fc141",
+        "tier": "essential",
+        "title": "Anatomie topographique des réseaux veineux (superficiels vs profonds) et drainage lymphatique",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "<span class=\"pr-val\"><strong>Le « M » veineux</strong></span> se forme au niveau du pli du coude (convergence des veines superficielles antébrachiales).",
+        "citations": [],
+        "mechanism": "Réseaux veineux superficiel/profond ont une localisation et un trajet distincts → le réseau superficiel de la main est formé par les <span class=\"pr-key\"><strong>veines digitales</strong></span> (réseau palmaire veineux des doigts peu développé) → les veines profondes et le drainage lymphatique profond gagnent des nœuds profonds, tandis que les <span class=\"pr-warn\"><strong>nœuds sus-épitrochléens sont superficiels</strong></span> (et non profonds) → le lymphatique profond draine notamment la lymphe des articulations.",
+        "testAnswer": "Les vaisseaux lymphatiques profonds prennent en charge la lymphe des articulations → ils rejoignent des nœuds lymphatiques profonds (par ex. les sus‑épitrochléens), plutôt que des voies exclusivement superficielles.",
+        "derivations": [
+          "Le réseau veineux superficiel de la main est formé par les <span class=\"pr-key\"><strong>veines digitales</strong></span> ; le réseau palmaire veineux des doigts est <span class=\"pr-val\"><strong>peu développé</strong></span> — les arcades (veineuse palmaire, digitale) et les veines métacarpiennes ne sont pas retenues comme composantes de ce réseau superficiel.",
+          "<span class=\"pr-key\"><strong>Le réseau lymphatique profond draine notamment la lymphe issue des articulations.</strong></span>",
+          "<span class=\"pr-warn\"><strong>La veine céphalique ne se termine pas dans le bras</strong></span> et <span class=\"pr-warn\"><strong>ne s'abouche pas dans la veine axillaire médiale</strong></span> — ces deux propositions sont rejetées ; elle poursuit un trajet superficiel proximal au-delà du bras.",
+          "<span class=\"pr-key\"><strong>Les nœuds sus-épitrochléens sont des lymphonœuds superficiels</strong></span> (et non profonds, contrairement à une proposition rejetée à l'examen)."
+        ],
+        "questionIds": [
+          "268626",
+          "350794",
+          "268804"
+        ],
+        "testQuestion": "Given « séparation topographique des réseaux (veineux superficiel vs profond) et correspondance drainage → nœuds profonds », predict what happens when on cherche le trajet lymphatique depuis les articulations du membre thoracique?",
+        "caseQuestionIds": []
+      }
+    ],
+    "updatedAt": "2026-10-26T18:54:59Z"
+  },
+  "Blida_ANATOMIE_1_ERE_MUSCLES_DE_LA_HANCHE_ET_DE_LA_CUISSE": {
+    "categoryId": "Blida_ANATOMIE_1_ERE",
+    "categoryName": "Anatomie (1 ère)",
+    "subcategoryId": "Blida_ANATOMIE_1_ERE_MUSCLES_DE_LA_HANCHE_ET_DE_LA_CUISSE",
+    "subcategoryName": "Muscles de la hanche et de la cuisse",
+    "principles": [
+      {
+        "id": "696c877d-bd93-42c6-bc64-f5fc064bb250",
+        "tier": "essential",
+        "title": "Topographie et fonctions des muscles de la hanche (origine/insertions → actions)",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "Le **moyen glutéal** est un abducteur de la cuisse ; le **petit glutéal**, comme l'obturateur interne, se termine sur le <span class=\"pr-val\"><strong>grand trochanter</strong></span>. Le **jumeau supérieur** s'insère sur l'épine ischiatique.",
+        "citations": [],
+        "mechanism": "Origine + trajet + insertion du muscle de la hanche → appartenance à une région (iliaque/glutéale, pelvi-trochantérienne, etc.) → fonction mécanique (**abduction**, **adduction**, flexion, extension, rotation médiale/latérale).",
+        "testAnswer": "Insertion sur le grand trochanter → fonction typique autour de la hanche → orientation en rotation médiale de la cuisse (muscle pelvi‑trochantérien/rotateur médial) plutôt que flexion ou extension.",
+        "derivations": [
+          "Si un muscle s'insère sur le grand trochanter (p. ex. **obturateur interne**, **carré fémoral**), alors il appartient au groupe des <span class=\"pr-key\"><strong>rotateurs latéraux</strong></span> (muscles pelvi-trochantériens) de la hanche — pas un rotateur médial : l'énoncé « carré fémoral rotateur médial » est <span class=\"pr-warn\"><strong>rejeté</strong></span>.",
+          "Le **psoas-iliaque** correspond à la région iliaque, alors que le **grand fessier** est un <span class=\"pr-key\"><strong>extenseur</strong></span> de la cuisse (et non un fléchisseur).",
+          "Le tenseur du fascia lata limite latéralement la région fessière et en fait partie ; de même, les muscles <span class=\"pr-warn\"><strong>pelvi-trochantériens appartiennent bien à la région glutéale</strong></span> (contrairement à une idée reçue — l'énoncé « ils n'en font pas partie » est rejeté)."
+        ],
+        "questionIds": [
+          "268617",
+          "268694",
+          "268652",
+          "268938",
+          "590209"
+        ],
+        "testQuestion": "Given « un muscle s’insère sur le grand trochanter » et qu’on lui attribue une fonction à la hanche, prédire son action principale (abduction/extenson/rotation) et sa catégorie fonctionnelle typique.",
+        "caseQuestionIds": []
+      },
+      {
+        "id": "88964318-f1d6-491d-949b-f86ee1439522",
+        "tier": "essential",
+        "title": "Loge médiale de la cuisse : classification fonctionnelle et innervation",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "Le **moyen adducteur** occupe le plan superficiel du groupe médial. Le **gracile** naît le long de la symphyse pubienne. Piège : le nombre de muscles du groupe n'est <span class=\"pr-warn\"><strong>pas limité à 4</strong></span>.",
+        "citations": [],
+        "mechanism": "**Loge médiale de la cuisse** (adducteurs + rotateurs latéraux) → muscles inclus définis par leur appartenance anatomique → origine/attache décrites selon le muscle (bassin/pubis) → innervation commune par le <span class=\"pr-key\"><strong>nerf obturateur</strong></span> (jamais le nerf fémoral) → toute proposition contraire à ces critères est fausse.",
+        "testAnswer": "Si le muscle n’appartient pas à la loge médiale (ex. semi-tendineux des ischio-jambiers) → la proposition est fausse. Si l’innervation est attribuée au nerf fémoral au lieu du nerf obturateur pour les adducteurs → la proposition est fausse ; seules les propositions conformes à « adducteurs/rotateurs latéraux + nerf obturateur » restent vraies.",
+        "derivations": [
+          "Le groupe médial comprend le **long adducteur**, le **grand adducteur**, le **court adducteur**, le **gracile** et le **pectiné** ; le **semi-tendineux** relève des ischio-jambiers (postérieurs), pas du groupe médial → le classer dans le médial est faux.",
+          "Les muscles de la loge médiale sont majoritairement <span class=\"pr-key\"><strong>rotateurs latéraux et adducteurs</strong></span> → toute proposition qui leur attribue un autre rôle est fausse.",
+          "L'innervation attendue passe par le <span class=\"pr-key\"><strong>nerf obturateur</strong></span>, jamais par le nerf fémoral → « innervés par le nerf fémoral » est <span class=\"pr-warn\"><strong>faux</strong></span>."
+        ],
+        "questionIds": [
+          "268618",
+          "268842",
+          "268696"
+        ],
+        "testQuestion": "Given « Classification de la loge médiale de la cuisse (adducteurs/rotateurs latéraux) et innervation par le nerf obturateur », predict what happens when on inclut un muscle (ex. semi-tendineux) ou quand on attribue une innervation au nerf fémoral?",
+        "caseQuestionIds": []
+      },
+      {
+        "id": "a2c62e21-2493-4301-a92f-822bc0190fff",
+        "tier": "essential",
+        "title": "Patte d’oie (insertion tibiale commune)",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "Le **gracile** naît le long de la symphyse pubienne. Piège : le tendon du <span class=\"pr-warn\"><strong>droit fémoral</strong></span> n'appartient pas à la patte d'oie.",
+        "citations": [],
+        "mechanism": "**Patte d'oie** = muscles médiaux (**gracile** + **sartorius** + **semi-tendineux**) → insertion tendineuse commune sur la <span class=\"pr-key\"><strong>face médiale proximale du tibia</strong></span> (jamais la face latérale — piège classique) → ces muscles n'ont pas d'origine commune, seulement une insertion terminale commune.",
+        "testAnswer": "Parce que la patte d’oie se définit par une insertion proximale commune sur le tibia → sélectionner gracile + sartorius + semi-tendineux → et attribuer à ces trois muscles la terminaison sur la zone tibiale proximale correspondant à la patte d’oie, tandis que le semi-membraneux n’en fait pas partie.",
+        "derivations": [
+          "Si on coche « appartiennent à la patte d'oie », on doit retrouver **gracile**, **sartorius** et **semi-tendineux** — pas le semi-membraneux, qui est un autre ischio-jambier.",
+          "Si la question porte sur l'insertion, la réponse attendue est une insertion proximale commune sur la face <span class=\"pr-val\"><strong>médiale</strong></span> du tibia (zone de la patte d'oie).",
+          "Si on demande une « origine commune », c'est <span class=\"pr-warn\"><strong>faux</strong></span> : les muscles de la patte d'oie ont des origines différentes mais une insertion terminale commune au tibia."
+        ],
+        "questionIds": [
+          "268724",
+          "268798",
+          "268876",
+          "268932",
+          "268935"
+        ],
+        "testQuestion": "Given la “patte d’oie (insertion tibiale commune)”, quels muscles dois-tu sélectionner et quelle terminaison commune doivent-ils partager ?",
+        "caseQuestionIds": []
+      }
+    ],
+    "updatedAt": "2026-10-26T18:55:00Z"
+  },
+  "Blida_ANATOMIE_1_ERE_VASCULARISATION_DU_MEMBRE_INFERIEUR": {
+    "categoryId": "Blida_ANATOMIE_1_ERE",
+    "categoryName": "Anatomie (1 ère)",
+    "subcategoryId": "Blida_ANATOMIE_1_ERE_VASCULARISATION_DU_MEMBRE_INFERIEUR",
+    "subcategoryName": "Vascularisation du membre inférieur",
+    "principles": [
+      {
+        "id": "b065992d-f1c5-47d7-83b6-d6f8c00e575e",
+        "tier": "essential",
+        "title": "Trajectoire et segmentation vasculaires du membre inférieur",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "Les branches de l’<span class=\"pr-key\"><strong>artère hypogastrique</strong></span> (iliaque interne) irriguent la racine du membre inférieur : glutéale supérieure, ischiatique, pudendale interne, obturatrice. L’<span class=\"pr-val\"><strong>artère fémorale profonde</strong></span> est l’artère nourricière de la cuisse.",
+        "citations": [],
+        "mechanism": "Artère ou veine d’un étage proximal → devient la branche d’un niveau distal à un « relais » anatomique précis (<span class=\"pr-key\"><strong>arcades, hiatus, canaux</strong></span>) → donne des branches collatérales ou terminales spécifiques → explique les réponses sur « qui se termine où » et « qui vascularise quel territoire ».",
+        "testAnswer": "Au niveau de l’arcade fémorale, l’artère iliaque externe → devient l’artère fémorale, qui poursuit ensuite son trajet dans le trigone/les loges fémorales → se termine au hiatus du muscle grand adducteur → permettant la continuité vers l’artère poplitée et la distribution tibiale distale.",
+        "derivations": [
+          "L’artère iliaque externe → devient <span class=\"pr-key\"><strong>artère fémorale</strong></span> au niveau de l’arcade fémorale, puis → devient artère poplitée après le <span class=\"pr-key\"><strong>hiatus du grand adducteur</strong></span> (et non simplement « au niveau du genou », formulation écartée par la clé), puis → se distribue dans les artères tibiales (antérieure/postérieure) et fibulaire.",
+          "L’artère fémorale → se termine dans le <span class=\"pr-key\"><strong>hiatus du grand adducteur</strong></span> (et donne des collatérales comme l’épigastrique superficielle ; la fémorale profonde vascularise la cuisse).",
+          "Les artères tibiales ont des destinations distinctes : la <span class=\"pr-key\"><strong>tibiale postérieure</strong></span> se termine dans le canal tarsien. L’anastomose de la tibiale antérieure avec une artère plantaire (médiale, médiane ou latérale) à sa terminaison est en revanche une formulation <span class=\"pr-warn\"><strong>systématiquement écartée</strong></span> par la clé."
+        ],
+        "questionIds": [
+          "268644",
+          "268682",
+          "268751",
+          "268758",
+          "268822",
+          "268902",
+          "268787",
+          "268870",
+          "268683",
+          "268759",
+          "268903",
+          "268904",
+          "268905",
+          "268945",
+          "268946",
+          "355390",
+          "591741"
+        ],
+        "testQuestion": "Given « trajectoire et segmentation vasculaires du membre inférieur », predict what happens when the artère iliaque externe passes under the arcade fémorale?",
+        "caseQuestionIds": [],
+        "hasUnincorporatedQ": true
+      },
+      {
+        "id": "dd895706-f010-478c-8bba-9e8050cbe3d1",
+        "tier": "essential",
+        "title": "Anastomoses artérielles & trajet des vaisseaux au poignet/main",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "La veine céphalique naît de la face dorsale du pouce. Au niveau du creux axillaire, le relais lymphatique profond en est le <span class=\"pr-key\"><strong>principal</strong></span> point de drainage.",
+        "citations": [],
+        "mechanism": "Trajet segmentaire → passage à travers des zones anatomiques clés → anastomoses entre axes (<span class=\"pr-key\"><strong>radial/ulnaire</strong></span>) → formation d’arcades palmaires (superficielle/profonde) → distribution distale (digitales/rameaux).",
+        "testAnswer": "Le sang peut continuer vers la paume grâce aux anastomoses ulnaires–radiales qui alimentent les arcades palmaires (superficielle/profonde) → les artères digitales peuvent être alimentées en aval par ces arcades, mais l’origine exacte de certaines branches peut dépendre de quelle arcade (palmaire vs dorsale) reste perfusée.",
+        "derivations": [
+          "Au niveau de la main, radiale et ulnaire s’anastomosent pour former des <span class=\"pr-key\"><strong>arcades palmaires</strong></span> (superficielle et/ou profonde), assurant la continuité vers les doigts.",
+          "Les artères radiale et ulnaire ont des trajets spécifiques : le segment <span class=\"pr-val\"><strong>anté-brachial</strong></span> est profond dans les 2/3 supérieurs, le segment <span class=\"pr-val\"><strong>carpien</strong></span> traverse la tabatière anatomique — ces repères conditionnent leur participation aux arcades.",
+          "Selon l’origine (arcade palmaire profonde vs arcades dorsales/du carpe), des branches digitales spécifiques proviennent de réseaux différents : ex. la <span class=\"pr-key\"><strong>collatérale interne du V doigt</strong></span> provient de l’arcade dorsale du carpe (et non de l’arcade palmaire profonde)."
+        ],
+        "questionIds": [
+          "268680",
+          "268786",
+          "268681",
+          "268750"
+        ],
+        "testQuestion": "Si on isole/occlut l’axe radial à l’avant-bras ou si on modifie son trajet au niveau carpien, que prédit-on pour la vascularisation de la main et l’origine des artères digitales via les arcades ?",
+        "caseQuestionIds": []
+      },
+      {
+        "id": "5eafac3d-9353-4662-8c89-76f2906f6b6a",
+        "tier": "essential",
+        "title": "Trajet/connexion des veines superficielles du membre supérieur (céphalique–basilique)",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": "Au niveau de la main, le réseau veineux <span class=\"pr-key\"><strong>dorsal superficiel</strong></span> est plus développé que le réseau palmaire.",
+        "citations": [],
+        "mechanism": "Veines superficielles → suivent un trajet sous-cutané → présentent des anastomoses au niveau du pli du coude (formation des veines médianes) → s’abouchent dans les veines profondes selon le type (<span class=\"pr-key\"><strong>céphalique → axillaire</strong></span> ; <span class=\"pr-key\"><strong>basilique → brachiale médiale</strong></span>).",
+        "testAnswer": "Tracé : céphalique → trajet superficiel latéral du membre → anastomoses au pli du coude via les veines médianes → abouchement dans la veine axillaire. Donc toute proposition plaçant la céphalique dans la veine brachiale médiale (ou ailleurs) est fausse ; et pour les veines médianes, seule la combinaison céphalique antébrachiale + médiane céphalique (vs basilique antébrachiale + médiane basilique) est correcte selon le pli du coude.",
+        "derivations": [
+          "Au pli du coude, la basilique et la céphalique sont reliées par les <span class=\"pr-key\"><strong>veines médianes</strong></span> (médiane céphalique ↔ céphalique antébrachiale ; médiane basilique ↔ basilique antébrachiale) : donc une « médiane » n’est pas formée par la mauvaise veine.",
+          "La veine céphalique se jette dans la <span class=\"pr-key\"><strong>veine axillaire</strong></span> (et non dans une autre veine brachiale).",
+          "La veine basilique s’abouche dans la <span class=\"pr-key\"><strong>veine brachiale médiale</strong></span> (et non la veine brachiale latérale, formulation écartée par la clé)."
+        ],
+        "questionIds": [
+          "268749",
+          "268756",
+          "268785",
+          "268824",
+          "268752"
+        ],
+        "testQuestion": "Given « trajet/connexion veineuse céphalique–basilique », predict what happens when on demande le point d’abouchement de la veine céphalique (ou la veine qui forme une veine médiane au pli du coude) ?",
+        "caseQuestionIds": []
+      },
+      {
+        "id": "43a585a9-17bc-4445-8b70-34ab22217da9",
+        "tier": "essential",
+        "title": "Drainage veineux du MI (réseau superficiel vs profond)",
+        "locked": false,
+        "source": "moderator",
+        "tables": [],
+        "details": null,
+        "citations": [],
+        "mechanism": "Réseau veineux du membre inférieur = 2 voies principales → drainage vers le système iliaque (profondes) ou vers les veines poplitée/fémorale puis iliaque (<span class=\"pr-key\"><strong>saphènes</strong></span>) → organisation structurale : nombreuses <span class=\"pr-val\"><strong>valvules</strong></span> + origine au réseau veineux du pied + terminaisons spécifiques (grande/petite saphène) ; « profondes » ≠ « saphènes » (superficielles).",
+        "testAnswer": "Petite saphène = veine superficielle → elle part du réseau veineux du pied et chemine en regard postéro-latéral de la jambe → se termine au niveau de la veine poplitée, qui appartient au système veineux profond → puis le retour rejoint le drainage vers le bassin via les veines iliaques (notamment iliaque interne pour la voie profonde).",
+        "derivations": [
+          "Les veines profondes du membre inférieur se drainent vers le système iliaque proximal ; ni « veine iliaque interne » ni « veine iliaque externe » pris isolément ne sont retenus comme formulation exacte par la clé (options systématiquement <span class=\"pr-warn\"><strong>écartées</strong></span>).",
+          "La <span class=\"pr-key\"><strong>grande saphène</strong></span> naît du réseau veineux du pied et fait suite à la veine marginale médiale (dos du pied) → remonte vers le système veineux profond.",
+          "La <span class=\"pr-key\"><strong>petite saphène</strong></span> naît aussi au pied et se termine dans la veine poplitée (veine profonde) — et non au trigone fémoral (formulation <span class=\"pr-warn\"><strong>écartée</strong></span>).",
+          "Le système veineux du membre inférieur comporte de nombreuses <span class=\"pr-val\"><strong>valvules</strong></span>, qui favorisent le retour veineux."
+        ],
+        "questionIds": [
+          "268823",
+          "268947",
+          "268871"
+        ],
+        "testQuestion": "Étant donné le principe “Drainage veineux du MI (réseau superficiel vs profond)”, que prédit-on quand on suit le trajet de la petite veine saphène ?",
+        "caseQuestionIds": []
+      },
+      {
+        "id": "d3ee4758aca090d7",
+        "tier": "core",
+        "title": "Axe artériel du membre supérieur",
+        "locked": false,
+        "source": "ai",
+        "tables": null,
+        "details": "- En avant, l’**artère axillaire** répond au **fascia clavi-pectoral**.\n- L’**artère ulnaire** ne traverse pas la **tabatière anatomique**.\n- L’**arcade palmaire profonde** ne donne pas les **artères récurrentes palmaires**.\n\nLe cours décrit l’axe axillaire puis brachial et sa bifurcation radiale-ulnaire.",
+        "citations": [
+          {
+            "page": null,
+            "score": 0.8226,
+            "title": "Vascularisation du membre inférieur",
+            "pdfUrl": "https://download.mbset.com/pdfs/drive/S8jf1BHgvyHDW5EQuEGI/1ad7L_e0trhduCtiiWhDvsx4nonV4Ln-9_1785715090467.pdf",
+            "snippet": "1 • Vascularisation du membre inférieur • I. Artères",
+            "filename": "Blida_ANATOMIE_1_ERE_VASCULARISATION_DU_MEMBRE_INFERIEUR_v3.pdf",
+            "subcategoryId": "Blida_ANATOMIE_1_ERE_VASCULARISATION_DU_MEMBRE_INFERIEUR"
+          },
+          {
+            "page": null,
+            "score": 0.7869,
+            "title": "Vascularisation du membre inférieur",
+            "pdfUrl": "https://download.mbset.com/pdfs/drive/S8jf1BHgvyHDW5EQuEGI/1ad7L_e0trhduCtiiWhDvsx4nonV4Ln-9_1785715090467.pdf",
+            "snippet": "3 • 3. Artère poplitée •  Artère du genou faisant suite à l’artère fémorale.",
+            "filename": "Blida_ANATOMIE_1_ERE_VASCULARISATION_DU_MEMBRE_INFERIEUR_v3.pdf",
+            "subcategoryId": "Blida_ANATOMIE_1_ERE_VASCULARISATION_DU_MEMBRE_INFERIEUR"
+          },
+          {
+            "page": null,
+            "score": 0.7848,
+            "title": "Vascularisation du membre inférieur",
+            "pdfUrl": "https://download.mbset.com/pdfs/drive/S8jf1BHgvyHDW5EQuEGI/1ad7L_e0trhduCtiiWhDvsx4nonV4Ln-9_1785715090467.pdf",
+            "snippet": "2 • 2. Artère fémorale : •  Artère principale de la cuisse",
+            "filename": "Blida_ANATOMIE_1_ERE_VASCULARISATION_DU_MEMBRE_INFERIEUR_v3.pdf",
+            "subcategoryId": "Blida_ANATOMIE_1_ERE_VASCULARISATION_DU_MEMBRE_INFERIEUR"
+          }
+        ],
+        "mechanism": "- **Artère sub-clavière** → <span class=\"pr-key\">**artère axillaire**</span> au **milieu du bord postérieur de la clavicule** → traverse la fosse axillaire **en bas et en dehors**\n- **Bord distal du grand pectoral** → **artère brachiale (humérale)** → sillon bicipital médial → bifurcation sous le pli du coude en **radiale** et **ulnaire**\n- **Artère radiale** → devient superficielle au **tiers inférieur** de l’avant-bras → pouls au versant **latéral** du poignet\n- **Artère ulnaire** → avant-bras antéro-médial → **canal de Guyon**, en dehors du **pisiforme**",
+        "testAnswer": "Après le **bord distal du grand pectoral**, l’<span class=\"pr-key\">**artère axillaire**</span> se poursuit directement par l’**artère brachiale (humérale)**.",
+        "derivations": [
+          "**Sous-clavière → humérale** → passage obligatoire par l’**artère axillaire** — car elle constitue le segment axillaire de l’axe artériel.",
+          "**Branche subscapulaire** → collatérale de l’**artère axillaire** — et non de l’artère brachiale.",
+          "**Tronc secondaire postérieur** → situé en arrière de l’**artère axillaire** — car les faisceaux du plexus brachial se disposent autour d’elle.",
+          "**Pouls radial** → palpation latérale au poignet — car l’**artère radiale** y est superficielle."
+        ],
+        "questionIds": [
+          "268679",
+          "268788",
+          "268748",
+          "268755"
+        ],
+        "testQuestion": "Étant donné ce principe, prédisez quelle artère devient le tronc brachial après le bord distal du grand pectoral."
+      }
+    ],
+    "updatedAt": "2026-10-26T18:55:01Z"
+  }
+}

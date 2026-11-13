@@ -1,0 +1,1301 @@
+[
+  {
+    "id": "lab_potassium",
+    "name": "Potassium sérique (Kaliémie)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "3.5 - 5.0",
+    "unit": "mmol/L",
+    "high_interpretation": "Hyperkaliémie : Urgence vitale si > 6.0 mmol/L ou anomalies ECG (ondes T pointues et symétriques, élargissement QRS, disparition P). Risque d'arrêt cardiaque en asystolie. Causes : insuffisance rénale aiguë/chronique, acidose métabolique, rhabdomyolyse, lyse tumorale, surdosage en IEC, ARA2 ou spironolactone.",
+    "low_interpretation": "Hypokaliémie : Urgence si < 3.0 mmol/L. Risque d'arythmies ventriculaires majeures (torsades de pointes, fibrillation ventriculaire). Signes ECG : aplatissement T, sous-décalage ST, onde U proéminente, allongement QT. Causes : pertes digestives (vomissements, diarrhées), diurétiques hypokaliémiants (furosémide, thiazidiques), hyperaldostéronisme.",
+    "clinical_notes": [
+      "Attention à la fausse hyperkaliémie par hémolyse lors d'un prélèvement difficile ou garrot prolongé.",
+      "Toute dyskaliémie modérée à sévère justifie impérativement un ECG 12 dérivations immédiat."
+    ]
+  },
+  {
+    "id": "lab_sodium",
+    "name": "Sodium sérique (Natrémie)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "135 - 145",
+    "unit": "mmol/L",
+    "high_interpretation": "Hypernatrémie (> 145 mmol/L) : Traduit toujours une déshydratation intracellulaire. Signes : soif intense, sécheresse des muqueuses, fièvre centrale, somnolence, convulsions. Corriger lentement (< 10-12 mmol/L par 24h) avec du G5% pour éviter l'œdème cérébral iatrogène.",
+    "low_interpretation": "Hyponatrémie (< 135 mmol/L) : Hyperhydratation intracellulaire. Nausées, dégoût de l'eau, céphalées, confusion, coma si < 120 mmol/L. Risque fatal de myélinolyse centropontine (démyélinisation osmotique) en cas de correction trop brutale.",
+    "clinical_notes": [
+      "Calculer systématiquement la natrémie corrigée en présence d'hyperglycémie : Na_corr = Na + 1.6 * (Glycémie g/L - 1).",
+      "Distinguer l'hyponatrémie vraie par mesure de l'osmolalité plasmatique."
+    ]
+  },
+  {
+    "id": "lab_creatinine",
+    "name": "Créatinine sérique & DFG",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Homme : 60 - 110 | Femme : 45 - 90",
+    "unit": "µmol/L",
+    "high_interpretation": "Insuffisance rénale aiguë (IRA) ou chronique (IRC). Évaluer l'ancienneté par les valeurs antérieures et la taille des reins à l'échographie. Une hausse de 26 µmol/L en 48h définit une IRA (KDIGO stade 1).",
+    "low_interpretation": "Dénutrition sévère, sarcopénie majeure, hémodilution, grossesse (hyperfiltration physiologique).",
+    "clinical_notes": [
+      "Toujours estimer le Débit de Filtration Glomérulaire (DFG) par l'équation CKD-EPI (ou Cockcroft-Gault pour l'adaptation posologique des médicaments).",
+      "Arrêt immédiat des médicaments néphrotoxiques (AINS, aminosides, produits de contraste iodés)."
+    ]
+  },
+  {
+    "id": "lab_uree",
+    "name": "Urée sanguine",
+    "category": "Ionogramme & Rein",
+    "normal_range": "2.5 - 7.5",
+    "unit": "mmol/L (0.15 - 0.45 g/L)",
+    "high_interpretation": "Insuffisance rénale, déshydratation extracellulaire (IRA fonctionnelle : rapport Urée/Créat molaire > 100), hémorragie digestive haute (digestion des hématies), hypercatabolisme protidique ou corticothérapie.",
+    "low_interpretation": "Insuffisance hépatocellulaire sévère (baisse de synthèse du cycle de l'urée), dénutrition protidique sévère, hémodilution, grossesse.",
+    "clinical_notes": [
+      "Une élévation isolée de l'urée avec créatinine subnormale évoque en priorité une déshydratation fonctionnelle ou un saignement digestif haut occulte."
+    ]
+  },
+  {
+    "id": "lab_hemoglobine",
+    "name": "Hémoglobine (NFS)",
+    "category": "Hématologie",
+    "normal_range": "Homme : 13 - 17 | Femme : 12 - 15.5 | Enceinte : > 10.5",
+    "unit": "g/dL",
+    "high_interpretation": "Polyglobulie primitive (Maladie de Vaquez) ou secondaire (hypoxie chronique BPCO, cardiopathie cyanogène, tabagisme, tumeur sécrétant de l'EPO). Fausse polyglobulie par hémoconcentration.",
+    "low_interpretation": "Anémie. Classifier impérativement selon le VGM : Microcytaire (< 80 fl : carence martiale, thalassémie, anémie inflammatoire), Normocytaire (80-100 fl) ou Macrocytaire (> 100 fl : carence B12/folates, éthylisme, hypothyroïdie).",
+    "clinical_notes": [
+      "Seuil transfusionnel standard : Hb < 7 g/dL chez le sujet jeune sans antécédent ; Hb < 8 à 10 g/dL en cas de coronaropathie active ou SCA."
+    ]
+  },
+  {
+    "id": "lab_plaquettes",
+    "name": "Numération plaquettaire",
+    "category": "Hématologie",
+    "normal_range": "150 000 - 400 000",
+    "unit": "/mm³",
+    "high_interpretation": "Thrombocytose (> 450 000) : Réactionnelle inflammatoire/infectieuse, carence en fer, splénectomie, ou syndrome myéloprolifératif (Thrombocytémie essentielle). Risque thrombotique si > 1 000 000/mm³.",
+    "low_interpretation": "Thrombopénie (< 150 000) : Risque hémorragique spontané majeur si < 20 000/mm³. Causes urgentes : CIVD, microangiopathie thrombotique (PTT/SHU), purpura thrombopénique immunologique (PTI), thrombopénie induite par l'héparine (TIH).",
+    "clinical_notes": [
+      "Toujours éliminer une fausse thrombopénie par agglutination à l'EDTA en demandant un contrôle sur tube citraté.",
+      "Rechercher un purpura pétéchial et des bulles hémorragiques endobuccales."
+    ]
+  },
+  {
+    "id": "lab_leucocytes",
+    "name": "Globules Blancs (Leucocytes)",
+    "category": "Hématologie",
+    "normal_range": "4 000 - 10 000",
+    "unit": "/mm³",
+    "high_interpretation": "Hyperleucocytose : Polynucléose neutrophile (> 7 500) en faveur d'une infection bactérienne, nécrose tissulaire, tabagisme ou corticoïdes. Hyperéosinophilie (> 500) : parasitose, allergie médicamenteuse. Hyperlymphocytose : infection virale, LLC.",
+    "low_interpretation": "Leucopénie (< 4 000) / Neutropénie (< 1 500) : Agranulocytose médicale (< 500 PNN) : urgence vitale infectieuse (isolement, antibiothérapie immédiate si fièvre). Causes : chimio, toxiques, sepsis sévère, viroses (VIH, hépatites).",
+    "clinical_notes": [
+      "Neutropénie fébrile (PNN < 500 et T° ≥ 38.3°C) : urgence médicale absolue, hémocultures et antibiothérapie IV antipyocyanique dans l'heure."
+    ]
+  },
+  {
+    "id": "lab_crp",
+    "name": "Protéine C-Réactive (CRP)",
+    "category": "Inflammation & Infectiologie",
+    "normal_range": "< 5",
+    "unit": "mg/L",
+    "high_interpretation": "Syndrome inflammatoire biologique. Si CRP > 50 à 100 mg/L : forte suspicion d'infection bactérienne invasive, pneumonie franche, pyélonéphrite, péritonite, crise d'arthrite microcristalline ou maladie systémique.",
+    "low_interpretation": "Absence de syndrome inflammatoire systémique significatif.",
+    "clinical_notes": [
+      "Cinétique de la CRP : s'élève 6 à 12h après le début de l'agression, pic à 48h, demi-vie courte (19h). Excellent marqueur de surveillance de l'efficacité thérapeutique."
+    ]
+  },
+  {
+    "id": "lab_procalcitonine",
+    "name": "Procalcitonine (PCT)",
+    "category": "Inflammation & Infectiologie",
+    "normal_range": "< 0.1",
+    "unit": "ng/mL (µg/L)",
+    "high_interpretation": "Infection bactérienne systémique et sepsis. > 0.5 ng/mL : infection bactérienne probable ; > 2.0 ng/mL : sepsis sévère à haut risque de choc septique.",
+    "low_interpretation": "< 0.25 ng/mL : infection bactérienne systémique peu probable (oriente vers étiologie virale ou bactérienne localisée).",
+    "clinical_notes": [
+      "Très utile pour guider l'initiation et l'arrêt d'une antibiothérapie en réanimation et pneumologie (pneumonies communautaires)."
+    ]
+  },
+  {
+    "id": "lab_troponine",
+    "name": "Troponine ultra-sensible (hs-cTnI / hs-cTnT)",
+    "category": "Cardiologie & Urgences",
+    "normal_range": "< 14 (sexe féminin: < 10)",
+    "unit": "ng/L (pg/mL)",
+    "high_interpretation": "Nécrose myocardique. Élévation aiguë avec cinétique (delta H0-H1 ou H0-H3) : Syndrome Coronarien Aigu (SCA sans sus-décalage de ST). Élévation sans cinétique : myocardite, embolie pulmonaire, choc septique, insuffisance rénale, décompensation cardiaque.",
+    "low_interpretation": "Valeur indétectable ou très basse à H0 et H1 : élimine le SCA avec une valeur prédictive négative > 99%.",
+    "clinical_notes": [
+      "La troponine ne fait pas le diagnostic de thrombose coronarienne, elle signe une souffrance myocardique : interprétation indissociable de l'ECG et de la clinique."
+    ]
+  },
+  {
+    "id": "lab_bnp",
+    "name": "BNP et NT-proBNP",
+    "category": "Cardiologie & Urgences",
+    "normal_range": "BNP < 100 | NT-proBNP < 300",
+    "unit": "pg/mL (ng/L)",
+    "high_interpretation": "Insuffisance cardiaque aiguë ou chronique (étirement pariétal myocardique ventriculaire). OAP cardiogénique en décompensation. Autres causes : embolie pulmonaire, insuffisance rénale, fibrillation auriculaire, âge avancé.",
+    "low_interpretation": "Valeur prédictive négative excellente : élimine une origine cardiaque devant une dyspnée aiguë aux urgences.",
+    "clinical_notes": [
+      "Les seuils d'exclusion diffèrent selon l'âge pour le NT-proBNP : < 450 pg/mL (< 50 ans), < 900 pg/mL (50-75 ans), < 1800 pg/mL (> 75 ans)."
+    ]
+  },
+  {
+    "id": "lab_d_dimeres",
+    "name": "D-Dimères (produits de dégradation de fibrine)",
+    "category": "Hémostase & Thromboembolie",
+    "normal_range": "< 500 (ajusté à l'âge : âge × 10 au-delà de 50 ans)",
+    "unit": "ng/mL (µg/L)",
+    "high_interpretation": "Thrombose veineuse profonde (TVP) ou Embolie pulmonaire (EP). Nombreux faux positifs : âge > 50 ans, grossesse, cancer évolutif, chirurgie récente, infection, traumatisme, CIVD.",
+    "low_interpretation": "D-Dimères < seuil ajusté avec probabilité clinique non forte (score de Wells / Genève) : élimine formellement la maladie thromboembolique veineuse sans nécessité d'angioscanner.",
+    "clinical_notes": [
+      "Ne jamais doser les D-Dimères en cas de probabilité clinique forte d'emblée : aller directement à l'imagerie (angioscanner thoracique)."
+    ]
+  },
+  {
+    "id": "lab_tp_inr",
+    "name": "Taux de Prothrombine (TP) & INR",
+    "category": "Hémostase & Coagulation",
+    "normal_range": "TP : 70 - 100% | INR normal : 0.8 - 1.2",
+    "unit": "% et ratio",
+    "high_interpretation": "INR élevé : surdosage en AVK (Sintrom / Acénocoumarol). Si INR > 4.5 à 6 : risque hémorragique croissant ; si INR > 10 ou saignement grave : urgence absolue (antidote PPSB + Vitamine K1).",
+    "low_interpretation": "TP bas (< 50%) : Insuffisance hépatocellulaire (cirrhose, hépatite fulminante avec Facteur V abaissé), déficit en vitamine K, consommation par CIVD.",
+    "clinical_notes": [
+      "Cible thérapeutique sous AVK : INR 2.0 - 3.0 (prothèses mécaniques aortiques : 2.5 - 3.5, mitrales : 3.0 - 4.0).",
+      "Doser le Facteur V pour différencier une insuffisance hépatique (Facteur V bas) d'une carence en vitamine K (Facteur V normal)."
+    ]
+  },
+  {
+    "id": "lab_tca",
+    "name": "Temps de Céphaline Activée (TCA)",
+    "category": "Hémostase & Coagulation",
+    "normal_range": "Ratio Patient/Témoin : 0.8 - 1.2",
+    "unit": "ratio",
+    "high_interpretation": "Allongement (Ratio > 1.2) : Traitement par Héparine non fractionnée (HNF, cible 1.5 - 2.5), déficit constitutionnel en facteur (Hémophilie A VIII, Hémophilie B IX, Willebrand), anticoagulant circulant de type lupique (SAPL), CIVD.",
+    "low_interpretation": "État d'hypercoagulabilité biologique, prélèvement difficile.",
+    "clinical_notes": [
+      "Les HBPM (Lovenox) et les AOD ne modifient généralement pas le TCA de façon proportionnelle."
+    ]
+  },
+  {
+    "id": "lab_alat_asat",
+    "name": "Transaminases (ALAT/SGPT et ASAT/SGOT)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "ALAT: < 45 UI/L (Homme) / < 34 UI/L (Femme) | ASAT: < 35 UI/L (Homme) / < 31 UI/L (Femme)",
+    "unit": "UI/L (à 37°C)",
+    "high_interpretation": "Élévation modérée (< 5N) : stéatose (NAFLD/NASH), hépatite chronique (B, C), médicaments, alcool. Élévation majeure (> 10N ou > 1000 UI/L) : hépatite aiguë virale (A, B, C, E), hépatite médicamenteuse (paracétamol) ou ischémique (foie de choc). Urgence vitale si associée à un TP < 50% ou un Facteur V < 50% (Hépatite fulminante) : transfert immédiat en réanimation et avis spécialisé pour transplantation hépatique.",
+    "low_interpretation": "Généralement non pathologique. Des taux très bas peuvent parfois se voir en cas de carence sévère en pyridoxine (vitamine B6, cofacteur indispensable des aminotransférases, notamment chez les patients dénuttrés ou en hémodialyse chronique).",
+    "clinical_notes": [
+      "Rapport d'Iturbe-Chahoun (ASAT/ALAT) : > 2 en faveur d'une hépatite alcoolique (carence en B6 diminuant l'ALAT cytosolique) ; < 1 en faveur d'une origine métabolique (NAFLD) ou virale.",
+      "Piège pré-analytique : L'ASAT est également présente dans le myocarde, les muscles squelettiques, les globules rouges et les reins. Une hémolyse in vitro ou une rhabdomyolyse élève faussement l'ASAT sans souffrance hépatique (toujours confronter avec la CPK et la LDH).",
+      "Piège du concours : Une chute brutale des transaminases lors d'une hépatite aiguë fulminante ne signe pas la guérison, mais peut refléter une nécrose massive et une disparition du parenchyme hépatique (foie 'vide', pronostic sombre)."
+    ],
+    "created_at": "2026-11-04T15:38:55.655815+00:00",
+    "updated_at": "2026-11-04T15:38:55.655830+00:00"
+  },
+  {
+    "id": "lab_bilirubine",
+    "name": "Bilirubine (Totale, Conjuguée et Libre)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "Totale : 5 - 20 µmol/L (0.3 - 1.2 mg/dL) | Conjuguée (directe) : < 5 µmol/L (< 0.3 mg/dL) | Libre (indirecte) : < 15 µmol/L (< 0.9 mg/dL)",
+    "unit": "µmol/L",
+    "high_interpretation": "Hyperbilirubinémie. Si prédominance libre (>80%) : Hémolyse intravasculaire ou extravasculaire, érythropoïèse inefficace (anémie pernicieuse), syndromes de Gilbert et de Crigler-Najjar. Si prédominance conjuguée (>50%) : Cholestase intrahépatique (hépatites aiguës/chroniques, cirrhose, médicaments) ou extrahépatique (lithiase de la voie biliaire principale, cholangiocarcinome, tumeur de la tête du pancréas). Urgence vitale : Ictère à bilirubine conjuguée fébrile (angiocholite - triade de Charcot) nécessitant une décompression biliaire urgente (CPRE ou chirurgie) et antibiothérapie IV. Seuil d'ictère clinique visible : > 35-50 µmol/L.",
+    "low_interpretation": "Une valeur basse n'a généralement pas de signification pathologique clinique reconnue et ne constitue pas une urgence médicale. Elle peut être observée dans certaines situations physiologiques ou liées à l'alimentation.",
+    "clinical_notes": [
+      "Piège pré-analytique : La bilirubine est photosensible. Le tube prélèvé (idéalement protégé de la lumière par de l'aluminium) doit être acheminé rapidement au laboratoire pour éviter une photodégradation faussement abaissante.",
+      "Règle clé : Bilirubine Totale = Bilirubine Conjuguée + Bilirubine Libre (non conjuguée). Une bilirubinémie conjuguée > 20% de la totale signe toujours une atteinte hépatique ou biliaire, orientant d'emblée la démarche diagnostique au concours."
+    ],
+    "created_at": "2026-10-26T06:41:50.888703+00:00",
+    "updated_at": "2026-10-26T06:41:50.888714+00:00"
+  },
+  {
+    "id": "lab_lipase",
+    "name": "Lipasémie",
+    "category": "Gastroentérologie & Urgences",
+    "normal_range": "< 60",
+    "unit": "UI/L",
+    "high_interpretation": "Pancréatite aiguë si Lipase > 3x LSN associée à une douleur épigastrique transfixiante typique. Pas d'indication à répéter le dosage (ne préjuge pas de la sévérité). Autres causes : insuffisance rénale, perforation digestive, ischémie mésentérique.",
+    "low_interpretation": "Sans valeur sémiologique.",
+    "clinical_notes": [
+      "L'amylasémie est obsolète et ne doit plus être dosée au profit exclusif de la lipase.",
+      "Scanner abdominal avec injection à réaliser à 72-96h du début des douleurs pour évaluer la nécrose (score de Balthazar)."
+    ]
+  },
+  {
+    "id": "lab_gazometrie_ph",
+    "name": "Gazométrie artérielle : pH et GDS",
+    "category": "Réanimation & Pneumologie",
+    "normal_range": "pH : 7.35 - 7.45 | PaO2 : 80 - 100 mmHg | PaCO2 : 35 - 45 mmHg | HCO3- : 22 - 26 mmol/L",
+    "unit": "GDS artériel",
+    "high_interpretation": "Alcalose métabolique (HCO3- élevé, hypokaliémie, vomissements) ou alcalose respiratoire (hyperventilation, angoisse, EP).",
+    "low_interpretation": "Acidose : Métabolique (HCO3- bas, calculer le trou anionique : acidocétose, acidose lactique, toxiques) ou Respiratoire (PaCO2 élevée : hypoventilation, décompensation BPCO).",
+    "clinical_notes": [
+      "Calcul du Trou Anionique plasmatique : TA = (Na + K) - (Cl + HCO3). Valeur normale : 12-16 mmol/L. Si TA augmenté : présence d'anions indosés (lactates, corps cétoniques, salicylés, méthanol)."
+    ]
+  },
+  {
+    "id": "lab_lactates",
+    "name": "Lactatémie artérielle / veineuse",
+    "category": "Réanimation & Urgences",
+    "normal_range": "0.5 - 2.0",
+    "unit": "mmol/L",
+    "high_interpretation": "Hypoperfusion tissulaire et hypoxie cellulaire. Lactates > 2 mmol/L : alerte sepsis ; > 4 mmol/L : critère de gravité majeur du choc septique, cardiogénique ou hémorragique. Causes non hypoxiques : metformine, insuffisance hépatique sévère, crise convulsive.",
+    "low_interpretation": "Bonne oxygénation tissulaire basale.",
+    "clinical_notes": [
+      "La clairance des lactates (baisse de > 20% toutes les 2h sous réanimation) est l'un des meilleurs reflets de la restauration hémodynamique."
+    ]
+  },
+  {
+    "id": "lab_calcium",
+    "name": "Calcémie totale et corrigée",
+    "category": "Métabolisme & Endocrinologie",
+    "normal_range": "2.20 - 2.60",
+    "unit": "mmol/L (88 - 104 mg/L)",
+    "high_interpretation": "Hypercalcémie : Urgence vitale si > 3.0 - 3.5 mmol/L (raccourcissement QT à l'ECG, confusion, déshydratation aiguë). Causes : hyperparathyroïdie primitive, métastases osseuses, myélome multiple, granulomatoses (sarcoïdose).",
+    "low_interpretation": "Hypocalcémie (< 2.20 mmol/L) : Allongement du QT à l'ECG (risque de torsades de pointes), paresthésies péri-buccales, signe de Trousseau, signe de Chvostek, tétanie. Causes : hypoparathyroïdie, carence en vitamine D, pancréatite aiguë.",
+    "clinical_notes": [
+      "Toujours calculer la calcémie corrigée en fonction de l'albuminémie : Ca_corr = Ca_mesuré + 0.02 * (40 - Albuminémie g/L)."
+    ]
+  },
+  {
+    "id": "calcemie_corrigee_ionise",
+    "name": "Calcémie corrigée (Ca corr) & Calcium ionisé (Ca2+)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Calcémie totale: 2.20 - 2.60 | Calcium ionisé: 1.15 - 1.30",
+    "unit": "mmol/L",
+    "high_interpretation": "Hypercalcémie : Hyperparathyroïdie primaire, néoplasies (lyse osseuse, PTHrp), sarcoïdose, intoxication Vit D, immobilisation prolongée. Urgence vitale si > 3.5 mmol/L (risque d'arythmie, coma, arrêt cardiaque). Conduite : Réhydratation isotonique (NaCl 0.9%), biphosphonates, diurétiques de l'anse après remplissage.",
+    "low_interpretation": "Hypocalcémie : Hypoparathyroïdie, carence en Vit D, insuffisance rénale chronique, hypomagnésémie, pancréatite aiguë. Urgence vitale si < 1.75 mmol/L ou signes de tétanie (Chvostek, Trousseau). Conduite : Gluconate de calcium IV lent sous scope.",
+    "clinical_notes": [
+      "La calcémie totale dépend de l'albuminémie. Formule de correction : Ca corr (mmol/L) = Ca mesuré + 0.02 x (40 - Albumine en g/L).",
+      "Le calcium ionisé est la fraction biologiquement active, non influencée par l'albumine, mais dépendante du pH (l'acidose augmente le Ca2+ ionisé, l'alcalose le diminue).",
+      "Piège de concours : Toute hypocalcémie doit faire doser la magnésémie, car l'hypomagnésémie sévère induit une résistance à la PTH et une inhibition de sa sécrétion."
+    ],
+    "created_at": "2026-10-14T11:56:30.383520+00:00",
+    "updated_at": "2026-10-14T11:56:30.383533+00:00"
+  },
+  {
+    "id": "lab_ferritine_cst",
+    "name": "Ferritine sérique & Coefficient de Saturation de la Transferrine (CST)",
+    "category": "Vitamines & Oligo-éléments",
+    "normal_range": "Ferritine - Homme: 30-300 µg/L | Femme: 15-200 µg/L (post-ménopause: 30-300 µg/L). CST: 20 - 40 %",
+    "unit": "µg/L (Ferritine) et % (CST)",
+    "high_interpretation": "Ferritine haute (>300 H / >200 F) avec CST bas/normal : Syndrome inflammatoire (protéine de l'acute phase), cytolyse hépatique, syndrome métabolique, alcoolisme. Ferritine haute avec CST > 50% : Surcharge en fer (Hemochromatose génétique liée au gène HFE, transfusions multiples, hémochromatose secondaire). Urgence si ferritinémie massivement augmentée (>10 000 µg/L) avec défaillance multiviscérale : suspecter un Syndrome d'Activation Macrophagique (SAM) ou une Hémophagocytose. Conduite à tenir : Bilan hépatique,CRP, ferritinémie de contrôle, test génétique HFE (C282Y) si CST élevé persistant.",
+    "low_interpretation": "Ferritine basse (<15 µg/L) : Carence martiale (anémie ferriprive). C'est le marqueur le plus spécifique des réserves en fer de l'organisme. Une ferritinémie basse confirme le diagnostic de carence en fer (valeur < 30 µg/L évocatrice chez l'insuffisant rénal ou l'insuffisant cardiaque). Conduite à tenir : Rechercher une cause (pertes sanguines digestives, gynécologiques, malabsorption type cœliaque).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : La ferritine est une protéine de l'inflammation (CRP). Une carence martiale peut être masquée par un syndrome inflammatoire (une ferritine dite 'normale' à 50 µg/L peut en réalité cacher une carence si la CRP est très élevée). Dans ce cas, le CST reste bas (<20%) et le récepteur soluble de la transferrine (RsTf) est augmenté.",
+      "Calcul du CST : CST (%) = [Fer sérique (µg/L) / Transferrine (g/L) x 1.41] x 100. Un CST > 50% chez l'homme ou > 45% chez la femme est le seuil de dépistage de la surcharge en fer."
+    ],
+    "created_at": "2026-10-14T12:21:13.317640+00:00",
+    "updated_at": "2026-10-14T12:21:13.317656+00:00"
+  },
+  {
+    "id": "lab_tsh_ultrasensible",
+    "name": "TSH ultrasensible (TSHus)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "0.4 - 4.0",
+    "unit": "mUI/L",
+    "high_interpretation": "Hypothyroïdie (primaire si TSH > 4 mUI/L avec T4L basse). Causes fréquentes : Thyroïdite d'Hashimoto (anticorps anti-TPO positifs), iatrogène (amiodarone, lithium), post-thérapeutique (chirurgie, I131), carence iodée sévère. Si TSH > 10 mUI/L : hypothyroïdie franche, risque cardiovasculaire accru et dyslipidémie. Conduite à tenir : contrôler T4L et avis endocrinologie pour introduction progressive de L-thyroxine (surtout chez le coronarien).",
+    "low_interpretation": "Hyperthyroïdie (si associée à T4L/T3L élevées) ou thyrotoxicose infra-clinique (si T4L/T3L normales). Causes fréquentes : Maladie de Basedow (anticorps anti-récepteurs de la TSH positifs), goitre multinodulaire toxique, adénome toxique, thyroïdite subaiguë de de Quervain (phase initiale avec douleur cervicale). Urgence vitale : Crise thyrotoxique aiguë (fièvre > 38.5°C, tachycardie disproportionnée, troubles neuro-psychiatriques, insuffisance cardiaque) engageant le pronostic vital nécessitant une hospitalisation en réanimation. Autres causes de TSH basse : prise de corticoïdes, dopamine, syndrome de conversion (euthyroid sick syndrome).",
+    "clinical_notes": [
+      "Piège pré-analytique : Variations physiologiques (grossesse : premier trimestre avec limite inf abaissée à 0.1 mUI/L, nycthémère, âge) et interférences médicamenteuses (biotine à forte dose provoquant de fausses diminutions de TSH ou fausses augmentations des hormones thyroïdiennes selon les trousses immuno-enzymatiques).",
+      "Règle d'or diagnostique : Ne jamais interpréter une TSH isolément sans doser simultanément la T4 libre (T4L), indispensable pour différencier une atteinte hypophysaire centrale (TSH basse ou normale avec T4L basse) d'une atteinte périphérique."
+    ],
+    "created_at": "2026-10-14T12:37:53.483170+00:00",
+    "updated_at": "2026-10-14T12:37:53.483182+00:00"
+  },
+  {
+    "id": "lab_vitamine_d",
+    "name": "Vitamine D (25-OH-Vitamine D totale)",
+    "category": "Vitamines & Oligo-éléments",
+    "normal_range": "Suffisance: 30 - 100 | Insuffisance: 10 - 29 | Carence: < 10",
+    "unit": "ng/mL (facteur de conversion en nmol/L : multiplier par 2.5)",
+    "high_interpretation": "Hypervitaminose D : > 150 ng/mL. Causes : iatrogène (surdosage médicamenteux en cholécalciférol ou ergocalciférol), granulomatoses (sarcoïdose, tuberculose par hydroxylation macrophagique extra-rénale non régulée), lymphomes. Risque d'urgence vitale : Hypercalcémie menaçante (> 3.0 mmol/L) avec insuffisance rénale aiguë, troubles du rythme cardiaque et calcifications métastatiques. Conduite à tenir : Arrêt immédiat de la vitamine D et du calcium, hydratation IV massive, diurétiques de l'anse, corticoïdes si granulomatose.",
+    "low_interpretation": "Carence ou insuffisance en vitamine D : < 30 ng/mL. Causes : défaut d'exposition solaire (mode de vie urbain, voilée, en Algérie paradoxalement très fréquent malgré l'ensoleillement), malabsorption intestinale (maladie cœliaque, Crohn, chirurgie bariatrique), insuffisance rénale ou hépatique chronique, traitements inducteurs enzymatiques (anti-épileptiques). Risque d'urgence : Hypocalcémie sévère avec tétanie, convulsions ou allongement du QT si carence profonde associée à une hypomagnésémie. Conduite à tenir : Supplémentation adaptée (charge puis entretien), correction préalable ou concomitante d'une hypomagnésémie.",
+    "clinical_notes": [
+      "Piège pré-analytique : Le prélèvement doit être protégé de la lumière (photolabilité de la 25-OH-D) et centrifugé rapidement avec décantation du sérum.",
+      "Forme circulante : La 25-hydroxyvitamine D est le reflet fidèle des réserves corporelles (via l'apport solaire et nutritionnel) en raison de sa longue demi-vie (2 à 3 semaines), contrairement à la 1,25-dihydroxyvitamine D (calcitriol) qui a une demi-vie très courte et dont le taux peut être normal ou faussement élevé par hyperparathyroïdie secondaire.",
+      "Contexte Algérien : La carence en vitamine D est un véritable problème de santé publique en Algérie, touchant plus de 80% de la population saine (femmes enceintes, nouveau-nés, personnes âgées), nécessitant une systématisation du dépistage et de la prophylaxie."
+    ],
+    "created_at": "2026-10-14T16:52:36.982845+00:00",
+    "updated_at": "2026-10-14T16:52:36.982862+00:00"
+  },
+  {
+    "id": "lab_hba1c",
+    "name": "Hémoglobine glyquée (HbA1c)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Normal : < 5.7 % | Prédiabète : 5.7 - 6.4 % | Diabète : ≥ 6.5 %",
+    "unit": "% (ou mmol/mol selon IFCC)",
+    "high_interpretation": "Valeur élevée : Témoigne d'un déséquilibre glycémique chronique sur les 3 derniers mois. Causes : Diabète de type 1 ou 2 mal contrôlé, mauvaise observance thérapeutique, iatrogénie (corticothérapie). Seuils et urgence : Pas d'urgence vitale immédiate isolée, mais un taux > 10 % expose à un risque majeur de complications métaboliques aiguës (acidocétose diabétique, syndrome hyperosmolaire) en cas de facteur déclenchant. Conduite à tenir : Réévaluation de la stratégie thérapeutique, recherche de facteurs favorisants, éducation thérapeutique.",
+    "low_interpretation": "Valeur basse : Causes : Hypoglycémies chroniques, variants d'hémoglobine, hémolyse chronique, saignements récents ou transfusions massives (diminution de la durée de vie des globules rouges faussant le dosage). Seuil d'urgence : Aucun seuil d'urgence vitale directe lié à l'HbA1c basse, mais recherche d'une pathologie sous-jacente (anémie hémolytique, insuffisance rénale chronique avancée). Conduite à tenir : Corréler avec l'hémogramme et le profil glycémique capillaire.",
+    "clinical_notes": [
+      "Pièges pré-analytiques majeurs : Fausse baisse de l'HbA1c en cas de diminution de la durée de vie érythrocytaire (hémolyse, saignements, grossesses, splénomégalie, transfusion) ou d'hémoglobinopathies (AS, AC, etc., selon la technique de dosage). Fausse augmentation en cas de carence en fer (diminution du renouvellement érythrocytaire, fausse glycation) ou d'urémie.",
+      "L'HbA1c n'est pas recommandée pour le diagnostic du diabète chez l'enfant, la femme enceinte, en cas d'anémie sévère ou d'insuffisance rénale chronique terminale, où l'on préfère l'autosurveillance glycémique et la glycémie à jeun."
+    ],
+    "created_at": "2026-10-14T20:49:21.655277+00:00",
+    "updated_at": "2026-10-14T20:49:21.655288+00:00"
+  },
+  {
+    "id": "lab_troponine_ultrasensible",
+    "name": "Troponine ultrasensible (cTn-us / cTnT-us ou cTnI-us)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Variable selon le réactif et le sexe (généralement < 14 ng/L ou pg/mL pour le 99e percentile de la population saine)",
+    "unit": "ng/L (ou pg/mL)",
+    "high_interpretation": "Élévation : Infarctus du Myocarde (IDM) avec ou sans sus-décalage du ST (cinétique dynamique indispensable : variation > 20-50% à 1h ou 3h selon l'algorithme ESC). Causes non coronariennes (lésions myocardiques aiguës ou chroniques) : embolie pulmonaire grave, myocardite aiguë, insuffisance cardiaque aiguë ou chronique, dissection aortique, choc septique, contusion myocardique, insuffisance rénale chronique avancée, AVC, exercice physique intense.",
+    "low_interpretation": "Valeur normale ou indétectable (< seuil de décèlement du test) : Valeur normale excluant un IDM récent (valeur prédictive négative excellente après 3 heures de la douleur). Une valeur basse n'élimine pas une angine de poitrine stable ou un IDM très précoce (généralement < 1 à 3 heures après le début des symptômes).",
+    "clinical_notes": [
+      "Piège pré-analytique et interprétatif : Toute élévation de la troponine ne signe pas un IDM aigu (infarctus de type 2 ou atteinte myocardique non ischémique). Exiger une cinétique (variation temporelle) pour différencier une atteinte aiguë (variation significative) d'une cardiomyopathie chronique stable (élévation basale chronique).",
+      "Insuffisance rénale : L'insuffisance rénale chronique provoque souvent une élévation basale chronique de la troponine (due à une clairance rénale diminuée et/ou une micro-ischémie sous-jacente) ; dans ce cas, c'est la cinétique (variation) qui reste la clé diagnostique d'un syndrome coronarien aigu surajouté."
+    ],
+    "created_at": "2026-10-22T06:17:33.036401+00:00",
+    "updated_at": "2026-10-22T06:17:33.036419+00:00"
+  },
+  {
+    "id": "lab_proteinurie_24h_rac",
+    "name": "Protéinurie des 24h & Rapport Albuminurie/Créatininurie (RAC)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Protéinurie des 24h: < 0.15 g/24h (ou < 150 mg/24h) | RAC (spot urinaire): < 30 mg/g (ou < 3 mg/mmol)",
+    "unit": "g/24h (Protéinurie) et mg/g (RAC)",
+    "high_interpretation": "Protéinurie > 0.15 g/24h ou RAC > 30 mg/g (microalbuminurie 30-300 mg/g, macroalbuminurie > 300 mg/g). Causes: Glomérulopathies (néphropathie diabétique, glomérulonéphrite chronique), tubulopathies (protéinurie de faible poids moléculaire), protéinurie de surcharge (myélome multiple avec chaînes légères de Bence-Jones). Seuil néphrotique: > 3 g/24h (ou > 3.5 g/1.73m²/24h), constitutif du syndrome néphrotique pur ou impur associé à une hypoalbuminémie < 30 g/L et des œdèmes. Conduite à tenir: Évaluer la fonction rénale (créatininémie, DFG), rechercher une hématurie microscopique (ECBU), quantifier le RAC sur premier jet du matin, et orienter vers une ponction-biopsie rénale (PBR) selon le contexte.",
+    "low_interpretation": "Valeurs physiologiques normales (< 0.15 g/24h ou < 30 mg/g). Une valeur basse n'a pas de pathogénicité propre et reflète l'absence de lésion glomérulaire ou tubulaire significative.",
+    "clinical_notes": [
+      "Piège pré-analytique : La protéinurie des 24h souffre souvent d'erreurs de recueil (collecte incomplète ou excessive). Le recueil doit être rigoureux (vider la vessie le matin à J0, puis recueillir toutes les urines jusqu'au lendemain matin J1 inclus).",
+      "Le RAC (Rapport Albuminurie/Créatininurie) sur un échantillon urinaire matinal est recommandé par les guidelines KDIGO en première intention pour le dépistage de la maladie rénale chronique (notamment chez le diabétique et l'hypertendu), car il s'affranchit des erreurs de recueil des 24h.",
+      "Attention au test à la bandelette urinaire : Ne détecte bien que l'albumine (faible sensibilité pour les chaînes légères de Bence-Jones au cours du myélome multiple, nécessitant l'immunofixation des urines ou le test à l'acide sulfosalicylique)."
+    ],
+    "created_at": "2026-10-22T13:44:12.450754+00:00",
+    "updated_at": "2026-10-22T13:44:12.450767+00:00"
+  },
+  {
+    "id": "lab_ammoniemy",
+    "name": "Ammoniémie (NH3)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "11 - 32",
+    "unit": "µmol/L",
+    "high_interpretation": "Hyperammoniémie : Encéphalopathie hépatique (cirrhose, hépatite fulminante), insuffisance hépato-cellulaire sévère, shunt porto-systémique, erreurs innées du métabolisme du cycle de l'urée (déficit en OTC, etc.), syndrome de Reye, acidémie organique. Seuil d'urgence vitale : > 100 µmol/L (risque d'œdème cérébral aigu, engagement, hernie cérébrale). Conduite à tenir : Urgence réanimatoire, ventilation mécanique si score de Glasgow < 8, épuration extrarénale (hémodialyse) si hyperammoniémie majeure ou échec du traitement médical, lactulose, rifaximine, arrêt des apports protéiques.",
+    "low_interpretation": "Hypoammoniémie : Situation rare, le plus souvent artéfactuelle (délai d'acheminement excessif sans glace, dégradation in vitro). Causes cliniques exceptionnelles : hyperinsulinisme congénital ou carence nutritionnelle majeure. Pas de seuil d'urgence pour une valeur basse isolée.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Prélèvement sur tube hépariné lithium, STRICTEMENT transporté dans la glace (glacée/slush ice), centrifugation immédiate à +4°C et analyse en < 15-30 minutes. Le métabolisme des érythrocytes in vitro libère rapidement de l'ammoniaque, faussant l'examen (fausse hyperammoniémie).",
+      "Le garrot serré prolongé ou le poing serré pendant la phlébotomie élève artificiellement l'ammoniémie.",
+      "Corrélation clinique : L'ammoniémie ne corrèle pas toujours linéairement avec le degré d'encéphalopathie hépatique chez le cirrhotique chronique, mais elle est indispensable pour le diagnostic différentiel et le suivi des crises d'encéphalopathie aiguë et des erreurs innées du métabolisme chez le nouveau-né."
+    ],
+    "created_at": "2026-10-22T20:00:35.319000+00:00",
+    "updated_at": "2026-10-22T20:00:35.319014+00:00"
+  },
+  {
+    "id": "lab_ammoniemie",
+    "name": "Ammoniémie (Ammoniaque plasmatique)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "11 - 32",
+    "unit": "µmol/L",
+    "high_interpretation": "Hyperammoniémie : Encéphalopathie hépatique (cirrhose, hépatite fulminante), insuffisance hépato-cellulaire sévère, shunt porto-systémique, erreurs innées du métabolisme du cycle de l'urée (déficit en ornithine transcarbamylase - OTC), intoxications aiguës (acide valproïque, salicylés), syndrome de Reye. Urgence vitale neurologique si > 100 µmol/L ou apparition de signes d'engagement cérébral (œdèmeglobulaire, coma). Conduite à tenir : Arrêt de tout apport protéique, éviction des sédatifs, épuration extrarénale en urgence si encéphalopathie grade III/IV réfractaire, administration de lactulose et rifaximine (si origine hépatique), L-ornithine-L-aspartate (LOLA), ou benzoate de sodium / phénylbutyrate (si anomalie du cycle de l'urée).",
+    "low_interpretation": "Hypoammoniémie : Rare en pratique clinique, observée parfois en cas de dénutrition sévère, ou sous traitement par certains antibiotiques ou lactulose au long cours. Pas de retentissement clinique direct aigu.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le prélèvement doit être fait sur tube sang total hépariné, transporté IMMEDIATEMENT dans la glace (glacée) et centrifugé dans les 15 à 30 minutes pour éviter la production ex-vivo d'ammoniac par désamination érythrocytaire, faussant grandement les résultats (fausse hyperammoniémie).",
+      "La corrélation clinique est imparfaite : le taux d'ammoniémie ne corrèle pas toujours linéairement avec le degré d'encéphalopathie hépatique chez le cirrhotique chronique, mais il est indispensable pour le suivi de la neurotoxicitée et le diagnostic des anomalies métaboliques congénitales chez le nouveau-né."
+    ],
+    "created_at": "2026-10-23T04:38:43.038837+00:00",
+    "updated_at": "2026-10-23T04:38:43.038855+00:00"
+  },
+  {
+    "id": "lab_osmolalite_plasmatique",
+    "name": "Osmolalité plasmatique & Trou osmotique",
+    "category": "Ionogramme & Rein",
+    "normal_range": "275 - 295",
+    "unit": "mOsm/kg H2O",
+    "high_interpretation": "Hyperosmolalité : Hypernatrémie majeure, Diabète sucré décompensé (hyperglycémie simple), Coma hyperosmolaire hyperglycémique non cétosique (> 320 mOsm/kg, urgence réanimatoire), Intoxications exogènes si trou osmotique élevé (méthanol, éthylène-glycol, éthanol). Conduite à tenir : Réhydratation adaptée, insulinothérapie prudente si hyperglycémie, recherche d'une substance osmotiquement active.",
+    "low_interpretation": "Hypoosmolalité : Hyponatrémie hypo-osmolaire (la plus fréquente), SIADH (Syndrome de sécrétion inappropriée d'ADH), Intoxication à l'eau, Insuffisance surrénalienne aiguë, Hypothyroïdie profonde. Seuil d'alerte < 250 mOsm/kg (risque d'œdème cérébral et de convulsions). Conduite à tenir : Restriction hydrique ou correction prudente selon la symptomatologie neurologique.",
+    "clinical_notes": [
+      "Formule de calcul : Osmolalité calculée = 2 x Na+ + Glycémie + Urée (en mmol/L). Pour les unités usuelles en g/L : 2 x Na+ + Glycémie(g/L)x5,55 + Urée(g/L)x16,7.",
+      "Le trou osmotique (différence entre osmolalité mesurée par cryoscopie et osmolalité calculée) est normalement < 10 mOsm/kg. Un trou osmotique > 10 mOsm/kg signe la présence d'un osmolyte circulant non pris en compte (alcool, éthylène-glycol, méthanol, mannitol)."
+    ],
+    "created_at": "2026-10-23T13:20:36.934839+00:00",
+    "updated_at": "2026-10-23T13:20:36.934853+00:00"
+  },
+  {
+    "id": "lab_acide_urique",
+    "name": "Acide urique (Uricémie)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Homme: 40 - 70 mg/L (240 - 420 µmol/L) | Femme: 30 - 60 mg/L (180 - 360 µmol/L)",
+    "unit": "mg/L (Conversion µmol/L = mg/L x 5.95)",
+    "high_interpretation": "Hyperuricémie (> 70 mg/L chez l'homme, > 60 mg/L chez la femme). Causes : Insuffisance rénale (diminution de l'excrétion), excès d'apport (purines, alcool), syndrome métabolique, médicaments (diurétiques thiazidiques ou de l'anse, aspirine à faible dose), lyse tumorale (chimio-induite), psoriasis étendu. Risques : Crise de goutte aiguë, néphropathie uratique aiguë, lithiase rénale urique. Conduite à tenir : Rechercher une atteinte articulaire ou rénale, hydratation, traiter la cause, et discuter d'un traitement hypouricémiant (allopurinol, febuxostat) en dehors de la crise aiguë.",
+    "low_interpretation": "Hypouricémie (< 30 mg/L). Causes : Déficit de réabsorption tubulaire proximale (syndrome de Fanconi, maladie de Wilson, diabète sucré), iatrogène (uricosuriques : benzbromarone, fortes doses de salicylés, losartan, œstrogènes), carence d'apport sévère / dénutrition, syndrome de SIADH (par augmentation de la clearance urique). Conduite à tenir : Rechercher une tubulopathie proximale (glycosurie sans hyperglycémie, aminoacidurie, phosphaturie) et explorer la fonction hépatique (Wilson).",
+    "clinical_notes": [
+      "Piège pré-analytique : L'uricémie peut être faussement abaissée en présence de fortes concentrations de bilirubine, d'acide ascorbique (vitamine C) ou de glucose selon la méthode enzymatique utilisée (uricase).",
+      "Syndrome de lyse tumorale : Urgence médico-chirurgicale en onco-hématologie où une hyperuricémie majeure (> 80-100 mg/L) s'associe à une hyperkaliémie, hyperphosphatémie et hypocalcémie, menaçant le pronostic rénal et vital (nécessité d'une diurèse forcée et de rasburicase)."
+    ],
+    "created_at": "2026-10-24T04:27:36.253748+00:00",
+    "updated_at": "2026-10-24T04:27:36.253766+00:00"
+  },
+  {
+    "id": "lab_prolactine",
+    "name": "Prolactine sérique (PRL)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Homme: 2 - 18 ng/mL (40 - 380 mUI/L) | Femme non enceinte: 3 - 25 ng/mL (60 - 500 mUI/L) | Femme enceinte: 20 - 400 ng/mL",
+    "unit": "ng/mL (ou mUI/L, facteur de conversion approximatif 1 ng/mL ≈ 21,2 mUI/L)",
+    "high_interpretation": "Hyperprolactinémie : Causes physiologiques (grossesse, allaitement, stress, sommeil), iatrogènes (antipsychotiques, antidépresseurs, métoclopramide), pathologiques (macroprolactinome ou microprolactinome hypophysaire, hypothyroïdie primaire par TSH élevée, insuffisance rénale chronique, syndrome des ovaires polykystiques - SOPK). Clinique : gynécomastie, impuissance, troubles de la libido chez l'homme ; aménorrhée, galactorrhée, infertilité chez la femme. Seuil d'urgence : > 250 ng/mL oriente fortement vers un macroprolactinome (risque de compression chiasmatique avec troubles visuels, urgence neuro-ophtalmologique). Conduite à tenir : éliminer une cause iatrogène ou biologique (macroprolactine), doser TSH, vérifier la fonction rénale, et réaliser une IRM hypophysaire si persistance.",
+    "low_interpretation": "Hypoprolactinémie : Rare et généralement sans retentissement clinique majeur. Causes : hypopituitarisme global (insuffisance antéhypophysaire), iatrogène (agonistes dopaminergiques à forte dose, bromocriptine, cabergoline). Clinique : absence de retentissement spécifique, souvent masquée par les autres déficits endocriniens associés en cas d'atteinte hypophysaire globale. Conduite à tenir : exploration de l'axe thyréotrope, gonadotrope et corticotrope en cas de suspicion d'hypopituitarisme.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Effet crochet (hook effect) lors des dosages immunologiques en présence d'une macroprolactinémie massive (> 1000 ng/mL saturant les anticorps du réactif), donnant faussement des valeurs modérément élevées. Solution : demander une dilution de l'échantillon au laboratoire.",
+      "Recherche systématique de la macroprolactine : En présence d'une hyperprolactinémie asymptomatique, demander une précipitation au polyéthylène glycol (PEG) pour éliminer un complexe macroprolactine (molécule inactive biologiquement mais immunoréactive).",
+      "Conditions de prélèvement strictes : Le prélèvement doit être fait idéalement le matin, au repos, sans stress excessif et sans stimulation préalable des mamelons, la prolactine étant une hormone de stress très fluctuante."
+    ],
+    "created_at": "2026-10-24T12:37:56.669623+00:00",
+    "updated_at": "2026-10-24T12:37:56.669638+00:00"
+  },
+  {
+    "id": "lab_triglycerides",
+    "name": "Triglycérides sériques (TG)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "< 1.50 g/L (ou < 1.70 mmol/L) à jeun",
+    "unit": "g/L (facteur de conversion mmol/L = g/L x 1.14)",
+    "high_interpretation": "Hypertriglycéridémie : > 1.5 g/L (modérée), > 2.0 g/L (anormale), > 5.0 g/L (majeure, risque de pancréatite aiguë), > 10.0 g/L (risque vital imminent de pancréatite aiguë nécrosante et syndrome de chylomicronémie). Causes : diabète déséquilibré, alcoolisme, obésité, syndrome métabolique, insuffisance rénale chronique, hypothyroïdie, iatrogène (corticoïdes, rétinoïdes, bêta-bloquants, œstrogènes), dyslipidémies familiales (types I, IV, V). Conduite à tenir : si TG > 5 g/L, urgence médicale relative, régime strict sans graisses, arrêt de l'alcool, initiation rapide d'un fibrate et/ou acides gras oméga-3, avis spécialisé endocrinologie.",
+    "low_interpretation": "Hypotriglycéridémie : Rare cliniquement. Causes : malabsorption intestinale, malnutrition, hyperthyroïdie, insuffisance hépatocellulaire sévère, abêtalipoprotéinémie. Conduite à tenir : exploration d'une cause carentielle ou digestive sous-jacente.",
+    "clinical_notes": [
+      "Prélèvement impératif à jeun strict de 12 heures (risque de faux positif ou de lipémie post-prandiale majeure si non respecté).",
+      "Sérum lactescent ou chylomicronémique si les triglycérides dépassent 3 à 4 g/L, perturbant par interférence optique de nombreux dosages biochimiques (colorimétrie)."
+    ],
+    "created_at": "2026-10-24T18:45:04.106885+00:00",
+    "updated_at": "2026-10-24T18:45:04.106901+00:00"
+  },
+  {
+    "id": "lab_fibrinogene",
+    "name": "Fibrinogène (Facteur I)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "2.0 - 4.0",
+    "unit": "g/L",
+    "high_interpretation": "Hyperfibrinogénémie (> 4.0 g/L) : Facteur de phase aiguë non spécifique (inflammation, infection, nécrose tissulaire, syndrome néphrotique, chirurgie, traumatisme). Facteur de risque cardiovasculaire et d'thrombose veineuse/artérielle. Physiologique au 3ème trimestre de la grossesse (jusqu'à 6 g/L).",
+    "low_interpretation": "Hypofinogénémie (< 2.0 g/L) ou Aﬁbrinogénémie (< 0.5 g/L). Causes : 1) Consommation (CIVD, hémorragie massive, embolie amniotique, décollement placentaire - HRP). 2) Défaut de synthèse (insuffisance hépatocellulaire sévère, cirrhose décompensée). 3) Congénitale (afibrinogénémie ou dysfibrinogénémie rare). Urgence vitale majeure si < 1.0 g/L : risque hémorragique cataclysmique, nécessite une transfusion de cryoprécipités ou de fibrinogène (facteur I concentré) et de plasma frais congelé.",
+    "clinical_notes": [
+      "Piège pré-analytique : Le fibrinogène est une protéine de l'inflammation. Une valeur normale basse chez un patient fébrile ou agressé chirurgicalement peut en réalité masquer une consommation débutante (CIVD).",
+      "Méthode de dosage de référence : Méthode de Clauss (temps de thrombine mesuré en excès de thrombine) par rapport à la méthode dérivée du TP (trop sensible aux variations d'autres facteurs et aux héparines)."
+    ],
+    "created_at": "2026-10-31T01:43:06.567164+00:00",
+    "updated_at": "2026-10-31T01:43:06.567178+00:00"
+  },
+  {
+    "id": "lab_t4_t3_libres",
+    "name": "T4 libre (FT4) et T3 libre (FT3)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "FT4: 12 - 22 pmol/L (0.9 - 1.7 ng/dL) | FT3: 3.5 - 6.5 pmol/L (2.3 - 4.2 pg/mL)",
+    "unit": "pmol/L (ou ng/dL / pg/mL)",
+    "high_interpretation": "FT4/FT3 élevées : Hyperthyroïdie (Maladie de Basedow, goitre multinodulaire toxique, adénome toxique). Thyroïdite subaiguë de De Quervain (phase initiale thyréotoxique). Surcharge iodée (amiodarone). Urgence vitale : Crise thyrotoxique (orage thyroïdien) associant hyperthermie majeure, tachycardie disproportionnée, troubles neuro-psychiques et défaillance multiviscérale. Conduite à tenir : Arrêt de l'iode, antithyroïdiens de synthèse (ATS), bêta-bloquants (propranolol), mesures de réanimation.",
+    "low_interpretation": "FT4/FT3 basses : Hypothyroïdie primaire (hashimoto, iatrogène post-chirurgie ou post-iode 131) ou centrale (hypophysaire/hypothalamique). Syndrome des T3 basses (Non-Thyroidal Illness Syndrome / Sick Euthyroid Syndrome) en réanimation (pathologie grave intercurrente). Urgence vitale : Coma myxœdémateux (hypothermie profonde, bradycardie, hypotension, hypoventilation alvéolaire avec hypercapnie, troubles de conscience). Conduite à tenir : Réanimation respiratoire, hormonothérapie substitutive en urgence (L-T4 IV ou liothyronine) associée à une corticothérapie préalable (hydrocortisone) pour éviter une insuffisance surrénalienne aiguë associée.",
+    "clinical_notes": [
+      "Toujours coupler l'interprétation des hormones thyroïdiennes (FT4, FT3) avec le dosage de la TSH ultrasensible (TSHuh) pour authentifier l'origine (centrale vs périphérique) et éviter les pièges du syndrome des T3/T4 basses de réanimation.",
+      "Piège pré-analytique majeur : Certaines variations des protéines porteuses (TBG) modifient la T4 totale mais ne modifient PAS les fractions libres (FT4 et FT3), d'où la supériorité des formes libres. Attention toutefois aux interférences analytiques (anticorps anti-streptavidine ou hétérophiles) et aux médicaments (amiodarone, corticoïdes, héparine) modifiant la liaison protéique."
+    ],
+    "created_at": "2026-10-25T13:09:19.666924+00:00",
+    "updated_at": "2026-10-25T13:09:19.666938+00:00"
+  },
+  {
+    "id": "lab_lipase_serique",
+    "name": "Lipase sérique (LPS)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "13 - 60",
+    "unit": "UI/L",
+    "high_interpretation": "Hyperlipasémie > 3N : Pancréatite aiguë (diagnostic positif si associée à des douleurs évocatrices et/ou imagerie concordante). Autres causes : insuffisance rénale (diminution de l'élimination), occlusion ou perforation intestinale, cholécystite aiguë, infarctus mésentérique, cholangite. Conduite à tenir : Hydratation IV agressive, évaluation du score de Balthazar ou Ranson, élimination d'une origine biliaire ou métabolique (hypertriglycéridémie, hypercalcémie).",
+    "low_interpretation": "Hypolipasémie : Pas de signification pathologique univoque en pathologie aiguë. Peut témoigner d'une insuffisance pancréatique exocrine au stade très tardif ou avancé (destruction massive du parenchyme pancréatique, mucoviscidose), mais l'élastase fécales ou la stéatorrhée sont préférées pour cette exploration. Conduite à tenir : Corréler cliniquement, rechercher des signes de malabsorption.",
+    "clinical_notes": [
+      "La lipase est l'enzyme de choix par rapport à l'amylase pour le diagnostic de la pancréatite aiguë (plus sensible et plus spécifique, sa cinétique est plus tardive mais elle se normalise plus lentement).",
+      "Une élévation modérée (< 3N) n'est pas spécifique d'une pancréatite aiguë et peut être observée dans de nombreuses affections abdomino-pelviennes aiguës ou en cas d'insuffisance rénale modérée à sévère.",
+      "Piège pré-analytique : Le prélèvement doit être centrifugé rapidement pour éviter l'hémolyse qui peut interférer avec certaines techniques dosant l'activité enzymatique."
+    ],
+    "created_at": "2026-10-25T23:24:57.138035+00:00",
+    "updated_at": "2026-10-25T23:24:57.138051+00:00"
+  },
+  {
+    "id": "lab_anticorps_anti_nucleaires",
+    "name": "Anticorps Anti-Nucléaires (AAN / ANA)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Négatif (Titre < 1:80 ou ratio < 1.0 selon la technique)",
+    "unit": "Titre (dilution) ou Ratio U/mL",
+    "high_interpretation": "Positivité évocatrice de connectivite ou de maladie auto-immune systémique. Lupus Érythémateux Systémique (LES), Sclérodermie systémique, Syndrome de Sjögren, Myopathies inflammatoires (polymyosite/dermatomyosite), Connectivite mixtes (Sharp), Hépatite auto-immune. Urgence vitale : Atteinte viscérale menaçante (lupus grave avec glomérulonéphrite lupique, péricardite sévère, pneumopathie interstitielle diffuse ou hypertension artérielle pulmonaire). Conduite à tenir : Rechercher des signes de gravité systémique, caractériser l'aspect de fluorescence en IFI (homogène, moucheté, nucléolaire, centromérique) et réaliser le profil extractible des AAN (ENA : anti-DNA natif, anti-Sm, anti-SSA, anti-SSB, anti-Scl-70, anti-Jo1).",
+    "low_interpretation": "Négatif ou taux indétectable. Absence de connectivite à l'instant T (valeur prédictive négative élevée pour le LES > 95%). Conduite à tenir : Une négativité élimine presque un LES évolutif, mais n'exclut pas une connectivite débutante (refaire si forte suspicion clinique) ou une autre pathologie auto-immune spécifique à AAN négatifs (ex: vascularites à ANCA, myasthénie, polyarthrite rhumatoïde séronégative).",
+    "clinical_notes": [
+      "Piège pré-analytique : Jusqu'à 15-20% de la population générale saine (notamment les sujets âgés) peuvent avoir des AAN positifs à faible titre (1:80 ou 1:160) sans aucune maladie auto-immune. La spécificité clinique dépend du titre et du contexte.",
+      "Indication de la technique : L'immunofluorescence indirecte (IFI) sur cellules HEp-2 reste le gold standard du dépistage. Ne pas demander directement des sous-types d'anticorps sans un dépistage AAN positif, sauf suspicion clinique hautement spécifique (ex: anti-DNA natif pour le suivi du lupus)."
+    ],
+    "created_at": "2026-10-26T01:27:02.921934+00:00",
+    "updated_at": "2026-10-26T01:27:02.921947+00:00"
+  },
+  {
+    "id": "lab_troponine_hs",
+    "name": "Troponine T et I hypersensible (hs-cTn)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Troponine T hs : < 14 ng/L (Sexe-agnostique ou selon fabricant) | Troponine I hs : Homme < 34 ng/L, Femme < 16 ng/L (Variable selon le kit, ex: Abbott ou Roche)",
+    "unit": "ng/L (ou pg/mL)",
+    "high_interpretation": "Élévation (Infarctus du Myocarde [IDM] si cinétique positive/négative avec delta, ou Lésion Myocardique Aiguë Non Ischémique : embolie pulmonaire grave, dissection aortique, myocardite, insuffisance cardiaque aiguë, sepsis sévère, contusion myocardique, insuffisance rénale chronique). Urgence vitale absolue si syndrome coronarien aigu suspecté : ECG immédiat en < 10 min, double anti-agragation plaquettaire (DAP), héparine, et orientation vers une unité de soins intensifs cardiologiques (USIC) ou salle de coronarographie pour reperfusion.",
+    "low_interpretation": "Valeur basse ou normale (< 99e percentile) : N'exclut pas formellement un IDM très précoce (fenêtre d'apparition de 1 à 3 heures). Conduite à tenir : Répéter le dosage à H1 ou H2 selon les algorithmes décisionnels rapides (0h/1h ou 0h/2h de la ESC) pour évaluer le delta, ou à H3 si algorithme standard.",
+    "clinical_notes": [
+      "Piège pré-analytique / Diagnostic : Une élévation chronique de la troponine hs est fréquente en cas d'insuffisance rénale chronique (IRC) par baisse de la clairance et/ou cardiomyopathie hypertensive/urémique sous-jacente. Pour l'IDM, c'est la variation (delta) cinétique entre deux dosages qui prime sur la valeur absolue isolée.",
+      "Règle d'or du concours : Un test de troponine ultra-sensible négatif dans les 2 premières heures suivant le début de la douleur thoracique ne permet PAS d'éliminer un SCA (faux négatif par non-atteinte de la fenêtre temporelle). Il faut impérativement associer l'ECG et répéter le dosage."
+    ],
+    "created_at": "2026-11-13T02:00:39.489093+00:00",
+    "updated_at": "2026-11-13T02:00:39.489105+00:00"
+  },
+  {
+    "id": "lab_cortisol_8h",
+    "name": "Cortisol sérique à 8h",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "100 - 550 nmol/L (ou 50 - 250 µg/L) avec un pic matinal à 8h",
+    "unit": "nmol/L",
+    "high_interpretation": "Hypercortisolisme (Maladie de Cushing, syndrome de Cushing ACTH-dépendant ou indépendant, corticosurrénalome) ou états d'hypercortisolisme fonctionnel (stress aigu, sepsis, traumatisme, douleur intense, grossesse, alcoolisme chronique, dépression majeure). Pas de seuil d'urgence vitale immédiate, mais nécessite une enquête étiologique (freinage minute à la dexaméthasone).",
+    "low_interpretation": "Insuffisance surrénalienne (primaire / maladie d'Addison si associée à une ACTH effondrée ou très élevée selon l'origine, ou secondaire / hypophysaire si ACTH basse). SEUIL D'URGENCE VITALE : Cortisol < 100 nmol/L (ou < 3 µg/L) en situation de stress aigu (choc, sepsis) évoquant une insuffisance surrénalienne aiguë (crise addisonienne). CONDUITE À TENIR : Prélèvement pour ACTH/Cortisol (ne retarde pas le traitement), puis injection immédiate d'Hémisuccinate d'Hydrocortisone (HSHC) 100 mg IV + remplissage vasculaire.",
+    "clinical_notes": [
+      "Piège pré-analytique : Le prélèvement doit impérativement être réalisé à 8h00 du matin (respect du rythme circadien nycthéméral, nadir à minuit). Un cortisol isolé sans heure ni contexte clinique n'a aucune valeur.",
+      "Interférences médicamenteuses : Les œstrogènes (contraceptifs oraux, grossesse) augmentent la CBG (Cortisol-Binding Globulin) et donc le cortisol total sans qu'il y ait d'hypercortisolisme clinique (nécessite le dosage du cortisol libre ou salivaire).",
+      "Situation de stress : En réanimation, un cortisol basal élevé est la règle (réponse normale au stress). À l'inverse, un cortisol basal < 400 nmol/L chez un patient en choc septique vasoprésor-dépendant suspecte une insuffisance surrénalienne relative liée à la réanimation (ICAR)."
+    ],
+    "created_at": "2026-10-27T05:21:00.467422+00:00",
+    "updated_at": "2026-10-27T05:21:00.467435+00:00"
+  },
+  {
+    "id": "lab_quantiferon_tb_gold",
+    "name": "Quantiféron-TB Gold (IGRA - Interferon-Gamma Release Assay)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "Négatif (Réponse aux antigènes insuffisante)",
+    "unit": "UI/mL d'interféron-gamma (ou IU/mL)",
+    "high_interpretation": "Positif (≥ 0,35 UI/mL et ≥ 25% du bruit de fond / témoin négatif) : Témoin d'une infection par Mycobacterium tuberculosis (tuberculose-infection latente ou maladie tuberculeuse active). Ne permet pas de différencier une infection latente (ITL) d'une tuberculose maladie. Conduite à tenir : Évaluation clinique et radiologique (radiographie thoracique) pour éliminer une tuberculose active avant toute prescription de traitement de l'ITL.",
+    "low_interpretation": "Négatif (< 0,35 UI/mL) : Absence de sensibilisation détectable aux antigènes de M. tuberculosis. Indéterminé : Témoin positif (mitogène) insuffisant (anergie, immunodépression profonde, erreur technique) ou témoin négatif trop élevé (fuite d'interféron spontanée). Conduite à tenir : Répéter le test ou recourir à l'IDR à la tuberculine selon le contexte clinique.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le prélèvement doit être réalisé directement dans les tubes spécifiques (Nil, TB Antigen, Mitogen) et agités vigoureusement (10 fois) immédiatement après le prélèvement, puis incubés rapidement à 37°C en laboratoire dans les 16 heures.",
+      "Avantage majeur par rapport à l'IDR : Absence de réaction croisée avec le BCG (Bacille de Calmette et Guérin) et les mycobactéries environnementales (M. avium, etc.), ce qui en fait l'examen de choix chez les sujets vaccinés par le BCG, très fréquent en Algérie."
+    ],
+    "created_at": "2026-10-27T10:45:33.243654+00:00",
+    "updated_at": "2026-10-27T10:45:33.243668+00:00"
+  },
+  {
+    "id": "lab_ponction_pleurale_light",
+    "name": "Liquide Pleural : Critères de Light (Exsudat vs Transsudat)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "Transsudat si tous les critères de Light sont négatifs | Exsudat si au moins 1 critère positif",
+    "unit": "Rapport et g/L",
+    "high_interpretation": "Exsudat pleural (Légende de Light : Protéines pleurales/sériques > 0.5, LDH pleural/sérique > 0.6, LDH pleural > 2/3 de la limite supérieure de la normale sérique). Causes : Infections (pleurésie para-pneumonique, empyème - URGENCE si purulent), Tuberculose (très fréquente en Algérie, lymphocytaire), Néoplasies (mésothéliome, métastases), Embolie pulmonaire, Connectivites.",
+    "low_interpretation": "Transsudat pleural (Tous les critères de Light < 0.5 pour protides et < 0.6 pour LDH). Causes : Insuffisance cardiaque gauche (cause n°1), Cirrhose hépatique (hydrothorax), Syndrome néphrotique, Dialyse péritonéale, Atélectasie aiguë. Pas d'urgence immédiate liée au liquide lui-même, traiter la cause médicale sous-jacente.",
+    "clinical_notes": [
+      "Piège classique des critères de Light : Faux exsudat chez les patients cirrhotiques ou en syndrome néphrotique sous traitement diurétique au long cours (les protéines sanguines se concentrent, faisant basculer un transsudat en exsudat biochimique). Dans ce cas, utiliser le Gradient Albumine Sérum-Pl_pleural > 12 g/L pour confirmer le transsudat.",
+      "Devant tout épanchement pleural exsudatif en Algérie, éliminer systématiquement une tuberculose pleurale (adénosine désaminase - ADA pleurale > 40 UI/L, prédominance lymphocytaire) et une pleurésie infectieuse compliquée (pH < 7.20, glucose < 0.6 g/L ou < 2.2 mmol/L, LDH > 1000 UI/L imposant un drainage thoracique urgent)."
+    ],
+    "created_at": "2026-10-27T16:46:54.741082+00:00",
+    "updated_at": "2026-10-27T16:46:54.741096+00:00"
+  },
+  {
+    "id": "lab_phosphoremie",
+    "name": "Phosphorémie (Phosphate inorganique)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "0.81 - 1.45",
+    "unit": "mmol/L",
+    "high_interpretation": "Hyperphosphorémie : Insuffisance rénale aiguë ou chronique (cause majeure), hypoparathyroïdie (primaire ou chirurgicale), lyse cellulaire massive (syndrome de lyse tumorale, rhabdomyolyse, brûlures étendues, hémolyse), acidose métabolique sévère, intoxication par la vitamine D ou laxatifs riches en phosphate. Seuil d'urgence vitale : > 2.5 mmol/L (risque de calcifications tissulaires métastatiques et d'hypocalcémie aiguë avec tétanie). Conduite à tenir : Arrêt des apports, hydratation, traitement de la cause, chélateurs du phosphore si IRC.",
+    "low_interpretation": "Hypophosphorémie : Hyperparathyroïdie primaire (fuite rénale), carence d'apport ou malabsorption (dénutrition, alcoolisme chronique), syndrome de re-nutrition inappropriée (refeeding syndrome chez le dénutri), alcalose respiratoire aiguë (passage intracellulaire du phosphate), acidose tubulaire rénale, diabète mal contrôlé (cétose). Seuil d'urgence vitale : < 0.32 mmol/L (hypophosphorémie sévère engageant le pronostic vital avec dysfonction diaphragmatique, encéphalopathie, insuffisance cardiaque, rhabdomyolyse et altération de la libération d'oxygène par diminution du 2,3-DPG). Conduite à tenir : Supplémentation IV prudente sous monitorage cardiaque et biologique strict.",
+    "clinical_notes": [
+      "Piège pré-analytique : L'hémolyse in vitro libère le phosphate intracellulaire et fausse la phosphorémie à la hausse (fausse hyperphosphorémie). Le prélèvement doit être centrifugé rapidement.",
+      "Le syndrome de re-nutrition (refeeding syndrome) en réanimation associe une hypophosphorémie, une hypokaliémie et une hypomagnésémie profondes lors de la reprise de l'alimentation chez un patient dénutri (attention au pic d'insuline intracellulaire)."
+    ],
+    "created_at": "2026-10-27T21:25:28.196807+00:00",
+    "updated_at": "2026-10-27T21:25:28.196821+00:00"
+  },
+  {
+    "id": "lab_beta_2_microglobuline",
+    "name": "Bêta-2-Microglobuline sérique (β2M)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "0.8 - 2.2",
+    "unit": "mg/L",
+    "high_interpretation": "Élévation par augmentation de la synthèse cellulaire ou défaut d'élimination rénale. Causes majeures : Insuffisance rénale (diminution du DFG), Hémopathies malignes (Myélome multiple, LLC, lymphomes de Hodgkin et non hodgkiniens), Affections inflammatoires chroniques et auto-immunes (polyarthrite rhumatoïde, syndrome de Sjögren), Rejet de greffe rénale. Urgence vitale : N/A (valeur pronostique et diagnostique, non une urgence aiguë en soi, mais oriente vers une insuffisance rénale sévère ou une prolifération lymphocytaire massive). Conduite à tenir : Confrérer la valeur à la clairance de la créatinine (DFG) et aux explorations onco-hématologiques (EPP, immunofixation, myélogramme).",
+    "low_interpretation": "Rarement pathologique en soi. Peut se voir dans de rares cas de déficits de synthèse ou lors d'épuration extracorporelle spécifique. Urgence vitale : Aucune. Conduite à tenir : Contrôler le prélèvement si discordance clinique.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : La β2M est filtrée par les glomérules et réabsorbée/catabolisée par les cellules tubulaires proximales. Toute insuffisance rénale entraîne son accumulation sérique indépendamment d'une néoplasie.",
+      "Utilité pronostique majeure au concours de résidanat : Facteur pronostique international (ISS) dans le Myélome Multiple (reflète la charge tumorale et la fonction rénale) et marqueur de l'atteinte tubulaire rénale précoce."
+    ],
+    "created_at": "2026-10-28T00:37:42.424474+00:00",
+    "updated_at": "2026-10-28T00:37:42.424488+00:00"
+  },
+  {
+    "id": "lab_myoglobine",
+    "name": "Myoglobine sérique et urinaire (Mb)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Sérique : < 70 µg/L (Homme) / < 50 µg/L (Femme) | Urinaire : Négative ou < 5 µg/L",
+    "unit": "µg/L",
+    "high_interpretation": "Sérique : Rhabdomyolyse aiguë (traumatisme, crush syndrome, ischémie, efforts intenses, toxiques, statines, infections), syndrome des loges, infarctus du myocarde (précoce mais non spécifique). Seuil d'urgence : Myoglobine sérique > 1000 µg/L ou myoglobinurie massive (urines rouge-brun sans hématies au sedim) menaçant le rein par nécrose tubulaire aiguë (IRA pigmentaire). Conduite à tenir : Hydratation IV agressive, alcalinisation des urines (bicarbonate de sodium), correction des ioniogrammes (K+), surveillance de la diurèse horaire.",
+    "low_interpretation": "Absence de signification pathologique particulière, témoigne de l'intégrité musculaire ou d'une cinétique dépassée (la myoglobine a une clairance et une demi-vie très courtes de 15 à 30 minutes).",
+    "clinical_notes": [
+      "Piège diagnostique majeur : Une bandelette urinaire positive au sang mais un sédiment urinaire sans hématies (hématurie 'fictive') signe une myoglobinurie ou une hemoglobinurie.",
+      "Cinétique : Marqueur très précoce (élévation en 1 à 3h, pic en 6 à 12h, normalisation en 24 à 48h), sa normalisation rapide ne doit pas éliminer une rhabdomyolyse si le prélèvement est tardif (préférer les CPK sériques dont la cinétique est plus étalée)."
+    ],
+    "created_at": "2026-10-28T07:01:44.573864+00:00",
+    "updated_at": "2026-10-28T07:01:44.573879+00:00"
+  },
+  {
+    "id": "lab_anticorps_antiphospholipides",
+    "name": "Anticorps Anti-Phospholipides (aPL : Lupus Anticoagulant, Anti-Cardiolipine, Anti-Bêta2GP1)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Lupus Anticoagulant (LA) : Négatif | Anti-Cardiolipine (aCL IgG/IgM) : < 10 UGPL/UMPL (ou UI/mL) | Anti-Bêta2 Glycoprotéine 1 (aB2GP1 IgG/IgM) : < 10 UI/mL",
+    "unit": "Qualitatif (Négatif/Positif) ou UI/mL (titres modérés à forts > 40 UI/mL)",
+    "high_interpretation": "Présence d'aPL : Évoque un syndrome des antiphospholipides (SAPL, primaire ou secondaire au LES). Manifestations cliniques : Thromboses vasculaires (artérielles, veineuses, microvasculaires) et/ou morbidité obstétricale (fausses couches à répétition, morts fœtales). Urgence vitale : SAPL catastrophique (Asherson) avec défaillances multiviscérales aiguës. Conduite à tenir : Anticoagulation curative immédiate si thrombose avérée, corticothérapie et échanges plasmatiques si SAPL catastrophique.",
+    "low_interpretation": "Négatif (Absence d'aPL significatifs) : N'exclut pas formellement le diagnostic si la clinique est fortement évocatrice (refaire le dosage à 12 semaines d'intervalle ou rechercher d'autres isotypes/cibles comme anti-phosphatidylserine/prothrombine). Une positivité isolée et faible sans critères cliniques (thrombose/obstétrique) n'a pas de valeur pathologique (faux positifs transitoires sous infection ou médicaments).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le test du Lupus Anticoagulant (LA) est basé sur la cohésion de tests de coagulation in vitro (comme le TCK). Une héparinothérapie ou une anticoagulation par antivitamine K (AVK) ou AOD perturbe complètement l'interprétation et donne de faux positifs ou fausses négativités, nécessitant des agents neutralisants ou l'arrêt des traitements.",
+      "Critère diagnostique indispensable : Pour poser le diagnostic biologique définitif d'un SAPL (classification de Sydney), la positivité des aPL (LA, aCL ou aB2GP1) doit être confirmée à deux reprises ou plus, à au moins 12 semaines d'intervalle."
+    ],
+    "created_at": "2026-10-28T14:15:03.740283+00:00",
+    "updated_at": "2026-10-28T14:15:03.740298+00:00"
+  },
+  {
+    "id": "lab_anticorps_anti_transglutaminase",
+    "name": "Anticorps anti-Transglutaminase tissulaire IgA et IgG (Anti-tTG)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Négatif < 10 U/mL (Zone grise : 10 - 18 U/mL | Positif > 18 U/mL)",
+    "unit": "U/mL",
+    "high_interpretation": "Valeur élevée : En faveur d'une maladie cœliaque (sensibilité et spécificité > 95% pour les IgA anti-tTG). Un taux supérieur à 10 fois la limite supérieure de la normale ( > 10x LSN) associé aux anti-endomysium (EMA) positifs permet, selon les recommandations ESPGHAN, de se passer de la biopsie duodénale chez l'enfant symptomatique. Conduite à tenir : Réaliser des anticorps anti-endomysium (EMA) en confirmation et programmer une FOGD avec biopsies bulbaires et distales (classées Marsh).",
+    "low_interpretation": "Valeur basse ou négative : Exclut la maladie cœliaque sous réserve d'un dosage simultané des IgA totales sériques normal (pour éliminer un déficit sélectif en IgA, fréquent chez les cœliaques). En cas de déficit en IgA, ce sont les IgG anti-tTG ou les IgG anti-deamidated gliadin peptides (DGP) qu'il faut interpréter.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le patient doit impérativement être sous régime normogluten au moment du dosage (au moins 3g de gluten/jour pendant 6 semaines avant le test). Un régime sans gluten strict fausse négativement les sérologies en quelques mois.",
+      "Piège biologique : Toujours vérifier le dosage des IgA totales sériques associé. Un déficit sélectif en IgA (fréquent dans la maladie cœliaque) donne de faux négatifs pour les anti-tTG IgA, nécessitant le recours systématique aux formes IgG (anti-tTG IgG ou anti-DGP IgG)."
+    ],
+    "created_at": "2026-10-30T16:45:45.550366+00:00",
+    "updated_at": "2026-10-30T16:45:45.550382+00:00"
+  },
+  {
+    "id": "lab_calcitonine",
+    "name": "Calcitonine sérique (CT)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Homme : < 10 ng/L (pg/mL) | Femme : < 5 ng/L (pg/mL)",
+    "unit": "ng/L (ou pg/mL)",
+    "high_interpretation": "Valeurs élevées (> 100 ng/L) : suspicion forte de Cancer Médullaire de la Thyroïde (CMT). Valeurs entre 10 et 100 ng/L : test de stimulation au pentagastrine ou au calcium (si disponible) ou test à l'effort. Causes non CMT (fausses élévations) : insuffisance rénale chronique (diminution de la clairance), hypergastrinémie (IPP au long cours, atrophie gastrique), neuroendocrinopathies, pathologie pulmonaire (BPCO, carcinome anaplasique ou à petites cellules), thyroïdite auto-immune (Hashimoto), grossesse.",
+    "low_interpretation": "Valeurs basses (< limite de détection ou normales) : pas de signification pathologique directe. Exclut pratiquement un CMT patent. Une calcitonine indétectable après chirurgie thyroïdienne pour CMT est le meilleur témoin de la rémission complète.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : prélèvement sur tube sec ou EDTA, centrifugation immédiate à froid (+4°C) et congélation rapide du sérum/plasma pour éviter la dégradation de la calcitonine par les protéases sériques.",
+      "Interférence médicamenteuse : les inhibiteurs de la pompe à protons (IPP) augmentent modérément la calcitonine par hypergastrinémie secondaire ; il est recommandé de les arrêter 2 semaines avant le dosage en cas de doute.",
+      "Corrélation anatomo-clinique : Le taux de calcitonine sérique basal est directement corrélé à la masse tumorale et au risque métastatique dans le CMT (valeurs > 500 ng/L associées à un risque élevé de metastases ganglionnaires et à distance)."
+    ],
+    "created_at": "2026-10-29T00:08:07.124606+00:00",
+    "updated_at": "2026-10-29T00:08:07.124619+00:00"
+  },
+  {
+    "id": "lab_troponine_nt_probnp_ep",
+    "name": "Troponine I/T et NT-proBNP (Stratification EP)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Troponine I usuelle: < 0.04 ng/mL (hs-cTn selon fabricant) | NT-proBNP: < 300 pg/mL (< 125 si < 75 ans)",
+    "unit": "ng/mL ou pg/mL",
+    "high_interpretation": "Élévation (Troponine > seuil de nécrose/souffrance myocardique, NT-proBNP > 500-600 pg/mL) : Témoin d'une souffrance ou nécrose myocardique aiguë et de dysfonction ventriculaire droite. En cas d'Embolie Pulmonaire (EP), classe l'patient en EP à risque intermédiaire-haut (nécessitant une surveillance rapprochée en réanimation et readiness pour une thrombolyse de sauvetage en cas de dégradation). Urgence vitale : Risque de choc obstructif imminent.",
+    "low_interpretation": "Valeurs normales : En faveur d'une EP à faible risque (ou intermédiaire-faible si autres critères négatifs). Permet d'orienter vers une prise en charge ambulatoire (scores PESI simplifié = 0 ou HESTIA négatif) sous réserve des critères sociaux et hémodynamiques.",
+    "clinical_notes": [
+      "Piège pré-analytique/clinique : Une troponine ou un NT-proBNP élevé dans l'EP ne signe pas forcément un IDM aigu associé, mais reflète la contrainte mécanique aiguë exercée sur le ventricule droit (VD).",
+      "Règle ESC EP : Une EP à risque intermédiaire est définie par la présence conjointe d'un dysfonctionnement VD à l'ETT (ou CT) ET d'élévation des biomarqueurs cardiaques (Troponines ou NT-proBNP).",
+      "Piège de concours : Ne jamais éliminer une EP grave sur une seule troponine normale au tout début des symptômes (cinétique à respecter)."
+    ],
+    "created_at": "2026-10-29T06:07:54.405239+00:00",
+    "updated_at": "2026-10-29T06:07:54.405253+00:00"
+  },
+  {
+    "id": "lab_clairance_alpha1_antitrypsine",
+    "name": "Clairance fécale de l'Alpha-1-Antitrypsine (Clairance de l'A1AT)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "< 20 (jusqu'à 24 selon les techniques)",
+    "unit": "mL/min ou mL/24h",
+    "high_interpretation": "Élévation pathologique signant une perte digestive de protéines ou entéropathie exsudative (fuite lymphatique entérique ou atteinte de la muqueuse). Causes : lymphangiectasies intestinales primitives ou secondaires (compression, tuberculose péritonéale fréquente en Algérie), entéropathies inflammatoires (MICI : Crohn, RCH), maladie coeliaque réfractaire, insuffisance cardiaque droite sévère, péricardite constrictive. Conduite à tenir : enquête étiologique orientée (endoscopie digestive haute et basse avec biopsies, imagerie abdomino-pelvienne, échographie cardiaque).",
+    "low_interpretation": "Valeurs normales ou basses, excluant une entéropathie exsudative. Une hypoalbuminémie avec une clairance de l'A1AT normale oriente plutôt vers un défaut de synthèse hépatique (cirrhose, dénutrition majeure) ou une fuite rénale (syndrome néphrotique).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Nécessité absolue d'un recueil des selles de 24 à 72 heures associé simultanément à un dosage sérique de l'A1AT pour le calcul de la clairance. Attention à la contamination urinaire des selles qui fausse totalement le résultat.",
+      "Résistance enzymatique : L'Alpha-1-antitrypsine est choisie car elle résiste à la protéolyse digestive et n'est ni sécrétée ni dégradée dans la lumière intestinale, contrairement à l'albumine ou l'alpha-2-macroglobuline.",
+      "Formule de calcul indispensable : Clairance (mL/min ou mL/24h) = [Concentration fécale de l'A1AT (mg/g) x Poids des selles des 24h (g)] / [Concentration sérique de l'A1AT (mg/mL)]."
+    ],
+    "created_at": "2026-11-12T21:00:00.756742+00:00",
+    "updated_at": "2026-11-12T21:00:00.756757+00:00"
+  },
+  {
+    "id": "lab_acth_plasmatique",
+    "name": "ACTH plasmatique (Corticotrophine)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "10 - 50 (Valeurs de référence à 8h du matin)",
+    "unit": "pg/mL",
+    "high_interpretation": "Valeur élevée (> 50 pg/mL) : Évoque une origine ACTH-dépendante. Causes principales : Maladie de Cushing (adénome hypophysaire corticotrope), Sécrétion ectopique d'ACTH (tumeur neuroendocrine, carcinome bronchique à petites cellules), ou Insuffisance surrénalienne primaire (Maladie d'Addison, avec rétrocontrôle négatif effondré du cortisol, ACTH > 100 pg/mL). Conduite à tenir : Rechercher des signes d'imprégnation cortisonique ou d'insuffisance surrénalienne aiguë (urgence vitale si Addison méconnue, risque de choc cardiométabolique et mélanodermie), réaliser une imagerie hypothalamo-hypophysaire ou thoraco-abdominale selon le contexte.",
+    "low_interpretation": "Valeur basse (< 10 pg/mL) ou effondrée (< 5 pg/mL) : Évoque une origine ACTH-indépendante. Causes principales : Corticosurrénalome malin, Adénome bénin sécrétant de cortisol (Syndrome de Cushing surrénalien), ou Iatrogénie (corticothérapie au long cours ayant inhibé l'axe corticotrope). Conduite à tenir : Évaluer le risque d'atrophie surrénalienne induite par les corticoïdes, se méfier d'un sevrage brutal en corticoïdes pouvant déclencher une insuffisance surrénalienne aiguë.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'ACTH est une molécule extrêmement fragile (très sensible aux protéases plasmatiques). Le prélèvement doit impérativement être réalisé sur tube EDTA réfrigéré, centrifugé immédiatement à froid (4°C), et le plasma congelé à -20°C ou -80°C dans l'heure qui suit.",
+      "Cycle nycthéméral indispensable : L'ACTH présente un rythme circadien avec un pic matinal (8h) et un nadir au coucher minuit. Les dosages doivent toujours être interprétés en fonction de l'heure du prélèvement et couplés systématiquement au dosage du cortisol plasmatique ou salivaire."
+    ],
+    "created_at": "2026-10-29T19:07:02.692261+00:00",
+    "updated_at": "2026-10-29T19:07:02.692278+00:00"
+  },
+  {
+    "id": "lab_serologie_hepatite_b",
+    "name": "Sérologie Hépatite B complète (Ag HBs, Ac anti-HBs, Ac anti-HBc, Ag HBe, ADN VHB)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "Ag HBs: Négatif | Ac anti-HBs: >= 10UI/L (immunité) | Ac anti-HBc: Négatif | Ag HBe: Négatif | ADN VHB: Seuil de détection (indétectable)",
+    "unit": "Qualitatif (Négatif/Positif) ou UI/mL pour l'ADN VHB",
+    "high_interpretation": "Ag HBs positif : Infection VHB (aiguë ou chronique). Ag HBe positif : Forte réplication virale et haute contagiosité. ADN VHB élevé (> 2000 UI/mL en chronique) : Activité virale significative nécessitant une évaluation pour traitement antiviral (notamment avant immunosuppression ou chimiothérapie). Ac anti-HBc total positif : Témoin d'un contact présent ou passé avec le VHB.",
+    "low_interpretation": "Ac anti-HBs < 10 UI/L : Absence d'immunité protectrice post-vaccinale ou post-infection. Ag HBs négatif couplé à Ac anti-HBs positif (> 10 UI/L) : Guérison d'une hépatite B ancienne ou vaccination efficace. Profil totalement négatif (Ag HBs -, Ac anti-HBs -, Ac anti-HBc -) : Sujet naïf, indications de la vaccination si facteurs de risque.",
+    "clinical_notes": [
+      "Piège du profil 'Anti-HBc isolé' (Ag HBs -, Ac anti-HBs -, Ac anti-HBc +) : Retrouvé en phase de fenêtre sérologique d'une hépatite aiguë, après perte des anti-HBs chez un ancien guéri, ou faux positif. Conduite à tenir : doser l'ADN VHB pour éliminer une infection occulte.",
+      "Mutations d'escape de l'Ag HBs : Des variants de l'Ag HBs peuvent induire une infection active avec Ag HBs indétectable par certains réactifs de laboratoire, nécessitant le recours à la PCR ADN VHB.",
+      "Dépistage pré-thérapeutique impératif : Le triptyque (Ag HBs, Ac anti-HBs, Ac anti-HBc) est obligatoire avant toute instauration d'une biothérapie, d'une chimiothérapie ou d'une immunosuppression pour prévenir une réactivation virale fatale (hépatite fulminante)."
+    ],
+    "created_at": "2026-10-29T23:27:37.734224+00:00",
+    "updated_at": "2026-10-29T23:27:37.734240+00:00"
+  },
+  {
+    "id": "lab_gazometrie_arterielle",
+    "name": "Gazométrie artérielle / Équilibre Acido-Basique (pH, PaO2, PaCO2, HCO3-, SaO2)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "pH: 7.35 - 7.45 | PaO2: 80 - 100 mmHg | PaCO2: 35 - 45 mmHg | HCO3-: 22 - 26 mmol/L | SaO2: > 95%",
+    "unit": "mmHg (gaz), mmol/L (bicarbonates), sans unité (pH, SaO2)",
+    "high_interpretation": "pH > 7.45 (Alcalose) : Alcalose métabolique (vomissements, diurétiques, hypokaliémie) ou respiratoire (hyperventilation, anxiété, embolie pulmonaire initiale). PaCO2 > 45 mmHg (Hypoventilation alvéolaire / Acidose respiratoire). HCO3- > 26 mmol/L (Alcalose métabolique ou compensation métabolique d'une acidose respiratoire chronique).",
+    "low_interpretation": "pH < 7.35 (Acidose) : Acidose métabolique (acidocétose diabétique, acidose lactique, insuffisance rénale, intoxications) ou respiratoire (hypoventilation aiguë, BPCO décompensée). PaO2 < 80 mmHg (Hypoxémie : modérée 60-80, sévère < 60 mmHg). PaCO2 < 35 mmHg (Hyperventilation / Alcalose respiratoire). HCO3- < 22 mmol/L (Acidose métabolique ou compensation métabolique d'une alcalose respiratoire chronique).",
+    "clinical_notes": [
+      "Urgences vitales : pH < 7.15 (risque d'arythmie fatale et collapsus cardiovasculaire) ou pH > 7.60 ; PaO2 < 60 mmHg (hypoxémie menaçante nécessitant une oxygénothérapie ou ventilation).",
+      "Piège pré-analytique majeur : Présence de bulles d'air dans la seringue (fausse augmentation de la PaO2, fausse diminution de la PaCO2), délai excessif avant analyse sans glaçage (consommation d'O2 et production de CO2 par les leucocytes/érythrocytes entraînant une fausse hypoxémie et une fausse acidose).",
+      "Règle de Winter (compensation de l'acidose métabolique) : PaCO2 attendue = (1.5 x HCO3-) + 8 (± 2). Si la PaCO2 mesurée est différente, il existe un trouble acido-basique mixte."
+    ],
+    "created_at": "2026-11-08T21:17:14.065871+00:00",
+    "updated_at": "2026-11-08T21:17:14.065889+00:00"
+  },
+  {
+    "id": "lab_cortisol_uri_freinage_dexa",
+    "name": "Cortisol libre urinaire des 24h (CLU) & Test de freinage minute à la Dexaméthasone",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "CLU : 50 - 250 µg/24h (130 - 680 nmol/24h) | Freinage minute (1mg à minuit) : Cortisolemie post-test < 50 nmol/L (< 1.8 µg/dL)",
+    "unit": "µg/24h (CLU) et nmol/L ou µg/dL (Freinage)",
+    "high_interpretation": "Hypercortisolisme (Maladie de Cushing, Syndrome de Cushing ACTH-dépendant ou ACTH-indépendant, Pseudo-Cushing : alcoolisme, obésité morbide, dépression). Conduite à tenir : Éliminer une corticothérapie exogène (interrogatoire), confirmer par un 2ème test de première intention (CLU, freinage ou cortisol salivaire nocturne), puis doser l'ACTH plasmatique pour orienter l'enquête étiologique.",
+    "low_interpretation": "Insuffisance surrénalienne (primaire ou secondaire). Note : Le test de freinage minute ne sert pas à explorer l'hypocortisolisme (qui nécessite un test au Synacthène). Un CLU effondré plaide pour une insuffisance surrénalienne chronique ou une freinage iatrogène par les corticoïdes.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : s'assurer de la rigueur de la collecte des urines de 24h (vérifier la créatininurie des 24h pour valider la complétude de la miction).",
+      "Faux positifs du freinage minute : inducteurs enzymatiques (phénytoïne, carbamazépine, rifampicine accélérant la clairance de la dexaméthasone), estrogènes (augmentant la CBG), stress aigu, obésité, dépression.",
+      "Piège du concours : une insuffisance surrénalienne secondaire (hypophysaire) se traduit par une ACTH basse ou inadaptéement normale, un cortisol bas, mais un test au Synacthène pouvant être normal au tout début (atrophie surrénalienne non encore installée)."
+    ],
+    "created_at": "2026-10-30T10:18:49.939478+00:00",
+    "updated_at": "2026-10-30T10:18:49.939490+00:00"
+  },
+  {
+    "id": "lab_cpk_totale",
+    "name": "Créatine Phosphokinase totale (CPK)",
+    "category": "Cardiologie & Vasculaire",
+    "normal_range": "Homme: < 190 UI/L | Femme: < 170 UI/L (à 37°C, variable selon les techniques)",
+    "unit": "UI/L",
+    "high_interpretation": "Élévation témoignant d'une souffrance ou d'une nécrose tissulaire (musculaire squelettique, myocardique ou cérébrale). Causes majeures : rhabdomyolyse aiguë (CPK > 5 à 10x la N, risque d'insuffisance rénale aiguë par myoglobinurie), infarctus du myocarde (IDM), traumatismes musculaires, injections intramusculaires répétées, convulsions, efforts physiques intenses, myopathies inflammatoires (polymyosite, dermatomyosite), iatrogénie (statines, fibrates). Seuil d'urgence critique : CPK > 5000 UI/L (risque majeur de nécrose tubulaire aiguë, protocole d'hydratation IV massive et alcalinisation des urines requis).",
+    "low_interpretation": "Valeur basse généralement sans signification pathologique directe. Retrouvée chez les sujets dénutris, en cas de fonte musculaire importante (sarcopénie, cachexie néoplasique, maladies chroniques consumptives) ou d'hyperthyroïdie (parfois associée à une diminution de la masse musculaire). Pas de seuil d'urgence vitale pour les valeurs basses.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : l'activité CPK est très riche dans le muscle squelettique et le myocarde ; une ponction veineuse traumatique, un électromyogramme (EMG) récent ou des injections IM intempestives élèvent faussement les taux.",
+      "Spécificité tissulaire : bien que la CPK totale soit sensible pour la rhabdomyolyse, son isoenzyme CK-MB reste un marqueur historique mais détrôné par la troponine ultrasensible pour le diagnostic d'IDM. Penser à doser la myoglobinémie et la fonction rénale (créatininémie) devant toute hyperCKémie massive.",
+      "Règle en réanimation : toute rhabdomyolyse avec CPK > 1000 UI/L associée à des urines foncées doit faire craindre une myoglobinurie obstructive et néphrotoxique, nécessitant un remplissage vasculaire précoce par NaCl 0.9% pour maintenir un diurèse forcée > 100-200 mL/h."
+    ],
+    "created_at": "2026-10-30T21:38:37.046271+00:00",
+    "updated_at": "2026-10-30T21:38:37.046288+00:00"
+  },
+  {
+    "id": "lab_marqueurs_tumoraux_ace_ca",
+    "name": "Marqueurs Tumoraux (ACE, CA 125, CA 19-9, CA 15-3)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "ACE: < 5 ng/mL (fumeur < 10) | CA 125: < 35 U/mL | CA 19-9: < 37 U/mL | CA 15-3: < 30 U/mL",
+    "unit": "ng/mL (ACE) ou U/mL (CA)",
+    "high_interpretation": "ACE élevé : Adénocarcinomes (colorectal, estomac, poumon, sein, medullaire de la thyroïde). CA 125 élevé : Carcinome épithélial ovarien, endométriose, règles, grossesse, péritonite. CA 19-9 élevé : Adénocarcinome pancréatique, voies biliaires, colorectal. CA 15-3 élevé : Cancer du sein métastatique. Pas d'urgence vitale immédiate (valeur pronostique et de suivi, jamais de dépistage de masse). Conduite à tenir : Bilan d'imagerie orienté et recherche de récidive ou de métastases.",
+    "low_interpretation": "Valeurs basses ou dans les limites de la normale : N'élimine formellement pas une pathologie maligne au début ou peu sécrétante (faible sensibilité des marqueurs tumoraux pris isolément). Aucune urgence ni conduite à tenir spécifique.",
+    "clinical_notes": [
+      "Piège du CA 19-9 : Nul chez les sujets de phénotype Lewis a-b- (environ 5 à 10% de la population, incapacité génétique à synthétiser cet épitope).",
+      "Faux positifs fréquents : Le CA 125 s'élève physiologiquement pendant les menstruations, la grossesse et en cas d'épanchement séreux (ascite, pleurésie bénigne). L'ACE s'élève chez les grands fumeurs et en cas de pathologie hépatique bénigne (ictère obstructif, cirrhose).",
+      "Utilisation clinique : Indiqués essentiellement pour le suivi thérapeutique et la détection précoce des récidives post-opératoires, jamais pour le diagnostic positif ou le dépistage en population générale."
+    ],
+    "created_at": "2026-11-03T01:42:14.933507+00:00",
+    "updated_at": "2026-11-03T01:42:14.933524+00:00"
+  },
+  {
+    "id": "lab_bilan_hemolyse",
+    "name": "Bilan d'hémolyse (Haptoglobine, LDH, Bilirubine libre)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "Haptoglobine: 0.3 - 2.0 g/L | LDH: 135 - 225 UI/L | Bilirubine libre (indirecte): < 10 mg/L (< 17 µmol/L)",
+    "unit": "Mixte (g/L, UI/L, µmol/L)",
+    "high_interpretation": "Hémolyse (intra ou extravasculaire) : effondrement de l'Haptoglobine (consommée par liaison à l'hémoglobine libre), élévation majeure des LDH (libération intracellulaire) et élévation de la Bilirubine libre (non conjuguée, par catabolisme de l'hème). Urgence vitale: CIVD, hémolyse aiguë massive, choc transfusionnel. Conduite à tenir: test de Coombs direct (TCD), NFS, réticulocytes, frottis sanguin.",
+    "low_interpretation": "Haptoglobine basse : pathognomonique d'une hémolyse intravasculaire ou extravasculaire (ou insuffisance hépatique sévère par défaut de synthèse). LDH basse: rare, peu de signification clinique propre (parfois carence en vitamine B6). Bilirubine libre basse: sans signification pathologique.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'haptoglobine est une protéine de l'inflammation (glycoprotéine de la phase aiguë). En cas d'hémolyse associée à un syndrome inflammatoire (infection, connectivite), sa valeur peut faussement se normaliser ou s'élever, masquant l'hémolyse.",
+      "Piège analytique des LDH : Une hémolyse in vitro (prélèvement traumatique, garrot trop serré) provoque une fausse élévation spectaculaire des LDH et une fausse baisse de l'haptoglobine, mimant parfaitement une anémie hémolytique.",
+      "Bilan de certitude : Devant une suspicion d'hémolyse, toujours associer le taux de réticulocytes (élevé > 120 G/L en cas d'hémolyse régénérative) et rechercher des schistocytes sur le frottis sanguin (orientation vers une MAT)."
+    ],
+    "created_at": "2026-10-31T15:27:24.052259+00:00",
+    "updated_at": "2026-10-31T15:27:24.052277+00:00"
+  },
+  {
+    "id": "lab_microalbuminurie",
+    "name": "Microalbuminurie (MAU)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Moins de 30 (Urines de 24h: < 30 mg/24h ; Rapport Albuminurie/Créatininurie: < 3 mg/mmol ou < 30 mg/g)",
+    "unit": "mg/24h ou mg/g de créatinine",
+    "high_interpretation": "Albuminurie persistante entre 30 et 300 mg/24h (stade de néphropathie débutante). Causes majeures : Néphropathie diabétique (type 1 et 2), glomérulonéphropathie chronique, HTA ancienne, pré-éclampsie. Signe précoce de dysfonctionnement endothélial et de morbi-mortalité cardiovasculaire globale. Conduite à tenir : Confirmer sur 2 à 3 dosages sur 3 à 6 mois, optimiser le contrôle glycémique (HbA1c < 7%) et tensionnel (IECA ou ARA2 en première intention).",
+    "low_interpretation": "Valeur physiologique normale (< 30 mg/24h). Absence d'atteinte glomérulaire significative à ce stade. Aucune intervention spécifique requise en dehors du suivi habituel des patients à risque (diabète, HTA).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Faux positifs fréquents en cas d'effort physique intense récent, d'infection urinaire (leucocyturie/hématurie), de fièvre, d'insuffisance cardiaque décompensée ou de menstruations. Toujours éliminer une IU par ECBU avant de conclure.",
+      "Recommandation internationale : Préférer systématiquement le rapport Albuminurie/Créatininurie (RAC) sur un échantillon urinaire (de préférence le premier urine du matin) plutôt que la collecte des urines de 24h, souvent source d'erreurs de recueil."
+    ],
+    "created_at": "2026-10-31T19:26:55.781110+00:00",
+    "updated_at": "2026-10-31T19:26:55.781123+00:00"
+  },
+  {
+    "id": "lab_complement_c3_c4",
+    "name": "Complément sérique C3 et C4",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "C3: 0.9 - 1.8 g/L | C4: 0.1 - 0.4 g/L",
+    "unit": "g/L",
+    "high_interpretation": "Signe d'un syndrome inflammatoire aigu ou chronique (phase aiguë, C3 et C4 étant des protéines de l'inflammation). Peu spécifique isolément.",
+    "low_interpretation": "Consommation du complément par activation des voies (classique, alterne ou des lectines). C3 et C4 bas : activation de la voie classique (Lupus érythémateux systémique en poussée, cryoglobulinémie, glomérulonéphrite post-infectieuse, endocardite bactérienne). C3 bas isolé : activation de la voie alterne (Glomérulonéphrite membranoproliférative / type II, syndrome hémolytique et urémique atypique - SHUa). Urgence : évaluer la fonction rénale et rechercher une glomérulonéphrite lupique active.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : instabilité thermique des fractions du complément. Le prélèvement doit être centrifugé rapidement et le sérum congelé à -80°C si le dosage n'est pas immédiat, pour éviter une activation spontanée in vitro faussement abaisseuse.",
+      "Utilité majeure dans le suivi évolutif du Lupus Érythémateux Systémique (LES) : une baisse isolée ou franche de C3/C4 précède souvent la rechute rénale (néphrite lupique) avant même l'élévation de la protéinurie ou la baisse de la clairance de la créatinine."
+    ],
+    "created_at": "2026-10-31T22:41:38.866202+00:00",
+    "updated_at": "2026-10-31T22:41:38.866218+00:00"
+  },
+  {
+    "id": "lab_methemoglobinemie",
+    "name": "Méthémoglobinémie (MetHb)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "0.5 - 1.5",
+    "unit": "% de l'hémoglobine totale",
+    "high_interpretation": "Urgence médicale majeure. 1.5-10%: Asymptomatique ou cyanose discrète. 10-20%: Cyanose cutanéo-muqueuse isolée ('chocolat blood' ne se colorant pas à l'air), céphalées, asthénie. 20-50%: Dyspnée, tachycardie, céphalées intenses, vertiges, syncope, acidose lactique. 50-70%: Arythmies, convulsions, coma, acidose métabolique sévère, défaillance multiviscérale. >70%: Souvent mortel par hypoxie tissulaire profonde. Causes: Toxiques (nitrites, nitrates, benzocaïne, dapsone, anilines), héréditaires (déficit en cytochrome b5 réductase, Hb M). Conduite à tenir: Arrêt immédiat de l'exposition, oxygénothérapie normobare ou hyperbare, et administration de Bleu de Méthylène IV (1 à 2 mg/kg en 5 minutes) si MetHb > 20% (ou > 10% si symptomatique), contre-indiqué en cas de déficit en G6PD (risque d'anémie hémolytique aiguë).",
+    "low_interpretation": "Valeur non pathologique en soi. Correspond à l'absence de méthémoglobinémie significative. Pas de signification clinique particulière, si ce n'est l'exclusion d'une intoxication oxydative ou d'une hémoglobinopathie de type Hb M. Aucune conduite à tenir particulière.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'oxymétrie de pouls (SpO2) est fausse et stagne obstinément autour de 85% malgré l'oxygénothérapie (phénomène de 'trou oxymétrique' où SpO2 lue >> SaO2 mesurée par co-oxymétrie).",
+      "Pour le concours de résidanat : Le diagnostic de certitude repose impérativement sur la co-oxymétrie (spectrophotométrie à plusieurs longueurs d'onde sur sang artériel ou veineux) et non sur la gazométrie artérielle standard qui calcule la saturation au lieu de la mesurer."
+    ],
+    "created_at": "2026-11-01T02:24:46.696982+00:00",
+    "updated_at": "2026-11-01T02:24:46.696998+00:00"
+  },
+  {
+    "id": "lab_lithiemie",
+    "name": "Lithiumémie (Dosage du Lithium)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Traitement d'entretien : 0,6 - 1,2 mmol/L | Sujet âgé : 0,4 - 0,8 mmol/L",
+    "unit": "mmol/L",
+    "high_interpretation": "Surdosage / Intoxication au lithium (Urgence médicale absolue si > 1,2 mmol/L et critique si > 2,0 mmol/L). Causes : Insuffisance rénale, déshydratation, régime hyposodé, iatrogénie (diurétiques thiazidiques, AINS, IEC/ARA2). Signes cliniques : Troubles neuro-psychiques (tremblements amples, dysarthrie, confusion, convulsions, coma), troubles digestifs (nausées, vomissements, diarrhées profuses aggravaant la déshydratation). Conduite à tenir : Arrêt immédiat du traitement, réhydratation IV, alcalinisation des urines, et épuration extra-rénale (hémodialyse) en urgence si lithiémie > 1,5 - 2 mmol/L avec signes neurologiques sévères ou insuffisance rénale associée.",
+    "low_interpretation": "Sous-dosage (Lithiumémie < 0,5 mmol/L). Causes : Ininobservance thérapeutique (très fréquente chez les patients bipolaires), clairance rénale augmentée (grossesse, surcharge sodée). Conséquence : Risque majeur de rechute de l'épisode maniaque ou dépressif (perte d'efficacité de la thymorégulation).",
+    "clinical_notes": [
+      "Délai de prélèvement indispensable : Toujours réaliser le prélèvement 12 heures après la dernière prise (état d'équilibre pharmacocinétique).",
+      "Piège pharmacologique et ionique : Le lithium est réabsorbé au niveau du tubule rénal proximal en compétition directe avec le sodium. Toute déplétion sodée (régime sans sel, diurétiques, sueurs intenses, vomissements) entraîne une réabsorption accrue du lithium et une toxicité menaçant le pronostic vital."
+    ],
+    "created_at": "2026-11-01T16:14:52.398404+00:00",
+    "updated_at": "2026-11-01T16:14:52.398417+00:00"
+  },
+  {
+    "id": "lab_magnesemie",
+    "name": "Magnésémie (Magnésium sérique)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "0.75 - 0.95 (ou 1.7 - 2.2)",
+    "unit": "mmol/L (ou mg/dL)",
+    "high_interpretation": "Hypermagnésémie (rare) : Insuffisance rénale sévère (DFG < 30 mL/min), iatrogénie (perfusions massives, laxatifs ou antiacides magnésiens). Signes cliniques : abolition des réflexes ostéo-tendineux (ROT) dès > 1.5 mmol/L, somnolence, bradycardie, hypotension, troubles de la conduction (bAV) et risque d'arrêt cardiaque en diastole si > 2.5 mmol/L. Conduite à tenir : arrêt immédiat des apports, réhydratation, diurétiques de l'anse, et Gluconate de Calcium IV en urgence si signes électrocardiographiques ou neurologiques.",
+    "low_interpretation": "Hypomagnésémie (fréquente en réanimation) : Pertes digestives (diarrhées chroniques, fistules, malabsorption) ou rénales (diurétiques de l'anse ou thiazidiques, néphropathies tubulaires, hypercalcémie, alcoolisme chronique). Signes cliniques : hyperexcitabilité neuromusculaire (signes de Chvostek et Trousseau, tétanie, tremblements, convulsions), troubles du rythme cardiaque (Torsades de pointes, FV). Conduite à tenir : supplémentation IV (Sulfate de Magnésium) en cas de symptômes aigus ou de Torsades de pointes, associée impérativement à une correction de la kaliémie et de la calcémie.",
+    "clinical_notes": [
+      "Piège biologique : Le magnésium est un ion essentiellement intracellulaire. La magnésémie sanguine ne reflète que 1% du stock total de l'organisme ; une valeur normale n'élimine donc pas une déplétion tissulaire profonde.",
+      "Corrélation clinique indispensable : Une hypomagnésémie sévère entraîne une résistance à la parathormone (hypocalcémie réfractaire) et une inefficacité de la correction de l'hypokaliémie (par fuite rénale de potassium via l'inhibition de la pompe Na+/K+-ATPase).",
+      "Contexte concours de résidanat : Devant toute Torsade de pointes, même si la magnésémie est dans les limites de la norme basse, l'administration empirique de Sulfate de Magnésium IV est un geste salvateur et une question classique d'internat."
+    ],
+    "created_at": "2026-11-01T20:40:49.129896+00:00",
+    "updated_at": "2026-11-01T20:40:49.129913+00:00"
+  },
+  {
+    "id": "lab_calcemie_corrigee_calcium_ionise",
+    "name": "Calcémie corrigée & Calcium ionisé",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Calcémie totale: 2.20 - 2.60 mmol/L (88 - 104 mg/L) | Calcium ionisé: 1.15 - 1.30 mmol/L",
+    "unit": "mmol/L",
+    "high_interpretation": "Hypercalcémie (> 2.60 mmol/L ou Ca ionisé > 1.30 mmol/L) : Causes principales (Hyperparathyroïdie primaire, hypercalcémie humorale maligne sur PTHrP, myélome multiple, sarcoïdose). Urgence vitale si > 3.0 mmol/L (crise hypercalcémique) : risque d'arythmie cardiaque, coma, insuffisance rénale aiguë. Conduite à tenir : Réhydratation IV massive (NaCl 0.9%), diurétiques de l'anse après repletion volémique, bisphosphonates (zolédronique) ou calcitonine en urgence.",
+    "low_interpretation": "Hypocalcémie (< 2.20 mmol/L ou Ca ionisé < 1.15 mmol/L) : Causes principales (Hypoparathyroïdie post-opératoire, carence en vitamine D, insuffisance rénale chronique, hypomagnésémie sévère, pancréatite aiguë). Urgence vitale si < 1.90 mmol/L ou signes de tetanie/spasme laryngé : risque de convulsions, QT long, torsades de pointes, insuffisance cardiaque. Conduite à tenir : Gluconate de calcium IV lent sous monitorage ECG strict, correction d'une éventuelle hypomagnésémie associée.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Toujours corriger la calcémie totale en cas d'hypoalbuminémie. Formule de Payne : Calcémes corrigée (mmol/L) = Calcémes mesurée + 0.02 x (40 - Albuminémie en g/L).",
+      "Le calcium ionisé (forme active) ne dépend pas des protéines plasmatiques et doit être dosé en urgence en réanimation (gaz du sang avec électrolytes) en cas de troubles acido-basiques (l'alcalose augmente la liaison aux protéines et baisse le calcium ionisé libre)."
+    ],
+    "created_at": "2026-11-02T00:56:02.969727+00:00",
+    "updated_at": "2026-11-02T00:56:02.969743+00:00"
+  },
+  {
+    "id": "lab_eca_serique",
+    "name": "Enzyme de Conversion de l'Angiotensine (ECA sérique)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "20 - 70",
+    "unit": "UI/L",
+    "high_interpretation": "Élévation évocatrice de la Sarcoïdose (sensibilité ~60%, spécificité ~90%, corrélée à la charge granulomateuse active). Autres causes : Silicose, Maladie de Crohn, Lèpre, Cirrhose biliaire primitive, Hyperthyroïdie, Insuffisance rénale chronique, Histoplasmose. Pas d'urgence vitale directe liée au chiffre isolé, mais nécessite une évaluation de l'atteinte viscérale (pulmonaire, cardiaque, neurologique). Conduite à tenir : Rechercher des signes d'atteinte systémique, réaliser une radiographie thoracique, un EFR, un ECG et doser la calcémie/hypercalciurie.",
+    "low_interpretation": "Valeur basse ou normale (n'exclut pas une sarcoïdose, notamment les formes inactives, chroniques fibrosantes ou sous corticothérapie). Cause iatrogène majeure : Traitement par Inhibiteurs de l'Enzyme de Conversion (IEC) entraînant une inhibition directe. Conduite à tenir : Vérifier l'ordonnance à la recherche d'une prise d'IEC en cours.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Faux négatif ou effondrement de l'ECA sérique chez les patients traités par des Inhibiteurs de l'Enzyme de Conversion (IEC), à arrêter idéalement plusieurs jours avant le dosage si possible, ou à interpréter en tenant compte du traitement.",
+      "Variabilité pédiatrique et génétique : Les taux physiologiques sont plus élevés chez l'enfant et l'adolescent en phase de croissance. Il existe également un polymorphisme génétique (insertion/délétion du gène ACE) influençant les valeurs basales de référence."
+    ],
+    "created_at": "2026-11-02T07:53:30.125272+00:00",
+    "updated_at": "2026-11-02T07:53:30.125286+00:00"
+  },
+  {
+    "id": "ionogramme_urinaire",
+    "name": "Ionogramme urinaire (Natriurèse, Kaliurèse)",
+    "category": "Ionogramme & Rein",
+    "normal_range": "Natriurèse: 40 - 220 mmol/24h | Kaliurèse: 25 - 100 mmol/24h",
+    "unit": "mmol/24h (ou spot urinaire en mmol/L)",
+    "high_interpretation": "Natriurèse > 20-40 mmol/L en cas d'hyponatrémie : élimine une hypovolémie vraie (pertes extra-rénales), oriente vers une SIADH, une néphropathie perte de sel ou un diurétique. Kaliurèse > 30 mmol/24h en cas d'hypokaliémie : origine rénale (alcalose métabolique, diurétiques, hyperminéralocorticismes, tubulopathies).",
+    "low_interpretation": "Natriurèse < 20 mmol/L : réponse rénale adaptée à une hypovolémie vraie (pertes extra-rénales digestives ou cutanées) ou un état d'œdèmes avec baisse du VCAM (insuffisance cardiaque, cirrhose, syndrome néphrotique). Kaliurèse < 20 mmol/L : origine extra-rénale (pertes digestives basses, vomissements avec alcalose chloropénique).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Toujours interpréter le ionogramme urinaire couplé au ionogramme sanguin et à l'osmolalité urinaire et plasmatique. Pour la natriurèse de spot, le rapport Na/K urinaire et le calcul de la FENa (Fraction Excrétée du Sodium) sont indispensables devant une IRA.",
+      "Règle clé IRA : Une FENa < 1% (ou FeUrea < 35%) oriente vers une insuffisance rénale aiguë fonctionnelle (pré-rénale), tandis qu'une FENa > 2% (ou FeUrea > 50%) oriente vers une nécrose tubulaire aiguë (NTA), sauf si prise récente de diurétiques ou glomérulonéphrite aiguë pigmentaire."
+    ],
+    "created_at": "2026-11-02T18:38:50.864769+00:00",
+    "updated_at": "2026-11-02T18:38:50.864781+00:00"
+  },
+  {
+    "id": "lab_salicylemie",
+    "name": "Salicylémie (Acide Acétylsalicylique / Aspirine)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "Thérapeutique: 1.5 - 3 mmol/L (100 - 200 mg/L) | Anti-inflammatoire: 1.5 - 2.2 mmol/L | Toxique: > 2.0 mmol/L (> 300 mg/L)",
+    "unit": "mg/L (ou mmol/L)",
+    "high_interpretation": "Intoxication salicylée (aigüe ou chronique). Signes d'appel : acouphènes, hyperventilation (alcalose respiratoire primitive), troubles digestifs, hyperthermie. Urgence vitale absolue si > 500 mg/L (3.6 mmol/L) chez l'adulte ou > 300 mg/L chez l'enfant. Conduite à tenir immédiate : Réanimation (alcalinisation des urines par bicarbonate de sodium iso-osmotique pour viser un pH urinaire entre 7.5 et 8.0, remplissage, épuration extrarénale en urgence si neurotoxicités, acidose sévère, OAP ou insuffisance rénale).",
+    "low_interpretation": "Absence d'imprégnation salicylée significative ou posologie thérapeutique infrarésiduelle. Pas de retentissement clinique ni de seuil d'urgence associé.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Demander un dosage de contrôle à H4 ou H6 post-ingestion car l'absorption digestive peut être retardée (formation de bézoards gastriques, galénique gastro-résistante). Ne jamais éliminer une intoxication sur une seule valeur précoce.",
+      "Piège biologique et gazométrique : L'intoxication salicylée induit typiquement un trouble acido-basique mixte associant une alcalose respiratoire (stimulation directe du centre respiratoire bulbaire) et une acidose métabolique à trou anionique sérique augmenté (accumulation d'acide salicylique, lactates et cétones).",
+      "Calcul indispensable au lit du malade : Utiliser le nomogramme de Done (corrélant la salicylémie en fonction du temps post-ingestion) pour estimer la sévérité, tout en sachant que la clinique prime toujours sur la biologie."
+    ],
+    "created_at": "2026-11-03T09:48:27.338199+00:00",
+    "updated_at": "2026-11-03T09:48:27.338216+00:00"
+  },
+  {
+    "id": "lab_frottis_sanguin_schizocytes",
+    "name": "Frottis Sanguin Périphérique : Schizocytes (FS - Schizocytes)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "< 0.5 % (ou < 2 ‰ des hématies, voire 0 selon les laboratoires)",
+    "unit": "% (pourcentage des globules rouges)",
+    "high_interpretation": "Présence de schizocytes (hématies fragmentées par cisaillement mécanique). Seuil critique d'urgence : >= 2 % (ou > 1 % selon les classifications) couplé à une anémie hémolytique mécanique et une thrombopénie. Signe cardinal des Microangiopathies Thrombotiques (MAT : PTTh et SHU), CIVD, valves cardiaques dysfonctionnelles, HTA maligne, éclampsie. Conduite à tenir immédiate : Urgence médicale absolue, évaluation de l'hémostase, LDH, haptoglobine, test de Coombs direct (doit être négatif pour orienter vers une MAT), et discussion urgente pour échanges plasmatiques si suspicion de PTT (score de PLASMIC).",
+    "low_interpretation": "Valeur normale ou physiologiquement insignifiante. Absence de microangiopathie thrombotique ou d'hémolyse mécanique significative. Aucune action particulière requise.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'évaluation des schizocytes nécessite une lecture soigneuse du frottis par un opérateur entraîné. Une anémie ischémique, des artéfacts de prélèvement ou une mauvaise fixation peuvent générer des faux positifs (ou fausses anomalies morphologiques). Toujours corréler avec l'effondrement de l'haptoglobine, l'élévation des LDH et de la bilirubine libre.",
+      "Règle d'or du concours de résidanat : Devant une association anémie hémolytique négative au test de Coombs + thrombopénie + schizocytes >= 1-2% + insuffisance rénale et/ou signes neurologiques, le diagnostic d'Urgence de Purpura Thrombotique Thrombopénique (PTT) est suspecté, imposant de doser en urgence l'activité de l'enzyme ADAMTS13 tout en initiant sans délai les échanges plasmatiques."
+    ],
+    "created_at": "2026-11-03T17:58:07.630278+00:00",
+    "updated_at": "2026-11-03T17:58:07.630296+00:00"
+  },
+  {
+    "id": "lab_reticulocytes",
+    "name": "Numération des Réticulocytes",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "20 000 - 120 000 /mm³ (ou 0.8% - 2.0%)",
+    "unit": "/mm³ (ou G/L)",
+    "high_interpretation": "Réticulocytose (> 120 000 /mm³) : Signe une anémie RÉGÉNÉRATIVE. Évoque en premier lieu une anémie hémolytique (corpusculaire ou extracorpusculaire, test de Coombs, haptoglobine effondrée, LDH augmentées) ou une hémorragie aiguë extériorisée/occulte. Également observée en post-thérapeutique immédiate (fer, vitamine B12, folates, EPO). Pas d'urgence vitale immédiate sauf si le taux d'hémoglobine est bas (syndrome anémique aigu).",
+    "low_interpretation": "Réticulopénie (< 20 000 /mm³) : Signe une anémie ARÉGÉNÉRATIVE (centrale). Évoque une insuffisance médullaire globale (aplasie médullaire, envahissement leucémique ou métastatique, myélofibrose) ou sectorielle (érythroblastopénie aiguë ou chronique, carence martiale profonde, carence en B12/folates, anémie inflammatoire). Urgence si pancytopénie associée (risque infectieux et hémorragique majeur).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Ne jamais se fier au pourcentage brut (%) en cas d'anémie sévère ! Il faut toujours calculer le Taux de Réticulocytes Corrigé (TRC = % réticulocytes x [Hb patient / Hb normale] ou [Hte patient / Hte normale]) ou l'Indice de Production Réticulocytaire (IPR = TRC / facteur de maturation qui est de 1.5 si Hte entre 20-30% et 2 si Hte < 20%).",
+      "Une anémie avec des réticulocytes normaux (entre 20k et 120k) dans un contexte d'anémie sévère est en réalité une anémie arégénérative relative (la moelle ne répond pas de manière adaptée à l'anémie)."
+    ],
+    "created_at": "2026-11-03T23:32:52.243939+00:00",
+    "updated_at": "2026-11-03T23:32:52.243953+00:00"
+  },
+  {
+    "id": "lab_alpha_1_antitrypsine",
+    "name": "Alpha-1-Antitrypsine sérique (A1AT)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "0.90 - 2.00",
+    "unit": "g/L",
+    "high_interpretation": "Valeur élevée : Correspond à une protéine de l'inflammation (phase aiguë). Causes : infection aiguë ou chronique, inflammation systémique, néoplasie, grossesse, œstrogénothérapie. Pas de seuil d'urgence vitale spécifique, interpréter dans le contexte inflammatoire global (CRP, VS).",
+    "low_interpretation": "Valeur basse (< 0.5 g/L évocatrice, < 0.2 g/L pathognomonique) : Déficit en alpha-1-antitrypsine (maladie génétique autosomique co-dominante, allèles Z et S). Causes : emphysème pulmonaire panacinaire précoce (surtout chez le non-fumeur, base pulmonaire), cirrhose hépatique de l'enfant ou de l'adulte, hépatocarcinome, panniculite nécrosante. Urgence relative : sevrage tabagique impératif, éviction des expositions professionnelles, avis spécialisé en pneumologie/gastro-entérologie pour phénotypage (PiMM, PiMZ, PiZZ) et supplémentation éventuelle.",
+    "clinical_notes": [
+      "Piège biologique majeur : L'A1AT étant une protéine de l'inflammation, un taux 'normal' ou faussement 'bas-normal' peut masquer un déficit hétérozygote (PiMZ) ou même homozygote (PiZZ) en période inflammatoire aiguë. Toujours coupler le dosage à un Électrophorèse des Protéines Sériques (E.P.S.) pour rechercher l'aplatissement de la zone alpha-1.",
+      "Corrélation génotypique et phénotypique : Le génotype PiZZ est associé à un risque majeur d'emphysème pulmonaire précoce et d'atteinte hépatique par accumulation polymérique intra-hépatocytaire. Le tabagisme accélère considérablement la destruction pulmonaire par inactivation oxydative de l'enzyme résiduelle."
+    ],
+    "created_at": "2026-11-04T06:48:07.545582+00:00",
+    "updated_at": "2026-11-04T06:48:07.545599+00:00"
+  },
+  {
+    "id": "lab_pal_gammagt",
+    "name": "Phosphatases Alcalines (PAL) et Gamma-Glutamyl transférase (Gamma-GT)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "PAL: 40 - 120 UI/L (Adulte) | Gamma-GT: Homme: 10 - 55 UI/L, Femme: 9 - 35 UI/L",
+    "unit": "UI/L",
+    "high_interpretation": "PAL élevées + Gamma-GT élevées : origine hépato-biliaire (cholestase intra ou extra-hépatique, obstacle, hépatite). PAL élevées + Gamma-GT normales : origine osseuse (maladie de Paget, ostéomalacie, métastases osseuses, croissance) ou physiologique (grossesse au 3ème trimestre). Gamma-GT seule élevée : induction enzymatique (alcool, médicaments inducteurs comme les anticonvulsivants), stéatose hépatique (NAFLD/NASH). Urgence si cholestase aiguë fébrile (angiocholite) : antibiothérapie IV et drainage biliaire urgent (CPRE).",
+    "low_interpretation": "PAL basses : hypophosphatasie (maladie génétique rare), hypothyroïdie, malnutrition sévère, carence en zinc ou magnésium, anémie pernicieuse. Gamma-GT basses : situation le plus souvent sans signification pathologique majeure (parfois hypothyroïdie ou sevrage alcoolique prolongé). Pas d'urgence vitale directe liée à des valeurs basses.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : les PAL sont thermostables et augmentent à température ambiante ; le prélèvement doit être acheminé rapidement au laboratoire. L'hémolyse perturbe modérément certains dosages.",
+      "Règle clé d'orientation diagnostique au concours : face à une élévation isolée des PAL, toujours doser les Gamma-GT (et/ou la 5'-nucléotidase) pour affirmer l'origine hépatique et éliminer l'origine osseuse.",
+      "Chez l'enfant en période de croissance, les PAL physiologiques sont 2 à 3 fois plus élevées que chez l'adulte, ce qui ne doit pas inquiéter à tort."
+    ],
+    "created_at": "2026-11-06T07:11:47.435688+00:00",
+    "updated_at": "2026-11-06T07:11:47.435701+00:00"
+  },
+  {
+    "id": "lab_carboxyhemoglobine_hbco",
+    "name": "Carboxyhémoglobine (HbCO)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "Non-fumeur : < 2 % | Fumeur : 5 - 10 %",
+    "unit": "% de l'hémoglobine totale",
+    "high_interpretation": "Signe une intoxication au monoxyde de carbone (CO), urgence toxicologique majeure (chauffages d'appoint défectueux, chauffe-eau non raccordés, incendies, groupes électrogènes). Clinique progressive : 10-20 % (céphalées pulsatiles, nausées, vertiges), 20-30 % (confusion, tachycardie, faiblesse musculaire), > 30-40 % (coma, convulsions, état de choc, ischémie myocardique aiguë, acidose lactique sévère), > 50-60 % (arrêt cardio-respiratoire). Seuil d'urgence vitale : HbCO > 20-25 % ou présence de signes de gravité neurologiques/cardiologiques. CAT immédiate : évacuation de la zone, oxygénothérapie normobare au masque à haute concentration à réservoir (12-15 L/min) sans attendre les résultats ; indication d'oxygénothérapie hyperbare (OHB) en caisson selon les critères de gravité.",
+    "low_interpretation": "Taux physiologiques (< 2 % chez le non-fumeur) correspondant au catabolisme physiologique de l'hème par l'hème oxygénase. Piège clinique majeur : un taux bas ou normalisé n'élimine absolument pas une intoxication grave récente si le prélèvement a été différé ou réalisé après mise sous oxygène pré-hospitalière, en raison de la clairance rapide du CO.",
+    "clinical_notes": [
+      "Piège d'oxymétrie de pouls (SpO2) : Le saturomètre de pouls standard à deux longueurs d'onde est incapable de distinguer l'HbCO de l'oxyhémoglobine (HbO2). La SpO2 affichée reste faussement normale (98-100 %) malgré une hypoxie tissulaire mortelle. Seule la co-oxymétrie sur analyseur de gaz du sang (artériel ou veineux hépariné) permet le dosage fiable.",
+      "Cinétique d'élimination et demi-vie (T1/2) : La demi-vie de l'HbCO est de 4 à 5 heures à l'air ambiant (FiO2 21 %), réduite à 60-90 minutes sous O2 pur normobare (FiO2 100 %) et à 20-30 minutes en caisson hyperbare à 2,5-3 ATA. Il est impératif de consigner l'heure exacte de fin d'exposition et le délai de mise sous O2 pour évaluer la gravité réelle de l'exposition initiale.",
+      "Indications consensuelles de l'Oxygénothérapie Hyperbare (OHB) au concours : Perte de connaissance (même transitoire ou initiale), signes neurologiques focaux, coma, convulsions, signes d'ischémie myocardique (angor, anomalies ECG, élévation de troponine), femme enceinte (HbF fœtale à très haute affinité pour le CO avec risque létal ou tératogène fœtal), ou taux d'HbCO > 25 % (ou > 15-20 % chez la femme enceinte)."
+    ],
+    "created_at": "2026-11-05T02:39:00.371250+00:00",
+    "updated_at": "2026-11-05T02:39:00.371267+00:00"
+  },
+  {
+    "id": "lab_uree_sanguine",
+    "name": "Urée sérique / sanguine",
+    "category": "Ionogramme & Rein",
+    "normal_range": "2.5 - 7.5 (soit 0.15 - 0.45 g/L)",
+    "unit": "mmol/L",
+    "high_interpretation": "Urée élevée (Urémie) : Insuffisance rénale aiguë (IRA) ou chronique (IRC). Causes pré-rénales (déshydratation, insuffisance cardiaque, syndrome hépatorénal, hypercatabolisme protéique, corticothérapie, saignement digestif haut), rénales (néphropathies organiques) ou post-rénales (obstruction des voies urinaires). Seuil d'alerte > 30 mmol/L : risque d'encéphalopathie urémique et de péricardite urémique, urgence néphrologique.",
+    "low_interpretation": "Urée basse : Dénutrition sévère, insuffisance hépatocellulaire grave (défaut de synthèse par le foie), hyperhydratation extracellulaire (prise de volume), grossesse normale (augmentation du débit filtration glomérulaire). Rarement critique en soi, mais témoigne d'un état catabolique ou hépatique sous-jacent.",
+    "clinical_notes": [
+      "Facteurs pré-analytiques : L'urée est moins spécifique que la créatinine de la fonction rénale car elle subit une réabsorption tubulaire passive sensible au débit urinaire et au statut volémique.",
+      "Piège concours/clinique : Le rapport Urée/Créatinine (en mmol/L) > 100 (ou > 0.1 si créat en mg/L et urée en g/L) oriente fortement vers une cause pré-rénale (déshydratation, hémorragie digestive haute avec digestion des protéines par le tractus).",
+      "Conversion usuelle en Algérie : 1 g/L d'urée = 16.65 mmol/L (ou Urée en mmol/L x 0.06 = Urée en g/L)."
+    ],
+    "created_at": "2026-11-06T00:27:36.055140+00:00",
+    "updated_at": "2026-11-06T00:27:36.055155+00:00"
+  },
+  {
+    "id": "lab_vitamines_b12_b9",
+    "name": "Vitamines B12 et Folates (Vitamine B9)",
+    "category": "Vitamines & Oligo-éléments",
+    "normal_range": "Vitamine B12 : 200 - 900 pg/mL (ou 145 - 637 pmol/L) | Folates sériques : 3 - 20 ng/mL | Folates érythrocytaires : 150 - 600 ng/mL",
+    "unit": "pg/mL (B12) et ng/mL (Folates)",
+    "high_interpretation": "Vitamine B12 élevée : Hépatopathies aiguës ou chroniques (cytolyse libérant les stocks), syndromes myéloprolifératifs (polycytémie vraie, leucémie myéloïde chronique via augmentation de l'haptocorrine), insuffisance rénale chronique. Folates élevés : Supplémentation récente, surdosage médicamenteux, alimentation riche.",
+    "low_interpretation": "Vitamine B12 basse (< 200 pg/mL) : Maladie de Biermer (anémie pernicieuse par atrophie gastrique et anticorps anti-facteur intrinsèque/anti-cellules pariétales), gastrectomie, résection iléale, malabsorption (maladie cœliaque, Crohn), régime végétalien strict. Risque d'atteinte neurologique irréversible (dégénérescence combinée des cordons de la moelle). Folates bas (< 3 ng/mL) : Carence d'apports (alcoolisme, dénutrition), malabsorption jéjunale, besoins accrus (grossesse, hémolyse chronique). Risque de spina bifida chez le fœtus.",
+    "clinical_notes": [
+      "Piège diagnostique majeur (Règle d'or de réanimation/interne) : Ne jamais supplémenter en folates seul une carence mixte en B12/B9, car cela aggrave ou déclenche les manifestations neurologiques graves de la carence en B12 (myélose cervico-arthrosique). Toujours charger en B12 avant ou en même temps que les folates.",
+      "Fausse baisse des folates sériques : Observée en cas de grossesse, d'hyperglycémie ou de traitement par certains anticonvulsivants. Le dosage des folates érythrocytaires reflète mieux les stocks tissulaires à long terme.",
+      "Causes de fausse baisse de la vitamine B12 : Déficit en haptocorrine (congénital, bénin) ou grossesse (chute physiologique des protéines porteuses)."
+    ],
+    "created_at": "2026-11-06T15:15:07.427565+00:00",
+    "updated_at": "2026-11-06T15:15:07.427580+00:00"
+  },
+  {
+    "id": "lab_cryoglobulinee",
+    "name": "Cryoglobulinémie (Recherche et typage)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Négatif (Absence de précipité cryable après 7 jours à 4°C)",
+    "unit": "% (ou absence/présence, quantification en mg/L)",
+    "high_interpretation": "Présence de cryoglobulines (immunoglobulines précipitant au froid et se solubilisant à 37°C). Classées en 3 types (Brouet) : Type I (monoclonale, hémopathies malignes type myeloma/Waldenström, risque d'hyperviscosité) ; Type II et III (mixtes, polyclonales ou mixtes avec composante monoclonale, associées à l'Hépatite C, maladies auto-immunes type Gougerot-Sjögren, LES). Urgence clinique : Vascularite cryoglobulinémique systémique (purpura vasculaire infiltré, arthralgies, glomérulonéphrite membranaire ou MPGN, neuropathie périphérique, nécrose cutanée). Conduite à tenir : Bilan étiologique urgent (Sérologie VHC, VIH, VHB, EPP sérique et urinaire, fraction C3/C4/CH50 effondrées) et corticothérapie/plasmaphérèse si atteinte viscérale menaçante.",
+    "low_interpretation": "Non applicable (absence de cryoglobulines, valeur normale).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le prélèvement DOIT être strictement recueilli sur tube préchauffé à 37°C, transporté immédiatement à 37°C au laboratoire, et centrifugé à 37°C pour éviter la précipitation intempestive dans le caillot et un faux négatif.",
+      "Bilan biologique associé indispensable : Le complément sérique (particulièrement le C4) est effondré dans les cryoglobulinémies mixtes (types II et III) par consommation sur complexes immuns circulants."
+    ],
+    "created_at": "2026-11-06T20:58:16.024568+00:00",
+    "updated_at": "2026-11-06T20:58:16.024582+00:00"
+  },
+  {
+    "id": "lab_cholinesterases",
+    "name": "Cholinestérases plasmatiques (ChE) et érythrocytaires (acétylcholinestérase)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "Plasmatiques (Butyrylcholinestérase) : 5300 - 12900 UI/L à 37°C | Érythrocytaires (AChE) : 30 - 45 UI/g d'Hb (ou selon technique spécifique)",
+    "unit": "UI/L (plasma) / UI/g Hb (globules rouges)",
+    "high_interpretation": "Élévation rare, observée en cas de syndrome néphrotique (synthèse hépatique augmentée de protéines), obésité, ou hyperlipidémie. Pas de retentissement aigu urgent.",
+    "low_interpretation": "Chute critique (< 50% de la base ou < 20-30% de la normale) évocatrice d'une intoxication aiguë aux insecticides organophosphorés (OP) ou carbamates (inhibition irréversible pour les OP). Autres causes de baisse des ChE plasmatiques : hépatopathies sévères (cirrhose, hépatite fulminante), dénutrition sévère, grossesse, génétique (variant atypique de butyrylcholinestérase induisant un bloc prolongé aux curares comme la suxaméthonium). Urgence vitale en réanimation pour les OP : risque de crise cholinergique majeure (bronchorrhée abondante, bronchospasme, bradycardie, détresse respiratoire) nécessitant l'administration immédiate d'Atropine et de pralidoxime (oximes).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le dosage des cholinestérases plasmatiques varie considérablement d'un individu à l'autre (variabilité interindividuelle importante). La valeur basale du patient est idéale mais rarement connue en urgence ; une baisse franche par rapport à la limite inférieure de la norme est l'élément clé.",
+      "Piège pharmacologique : Les inhibiteurs des cholinestérases (organophosphorés) inhibent à la fois la butyrylcholinestérase plasmatique (plus sensible, baisse rapide) et l'acétylcholinestérase érythrocytaire (reflète mieux l'activité synaptique/cérébrale et érythrocytaire). Ne pas se fier uniquement aux chiffres biologiques pour traiter une intoxication aiguë : la clinique (syndrome muscarinique, nicotinique et central) guide l'antidotothérapie en réanimation."
+    ],
+    "created_at": "2026-11-07T01:00:43.342576+00:00",
+    "updated_at": "2026-11-07T01:00:43.342589+00:00"
+  },
+  {
+    "id": "lab_frottis_sanguin_schizocytes_mat",
+    "name": "Frottis sanguin périphérique : Schizocytes et Microangiopathie Thrombotique (MAT)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "Absents ou < 0.5% (< 2 pour mille ou < 5 gellules/champ)",
+    "unit": "% ou pour mille (‰)",
+    "high_interpretation": "Signe d'une hémolyse mécanique par fragmentation intravasculaire. Seuil d'alerte > 1% à 2% (selon les laboratoires) couplé à une anémie hémolytique mécanico-vasculaire et une thrombopénie périphérique. Étiologies urgentes (Urgences médico-réanimatoires) : Purpura Thrombotique Thrombocytopénique (PTT - déficit en ADAMTS13), Syndrome Hémolytique et Urémique (SHU typique post-diarrhéique Shiga-toxine ou atypique lié au complément), CIVD, HTA maligne, valves cardiaques mécaniques dysfonctionnelles, greffe de moelle osseuse, cancers disséminés. Conduite à tenir immédiate : Urgence absolue. Bilan d'hémostase, dosage de haptoglobine effondrée, LDH très élevées, test de Coombs direct (doit être NÉGATIF pour éliminer une AIHA), fonction rénale. Avis hématologique/réanimation et contact immédiat avec le centre de référence pour plasmaphérèse en urgence si PTT suspecté (score PLASMIC).",
+    "low_interpretation": "Valeur normale ou absence de schizocytes significatifs. N'exclut pas formellement une MAT débutante ou localisée (réitérer le frottis si forte suspicion clinique).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'analyse doit être réalisée sur un frottis sanguin frais, étalé rapidement après prélèvement sur EDTA pour éviter les artefacts de crenation (échinocytes) ou de lyse mimant des schizocytes. L'examen au microscope par un biologiste qualifié est indispensable.",
+      "Triade biologique classique de la MAT (Syndrome de Moschcowitz et apparentés) : Anémie hémolytique mécanique (schizocytes > 1-2%, LDH augmentées, haptoglobine effondrée, bilirubine indirecte augmentée), Thrombopénie périphérique consommptive, et test de Coombs direct négatif. La fièvre et les signes neurologiques ou rénaux complètent le tableau."
+    ],
+    "created_at": "2026-11-07T07:28:30.336104+00:00",
+    "updated_at": "2026-11-07T07:28:30.336118+00:00"
+  },
+  {
+    "id": "lab_cortisol_uri_freinage",
+    "name": "Cortisol libre urinaire des 24h (CLU) et Freinage minute à la Dexaméthasone",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "CLU : 50 - 250 µg/24h (138 - 690 nmol/24h) | Freinage minute : Cortisol sérique post-dexaméthasone < 50 nmol/L (< 1.8 µg/dL)",
+    "unit": "µg/24h et nmol/L",
+    "high_interpretation": "Évoque un syndrome de Cushing (ACTH-dépendant ou ACTH-indépendant). En cas de CLU > 3 à 4 fois la normale haute ou d'absence de freinage (cortisol > 50 nmol/L après 1 mg de dexaméthasone à 23h-00h), confirmer par un second test de première intention (CLU, cortisol salivaire de minuit ou freinage faible standard à 2 mg/j pendant 48h).",
+    "low_interpretation": "Évoque une insuffisance surrénalienne (primaire ou secondaire) ou une non-observance du test de freinage. Une valeur de cortisol post-freinage effondrée est normale. Si CLU effondré, rechercher une corticothérapie occulte ou une insuffisance corticotrope.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur pour le CLU : La qualité du recueil des urines de 24h est critique. Vérifier impérativement la créatininurie des 24h pour valider l'exhaustivité du recueil (chez l'adulte : 15-20 mg/kg/j chez la femme, 20-25 mg/kg/j chez l'homme).",
+      "Piège du test de freinage minute (Dexa 1mg) : De nombreux faux positifs existent en cas de stress, dépression, alcoolisme chronique, obésité morbide, insuffisance rénale ou prise d'inducteurs enzymatiques (phénobarbital, rifampicine, carbamazépine) qui accélèrent la clairance de la dexaméthasone."
+    ],
+    "created_at": "2026-11-07T18:57:55.690667+00:00",
+    "updated_at": "2026-11-07T18:57:55.690685+00:00"
+  },
+  {
+    "id": "lab_peptide_c_insuline_homa",
+    "name": "Peptide C et Insulinémie à jeun (Indice HOMA-IR)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Insulinémie à jeun : 2.6 - 24.9 mUI/L | Peptide C à jeun : 1.1 - 4.4 µg/L | HOMA-IR normal : < 2.5",
+    "unit": "mUI/L (Insuline), µg/L (Peptide C), sans (HOMA-IR)",
+    "high_interpretation": "Hyperinsulinémie / Peptide C élevé : Insulinorésistance (syndrome métabolique, obésité, diabète de type 2 débutant), Insulinome (hypoglycémie avec insuline et peptide C hauts, rapport insuline/glycémie élevé), Insuffisance rénale chronique (diminution de la clairance du peptide C). Conduite à tenir : Rechercher une hypoglycémie organique si suspecte, explorer le syndrome métabolique.",
+    "low_interpretation": "Hypoinsulinémie / Peptide C bas : Diabète de type 1 ancien (carence insulinique profonde), Diabète monogénique (MODY) ou LADA au stade avancé, Factice (prise de sulfamides ou insuline exogène : insuline haute mais peptide C bas ou effondré). Conduite à tenir : Différencier DT1 et DT2, éliminer une hypoglycémie factice.",
+    "clinical_notes": [
+      "Piège diagnostique majeur en cas d'hypoglycémie : un Peptide C bas ou indétectable en présence d'une forte insulinémie signe formellement une administration d'insuline exogène (factice ou accidentelle).",
+      "Calcul de l'HOMA-IR (Homeostatic Model Assessment for Insulin Resistance) : [Insuline à jeun (mUI/L) × Glycémie à jeun (mmol/L)] / 22.5. Un score supérieur à 2.5 (ou 2.0 selon les laboratoires) définit l'insulinorésistance."
+    ],
+    "created_at": "2026-11-07T22:53:00.211368+00:00",
+    "updated_at": "2026-11-07T22:53:00.211382+00:00"
+  },
+  {
+    "id": "lab_facteur_rhumatoide_anti_ccp",
+    "name": "Facteur Rhumatoïde (FR) & Anticorps Anti-CCP (ACPA)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "FR: < 20 UI/mL (Négatif) | Anti-CCP (ACPA): < 17-20 U/mL selon les techniques (Négatif)",
+    "unit": "UI/mL ou U/mL",
+    "high_interpretation": "Polyarthrite rhumatoïde (PR) : Le FR a une excellente sensibilité (60-80%) mais une faible spécificité (présent dans les infections chroniques, connectivites, sujets âgés). Les anti-CCP (ACPA) ont une excellente spécificité (95-98%) et une valeur pronostique majeure (marqueur d'erosions radiologiques précoces et de sévérité). Autres causes de FR élevé : Gougerot-Sjögren, LES, cryoglobulinémie, hépatite C, endocardite bactérienne subaiguë. Conduite à tenir : Consultation spécialisée rhumatologie, bilan radiographique des mains/poignets, initiation d'un traitement de fond (MTX) si PR avérée selon critères ACR/EULAR 2010.",
+    "low_interpretation": "Absence de signification pathologique. Une valeur basse ou négative n'exclue pas formellement une polyarthrite rhumatoïde (PR séronégative, présente dans 20-30% des cas au début de la maladie). Conduite à tenir : Répéter le dosage si forte suspicion clinique ou réévaluer l'imagerie (échographie articulaire avec Doppler ou IRM).",
+    "clinical_notes": [
+      "Piège diagnostique : Le FR peut être faussement positif chez le sujet âgé sain (jusqu'à 10-15% de faux positifs) et en cas d'hypergammaglobulinémie polyclonale (infections chroniques, cirrhose).",
+      "Association pronostique : L'association d'un FR positif et d'Anti-CCP positifs chez un patient avec une mono- ou polyarthrite signe une PR agressive à haut risque d'atteinte extra-articulaire et de destruction ostéo-articulaire rapide."
+    ],
+    "created_at": "2026-11-08T02:37:38.085184+00:00",
+    "updated_at": "2026-11-08T02:37:38.085197+00:00"
+  },
+  {
+    "id": "lab_aldosterone_renine",
+    "name": "Aldostérone plasmatique, Rénine active et Rapport Aldostérone/Rénine (RAR)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Aldostérone couchée: 30 - 150 pg/mL (80 - 415 pmol/L) | Rénine active couchée: 3 - 30 mUI/L | RAR (Aldostérone/Rénine): < 20 à 30 (selon les unités et le laboratoire)",
+    "unit": "pg/mL (Aldostérone) et mUI/L (Rénine)",
+    "high_interpretation": "RAR élevé (> 30 avec aldostérone > 150 pg/mL et rénine supprimée) : Évoque en premier lieu un hyperaldostéronisme primaire (HAP) (adénome de Conn ou hyperplasie bilatérale). Conduite à tenir : Arrêt des interférences médicamenteuses, confirmation par test de charge sodée ou test au captopril, puis imagerie (TDM surrénaliennes) et cathétérisme des veines surrénaliennes (CVS). Hyperaldostéronisme secondaire (rénine élevée et aldostérone élevée) : Sténose de l'artère rénale, HTA maligne, déploiement volémique inefficace (insuffisance cardiaque, cirrhose).",
+    "low_interpretation": "Hypoaldostéronisme hyporéninien (syndrome d'Addison ou insuffisance surrénalienne primaire si rénine très haute et aldostérone basse) ; Hypoaldostéronisme hyporéninien du diabétique (néphropathie diabétique, rénine basse et aldostérone basse avec risque d'hyperkaliémie menaçante) ; Pseudo-hyperaldostéronisme (excès de minéralocorticoïdes non aldostéroniques : réglisse, syndrome de Liddle, Cushing) avec rénine et aldostérone toutes deux effondrées.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : De nombreux médicaments faussent le RAR. Il faut idéalement arrêter les IEC, ARA2, diurétiques (thiazidiques et spironolactone/amiloride) et inhibiteurs direct de la rénine 4 semaines avant le prélèvement. Préférer la rilménidine ou les inhibiteurs calciques si besoin.",
+      "Conditions de prélèvement strictes : Le patient doit être levé depuis au moins 2 heures, assis depuis 5 à 15 minutes, et normokaliémique (la correction d'une hypokaliémie est impérative car elle inhibe la sécrétion d'aldostérone)."
+    ],
+    "created_at": "2026-11-08T10:38:30.735178+00:00",
+    "updated_at": "2026-11-08T10:38:30.735191+00:00"
+  },
+  {
+    "id": "lab_psa_total_libre",
+    "name": "Antigène Spécifique de la Prostate (PSA total et rapport PSA libre/PSA total)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "PSA total : < 4.0 ng/mL (valeurs seuils adaptées selon l'âge : 40-49 ans: < 2.5 | 50-59 ans: < 3.5 | 60-69 ans: < 4.5 | > 70 ans: < 6.5). Rapport PSA libre / PSA total (L/T) : > 0.20 (20%)",
+    "unit": "ng/mL (ou µg/L)",
+    "high_interpretation": "PSA total > 4.0 ng/mL ou rapport L/T bas (< 0.10 à 0.15) : Évoque en premier lieu une hypertrophie bénigne de la prostate (HBP), une prostatite aiguë/chronique, une rétention aiguë d'urine (RAU), ou un adénocarcinome prostatique. Seuil d'alerte : PSA > 10 ng/mL (forte probabilité de cancer) ou cinétique rapide (vélocité > 0.75 ng/mL/an). Conduite à tenir : Éliminer une infection urinaire, répéter le dosage à distance si cause transitoire, réaliser un toucher rectal (TR) et orienter vers l'urologue pour une éventuelle biopsie prostatique échoguidée.",
+    "low_interpretation": "PSA effondré ou indétectable : Situation physiologique normale chez l'homme jeune ou post-prostatectomie totale (le taux doit être indétectable, souvent < 0.05 ou 0.1 ng/mL, constituant le marqueur idéal de suivi de récidive biologique). N'a pas de signification pathologique par défaut.",
+    "clinical_notes": [
+      "Pièges pré-analytiques et faux positifs majeurs : Toute manipulation de la prostate fausse le PSA total (toucher rectal récent, échographie prostatique transrectale, sondage urinaire, cystoscopie, rétention aiguë d'urine, activité sexuelle récente ou prostatite aiguë). Toujours doser le PSA AVANT le TR ou attendre 48h à 4 semaines selon l'acte.",
+      "Interprétation du rapport PSA libre / PSA total : Plus le rapport est bas (< 0.15), plus le risque de cancer de la prostate est élevé pour une zone grise de PSA total comprise entre 4 et 10 ng/mL. Un rapport élevé (> 0.20) oriente plutôt vers une pathologie bénigne (HBP)."
+    ],
+    "created_at": "2026-11-08T17:09:53.611051+00:00",
+    "updated_at": "2026-11-08T17:09:53.611066+00:00"
+  },
+  {
+    "id": "lab_trou_anionique",
+    "name": "Trou anionique plasmatique et urinaire (TA / TAU)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "Plasmatique : 12 ± 4 mEq/L (ou mmol/L) | Urinaire : Variable (négatif ou positif selon le statut acido-basique)",
+    "unit": "mEq/L",
+    "high_interpretation": "TA plasmatique élevé (> 16 mEq/L) : Acidose métabolique à trou anionique élevé (MUDPILES : Méthanol, Urémie, DKA/Acidocétose diabétique, Paracétamol/Propylène glycol, Isoniazide/Inanition, Lacticose, Éthanol/Ethylène glycol, Salicylates). Urgence vitale selon pH et étiologie. TAU positif (> 0) : Acidose tubulaire rénale proximale (type 2) ou distale (type 1). Conduite à tenir : Gaz du sang, ionogramme complet, recherche de toxiques, fonction rénale.",
+    "low_interpretation": "TA plasmatique bas (< 8 mEq/L) : Rare, le plus souvent artéfactuel (hypoalbuminémie majeure, myélome multiple avec gamma monoclonale cationique, hypercalcémie ou hypermagnésémie sévère, intoxication au lithium). TAU négatif fort (< -20 mEq/L) : Perte rénale de bicarbonates ou diarrhée (réponse rénale adaptée avec ammoniurie augmentée et excrétion de NH4Cl).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'hypoalbuminémie abaisse artificiellement le trou anionique plasmatique (correction : ajouter 2.5 mEq/L au TA mesuré par tranche de 10 g/L d'albumine en moins sous la normale de 40 g/L).",
+      "Formule indispensable au concours : TA plasmatique = [Na+] - ([Cl-] + [HCO3-]). Formule alternative avec le potassium : [Na+ + K+] - ([Cl-] + [HCO3-]).",
+      "Calcul du TAU : [Na+ urinaire + K+ urinaire] - [Cl- urinaire]. Permet de différencier une origine rénale (TAU positif ou peu négatif) d'une origine extra-rénale (TAU très négatif) devant une acidose métabolique à trou anionique normal (hyperchlorémique)."
+    ],
+    "created_at": "2026-11-09T01:04:26.291129+00:00",
+    "updated_at": "2026-11-09T01:04:26.291145+00:00"
+  },
+  {
+    "id": "lab_pro_adm_il6_sepsis",
+    "name": "Pro-Adrénomédulline (Pro-ADM) et Interleukine-6 (IL-6)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "IL-6: < 7 pg/mL (Sepsis: > 100-1000 pg/mL) | Pro-ADM: < 0.5 nmol/L (Sepsis grave: > 1.5 nmol/L)",
+    "unit": "pg/mL (IL-6) et nmol/L (Pro-ADM)",
+    "high_interpretation": "IL-6 élevée : Marqueur précoce d'inflammation systémique et de sepsis bactérien (pic à 2-4h, avant la PCT et la CRP), valeur pronostique de choc septique et de dysfonction d'organe (SDRA, défaillance multiviscérale). Pro-ADM élevée : Reflète l'atteinte endotheliale et la sévérité hémodynamique, excellente valeur prédictive de mortalité en réanimation et d'orientation vers les soins intensifs (seuil d'urgence > 1.5 nmol/L nécessitant une réanimation volémique et une antibiothérapie probabiliste immédiate).",
+    "low_interpretation": "Valeurs basses ou normales : Excellente valeur prédictive négative (VPN) pour exclure un sepsis bactérien aigu ou une SIRS sévère à court terme, permettant de surseoir ou d'arrêter précocement une antibiothérapie (notamment en association avec la Procalcitonine).",
+    "clinical_notes": [
+      "Piège pré-analytique : L'IL-6 possède une demi-vie très courte (quelques minutes à 1 heure) et se dégrade rapidement à température ambiante ; le tube (EDTA ou sec) doit être centrifugé immédiatement et congelé si le dosage est différé.",
+      "Interaction médicamenteuse : Les antagonistes des récepteurs de l'IL-6 (ex: Tocilizumab) faussent les dosages endogènes et augmentent artificiellement la concentration circulante d'IL-6 libre.",
+      "Corrélation clinique : L'association Pro-ADM et IL-6 permet d'évaluer à la fois la charge inflammatoire précoce (IL-6) et la dysfonction endothéliale/sévérité hémodynamique (Pro-ADM), surpassant la CRP seule dans le monitorage du choc septique en réanimation."
+    ],
+    "created_at": "2026-11-09T08:18:00.287970+00:00",
+    "updated_at": "2026-11-09T08:18:00.287984+00:00"
+  },
+  {
+    "id": "lab_paracetamolemie",
+    "name": "Paracétamolémie (Dosage plasmatique du paracétamol)",
+    "category": "Marqueurs Tumoraux & Toxicologie",
+    "normal_range": "Zone thérapeutique: 10 - 20 mg/L (ou 66 - 132 µmol/L)",
+    "unit": "mg/L",
+    "high_interpretation": "Surdosage ou intoxication aiguë. À partir de 150-200 mg/L à H4 post-ingestion, risque majeur d'hépatite cytolytique fulminante par saturation de la glycurono-conjugaison et production massive du métabolite toxique NAPQI. Urgence vitale absolue : indication formelle à l'antidote (N-acétylcystéine - NAC) si la concentration se situe au-dessus de la ligne de traitement du nomogramme de Rumack-Matthew. Conduite à tenir : Évaluation de l'heure d'ingestion, début immédiat de la NAC IV si délai > 4h et selon nomogramme, contact centre antipoison, charbon actif si ingestion < 1h.",
+    "low_interpretation": "Absence d'intoxication aiguë aux doses usuelles. Une valeur basse ou indétectable (sauf si prise très récente < 4h) exclut une hépatotoxicité aiguë liée au paracétamol. Attention : une paracétamolémie nulle à distance d'une intoxication chronique ou tardive n'exclut pas une hépatotoxicité déjà constituée.",
+    "clinical_notes": [
+      "Piège pré-analytique : Le nomogramme de Rumack-Matthew n'est validé que pour une ingestion aiguë unique entre H4 et H24 post-ingestion. Il est inapplicable en cas d'intoxications chroniques (prises répétées sur plusieurs jours) ou si le délai d'ingestion est inconnu.",
+      "Règle thérapeutique : L'antidote (N-acétylcystéine) est d'autant plus efficace qu'il est administré tôt (dans les 8 premières heures). En cas de doute sur le délai d'ingestion ou de retard d'acheminement du dosage, débuter immédiatement la NAC en attendant le résultat."
+    ],
+    "created_at": "2026-11-09T18:58:38.610750+00:00",
+    "updated_at": "2026-11-09T18:58:38.610764+00:00"
+  },
+  {
+    "id": "lab_anca_pr3_mpo",
+    "name": "Anticorps Anticytoplasme des PNN (ANCA : Anti-PR3 et Anti-MPO)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Négatif (Titre < seuil de positivité du laboratoire, généralement < 1/20 en IFI ou < 10-20 UI/mL en ELISA)",
+    "unit": "UI/mL ou Rapport de dilution",
+    "high_interpretation": "Positivité évocatrice de vascularite nécrosante systémique associée aux ANCA. Anti-PR3 (c-ANCA) : fortement associé à la Granulomatose avec Polyangéite (GPA / Maladie de Wegener). Anti-MPO (p-ANCA) : associé à la Polyangéite Microscopique (PAM), au Churg-Strauss (EGPA) et à la Glomérulonéphrite extra-capillaire pauci-immune. Conduite à tenir : Urgence néphrologique/interniste si atteinte viscérale menaçante (pulmonaire ou rénale), confirmation histologique indispensable, bilan d'extension (créatininémie, BU, Rx thorax ou TDM thoracique, NFS).",
+    "low_interpretation": "Négatif. Ne <b>exclut pas formellement</b> une vascularite à ANCA (sensibilité de l'ELISA d'environ 70-90% selon l'atteinte, surtout en phase précoce ou localisée). Les ANCA peuvent être exceptionnellement positifs (souvent à taux faibles ou atypiques) au cours d'infections chroniques, de maladies inflammatoires chroniques de l'intestin (MICI), de cirrhose biliaire primitive ou sous certains médicaments (ex: propylthiouracile, minocycline).",
+    "clinical_notes": [
+      "Piège pré-analytique / technique : La double approche (dépistage par Immunofluorescence Indirecte - IFI couplée à des ELISA spécifiques anti-PR3 et anti-MPO) est la règle internationale. Une IFI positive sans spécificité PR3/MPO (p-ANCA atypique) n'a pas de valeur pour les vascularites systémiques.",
+      "Corrélation clinique indispensable : Un taux élevé d'ANCA (surtout PR3) signe un risque fort de rechute, mais le suivi sériel quantitatif des ANCA pour guider l'adaptation thérapeutique en phase de rémission reste controversé (recommandations EULAR)."
+    ],
+    "created_at": "2026-11-10T02:19:54.257192+00:00",
+    "updated_at": "2026-11-10T02:19:54.257208+00:00"
+  },
+  {
+    "id": "lab_svo2_scvo2",
+    "name": "Gazométrie du sang veineux mêlé (SvO2) et central (ScvO2)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "SvO2 : 65 - 75 % | ScvO2 (VCS) : 70 - 80 %",
+    "unit": "% (Saturation en oxygène)",
+    "high_interpretation": "SvO2/ScvO2 élevée (> 80 %) : Extraction tissulaire effondrée de l'O2. Causes : Choc distributif (septique hyperdynamique précoce), shunt artério-veineux (fistules), hypoxie cellulaire inhibant l'utilisation du glucose/O2 (ex: intoxication au cyanure), mort cérébrale (extraction cérébrale nulle), ou cathéter de Swan-Ganz mal positionné (dans le VD ou une artère pulmonaire distale en zone de West 1). Conduite à tenir : Rechercher une septe/choc septique, éliminer une intoxication au cyanure, vérifier la position du cathéter (Swan-Ganz ou KTC).",
+    "low_interpretation": "SvO2/ScvO2 basse (< 65 %) : Augmentation de l'extraction tissulaire en réponse à un transport inadéquat de l'O2 (DO2). Causes : Choc hypovolémique (hémorragie), choc cardiogénique (infarctus étendu, trouble du rythme), choc obstructif (embolie pulmonaire massive, tamponnade), anémie sévère (baisse du contenu artériolaire en O2), hypoxémie sévère (PaO2 effondrée), ou hypermétabolisme (frissons, fièvre, détresse respiratoire avec travail respiratoire excessif). Seuil d'urgence vitale : < 50 % (ischémie tissulaire imminente, risque d'arrêt cardiaque par hypoxie réfractaire). Conduite à tenir immédiate : Remplissage vasculaire guidé par l'échographie, inotropes (dobutamine si dysfonction myocardique), transfusion sanguine si Hb < 7-8 g/dL, sédation-curarisation et ventilation mécanique pour baisser la consommation d'O2 (VO2).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le sang veineux central (ScvO2 prélevé par cathéter jugulaire interne ou sous-clavier) est systématiquement supérieur de 2 à 5 % au sang veineux mêlé (SvO2 prélevé à l'artère pulmonaire via Swan-Ganz) en raison d'un drainage supérieur moins extracteur au repos, mais les deux tendent à se rapprocher en cas de choc sévère.",
+      "Règle d'or de réanimation (Équation de Fick) : Une baisse de la SvO2/ScvO2 reflète soit une baisse du débit cardiaque, soit une baisse de l'hémoglobine, soit une baisse de la SaO2, soit une augmentation de la consommation tissulaire (VO2)."
+    ],
+    "created_at": "2026-11-11T00:09:34.083671+00:00",
+    "updated_at": "2026-11-11T00:09:34.083688+00:00"
+  },
+  {
+    "id": "lab_beta_hcg_plasmatique",
+    "name": "Bêta-HCG plasmatique quantitative (hCG total ou sous-unité bêta)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Homme et femme non enceinte : < 5 UI/L (ou < 2 mUI/mL selon les techniques) | Femme enceinte : varie selon l'terme (croissance exponentielle au 1er trimestre)",
+    "unit": "UI/L (ou mUI/mL)",
+    "high_interpretation": "Grossesse normale ou pathologique (GEU, mole hydatiforme, grossesse multiple). Tumeurs trophoblastiques gestationnelles. Tumeurs germinales non séminomateuses (testicule, ovaire, médiastin). Sécrétion ectopique par certains cancers (bronches, digestif). Conduite à tenir : échographie pelvienne (suspecter GEU si hCG > seuil de discrimination transvaginal ~1000-1500 UI/L et utérus vide), β-HCG quantitatifs sériés à 48h (cinétique anormale en cas de GEU).",
+    "low_interpretation": "Absence de grossesse (si < 5 UI/L). En début de grossesse, des valeurs basses ou augmentant anormalement lentement (< 66% en 48h) font craindre une fausse couche spontanée (FCS) ou une grossesse extra-utérine (GEU). Conduite à tenir : contrôle à 48h-72h et échographie de contrôle.",
+    "clinical_notes": [
+      "Piège pré-analytique / interférences : Effet 'hook' (crochet) en cas de concentrations très élevées (mole hydatiforme ou choriocarcinome) entraînant un résultat faussement bas ou normal par saturation des anticorps ; la dilution du sérum (ex: au 1/100e) démasque la positivité massive.",
+      "Causes de faux positifs : Interférences par des anticorps hétérophiles ou, chez la femme périménopausée/ménopausée, production physiologique d'hCG hypophysaire basale (< 15-20 UI/L).",
+      "Règle de cinétique au 1er trimestre : En début de grossesse intra-utérine évolutive, le taux de β-HCG double approximativement toutes les 48 à 72 heures."
+    ],
+    "created_at": "2026-11-11T06:54:56.359463+00:00",
+    "updated_at": "2026-11-11T06:54:56.359476+00:00"
+  },
+  {
+    "id": "lab_facteurs_coagulation_v_viii_willebrand",
+    "name": "Facteurs de la coagulation (Facteur V, Facteur VIII, Facteur Willebrand)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "Facteur V: 70 - 120% | Facteur VIII: 50 - 150% | Facteur Willebrand (Ag et Activité): 50 - 150%",
+    "unit": "% (ou UI/dL)",
+    "high_interpretation": "Facteur VIII et Willebrand élevés : Réaction inflammatoire aiguë (protéines de l'phase aiguë), stress, grossesse, exercice physique, état pro-thrombotique (risque thrombo-veineux accru pour le FVIII > 150%). Pas de seuil d'urgence vitale directe par excès, mais marqueur de risque thrombotique.",
+    "low_interpretation": "Facteur V bas (< 30%) : Insuffisance hépatocellulaire sévère ou CIVD (pronostic vital engagé, risque hémorragique majeur). Facteur VIII bas (< 40%) : Hémophilie A (transmission liée au X, sévérité selon le taux : <1% sévère, 1-5% modéré, 5-40% mineur). Facteur Willebrand bas (< 50%) : Maladie de Willebrand (la plus fréquente des maladies hémorragiques constitutionnelles, types 1, 2 ou 3). Conduite à tenir immédiate en cas de saignement : transfusion de PFC, cryoprécipités, concentrates de FVIII ou facteur Willebrand, ou Desmopressine (Minirin) selon l'étiologie.",
+    "clinical_notes": [
+      "Le Facteur V est exclusivement synthétisé par le foie : c'est le meilleur marqueur de synthèse hépatique en réanimation (il n'est pas dépendant de la vitamine K, contrairement au FII, FVII, FIX et FX).",
+      "Le Facteur VIII est un réactant de phase aiguë synthétisé par les cellules endothéliales et complexé au Facteur Willebrand qui le protège de la protéolyse ; une fausse baisse du FVIII peut masquer une maladie de Willebrand de type 2N ou être liée à un prélèvement traumatique.",
+      "Piège pré-analytique majeur : Le prélèvement pour l'hémostase doit être réalisé sur tube citrate de sodium 0,109 M (3,2%), rempli exactement jusqu'au trait (ratio 9 volumes de sang pour 1 volume d'anticoagulant), acheminé immédiatement au laboratoire à température ambiante pour éviter l'activation ou la dégradation in vitro."
+    ],
+    "created_at": "2026-11-11T15:31:05.544657+00:00",
+    "updated_at": "2026-11-11T15:31:05.544670+00:00"
+  },
+  {
+    "id": "electrophorese_hemoglobine",
+    "name": "Électrophorèse de l'Hémoglobine (HbA, HbA2, HbF, HbS)",
+    "category": "Hématologie & Hémostase",
+    "normal_range": "HbA: 96.5 - 98.5% | HbA2: 1.5 - 3.5% | HbF: < 1.0% (adulte) | HbS: 0%",
+    "unit": "%",
+    "high_interpretation": "Présence anormale ou élévation de fractions pathologiques : HbS > 50% (Drépanocytose homozygote SS) ou 35-45% (Trait drépanocytaire AS associé à HbA). HbA2 élevée (> 4.0%) : Bêta-thalassémie mineure (hétérozygote). HbF très élevée (10-100%) : Bêta-thalassémie majeure (anémie de Cooley) ou persistance héréditaire de l'hémoglobine fœtale (PHHF). Urgence vitale : Crise vaso-occlusive aiguë, syndrome thoracique aigu, séquestration splénique chez le drépanocytaire (nécessité de transfusion/échange transfusionnel si Hb < 5 g/dL ou signes de défaillance d'organe).",
+    "low_interpretation": "Taux d'HbA effondré ou absent : Thalassémies majeures (absence totale d'HbA dans la béta-thalassémie homozygote ou formes sévères). Taux d'HbA2 abaissé : Alpha-thalassémie (traits alpha-thalassémiques ou délétions de gènes alpha). Urgence clinique : Anémie sévère profonde menaçant le pronostic vital, décompensation cardiaque sur anémie chronique.",
+    "clinical_notes": [
+      "Piège pré-analytique : Une transfusion sanguine récente (moins de 3 mois) fausse totalement l'électrophorèse en introduisant de l'HbA exogène chez un patient drépanocytaire (SS), masquant le profil de base.",
+      "Piège diagnostique : Une carence martiale associée (très fréquente en Algérie) peut faussement abaisser le taux d'HbA2 dans la bêta-thalassémie mineure, normalisant faussement le profil. Il faut corriger le fer avant d'éliminer une bêta-thalassémie."
+    ],
+    "created_at": "2026-11-11T22:54:47.582395+00:00",
+    "updated_at": "2026-11-11T22:54:47.582413+00:00"
+  }
+]

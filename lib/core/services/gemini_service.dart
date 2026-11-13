@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../config/app_secrets.dart';
 import '../utils/medical_text_formatter.dart';
-import '../../features/revision/data/residency_repository.dart';
 
 class GeminiService {
   // Configured Gemini API Key from environment or git-ignored secrets
@@ -129,9 +128,12 @@ RÈGLES FONDAMENTALES DE RECHERCHE ET DE CITATION DE SOURCES :
    - Par exemple, écris: "≥ 1 mm (0,1 mV)" et JAMAIS "\$\\ge 1 \\text{ mm}\$".
 ''';
 
+  /// Optional catalog provider injected by study/residanat packages.
+  static List<({String moduleName, List<String> courseNames})> Function()? courseCatalogProvider;
+
   /// Search across all 1,209 courses in medsina_ressources for the best matching curriculum courses
   static List<String> _findMatchingCoursesInDrive(String query, {String? courseHint, String? moduleHint}) {
-    final modules = ResidencyRepository.getModules();
+    final catalog = courseCatalogProvider?.call() ?? const [];
     final List<String> found = [];
 
     // If explicit course hint provided, prioritize it
@@ -148,18 +150,18 @@ RÈGLES FONDAMENTALES DE RECHERCHE ET DE CITATION DE SOURCES :
 
     // Search through all modules and courses
     int count = found.length;
-    for (final m in modules) {
-      for (final c in m.courses) {
-        if (found.any((f) => f.contains(c.name))) continue;
+    for (final m in catalog) {
+      for (final cName in m.courseNames) {
+        if (found.any((f) => f.contains(cName))) continue;
 
-        final cNameLower = c.name.toLowerCase();
+        final cNameLower = cName.toLowerCase();
         int score = 0;
         for (final w in words) {
           if (cNameLower.contains(w)) score++;
         }
 
         if (score > 0) {
-          found.add('• Référence Curriculum : "${c.name}" (Module: ${m.name}, disponible sur Google Drive medsina_ressources)');
+          found.add('• Référence Curriculum : "$cName" (Module: ${m.moduleName}, disponible sur Google Drive medsina_ressources)');
           count++;
           if (count >= 4) break;
         }

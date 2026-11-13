@@ -1,0 +1,30 @@
+name: medsina_residanat_pkg
+description: Résidanat preparation features (47 modules, study planner, livrets, mindmaps, national exams, group revision, error notebook).
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  equatable: ^3.0.0
+  fl_chart: ^1.3.1
+  flutter_markdown: ^0.7.7+1
+  flutter_tts: ^4.2.5
+  shared_preferences: ^2.5.6
+  syncfusion_flutter_pdfviewer: ^35.1.39
+  medsina_core: any
+  medsina_study_engine: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/course_summaries.json
+    - assets/data/course_mindmaps.json
+    - assets/data/samedis_pedagogiques.json
+    - assets/data/temoignages_conseils.json
+    - assets/mindmaps/

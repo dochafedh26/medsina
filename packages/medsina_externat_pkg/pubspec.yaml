@@ -1,0 +1,19 @@
+name: medsina_externat_pkg
+description: Externat (1st to 6th year medical curriculum) catalog, EMD simulations, and bedside guides.
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  equatable: ^3.0.0
+  medsina_core: any
+  medsina_study_engine: any
+
+flutter:
+  uses-material-design: true

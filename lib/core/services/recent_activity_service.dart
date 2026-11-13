@@ -1,20 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/app_constants.dart';
-import '../../features/clinical/presentation/clinical_screen.dart';
-import '../../features/lab_analysis/presentation/lab_analysis_screen.dart';
-import '../../features/prescription/presentation/prescription_analysis_screen.dart';
-import '../../features/revision/bloc/revision_bloc.dart';
-import '../../features/revision/bloc/revision_event.dart';
-import '../../features/revision/data/residency_repository.dart';
-import '../../features/revision/models/module_model.dart';
-import '../../features/revision/models/revision_session_model.dart';
-import '../../features/revision/presentation/course_pdf_viewer_screen.dart';
-import '../../features/revision/presentation/qcm_study_screen.dart';
-import '../../features/revision/services/revision_session_storage.dart';
+import '../interfaces/feature_contracts.dart';
 
 enum ActivityType {
   qcmCourse,
@@ -158,68 +147,13 @@ class RecentActivityService {
     final list = <RecentActivityItem>[];
     final prefs = await SharedPreferences.getInstance();
 
-    // 1. Check in-progress QCM courses from RevisionSessionStorage
-    try {
-      final courseProgresses = await RevisionSessionStorage.instance.getAllCourseProgress();
-      final activeList = courseProgresses.values.where((p) => !p.isCompleted).toList()
-        ..sort((a, b) => b.lastActiveAt.compareTo(a.lastActiveAt));
-
-      if (activeList.isNotEmpty) {
-        final latest = activeList.first;
-        final currentQ = latest.currentQuestionIndex + 1;
-        final totalQ = latest.totalQuestions;
-        final pct = totalQ > 0 ? (currentQ / totalQ).clamp(0.0, 1.0) : 0.0;
-
-        list.add(RecentActivityItem(
-          id: 'qcm_${latest.courseId}',
-          type: ActivityType.qcmCourse,
-          title: 'QCM : ${latest.courseName}',
-          subtitle: 'Reprendre à la question $currentQ/$totalQ • ${(pct * 100).toInt()}% terminé',
-          badgeText: 'Session QCM en pause',
-          badgeColor: const Color(0xFF0D9488),
-          icon: Icons.quiz_rounded,
-          iconColor: const Color(0xFF0D9488),
-          timestamp: latest.lastActiveAt,
-          progressPercent: pct,
-          data: {
-            'courseId': latest.courseId,
-            'courseName': latest.courseName,
-            'moduleId': latest.moduleId,
-            'currentQuestionIndex': latest.currentQuestionIndex,
-            'totalQuestions': latest.totalQuestions,
-          },
-        ));
-      }
-    } catch (_) {}
-
-    // 2. Check in-progress Custom Sessions
-    try {
-      final customSessions = await RevisionSessionStorage.instance.getCustomSessions();
-      final activeCustom = customSessions.where((s) => !s.isCompleted).toList();
-      if (activeCustom.isNotEmpty) {
-        final session = activeCustom.first;
-        final currentQ = session.currentQuestionIndex + 1;
-        final totalQ = session.totalQuestions;
-        final pct = totalQ > 0 ? (currentQ / totalQ).clamp(0.0, 1.0) : 0.0;
-
-        list.add(RecentActivityItem(
-          id: 'custom_${session.id}',
-          type: ActivityType.qcmCustomSession,
-          title: session.title,
-          subtitle: 'Reprendre à la question $currentQ/$totalQ • ${(pct * 100).toInt()}% terminé',
-          badgeText: 'Session Sur-Mesure',
-          badgeColor: const Color(0xFF8B5CF6),
-          icon: Icons.dashboard_customize_rounded,
-          iconColor: const Color(0xFF8B5CF6),
-          timestamp: session.lastActiveAt,
-          progressPercent: pct,
-          data: {
-            'sessionId': session.id,
-            'session': session,
-          },
-        ));
-      }
-    } catch (_) {}
+    // 1 & 2. Check in-progress QCM courses & Custom Sessions via injected provider
+    if (revisionActivitiesProvider != null) {
+      try {
+        final studyItems = await revisionActivitiesProvider!();
+        list.addAll(studyItems);
+      } catch (_) {}
+    }
 
     // 3. Check recent course reading
     final courseStr = prefs.getString(_keyRecentCourse);
@@ -420,108 +354,16 @@ class RecentActivityService {
     return list.take(3).toList();
   }
 
+  /// Optional provider injected by `medsina_study_engine` for QCM/custom session activities.
+  static Future<List<RecentActivityItem>> Function()? revisionActivitiesProvider;
+
   // --- LAUNCH ACTION SPECIFICALLY ---
 
   Future<void> launchActivity(BuildContext context, RecentActivityItem item) async {
-    switch (item.type) {
-      case ActivityType.qcmCourse:
-        final courseId = item.data['courseId'] as String? ?? 'c_cardio_hta';
-        CourseModel? course = await ResidencyRepository.findCourseById(courseId);
-
-        course ??= const CourseModel(
-          id: 'c_cardio_hta',
-          moduleId: 'Blida_CARDIOLOGIE',
-          name: 'Hypertension Artérielle de l\'Adulte (HTA)',
-          questionsCount: 340,
-          hasPdf: true,
-        );
-
-        if (context.mounted) {
-          context.read<RevisionBloc>().add(OpenCourseQuestionsEvent(course, resume: true));
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-          );
-        }
-        break;
-
-      case ActivityType.qcmCustomSession:
-        final session = item.data['session'] as CustomRevisionSession?;
-        if (session != null && context.mounted) {
-          context.read<RevisionBloc>().add(StartCustomSessionEvent(session, resume: true));
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const QcmStudyScreen()),
-          );
-        }
-        break;
-
-      case ActivityType.courseDocument:
-        final courseId = item.data['courseId'] as String? ?? 'c_cardio_hta';
-        final moduleName = item.data['moduleName'] as String? ?? 'Cardiologie';
-        CourseModel? course = await ResidencyRepository.findCourseById(courseId);
-
-        course ??= const CourseModel(
-          id: 'c_cardio_hta',
-          moduleId: 'Blida_CARDIOLOGIE',
-          name: 'Hypertension Artérielle de l\'Adulte (HTA)',
-          questionsCount: 340,
-          hasPdf: true,
-        );
-
-        if (context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => CoursePdfViewerScreen(
-                course: course!,
-                moduleName: moduleName,
-              ),
-            ),
-          );
-        }
-        break;
-
-      case ActivityType.clinicalProtocol:
-        final protocolId = item.data['protocolId'] as String? ?? 'cat_sca_st_plus';
-        if (context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ClinicalScreen(
-                initialTabIndex: 0,
-                targetProtocolId: protocolId,
-              ),
-            ),
-          );
-        }
-        break;
-
-      case ActivityType.prescriptionVidal:
-        if (context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const PrescriptionAnalysisScreen()),
-          );
-        }
-        break;
-
-      case ActivityType.labAnalysis:
-        if (context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const LabAnalysisScreen()),
-          );
-        }
-        break;
-
-      case ActivityType.emergencyDrug:
-        final drugName = item.data['drugName'] as String? ?? '';
-        if (context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ClinicalScreen(
-                initialTabIndex: 2,
-                targetDrugQuery: drugName,
-              ),
-            ),
-          );
-        }
-        break;
-    }
+    await MedsinaFeatureRegistry.instance.dispatchRoute(
+      context,
+      'activity:${item.type.name}',
+      item.data,
+    );
   }
 }

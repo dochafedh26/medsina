@@ -1,4 +1,4 @@
-import '../../admin/models/admin_models.dart';
+import 'subscription_plan_item.dart';
 
 /// Available subscription durations for Medsina plans.
 enum SubscriptionDuration {
