@@ -1311,5 +1311,20 @@
     ],
     "created_at": "2026-11-13T09:50:55.150461+00:00",
     "updated_at": "2026-11-13T09:50:55.150480+00:00"
+  },
+  {
+    "id": "lab_calprotectine_ fecale",
+    "name": "Calprotectine fécale (CF)",
+    "category": "Infectiologie & Inflammation",
+    "normal_range": "< 50",
+    "unit": "µg/g de selles",
+    "high_interpretation": "Inflammation intestinale organique marquée. 50-200 µg/g : Zone grise, inflammation minime ou modérée (AINS, diverticulite, infection récente, MICI débutante). > 200-250 µg/g : Forte suspicion de Maladie Inflammatoire Chronique de l'Intestin (MICI - Crohn ou RCH) active, poussée infectieuse sévère ou entéropathie aux AINS. Conduite à tenir : Avis gastro-entérologique et programmation d'une coloscopie avec biopsies.",
+    "low_interpretation": "< 50 µg/g : Valeur normale excluant quasi-formellement une inflammation organique active. Oriente fortement vers un Syndrome de l'Intestin Irritable (SII) ou des Troubles Fonctionnels Intestinaux (TFI). Pas de seuil d'urgence vitale bas.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Faux positifs par la prise récente d'AINS (induisent une entéropathie inflammatoire), les saignements digestifs abondants, et les infections entériques bactériennes ou parasitaires aiguës.",
+      "Utilité clinique principale validée : Excellente valeur prédictive négative (VPN > 95%) permettant d'éviter des endoscopies inutiles chez les patients suspects de troubles fonctionnels intestinaux (SII)."
+    ],
+    "created_at": "2026-11-13T23:46:10.109938+00:00",
+    "updated_at": "2026-11-13T23:46:10.109953+00:00"
   }
 ]
