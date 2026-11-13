@@ -265,8 +265,18 @@ class OtaUpdateService {
         );
 
         if (await file.exists() && await file.length() > 5 * 1024 * 1024) {
-          downloadSucceeded = true;
-          break;
+          final raf = await file.open();
+          final header = await raf.read(2);
+          await raf.close();
+          if (header.length == 2 && header[0] == 0x50 && header[1] == 0x4B) {
+            downloadSucceeded = true;
+            break;
+          } else {
+            debugPrint('Mirror $mirrorUrl returned non-APK content (invalid magic bytes).');
+            try {
+              await file.delete();
+            } catch (_) {}
+          }
         }
       } catch (e) {
         debugPrint('Mirror $mirrorUrl failed: $e');
