@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../features/revision/services/revision_session_storage.dart';
+import '../interfaces/feature_contracts.dart';
 import '../network/supabase_service.dart';
 import 'cloud_sync_service.dart';
 import 'user_loyalty_service.dart';
@@ -217,25 +217,24 @@ class UserStudyProgressService {
 
       final isAccomplished = loaded.accomplishedDates.contains(todayStr);
 
-      // Aggregate QCMs from RevisionSessionStorage
+      // Aggregate QCMs from registered StudyProgressContributors
       int aggregatedQcm = loaded.totalQcmSolved;
       int aggregatedCourses = loaded.completedCourseIds.length;
       final completedCourses = Set<String>.from(loaded.completedCourseIds);
 
       try {
-        final allProgress = await RevisionSessionStorage.instance.getAllCourseProgress();
         int liveQcmCount = 0;
-        for (final entry in allProgress.values) {
-          liveQcmCount += entry.revealedQuestions.length;
-          if (entry.isCompleted) {
-            completedCourses.add(entry.courseId);
-          }
+        int liveCompletedCount = 0;
+        for (final contributor in MedsinaFeatureRegistry.instance.progressContributors) {
+          final counts = await contributor.getProgressCounts();
+          liveQcmCount += counts.solvedQcms;
+          liveCompletedCount += counts.completedCourses;
         }
         if (liveQcmCount > aggregatedQcm) {
           aggregatedQcm = liveQcmCount;
         }
-        if (completedCourses.length > aggregatedCourses) {
-          aggregatedCourses = completedCourses.length;
+        if (liveCompletedCount > aggregatedCourses) {
+          aggregatedCourses = liveCompletedCount;
         }
       } catch (_) {}
 

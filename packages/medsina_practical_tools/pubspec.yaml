@@ -1,0 +1,22 @@
+name: medsina_practical_tools
+description: Shared clinical calculators, biological norms, focus timer, and lab analysis tools for Medsina apps.
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  equatable: ^3.0.0
+  shared_preferences: ^2.5.6
+  medsina_core: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/lab_reference_values.json
+    - assets/data/on_call_mementos.json

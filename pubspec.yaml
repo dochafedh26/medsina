@@ -16,6 +16,18 @@ version: 1.0.82+107
 environment:
   sdk: ^3.13.2
 
+workspace:
+  - packages/medsina_core
+  - packages/medsina_practical_tools
+  - packages/medsina_study_engine
+  - packages/medsina_residanat_pkg
+  - packages/medsina_externat_pkg
+  - packages/medsina_clinical_pkg
+  - apps/medsina_residanat
+  - apps/medsina_clinique
+  - apps/medsina_externat
+  - apps/medsina_all_in_one
+
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,

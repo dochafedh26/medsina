@@ -2401,12 +2401,16 @@ class SupabaseService {
 
   // --- OTA APP RELEASES ---
 
-  static Future<Map<String, dynamic>?> fetchLatestRelease(String platform) async {
+  static Future<Map<String, dynamic>?> fetchLatestRelease(
+    String platform, {
+    String appId = 'medsina_all',
+  }) async {
     try {
       final res = await client
           .from('app_releases')
           .select()
           .inFilter('platform', [platform.toLowerCase(), 'all'])
+          .eq('app_id', appId)
           .eq('is_active', true)
           .order('build_number', ascending: false)
           .limit(1)

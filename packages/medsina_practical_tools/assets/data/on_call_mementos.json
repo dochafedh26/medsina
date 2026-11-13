@@ -1,0 +1,954 @@
+[
+  {
+    "id": "memento_checklist_garde",
+    "title": "Checklist de Début de Garde Hospitalière",
+    "category": "Organisation & Sécurité",
+    "icon_name": "checklist_rounded",
+    "color_hex": "#0D9488",
+    "priority_level": 3,
+    "points": [
+      "Prendre les transmissions orales et écrites du médecin sortant (patients instables en priorité absolue).",
+      "Vérifier les coordonnées d'urgence : Réanimation de garde, SAMU 115, Laboratoire central, Banque du sang (CTS).",
+      "Tester le chariot d'urgence du service : Défibrillateur opérationnel, laryngoscope et lames, ampoules d'Adrénaline et solutés.",
+      "Vérifier les bilans biologiques en attente des admissions de fin d'après-midi.",
+      "Identifier les patients à risque dans les lits du service (sepsis, détresse respiratoire, post-opératoire immédiat)."
+    ],
+    "scientific_references": "Guide Pratique de l'Interne de Garde SFMU / Recommandations d'organisation des urgences"
+  },
+  {
+    "id": "memento_ordonnance_conforme",
+    "title": "Règle de Rédaction d'Ordonnance Conforme (MSPRH)",
+    "category": "Bonne Pratique Médicale",
+    "icon_name": "description_rounded",
+    "color_hex": "#0284C7",
+    "priority_level": 3,
+    "points": [
+      "Identité complète du malade : Nom, prénom, âge, poids (obligatoire chez l'enfant et l'insuffisant rénal).",
+      "Date du jour et signature lisible avec cachet médical officiel.",
+      "Dénomination Commune Internationale (DCI) recommandée — la spécialité commerciale entre parenthèses.",
+      "Posologie explicite : dose unitaire, voie d'administration, rythme des prises et durée exacte du traitement.",
+      "Mention « Ne pas dépasser » pour les antalgiques de palier 1 et 2.",
+      "En pédiatrie : toujours inscrire le poids en kg et calculer la dose exacte en mg/kg/j."
+    ],
+    "scientific_references": "Décret exécutif MSPRH relatif aux règles de prescription et de dispensation des médicaments"
+  },
+  {
+    "id": "memento_hypoglycemie",
+    "title": "CAT Hypoglycémie Sévère (Glycémie < 0,5 g/L)",
+    "category": "Urgences Métaboliques",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#F59E0B",
+    "priority_level": 1,
+    "points": [
+      "Confirmer immédiatement par dextrostix capillaire au lit du malade.",
+      "Si voie veineuse disponible : Sérum Glucosé à 30% (G30%) 50 mL IV direct (ou G10% 200 mL en 15 min).",
+      "Si pas de voie veineuse : Glucagon 1 mg SC ou IM (inefficace si dénutrition ou hépatopathie sévère).",
+      "Resucrage oral dès que le patient reprend conscience : boisson sucrée + sucres lents (pain, biscuit).",
+      "Surveillance glycémique toutes les 30 min pendant 2h. Rechercher impérativement la cause déclenchante.",
+      "Hospitaliser si : hypoglycémie sous sulfamides hypoglycémiants (risque de récidive sur 48h) ou sujet isolé."
+    ],
+    "scientific_references": "Consensus SFD / HAS Prise en charge des urgences métaboliques chez le diabétique"
+  },
+  {
+    "id": "memento_detresse_respiratoire",
+    "title": "CAT Détresse Respiratoire Aiguë aux Urgences",
+    "category": "Urgences Vitales",
+    "icon_name": "air_rounded",
+    "color_hex": "#0284C7",
+    "priority_level": 1,
+    "points": [
+      "Alerter le réanimateur si SpO2 < 88% sous O2 fort débit ou Fréquence Respiratoire > 35/min ou signes d'épuisement.",
+      "Installer le patient en position assise ou demi-assise (45°), O2 au masque haute concentration 12-15 L/min.",
+      "Monitorage continu : SpO2, FC, FR, Pression artérielle, tracé ECG, température.",
+      "Bilan d'urgence : NFS, CRP, D-Dimères, BNP, GDS artériel, radiographie thoracique au lit.",
+      "Éliminer les urgences vitales immédiates : Embolie pulmonaire, OAP cardiogénique, Pneumothorax suffocant, Crise d'asthme aigu grave.",
+      "En cas d'OAP : Furosémide 40 à 80 mg IVD + Dérivés nitrés si PAS > 110 mmHg + VNI (CPAP de Boussignac précoce)."
+    ],
+    "scientific_references": "Recommandations SRLF / SFMU Détresses respiratoires aiguës de l'adulte"
+  },
+  {
+    "id": "memento_douleur_thoracique",
+    "title": "CAT Douleur Thoracique aux Urgences & SCA ST+",
+    "category": "Urgences Cardiologiques",
+    "icon_name": "favorite_border_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "ECG 18 dérivations obligatoire réalisé et interprété en moins de 10 minutes.",
+      "Si sus-décalage ST persistant (SCA ST+) : alerte cardiologie interventionnelle immédiate, stratégie de reperfusion < 120 min.",
+      "Traitement d'urgence immédiat : Aspirine 250-500 mg IV ou PO à croquer + Héparinothérapie (HNF ou Énoxaparine) + Antalgie.",
+      "Si pas de sus-décalage ST : dosage de la troponine ultra-sensible (protocole H0-H1 ou H0-H3).",
+      "Bilan systématique : NFS, TP-TCA, ionogramme, créatinine, radio thorax de face, lipase si douleur épigastrique.",
+      "Ne jamais administrer d'antalgiques morphiniques sans avoir éliminé une dissection aortique ou une urgence chirurgicale."
+    ],
+    "scientific_references": "Guidelines ESC 2023 Acute Coronary Syndromes / Consensus Société Algérienne de Cardiologie"
+  },
+  {
+    "id": "memento_sepsis_6",
+    "title": "Choc Septique — Protocole Sepsis 6 Heure 1",
+    "category": "Urgences Vitales",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#DC2626",
+    "priority_level": 1,
+    "points": [
+      "1. PRÉLEVER : Hémocultures (2 paires aéro-anaérobies) et prélèvements de foyers AVANT d'injecter les antibiotiques.",
+      "2. OXYGÉNER : O2 adapté pour cibler SpO2 ≥ 95% (ou 88-92% chez le BPCO reteneur).",
+      "3. REMPLIR : Remplissage vasculaire cristalloïde rapide 30 mL/kg en 30 à 60 min (NaCl 0.9% ou Ringer Lactate).",
+      "4. ANTIBIOTIQUES : Antibiothérapie IV probabiliste à large spectre débutée impérativement dans la 1ère heure.",
+      "5. VASOPRESSEURS : Noradrénaline IV titrée au PSE si PAS < 65 mmHg persistant après 1-2L de remplissage.",
+      "6. MONITORER : Dosage des lactates artériels initiaux et surveillance horaire de la diurèse par sonde urinaire."
+    ],
+    "scientific_references": "Surviving Sepsis Campaign International Guidelines 2021-2024"
+  },
+  {
+    "id": "memento_agitation_adulte",
+    "title": "Fiche Réflexe : Agitation Aiguë de l'Adulte en Garde",
+    "category": "Psychiatrie & Neurologie",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Priorité 1 : Éliminer formellement une cause organique d'extrême urgence : Hypoglycémie capillaire immédiate ! Hypoxie, Globe vésical aigu, Fécalome du sujet âgé, Intoxication toxique ou CO.",
+      "Priorité 2 : Mesures non pharmacologiques de désescalade verbale, pièce calme, retirer les objets contondants.",
+      "Priorité 3 : Sédation médicamenteuse uniquement si dangerosité : Hydroxyzine (Atarax) 50-100 mg ou Cyamémazine (Tercian) 25-50 mg PO ou IM selon tolérance hémodynamique.",
+      "Contre-indication des benzodiazépines chez le sujet âgé ou insuffisant respiratoire BPCO (risque d'arrêt respiratoire)."
+    ],
+    "scientific_references": "Recommandations SFMU / Conférence de consensus Agitation en milieu d'urgence"
+  },
+  {
+    "id": "memento_antidotes",
+    "title": "Antidotes d'Urgence à Connaître par Cœur",
+    "category": "Toxicologie Clinique",
+    "icon_name": "medication_liquid_rounded",
+    "color_hex": "#7C3AED",
+    "priority_level": 1,
+    "points": [
+      "Paracétamol : N-Acétylcystéine (NAC) IV selon le nomogramme de Rumack-Matthew, efficace jusqu'à H16.",
+      "Benzodiazépines : Flumazénil (Anexate) 0.2 mg IVD en 15 sec, puis 0.1 mg toutes les min (max 1-2 mg).",
+      "Opiacés / Morphine : Naloxone (Narcan) 0.4 mg IV ou IM, titration par paliers de 0.1 mg toutes les 2-3 min.",
+      "Organophosphorés (insecticides agricoles) : Atropine IV fortes doses (1 à 3 mg répétés) + Pralidoxime (Contrathion).",
+      "Antivitamines K (Sintrom) : PPSB (Concentré de Complexe Prothrombinique) 25 à 50 UI/kg + Vitamine K1 10 mg IV lente.",
+      "Héparine non fractionnée : Sulfate de Protamine (1 mg neutralise 100 UI d'héparine).",
+      "Bêtabloquants : Glucagon 3 à 5 mg IVD puis perfusion continue (ou émulsion lipidique Intralipide)."
+    ],
+    "scientific_references": "Guide des Antidotes SFMU / Centre Antipoison CAP Algérie"
+  },
+  {
+    "id": "memento_valeurs_alerte",
+    "title": "Valeurs Biologiques d'Alerte Absolue",
+    "category": "Biologie Médicale",
+    "icon_name": "biotech_rounded",
+    "color_hex": "#0D9488",
+    "priority_level": 1,
+    "points": [
+      "Kaliémie < 2.5 mmol/L ou > 6.5 mmol/L → ECG d'urgence + protocole de correction immédiat.",
+      "Natrémie < 120 mmol/L ou > 155 mmol/L → risque neurologique extrême, correction lente.",
+      "Glycémie capillaire < 0.5 g/L (< 2.8 mmol/L) → resucrage IV immédiat (G30%).",
+      "pH artériel < 7.20 ou > 7.55 → gazométrie de contrôle, appel du réanimateur de garde.",
+      "Plaquettes < 20 000/mm³ → risque d'hémorragie cérébrale spontanée, transfusion plaquettaire.",
+      "Taux de Prothrombine (TP) < 30% avec saignement actif → PFC ou facteurs en urgence.",
+      "Créatininémie > 500 µmol/L aiguë avec anurie → indication de dialyse urgente."
+    ],
+    "scientific_references": "Normes SFBC et critères d'alerte critique biologique hospitalière"
+  },
+  {
+    "id": "memento_urgences_obstetrique",
+    "title": "Urgences Obstétricales en Garde",
+    "category": "Gynécologie-Obstétrique",
+    "icon_name": "pregnant_woman_rounded",
+    "color_hex": "#EC4899",
+    "priority_level": 1,
+    "points": [
+      "Pré-éclampsie sévère : PAS ≥ 160 ou PAD ≥ 110 mmHg + protéinurie + céphalées en casque / phosphènes → Nicardipine IV (Loxen) au PSE + Sulfate de magnésium (MgSO4) pour prévenir l'éclampsie.",
+      "Crise d'éclampsie : MgSO4 4 g IV en 15 min puis 1 g/h au PSE. Antidote : Gluconate de calcium 1g IV à portée de main.",
+      "Hémorragie du Post-Partum (HPP) : Ocytocine 5 à 10 UI IV lente, massage utérin immédiat, sac de recueil, appel équipe d'anesthésie-obstétrique. Transfusion précoce.",
+      "Interdiction formelle des AINS et de l'Aspirine forte dose à partir du 6e mois de grossesse (fermeture prématurée du canal artériel)."
+    ],
+    "scientific_references": "Recommandations CNGOF / SFAR Prise en charge des urgences obstétricales"
+  },
+  {
+    "id": "memento_pediatrie_doses",
+    "title": "Urgences Pédiatriques — Règles de Calcul de Dose",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#2563EB",
+    "priority_level": 2,
+    "points": [
+      "Paracétamol : 15 mg/kg par prise toutes les 6 heures (maximum 60 mg/kg/j).",
+      "Ibuprofène : 10 mg/kg par prise toutes les 8 heures (max 30 mg/kg/j). Contre-indiqué si < 3 mois, varicelle ou déshydratation.",
+      "Amoxicilline : 50 à 80 mg/kg/j en 3 prises (jusqu'à 90 mg/kg/j dans l'OMA purulente).",
+      "Salbutamol en nébulisation : 0.15 mg/kg (minimum 2.5 mg, max 5 mg) dilué dans du NaCl 0.9% sous débit O2 6-8 L/min.",
+      "Soluté de Réhydratation Orale (SRO) : 50 mL/kg sur 4h en cas de déshydratation aiguë modérée.",
+      "Estimation rapide du poids si inconnu : Poids (kg) = (Âge en années × 2) + 8 (valable de 1 à 10 ans)."
+    ],
+    "scientific_references": "Consensus Société Algérienne de Pédiatrie / SFMU Pédiatrique"
+  },
+  {
+    "id": "memento_coma_abcde",
+    "title": "Coma — Prise en Charge Initiale Standardisée (ABCDE)",
+    "category": "Neurologie & Urgences",
+    "icon_name": "psychology_rounded",
+    "color_hex": "#6D28D9",
+    "priority_level": 1,
+    "points": [
+      "A (Airway) : Libération des voies aériennes, canule de Guédel, position latérale de sécurité (PLS) si pas de traumatisme rachidien.",
+      "B (Breathing) : Oxygénothérapie au masque. Si Glasgow ≤ 8 : Intubation orotrachéale (IOT) sous séquence rapide pour protéger les voies aériennes.",
+      "C (Circulation) : Monitorage TA, Scope, deux voies veineuses périphériques de gros calibre, bilan biologique.",
+      "D (Disability) : Évaluation du score de Glasgow, réactivité et symétrie pupillaire (mydriase unilatérale = engagement cérébral urgent), glycémie capillaire immédiate.",
+      "E (Exposure) : Mesure de la température (hypothermie ? hyperthermie ?), examen cutané (purpura fulminans ? traces d'injections ?).",
+      "Si suspicion d'encéphalopathie de Gayet-Wernicke (dénutrition, alcoolisme) : injecter Thiamine (Vitamine B1) 500 mg IV AVANT tout apport glucosé."
+    ],
+    "scientific_references": "Consensus SRLF / SFAR Comas non traumatiques de l'adulte"
+  },
+  {
+    "id": "memento_brulures_parkland",
+    "title": "Brûlures Graves — Règle de Parkland et Réanimation",
+    "category": "Chirurgie & Réanimation",
+    "icon_name": "local_fire_department_rounded",
+    "color_hex": "#EA580C",
+    "priority_level": 1,
+    "points": [
+      "Évaluation de la Surface Corporelle Brûlée (SCB) par la règle des 9 de Wallace (Tête: 9%, Membres sup: 9% chacun, Membres inf: 18% chacun, Tronc ant: 18%, Tronc post: 18%, Périnée: 1%).",
+      "Brûlure grave nécessitant un centre de grands brûlés : SCB ≥ 20% adulte, ≥ 10% enfant ou localisation critique (face, mains, plis, périnée).",
+      "Formule de Parkland (24 premières heures) : Ringer Lactate = 4 mL × Poids (kg) × % SCB. Administrer la moitié dans les 8 premières heures, le reste sur les 16 heures suivantes.",
+      "Refroidissement précoce à l'eau courante tiède (15-20°C) pendant 15 minutes dans les 30 premières minutes.",
+      "Analgésie multimodale précoce (Morphine IV titrée). Ne jamais mettre de glace ni de corps gras."
+    ],
+    "scientific_references": "Recommandations SFETB (Société Française d'Étude et de Traitement des Brûlures)"
+  },
+  {
+    "id": "memento_scorpionisme",
+    "title": "CAT Envenimation Scorpionique (Algérie)",
+    "category": "Toxicologie Nationale",
+    "icon_name": "bug_report_rounded",
+    "color_hex": "#059669",
+    "priority_level": 1,
+    "points": [
+      "Classe I (Piqûre locale simple, pas de signes généraux) : Désinfection locale, surveillance médicale 4 heures, antalgiques (Paracétamol), pas de sérum.",
+      "Classe II (Signes généraux modérés : sudation profuse, priapisme, vomissements, agitation) : Hospitalisation, Prazosine 0.25 à 0.5 mg sublingual + surveillance continue scopée.",
+      "Classe III (Détresse vitale : choc cardiogénique, OAP, coma, convulsions) : Réanimation d'urgence, Dobutamine au PSE, VNI ou IOT, Sérothérapie antivenimeuse IPA.",
+      "Contre-indication absolue des morphiniques et des corticoïdes dans le scorpionisme (aggravent la défaillance hémodynamique).",
+      "Déclaration obligatoire au SEMEP et transmission de la fiche de toxicovigilance à l'Institut Pasteur d'Algérie."
+    ],
+    "scientific_references": "Guide National de Prise en Charge des Envenimations Scorpioniques - MSPRH / IPA Algérie"
+  },
+  {
+    "id": "colique_nephretique_febrile",
+    "title": "🚨 Colique Néphrétique Fébrile (CNF)",
+    "category": "Urgences Urologiques",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation immédiate de la stabilité hémodynamique (recherche de sepsis/choc septique) et élimination d'une obstruction bilatérale ou sur rein unique.",
+      "Étape 2 : Bilan biologique urgent : NFS, CRP, Créatininémie, Ionogramme sanguin, ECBU (avant antibiothérapie) et Hémocultures si fièvre > 38.5°C.",
+      "Étape 3 : Antalgie multimodale : AINS (Kétoprofène 100mg IV lent) si pas de contre-indication, associés à des antispasmodiques (Phloroglucinol 160mg IV) et paliers 2 ou 3 (Tramadol 100mg ou Paracétamol 1g IV).",
+      "Étape 4 : Antibiothérapie probabiliste IV immédiate après prélèvements : C3G (Ceftriaxone 2g/j) ou Fluoroquinolone (Ciprofloxacine 400mg x2/j) selon antibiogramme local.",
+      "Étape 5 : Drainage des voies urinaires en urgence (sonde JJ ou néphrostomie percutanée) si sepsis, anurie ou insuffisance rénale aiguë obstructive.",
+      "Étape 6 : Piège : Ne jamais retarder le drainage chirurgical par une antibiothérapie seule en cas de sepsis sévère ; risque de choc septique irréversible."
+    ],
+    "scientific_references": "Consensus AFU / SFMU / Recommandations MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-14T11:56:44.786516+00:00",
+    "updated_at": "2026-10-14T11:56:44.786530+00:00"
+  },
+  {
+    "id": "memento_bronchiolite_nourrisson",
+    "title": "👶 Bronchiolite Aiguë du Nourrisson",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#0284C7",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation immédiate de la détresse respiratoire (score de Wood modifié) et de la tolérance hémodynamique ; satO2 en air ambiant (seuil d'alarme < 92%).",
+      "Étape 2 : Bilan minimal au déchoquage : GDS capillaire ou veineux si détresse sévère, recherche de VRS/Grippe selon disponibilité, panachage selon protocole local.",
+      "Étape 3 : Conditionnement : Maintien de la tête en position neutre (ou fléchie modérément), désobstruction rhinopharyngée (DRP) au sérum salé 0.9% rigoureuse, oxygénothérapie aux lunettes si SatO2 < 92%.",
+      "Étape 4 : Surveillance armée (fréquence respiratoire, signes de lutte, pauses respiratoires, tolérance des tètes) ; critères de transfert en réa : épuisement, apnées, acidose respiratoire (pH < 7.32, PaCO2 > 60 mmHg).",
+      "Étape 5 : Piège thérapeutique : Éviter les corticoïdes systémiques et les antibiotiques en première intention (sauf surinfection bactérienne avérée) ; prudence avec les kinésithérapies respiratoires instrumentales agressives."
+    ],
+    "scientific_references": "Consensus SFMU / SFP / Recommandations MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-14T12:21:16.411916+00:00",
+    "updated_at": "2026-10-14T12:21:16.411965+00:00"
+  },
+  {
+    "id": "memento_morsures_vipere",
+    "title": "🐍 Morsures de Vipère en Algérie : Urgence Antivenin",
+    "category": "Toxicologie / Urgences",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Mettre le patient au repos strict, rassurer, immobiliser le membre mordu. Ne JAMAIS inciser, aspirer, cautériser ni poser de garrot (risque de nécrose accrue et choc toxinique).",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : NFS, plaquettes, TP, TCK, fibrinogène, ionogramme sanguin, urée, créatinine, CPK et groupement sanguin avec Rhésus.",
+      "Étape 3 : Antibiothérapie prophylaxie antitétanique selon statut vaccinal et amoxicilline-acide clavulanique. Antivenin spécifique (Sérum antiviperin polyvalent disponible en Algérie) : 1 à 2 flacons dilués dans 250 mL de NaCl 0.9% à passer en 1 à 2 heures après test cutané préalable si indiqué par le laboratoire, sous surveillance stricte (réaction anaphylactique).",
+      "Étape 4 : Surveillance armée (pouls, TA, extension de l'œdème repérée au feutre toutes les heures, diurèse horaire). Critères de transfert en réanimation : instabilité hémodynamique, troubles de l'hémostase sévères, anurie, ou œdème progressant au-delà de la racine du membre.",
+      "Étape 5 : Piège médico-légal et thérapeutique : Ne jamais administrer de corticoïdes en prévention des réactions à l'antivenin de routine sans signe anaphylactique, et ne jamais sous-estimer la cinétique de l'envenimation (surveillance obligatoire de 24 heures minimum aux UMC)."
+    ],
+    "scientific_references": "Consensus SFMU / Société Algérienne de Toxicologie / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-22T14:08:05.407678+00:00",
+    "updated_at": "2026-10-22T14:08:05.407695+00:00"
+  },
+  {
+    "id": "memento_pediatrie_deshydratation_igue",
+    "title": "💧 Déshydratation Aiguë et Réhydratation IV en Pédiatrie",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#F59E0B",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluer la sévérité (score de Gorelick) : Perte de poids > 10% (DA sévère), marbrures, tachycardie, pli cutané persistant, fontanelle déprimée, troubles de la conscience.",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : Glycémie capillaire, Ionogramme Sanguin (Na+, K+, Cl-), Urée, Créatinine, Gaz du sang (recherche d'acidose métabolique).",
+      "Étape 3 : Conditionnement et expansion volémique immédiate si DA sévère : Pose de 2 VVP ou voie intra-osseuse. Bolus de NaCl 0,9% à 20 mL/kg en 20 minutes, renouvelable 1 fois si instabilité hémodynamique.",
+      "Étape 4 : Perfusion de réhydratation de maintenance + déficit : Utiliser du Sérum Glucosé 5% + NaCl 0,9% (ou G5% + 4g/L de NaCl + 2g/L de KCl si diurèse présente). Répartir le volume calculé (déficit + besoins de base) sur 24 heures.",
+      "Étape 5 : Surveillance armée et critères de transfert en Réanimation Pédiatrique : Diurèse horaire (> 1 mL/kg/h), contrôle ionique à H4 puis H12, persistance des troubles de la conscience ou acidose sévère malgré le remplissage.",
+      "Étape 6 : Piège médico-légal / CI absolue : Ne JAMAIS corriger une hyponatrémie ou une hypernatrémie de manière trop rapide (risque d'œdème cérébral ou de myélinolyse centro-pontique). Vitesse maximale de baisse/hausse de la natrémie : 0,5 à 1 mmol/L/heure."
+    ],
+    "scientific_references": "Recommandations SFMU / Société Française de Pédiatrie / ESPGHAN / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-28T02:21:50.684285+00:00",
+    "updated_at": "2026-10-28T02:21:50.684298+00:00"
+  },
+  {
+    "id": "memento_aes_exposition_sang",
+    "title": "🩸 Accident d'Exposition au Sang (AES)",
+    "category": "Urgences Infectieuses & Risque Professionnel",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Nettoyage immédiat à l'eau et au savon (ou Dakin / eau de Javel diluée au 1/10e) pour une piqûre/coupure. Pour les projections muqueuses ou oculaires : rinçage abondant au sérum physiologique pendant au moins 15 minutes. Ne jamais faire saigner.",
+      "Étape 2 : Évaluation rapide du risque (type d'exposition, profondeur, objet souillé, statut sérologique du patient source : VIH, VHC, VHB) et déclaration immédiate de l'accident au médecin responsable de garde (médecine du travail / hygiène hospitalière).",
+      "Étape 3 : Bilan biologique urgent (Ag HBs, Ac anti-HCV, Sérologie VIH, créatininémie, transaminases) chez le soignant (J0) et chez le patient source si son accord est obtenu et son statut inconnu.",
+      "Étape 4 : Prophylaxie post-exposition (PPE) anti-VIH à initier idéalement dans les 4 heures (maximum 48h) : trithérapie standard (ex: Ténofovir/Emtricitabine + Dolutégravir ou Raltégravir) selon l'avis référent VIH. Gestion VHB : vaccination +/injections d'immunoglobulines spécifiques si soignant non répondeur/non vacciné.",
+      "Étape 5 : Suivi sérologique obligatoire à 1 mois, 3 mois et 6 mois pour VIH et VHC. Piège : Ne jamais banaliser un AES, la fenêtre thérapeutique de la PPE est courte et l'absence de déclaration immédiate engage la responsabilité médico-légale de l'établissement."
+    ],
+    "scientific_references": "Recommandations Ministère de la Santé (MSPRH Algérie) / SFMU / CCLIN",
+    "is_active": true,
+    "created_at": "2026-11-06T23:14:37.987133+00:00",
+    "updated_at": "2026-11-06T23:14:37.987145+00:00"
+  },
+  {
+    "id": "memento_hemorragie_digestive_rvo",
+    "title": "🚨 Hémorragie Digestive par RVO (Varices Œsophagiennes)",
+    "category": "Urgences Médico-Chirurgicales & Réanimation",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Conditionnement immédiat au déchoquage, 2 VVP de gros calibre (16G-18G), oxygénothérapie, monitorage multiparamétrique et évaluation de l'état hémodynamique (choc hémorragique ?).",
+      "Étape 2 : Bilan biologique urgent au lit : NFS, groupement-isogroupe, Rh, tests croisés, bilan hépatique, urée, créatinine, TP, TCA, fibrinogène et gaz du sang.",
+      "Étape 3 : Thérapie d'urgence avant l'endoscopie : Remplissage prudent (éviter la sur-transfusion qui aggrave l'hypertension portale, objectif PAM > 65 mmHg, culots globulaires si Hb < 7-8 g/dL), Terlipressine (Glypressin) : 2 mg IV direct puis 1 mg/4h, et Antibiothérapie prophylaxie (Ceftriaxone 1g/24h IV).",
+      "Étape 4 : Hémostase endoscopique urgente (ligature élastique ou sclérose) dans les 12 heures après réanimation hémodynamique. En cas d'échec ou d'hémorragie massive : Sonde de Blakemore ou de Linton (tamponnement gastrique provisoire max 24h).",
+      "Étape 5 : Surveillance armée en réanimation ou USI : conscience, diurèse horaire, SpO2, récidive hémorragique (hématémèse, méléna, choc), encéphalopathie hépatique, et correction des troubles de la coagulation (PFC, plaquettes).",
+      "Étape 6 : Piège mortel / CI absolue : Ne jamais donner de culots globulaires de manière excessive sans contrôle (risque de rebond tensionnel et majoration du saignement) et attention à l'intubation trachéale en urgence chez le cirrhotique en encéphalopathie (risque d'inhalation massive)."
+    ],
+    "scientific_references": "Consensus Baveno VII / SFMU / SRLF / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-11-08T23:46:53.959689+00:00",
+    "updated_at": "2026-11-08T23:46:53.959705+00:00"
+  },
+  {
+    "id": "memento_asthme_aigu_grave",
+    "title": "⚡ Asthme Aigu Grave (AAG) : Conduite à Tenir aux UMC",
+    "category": "Urgences Respiratoires",
+    "icon_name": "air_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation immédiate de la gravité (incapacité à aligner 3 mots, DEP < 50% de la théorique, silence auscultatoire, cyanose, collapsus, trouble de la conscience). Oxygénothérapie haute concentration pour SpO2 > 92%.",
+      "Étape 2 : Nébulisations en urgence de Bêta-2 mimétiques à courte durée d'action (Salbutamol 5 mg) associées à un anticholinergique (Bromure d'Ipratropium 0,5 mg) dans 4 mL de NaCl 0,9% sous 6-8 L/min, renouvelables toutes les 20 min si besoin.",
+      "Étape 3 : Corticothérapie systémique précoce par voie IV : Hémisuccinate d'Hydrocortisone (HSHC) 200 mg IV direct ou Méthylprednisolone (Solumédrol) 1-2 mg/kg IV.",
+      "Étape 4 : En cas d'échec des nébulisations après 1h ou forme asphyxique : Sulfate de Magnésium (2 g IV slow dans 100 mL G5% sur 20 min) et préparation au transfert en Réanimation pour éventuelle ventilation mécanique (intubation séquentielle prudente).",
+      "Étape 5 : Piège médico-légal absolu : Ne JAMAIS administrer de sédatifs ou de morphiniques (dépression respiratoire fatale) et éviter la sur-prescription d'antibiotiques sans signe formel d'infection bactérienne."
+    ],
+    "scientific_references": "Consensus GINA / SRLF / SFMU / Recommandations MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-11-10T01:37:14.773330+00:00",
+    "updated_at": "2026-11-10T01:37:14.773343+00:00"
+  },
+  {
+    "id": "memento_pancreatite_aigue",
+    "title": "🩸 Prise en Charge Initiale d'une Pancréatite Aiguë",
+    "category": "Gastro-entérologie / Urgences",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation hémodynamique immédiate (pouls, PA, SpO2), pose de 2 VVP de gros calibre, mise à jeun stricte et pose d'une sonde nasogastrique si vomissements incoercibles ou iléus.",
+      "Étape 2 : Bilan biologique urgent au déchoquage : NFS, Ionogramme sanguin, Urée, Créatinine, Calcémie, Glycémie, CRP, Lipasémie (ou amylasémie), Bilan hépatique complet (ASAT, ALAT, PAL, GGT, Bili totale et conjuguée) et gaz du sang.",
+      "Étape 3 : Remplissage vasculaire agressif par cristalloïdes (Ringer Lactate ou NaCl 0,9%) à raison de 10-20 mL/kg/h les premières 24h sous contrôle de la diurèse (objectif > 0,5 mL/kg/h) ; Antalgiques majeurs : Paracétamol IV associé à du Nefopam (Acupan) ou titration morphinique.",
+      "Étape 4 : Imagerie de première intention : Échographie abdominale aux urgences (recherche d'étiologie biliaire) et TDM abdomino-pelvienne avec injection de produit de contraste (recommandée à partir de la 72ème heure pour le staging pronostique de Balthazar si doute ou aggravation).",
+      "Étape 5 : Surveillance armée en unité de soins intensifs (USI) ou réanimation si score de Ranson > 3, APACHE II > 8, syndrome de réponse inflammatoire systémique (SIRS) persistant ou défaillance d'organe.",
+      "Étape 6 : Piège médico-légal et thérapeutique : Ne pas prescrire d'antibiothérapie prophylactique systématique (réservée aux formes nécrotiques surinfectées prouvées) et éliminer formellement une urgence chirurgicale non pancréatique (perforation, infarctus mésentérique)."
+    ],
+    "scientific_references": "Recommandations SFMU / SRLF /ACG / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-11-11T06:33:46.378854+00:00",
+    "updated_at": "2026-11-11T06:33:46.378875+00:00"
+  },
+  {
+    "id": "memento_intoxication_medicamenteuse_aigue",
+    "title": "💊 Intoxication Médicamenteuse Aiguë (IMA) Poly-médicamenteuse",
+    "category": "Toxicologie / Urgences Vitales",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation sécuritaire immédiate (score de Glasgow, statut hémodynamique, voie aérienne) ; déchocage direct si coma, détresse respiratoire ou collapsus. Recherche de signes toxiques spécifiques (syndrome anticholinergique, sérotoninergique, extra-pyramidal).",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : Glycémie capillaire immédiate (éliminer une hypoglycémie), Gaz du sang (GDS), Ionogramme sanguin, Fonction rénale, Troponine, Bilan hépatique et Taux de Prothrombine (TP) / TCA.",
+      "Étape 3 : Prise en charge thérapeutique de 1ère intention : Décontamination digestive par Charbon Activé (50 g per os ou SNG) si ingestion < 1h et patient conscient ou intubé. Antidotes spécifiques si suspectés : Naloxone (0,4 mg IV) pour les opiacés, Flumazénil (0,2 mg IV titré) pour les benzodiazépines (si non épileptique), N-acétylcystéine IV si intoxication au paracétamol selon le nomogramme de Rumack-Matthew.",
+      "Étape 4 : Surveillance armée continue (Scope ECG, SpO2, PNI toutes les 15 min). Critères de transfert immédiat en Réanimation : Glasgow < 8, instabilité hémodynamique réfractaire, troubles du rythme ventriculaire, acidose métabolique sévère (pH < 7.20), ou nécessité de ventilation mécanique.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne JAMAIS faire vomir un patient intoxiqué (risque majeur de pneumopathie d'inhalation). Ne pas administrer de Flumazénil en aveugle dans les poly-intoxications ou chez l'épileptique (risque de convulsion fatale). Toujours demander un avis psychiatrique avant la sortie définitive de l'UMC."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Toxicologie / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-17T18:52:47.168083+00:00",
+    "updated_at": "2026-10-17T18:52:47.168097+00:00"
+  },
+  {
+    "id": "memento_traumatisme_cranien",
+    "title": "🧠 Traumatisme Crânien : Scanner & Urgences",
+    "category": "Neuro-Traumatologie",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation initiale immédiate (Score de Glasgow GCS, réactivité pupillaire, recherche de signes de focalisation, otorragie ou rhinorrhée de LCR).",
+      "Étape 2 : Indication formelle de TDM cérébrale sans injection en urgence (GCS < 15 à H2 post-choc, amnésie post-traumatique > 30 min, vomissements répétés, âge > 65 ans, anticoagulant/antiplaquettaire, céphalées violentes, signes neurologiques focaux).",
+      "Étape 3 : Conditionnement et réanimation initiale (Oxygénothérapie pour SpO2 > 94%, immobilisation cervicale stricte par collier, abord veineux périphérique, correction immédiate d'une hypotension systolique PAS < 100 mmHg).",
+      "Étape 4 : Gestion spécifique en cas d'engagement cérébral imminent ou de mydriase unilatérale (Hyperventilation brève si hernie, Mannitol 20% 1g/kg IV ou Sérum Salé Hypertonique 7.5% 2-3 ml/kg, appel immédiat du neurochirurgien de garde et du réanimateur).",
+      "Étape 5 : Surveillance armée en salle d'observation des UMC pendant au moins 6 heures si GCS à 15 (réévaluation horaire du GCS, des pupilles, et de la conscience avant toute décision de sortie avec consignes écrites).",
+      "Étape 6 : Piège médico-légal absolu (Interdiction formelle de réaliser une ponction lombaire et de prescrire des sédatifs ou morphiniques puissants avant l'élimination formelle d'une lésion chirurgicale au TDM cérébral)."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Médecine d'Urgence (SAMU) / MSPRH",
+    "is_active": true,
+    "created_at": "2026-11-12T19:59:39.961173+00:00",
+    "updated_at": "2026-11-12T19:59:39.961189+00:00"
+  },
+  {
+    "id": "memento_acr_adulte",
+    "title": "⚡ Arrêt Cardio-Respiratoire (ACR) Adulte",
+    "category": "Urgences Vitales & Réanimation",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Sécuriser les lieux, vérifier l'absence de conscience et de respiration (ou gaspings), débuter immédiatement un MCE de haute qualité (100-120/min, profondeur 5-6 cm) et brancher le défibrillateur (DAE / palette).",
+      "Étape 2 : Analyser le rythme : si FV ou TV sans pouls -> Choc unique (150-200J biphasique), puis reprendre immédiatement le MCE pendant 2 minutes sans réévaluer le rythme.",
+      "Étape 3 : Abord vasculaire immédiat (IV ou IO), intubation trachéale par opérateur entraîné avec capnographie (ETCO2), et administration d'Adrénaline 1 mg IVP (à répéter toutes les 3-5 min) et Amiodarone 300 mg IV après le 3ème choc si FV/TV réfractaire.",
+      "Étape 4 : Rechercher et traiter les 4H et 4T (Hypoxie, Hypovolémie, H+/Acidose, Hypo/Hyperkaliémie, Hypothermie, Tamponnade, Toxiques, Thrombose coronaire, Thrombo-embolie pulmonaire).",
+      "Étape 5 : Post-ACR (ROSC) : Assurer une sédation, contrôle de la ventilation (SpO2 94-98%, Normocapnie), objectif tensionnel (PAM > 65 mmHg par remplissage et amines vasopressives), ECG 12 dérivations en urgence et transfert médicalisé vers l'unité de soins intensifs / réanimation."
+    ],
+    "scientific_references": "Recommandations ERC / SRLF / SFMU / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-11-10T18:42:10.090178+00:00",
+    "updated_at": "2026-11-10T18:42:10.090190+00:00"
+  },
+  {
+    "id": "memento_pediatrie_deshydratation_aigue",
+    "title": "💧 Déshydratation Aiguë & Réhydratation IV en Pédiatrie",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluer immédiatement le degré de déshydratation (légère <5%, modérée 5-9%, sévère ≥10%) et rechercher des signes de choc hypovolémique (marbrures, tachycardie, TRC > 3s, oligurie).",
+      "Étape 2 : Poser une voie veineuse périphérique (VVP) de bon calibre ou un accès intra-osseux (IO) en < 90 secondes en cas d'échec chez le nourrisson en état de choc.",
+      "Étape 3 : Instaurer le remplissage vasculaire d'urgence en cas de choc : Bolus de NaCl 0,9% ou Ringer Lactate à 20 mL/kg en 15-20 minutes, renouvelable 1 fois si nécessaire.",
+      "Étape 4 : Calculer la perfusion de réhydratation de maintenance + déficit : Utiliser le SSI 0,9% ou G5% + NaCl/KCl selon la volémie après la phase de choc, répartie sur 24h selon la formule de Holliday-Segar.",
+      "Étape 5 : Monitorer la diurèse horaire (objectif > 1 mL/kg/h) et contrôler la natrémie, la kaliémie et l'équilibre acido-basique (GDS) à H6.",
+      "Étape 6 : Piège : Ne jamais administrer de bolus de K+ pur IV direct (risque d'arrêt cardiaque) et éviter la correction trop rapide d'une hyponatrémie sévère (risque de myélinolyse centropontique)."
+    ],
+    "scientific_references": "Consensus ESPGHAN / SFMU / Recommandations MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-11-02T23:37:45.086808+00:00",
+    "updated_at": "2026-11-02T23:37:45.086823+00:00"
+  },
+  {
+    "id": "memento_transfusion_choc_hemorragique",
+    "title": "🩸 Transfusion d'Urgence Vitale & Choc Hémorragique",
+    "category": "Urgences Vitales & Réanimation",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Libérer les voies aériennes, oxygénothérapie haut débit, conditionnement immédiat par 2 VVP de gros calibre (14G ou 16G) ou KT central, pose d'une sonde urinaire pour diurèse horaire et déclenchement du protocole de transfusion massive (PTM).",
+      "Étape 2 : Prélèvements urgents avant toute transfusion : Groupage ABO-Rh, RAI, NFS, Hémostase (TP, TCA, Fibrinogène), Lactates, Gaz du sang, Bilan hépatique et rénal.",
+      "Étape 3 : Transfusion immédiate : culots globulaires de groupe O négatif (ou isogroupe si connu), plasma frais congelé (PFC) et plaquettes selon un ratio 1:1:1 pour lutter contre la triade létale (hypothermie, acidose, coagulopathie).",
+      "Étape 4 : Traitement pharmacologique associé : Acide tranexamique (Exacyl) 1g IV en bolus dans les 3 premières heures, puis 1g sur 8h. Correction de l'hypocalcémie par Gluconate de Calcium 10% (1 à 2 ampoules). Maintien d'une PAM > 65 mmHg par remplissage prudent et Noradrénaline si choc réfractaire.",
+      "Étape 5 : Surveillance armée au déchoquage : conscience, SpO2, scope ECG, PNI toutes les 5 min, diurèse, température. Critères de transfert immédiat en réanimation : persistance du choc, saignement non contrôlé nécessitant une hémostase chirurgicale ou radiologique.",
+      "Étape 6 : Piège médico-légal et transfusionnel : Ne jamais perfuser de produits sanguins labiles avec du Ringer Lactate (risque de micro-caillots par le calcium). Toujours effectuer le test ultime au lit du malade juste avant la transfusion."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / European Guidelines on management of major bleeding and coagulopathy following trauma / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-24T19:04:16.457279+00:00",
+    "updated_at": "2026-10-24T19:04:16.457294+00:00"
+  },
+  {
+    "id": "memento_oap_flash_hypertensif",
+    "title": "⚡ OAP Flash & Crise Aiguë Hypertensive",
+    "category": "Urgences Cardiovasculaires",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Assise stricte, monitorage complet (SpO2, PNI, ECG 12 dérivations), pose de 2 VVP de gros calibre et oxygénothérapie haut débit au masque à haute concentration (ou VNI en urgence si détresse respiratoire persistante).",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : Gaz du sang (GDS), Troponine ultrasensible, BNP/NT-proBNP, Ionogramme sanguin avec fonction rénale (Urée, Créatinine) et NFS.",
+      "Étape 3 : Traitement vasodilatateur et diurétique immédiat : Nicardipine (Loxen) IVSE à débuter à 1-2 mg/h (titrage strict pour baisser la PAM de 25% max en 1h) associé au Furosémide (Lasilix) IV direct : 40 à 80 mg (ou doubler la dose habituelle du patient).",
+      "Étape 4 : Surveillance armée (PA toutes les 5 à 10 min, diurèse horaire). Critères de transfert en réanimation : échec de la VNI, persistance d'une SpO2 < 90%, collapsus, ou nécessité de vasopresseurs.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne JAMAIS chuter brutalement la PA à des valeurs normales d'emblée (risque d'ischémie myocardique, mésentérique ou d'AVC par rupture d'autoregulation) et éviter les dérivés nitrés si sténose aortique serrée connue."
+    ],
+    "scientific_references": "ESC Guidelines / SFMU / SRLF / Consensus Nationaux Algériens de Cardiologie",
+    "is_active": true,
+    "created_at": "2026-11-08T19:47:29.338829+00:00",
+    "updated_at": "2026-11-08T19:47:29.338841+00:00"
+  },
+  {
+    "id": "memento_syndrome_meninge_aigu",
+    "title": "⚡ Syndrome Méningé Aigu & PL",
+    "category": "Infectiologie & Urgences Neurologiques",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluer la triade (céphalées, vomissements, raideur de nuque). Rechercher des signes de choc (purpura fulminans) ou d'engagement cérébral (troubles de conscience, anisocorie).",
+      "Étape 2 : Céfotaxime 2g IVD immédiat + Dexaméthasone 10mg IV avant toute imagerie ou PL si purpura ou retard de PL (selon recommandations SFMU/SPRM).",
+      "Étape 3 : Fond d'œil en urgence si disponible, ou TDM cérébrale éliminant un processus expansif intracrânien (effet de masse) AVANT de réaliser la Ponction Lombaire.",
+      "Étape 4 : Réalisation de la PL au déchoquage : mesure de la pression d'ouverture, recueil de 4 tubes (biochimie, bactério, cyto, virologie), analyse macroscopique (eau de roche vs trouble/purulent).",
+      "Étape 5 : PIÈGE MAJEUR : Ne JAMAIS retarder l'antibiothérapie par l'imagerie ou la PL en cas de suspicion de méningite bactérie aigue. Contre-indication absolue de la PL en cas de signe de focalisation ou de trouble de conscience sans TDM préalable."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / SPILF / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-11-07T16:52:51.246236+00:00",
+    "updated_at": "2026-11-07T16:52:51.246253+00:00"
+  },
+  {
+    "id": "memento_hyperkalemie_aigue",
+    "title": "⚡ Hyperkaliémie Aiguë avec Menace ECG",
+    "category": "Urgences Métaboliques",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Monitorage continu immédiat, ECG 12 dérivations à la recherche de signes de gravité (ondes T amples et pointues, élargissement des QRS, disparition des onde P, aspect sine wave).",
+      "Étape 2 : Bilan biologique urgent : Ionogramme sérique, urée, créatininémie, gaz du sang (recherche d'une acidose associée), glycémie capillaire et ECG de contrôle.",
+      "Étape 3 : Traitement d'urgence de la menace (si signes ECG) : Gluconate de calcium 10% (1 à 2 ampoules de 10 ml en IV lente sur 5 min, répéter si besoin à 5-10 min) pour stabiliser la membrane myocardique, associé à l'insuline rapide (10 UI dans 500 ml de G10% en IV sur 1 h) et des nébulisations de Salbutamol (10 à 20 mg).",
+      "Étape 4 : Éliminer les causes iatrogènes et l'insuffisance rénale aiguë, discuter en urgence de l'épuration extra-rénale (hémodialyse) en cas de résistance aux traitements médicaux ou d'anurie.",
+      "Étape 5 : Surveillance armée en unité de soins intensifs ou déchoquage (répéter l'ECG et la kaliémie à H1, H2, H4) ; attention au risque de rebond hypoglycémique sous insuline et d'extravasation nécrotique du calcium."
+    ],
+    "scientific_references": "Recommandations SRLF / SFMU / ESC / Collège de Réanimation Médicale",
+    "is_active": true,
+    "created_at": "2026-10-20T20:09:41.921274+00:00",
+    "updated_at": "2026-10-20T20:09:41.921289+00:00"
+  },
+  {
+    "id": "memento_im_anticoagulation",
+    "title": "💉 Contre-indication IM sous Anticoagulants",
+    "category": "Urgences Médico-Chirurgicales & Hémostase",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation clinique immédiate et recherche de tout antécédent de traitement anticoagulant (AVK, AOD) ou antiagrégant plaquettaire devant toute prescription d'injection intramusculaire (IM).",
+      "Étape 2 : Bilan d'hémostase en urgence au déchoquage : TP, TCA, INR et NFS-Plaquettes si le statut d'anticoagulation est incertain ou suspecté.",
+      "Étape 3 : Règle absolue : Proscrire formellement toute injection IM chez le patient sous anticoagulant efficace (risque majeur d'hématome compressif, de syndrome des loges ou de nécrose). Préférer systématiquement la voie IV stricte ou la voie SC selon le produit.",
+      "Étape 4 : Conduite à tenir en cas d'hématome post-IM survenu sous anticoagulant : Compression locale, arrêt ou neutralisation de l'anticoagulation (Vitamine K IV, PPSB ou antithidote spécifique selon l'AOD et le protocole SRLF/SFMU), et avis chirurgical urgent.",
+      "Étape 5 : Piège médico-légal et organisationnel majeur : Ne jamais déléguer la vérification du statut hémostatique aux équipes paramédicales avant un geste invasif ou une injection IM aux urgences."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / ANSM / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-20T22:22:34.816289+00:00",
+    "updated_at": "2026-10-20T22:22:34.816304+00:00"
+  },
+  {
+    "id": "memento_aes_garde",
+    "title": "🩸 Accident d'Exposition au Sang (AES)",
+    "category": "Infectiologie & Urgences",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Nettoyage immédiat de la plaie à l'eau et au savon, puis désinfection (Dakin ou Alcool à 70% ou Bétadine) pendant 5 minutes. En cas de projection muqueuse : rincer abondamment au sérum physiologique ou à l'eau.",
+      "Étape 2 : Évaluation du risque au déchoquage : nature du liquide, type de blessure (creuse > pleine), statut sérologique du patient source (VIH, VHB, VHC) et statut vaccinal VHB du Passant/Soignant.",
+      "Étape 3 : Prophylaxie post-exposition (PPE) anti-VIH urgente si source VIH+ ou à haut risque : quadrithérapie ou trithérapie (ex: Ténofovir/Emtricitabine 1 cp/j + Dolutégravir 50 mg 1 cp/j) à débuter idéalement dans les 4 heures (maximum 48h).",
+      "Étape 4 : Gestion VHB (Vaccin + Ig anti-VHB selon statut) et déclaration obligatoire de l'AES auprès de la médecine du travail et de l'Hôpital dans les 24-48 heures.",
+      "Étape 5 : Piège médico-légal absolu : ne jamais négliger un AES sous prétexte que le patient source est 'connu' ou 'asymptomatique', et réaliser les sérologies de référence (J0, M1, M3, M6)."
+    ],
+    "scientific_references": "Recommandations SPILF / Ministère de la Santé Algérie / CCLIN",
+    "is_active": true,
+    "created_at": "2026-10-21T05:22:18.047817+00:00",
+    "updated_at": "2026-10-21T05:22:18.047830+00:00"
+  },
+  {
+    "id": "memento_colique_nephretique_febrile",
+    "title": "🔴 Colique Néphrétique Hyperalgique et Fébrile",
+    "category": "Urgences Néphro-Urologiques & Infectieuses",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Urgence médico-chirurgicale absolue (risque de choc septique obstructif). Pose de 2 VVP, monitorage, évaluation de la douleur (EVA/EN) et recherche de signes de sepsis (tachycardie, hypotension, marbrures).",
+      "Étape 2 : Bilan biologique d'urgence : NFS, CRP, Ionogramme sanguin, Urée, Créatininémie, BU, ECBU, Hémocultures en urgence, Bilan d'hémostase (TP, TCA, Fibrinogène).",
+      "Étape 3 : Imagerie en urgence après stabilisation : Échographie rénale et vésicale (recherche d'une urétérohydronéphrose) et/ou TDM sans injection (Gold Standard si disponible).",
+      "Étape 4 : Antalgie forte et Antibiothérapie IV immédiate (après hémocultures) : Kétoprofène 100 mg IV (si fonction rénale normale) + Paracétamol 1g IV + Morphine titration (0,1 mg/kg). Antibiothérapie probabiliste : Céfotaxime 1g à 2g IV ou Ceftriaxone 2g IV (adapté au contexte algérien).",
+      "Étape 5 : Appel urgent de l'urologue de garde et du réanimateur : Indication absolue à un drainage des voies urinaires en urgence (sonde double J ou néphrostomie percutanée) en salle d'opération ou bloc radiologique.",
+      "Étape 6 : Piège médico-légal : Ne jamais attribuer une fièvre isolée à une simple colique néphrétique sans éliminer une pyélonéphrite obstructive. Contre-indication absolue aux AINS si insuffisance rénale aiguë organique ou déshydratation sévère."
+    ],
+    "scientific_references": "Consensus AFU / SFMU / SRLF / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-27T06:22:49.767158+00:00",
+    "updated_at": "2026-10-27T06:22:49.767197+00:00"
+  },
+  {
+    "id": "memento_metrorragies_geu",
+    "title": "🚨 Métrorragies du 1er Trimestre & Suspicion de GEU",
+    "category": "Gynéco-Obstétrique d'Urgence",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Conditionnement immédiat (2 Voies Veineuses Périphériques gros calibre 18G), remplissage par NaCl 0,9% si instabilité hémodynamique, pose de VVP, monitoring et Oxygénothérapie si détresse.",
+      "Étape 2 : Bilan pré-transfusionnel en urgence (Groupage ABO-Rh, RAI, NFS, Plaquettes, Fibrinogène, BHCG plasmatiques quantitatifs) + Test urinaire de grossesse si doute.",
+      "Étape 3 : Échographie abdomino-pelvienne (sus-pubienne puis endovaginale si disponible) en urgence à la recherche d'une vacuité utérine, d'une masse annexielle ou d'un épanchement péritonéal (Douglas).",
+      "Étape 4 : Antibioprophylaxie par Métronidazole 500mg IV + Céfoxitine (ou Amoxicilline/Acide Clavulanique 1g IV) et administration d'Immunoglobulines anti-D (250 µg ou 1500 UI IM) dans les 72h si la patiente est de Rhésus négatif.",
+      "Étape 5 : Appel immédiat du gynécologue de garde pour toute GEU rompue ou instable (bloc opératoire en urgence) ou protocole médical par Méthotrexate (1mg/kg IM) si GEU non rompue, stable et < 35mm.",
+      "Étape 6 : Piège médico-légal absolu : Ne JAMAIS éliminer une GEU sur un test urinaire positif ou négatif sans échographie et dosage quantitatif des BHCG ; attention aux fausses couches spontanées incomplètes hémorragiques."
+    ],
+    "scientific_references": "CNGOF / SFMU / Recommandations du Ministère de la Santé Algérien (MSPRH) sur la prise en charge de la GEU",
+    "is_active": true,
+    "created_at": "2026-11-08T07:27:35.293029+00:00",
+    "updated_at": "2026-11-08T07:27:35.293045+00:00"
+  },
+  {
+    "id": "memento_convulsion_febrile_emp",
+    "title": "⚡ Convulsion Fébrile & EMP Pédiatrique",
+    "category": "Pédiatrie & Urgences",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Libération des VAS, position latérale de sécurité (PLS), oxygénothérapie au masque à haute concentration (10 L/min) et mesure immédiate de la glycapie au bout du doigt.",
+      "Étape 2 : Si la crise persiste > 5 min, administrer du Valium (Diazépam) intra-rectal 0,5 mg/kg (max 10 mg) ou du Buccolam (Midazolam) intranasal/buccal 0,2-0,3 mg/kg.",
+      "Étape 3 : Si échec à 5 min, 2ème dose de Midazolam ou Rivotril (Clonazépam) IV 0,05-0,1 mg/kg. Si EMP établi (> 30 min), charger en Gardenal (Phénobarbital) IV lent : 20 mg/kg.",
+      "Étape 4 : Lutte active contre l'hyperthermie (Paracétamol IV 15 mg/kg si voie Abord d'urgence acquise, mesures physiques) et recherche étiologique (Pнце, méningite, infection ORL).",
+      "Étape 5 : Bilan biologique d'urgence (NFS, CRP, Ionogramme, Glycémie, Calcémie, GDS) et critères d'hospitalisation ou de transfert en réanimation pédiatrique.",
+      "Étape 6 : Piège : Ne jamais banaliser une convulsion fébrile simple prolongée et éliminer impérativement une méningo-encéphalite devant tout signe neurologique focal ou altération prolongée de la conscience."
+    ],
+    "scientific_references": "Consensus SFMU / Société Française de Pédiatrie (SFP) / Protocoles Nationaux MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-31T12:43:12.227985+00:00",
+    "updated_at": "2026-10-31T12:43:12.228001+00:00"
+  },
+  {
+    "id": "memento_urgences_diabetiques",
+    "title": "⚡ Urgences Diabétiques : ACFA & Cétose",
+    "category": "Endocrinologie / Urgences",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : ABCDE immédiat, GDS capillaire, cétonémie capillaire (ou bandelette urinaire), éliminer un choc septique ou une acidose lactique.",
+      "Étape 2 : Bilan biologique d'urgence : Ionogramme sanguin (avec kaliémie corrigée), urée, créatinine, glycémie veineuse, NFS, CRP, ECBU, troponine et ECG.",
+      "Étape 3 : Acidocétose diabétique (ACD) : Remplissage NaCl 0.9% (1L la 1ère heure) + Insulinothérapie IV continue (Actrapid 0.1 UI/kg/h) dès que K+ > 3.3 mmol/L. Si Hyperosmolarité (AHG) : réhydratation prudente et insulinothérapie adaptée.",
+      "Étape 4 : Surveillance armée horaire (conscience, GDS, glycémie capillaire, diurèse via sonde urinaire). Critères de réa : pH < 7.00, trouble de la conscience persistant, défaillance hémodynamique.",
+      "Étape 5 : Piège mortel : Ne JAMAIS administrer d'insuline si la kaliémie est < 3.3 mmol/L (risque d'arythmie fatale et d'arrêt cardiorespiratoire)."
+    ],
+    "scientific_references": "SFMU / SRLF / Consensus International ISPAD & ADA / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-23T13:06:12.369997+00:00",
+    "updated_at": "2026-10-23T13:06:12.370014+00:00"
+  },
+  {
+    "id": "memento_syndrome_meninge_pl",
+    "title": "🧠 Syndrome Méningé Aigu & PL",
+    "category": "Infectiologie & Urgences Neurologiques",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluer la conscience (GCS) et chercher des signes de gravité : purpura fulminans, signes de focalisation, crise convulsive, engagement (anomalie pupillaire, posture de décérébration).",
+      "Étape 2 : Réaliser immédiatement une Hémoculture (x2) et débuter l'Antibiothérapie probabiliste et la corticothérapie (Dexaméthasone 10 mg IV) SANS ATTENDRE LA PL si purpura ou retard de imagerie/PL.",
+      "Étape 3 : Indication absolue d'une TDM cérébrale avant PL si : déficit focal, crise inaugurale, GCS < 13, immunodépression ou œdème papillaire au FO. Sinon, PL immédiate au lit du malade.",
+      "Étape 4 : Réaliser la Ponction Lombaire (L3-L4) : mesurer la pression d'ouverture, prélever 4 tubes (biochimie, bactério/gram, virologie/cytologie), et débuter C3G (Céftriaxone 2g x 2/j IV) + Ampicilline (si > 50 ans ou < 3 mois).",
+      "Étape 5 : Piège médico-légal absolu : Ne JAMAIS retarder l'antibiothérapie d'urgence de plus de 30 minutes en cas de suspicion de méningite purulente bactérienne aux urgences."
+    ],
+    "scientific_references": "Consensus SPILF / SFMU / SRLF / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-11-06T02:31:54.916004+00:00",
+    "updated_at": "2026-11-06T02:31:54.916017+00:00"
+  },
+  {
+    "id": "memento_pneumothorax_compressif",
+    "title": "💨 Pneumothorax Spontané Compressif",
+    "category": "Urgences Vitales / Pneumologie",
+    "icon_name": "air_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Urgence vitale absolue ! Diagnostic clinique immédiat (détresse respiratoire aigue, asymétrie thoracique, abolition du murmure vésiculaire, tympanisme, collapsus hémodynamique). Ne PAS attendre la radio de thorax.",
+      "Étape 2 : Décompression d'urgence immédiate au lit du malade. Mandrin de thoracocentèse ou angiocathéter 14G ou 16G planté au 2e espace intercostal sur la ligne médio-claviculaire (ou 5e EIC ligne axillaire moyenne). Fuite d'air audible = diagnostic confirmé et soulagement instantané.",
+      "Étape 3 : Pose urgente d'un drain thoracique sous anesthésie locale (Xylocaïne 1 ou 2%) relié à un système de aspiration douce ou bulle à bulle (système de Heimlich ou bocal d'étanchéité stérile).",
+      "Étape 4 : Bilan paraclinique post-drainage : Radiographie pulmonaire de contrôle (vérifier l'expansion pulmonaire et le bon positionnement du drain) et gaz du sang (ABG).",
+      "Étape 5 : Surveillance armée en réanimation ou déchoquage (saturation, dyspnée, bullage du drain). Critères de transfert en chirurgie thoracique : fuite d'air persistante > 5 jours ou récidive.",
+      "Étape 6 : Piège médico-légal / CI absolue : Ne jamais administrer de protoxyde d'azote (N2O) et éviter la ventilation sous pression positive (VNI/IOT) avant d'avoir drainé le pneumothorax sous peine d'aggravation fatale."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Recommandations ESC / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-25T05:23:11.454197+00:00",
+    "updated_at": "2026-10-25T05:23:11.454212+00:00"
+  },
+  {
+    "id": "memento_acidocetose_diabetique",
+    "title": "⚡ Acidocétose Diabétique : Réanimation Métabolique",
+    "category": "Métabolique & Endocrinien",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Bilan initial d'urgence (GDS, glycap, ionogramme, urée, créat, BU, ECG) ; ABCDE : oxygénothérapie si SpO2 < 92%, remplissage vasculaire immédiat par NaCl 0,9% (1000 mL en 1h puis 500 mL/h) pour restaurer l'état hémodynamique.",
+      "Étape 2 : Insulinothérapie IV stricte à l'alte (Insuline ordinaire, type Actrapid) : bolus initial de 0,1 UI/kg puis seringue électrique (PSE) continue à 0,1 UI/kg/h (soit 5 à 10 UI/h) en maintenant la glycémie entre 2 et 2,5 g/L.",
+      "Étape 3 : Gestion potassique cruciale : supplémentation par KCl systématique dès que K+ < 5,0 mmol/L dans les perfusions (1 à 2g/h de KCl). Ne JAMAIS débuter l'insuline si K+ < 3,3 mmol/L (risque d'arythmie fatale).",
+      "Étape 4 : Alcalinisation par Bicarbonate de sodium 1,4% (250 mL en 30-60 min) uniquement réservée aux acidoses métaboliques profondes menaçantes avec pH < 7,0 ou collapsus hémodynamique réfractaire.",
+      "Étape 5 : Recherche active du facteur déclencheur (Infection urinaire/pulmonaire, IDM, Ictus, arrêt d'insulinothérapie, iatrogénie) et surveillance armée au déchoquage (glycémie capillaire horaire, GDS/iono toutes les 4h).",
+      "Étape 6 : Piège médico-légal & CI : Ne jamais arrêter brutalement l'insuline IV sans avoir préalablement relayé par de l'insuline sous-cutanée (overlap de 30 min) et couvert le trou anionique, sous peine de rebond cétonique."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / ALD Algérie / ADA Standards of Care",
+    "is_active": true,
+    "created_at": "2026-11-13T01:08:54.009165+00:00",
+    "updated_at": "2026-11-13T01:08:54.009177+00:00"
+  },
+  {
+    "id": "memento_chalazion",
+    "title": "👁️ Prise en charge du Chalazion aux UMC",
+    "category": "Ophtalmologie d'Urgence",
+    "icon_name": "healing_rounded",
+    "color_hex": "#0D9488",
+    "priority_level": 3,
+    "points": [
+      "Étape 1 : Examen clinique immédiat - Eliminer une cellulite orbitaire ou pré-septale (fièvre, douleur vive, œdème étendu, limitation de la motilité oculaire). Palper la paupière à la recherche d'un nodule ferme, indolore ou peu douloureux, situé dans le tarse.",
+      "Étape 2 : Bilan paraclinique - Aucun examen biologique ou radiologique n'est nécessaire en urgence pour un chalazion simple non compliqué.",
+      "Étape 3 : Thérapeutique de 1ère intention - Prescrire des compresses chaudes (10 min, 3 à 4 fois par jour) suivies d'un massage doux de la paupière vers le bord libre. Associer une pommade ophtalmique associant corticoïde et antibiotique (ex : Maxitrol pommade) 3 fois par jour pendant 7 jours.",
+      "Étape 4 : Surveillance et critères de gravité - Réévaluer à 48-72h. En cas d'extension de l'inflammation, de fièvre ou d'altération de l'état général, suspecter une cellulite et transférer en ophtalmologie ou orienter vers un avis spécialisé.",
+      "Étape 5 : Piège médico-légal et contre-indication - Ne jamais tenter une incision ou un curetage au lit du malade aux UMC (risque de cicatrice vicieuse ou de lésion du bord libre). Ne jamais prescrire de collyre corticoïde au long cours sans éliminer une kératite herpétique."
+    ],
+    "scientific_references": "Société Française d'Ophtalmologie (SFO) / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-25T18:33:05.408400+00:00",
+    "updated_at": "2026-10-25T18:33:05.408412+00:00"
+  },
+  {
+    "id": "memento_choc_anaphylactique",
+    "title": "⚡ Choc Anaphylactique : Adrénaline Immédiate et Surveillance",
+    "category": "Urgences Vitales & Réanimation",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Arrêt immédiat de l'antigène suspect (perfusion, antibiotique), décubitus strict, surélévation des membres inférieurs, oxygénothérapie haute concentration à 15 L/min au masque à haute concentration.",
+      "Étape 2 : ADRÉNALINE IM-N = 0,5 mg (0,5 mL à 1 mg/mL pur) en IM dans la cuisse (face antéro-externe), à renouveler toutes les 5 à 15 min si persistance du choc ou des signes de détresse respiratoire.",
+      "Étape 3 : Remplissage vasculaire immédiat par cristalloïdes (NaCl 0,9% ou Ringer Lactate) : bolus de 500 à 1000 mL chez l'adulte (20 mL/kg chez l'enfant) en 15-20 minutes, renouvelable selon l'état hémodynamique.",
+      "Étape 4 : Traitements adjuvants en seconde intention : Corticoïdes IV (Hydrocortisone 100-200 mg IVD ou Méthylprednisolone 1-2 mg/kg) et Antihistaminiques (Dexchlorphéniramine 5 mg IVL) pour prévenir la récurrence biphasique.",
+      "Étape 5 : Surveillance armée (scope, PA, SpO2, FR) pendant au moins 6 à 12 heures au déchoquage, et transfert immédiat en Réanimation en cas de collapsus réfractaire ou d'intubation difficile prévisible (œdème laryngé majeur).",
+      "Étape 6 : Piège mortel : NE JAMAIS injecter l'adrénaline en IV direct pur hors réanimation (risque d'arythmies fatales, FV/TV). En cas d'arrêt cardiaque, protocole ACR standard mais bolus d'adrénaline IV indispensable."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / EAACI / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-25T19:18:18.464389+00:00",
+    "updated_at": "2026-10-25T19:18:18.464429+00:00"
+  },
+  {
+    "id": "memento_morsure_vipere",
+    "title": "🐍 Morsures de Vipère en Algérie",
+    "category": "Urgences Toxicologiques & Piqûres",
+    "icon_name": "warning_rounded",
+    "color_hex": "#DC2626",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Repos strict, rassurement, immobilisation du membre mordu, 2 voies veineuses périphériques, élimination de tout garrot ou incision (contre-indiqués).",
+      "Étape 2 : Bilan biologique urgent au déchoquage : NFS, plaquettes, TP, TCA, Fibrinogène, Ionogramme, Urée, Créatinine, CK, Troponine, Groupage-Rhésus.",
+      "Étape 3 : Antithérapie spécifique : Sérothérapie antivenimeuse (SAV polyvalente algérienne ou équivalent) : 1 à 2 ampoules diluées dans 250 mL de NaCl 0,9% à passer en 1 heure (après test cutané si indiqué selon labo, ou surveillance rapprochée du choc anaphylactique), associée à une antibioprophylaxie (Amoxicilline-Acide Clavulanique 1g x 3/j) et mise à jour de l'ATS/VAT.",
+      "Étape 4 : Traitement symptomatique : Remplissage vasculaire prudents par Cristalloïdes, analgésiques (Paracétamol, éviter AINS et aspirine), corticothérapie si choc anaphylactique ou réaction allergique sévère (Hydrocortisone 100-200 mg IV).",
+      "Étape 5 : Surveillance armée en réanimation ou déchoquage : Extension de l'œdème, troubles de la coagulation, diurèse horaire (risque d'IRA par rhabdomyolyse/choc), signes de choc. Critères de transfert en réanimation : troubles hémodynamiques, CIVD, détresse respiratoire ou œdème cervical/facial menaçant.",
+      "Étape 6 : Piège médico-légal et absolu : Ne JAMAIS inciser la plaie, ne JAMAIS poser de garrot (risque d'ischémie aggravée et de nécrose étendue), ne jamais aspirer le venin par la bouche."
+    ],
+    "scientific_references": "Consensus SFMU / Société Algérienne de Toxicologie / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-25T23:19:38.749292+00:00",
+    "updated_at": "2026-10-25T23:19:38.749306+00:00"
+  },
+  {
+    "id": "memento_aes",
+    "title": "💉 Accident d'Exposition au Sang (AES)",
+    "category": "Risque infectieux & Urgences médico-légales",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Nettoyage immédiat à l'eau et au savon ou Dakin/Désinfectant (Bétadine dermique ou Alcool à 70°). Ne jamais faire saigner, ne pas frotter. En cas de projection muqueuse : rincer abondamment au sérum physiologique ou à l'eau claire pendant au moins 15 minutes.",
+      "Étape 2 : Évaluation rapide du risque : nature du geste (piqûre profonde = haut risque, simple effraction = risque modéré), type de liquide biologique (sang > LCR > liquide pleural) et statut sérologique du patient source (VIH, VHB, VHC connus ou test rapide ag HBs/VIH en urgence).",
+      "Étape 3 : Déclaration immédiate de l'accident au médecin chef de garde et contact du référent de l'unité de prise en charge des AES ou du service des maladies infectieuses pour évaluation et prescription d'une prophylaxie post-exposition (PPE) si indiquée.",
+      "Étape 4 : Instauration de la trithérapie antirétrovirale préventive (ex: Ténofovir/Emtricitabine 1 cp/j + Dolutégravir 50 mg 1 cp/j) dans les 4 heures suivant l'accident (délai maximal absolu de 48h) si le patient source est VIH+ ou de statut inconnu à haut risque.",
+      "Étape 5 : Réalisation des sérologies de référence au lit du malade et pour la source (VIH, VHB, VHC) avec accord du patient source, et programmation des contrôles sérologiques à M1, M3 et M6. Piège médico-légal : l'absence de déclaration immédiate aux UMC compromet la prise en charge ATMP (Accident du Travail / Maladie Professionnelle)."
+    ],
+    "scientific_references": "Consensus SFMU / Ministère de la Santé (MSPRH Algérie) / CCLIN",
+    "is_active": true,
+    "created_at": "2026-10-26T15:17:16.887573+00:00",
+    "updated_at": "2026-10-26T15:17:16.887586+00:00"
+  },
+  {
+    "id": "memento_malaise_syncope",
+    "title": "⚡ Malaise et Syncope aux Urgences",
+    "category": "Urgences Cardio-Vasculaires",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Bilan initial au déchoquage — éliminer l'arrêt cardio-respiratoire (ACR), monitorage continu (ECG 12 dérivations immédiat < 10 min, SpO2, PNI), glycémie capillaire en urgence (Dextro) et prise de la PA aux deux bras.",
+      "Étape 2 : Biologie d'urgence — NFS, ionogramme sanguin, urée, créatininémie, troponine ultra-sensible, gaz du sang (GDS) si dyspnée associée, et bêta-HCG systématique chez toute femme en âge de procréer.",
+      "Étape 3 : Thérapeutique immédiate — Conditionnement (VVP gros calibre), remplissage prudent si hypotension (NaCl 0.9% 250-500 mL si origine hypovolémique), Atropine 0.5 mg IV direct si bradycardie symptomatique réfractaire.",
+      "Étape 4 : Recherche de critères de gravité (Score ROSE / San Francisco) — Syncope survenant à l'effort ou en décubitus, palpitations préalables, douleur thoracique, ATCD familiaux de mort subite, souffle cardiaque systolique, anomalie ECG (BVF, BAV, QT long).",
+      "Étape 5 : Piège médico-légal et contre-indication — Ne jamais banaliser une syncope chez le sujet âgé (éliminer embolie pulmonaire, dissection aortique, hémorragie interne occulte). Interdiction formelle de laisser sortir un patient avec anomalie ECG sans avis cardiologique et monitorage.",
+      "Étape 6 : Orientation — Admission en USIC ou Réanimation si critères de haut risque, surveillance simple en observation UMC si cause vasovagale typique bénigne et bilan négatif."
+    ],
+    "scientific_references": "ESC Guidelines 2018 on Syncope / Consensus SFMU / Collège National de Réanimation / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-29T01:51:06.848997+00:00",
+    "updated_at": "2026-10-29T01:51:06.849011+00:00"
+  },
+  {
+    "id": "memento_hemorroides",
+    "title": "🩸 Crise Hémorroïdaire & Thrombose aux UMC",
+    "category": "Proctologie d'Urgence",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#F59E0B",
+    "priority_level": 2,
+    "points": [
+      "Étape 1 : Examen proctologique immédiat en décubitus latéral (position de Sims) pour différencier thrombose hémorroïdaire externe (tuméfaction violacée, ferme, très douloureuse) et prolapsus hémorroïdaire incarcéré.",
+      "Étape 2 : Éliminer impérativement une urgence chirurgicale ou un diagnostic différentiel grave : rectorragies abondantes masquées, nécrose muqueuse, abcès péri-anal ou fissure anale surinfectée.",
+      "Étape 3 : Instaurer le traitement antalgique et anti-inflammatoire de première intention : AINS (Kétoprofène 100 mg IM ou IV si contre-indication absente) + antalgiques palier II (Tramadol ou Nefopam) + topiques locaux (crème ou suppositoire à base de corticoïdes/anesthésiques locaux).",
+      "Étape 4 : En cas de thrombose externe récente (< 72h) et hyperalgique, réaliser une excision chirurgicale de la thrombose (incision en ellipse sous anesthésie locale à la Xylocaïne 1%) au déchoquage.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : NE JAMAIS tenter de refouler un prolapsus thrombosé ancien et nécrosé au risque d'aggraver l'œdème et la ischémie ; privilégier l'avis spécialisé proctologique ou chirurgical au décours de la garde."
+    ],
+    "scientific_references": "Recommandations de la SNFCP / SFMU / Consensus National Algérien de Proctologie",
+    "is_active": true,
+    "created_at": "2026-10-27T05:44:31.214684+00:00",
+    "updated_at": "2026-10-27T05:44:31.214703+00:00"
+  },
+  {
+    "id": "memento_ischemie_aigue_membre",
+    "title": "⚡ Ischémie Aiguë de Membre Inférieur",
+    "category": "Urgences Vasculaires",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation clinique immédiate (Rutherford 1 à 3) : recherche des 6 P (Pain, Pallor, Pulselessness, Paresthesia, Paralysis, Poikilothermia). Abolition des pouls, marbrures, froideur. État hémodynamique.",
+      "Étape 2 : Bilan pré-opératoire d'urgence en urgence : NFS, TP, TCA, Fibrinogène, Ionogramme, Urée, Créatinine, Groupe sanguin (2 déterminations) + Rhésus, ECG, Radio Thorax, Avis chirurgical vasculaire immédiat.",
+      "Étape 3 : Anticoagulation curative immédiate sauf contre-indication majeure : Héparine non fractionnée (HNF) IV en seringue électrique : Bolus de 50 UI/kg puis 500 UI/kg/24h (visée TCA à 1.5 - 2.5 fois le témoin). Hydratation et antalgiques palier 2 ou 3.",
+      "Étape 4 : Surveillance armée des paramètres de reperfusion et de la volémie. Alerte réanimation si ischémie dépassée (Rutherford 3) avec risque de syndrome des loges et d'hyperkaliémie post-revascularisation.",
+      "Étape 5 : Piège médico-légal : Ne jamais prescrire de thrombolyse sans avis spécialisé, et ne jamais retarder le bloc opératoire par une imagerie (Angio-TDM) si le membre est menacé (grade IIb ou III de Rutherford)."
+    ],
+    "scientific_references": "Consensus ESC / SFMU / Collège Français de Chirurgie Vasculaire / MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-30T07:14:19.036908+00:00",
+    "updated_at": "2026-10-30T07:14:19.036923+00:00"
+  },
+  {
+    "id": "memento_etat_de_mal_epileptique",
+    "title": "⚡ État de Mal Épileptique / Convulsions Aiguës",
+    "category": "Neurologie - Urgences Vitales",
+    "icon_name": "bolt_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Libération des VAS, oxygénation au masque haute concentration (15L/min), pose de 2 VVP, monitorage (SpO2, PNI, ECG) et administration systématique de 100 mg de Vitamine B1 (Thiamine) IV avant tout G80% (2ème flacon) pour prévenir l'encéphalopathie de Wernicke.",
+      "Étape 2 : Bilan biologique d'urgence au lit (Glycémie capillaire immédiate, ionogramme sanguin, urée, créatinine, calcémie, magnésémie, gaz du sang, NFS, hémostase) et recherche d'un toxic, d'une infection ou d'un arrêt de traitement anti-épileptique.",
+      "Étape 3 : Traitement de 1ère ligne (0-10 min) : Diazépam (Valium) 10 mg en IV lente (répétable 1 fois à 5 min) OU Clonazépam (Rivotril) 1 mg en IV lente. Si échec à 10 min : 2ème ligne par Acide Valproïque (Dépakine) 30 mg/kg en IVSE dans 100 ml de G5% sur 15-20 min OU Lévétiracétam (Keppra) 60 mg/kg (max 4,5g) dans 100 ml de NaCl 0,9% sur 15 min.",
+      "Étape 4 : Si échec à 30 min (EME réfractaire) : Transfert immédiat en Réanimation, Sédation par Propofol (1-2 mg/kg en bolus puis 2-10 mg/kg/h) ou Midazolam, intubation trachéale, ventilation mécanique et surveillance continue sous EEG.",
+      "Étape 5 : Piège médico-légal et thérapeutique : Ne jamais injecter de G80% sans couverture par la Thiamine chez l'éthylique ou le dénutri, et ne jamais injecter de Diazépam en IM (résorption aléatoire)."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Médecine d'Urgence (SAMU)",
+    "is_active": true,
+    "created_at": "2026-10-29T16:14:00.164687+00:00",
+    "updated_at": "2026-10-29T16:14:00.164700+00:00"
+  },
+  {
+    "id": "memento_retention_aigue_urine",
+    "title": "💧 Rétention Aiguë d'Urine & Globe Vésical",
+    "category": "Urgences Urologiques",
+    "icon_name": "emergency_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Diagnostic clinique immédiat (palpation/percussion d'un globe sus-pubien mat, douloureux, anxiété majeure) et élimination d'une anurie (toucher rectal et examen des OGE).",
+      "Étape 2 : Bilan biologique urgent au lit (Urée, Créatinine pour rechercher une insuffisance rénale aiguë obstructive, Ionogramme sanguin, NFS, ECBU si sepsis associé).",
+      "Étape 3 : Sondage vésical stérile en urgence (Sonde de Foley Ch 16-18 ou Ch 20-22 si hématurie avec caillots). En cas d'échec ou de traumatisme suspecté/sténose : pose d'un cathéter sus-pubien (CSP) sous anesthésie locale.",
+      "Étape 4 : Décompression progressive si globe volumineux (> 1000 ml) : clampage intermittent de la sonde toutes les 30 minutes (250-500 ml) pour éviter le syndrome de levée d'obstacle (chute tensionnelle et hématurie ex vacuo).",
+      "Étape 5 : Surveillance armée (diurèse horaire, aspect des urines, contrôle tensionnel) et relais étiologique (initiation d'un alpha-bloquant type Alfuzosine 10 mg/j si HBP après avis urologique avant toute tentative de clampage-ablation)."
+    ],
+    "scientific_references": "Recommandations AFU / SFMU / Consensus Urologie MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-10-30T14:17:03.597855+00:00",
+    "updated_at": "2026-10-30T14:17:03.597868+00:00"
+  },
+  {
+    "id": "memento_sca_non_st",
+    "title": "⚡ SCA sans ST (NSTEMI)",
+    "category": "Cardiologie / UMC",
+    "icon_name": "favorite_border_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Monitorage immédiat, pose de 2 VVP de gros calibre, ECG 12 dérivations < 10 min et oxygénothérapie si SpO2 < 90%.",
+      "Étape 2 : Biologie urgente au lit : Troponine ultrasensible, NFS, ionogramme sanguin, fonction rénale (Créat/Clairance), bilan hépatique et hémostase.",
+      "Étape 3 : Double anti-agrégation plaquettaire (DAPT) : Aspirine 250-300 mg IV + Clopidogrel 300-600 mg PO (ou Ticagrelor 180 mg PO si disponible), plus Anticoagulation (Enoxaparine 0,5 mg/kg IV direct puis 1 mg/kg/12h SC ou Héparine Non Fractionnée).",
+      "Étape 4 : Traitement symptomatique de la douleur : Dérivés nitrés sublinguaux ou IVSE si PA le permet, et Bêtabloquants si stables et sans signe d'insuffisance cardiaque.",
+      "Étape 5 : Stratification du risque (GRACE score) : Coronarographie en urgence < 2h en cas de très haut risque (choc, instabilité hémodynamique, arythmie menaçante, douleur persistante)."
+    ],
+    "scientific_references": "Recommandations ESC / SFMU / Société Algérienne de Cardiologie",
+    "is_active": true,
+    "created_at": "2026-11-06T11:02:18.761458+00:00",
+    "updated_at": "2026-11-06T11:02:18.761473+00:00"
+  },
+  {
+    "id": "memento_intoxication_medicamenteuse",
+    "title": "💊 Intoxication Médicamenteuse Aiguë (IMA)",
+    "category": "Toxicologie",
+    "icon_name": "warning_rounded",
+    "color_hex": "#EF4444",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluation sécuritaire et vitale (ABCDE), Glasgow, recherche de signes de choc, détresse respiratoire ou troubles du rythme (ECG immédiat).",
+      "Étape 2 : Bilan biologique d'urgence au lit du malade : Glycémie capillaire, Gaz du sang (GDS), Ionogramme sanguin, Urée, Créatinine, Bilan hépatique et Taux de Prothrombine (TP).",
+      "Étape 3 : Antidotes de première intention si toxique identifié : Naloxone (0,4 mg IV) si coma/hypoventilation aux opiacés ; Flumazénil CONTRE-INDIQUÉ si poly-intox ou épilepsie ; Charbon activé 50g per os si ingestion < 1h et patient conscient/protégé.",
+      "Étape 4 : Mesures de réanimation et surveillance armée : Monitorage continu, pose d'une VVP de bon calibre, sondage urinaire si besoin, transfert immédiat en réanimation si instabilité hémodynamique, troubles de la conscience (Glasgow < 8) ou convulsions.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne jamais provoquer de vomissements (risque d'inhalation) et éviter le flumazénil en aveugle dans les poly-intoxications (risque de levée de protection anti-comitiale et arrêt cardiaque réfractaire)."
+    ],
+    "scientific_references": "Consensus SFMU / SRLF / Centre Anti-Poison d'Algérie (CAP Algérie)",
+    "is_active": true,
+    "created_at": "2026-11-11T00:04:57.441058+00:00",
+    "updated_at": "2026-11-11T00:04:57.441070+00:00"
+  },
+  {
+    "id": "memento_pediatrie_deshydratation",
+    "title": "💧 Pédiatrie : Déshydratation Aiguë & Réhydratation IV",
+    "category": "Pédiatrie d'Urgence",
+    "icon_name": "child_care_rounded",
+    "color_hex": "#0284C7",
+    "priority_level": 1,
+    "points": [
+      "Étape 1 : Évaluer la sévérité (score de Gorelik ou clinique) : pli cutané, fontanelle déprimée, sécheresse des muqueuses, marbrures, TRC > 3s (collapsus = urgence vitale).",
+      "Étape 2 : Poser une voie veineuse périphérique (VVP) ou intra-osseuse (TIO) immédiate si choc. Bilan urgent : Glycémie capillaire, Ionogramme sanguin, Urée, Créatinine, Gaz du sang (recherche acidose métabolique).",
+      "Étape 3 : En cas de choc hypovolémique : Remplissage vasculaire par NaCl 0,9% ou Ringer Lactate à raison de 20 ml/kg en 20 minutes, renouvelable 1 à 2 fois si persistance des signes de choc.",
+      "Étape 4 : Pour la réhydratation de maintenance + déficit : Utiliser du Sérum Glucosé 5% + NaCl 0,9% (ou solution type iso-oncotique pédiatrique selon disponibilité) en couvrant les besoins basaux et la correction du déficit sur 24h.",
+      "Étape 5 : Surveillance armée au déchoquage : Contrôle de la diurèse (objectif > 1 ml/kg/h), de la conscience, des constantes (FC, TA, FR) et ionogramme de contrôle à H6-H12. Alerte réanimation si acidose sévère (pH < 7.15) ou échec du remplissage.",
+      "Étape 6 : Piège médico-légal / CI : Ne jamais administrer de potassium (KCl) dans les solutés de réhydratation tant que la diurèse n'est pas vérifiée et documentée (risque d'hyperkaliémie fatale)."
+    ],
+    "scientific_references": "Recommandations ESPGHAN / SFMU / Consensus National Pédiatrie MSPRH Algérie",
+    "is_active": true,
+    "created_at": "2026-11-12T03:04:52.914052+00:00",
+    "updated_at": "2026-11-12T03:04:52.914067+00:00"
+  }
+]

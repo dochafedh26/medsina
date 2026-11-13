@@ -1,0 +1,138 @@
+name: Medsina Multi-App Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: 'App to build and release'
+        required: true
+        type: choice
+        options:
+          - medsina_residanat
+          - medsina_clinique
+          - medsina_externat
+          - medsina_all_in_one
+      build_target:
+        description: 'Platform target'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - android
+          - web
+          - windows
+  push:
+    branches:
+      - 'feat/multi-app-modular-split'
+    tags:
+      - 'residanat-v*'
+      - 'clinique-v*'
+      - 'externat-v*'
+      - 'all-v*'
+
+jobs:
+  resolve-app:
+    runs-on: ubuntu-latest
+    outputs:
+      app_name: ${{ steps.set_app.outputs.app_name }}
+      app_dir: ${{ steps.set_app.outputs.app_dir }}
+    steps:
+      - id: set_app
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            APP="${{ inputs.app_name }}"
+          elif [[ "${{ github.ref_name }}" == residanat-v* ]]; then
+            APP="medsina_residanat"
+          elif [[ "${{ github.ref_name }}" == clinique-v* ]]; then
+            APP="medsina_clinique"
+          elif [[ "${{ github.ref_name }}" == externat-v* ]]; then
+            APP="medsina_externat"
+          else
+            APP="medsina_all_in_one"
+          fi
+          echo "app_name=$APP" >> "$GITHUB_OUTPUT"
+          echo "app_dir=apps/$APP" >> "$GITHUB_OUTPUT"
+
+  analyze-and-test:
+    needs: resolve-app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Bootstrap secrets for analysis
+        run: |
+          cp packages/medsina_core/lib/core/config/app_secrets.dart.example \
+             packages/medsina_core/lib/core/config/app_secrets.dart
+      - name: Resolve Dart Pub Workspace
+        run: flutter pub get
+      - name: Analyze all packages and apps
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings packages/* apps/*
+
+  build-android:
+    needs: [resolve-app, analyze-and-test]
+    if: ${{ github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'android' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Bootstrap secrets
+        run: |
+          cp packages/medsina_core/lib/core/config/app_secrets.dart.example \
+             packages/medsina_core/lib/core/config/app_secrets.dart
+      - name: Resolve workspace
+        run: flutter pub get
+      - name: Ensure Android platform scaffolding
+        run: |
+          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
+          APP_NAME="${{ needs.resolve-app.outputs.app_name }}"
+          if [ ! -d "$APP_DIR/android" ]; then
+            cp -r android "$APP_DIR/android"
+            if [ "$APP_NAME" != "medsina_all_in_one" ]; then
+              sed -i "s/applicationId = \"com.medsina.medsina\"/applicationId = \"com.medevsync.$APP_NAME\"/" "$APP_DIR/android/app/build.gradle.kts"
+            fi
+          fi
+      - name: Build Android APK
+        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
+        run: flutter build apk --release --split-per-abi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.resolve-app.outputs.app_name }}-android
+          path: ${{ needs.resolve-app.outputs.app_dir }}/build/app/outputs/flutter-apk/*.apk
+
+  build-web:
+    needs: [resolve-app, analyze-and-test]
+    if: ${{ github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'web' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Bootstrap secrets
+        run: |
+          cp packages/medsina_core/lib/core/config/app_secrets.dart.example \
+             packages/medsina_core/lib/core/config/app_secrets.dart
+      - name: Resolve workspace
+        run: flutter pub get
+      - name: Ensure Web platform scaffolding
+        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
+        run: |
+          if [ ! -d "web" ]; then
+            flutter create --platforms=web --org com.medevsync .
+          fi
+      - name: Build Web
+        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
+        run: flutter build web --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.resolve-app.outputs.app_name }}-web
+          path: ${{ needs.resolve-app.outputs.app_dir }}/build/web

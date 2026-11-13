@@ -1,0 +1,25 @@
+name: medsina_clinical_pkg
+description: Clinical practice, emergency CAT protocols, Synapse case simulator, Vidal Algeria nomenclature, and Clinical Atlas.
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  equatable: ^3.0.0
+  flutter_markdown: ^0.7.7+1
+  medsina_core: any
+  medsina_practical_tools: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/algerian_nomenclature.json
+    - assets/data/emergency_drugs_algeria.json
+    - assets/data/vidal_drug_interactions.json
+    - assets/data/vidal_terrain_contraindications.json

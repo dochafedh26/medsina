@@ -9,13 +9,12 @@ import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/license_key_formatter.dart';
 import '../../../core/widgets/medsina_logo.dart';
-import '../../admin/bloc/admin_bloc.dart';
-import '../../admin/models/admin_models.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/models/user_model.dart';
 import '../models/subscription_duration.dart';
+import '../models/subscription_plan_item.dart';
 import 'referral_screen.dart';
 
 class SubscriptionPaywallScreen extends StatefulWidget {
@@ -82,21 +81,18 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
       },
       builder: (context, state) {
         final currentTier = state.user?.tier ?? SubscriptionTier.free;
-        final adminPlans = context.watch<AdminBloc>().state.plans;
 
         SubscriptionPlanItem? getPlan(String id) {
           try {
             if (_fetchedPlans.isNotEmpty) {
               return _fetchedPlans.firstWhere((p) => p.id == id);
             }
-            return adminPlans.firstWhere((p) => p.id == id);
+          } catch (_) {}
+          try {
+            final def = SupabaseService.defaultPlans.firstWhere((p) => p['id'] == id);
+            return SubscriptionPlanItem.fromJson(def);
           } catch (_) {
-            try {
-              final def = SupabaseService.defaultPlans.firstWhere((p) => p['id'] == id);
-              return SubscriptionPlanItem.fromJson(def);
-            } catch (_) {
-              return null;
-            }
+            return null;
           }
         }
 

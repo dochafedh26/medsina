@@ -1,0 +1,298 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:medsina_core/core/constants/app_constants.dart';
+import 'package:medsina_core/core/network/supabase_service.dart';
+import 'package:medsina_core/core/services/user_loyalty_service.dart';
+import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/theme/theme_controller.dart';
+import 'package:medsina_core/core/widgets/medsina_logo.dart';
+import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
+import 'package:medsina_core/features/auth/bloc/auth_event.dart';
+import 'package:medsina_core/features/auth/bloc/auth_state.dart';
+import 'package:medsina_core/features/auth/presentation/auth_screen.dart';
+import 'package:medsina_clinical_pkg/features/clinical/bloc/clinical_bloc.dart';
+import 'features/navigation/presentation/main_scaffold.dart';
+import 'package:medsina_core/features/notifications/services/fcm_service.dart';
+import 'package:medsina_core/features/notifications/services/realtime_notification_service.dart';
+import 'package:medsina_core/features/notifications/services/smart_reminder_service.dart';
+import 'package:medsina_study_engine/features/revision/bloc/revision_bloc.dart';
+import 'package:medsina_study_engine/features/revision/models/module_model.dart';
+import 'package:medsina_study_engine/study_engine_bootstrap.dart';
+import 'package:medsina_core/core/interfaces/feature_contracts.dart';
+import 'package:medsina_clinical_pkg/features/clinical/presentation/clinical_screen.dart';
+import 'package:medsina_clinical_pkg/features/prescription/presentation/prescription_analysis_screen.dart';
+import 'package:medsina_practical_tools/features/lab_analysis/presentation/lab_analysis_screen.dart';
+import 'package:medsina_practical_tools/features/practical_tools/presentation/practical_tools_screen.dart';
+import 'package:medsina_residanat_pkg/features/revision/presentation/course_mindmap_screen.dart';
+import 'package:medsina_residanat_pkg/features/revision/presentation/course_summary_screen.dart';
+import 'package:medsina_residanat_pkg/features/revision/presentation/revision_catalog_screen.dart';
+import 'package:medsina_residanat_pkg/features/revision/presentation/samedis_pedagogiques_screen.dart';
+import 'features/search/presentation/global_search_screen.dart';
+
+void _registerAllInOneRoutes() {
+  MedsinaFeatureRegistry.instance.appId = 'medsina_all';
+  registerStudyEngineContracts();
+  final registry = MedsinaFeatureRegistry.instance;
+  registry.registerRouteHandler('global_search', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const GlobalSearchScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('residanat_catalog', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const RevisionCatalogScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('clinical_home', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const ClinicalScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('practical_tools', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const PracticalToolsScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('course_summary', (ctx, args) async {
+    final course = args['course'] as CourseModel?;
+    if (course == null || !ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) => CourseSummaryScreen(course: course, moduleName: args['moduleName'] as String?),
+    ));
+    return true;
+  });
+  registry.registerRouteHandler('course_mindmap', (ctx, args) async {
+    final course = args['course'] as CourseModel?;
+    if (course == null || !ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => CourseMindmapScreen(course: course)));
+    return true;
+  });
+  registry.registerRouteHandler('samedis_pedagogiques', (ctx, args) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) => SamedisPedagogiquesScreen(initialSearchQuery: args['initialSearchQuery'] as String? ?? ''),
+    ));
+    return true;
+  });
+  registry.registerRouteHandler('activity:clinicalProtocol', (ctx, data) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) => ClinicalScreen(initialTabIndex: 0, targetProtocolId: data['protocolId'] as String? ?? 'cat_sca_st_plus'),
+    ));
+    return true;
+  });
+  registry.registerRouteHandler('activity:prescriptionVidal', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const PrescriptionAnalysisScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('activity:labAnalysis', (ctx, _) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(builder: (_) => const LabAnalysisScreen()));
+    return true;
+  });
+  registry.registerRouteHandler('activity:emergencyDrug', (ctx, data) async {
+    if (!ctx.mounted) return false;
+    Navigator.of(ctx).push(MaterialPageRoute(
+      builder: (_) => ClinicalScreen(initialTabIndex: 2, targetDrugQuery: data['drugName'] as String? ?? ''),
+    ));
+    return true;
+  });
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Full-Screen Edge-to-Edge display on Android
+  // Full-Screen Immersive Sticky: hides Android system navigation bar so Medsina is true full screen
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarDividerColor: Colors.transparent,
+    ),
+  );
+
+  try {
+    await SupabaseService.initialize();
+    // Track user connection session, daily streak and loyalty XP
+    UserLoyaltyService.instance.initializeAndTrack();
+  } catch (e) {
+    debugPrint('Supabase initialization fallback: $e');
+  }
+
+  // Dynamically synchronize app version from runtime package info (web, android, windows)
+  try {
+    final pkg = await PackageInfo.fromPlatform();
+    if (pkg.version.isNotEmpty) {
+      AppConstants.appVersion = pkg.version;
+    }
+  } catch (e) {
+    debugPrint('PackageInfo initialization notice: $e');
+  }
+
+  // Initialize Realtime Medical Notifications (CAT, Courses, QCM, Pearl) with active user context
+  try {
+    String? activeUserId;
+    bool isAdmin = false;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userJson = prefs.getString('medsina_active_user');
+      if (userJson != null) {
+        final data = jsonDecode(userJson);
+        activeUserId = data['id']?.toString();
+        isAdmin = data['isAdmin'] == true || data['is_admin'] == true;
+      }
+    } catch (_) {}
+    activeUserId ??= SupabaseService.currentSession?.user.id;
+    await RealtimeNotificationService.instance.initialize(
+      userId: activeUserId,
+      isAdmin: isAdmin,
+    );
+    await SmartReminderService.instance.initialize();
+    await FcmService.instance.initialize(userId: activeUserId);
+  } catch (e) {
+    debugPrint('Realtime Notification initialization notice: $e');
+  }
+
+  await ThemeController.instance.initialize();
+  _registerAllInOneRoutes();
+
+  runApp(const MedsinaApp());
+}
+
+class MedsinaApp extends StatelessWidget {
+  const MedsinaApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (_) => AuthBloc()..add(AppStartedEvent()),
+        ),
+        BlocProvider<ClinicalBloc>(
+          create: (_) => ClinicalBloc(),
+        ),
+        BlocProvider<RevisionBloc>(
+          create: (_) => RevisionBloc(),
+        ),
+      ],
+      child: AnimatedBuilder(
+        animation: ThemeController.instance,
+        builder: (context, _) {
+          final tc = ThemeController.instance;
+          return MaterialApp(
+            title: 'Medsina — Plateforme Médicale Globale',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: tc.isNightShiftActive
+                ? AppTheme.nightShiftTheme
+                : AppTheme.darkTheme,
+            themeMode: tc.themeMode,
+            builder: (context, child) {
+              final mq = MediaQuery.of(context);
+              final clampedScale = mq.textScaler.clamp(
+                minScaleFactor: 1.0,
+                maxScaleFactor: 1.35,
+              );
+              return MediaQuery(
+                data: mq.copyWith(textScaler: clampedScale),
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+            home: const AuthGate(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Dynamic routing gate based on Bloc Authentication status
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        switch (state.status) {
+          case AuthStatus.authenticated:
+            return const MainScaffold();
+          case AuthStatus.unauthenticated:
+          case AuthStatus.error:
+          case AuthStatus.inactivitySuspended:
+            return const AuthScreen();
+          case AuthStatus.loading:
+          case AuthStatus.initial:
+            return const MedicalSplashScreen();
+        }
+      },
+    );
+  }
+}
+
+/// Polished Medical Loading / Splash Screen
+class MedicalSplashScreen extends StatelessWidget {
+  const MedicalSplashScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryTeal.withValues(alpha: 0.25),
+                    blurRadius: 32,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: const MedsinaLogo.icon(size: 68),
+            ),
+            const SizedBox(height: 24),
+            const MedsinaLogo(height: 38),
+            const SizedBox(height: 8),
+            Text(
+              'Plateforme Médicale & Résidanat Blida 2027',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white70 : const Color(0xFF64748B),
+              ),
+            ),
+            const SizedBox(height: 36),
+            const SizedBox(
+              width: 32,
+              height: 32,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: AppTheme.primaryTeal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,0 +1,27 @@
+name: medsina_residanat
+description: Medsina Résidanat — Préparation Concours Résidanat, 47 Modules, 19k+ QCMs, FSRS & Livrets.
+version: 1.0.82+107
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  shared_preferences: ^2.5.6
+  package_info_plus: ^10.2.2
+  medsina_core: any
+  medsina_practical_tools: any
+  medsina_study_engine: any
+  medsina_residanat_pkg: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

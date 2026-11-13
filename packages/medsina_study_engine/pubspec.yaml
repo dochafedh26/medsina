@@ -1,0 +1,29 @@
+name: medsina_study_engine
+description: Shared QCM engine, module/course models, PDF viewer, offline manager, FSRS flashcards, AI tutor, and analytics.
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  equatable: ^3.0.0
+  fl_chart: ^1.3.1
+  flutter_markdown: ^0.7.7+1
+  flutter_tts: ^4.2.5
+  path_provider: ^2.1.6
+  shared_preferences: ^2.5.6
+  syncfusion_flutter_pdf: ^35.1.39
+  syncfusion_flutter_pdfviewer: ^35.1.39
+  medsina_core: any
+  medsina_practical_tools: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/modules_catalog_47.json
+    - assets/data/blida_exam_principles.json

@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../interfaces/feature_contracts.dart';
 import '../models/app_release_model.dart';
 import '../network/supabase_service.dart';
 
@@ -90,7 +91,10 @@ class OtaUpdateService {
       final currentBuild = int.tryParse(packageInfo.buildNumber) ?? 1;
 
       final platformStr = currentPlatform;
-      final releaseData = await SupabaseService.fetchLatestRelease(platformStr);
+      final releaseData = await SupabaseService.fetchLatestRelease(
+        platformStr,
+        appId: MedsinaFeatureRegistry.instance.appId,
+      );
 
       if (releaseData == null) {
         return UpdateCheckResult(
