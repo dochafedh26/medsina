@@ -707,17 +707,17 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Conditionnement immédiat au déchoquage (2 VVP gros calibre, Scope, SaO2, ECG) et évaluation de la conscience (Glasgow). Glycémie capillaire et BU cétones en urgence.",
-      "Étape 2 : Bilan biologique indispensable : Ionogramme sanguin (avec Kaliémie et Natrémie corrigée), Urée, Créatinine, Gaz du sang (GDS), NFS, CRP, Troponine et Lactates.",
-      "Étape 3 : Réhydratation IV agressive par NaCl 0,9% (1000 mL en 1h, puis 500 mL/h les 2h suivantes) et Insulinothérapie IV continue à 0,1 UI/kg/h au PSE (Insuline rapide type Actrapid sans bolus initial).",
-      "Étape 4 : Gestion du Potassium : Si K+ < 3,3 mmol/L, STOP insuline et supplémenter (20-40 mmol/h) jusqu'à K+ > 3,3. Si K+ entre 3,3 et 5,2, ajouter 20 mmol de KCl par litre de perfusion.",
-      "Étape 5 : Surveillance armée horaire (glycémie capillaire, conscience) et ionogramme/GDS toutes les 4h. Intégration du G5% dès que glycémie < 2,5 g/L (13,9 mmol/L) pour maintenir l'insuline.",
-      "Étape 6 : Piège mortel : Ne JAMAIS administrer de bicarbonate de sodium en routine (sauf acidémie extrême pH < 6,9 menaçante) et éliminer un facteur déclenchant (Infection, IDM, Iatrogénie)."
+      "Étape 1 : Bilan initial d'urgence (GDS, glycap, ionogramme, urée, créat, BU, ECG) ; ABCDE : oxygénothérapie si SpO2 < 92%, remplissage vasculaire immédiat par NaCl 0,9% (1000 mL en 1h puis 500 mL/h) pour restaurer l'état hémodynamique.",
+      "Étape 2 : Insulinothérapie IV stricte à l'alte (Insuline ordinaire, type Actrapid) : bolus initial de 0,1 UI/kg puis seringue électrique (PSE) continue à 0,1 UI/kg/h (soit 5 à 10 UI/h) en maintenant la glycémie entre 2 et 2,5 g/L.",
+      "Étape 3 : Gestion potassique cruciale : supplémentation par KCl systématique dès que K+ < 5,0 mmol/L dans les perfusions (1 à 2g/h de KCl). Ne JAMAIS débuter l'insuline si K+ < 3,3 mmol/L (risque d'arythmie fatale).",
+      "Étape 4 : Alcalinisation par Bicarbonate de sodium 1,4% (250 mL en 30-60 min) uniquement réservée aux acidoses métaboliques profondes menaçantes avec pH < 7,0 ou collapsus hémodynamique réfractaire.",
+      "Étape 5 : Recherche active du facteur déclencheur (Infection urinaire/pulmonaire, IDM, Ictus, arrêt d'insulinothérapie, iatrogénie) et surveillance armée au déchoquage (glycémie capillaire horaire, GDS/iono toutes les 4h).",
+      "Étape 6 : Piège médico-légal & CI : Ne jamais arrêter brutalement l'insuline IV sans avoir préalablement relayé par de l'insuline sous-cutanée (overlap de 30 min) et couvert le trou anionique, sous peine de rebond cétonique."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / ALMS Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / ALD Algérie / ADA Standards of Care",
     "is_active": true,
-    "created_at": "2026-11-09T17:37:22.346992+00:00",
-    "updated_at": "2026-11-09T17:37:22.347008+00:00"
+    "created_at": "2026-11-13T01:08:54.009165+00:00",
+    "updated_at": "2026-11-13T01:08:54.009177+00:00"
   },
   {
     "id": "memento_chalazion",
