@@ -375,17 +375,16 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation hémodynamique immédiate (pouls, PA, SpO2), pose de 2 VVP de gros calibre, mise à jeun stricte et pose d'une sonde nasogastrique si vomissements incoercibles ou iléus.",
-      "Étape 2 : Bilan biologique urgent au déchoquage : NFS, Ionogramme sanguin, Urée, Créatinine, Calcémie, Glycémie, CRP, Lipasémie (ou amylasémie), Bilan hépatique complet (ASAT, ALAT, PAL, GGT, Bili totale et conjuguée) et gaz du sang.",
-      "Étape 3 : Remplissage vasculaire agressif par cristalloïdes (Ringer Lactate ou NaCl 0,9%) à raison de 10-20 mL/kg/h les premières 24h sous contrôle de la diurèse (objectif > 0,5 mL/kg/h) ; Antalgiques majeurs : Paracétamol IV associé à du Nefopam (Acupan) ou titration morphinique.",
-      "Étape 4 : Imagerie de première intention : Échographie abdominale aux urgences (recherche d'étiologie biliaire) et TDM abdomino-pelvienne avec injection de produit de contraste (recommandée à partir de la 72ème heure pour le staging pronostique de Balthazar si doute ou aggravation).",
-      "Étape 5 : Surveillance armée en unité de soins intensifs (USI) ou réanimation si score de Ranson > 3, APACHE II > 8, syndrome de réponse inflammatoire systémique (SIRS) persistant ou défaillance d'organe.",
-      "Étape 6 : Piège médico-légal et thérapeutique : Ne pas prescrire d'antibiothérapie prophylactique systématique (réservée aux formes nécrotiques surinfectées prouvées) et éliminer formellement une urgence chirurgicale non pancréatique (perforation, infarctus mésentérique)."
+      "Étape 1 : Évaluation initiale, pose de 2 VVP de bon calibre, mise en place d'une sonde nasogastrique en cas de vomissements incoercibles et pose d'une sonde urinaire pour surveillance stricte de la diurèse (> 0,5 mL/kg/h).",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : Lipasémie (ou amylasémie), NFS, créatinine, urée, CRP, bilan hépatique (ASAT, ALAT, GGT, PAL, bilirubinémie), calcémie, triglycérides, gaz du sang et groupage sanguin (RHS).",
+      "Étape 3 : Remplissage vasculaire agressif par Cristalloïdes (NaCl 0,9% ou Ringer Lactate) : 100 à 200 mL/h adapté à l'état hémodynamique. Antalgiques majeurs : Paracétamol IV 1g/6h + Néfopam (Acupan) ou titration morphinique IV si douleur intense (EVA > 6).",
+      "Étape 4 : Imagerie de première intention : Échographie abdominale en urgence (recherche d'étiologie biliaire). Scanner abdominal avec injection de produits de contraste iodé (TDM thoraco-abdomino-pelvien) indiqué idéalement entre la 48ème et 72ème heure pour évaluer la nécrose. Transfert en Réanimation si score de Balthazar élevé, défaillance d'organe (MIFI) ou sepsis sévère.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne pas administrer d'AINS (aggravation rénale et du saignement). Ne pas débuter d'antibiothérapie probabiliste systématique en l'absence de sepsis documenté ou d'angiocholite associée (résserver aux formes nécrotiques infectées prouvées)."
     ],
-    "scientific_references": "Recommandations SFMU / SRLF /ACG / MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / Collège de Réanimation / Recommandations Nationales Algériennes de Gastro-Entérologie",
     "is_active": true,
-    "created_at": "2026-11-11T06:33:46.378854+00:00",
-    "updated_at": "2026-11-11T06:33:46.378875+00:00"
+    "created_at": "2026-11-13T22:41:07.251857+00:00",
+    "updated_at": "2026-11-13T22:41:07.251870+00:00"
   },
   {
     "id": "memento_intoxication_medicamenteuse_aigue",
