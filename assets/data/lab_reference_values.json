@@ -1297,5 +1297,20 @@
     ],
     "created_at": "2026-11-11T22:54:47.582395+00:00",
     "updated_at": "2026-11-11T22:54:47.582413+00:00"
+  },
+  {
+    "id": "lab_metanephrines_urinaires_plasmatiques",
+    "name": "Métanéphrines et Normétanéphrines urinaires et plasmatiques",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Plasmatiques: Normétanéphrines < 0.90 nmol/L, Métanéphrines < 0.50 nmol/L | Urinaires (24h): Normétanéphrines < 2.0 µmol/24h, Métanéphrines < 1.0 µmol/24h",
+    "unit": "nmol/L (ou µmol/24h)",
+    "high_interpretation": "Élévation > 4 fois la normale : quasi-pathognomonique de phéochromocytome ou paragangliome. Élévation modérée (1 à 4 fois) : fausses positives fréquentes (stress, médicaments, insuffisance rénale). Urgence vitale : risque de crise hypertensive aiguë, AVC, OAP. Conduite à tenir : arrêt des interférants, confirmation par fractionnement, imagerie morphologique (TDM abdomino-pelvienne, IRM) et fonctionnelle (MIBG ou TEP-DOPA) après blocage alpha strict (Phénoxybenzamine) si la tumeur est confirmée.",
+    "low_interpretation": "Valeurs normales ou basses : excluent virtuellement le diagnostic de phéochromocytome (excellente valeur prédictive négative > 99%). Pas de pathologie endocrinienne associée à une carence.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Interférences médicamenteuses nombreuses (tricycliques, inhibiteurs de la recapture de la sérotonine, sympathomimétiques, L-dopa, labétalol). Les arrêter 1 à 2 semaines avant le dosage si possible.",
+      "Condition de prélèvement stricte pour les métanéphrines plasmatiques : Patient en position coudée (allongée) depuis au moins 30 minutes, car la position debout et le stress élèvent physiologiquement les catécholamines et leurs métabolites."
+    ],
+    "created_at": "2026-11-13T09:50:55.150461+00:00",
+    "updated_at": "2026-11-13T09:50:55.150480+00:00"
   }
 ]
