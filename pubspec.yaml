@@ -90,6 +90,7 @@ flutter:
   assets:
     - assets/
     - assets/data/
+    - assets/data/externat/
     - assets/drives/
     - assets/mindmaps/
 
