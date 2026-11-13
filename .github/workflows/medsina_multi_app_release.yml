@@ -181,6 +181,8 @@ jobs:
           fi
 
           if [ "$APP_NAME" != "medsina_all_in_one" ]; then
+            [ ! -d "$APP_DIR/web" ] && cp -r web "$APP_DIR/web"
+            [ ! -d "$APP_DIR/windows" ] && cp -r windows "$APP_DIR/windows"
             (cd "$APP_DIR" && dart run flutter_launcher_icons)
           fi
       - name: Build Universal APK, Split arm64 APK, and AAB
@@ -237,6 +239,8 @@ jobs:
             cp -r web "$APP_DIR/web"
           fi
           if [ "$APP_NAME" != "medsina_all_in_one" ]; then
+            [ ! -d "$APP_DIR/android" ] && cp -r android "$APP_DIR/android"
+            [ ! -d "$APP_DIR/windows" ] && cp -r windows "$APP_DIR/windows"
             (cd "$APP_DIR" && dart run flutter_launcher_icons)
           fi
       - name: Build Web
@@ -289,6 +293,8 @@ jobs:
             Copy-Item -Recurse "windows" "$appDir/windows"
           }
           if ($appName -ne "medsina_all_in_one") {
+            if (-not (Test-Path "$appDir/android")) { Copy-Item -Recurse "android" "$appDir/android" }
+            if (-not (Test-Path "$appDir/web")) { Copy-Item -Recurse "web" "$appDir/web" }
             $cmake = Get-Content "$appDir/windows/CMakeLists.txt" -Raw
             $cmake = $cmake -replace 'set\(BINARY_NAME "medsina"\)', "set(BINARY_NAME `"$appName`")"
             Set-Content "$appDir/windows/CMakeLists.txt" $cmake
