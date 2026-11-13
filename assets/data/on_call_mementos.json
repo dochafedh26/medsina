@@ -331,23 +331,22 @@
   },
   {
     "id": "memento_hemorragie_digestive_rvo",
-    "title": "🚨 Hémorragie Digestive par RVO (Varices Œsophagiennes)",
-    "category": "Urgences Médico-Chirurgicales & Réanimation",
+    "title": "🩸 Hémorragie Digestive Haute par RVO",
+    "category": "Urgences Médico-Chirurgicales",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Conditionnement immédiat au déchoquage, 2 VVP de gros calibre (16G-18G), oxygénothérapie, monitorage multiparamétrique et évaluation de l'état hémodynamique (choc hémorragique ?).",
-      "Étape 2 : Bilan biologique urgent au lit : NFS, groupement-isogroupe, Rh, tests croisés, bilan hépatique, urée, créatinine, TP, TCA, fibrinogène et gaz du sang.",
-      "Étape 3 : Thérapie d'urgence avant l'endoscopie : Remplissage prudent (éviter la sur-transfusion qui aggrave l'hypertension portale, objectif PAM > 65 mmHg, culots globulaires si Hb < 7-8 g/dL), Terlipressine (Glypressin) : 2 mg IV direct puis 1 mg/4h, et Antibiothérapie prophylaxie (Ceftriaxone 1g/24h IV).",
-      "Étape 4 : Hémostase endoscopique urgente (ligature élastique ou sclérose) dans les 12 heures après réanimation hémodynamique. En cas d'échec ou d'hémorragie massive : Sonde de Blakemore ou de Linton (tamponnement gastrique provisoire max 24h).",
-      "Étape 5 : Surveillance armée en réanimation ou USI : conscience, diurèse horaire, SpO2, récidive hémorragique (hématémèse, méléna, choc), encéphalopathie hépatique, et correction des troubles de la coagulation (PFC, plaquettes).",
-      "Étape 6 : Piège mortel / CI absolue : Ne jamais donner de culots globulaires de manière excessive sans contrôle (risque de rebond tensionnel et majoration du saignement) et attention à l'intubation trachéale en urgence chez le cirrhotique en encéphalopathie (risque d'inhalation massive)."
+      "Étape 1 : Conditionnement immédiat (2 VVP gros calibre 16-18G), oxygénothérapie, remplissage prudent par cristalloïdes (PAS cible 90-100 mmHg), appel urgent réanimateur et gastro-entérologue.",
+      "Étape 2 : Bilan biologique urgent (NFS, groupage-rhomésus, RAI, TP, TCK, urée, créatinine, bilan hépatique) et commande immédiate de CGR (test de cross-match) si instabilité.",
+      "Étape 3 : Thérapies d'urgence spécifiques : Somatostatine (bolus 250 µg puis 3 mg/24h au PSE) ou Terlipressine (Glypressin 2 mg IV direct puis 1 mg/4h), associés à une antibioprophylaxie IV (Ceftriaxone 1g/j ou Quinolones) et inhibiteur de la pompe à protons IV (ésoméprazole 80 mg).",
+      "Étape 4 : Surveillance armée (conscience, PA, FC, diurèse horaire, Hb), alerte en cas de récidive hémorragique (hématémèse abondante, collapsus) nécessitant la pose d'une sonde de Blakemore (si disponible) et transfert urgent en réanimation.",
+      "Étape 5 : Piège mortel : Ne jamais perfuser massivement du sérum salé isotonique (aggrave l'ascite et l'hypertension portale) ; éviter les sédatifs à forte dose (risque d'encéphalopathie hépatique aigue)."
     ],
-    "scientific_references": "Consensus Baveno VII / SFMU / SRLF / MSPRH Algérie",
+    "scientific_references": "Recommandations Baveno VII, SFMU, SRLF / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-08T23:46:53.959689+00:00",
-    "updated_at": "2026-11-08T23:46:53.959705+00:00"
+    "created_at": "2026-11-13T08:04:26.377908+00:00",
+    "updated_at": "2026-11-13T08:04:26.377923+00:00"
   },
   {
     "id": "memento_asthme_aigu_grave",
