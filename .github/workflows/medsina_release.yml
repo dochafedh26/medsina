@@ -1,9 +1,6 @@
 name: Medsina Release & OTA Pipeline
 
 on:
-  push:
-    tags:
-      - 'v*.*.*' # Trigger when pushing a tag like v1.0.1, v1.1.0
   workflow_dispatch:
     inputs:
       version:

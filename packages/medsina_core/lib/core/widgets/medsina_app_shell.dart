@@ -30,10 +30,14 @@ import 'medsina_logo.dart';
 Future<void> initializeMedsinaCore({
   required String appId,
   required String appDisplayName,
+  String? iconAsset,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
   MedsinaFeatureRegistry.instance.appId = appId;
   MedsinaFeatureRegistry.instance.appDisplayName = appDisplayName;
+  if (iconAsset != null && iconAsset.isNotEmpty) {
+    MedsinaFeatureRegistry.instance.iconAsset = iconAsset;
+  }
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setSystemUIOverlayStyle(
@@ -133,7 +137,9 @@ class MedsinaModularApp extends StatelessWidget {
                   case AuthStatus.authenticated:
                     final user = state.user!;
                     if (hasAppAccess != null && !hasAppAccess!(user)) {
-                      return const SubscriptionPaywallScreen();
+                      return const SubscriptionPaywallScreen(
+                        isWrongAppMismatch: true,
+                      );
                     }
                     return _ModularScaffold(
                       appTitle: title,

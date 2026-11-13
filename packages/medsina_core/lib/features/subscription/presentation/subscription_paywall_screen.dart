@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/interfaces/feature_contracts.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/license_key_formatter.dart';
@@ -18,7 +19,12 @@ import '../models/subscription_plan_item.dart';
 import 'referral_screen.dart';
 
 class SubscriptionPaywallScreen extends StatefulWidget {
-  const SubscriptionPaywallScreen({super.key});
+  final bool isWrongAppMismatch;
+
+  const SubscriptionPaywallScreen({
+    super.key,
+    this.isWrongAppMismatch = false,
+  });
 
   @override
   State<SubscriptionPaywallScreen> createState() => _SubscriptionPaywallScreenState();
@@ -142,7 +148,12 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
+
+              if (widget.isWrongAppMismatch && currentTier != SubscriptionTier.free) ...[
+                _buildWrongAppGuardBanner(context, currentTier),
+                const SizedBox(height: 16),
+              ],
 
               // Activation via Clé de Licence Card
               Container(
@@ -504,96 +515,127 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
               ),
               const SizedBox(height: 18),
 
-              // 4 Tier Cards
-              _buildPlanCard(
-                context,
-                user: state.user,
-                tier: SubscriptionTier.allAccess,
-                title: allAccessPlan?.name ?? 'Medsina All-Access (VIP)',
-                badge: allAccessPlan?.badge ?? 'RECOMMANDÉ • SUITE COMPLÈTE',
-                color: const Color(0xFF8B5CF6),
-                planItem: allAccessPlan,
-                duration: _selectedDuration,
-                features: allAccessPlan?.features.isNotEmpty == true
-                    ? allAccessPlan!.features
-                    : [
-                        'Accès illimité aux 47 modules du Résidanat Blida & National',
-                        'Banque complète de 6 240+ QCMs avec corrigés détaillés',
-                        'Téléchargement de TOUS les supports officiels de cours en PDF',
-                        'Accès complet au volet Pratique Clinique (CAT, protocoles d\'urgence)',
-                        'Tous les calculateurs médicaux (Glasgow, Wells, Cockcroft)',
-                        'Exports illimités vers Anki TSV et PDF imprimable sans watermark',
-                        'Mode hors-ligne complet sur PC, Mobile et Web',
-                      ],
-                isCurrent: currentTier == SubscriptionTier.allAccess,
-              ),
-              const SizedBox(height: 16),
+              // App-Scoped Tier Cards (highlights matching pass + All-Access first)
+              ...() {
+                final cards = <SubscriptionTier, Widget>{
+                  SubscriptionTier.allAccess: _buildPlanCard(
+                    context,
+                    user: state.user,
+                    tier: SubscriptionTier.allAccess,
+                    title: allAccessPlan?.name ?? 'Medsina All-Access (VIP)',
+                    badge: allAccessPlan?.badge ?? 'RECOMMANDÉ • SUITE COMPLÈTE',
+                    color: const Color(0xFF8B5CF6),
+                    planItem: allAccessPlan,
+                    duration: _selectedDuration,
+                    features: allAccessPlan?.features.isNotEmpty == true
+                        ? allAccessPlan!.features
+                        : [
+                            'Accès illimité aux 47 modules du Résidanat Blida & National',
+                            'Banque complète de 6 240+ QCMs avec corrigés détaillés',
+                            'Téléchargement de TOUS les supports officiels de cours en PDF',
+                            'Accès complet au volet Pratique Clinique (CAT, protocoles d\'urgence)',
+                            'Tous les calculateurs médicaux (Glasgow, Wells, Cockcroft)',
+                            'Exports illimités vers Anki TSV et PDF imprimable sans watermark',
+                            'Mode hors-ligne complet sur PC, Mobile et Web',
+                          ],
+                    isCurrent: currentTier == SubscriptionTier.allAccess,
+                  ),
+                  SubscriptionTier.residentElite: _buildPlanCard(
+                    context,
+                    user: state.user,
+                    tier: SubscriptionTier.residentElite,
+                    title: residentElitePlan?.name ?? 'Pass Résident Élite',
+                    badge: residentElitePlan?.badge ?? 'SPÉCIAL CONCOURS',
+                    color: AppTheme.primaryTeal,
+                    planItem: residentElitePlan,
+                    duration: _selectedDuration,
+                    features: residentElitePlan?.features.isNotEmpty == true
+                        ? residentElitePlan!.features
+                        : [
+                            'Les 47 modules officiels de préparation au Résidanat',
+                            'Simulateur d\'examens blancs chronométrés & Classement National',
+                            'Téléchargement des cours PDF officiels & Flashcards FSRS',
+                            'Exports Anki et PDF + MedsinaCoach IA',
+                            'CAT d\'urgences essentielles',
+                          ],
+                    isCurrent: currentTier == SubscriptionTier.residentElite,
+                  ),
+                  SubscriptionTier.clinicalPro: _buildPlanCard(
+                    context,
+                    user: state.user,
+                    tier: SubscriptionTier.clinicalPro,
+                    title: clinicalProPlan?.name ?? 'Pass Clinique Pro',
+                    badge: clinicalProPlan?.badge ?? 'INTERNES & PRATICIENS',
+                    color: AppTheme.accentCyan,
+                    planItem: clinicalProPlan,
+                    duration: _selectedDuration,
+                    features: clinicalProPlan?.features.isNotEmpty == true
+                        ? clinicalProPlan!.features
+                        : [
+                            'Toutes les Conduites à Tenir (CAT) par spécialité',
+                            'Arbres décisionnels et protocoles d\'urgence vitale Algérie',
+                            'Tous les scores et calculateurs médicaux spécialisés',
+                            'Pharmacopée & DCI Algérie (Saidal, IPA, Biopharm) + Vidal IA',
+                            'Normes de laboratoire complètes avec interprétations IA',
+                          ],
+                    isCurrent: currentTier == SubscriptionTier.clinicalPro,
+                  ),
+                  SubscriptionTier.etudiant: _buildPlanCard(
+                    context,
+                    user: state.user,
+                    tier: SubscriptionTier.etudiant,
+                    title: etudiantPlan?.name ?? 'Pass Étudiant (1ère - 6ème)',
+                    badge: etudiantPlan?.badge ?? 'CURSUS UNIVERSITAIRE',
+                    color: const Color(0xFF2563EB),
+                    planItem: etudiantPlan,
+                    duration: _selectedDuration,
+                    features: etudiantPlan?.features.isNotEmpty == true
+                        ? etudiantPlan!.features
+                        : [
+                            'Programme personnalisé selon votre année d\'étude (1ère à 6ème)',
+                            'Banque QCMs d\'examens ultérieurs & EMD de Faculté',
+                            'Exclusion des pièges hors-programme du résidanat',
+                            'Fiches de cours & résumés officiels de l\'année',
+                            'Mode révision semestrielle, partiels & Flashcards FSRS',
+                          ],
+                    isCurrent: currentTier == SubscriptionTier.etudiant,
+                  ),
+                };
 
-              _buildPlanCard(
-                context,
-                user: state.user,
-                tier: SubscriptionTier.residentElite,
-                title: residentElitePlan?.name ?? 'Pass Résident Élite',
-                badge: residentElitePlan?.badge ?? 'SPÉCIAL CONCOURS',
-                color: AppTheme.primaryTeal,
-                planItem: residentElitePlan,
-                duration: _selectedDuration,
-                features: residentElitePlan?.features.isNotEmpty == true
-                    ? residentElitePlan!.features
-                    : [
-                        'Les 47 modules officiels de préparation au Résidanat',
-                        'Simulateur d\'examens blancs chronométrés & Classement National',
-                        'Téléchargement des cours PDF officiels & Flashcards FSRS',
-                        'Exports Anki et PDF + MedsinaCoach IA',
-                        'CAT d\'urgences essentielles',
-                      ],
-                isCurrent: currentTier == SubscriptionTier.residentElite,
-              ),
-              const SizedBox(height: 16),
+                final order = switch (MedsinaFeatureRegistry.instance.appId) {
+                  'medsina_residanat' => [
+                      SubscriptionTier.residentElite,
+                      SubscriptionTier.allAccess,
+                      SubscriptionTier.etudiant,
+                      SubscriptionTier.clinicalPro,
+                    ],
+                  'medsina_clinique' => [
+                      SubscriptionTier.clinicalPro,
+                      SubscriptionTier.allAccess,
+                      SubscriptionTier.residentElite,
+                      SubscriptionTier.etudiant,
+                    ],
+                  'medsina_externat' => [
+                      SubscriptionTier.etudiant,
+                      SubscriptionTier.allAccess,
+                      SubscriptionTier.residentElite,
+                      SubscriptionTier.clinicalPro,
+                    ],
+                  _ => [
+                      SubscriptionTier.allAccess,
+                      SubscriptionTier.residentElite,
+                      SubscriptionTier.clinicalPro,
+                      SubscriptionTier.etudiant,
+                    ],
+                };
 
-              _buildPlanCard(
-                context,
-                user: state.user,
-                tier: SubscriptionTier.clinicalPro,
-                title: clinicalProPlan?.name ?? 'Pass Clinique Pro',
-                badge: clinicalProPlan?.badge ?? 'INTERNES & PRATICIENS',
-                color: AppTheme.accentCyan,
-                planItem: clinicalProPlan,
-                duration: _selectedDuration,
-                features: clinicalProPlan?.features.isNotEmpty == true
-                    ? clinicalProPlan!.features
-                    : [
-                        'Toutes les Conduites à Tenir (CAT) par spécialité',
-                        'Arbres décisionnels et protocoles d\'urgence vitale Algérie',
-                        'Tous les scores et calculateurs médicaux spécialisés',
-                        'Pharmacopée & DCI Algérie (Saidal, IPA, Biopharm) + Vidal IA',
-                        'Normes de laboratoire complètes avec interprétations IA',
-                      ],
-                isCurrent: currentTier == SubscriptionTier.clinicalPro,
-              ),
-              const SizedBox(height: 16),
-
-              _buildPlanCard(
-                context,
-                user: state.user,
-                tier: SubscriptionTier.etudiant,
-                title: etudiantPlan?.name ?? 'Pass Étudiant (1ère - 6ème)',
-                badge: etudiantPlan?.badge ?? 'CURSUS UNIVERSITAIRE',
-                color: const Color(0xFF2563EB),
-                planItem: etudiantPlan,
-                duration: _selectedDuration,
-                features: etudiantPlan?.features.isNotEmpty == true
-                    ? etudiantPlan!.features
-                    : [
-                        'Programme personnalisé selon votre année d\'étude (1ère à 6ème)',
-                        'Banque QCMs d\'examens ultérieurs & EMD de Faculté',
-                        'Exclusion des pièges hors-programme du résidanat',
-                        'Fiches de cours & résumés officiels de l\'année',
-                        'Mode révision semestrielle, partiels & Flashcards FSRS',
-                      ],
-                isCurrent: currentTier == SubscriptionTier.etudiant,
-              ),
-              const SizedBox(height: 16),
+                return [
+                  for (final tier in order) ...[
+                    cards[tier]!,
+                    const SizedBox(height: 16),
+                  ],
+                ];
+              }(),
               _buildPlanCard(
                 context,
                 user: state.user,
@@ -1413,6 +1455,86 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildWrongAppGuardBanner(
+    BuildContext context,
+    SubscriptionTier activeTier,
+  ) {
+    final (targetAppName, targetUrl) = switch (activeTier) {
+      SubscriptionTier.residentElite => (
+          'Medsina Résidanat',
+          'https://medsina.medevsync.com/download/medsina-residanat.apk',
+        ),
+      SubscriptionTier.clinicalPro => (
+          'Medsina Clinique',
+          'https://medsina.medevsync.com/download/medsina-clinique.apk',
+        ),
+      SubscriptionTier.etudiant => (
+          'Medsina Étudiant',
+          'https://medsina.medevsync.com/download/medsina-externat.apk',
+        ),
+      _ => ('Medsina', 'https://medsina.medevsync.com'),
+    };
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            activeTier.color.withValues(alpha: 0.14),
+            const Color(0xFF8B5CF6).withValues(alpha: 0.08),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: activeTier.color.withValues(alpha: 0.45), width: 1.4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.swap_horizontal_circle_rounded, color: activeTier.color, size: 22),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Abonnement ${activeTier.label} détecté',
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Votre compte possède déjà un ${activeTier.label} actif. '
+            'Cette application est ${MedsinaFeatureRegistry.instance.appDisplayName}. '
+            'Téléchargez $targetAppName pour utiliser votre pass, ou passez à Medsina All-Access pour tout débloquer.',
+            style: const TextStyle(fontSize: 12.5, height: 1.4),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            children: [
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: activeTier.color,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () => launchUrl(
+                  Uri.parse(targetUrl),
+                  mode: LaunchMode.externalApplication,
+                ),
+                icon: const Icon(Icons.download_rounded, size: 18),
+                label: Text('Télécharger $targetAppName'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

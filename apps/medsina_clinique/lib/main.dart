@@ -13,6 +13,7 @@ Future<void> main() async {
   await initializeMedsinaCore(
     appId: 'medsina_clinique',
     appDisplayName: 'Medsina Clinique',
+    iconAsset: 'assets/app_icon.png',
   );
 
   final registry = MedsinaFeatureRegistry.instance;

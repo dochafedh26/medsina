@@ -1,6 +1,14 @@
 name: Medsina Multi-App Release
 
 on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'residanat-v*'
+      - 'clinique-v*'
+      - 'externat-v*'
+      - 'all-v*'
   workflow_dispatch:
     inputs:
       app_name:
@@ -27,67 +35,94 @@ on:
         required: false
         type: boolean
         default: true
-  push:
-    tags:
-      - 'residanat-v*'
-      - 'clinique-v*'
-      - 'externat-v*'
-      - 'all-v*'
 
 permissions:
   contents: write
 
 jobs:
-  resolve-app:
+  detect-apps:
     runs-on: ubuntu-latest
     outputs:
-      app_name: ${{ steps.set_app.outputs.app_name }}
-      app_dir: ${{ steps.set_app.outputs.app_dir }}
-      app_label: ${{ steps.set_app.outputs.app_label }}
-      version: ${{ steps.set_app.outputs.version }}
-      build_num: ${{ steps.set_app.outputs.build_num }}
-      tag: ${{ steps.set_app.outputs.tag }}
+      apps_matrix: ${{ steps.compute.outputs.apps_matrix }}
+      has_apps: ${{ steps.compute.outputs.has_apps }}
     steps:
       - uses: actions/checkout@v4
-      - id: set_app
+      - uses: dorny/paths-filter@v3
+        id: changes
+        if: ${{ github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') }}
+        with:
+          filters: |
+            residanat:
+              - 'apps/medsina_residanat/**'
+              - 'packages/medsina_residanat_pkg/**'
+            externat:
+              - 'apps/medsina_externat/**'
+              - 'packages/medsina_externat_pkg/**'
+            clinique:
+              - 'apps/medsina_clinique/**'
+              - 'packages/medsina_clinical_pkg/**'
+            all_in_one:
+              - 'apps/medsina_all_in_one/**'
+              - 'lib/**'
+            study_engine:
+              - 'packages/medsina_study_engine/**'
+            shared_core:
+              - 'packages/medsina_core/**'
+              - 'packages/medsina_practical_tools/**'
+              - 'pubspec.yaml'
+      - id: compute
         run: |
+          APPS=()
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            APP="${{ inputs.app_name }}"
+            APPS=("${{ inputs.app_name }}")
           elif [[ "${{ github.ref_name }}" == residanat-v* ]]; then
-            APP="medsina_residanat"
+            APPS=("medsina_residanat")
           elif [[ "${{ github.ref_name }}" == clinique-v* ]]; then
-            APP="medsina_clinique"
+            APPS=("medsina_clinique")
           elif [[ "${{ github.ref_name }}" == externat-v* ]]; then
-            APP="medsina_externat"
+            APPS=("medsina_externat")
+          elif [[ "${{ github.ref_name }}" == all-v* ]]; then
+            APPS=("medsina_all_in_one")
           else
-            APP="medsina_all_in_one"
+            # Path-filtered main push
+            CORE="${{ steps.changes.outputs.shared_core }}"
+            STUDY="${{ steps.changes.outputs.study_engine }}"
+            RES="${{ steps.changes.outputs.residanat }}"
+            EXT="${{ steps.changes.outputs.externat }}"
+            CLI="${{ steps.changes.outputs.clinique }}"
+            ALL="${{ steps.changes.outputs.all_in_one }}"
+
+            if [ "$CORE" = "true" ]; then
+              APPS=("medsina_residanat" "medsina_externat" "medsina_clinique" "medsina_all_in_one")
+            else
+              if [ "$RES" = "true" ] || [ "$STUDY" = "true" ]; then
+                APPS+=("medsina_residanat")
+              fi
+              if [ "$EXT" = "true" ] || [ "$STUDY" = "true" ]; then
+                APPS+=("medsina_externat")
+              fi
+              if [ "$CLI" = "true" ]; then
+                APPS+=("medsina_clinique")
+              fi
+              if [ "$ALL" = "true" ] || [ "$STUDY" = "true" ]; then
+                APPS+=("medsina_all_in_one")
+              fi
+            fi
           fi
 
-          case "$APP" in
-            medsina_residanat) LABEL="Medsina_Residanat"; PREFIX="residanat" ;;
-            medsina_clinique)  LABEL="Medsina_Clinique";  PREFIX="clinique" ;;
-            medsina_externat)  LABEL="Medsina_Externat";  PREFIX="externat" ;;
-            *)                 LABEL="Medsina";           PREFIX="all" ;;
-          esac
-
-          RAW_VER=$(grep '^version:' "apps/$APP/pubspec.yaml" | awk '{print $2}')
-          VER="${RAW_VER%%+*}"
-          BUILD="${RAW_VER##*+}"
-          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref_name }}" == *-v* ]]; then
-            TAG="${{ github.ref_name }}"
+          if [ ${#APPS[@]} -eq 0 ]; then
+            echo "apps_matrix=[]" >> "$GITHUB_OUTPUT"
+            echo "has_apps=false" >> "$GITHUB_OUTPUT"
           else
-            TAG="${PREFIX}-v${VER}"
+            JSON=$(printf '"%s",' "${APPS[@]}")
+            JSON="[${JSON%,}]"
+            echo "apps_matrix=$JSON" >> "$GITHUB_OUTPUT"
+            echo "has_apps=true" >> "$GITHUB_OUTPUT"
           fi
-
-          echo "app_name=$APP" >> "$GITHUB_OUTPUT"
-          echo "app_dir=apps/$APP" >> "$GITHUB_OUTPUT"
-          echo "app_label=$LABEL" >> "$GITHUB_OUTPUT"
-          echo "version=$VER" >> "$GITHUB_OUTPUT"
-          echo "build_num=$BUILD" >> "$GITHUB_OUTPUT"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
   analyze-and-test:
-    needs: resolve-app
+    needs: detect-apps
+    if: ${{ needs.detect-apps.outputs.has_apps == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -104,8 +139,12 @@ jobs:
         run: flutter analyze --no-fatal-infos --no-fatal-warnings packages/* apps/*
 
   build-android:
-    needs: [resolve-app, analyze-and-test]
-    if: ${{ github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'android' }}
+    needs: [detect-apps, analyze-and-test]
+    if: ${{ needs.detect-apps.outputs.has_apps == 'true' && (github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'android') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(needs.detect-apps.outputs.apps_matrix) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -122,39 +161,62 @@ jobs:
              packages/medsina_core/lib/core/config/app_secrets.dart
       - name: Resolve workspace
         run: flutter pub get
-      - name: Ensure Android platform scaffolding
+      - name: Ensure Android scaffolding, branding & launcher icons
         run: |
-          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
-          APP_NAME="${{ needs.resolve-app.outputs.app_name }}"
+          APP_NAME="${{ matrix.app }}"
+          APP_DIR="apps/$APP_NAME"
+          case "$APP_NAME" in
+            medsina_residanat) ANDROID_LABEL="Medsina Résidanat" ;;
+            medsina_clinique)  ANDROID_LABEL="Medsina Clinique" ;;
+            medsina_externat)  ANDROID_LABEL="Medsina Étudiant" ;;
+            *)                 ANDROID_LABEL="Medsina" ;;
+          esac
+
           if [ ! -d "$APP_DIR/android" ]; then
             cp -r android "$APP_DIR/android"
             if [ "$APP_NAME" != "medsina_all_in_one" ]; then
               sed -i "s/applicationId = \"com.medsina.medsina\"/applicationId = \"com.medevsync.$APP_NAME\"/" "$APP_DIR/android/app/build.gradle.kts"
             fi
+            sed -i "s/android:label=\"Medsina\"/android:label=\"$ANDROID_LABEL\"/" "$APP_DIR/android/app/src/main/AndroidManifest.xml"
+          fi
+
+          if [ "$APP_NAME" != "medsina_all_in_one" ]; then
+            (cd "$APP_DIR" && dart run flutter_launcher_icons)
           fi
       - name: Build Universal APK, Split arm64 APK, and AAB
-        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
+        working-directory: apps/${{ matrix.app }}
         run: |
           flutter build apk --release
           flutter build apk --release --split-per-abi
           flutter build appbundle --release
       - name: Stage Android release deliverables
         run: |
-          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
-          LABEL="${{ needs.resolve-app.outputs.app_label }}"
-          VER="${{ needs.resolve-app.outputs.version }}"
-          mkdir -p dist-android
-          cp "$APP_DIR/build/app/outputs/flutter-apk/app-release.apk" "dist-android/${LABEL}_v${VER}_Android.apk"
-          cp "$APP_DIR/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk" "dist-android/${LABEL}_v${VER}_Android_arm64.apk"
-          cp "$APP_DIR/build/app/outputs/bundle/release/app-release.aab" "dist-android/${LABEL}_v${VER}_GooglePlay.aab"
+          APP_NAME="${{ matrix.app }}"
+          APP_DIR="apps/$APP_NAME"
+          case "$APP_NAME" in
+            medsina_residanat) LABEL="Medsina_Residanat" ;;
+            medsina_clinique)  LABEL="Medsina_Clinique" ;;
+            medsina_externat)  LABEL="Medsina_Externat" ;;
+            *)                 LABEL="Medsina" ;;
+          esac
+          RAW_VER=$(grep '^version:' "$APP_DIR/pubspec.yaml" | awk '{print $2}')
+          VER="${RAW_VER%%+*}"
+          mkdir -p "dist-android-$APP_NAME"
+          cp "$APP_DIR/build/app/outputs/flutter-apk/app-release.apk" "dist-android-$APP_NAME/${LABEL}_v${VER}_Android.apk"
+          cp "$APP_DIR/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk" "dist-android-$APP_NAME/${LABEL}_v${VER}_Android_arm64.apk"
+          cp "$APP_DIR/build/app/outputs/bundle/release/app-release.aab" "dist-android-$APP_NAME/${LABEL}_v${VER}_GooglePlay.aab"
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ needs.resolve-app.outputs.app_name }}-android
-          path: dist-android/*
+          name: ${{ matrix.app }}-android
+          path: dist-android-${{ matrix.app }}/*
 
   build-web:
-    needs: [resolve-app, analyze-and-test]
-    if: ${{ github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'web' }}
+    needs: [detect-apps, analyze-and-test]
+    if: ${{ needs.detect-apps.outputs.has_apps == 'true' && (github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'web') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(needs.detect-apps.outputs.apps_matrix) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -167,30 +229,45 @@ jobs:
              packages/medsina_core/lib/core/config/app_secrets.dart
       - name: Resolve workspace
         run: flutter pub get
-      - name: Ensure Web platform scaffolding
+      - name: Ensure Web scaffolding & launcher icons
         run: |
-          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
+          APP_NAME="${{ matrix.app }}"
+          APP_DIR="apps/$APP_NAME"
           if [ ! -d "$APP_DIR/web" ]; then
             cp -r web "$APP_DIR/web"
           fi
+          if [ "$APP_NAME" != "medsina_all_in_one" ]; then
+            (cd "$APP_DIR" && dart run flutter_launcher_icons)
+          fi
       - name: Build Web
-        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
+        working-directory: apps/${{ matrix.app }}
         run: flutter build web --release
       - name: Archive Web ZIP
         run: |
-          APP_DIR="${{ needs.resolve-app.outputs.app_dir }}"
-          LABEL="${{ needs.resolve-app.outputs.app_label }}"
-          VER="${{ needs.resolve-app.outputs.version }}"
-          mkdir -p dist-web
-          (cd "$APP_DIR/build/web" && zip -r "../../../../dist-web/${LABEL}_v${VER}_Web.zip" .)
+          APP_NAME="${{ matrix.app }}"
+          APP_DIR="apps/$APP_NAME"
+          case "$APP_NAME" in
+            medsina_residanat) LABEL="Medsina_Residanat" ;;
+            medsina_clinique)  LABEL="Medsina_Clinique" ;;
+            medsina_externat)  LABEL="Medsina_Externat" ;;
+            *)                 LABEL="Medsina" ;;
+          esac
+          RAW_VER=$(grep '^version:' "$APP_DIR/pubspec.yaml" | awk '{print $2}')
+          VER="${RAW_VER%%+*}"
+          mkdir -p "dist-web-$APP_NAME"
+          (cd "$APP_DIR/build/web" && zip -r "../../../../dist-web-$APP_NAME/${LABEL}_v${VER}_Web.zip" .)
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ needs.resolve-app.outputs.app_name }}-web
-          path: dist-web/*
+          name: ${{ matrix.app }}-web
+          path: dist-web-${{ matrix.app }}/*
 
   build-windows:
-    needs: [resolve-app, analyze-and-test]
-    if: ${{ github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'windows' }}
+    needs: [detect-apps, analyze-and-test]
+    if: ${{ needs.detect-apps.outputs.has_apps == 'true' && (github.event_name == 'push' || inputs.build_target == 'all' || inputs.build_target == 'windows') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(needs.detect-apps.outputs.apps_matrix) }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -203,49 +280,153 @@ jobs:
           Copy-Item "packages/medsina_core/lib/core/config/app_secrets.dart.example" "packages/medsina_core/lib/core/config/app_secrets.dart"
       - name: Resolve workspace
         run: flutter pub get
-      - name: Ensure Windows platform scaffolding
+      - name: Ensure Windows scaffolding, binary name & launcher icons
         shell: pwsh
         run: |
-          $appDir = "${{ needs.resolve-app.outputs.app_dir }}"
+          $appName = "${{ matrix.app }}"
+          $appDir = "apps/$appName"
           if (-not (Test-Path "$appDir/windows")) {
             Copy-Item -Recurse "windows" "$appDir/windows"
           }
+          if ($appName -ne "medsina_all_in_one") {
+            $cmake = Get-Content "$appDir/windows/CMakeLists.txt" -Raw
+            $cmake = $cmake -replace 'set\(BINARY_NAME "medsina"\)', "set(BINARY_NAME `"$appName`")"
+            Set-Content "$appDir/windows/CMakeLists.txt" $cmake
+            Push-Location $appDir
+            dart run flutter_launcher_icons
+            Pop-Location
+          }
       - name: Build Windows Release
-        working-directory: ${{ needs.resolve-app.outputs.app_dir }}
+        working-directory: apps/${{ matrix.app }}
         run: flutter build windows --release
       - name: Archive Windows Portable ZIP
         shell: pwsh
         run: |
-          $appDir = "${{ needs.resolve-app.outputs.app_dir }}"
-          $label = "${{ needs.resolve-app.outputs.app_label }}"
-          $ver = "${{ needs.resolve-app.outputs.version }}"
-          New-Item -ItemType Directory -Force -Path "dist-windows" | Out-Null
-          Compress-Archive -Path "$appDir/build/windows/x64/runner/Release/*" -DestinationPath "dist-windows/${label}_v${ver}_Windows_Portable.zip" -Force
+          $appName = "${{ matrix.app }}"
+          $appDir = "apps/$appName"
+          $label = switch ($appName) {
+            "medsina_residanat" { "Medsina_Residanat" }
+            "medsina_clinique"  { "Medsina_Clinique" }
+            "medsina_externat"  { "Medsina_Externat" }
+            default             { "Medsina" }
+          }
+          $rawVer = (Select-String -Path "$appDir/pubspec.yaml" -Pattern '^version:\s*(.+)$').Matches[0].Groups[1].Value.Trim()
+          $ver = $rawVer.Split('+')[0]
+          New-Item -ItemType Directory -Force -Path "dist-windows-$appName" | Out-Null
+          Compress-Archive -Path "$appDir/build/windows/x64/runner/Release/*" -DestinationPath "dist-windows-$appName/${label}_v${ver}_Windows_Portable.zip" -Force
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ needs.resolve-app.outputs.app_name }}-windows
-          path: dist-windows/*
+          name: ${{ matrix.app }}-windows
+          path: dist-windows-${{ matrix.app }}/*
 
   publish-release:
-    needs: [resolve-app, build-android, build-web, build-windows]
-    if: ${{ always() && (needs.build-android.result == 'success' || needs.build-web.result == 'success' || needs.build-windows.result == 'success') && (github.event_name == 'push' || inputs.publish_release == true) }}
+    needs: [detect-apps, build-android, build-web, build-windows]
+    if: ${{ always() && needs.detect-apps.outputs.has_apps == 'true' && (needs.build-android.result == 'success' || needs.build-web.result == 'success' || needs.build-windows.result == 'success') && (github.event_name == 'push' || inputs.publish_release == true) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(needs.detect-apps.outputs.apps_matrix) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download all built artifacts
+      - name: Resolve release metadata
+        id: meta
+        run: |
+          APP_NAME="${{ matrix.app }}"
+          case "$APP_NAME" in
+            medsina_residanat) LABEL="Medsina_Residanat"; PREFIX="residanat"; APP_ID="medsina_residanat" ;;
+            medsina_clinique)  LABEL="Medsina_Clinique";  PREFIX="clinique";  APP_ID="medsina_clinique" ;;
+            medsina_externat)  LABEL="Medsina_Externat";  PREFIX="externat";  APP_ID="medsina_externat" ;;
+            *)                 LABEL="Medsina";           PREFIX="all";       APP_ID="medsina_all" ;;
+          esac
+          RAW_VER=$(grep '^version:' "apps/$APP_NAME/pubspec.yaml" | awk '{print $2}')
+          VER="${RAW_VER%%+*}"
+          BUILD="${RAW_VER##*+}"
+          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref_name }}" == *-v* ]]; then
+            TAG="${{ github.ref_name }}"
+          else
+            TAG="${PREFIX}-v${VER}"
+          fi
+          echo "label=$LABEL" >> "$GITHUB_OUTPUT"
+          echo "app_id=$APP_ID" >> "$GITHUB_OUTPUT"
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "build_num=$BUILD" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Download built artifacts for ${{ matrix.app }}
         uses: actions/download-artifact@v4
         with:
+          pattern: ${{ matrix.app }}-*
           path: dist-release
           merge-multiple: true
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ needs.resolve-app.outputs.tag }}
-          name: "${{ needs.resolve-app.outputs.app_label }} v${{ needs.resolve-app.outputs.version }} (Build ${{ needs.resolve-app.outputs.build_num }})"
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: "${{ steps.meta.outputs.label }} v${{ steps.meta.outputs.version }} (Build ${{ steps.meta.outputs.build_num }})"
           draft: false
           prerelease: false
           files: dist-release/*
           body: |
-            ## ${{ needs.resolve-app.outputs.app_label }} v${{ needs.resolve-app.outputs.version }} (Build ${{ needs.resolve-app.outputs.build_num }})
+            ## ${{ steps.meta.outputs.label }} v${{ steps.meta.outputs.version }} (Build ${{ steps.meta.outputs.build_num }})
 
             Plateforme modulaire Medsina — build multi-plateforme (Android APK / arm64 / AAB, Web, Windows Portable).
+
+      - name: Register Per-App Release in Supabase OTA
+        env:
+          SUPABASE_URL: 'https://qzfssrhhuorljftpdvjm.supabase.co'
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          APP_ID: ${{ steps.meta.outputs.app_id }}
+          LABEL: ${{ steps.meta.outputs.label }}
+          VERSION: ${{ steps.meta.outputs.version }}
+          BUILD: ${{ steps.meta.outputs.build_num }}
+          TAG: ${{ steps.meta.outputs.tag }}
+          REPO: ${{ github.repository }}
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "SUPABASE_SERVICE_ROLE_KEY is not set. Skipping Supabase OTA registration."
+            exit 0
+          fi
+          python3 -c "
+          import os, requests
+
+          url = os.environ['SUPABASE_URL'].rstrip('/')
+          key = os.environ['SUPABASE_SERVICE_ROLE_KEY']
+          headers = {
+              'apikey': key,
+              'Authorization': f'Bearer {key}',
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+          }
+          app_id = os.environ['APP_ID']
+          label = os.environ['LABEL']
+          ver = os.environ['VERSION']
+          build = int(os.environ['BUILD'])
+          tag = os.environ['TAG']
+          repo = os.environ['REPO']
+
+          rows = [
+              {
+                  'app_id': app_id,
+                  'platform': 'android',
+                  'version_name': ver,
+                  'build_number': build,
+                  'download_url': f'https://github.com/{repo}/releases/download/{tag}/{label}_v{ver}_Android.apk',
+                  'is_mandatory': False,
+                  'is_active': True,
+              },
+              {
+                  'app_id': app_id,
+                  'platform': 'windows',
+                  'version_name': ver,
+                  'build_number': build,
+                  'download_url': f'https://github.com/{repo}/releases/download/{tag}/{label}_v{ver}_Windows_Portable.zip',
+                  'is_mandatory': False,
+                  'is_active': True,
+              },
+          ]
+          for row in rows:
+              r = requests.post(f'{url}/rest/v1/app_releases', headers=headers, json=row)
+              print(f'Registered {app_id} {row[\"platform\"]} v{ver}+{build}: HTTP {r.status_code}')
+          "

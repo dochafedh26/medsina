@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
+import '../interfaces/feature_contracts.dart';
 import '../theme/app_theme.dart';
 
 /// Reusable widget for Medsina brand logo and emblem icon.
@@ -35,7 +36,7 @@ class MedsinaLogo extends StatelessWidget {
     if (isIconOnly) {
       final size = iconSize ?? 32;
       return Image.asset(
-        AppConstants.iconAsset,
+        MedsinaFeatureRegistry.instance.iconAsset,
         width: size,
         height: size,
         fit: fit,

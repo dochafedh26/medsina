@@ -54,6 +54,7 @@ class MedsinaFeatureRegistry {
 
   String appId = 'medsina_all';
   String appDisplayName = 'Medsina';
+  String iconAsset = 'assets/medsina-icon.png';
 
   void registerSyncParticipant(CloudSyncParticipant participant) {
     if (!syncParticipants.any((p) => p.participantId == participant.participantId)) {

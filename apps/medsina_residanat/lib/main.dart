@@ -18,6 +18,7 @@ Future<void> main() async {
   await initializeMedsinaCore(
     appId: 'medsina_residanat',
     appDisplayName: 'Medsina Résidanat',
+    iconAsset: 'assets/app_icon.png',
   );
   registerStudyEngineContracts();
 

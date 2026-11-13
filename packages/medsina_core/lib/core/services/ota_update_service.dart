@@ -166,30 +166,52 @@ class OtaUpdateService {
     await prefs.setInt(_keyLastDismissedBuild, buildNumber);
   }
 
-  /// Resolves the available high-speed download mirrors in priority order (Fast CDN first, Octenium mirror second)
+  /// Resolves the available high-speed download mirrors in priority order
+  /// scoped to the current app (`medsina_residanat`, `medsina_externat`,
+  /// `medsina_clinique`, or `medsina_all`).
   static List<String> resolveDownloadMirrors(AppReleaseModel release) {
     final mirrors = <String>[];
     final ver = release.versionName;
+    final appId = MedsinaFeatureRegistry.instance.appId;
+
+    final (tagPrefix, fileLabel, octeniumSlug) = switch (appId) {
+      'medsina_residanat' => ('residanat', 'Medsina_Residanat', 'medsina-residanat'),
+      'medsina_externat' => ('externat', 'Medsina_Externat', 'medsina-externat'),
+      'medsina_clinique' => ('clinique', 'Medsina_Clinique', 'medsina-clinique'),
+      _ => ('all', 'Medsina', 'medsina'),
+    };
+
+    // 1. Registered Supabase downloadUrl first (if valid)
+    final raw = release.downloadUrl.trim();
+    if (raw.isNotEmpty && !raw.contains('None')) {
+      mirrors.add(raw);
+    }
 
     if (currentPlatform == 'android') {
-      // 1. High-speed global CDN (GitHub Releases)
-      mirrors.add('https://github.com/dochafedh26/medsina/releases/download/v$ver/Medsina_v${ver}_Android.apk');
-      // 2. Direct Octenium Server Mirror
-      final raw = release.downloadUrl.trim();
-      if (raw.isNotEmpty && !raw.contains('None') && !mirrors.contains(raw)) {
-        mirrors.add(raw);
-      }
-      mirrors.add('https://medsina.medevsync.com/releases/Medsina_v${ver}_Android.apk');
-      mirrors.add('https://medsina.medevsync.com/download/medsina.apk');
+      // 2. App-specific GitHub Releases CDN
+      final ghUrl =
+          'https://github.com/dochafedh26/medsina/releases/download/$tagPrefix-v$ver/${fileLabel}_v${ver}_Android.apk';
+      if (!mirrors.contains(ghUrl)) mirrors.add(ghUrl);
+
+      // 3. App-specific Octenium mirrors
+      final octVerUrl =
+          'https://medsina.medevsync.com/releases/${fileLabel}_v${ver}_Android.apk';
+      final octLatestUrl =
+          'https://medsina.medevsync.com/download/$octeniumSlug.apk';
+      if (!mirrors.contains(octVerUrl)) mirrors.add(octVerUrl);
+      if (!mirrors.contains(octLatestUrl)) mirrors.add(octLatestUrl);
     } else {
       // Windows Desktop mirrors
-      mirrors.add('https://github.com/dochafedh26/medsina/releases/download/v$ver/Medsina_v${ver}_Windows_Setup.exe');
-      final raw = release.downloadUrl.trim();
-      if (raw.isNotEmpty && !raw.contains('None') && !mirrors.contains(raw)) {
-        mirrors.add(raw);
-      }
-      mirrors.add('https://medsina.medevsync.com/releases/Medsina_v${ver}_Windows_Setup.exe');
-      mirrors.add('https://medsina.medevsync.com/download/medsina-setup.exe');
+      final ghWinUrl =
+          'https://github.com/dochafedh26/medsina/releases/download/$tagPrefix-v$ver/${fileLabel}_v${ver}_Windows_Portable.zip';
+      if (!mirrors.contains(ghWinUrl)) mirrors.add(ghWinUrl);
+
+      final octWinUrl =
+          'https://medsina.medevsync.com/releases/${fileLabel}_v${ver}_Windows_Portable.zip';
+      final octLatestWinUrl =
+          'https://medsina.medevsync.com/download/$octeniumSlug-windows.zip';
+      if (!mirrors.contains(octWinUrl)) mirrors.add(octWinUrl);
+      if (!mirrors.contains(octLatestWinUrl)) mirrors.add(octLatestWinUrl);
     }
 
     return mirrors;
