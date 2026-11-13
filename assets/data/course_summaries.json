@@ -2344,5 +2344,28 @@
     "treatment_summary": "Valvuloplastie mitrale percutanée (VPM) si morphologie valvulaire favorable (score de Wilkins ≤ 8) et absence de thrombus OG; sinon, remplacement valvulaire mitral prothétique. Traitement médical par diurétiques et ralentisseurs de fréquence, avec AVK en cas de FA.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-13T01:27:32.181355+00:00"
+  },
+  {
+    "course_id": "Blida_PEDIATRIE_TD_INTERPRETATION_DU_TLT",
+    "course_name": "TD: interprétation du TLT",
+    "module_id": "Blida_PEDIATRIE",
+    "module_name": "Pédiatrie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLe **TLT** (Test à la L-Thyroxine ou épreuve de freinage/stimulation, ou plus communément en pédiatrie le **Test à la L-Dopa / TRH** ou l'interprétation des explorations hormonales thyroïdiennes et somatotropes selon le contexte de l'intitulé de TD de Blida) correspond ici à l'exploration fonctionnelle endocrinienne pédiatrique, notamment l'évaluation de l'axe thyréotrope (**TSH, T4 libre**) et somatotrope (**GH, IGF-1**). \n\n## 2. Démarche Diagnostique\n- **Hypothyroïdie congénitale (Dépistage néonatal systématique en Algérie) :** Dosage de la **TSH sur sang buvard** entre J3 et J5 de vie. Si **TSH ≥ 15 mUI/L**, convocation urgente pour confirmation veineuse (**TSH et T4L**).\n- **Exploration d'un retard de croissance (Déficit en GH) :** \n  - **IGF-1** et **IGFBP-3** bas pour l'âge et le sexe.\n  - **Tests de stimulation de la GH** (nécessité de 2 tests pharmacologiques différents, ex: **L-Dopa, Insulinothérapie hypoglycémique, Glucagon, Arginine**) : un pic de GH **< 10 ng/mL** (ou < 7-20 ng/mL selon les seuils du laboratoire) affirme le déficit somatotrope.\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Hypothyroïdie primaire :** TSH élevée + T4L basse (Étiologie majeure : dysgénésie thyroïdienne, athyréose).\n- **Hypothyroïdie centrale :** TSH basse ou normale + T4L basse (Étiologie : lésion hypothalamo-hypophysaire, craniopharyngiome).\n- **Retard constitutionnel de croissance et de puberté (RCCP) :** Pic de GH normal après stimulation, âge osseux retardé.\n\n## 4. Stratégie Thérapeutique\n- **Hypothyroïdie congénitale :** Levothyroxine (**L-T4**) per os en une prise quotidienne. Dose initiale élevée : **10 à 15 µg/kg/jour**. Objectif : Normalisation rapide de la T4L (dans les 2 premières semaines) et de la TSH (dans le 1er mois) pour éviter le **crétinisme ischémique / retard mental définitif**.\n- **Déficit en GH :** Hormonothérapie substitutive par **GH recombinante humaine** en injections sous-cutanées quotidiennes le soir au coucher.\n\n## 5. Évolution, Pronostic & Complications majeures\n- Surveillance clinique (croissance, développement psychomoteur) et biologique stricte (**TSH** et **T4L** tous les mois les 6 premiers mois, puis tous les 2 à 3 mois).\n- Risque majeur en cas de retard de prise en charge d'une hypothyroïdie congénitale : **handicap intellectuel irréversible**.",
+    "key_takeaways": [
+      "Dépistage néonatal de l'hypothyroïdie congénitale en Algérie : TSH sur sang buvard à J3-J5.",
+      "Seuil d'alerte du dépistage : TSH ≥ 15 mUI/L nécessitant une confirmation veineuse en urgence.",
+      "Traitement minute de l'hypothyroïdie congénitale : L-Thyroxine à 10-15 µg/kg/j pour prévenir le retard mental.",
+      "Exploration du déficit en GH : exige toujours DEUX tests de stimulation pharmacologiques différents.",
+      "Définition biologique de l'hypothyroïdie primaire : TSH élevée associée à une T4 libre basse."
+    ],
+    "exam_traps": [
+      "Piège Annales : Ne pas confondre hypothyroïdie primaire (TSH haute, T4L basse) et centrale (TSH basse/normale, T4L basse).",
+      "Piège Traitement : Posologie insuffisante de L-T4 au démarrage ou retard d'instauration du traitement au-delà de 15 jours de vie (pronostic neurocognitif engagé).",
+      "Piège Diagnostic : Un seul test de stimulation de la GH abaissé ne suffit PAS pour affirmer un déficit somatotrope (il en faut 2)."
+    ],
+    "diagnostic_criteria": "TSH veineuse élevée associée à une T4L effondrée pour l'hypothyroïdie congénitale; pic de GH < 10 ng/mL après deux tests pharmacologiques différents pour le déficit somatotrope.",
+    "treatment_summary": "Instauration immédiate de L-Thyroxine (10-15 µg/kg/j) dès la confirmation de l'hypothyroïdie congénitale avant J15 de vie.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-13T17:22:29.467856+00:00"
   }
 ]
