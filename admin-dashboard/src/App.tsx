@@ -156,9 +156,10 @@ export default function App() {
 
       // Handle SSO Token from Medsina Desktop / Mobile App
       try {
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get('token') || params.get('access_token');
-        const refreshToken = params.get('refresh_token') || '';
+        const searchParams = new URLSearchParams(window.location.search);
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#\/?/, ''));
+        const token = searchParams.get('token') || searchParams.get('access_token') || hashParams.get('access_token');
+        const refreshToken = searchParams.get('refresh_token') || hashParams.get('refresh_token') || '';
 
         if (token) {
           const { error } = await supabase.auth.setSession({
@@ -167,7 +168,7 @@ export default function App() {
           });
           if (!error) {
             // Clean sensitive tokens from URL address bar
-            const cleanUrl = window.location.pathname + window.location.hash;
+            const cleanUrl = window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
           }
         }

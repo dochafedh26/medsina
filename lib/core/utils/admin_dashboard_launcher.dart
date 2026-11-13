@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,28 +23,37 @@ class AdminDashboardLauncher {
     final uri = Uri.parse(fullUrl);
     bool launched = false;
 
-    // 1. Attempt launching with external application (preferred browser)
-    try {
-      launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {
-      launched = false;
-    }
-
-    // 2. Fallback to platformDefault mode
-    if (!launched) {
+    // Web environment: open directly in new browser tab without popup blocker delay
+    if (kIsWeb) {
       try {
-        launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
+        launched = await launchUrl(uri, webOnlyWindowName: '_blank');
       } catch (_) {
         launched = false;
       }
-    }
-
-    // 3. Fallback to inAppBrowserView
-    if (!launched) {
+    } else {
+      // 1. Attempt launching with external application (preferred browser)
       try {
-        launched = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+        launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
       } catch (_) {
         launched = false;
+      }
+
+      // 2. Fallback to platformDefault mode
+      if (!launched) {
+        try {
+          launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
+        } catch (_) {
+          launched = false;
+        }
+      }
+
+      // 3. Fallback to inAppBrowserView
+      if (!launched) {
+        try {
+          launched = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+        } catch (_) {
+          launched = false;
+        }
       }
     }
 

@@ -12,7 +12,7 @@ import {
   Server,
   Sparkles
 } from 'lucide-react';
-import { loginAdminWithEmail, AdminAuthProfile } from '../../services/supabase';
+import { loginAdminWithEmail, sendAdminMagicLink, AdminAuthProfile } from '../../services/supabase';
 import logoDark from '../../assets/images/medsina-logo-dark.png';
 
 interface LoginViewProps {
@@ -24,7 +24,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMagicLoading, setIsMagicLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +37,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     const result = await loginAdminWithEmail(email, password);
     setIsLoading(false);
@@ -43,6 +46,26 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       onLoginSuccess(result.user);
     } else {
       setErrorMessage(result.message || 'Identifiants invalides ou privilèges insuffisants.');
+    }
+  };
+
+  const handleSendMagicLink = async () => {
+    if (!email.trim()) {
+      setErrorMessage('Veuillez spécifier votre adresse email administrateur.');
+      return;
+    }
+
+    setIsMagicLoading(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    const res = await sendAdminMagicLink(email);
+    setIsMagicLoading(false);
+
+    if (res.success) {
+      setSuccessMessage(res.message);
+    } else {
+      setErrorMessage(res.message);
     }
   };
 
@@ -80,6 +103,14 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <Server className="w-4 h-4 text-teal-400 shrink-0" />
           <span>Accès exclusif réservé à l'équipe de direction médicale Medsina.</span>
         </div>
+
+        {/* Success Banner */}
+        {successMessage && (
+          <div className="mb-6 p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-800/80 text-emerald-200 text-xs flex items-start gap-2.5 animate-in fade-in-50 duration-200">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="flex-1">{successMessage}</div>
+          </div>
+        )}
 
         {/* Error Banner */}
         {errorMessage && (
@@ -134,7 +165,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || isMagicLoading}
             className="w-full mt-2 py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 active:scale-[0.99] text-white shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-60"
           >
             {isLoading ? (
@@ -150,6 +181,27 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
               </>
             )}
           </button>
+
+          <div className="pt-2 text-center">
+            <button
+              type="button"
+              disabled={isLoading || isMagicLoading}
+              onClick={handleSendMagicLink}
+              className="text-xs text-slate-400 hover:text-teal-300 transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            >
+              {isMagicLoading ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-teal-400/40 border-t-teal-400 rounded-full animate-spin" />
+                  <span>Envoi du lien sécurisé...</span>
+                </>
+              ) : (
+                <>
+                  <Mail className="w-3.5 h-3.5 text-teal-400" />
+                  <span>Connexion sans mot de passe (Lien Magique Email)</span>
+                </>
+              )}
+            </button>
+          </div>
         </form>
 
         {/* Quick fill helper for admin */}

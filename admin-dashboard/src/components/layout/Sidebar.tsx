@@ -12,7 +12,8 @@ import {
   CheckCircle2, 
   Database,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  BookOpen
 } from 'lucide-react';
 import { NavigationTab } from '../../types/medsina';
 import iconEmblem from '../../assets/images/medsina-icon.png';
