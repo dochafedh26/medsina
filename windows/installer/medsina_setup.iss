@@ -9,8 +9,8 @@
 #ifndef MyAppExeName
   #define MyAppExeName "medsina.exe"
 #endif
-#ifndef MyAppId
-  #define MyAppId "{C64A2F02-5369-45B1-9DF8-97E4A8D9F21B}"
+#ifndef MyAppGuid
+  #define MyAppGuid "C64A2F02-5369-45B1-9DF8-97E4A8D9F21B"
 #endif
 #ifndef MyOutputDir
   #define MyOutputDir "..\..\win-dist"
@@ -27,7 +27,7 @@
 
 [Setup]
 ; Unique GUID identifying the app across updates
-AppId={#MyAppId}
+AppId={{{#MyAppGuid}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} v{#MyAppVersion}

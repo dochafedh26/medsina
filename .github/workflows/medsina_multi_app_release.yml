@@ -322,11 +322,11 @@ jobs:
           }
           $displayName = $label -replace '_', ' '
           $exeName = if ($appName -eq "medsina_all_in_one") { "medsina.exe" } else { "$appName.exe" }
-          $appId = switch ($appName) {
-            "medsina_residanat" { "{A7D3B104-8C2E-4F9A-B112-3D4E5F6A7B81}" }
-            "medsina_clinique"  { "{B8E4C215-9D3F-4A0B-C223-4E5F6A7B8C92}" }
-            "medsina_externat"  { "{C9F5D326-AE40-4B1C-D334-5F6A7B8C9D03}" }
-            default             { "{C64A2F02-5369-45B1-9DF8-97E4A8D9F21B}" }
+          $appGuid = switch ($appName) {
+            "medsina_residanat" { "A7D3B104-8C2E-4F9A-B112-3D4E5F6A7B81" }
+            "medsina_clinique"  { "B8E4C215-9D3F-4A0B-C223-4E5F6A7B8C92" }
+            "medsina_externat"  { "C9F5D326-AE40-4B1C-D334-5F6A7B8C9D03" }
+            default             { "C64A2F02-5369-45B1-9DF8-97E4A8D9F21B" }
           }
           $rawVer = (Select-String -Path "$appDir/pubspec.yaml" -Pattern '^version:\s*(.+)$').Matches[0].Groups[1].Value.Trim()
           $ver = $rawVer.Split('+')[0]
@@ -345,7 +345,7 @@ jobs:
             "/DMyAppName=$displayName" `
             "/DMyAppVersion=$ver" `
             "/DMyAppExeName=$exeName" `
-            "/DMyAppId=$appId" `
+            "/DMyAppGuid=$appGuid" `
             "/DMyOutputDir=$outDir" `
             "/DMyOutputBaseFilename=${label}_v${ver}_Windows_Setup" `
             "/DMyReleaseDir=$releaseDir" `
