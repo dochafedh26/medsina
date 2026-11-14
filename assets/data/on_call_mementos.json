@@ -660,22 +660,23 @@
   },
   {
     "id": "memento_syndrome_meninge_pl",
-    "title": "🧠 Syndrome Méningé Aigu & PL",
-    "category": "Infectiologie & Urgences Neurologiques",
-    "icon_name": "emergency_rounded",
+    "title": "🧠 Syndrome Méningé Aigu & PL d'Urgence",
+    "category": "Neurologie & Urgences Infectieuses",
+    "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluer la conscience (GCS) et chercher des signes de gravité : purpura fulminans, signes de focalisation, crise convulsive, engagement (anomalie pupillaire, posture de décérébration).",
-      "Étape 2 : Réaliser immédiatement une Hémoculture (x2) et débuter l'Antibiothérapie probabiliste et la corticothérapie (Dexaméthasone 10 mg IV) SANS ATTENDRE LA PL si purpura ou retard de imagerie/PL.",
-      "Étape 3 : Indication absolue d'une TDM cérébrale avant PL si : déficit focal, crise inaugurale, GCS < 13, immunodépression ou œdème papillaire au FO. Sinon, PL immédiate au lit du malade.",
-      "Étape 4 : Réaliser la Ponction Lombaire (L3-L4) : mesurer la pression d'ouverture, prélever 4 tubes (biochimie, bactério/gram, virologie/cytologie), et débuter C3G (Céftriaxone 2g x 2/j IV) + Ampicilline (si > 50 ans ou < 3 mois).",
-      "Étape 5 : Piège médico-légal absolu : Ne JAMAIS retarder l'antibiothérapie d'urgence de plus de 30 minutes en cas de suspicion de méningite purulente bactérienne aux urgences."
+      "Étape 1 : Évaluation immédiate de la conscience (Glasgow), recherche de signes de focalisation, de purpura fulminans (signe de gravité) et de signes d'engagement cérébral.",
+      "Étape 2 : Si purpura fulminans ou suspicion de méningite bactérienne : CÉFOTAXIME IV 2g (ou Ceftriaxone 2g) en urgence absolue avant même l'imagerie ou la PL, + Dexaméthasone 10mg IV 15 min avant ou en même temps.",
+      "Étape 3 : Fond d'œil (si disponible et rapide) et TDM cérébrale en urgence avant la Ponction Lombaire si : déficit focal, crise convulsive inaugurale, Glasgow < 15, ou immunodépression sévère.",
+      "Étape 4 : Réalisation de la Ponction Lombaire (PL) au déchoquage si pas de contre-indication radiologique : mesure de la pression d'ouverture, tubes pour biochimie (protéinorachie, glycorachie, rapport LCR/sang), cytologie et bactériologie (Gram, culture).",
+      "Étape 5 : Surveillance rapprochée (paramètres vitaux, conscience, apparition de purpura), isolement respiratoire de type air/gouttelettes si suspicion de méningocoque, et déclaration obligatoire selon les directives du MSPRH Algérie.",
+      "Étape 6 : Piège médico-légal / CI absolue : Ne jamais retarder l'antibiothérapie au-delà de 30-45 minutes si la PL est différée (TDM non disponible ou encombrée). La présence d'un purpura fulminans est une CI formelle et absolue à la PL (risque d'engagement et collapsus)."
     ],
-    "scientific_references": "Consensus SPILF / SFMU / SRLF / MSPRH Algérie",
+    "scientific_references": "Recommandations SPILF / SFMU / SRLF / Guide de Pratique Clinique MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-06T02:31:54.916004+00:00",
-    "updated_at": "2026-11-06T02:31:54.916017+00:00"
+    "created_at": "2026-11-14T03:21:42.149493+00:00",
+    "updated_at": "2026-11-14T03:21:42.149510+00:00"
   },
   {
     "id": "memento_pneumothorax_compressif",
