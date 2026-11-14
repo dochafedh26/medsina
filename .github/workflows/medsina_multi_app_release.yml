@@ -302,10 +302,12 @@ jobs:
             dart run flutter_launcher_icons
             Pop-Location
           }
+      - name: Install Inno Setup
+        run: choco install innosetup --yes --no-progress
       - name: Build Windows Release
         working-directory: apps/${{ matrix.app }}
         run: flutter build windows --release
-      - name: Archive Windows Portable ZIP
+      - name: Build Windows Setup Installer (.exe) & Portable ZIP
         shell: pwsh
         run: |
           $appName = "${{ matrix.app }}"
@@ -316,10 +318,40 @@ jobs:
             "medsina_externat"  { "Medsina_Externat" }
             default             { "Medsina" }
           }
+          $displayName = $label -replace '_', ' '
+          $exeName = if ($appName -eq "medsina_all_in_one") { "medsina.exe" } else { "$appName.exe" }
+          $appId = switch ($appName) {
+            "medsina_residanat" { "{A7D3B104-8C2E-4F9A-B112-3D4E5F6A7B81}" }
+            "medsina_clinique"  { "{B8E4C215-9D3F-4A0B-C223-4E5F6A7B8C92}" }
+            "medsina_externat"  { "{C9F5D326-AE40-4B1C-D334-5F6A7B8C9D03}" }
+            default             { "{C64A2F02-5369-45B1-9DF8-97E4A8D9F21B}" }
+          }
           $rawVer = (Select-String -Path "$appDir/pubspec.yaml" -Pattern '^version:\s*(.+)$').Matches[0].Groups[1].Value.Trim()
           $ver = $rawVer.Split('+')[0]
-          New-Item -ItemType Directory -Force -Path "dist-windows-$appName" | Out-Null
-          Compress-Archive -Path "$appDir/build/windows/x64/runner/Release/*" -DestinationPath "dist-windows-$appName/${label}_v${ver}_Windows_Portable.zip" -Force
+          $outDir = (Resolve-Path ".").Path + "\dist-windows-$appName"
+          New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+
+          $releaseDir = (Resolve-Path "$appDir/build/windows/x64/runner/Release").Path
+          $iconFile = (Resolve-Path "$appDir/windows/runner/resources/app_icon.ico").Path
+
+          $iscc = "iscc"
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          }
+          Write-Host "Compiling Inno Setup installer for $displayName v$ver..."
+          & $iscc `
+            "/DMyAppName=$displayName" `
+            "/DMyAppVersion=$ver" `
+            "/DMyAppExeName=$exeName" `
+            "/DMyAppId=$appId" `
+            "/DMyOutputDir=$outDir" `
+            "/DMyOutputBaseFilename=${label}_v${ver}_Windows_Setup" `
+            "/DMyReleaseDir=$releaseDir" `
+            "/DMyIconFile=$iconFile" `
+            "windows/installer/medsina_setup.iss"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          Compress-Archive -Path "$releaseDir\*" -DestinationPath "$outDir\${label}_v${ver}_Windows_Portable.zip" -Force
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.app }}-windows
@@ -378,7 +410,7 @@ jobs:
           body: |
             ## ${{ steps.meta.outputs.label }} v${{ steps.meta.outputs.version }} (Build ${{ steps.meta.outputs.build_num }})
 
-            Plateforme modulaire Medsina — build multi-plateforme (Android APK / arm64 / AAB, Web, Windows Portable).
+            Plateforme modulaire Medsina — build multi-plateforme (Android APK / arm64 / AAB, Web, Windows Setup .exe & Portable ZIP).
 
       - name: Register Per-App Release in Supabase OTA
         env:
@@ -431,7 +463,7 @@ jobs:
                   'version_name': ver,
                   'build_number': build,
                   'release_notes': f'Mise à jour officielle de {label} (v{ver}).',
-                  'download_url': f'https://github.com/{repo}/releases/download/{tag}/{label}_v{ver}_Windows_Portable.zip',
+                  'download_url': f'https://github.com/{repo}/releases/download/{tag}/{label}_v{ver}_Windows_Setup.exe',
                   'is_mandatory': False,
                   'min_supported_build': 1,
                   'is_active': True,

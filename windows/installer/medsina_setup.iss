@@ -1,14 +1,33 @@
-#define MyAppName "Medsina"
+#ifndef MyAppName
+  #define MyAppName "Medsina"
+#endif
 #ifndef MyAppVersion
   #define MyAppVersion "1.0.30"
 #endif
 #define MyAppPublisher "Medsina Sante Algerie"
 #define MyAppURL "https://medsina.medevsync.com"
-#define MyAppExeName "medsina.exe"
+#ifndef MyAppExeName
+  #define MyAppExeName "medsina.exe"
+#endif
+#ifndef MyAppId
+  #define MyAppId "{C64A2F02-5369-45B1-9DF8-97E4A8D9F21B}"
+#endif
+#ifndef MyOutputDir
+  #define MyOutputDir "..\..\win-dist"
+#endif
+#ifndef MyOutputBaseFilename
+  #define MyOutputBaseFilename "Medsina_Windows_Setup"
+#endif
+#ifndef MyReleaseDir
+  #define MyReleaseDir "..\..\build\windows\x64\runner\Release"
+#endif
+#ifndef MyIconFile
+  #define MyIconFile "..\runner\resources\app_icon.ico"
+#endif
 
 [Setup]
-; Unique GUID identifying Medsina across all updates
-AppId={{C64A2F02-5369-45B1-9DF8-97E4A8D9F21B}
+; Unique GUID identifying the app across updates
+AppId={#MyAppId}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} v{#MyAppVersion}
@@ -26,9 +45,9 @@ SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequiredOverridesAllowed=dialog
-SetupIconFile=..\runner\resources\app_icon.ico
-OutputDir=..\..\win-dist
-OutputBaseFilename=Medsina_Windows_Setup
+SetupIconFile={#MyIconFile}
+OutputDir={#MyOutputDir}
+OutputBaseFilename={#MyOutputBaseFilename}
 ; Force Windows Shell to refresh icon cache upon install & uninstall
 ChangesAssociations=yes
 
@@ -40,9 +59,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\runner\resources\app_icon.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyIconFile}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MyReleaseDir}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MyReleaseDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\app_icon.ico"
