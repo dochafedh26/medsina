@@ -1356,5 +1356,20 @@
     ],
     "created_at": "2026-11-14T14:23:50.929117+00:00",
     "updated_at": "2026-11-14T14:23:50.929130+00:00"
+  },
+  {
+    "id": "lab_ceruloplasmine_cuivre",
+    "name": "Céruloplasmine sérique et Cuprémie / Cuprurie des 24h",
+    "category": "Vitamines & Oligo-éléments",
+    "normal_range": "Céruloplasmine: 0.20 - 0.60 g/L | Cuprémie: 11 - 24 µmol/L (0.7 - 1.5 mg/L) | Cuprurie des 24h: < 0.3 µmol/24h (< 20 µg/24h)",
+    "unit": "g/L (Céruloplasmine), µmol/L (Cuprémie), µmol/24h (Cuprurie)",
+    "high_interpretation": "Cuprémie et Céruloplasmine élevées : hépatopathies cholestatiques (défaut d'excrétion biliaire), syndromes inflammatoires (la céruloplasmine est une protéine de l'inflammation de type alpha-2-globuline), grossesse, contraception orale. Cuprurie des 24h élevée (> 1.6 µmol/24h ou > 100 µg/24h) : très évocatrice de la maladie de Wilson (surtout si test à la D-pénicillamine), intoxications chroniques au cuivre.",
+    "low_interpretation": "Céruloplasmine effondrée (< 0.10 g/L) et Cuprémie basse : Maladie de Wilson (hépatolenticulaire, mutation ATP7B), acéruloplasminémie congénitale, malnutrition sévère, syndrome néphrotique (perte urinaire), entéropathie exsudative. Urgence neurologique/hépatique : une céruloplasmine basse associée à des anneaux de Kayser-Fleischer signe la maladie de Wilson nécessitant un début immédiat de chélateurs (D-pénicillamine ou trientine) et avis spécialisé (gastro-entérologue / neurologue).",
+    "clinical_notes": [
+      "Piège pré-analytique : La céruloplasmine étant une protéine inflammatoire, un syndrome inflammatoire aigu peut faussement normaliser une céruloplasmine abaissée dans le cadre d'une maladie de Wilson débutante.",
+      "Piège diagnostic du concours : Une céruloplasmine basse ne suffit pas à elle seule pour poser le diagnostic de maladie de Wilson ; il faut l'associer à l'augmentation de la cuprurie des 24h, à la présence d'anneaux de Kayser-Fleischer à la lampe à fente, et idéalement au dosage du cuivre hepatique (> 250 µg/g de sec) ou à l'étude génétique ATP7B."
+    ],
+    "created_at": "2026-11-14T23:13:30.510443+00:00",
+    "updated_at": "2026-11-14T23:13:30.510460+00:00"
   }
 ]
