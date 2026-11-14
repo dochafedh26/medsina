@@ -505,22 +505,22 @@
   },
   {
     "id": "memento_syndrome_meninge_aigu",
-    "title": "⚡ Syndrome Méningé Aigu & PL",
-    "category": "Infectiologie & Urgences Neurologiques",
-    "icon_name": "emergency_rounded",
+    "title": "🧠 Syndrome Méningé Aigu & Ponction Lombaire",
+    "category": "Urgences Neurologiques & Infectieuses",
+    "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluer la triade (céphalées, vomissements, raideur de nuque). Rechercher des signes de choc (purpura fulminans) ou d'engagement cérébral (troubles de conscience, anisocorie).",
-      "Étape 2 : Céfotaxime 2g IVD immédiat + Dexaméthasone 10mg IV avant toute imagerie ou PL si purpura ou retard de PL (selon recommandations SFMU/SPRM).",
-      "Étape 3 : Fond d'œil en urgence si disponible, ou TDM cérébrale éliminant un processus expansif intracrânien (effet de masse) AVANT de réaliser la Ponction Lombaire.",
-      "Étape 4 : Réalisation de la PL au déchoquage : mesure de la pression d'ouverture, recueil de 4 tubes (biochimie, bactério, cyto, virologie), analyse macroscopique (eau de roche vs trouble/purulent).",
-      "Étape 5 : PIÈGE MAJEUR : Ne JAMAIS retarder l'antibiothérapie par l'imagerie ou la PL en cas de suspicion de méningite bactérie aigue. Contre-indication absolue de la PL en cas de signe de focalisation ou de trouble de conscience sans TDM préalable."
+      "Étape 1 : Évaluation immédiate, recherche de signes de gravité (troubles de la conscience Glasgow < 12, déficit focal, sepsis sévère, purpura fulminans) et sécurisation des voies aériennes.",
+      "Étape 2 : Si purpura fulminans ou suspicion forte de méningite bact, ATBthérapie IV immédiate (C3G: Ceftriaxone 2g IV) et Dexaméthasone (10mg IV) AVANT toute imagerie, puis TDM cérébrale urgente pour éliminer une HIC/masse.",
+      "Étape 3 : Réaliser la Ponction Lombaire (PL) en décubitus latéral si pas de contre-indication (pas de signe de focalisation, pas de trouble hémostase, pas d'infection cutanée au point de ponction) ; mesurer la pression d'ouverture et prélever 4 tubes.",
+      "Étape 4 : Analyse biochimique et cytologique immédiate au labo (aspect trouble = urgence, glycorachie vs glycémie, protéinorachie, cellularité avec formule) et mise en route du traitement adapté (antibiothérapie probabiliste ou antivirale par Aciclovir 10mg/kg/8h si suspicion d'hsv).",
+      "Étape 5 : Piège médico-légal absolu : ne JAMAIS retarder l'antibiothérapie de plus de 30 minutes en cas de purpura fulminans ou de sepsis pour faire une PL ou une TDM. La PL est formellement contre-indiquée en présence de signes de localisation neurologique ou de troubles hémostase majeurs."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / SPILF / MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SPILF / SRLF / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-07T16:52:51.246236+00:00",
-    "updated_at": "2026-11-07T16:52:51.246253+00:00"
+    "created_at": "2026-11-14T18:11:04.150494+00:00",
+    "updated_at": "2026-11-14T18:11:04.150509+00:00"
   },
   {
     "id": "memento_hyperkalemie_aigue",
