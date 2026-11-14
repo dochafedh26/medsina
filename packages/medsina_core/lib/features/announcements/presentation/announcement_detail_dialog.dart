@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/medsina_dialog.dart';
 import '../../notifications/models/medical_notification.dart';
 
 class AnnouncementDetailDialog extends StatelessWidget {
@@ -74,11 +75,11 @@ class AnnouncementDetailDialog extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Impossible d\'ouvrir le lien : $e'),
-            backgroundColor: Colors.redAccent,
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Lien inaccessible',
+          message: 'Impossible d\'ouvrir le lien demandé.',
+          detail: '$e',
         );
       }
     }

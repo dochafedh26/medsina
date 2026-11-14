@@ -218,13 +218,24 @@ class MedsinaApp extends StatelessWidget {
 }
 
 /// Dynamic routing gate based on Bloc Authentication status
-class AuthGate extends StatelessWidget {
+class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
+
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  bool _hasInitialized = false;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
+        if (state.status != AuthStatus.initial &&
+            state.status != AuthStatus.loading) {
+          _hasInitialized = true;
+        }
         switch (state.status) {
           case AuthStatus.authenticated:
             return const MainScaffold();
@@ -233,6 +244,10 @@ class AuthGate extends StatelessWidget {
           case AuthStatus.inactivitySuspended:
             return const AuthScreen();
           case AuthStatus.loading:
+            if (_hasInitialized) {
+              return const AuthScreen();
+            }
+            return const MedicalSplashScreen();
           case AuthStatus.initial:
             return const MedicalSplashScreen();
         }

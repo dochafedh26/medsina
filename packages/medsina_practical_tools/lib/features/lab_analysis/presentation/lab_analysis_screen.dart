@@ -8,6 +8,7 @@ import 'package:medsina_core/core/services/ai_quota_service.dart';
 import 'package:medsina_core/core/services/free_trial_quota_service.dart';
 import 'package:medsina_core/core/services/gemini_service.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_core/features/ai_assistant/presentation/clinical_copilot_sheet.dart';
 import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
 import 'package:medsina_core/features/subscription/presentation/ai_quota_exhausted_dialog.dart';
@@ -124,12 +125,10 @@ class _LabAnalysisScreenState extends State<LabAnalysisScreen> {
   Future<void> _startAnalysis() async {
     final text = _labTextController.text.trim();
     if (text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Veuillez saisir ou coller des résultats biologiques à analyser.'),
-          backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-        ),
+      MedsinaDialog.warning(
+        context,
+        title: 'Bilan requis',
+        message: 'Veuillez saisir ou coller des résultats biologiques à analyser.',
       );
       return;
     }

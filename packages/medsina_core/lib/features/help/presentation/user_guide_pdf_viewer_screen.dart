@@ -14,6 +14,7 @@ import '../../../core/interfaces/feature_contracts.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../profile/presentation/modern_user_profile_screen.dart';
+import '../../../core/widgets/medsina_dialog.dart';
 import '../../../core/widgets/medsina_logo.dart';
 
 class UserGuidePdfViewerScreen extends StatefulWidget {
@@ -347,8 +348,11 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } catch (_) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Impossible d\'ouvrir le fichier : $e')),
+          MedsinaDialog.error(
+            context,
+            title: 'Ouverture impossible',
+            message: 'Impossible d\'ouvrir le guide PDF.',
+            detail: '$e',
           );
         }
       }
@@ -1197,11 +1201,11 @@ class _UserGuidePdfViewerScreenState extends State<UserGuidePdfViewerScreen>
         });
       },
       onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.redAccent,
-            content: Text('Erreur de lecture PDF: ${details.description}'),
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Erreur de lecture PDF',
+          message: 'Impossible de charger le guide PDF.',
+          detail: details.description,
         );
       },
     );

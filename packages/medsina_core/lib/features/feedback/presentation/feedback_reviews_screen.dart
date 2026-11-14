@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/medsina_dialog.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/models/user_model.dart';
 import '../models/app_review_model.dart';
@@ -425,11 +426,10 @@ class _FeedbackReviewsScreenState extends State<FeedbackReviewsScreen> {
                             : () async {
                                 final comment = commentController.text.trim();
                                 if (comment.length < 5) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      backgroundColor: Color(0xFFDC2626),
-                                      content: Text('Veuillez rédiger un commentaire d\'au moins quelques mots.'),
-                                    ),
+                                  MedsinaDialog.warning(
+                                    ctx,
+                                    title: 'Commentaire trop court',
+                                    message: 'Veuillez rédiger un commentaire d\'au moins quelques mots.',
                                   );
                                   return;
                                 }
@@ -469,13 +469,16 @@ class _FeedbackReviewsScreenState extends State<FeedbackReviewsScreen> {
                                       _reviews.insert(0, saved);
                                     }
                                   });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      backgroundColor: Color(0xFF16A34A),
-                                      content: Text(
-                                        'Merci pour votre avis ! Il a été publié sur le mur de la communauté ⭐',
-                                      ),
-                                    ),
+                                  MedsinaDialog.success(
+                                    context,
+                                    title: 'Avis publié ⭐',
+                                    message: 'Merci pour votre avis ! Il a été publié sur le mur de la communauté.',
+                                  );
+                                } else if (mounted) {
+                                  MedsinaDialog.error(
+                                    context,
+                                    title: 'Échec de publication',
+                                    message: 'Impossible d\'enregistrer votre avis pour le moment. Vérifiez votre connexion.',
                                   );
                                 }
                               },

@@ -132,34 +132,73 @@ class MedsinaModularApp extends StatelessWidget {
                 ? AppTheme.nightShiftTheme
                 : AppTheme.darkTheme,
             themeMode: tc.themeMode,
-            home: BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                switch (state.status) {
-                  case AuthStatus.authenticated:
-                    final user = state.user!;
-                    if (hasAppAccess != null && !hasAppAccess!(user)) {
-                      return _WrongAppAccessGate(
-                        user: user,
-                        appTitle: title,
-                      );
-                    }
-                    return _ModularScaffold(
-                      appTitle: title,
-                      tabs: tabsBuilder(context, user),
-                    );
-                  case AuthStatus.unauthenticated:
-                  case AuthStatus.error:
-                  case AuthStatus.inactivitySuspended:
-                    return const AuthScreen();
-                  case AuthStatus.loading:
-                  case AuthStatus.initial:
-                    return _ModularSplashScreen(subtitle: subtitle);
-                }
-              },
+            home: _ModularAuthGate(
+              title: title,
+              subtitle: subtitle,
+              tabsBuilder: tabsBuilder,
+              hasAppAccess: hasAppAccess,
             ),
           );
         },
       ),
+    );
+  }
+}
+
+class _ModularAuthGate extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final List<AppTabDefinition> Function(BuildContext context, UserModel user) tabsBuilder;
+  final bool Function(UserModel user)? hasAppAccess;
+
+  const _ModularAuthGate({
+    required this.title,
+    required this.subtitle,
+    required this.tabsBuilder,
+    this.hasAppAccess,
+  });
+
+  @override
+  State<_ModularAuthGate> createState() => _ModularAuthGateState();
+}
+
+class _ModularAuthGateState extends State<_ModularAuthGate> {
+  bool _hasInitialized = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state.status != AuthStatus.initial &&
+            state.status != AuthStatus.loading) {
+          _hasInitialized = true;
+        }
+        switch (state.status) {
+          case AuthStatus.authenticated:
+            final user = state.user!;
+            if (widget.hasAppAccess != null && !widget.hasAppAccess!(user)) {
+              return _WrongAppAccessGate(
+                user: user,
+                appTitle: widget.title,
+              );
+            }
+            return _ModularScaffold(
+              appTitle: widget.title,
+              tabs: widget.tabsBuilder(context, user),
+            );
+          case AuthStatus.unauthenticated:
+          case AuthStatus.error:
+          case AuthStatus.inactivitySuspended:
+            return const AuthScreen();
+          case AuthStatus.loading:
+            if (_hasInitialized) {
+              return const AuthScreen();
+            }
+            return _ModularSplashScreen(subtitle: widget.subtitle);
+          case AuthStatus.initial:
+            return _ModularSplashScreen(subtitle: widget.subtitle);
+        }
+      },
     );
   }
 }

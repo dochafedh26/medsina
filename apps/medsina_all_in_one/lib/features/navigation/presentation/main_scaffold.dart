@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medsina_core/core/constants/app_constants.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_core/core/widgets/medsina_logo.dart';
 import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
 import 'package:medsina_core/features/auth/bloc/auth_event.dart';
@@ -756,11 +757,10 @@ class _MainScaffoldState extends State<MainScaffold> {
         isMandatory: check.isMandatory,
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Vous utilisez déjà la dernière version (v${check.currentVersion}) ✨'),
-          backgroundColor: AppTheme.primaryTeal,
-        ),
+      MedsinaDialog.info(
+        context,
+        title: 'Application à jour ✨',
+        message: 'Vous utilisez déjà la dernière version disponible (v${check.currentVersion}).',
       );
     }
   }

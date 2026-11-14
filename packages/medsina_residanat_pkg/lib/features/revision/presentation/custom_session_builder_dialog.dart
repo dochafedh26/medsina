@@ -5,6 +5,7 @@ import 'package:medsina_study_engine/features/revision/data/residency_repository
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_study_engine/features/revision/bloc/revision_bloc.dart';
 import 'package:medsina_study_engine/features/revision/bloc/revision_event.dart';
 import 'package:medsina_study_engine/features/revision/models/module_model.dart';
@@ -99,8 +100,10 @@ class _CustomSessionBuilderDialogState extends State<CustomSessionBuilderDialog>
 
   void _startSession() async {
     if (_selectedCourseIds.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez sélectionner au moins un cours pour cette session.')),
+      MedsinaDialog.warning(
+        context,
+        title: 'Sélection requise',
+        message: 'Veuillez sélectionner au moins un cours pour cette session.',
       );
       return;
     }

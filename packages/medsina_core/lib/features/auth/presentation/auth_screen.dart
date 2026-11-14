@@ -68,6 +68,22 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final state = context.read<AuthBloc>().state;
+      if (state.errorMessage != null) {
+        MedsinaDialog.showAuthError(context, state.errorMessage!);
+        context.read<AuthBloc>().add(ClearAuthMessageEvent());
+      } else if (state.successMessage != null &&
+          state.status != AuthStatus.authenticated) {
+        MedsinaDialog.success(
+          context,
+          title: 'Information',
+          message: state.successMessage!,
+        );
+        context.read<AuthBloc>().add(ClearAuthMessageEvent());
+      }
+    });
   }
 
   @override

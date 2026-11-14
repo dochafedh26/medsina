@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart' as p;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_core/core/services/recent_activity_service.dart';
 import 'package:medsina_core/core/services/user_study_progress_service.dart';
 import '../models/module_model.dart';
@@ -529,13 +530,20 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
                       ),
                     );
                     final ok = await OfflineCourseManager.instance.downloadCourse(widget.course);
-                    if (context.mounted && ok) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Cours enregistré pour consultation hors-ligne !'),
-                          backgroundColor: Colors.teal,
-                        ),
-                      );
+                    if (context.mounted) {
+                      if (ok) {
+                        MedsinaDialog.success(
+                          context,
+                          title: 'Téléchargement terminé',
+                          message: 'Cours "${widget.course.name}" enregistré pour consultation hors-ligne !',
+                        );
+                      } else {
+                        MedsinaDialog.error(
+                          context,
+                          title: 'Téléchargement échoué',
+                          message: 'Impossible d\'enregistrer ce cours hors-ligne. Vérifiez votre connexion.',
+                        );
+                      }
                     }
                   },
                 ),
@@ -1251,28 +1259,13 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
 
     if (mounted) {
       setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text('🎉 Cours "${widget.course.name}" validé ! (+30 XP)'),
-              ),
-            ],
-          ),
-          backgroundColor: const Color(0xFF0F766E),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          action: widget.course.questionsCount > 0
-              ? SnackBarAction(
-                  label: 'QCM ➔',
-                  textColor: Colors.amber,
-                  onPressed: _startCourseQcm,
-                )
-              : null,
-        ),
+      MedsinaDialog.success(
+        context,
+        title: 'Cours validé ! 🎉',
+        message: 'Cours "${widget.course.name}" validé avec succès (+30 XP).',
+        buttonLabel: widget.course.questionsCount > 0 ? 'Lancer les QCMs' : 'Parfait',
+        secondaryLabel: widget.course.questionsCount > 0 ? 'Fermer' : null,
+        onPrimary: widget.course.questionsCount > 0 ? _startCourseQcm : null,
       );
     }
   }

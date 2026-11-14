@@ -4,6 +4,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:medsina_core/core/models/app_release_model.dart';
 import 'package:medsina_core/core/services/ota_update_service.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 
 class OtaUpdateDialog extends StatefulWidget {
   final AppReleaseModel release;
@@ -74,22 +75,19 @@ class _OtaUpdateDialogState extends State<OtaUpdateDialog> {
       setState(() => _isDownloading = false);
       if (!success && !widget.isMandatory) {
         final fallbackUrl = OtaUpdateService.sanitizeDownloadUrl(widget.release);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Installation automatique non supportée par votre appareil.'),
-            backgroundColor: const Color(0xFFC2410C),
-            duration: const Duration(seconds: 8),
-            action: SnackBarAction(
-              label: 'Navigateur',
-              textColor: Colors.white,
-              onPressed: () async {
-                final uri = Uri.parse(fallbackUrl);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                }
-              },
-            ),
-          ),
+        MedsinaDialog.warning(
+          context,
+          title: 'Installation manuelle requise',
+          message: 'L\'installation automatique n\'est pas supportée sur cet appareil.',
+          detail: 'Vous pouvez télécharger et installer la mise à jour directement depuis votre navigateur.',
+          buttonLabel: 'Ouvrir le navigateur',
+          secondaryLabel: 'Fermer',
+          onPrimary: () async {
+            final uri = Uri.parse(fallbackUrl);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
+          },
         );
       }
     }

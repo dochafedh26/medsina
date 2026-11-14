@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/medsina_dialog.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../models/ai_quota_pack.dart';
 
@@ -64,8 +65,10 @@ class _AiPackPurchaseModalState extends State<AiPackPurchaseModal> {
   Future<void> _submitPurchase() async {
     final user = context.read<AuthBloc>().state.user;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez vous connecter pour commander une recharge.')),
+      MedsinaDialog.warning(
+        context,
+        title: 'Connexion requise',
+        message: 'Veuillez vous connecter pour commander une recharge.',
       );
       return;
     }
@@ -73,11 +76,10 @@ class _AiPackPurchaseModalState extends State<AiPackPurchaseModal> {
     final ref = _refController.text.trim();
 
     if (ref.isEmpty && _receiptBytes == null && _pickedFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Veuillez joindre le reçu de paiement (PDF/Image) ou saisir la référence.'),
-          backgroundColor: Color(0xFFDC2626),
-        ),
+      MedsinaDialog.warning(
+        context,
+        title: 'Justificatif manquant',
+        message: 'Veuillez joindre le reçu de paiement (PDF/Image) ou saisir la référence.',
       );
       return;
     }
@@ -124,51 +126,31 @@ class _AiPackPurchaseModalState extends State<AiPackPurchaseModal> {
       setState(() => _isSubmitting = false);
 
       if (success) {
+        final parentContext = Navigator.of(context).context;
         Navigator.pop(context);
-        showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-            title: const Row(
-              children: [
-                Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 28),
-                SizedBox(width: 10),
-                Text('Demande Transmise', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-              ],
-            ),
-            content: Text(
-              'Votre commande de recharge de +${_selectedPack.credits} requêtes IA a été envoyée à l\'administration avec votre reçu.\n\nVos requêtes bonus seront disponibles immédiatement après validation !',
-              style: const TextStyle(fontSize: 13, height: 1.45),
-            ),
-            actions: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryTeal,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Compris'),
-              ),
-            ],
-          ),
+        MedsinaDialog.success(
+          parentContext,
+          title: 'Demande Transmise',
+          message:
+              'Votre commande de recharge de +${_selectedPack.credits} requêtes IA a été envoyée à l\'administration avec votre reçu.',
+          detail: 'Vos requêtes bonus seront disponibles immédiatement après validation !',
+          buttonLabel: 'Compris',
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Impossible de soumettre la demande. Veuillez vérifier votre connexion.'),
-            backgroundColor: Color(0xFFDC2626),
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Échec de l\'envoi',
+          message: 'Impossible de soumettre la demande. Veuillez vérifier votre connexion internet.',
         );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSubmitting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur: $e'),
-            backgroundColor: const Color(0xFFDC2626),
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Erreur lors de l\'envoi',
+          message: 'Une erreur inattendue est survenue lors de la soumission.',
+          detail: '$e',
         );
       }
     }

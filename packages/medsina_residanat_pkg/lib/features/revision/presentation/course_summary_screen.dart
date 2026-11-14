@@ -2,6 +2,7 @@ import 'package:medsina_study_engine/features/comments/presentation/medical_comm
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_core/features/ai_assistant/presentation/clinical_copilot_sheet.dart';
 import '../data/course_summary_repository.dart';
 import '../models/course_summary_model.dart';
@@ -76,40 +77,29 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
             _summary = generated;
             _isGenerating = false;
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: const Color(0xFF10B981),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              content: const Row(
-                children: [
-                  Icon(Icons.check_circle_rounded, color: Colors.white),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Fiche de synthèse générée et enregistrée avec succès !',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          MedsinaDialog.success(
+            context,
+            title: 'Fiche générée',
+            message: 'Fiche de synthèse générée et enregistrée avec succès !',
           );
         } else {
           setState(() => _isGenerating = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: const Color(0xFFEF4444),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              content: const Text('Impossible de générer la fiche. Veuillez réessayer dans quelques instants.'),
-            ),
+          MedsinaDialog.error(
+            context,
+            title: 'Génération impossible',
+            message: 'Impossible de générer la fiche. Veuillez réessayer dans quelques instants.',
           );
         }
       }
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         setState(() => _isGenerating = false);
+        MedsinaDialog.error(
+          context,
+          title: 'Erreur de génération',
+          message: 'Une erreur est survenue lors de la génération de la fiche.',
+          detail: '$e',
+        );
       }
     }
   }

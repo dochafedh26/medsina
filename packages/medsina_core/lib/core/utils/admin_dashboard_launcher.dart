@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../network/supabase_service.dart';
+import '../widgets/medsina_dialog.dart';
 
 /// Centralized launcher for the Medsina Admin Dashboard.
 ///
@@ -57,22 +58,18 @@ class AdminDashboardLauncher {
       }
     }
 
-    // 4. If all external launchers fail, provide copy snackbar
+    // 4. If all external launchers fail, show error dialog with copy action
     if (!launched && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: const Color(0xFFDC2626),
-          content: const Text(
-            'Impossible d\'ouvrir le navigateur. URL : $adminUrl',
-          ),
-          action: SnackBarAction(
-            label: 'Copier',
-            textColor: Colors.white,
-            onPressed: () {
-              Clipboard.setData(const ClipboardData(text: adminUrl));
-            },
-          ),
-        ),
+      MedsinaDialog.error(
+        context,
+        title: 'Ouverture impossible',
+        message: 'Impossible d\'ouvrir le navigateur pour accéder au tableau de bord administrateur.',
+        detail: 'URL : $adminUrl',
+        buttonLabel: 'Fermer',
+        secondaryLabel: 'Copier l\'URL',
+        onSecondary: () {
+          Clipboard.setData(const ClipboardData(text: adminUrl));
+        },
       );
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_study_engine/features/revision/models/qcm_model.dart';
 import '../models/exam_session_model.dart';
 import 'exam_result_screen.dart';
@@ -107,16 +108,17 @@ class _ExamRunnerScreenState extends State<ExamRunnerScreen> {
     });
   }
 
-  void _autoSubmitOnTimeUp() {
+  Future<void> _autoSubmitOnTimeUp() async {
     _recordCurrentQuestionTime();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('⏱️ Temps écoulé ! Soumission automatique de votre épreuve.'),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 3),
-      ),
+    await MedsinaDialog.warning(
+      context,
+      title: 'Temps écoulé ⏱️',
+      message: 'Le temps imparti pour cette épreuve est terminé. Votre copie va être soumise automatiquement.',
+      buttonLabel: 'Voir les résultats',
     );
-    _submitExam();
+    if (mounted) {
+      _submitExam();
+    }
   }
 
   void _showSubmitConfirmationDialog() {

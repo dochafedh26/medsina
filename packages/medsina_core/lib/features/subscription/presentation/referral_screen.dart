@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/medsina_dialog.dart';
 import '../../auth/bloc/auth_bloc.dart';
 
 class ReferralScreen extends StatefulWidget {
@@ -84,18 +85,19 @@ class _ReferralScreenState extends State<ReferralScreen> {
   Future<void> _claimCode() async {
     final code = _codeController.text.trim().toUpperCase();
     if (code.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez entrer un code de parrainage.')),
+      MedsinaDialog.warning(
+        context,
+        title: 'Code requis',
+        message: 'Veuillez entrer un code de parrainage.',
       );
       return;
     }
 
     if (code == _referralCode) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFFDC2626),
-          content: Text('Vous ne pouvez pas utiliser votre propre code de parrainage !'),
-        ),
+      MedsinaDialog.warning(
+        context,
+        title: 'Code invalide',
+        message: 'Vous ne pouvez pas utiliser votre propre code de parrainage !',
       );
       return;
     }
@@ -110,19 +112,17 @@ class _ReferralScreenState extends State<ReferralScreen> {
     if (res['success'] == true) {
       _codeController.clear();
       setState(() => _hasClaimedCode = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: const Color(0xFF16A34A),
-          content: Text(res['message'] ?? 'Félicitations ! +10 requêtes IA offertes ! 🎉'),
-        ),
+      MedsinaDialog.success(
+        context,
+        title: 'Code activé ! 🎉',
+        message: res['message'] ?? 'Félicitations ! +10 requêtes IA offertes !',
       );
       _loadReferralStats();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: const Color(0xFFDC2626),
-          content: Text(res['message'] ?? 'Code invalide ou déjà utilisé.'),
-        ),
+      MedsinaDialog.error(
+        context,
+        title: 'Code non valide',
+        message: res['message'] ?? 'Code invalide ou déjà utilisé.',
       );
     }
   }
@@ -394,7 +394,6 @@ class _ReferralScreenState extends State<ReferralScreen> {
                     ? null
                     : () async {
                         final navigator = Navigator.of(dialogContext);
-                        final messenger = ScaffoldMessenger.of(context);
                         setModalState(() => _isRedeeming = true);
 
                         final user = context.read<AuthBloc>().state.user;
@@ -410,20 +409,17 @@ class _ReferralScreenState extends State<ReferralScreen> {
                         navigator.pop();
 
                         if (res['success'] == true) {
-                          messenger.showSnackBar(
-                            SnackBar(
-                              backgroundColor: const Color(0xFF16A34A),
-                              duration: const Duration(seconds: 5),
-                              content: Text(res['message'] ?? 'Félicitations ! Votre abonnement annuel offert est actif ! 🎉'),
-                            ),
+                          MedsinaDialog.success(
+                            context,
+                            title: 'Abonnement activé ! 🎉',
+                            message: res['message'] ?? 'Félicitations ! Votre abonnement annuel offert est actif !',
                           );
                           _loadReferralStats();
                         } else {
-                          messenger.showSnackBar(
-                            SnackBar(
-                              backgroundColor: const Color(0xFFDC2626),
-                              content: Text(res['message'] ?? 'Erreur lors de l\'activation.'),
-                            ),
+                          MedsinaDialog.error(
+                            context,
+                            title: 'Échec de l\'activation',
+                            message: res['message'] ?? 'Erreur lors de l\'activation.',
                           );
                         }
                       },

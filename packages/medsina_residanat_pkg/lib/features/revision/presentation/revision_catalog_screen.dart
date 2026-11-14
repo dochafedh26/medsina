@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medsina_core/core/constants/app_constants.dart';
 import 'package:medsina_core/core/services/free_trial_quota_service.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
 import 'package:medsina_core/features/auth/models/user_model.dart';
 import 'package:medsina_core/features/subscription/presentation/subscription_paywall_screen.dart';
@@ -1027,17 +1028,19 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                       forceUpload: true,
                     );
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            ok
-                                ? '☁️ Vos données sont 100% synchronisées sur le Cloud !'
-                                : 'Erreur de synchronisation Cloud. Vérifiez votre connexion.',
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
+                      if (ok) {
+                        MedsinaDialog.success(
+                          context,
+                          title: 'Synchronisation réussie ☁️',
+                          message: 'Vos données sont 100% synchronisées sur le Cloud !',
+                        );
+                      } else {
+                        MedsinaDialog.error(
+                          context,
+                          title: 'Erreur de synchronisation',
+                          message: 'Erreur de synchronisation Cloud. Vérifiez votre connexion internet.',
+                        );
+                      }
                     }
                   },
             child: Container(
@@ -1850,13 +1853,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                             setDlgState(() {
                               if (val == true) {
                                 if (selectedNames.length >= 2) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Le Pass Découverte est limité à 2 modules au choix.',
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                    ),
+                                  MedsinaDialog.warning(
+                                    ctx,
+                                    title: 'Limite atteinte',
+                                    message: 'Le Pass Découverte est limité à 2 modules au choix.',
                                   );
                                   return;
                                 }
@@ -1900,13 +1900,11 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                         if (context.mounted) {
                           Navigator.pop(ctx);
                           setState(() {});
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: const Color(0xFF16A34A),
-                              content: Text(
-                                'Modules activés : ${list.join(" & ")}. Les 2 premiers cours sont débloqués !',
-                              ),
-                            ),
+                          MedsinaDialog.success(
+                            context,
+                            title: 'Modules activés ! 🎉',
+                            message: 'Modules activés : ${list.join(" & ")}.',
+                            detail: 'Les 2 premiers cours sont débloqués !',
                           );
                         }
                       }

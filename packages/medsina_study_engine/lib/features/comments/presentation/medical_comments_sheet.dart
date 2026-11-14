@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import '../models/medical_comment.dart';
 import '../services/medical_comment_service.dart';
 
@@ -87,11 +88,11 @@ class _MedicalCommentsSheetState extends State<MedicalCommentsSheet> {
       _focusNode.unfocus();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors de l\'ajout : $e'),
-            backgroundColor: Colors.redAccent,
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Erreur d\'envoi',
+          message: 'Impossible d\'ajouter votre commentaire.',
+          detail: '$e',
         );
       }
     } finally {
@@ -102,23 +103,13 @@ class _MedicalCommentsSheetState extends State<MedicalCommentsSheet> {
   }
 
   Future<void> _handleDelete(MedicalComment comment) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Supprimer le commentaire ?'),
-        content: const Text('Cette action est définitive.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFEF4444)),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Supprimer', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+    final confirmed = await MedsinaDialog.confirm(
+      context,
+      title: 'Supprimer le commentaire ?',
+      message: 'Cette action est définitive.',
+      confirmLabel: 'Supprimer',
+      cancelLabel: 'Annuler',
+      isDestructive: true,
     );
 
     if (confirmed == true) {

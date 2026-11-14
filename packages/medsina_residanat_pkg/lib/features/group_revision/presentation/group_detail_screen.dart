@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
 import 'package:medsina_study_engine/features/revision/bloc/revision_bloc.dart';
 import 'package:medsina_study_engine/features/revision/bloc/revision_event.dart';
@@ -232,11 +233,10 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> with SingleTicker
                                       senderName: user.fullName.isNotEmpty ? user.fullName : 'Un confrère',
                                     );
                                     if (mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Invitation envoyée avec succès à $displayName ! 🎉'),
-                                          backgroundColor: AppTheme.primaryTeal,
-                                        ),
+                                      MedsinaDialog.success(
+                                        context,
+                                        title: 'Invitation envoyée 🎉',
+                                        message: 'Invitation envoyée avec succès à $displayName !',
                                       );
                                       _loadData();
                                     }
@@ -479,11 +479,21 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> with SingleTicker
                                 questionCount: questionCount,
                                 durationMinutes: durationMinutes,
                               );
-                              if (mounted && ch != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Défi publié avec succès dans le groupe !'), backgroundColor: AppTheme.primaryTeal),
-                                );
-                                _loadData();
+                              if (mounted) {
+                                if (ch != null) {
+                                  MedsinaDialog.success(
+                                    context,
+                                    title: 'Défi publié ! 🏆',
+                                    message: 'Défi publié avec succès dans le groupe !',
+                                  );
+                                  _loadData();
+                                } else {
+                                  MedsinaDialog.error(
+                                    context,
+                                    title: 'Échec de publication',
+                                    message: 'Impossible de créer le défi. Veuillez réessayer.',
+                                  );
+                                }
                               }
                             },
                           ),

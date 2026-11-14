@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:medsina_core/core/network/supabase_service.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_study_engine/features/revision/models/module_model.dart';
 import '../models/temoignage_conseil_model.dart';
 import 'package:medsina_study_engine/features/revision/presentation/course_pdf_viewer_screen.dart';
@@ -167,21 +168,21 @@ class _TemoignagesConseilsScreenState extends State<TemoignagesConseilsScreen> {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Impossible d\'ouvrir le lien : $url'),
-              backgroundColor: Colors.red,
-            ),
+          MedsinaDialog.error(
+            context,
+            title: 'Lien inaccessible',
+            message: 'Impossible d\'ouvrir le lien demandé.',
+            detail: url,
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors de l\'ouverture : $e'),
-            backgroundColor: Colors.red,
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Erreur d\'ouverture',
+          message: 'Impossible d\'ouvrir le lien.',
+          detail: '$e',
         );
       }
     }
