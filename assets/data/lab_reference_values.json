@@ -1326,5 +1326,20 @@
     ],
     "created_at": "2026-11-13T23:46:10.109938+00:00",
     "updated_at": "2026-11-13T23:46:10.109953+00:00"
+  },
+  {
+    "id": "lab_electrophorese_proteines_seriques",
+    "name": "Électrophorèse des protéines sériques (EPS)",
+    "category": "Immunologie & Rhumatologie",
+    "normal_range": "Protéines totales : 60 - 80 g/L | Albumine : 35 - 50 g/L | Alpha-1 : 1 - 3 g/L | Alpha-2 : 6 - 10 g/L | Bêta-1 : 3 - 6 g/L | Bêta-2 : 3 - 5 g/L | Gamma : 8 - 15 g/L",
+    "unit": "g/L",
+    "high_interpretation": "Hypergammaglobulinémie polyclonale (aspect en dôme large : infections chroniques, connectivites, hépatopathies) ou monoclonale (pic monoclonal étroit : Myélome multiple, MGUS, Waldenström). Élévation des alpha-2 (syndrome inflammatoire aigu). Seuil d'urgence : pic > 30 g/L ou hyperviscosité sanguine (IgM), IRA (rein myélomateux), hypercalcémie menaçante.",
+    "low_interpretation": "Hypoprotéinémie globale (syndrome néphrotique, entéropathie exsudative, dénutrition sévère). Hypoalbuminémie (syndrome inflammatoire, cirrhose, néphrose). Hypogammaglobulinémie (déficits immunitaires primitifs ou secondaires : néoplasies hématologiques, iatrogène). Risque infectieux majeur si IgG < 4 g/L.",
+    "clinical_notes": [
+      "Piège pré-analytique : Ne pas confondre un pic monoclonal avec le fibrinogène qui migre en zone bêta/gamma (toujours vérifier que le prélèvement est fait sur tube sec et non hépariné/EDTA).",
+      "Conduite à tenir face à une découverte fortuite de pic monoclonal : Réaliser systématiquement un bilan de première intention (immuno-fixation des protéines sériques et urinaires, créatininémie, calcémie, radiographies osseuses ou coroscanner low-dose)."
+    ],
+    "created_at": "2026-11-14T06:51:37.557636+00:00",
+    "updated_at": "2026-11-14T06:51:37.557652+00:00"
   }
 ]
