@@ -110,9 +110,10 @@ class OtaUpdateService {
       final normCurrent = normalizeBuildNumber(currentBuild);
 
       final isNewerVer = isVersionNewer(release.versionName, currentVersion);
-      final isNewerBuild = release.buildNumber > currentBuild || normRemote > normCurrent;
+      final isOlderVer = isVersionNewer(currentVersion, release.versionName);
+      final isNewerBuild = !isOlderVer && normRemote > normCurrent;
 
-      // Check if remote version or build is strictly newer than current app
+      // Check if remote version or normalized build is strictly newer than current app
       if (isNewerVer || isNewerBuild) {
         // If not ignoring dismissed builds, check if user chose to skip this optional build
         if (!ignoreDismissed && !release.isMandatory) {
@@ -130,7 +131,6 @@ class OtaUpdateService {
         }
 
         final isMandatory = release.isMandatory ||
-            currentBuild < release.minSupportedBuild ||
             normCurrent < normalizeBuildNumber(release.minSupportedBuild);
 
         return UpdateCheckResult(

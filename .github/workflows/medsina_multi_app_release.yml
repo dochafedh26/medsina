@@ -373,6 +373,7 @@ jobs:
           name: "${{ steps.meta.outputs.label }} v${{ steps.meta.outputs.version }} (Build ${{ steps.meta.outputs.build_num }})"
           draft: false
           prerelease: false
+          make_latest: ${{ matrix.app == 'medsina_all_in_one' }}
           files: dist-release/*
           body: |
             ## ${{ steps.meta.outputs.label }} v${{ steps.meta.outputs.version }} (Build ${{ steps.meta.outputs.build_num }})
@@ -418,8 +419,10 @@ jobs:
                   'platform': 'android',
                   'version_name': ver,
                   'build_number': build,
+                  'release_notes': f'Mise à jour officielle de {label} (v{ver}).',
                   'download_url': f'https://github.com/{repo}/releases/download/{tag}/{label}_v{ver}_Android.apk',
                   'is_mandatory': False,
+                  'min_supported_build': 1,
                   'is_active': True,
               },
               {
@@ -427,12 +430,22 @@ jobs:
                   'platform': 'windows',
                   'version_name': ver,
                   'build_number': build,
+                  'release_notes': f'Mise à jour officielle de {label} (v{ver}).',
                   'download_url': f'https://github.com/{repo}/releases/download/{tag}/{label}_v{ver}_Windows_Portable.zip',
                   'is_mandatory': False,
+                  'min_supported_build': 1,
                   'is_active': True,
               },
           ]
           for row in rows:
+              # Deactivate previous active releases for this app_id & platform so older 2000+ builds don't shadow new builds
+              patch_url = f\"{url}/rest/v1/app_releases?app_id=eq.{app_id}&platform=eq.{row['platform']}&is_active=eq.true\"
+              pr = requests.patch(patch_url, headers=headers, json={'is_active': False})
+              print(f'Deactivated previous {app_id} {row[\"platform\"]} releases: HTTP {pr.status_code}')
+
               r = requests.post(f'{url}/rest/v1/app_releases', headers=headers, json=row)
               print(f'Registered {app_id} {row[\"platform\"]} v{ver}+{build}: HTTP {r.status_code}')
+              if r.status_code >= 400:
+                  print(r.text)
+                  r.raise_for_status()
           "
