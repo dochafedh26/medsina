@@ -1341,5 +1341,21 @@
     ],
     "created_at": "2026-11-14T06:51:37.557636+00:00",
     "updated_at": "2026-11-14T06:51:37.557652+00:00"
+  },
+  {
+    "id": "lab_albumine_prealbumine",
+    "name": "Albumine sérique et Préalbumine (Transthyritine)",
+    "category": "Endocrinologie & Métabolisme",
+    "normal_range": "Albumine: 35 - 50 g/L | Préalbumine: 20 - 40 mg/L",
+    "unit": "g/L (Albumine) et mg/L (Préalbumine)",
+    "high_interpretation": "Albumine élevée: Déshydratation aiguë (hémoconcentration). Pas de signification pathologique propre. Préalbumine élevée: Insuffisance rénale chronique, corticothérapie, ou convalescence.",
+    "low_interpretation": "Albumine < 30 g/L: Hypoalbuminémie modérée. < 20 g/L: Risque majeur d'anasarque (œdèmes généralisés, œdème pulmonaire). Causes: Dénutrition protéico-énergétique, syndrome néphrotique, cirrhose hépatique (défaut de synthèse), entéropathie exsudative, états inflammatoires sévères (protéine négative de la phase aiguë). Préalbumine basse (< 20 mg/L): Marqueur précoce de dénutrition aiguë ou de catabolisme accru (demi-vie courte de 2 jours contre 20 jours pour l'albumine).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur: L'albumine est une protéine négative de l'inflammation. En cas de syndrome inflammatoire (CRP élevée), sa baisse reflète la réponse inflammatoire et non un état de dénutrition pure.",
+      "Calcul associé indispensable: En cas d'hypoalbuminémie, la calcémie totale doit être corrigée pour estimer le calcium ionisé actif (Formule de Payne: Calcium corrigé = Calcium mesuré + 0.02 * (40 - Albumine en g/L)).",
+      "Intérêt au lit du malade en réanimation: Le suivi de la préalbumine est supérieur à celui de l'albumine pour évaluer l'efficacité de la support nutritionnel entérale ou parentérale à court terme grâce à sa demi-vie courte."
+    ],
+    "created_at": "2026-11-14T14:23:50.929117+00:00",
+    "updated_at": "2026-11-14T14:23:50.929130+00:00"
   }
 ]
