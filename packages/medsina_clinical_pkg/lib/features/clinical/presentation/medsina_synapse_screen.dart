@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:medsina_core/core/constants/app_constants.dart';
 import 'package:medsina_core/core/network/supabase_service.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
 import 'package:medsina_core/features/subscription/presentation/subscription_paywall_screen.dart';
 
@@ -35,20 +36,19 @@ class MedsinaSynapseScreen extends StatelessWidget {
     try {
       final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!launched && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Impossible d\'ouvrir le simulateur Medsina Synapse sur https://medsina.medevsync.com/synapse'),
-            backgroundColor: Colors.redAccent,
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Lancement impossible',
+          message: 'Impossible d\'ouvrir le simulateur Medsina Synapse sur https://medsina.medevsync.com/synapse.',
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors du lancement : $e'),
-            backgroundColor: Colors.redAccent,
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Erreur de lancement',
+          message: 'Une erreur est survenue lors de l\'ouverture du simulateur.',
+          detail: '$e',
         );
       }
     }

@@ -23,6 +23,7 @@ import '../services/ota_update_service.dart';
 import '../services/user_loyalty_service.dart';
 import '../theme/app_theme.dart';
 import '../theme/theme_controller.dart';
+import 'medsina_dialog.dart';
 import 'medsina_logo.dart';
 
 /// Shared bootstrap helper for all Medsina app shells (`medsina_residanat`,
@@ -137,8 +138,9 @@ class MedsinaModularApp extends StatelessWidget {
                   case AuthStatus.authenticated:
                     final user = state.user!;
                     if (hasAppAccess != null && !hasAppAccess!(user)) {
-                      return const SubscriptionPaywallScreen(
-                        isWrongAppMismatch: true,
+                      return _WrongAppAccessGate(
+                        user: user,
+                        appTitle: title,
                       );
                     }
                     return _ModularScaffold(
@@ -158,6 +160,54 @@ class MedsinaModularApp extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _WrongAppAccessGate extends StatefulWidget {
+  final UserModel user;
+  final String appTitle;
+
+  const _WrongAppAccessGate({
+    required this.user,
+    required this.appTitle,
+  });
+
+  @override
+  State<_WrongAppAccessGate> createState() => _WrongAppAccessGateState();
+}
+
+class _WrongAppAccessGateState extends State<_WrongAppAccessGate> {
+  bool _dialogShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _dialogShown) return;
+      _dialogShown = true;
+      MedsinaDialog.warning(
+        context,
+        title: 'Accès non inclus dans votre abonnement',
+        message:
+            'Votre abonnement actuel (${widget.user.tier.label}) ne permet pas de vous connecter à ${widget.appTitle}.',
+        detail:
+            'Connectez-vous sur l\'application correspondant à votre formule, passez à l\'offre All-Access, ou changez de compte.',
+        buttonLabel: 'Voir les offres',
+        secondaryLabel: 'Se déconnecter',
+        onSecondary: () {
+          if (mounted) {
+            context.read<AuthBloc>().add(LogoutEvent());
+          }
+        },
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const SubscriptionPaywallScreen(
+      isWrongAppMismatch: true,
     );
   }
 }
@@ -186,22 +236,24 @@ class _ModularScaffoldState extends State<_ModularScaffold> {
       if (!mounted) return;
       final check = await OtaUpdateService.checkForUpdates();
       if (check.hasUpdate && check.latestRelease != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Mise à jour ${check.latestRelease!.versionName} disponible pour ${widget.appTitle}',
-            ),
-            action: SnackBarAction(
-              label: 'Télécharger',
-              onPressed: () {
-                OtaUpdateService.startUpdateProcess(
-                  check.latestRelease!,
-                  onProgress: (_) {},
-                  onStatusChange: (_) {},
-                );
-              },
-            ),
-          ),
+        final release = check.latestRelease!;
+        MedsinaDialog.info(
+          context,
+          title: 'Nouvelle version disponible 🚀',
+          message:
+              'La version v${release.versionName} est disponible pour ${widget.appTitle} (actuelle : v${check.currentVersion}).',
+          detail: release.releaseNotes.isNotEmpty
+              ? release.releaseNotes
+              : 'Améliorations de stabilité et nouveaux contenus médicaux.',
+          buttonLabel: 'Télécharger',
+          secondaryLabel: 'Plus tard',
+          onPrimary: () {
+            OtaUpdateService.startUpdateProcess(
+              release,
+              onProgress: (_) {},
+              onStatusChange: (_) {},
+            );
+          },
         );
       }
     });

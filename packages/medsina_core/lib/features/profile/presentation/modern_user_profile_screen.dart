@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/medsina_dialog.dart';
 import '../../../core/widgets/medsina_logo.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
@@ -564,11 +565,11 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
       _updateAvatarUrl(uploadedUrl);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Impossible de charger la photo : $e'),
-            backgroundColor: const Color(0xFFEF4444),
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Erreur de chargement',
+          message: 'Impossible de charger la photo de profil.',
+          detail: '$e',
         );
       }
     } finally {
@@ -598,12 +599,10 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
             ),
           );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Photo de profil mise à jour avec succès ✨'),
-          backgroundColor: AppTheme.primaryTeal,
-          duration: Duration(seconds: 2),
-        ),
+      MedsinaDialog.success(
+        context,
+        title: 'Photo mise à jour',
+        message: 'Votre photo de profil a été mise à jour avec succès.',
       );
     }
   }
@@ -641,11 +640,10 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
         _isEditing = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Vos modifications ont été enregistrées avec succès ! ✨'),
-          backgroundColor: AppTheme.primaryTeal,
-        ),
+      MedsinaDialog.success(
+        context,
+        title: 'Profil enregistré',
+        message: 'Vos modifications ont été enregistrées et synchronisées avec succès.',
       );
     }
   }
@@ -2065,11 +2063,10 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
                 );
                 if (dlgContext.mounted) Navigator.pop(dlgContext);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Progrès enregistré : +$q QCMs et +$c cours ajoutés ! ✨'),
-                      backgroundColor: AppTheme.primaryTeal,
-                    ),
+                  MedsinaDialog.success(
+                    context,
+                    title: 'Progrès enregistré',
+                    message: '+$q QCMs et +$c cours ont été ajoutés à votre suivi.',
                   );
                 }
               }
@@ -2144,11 +2141,10 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
               );
               if (dlgContext.mounted) Navigator.pop(dlgContext);
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Objectifs quotidiens mis à jour ! 🎯'),
-                    backgroundColor: AppTheme.primaryTeal,
-                  ),
+                MedsinaDialog.success(
+                  context,
+                  title: 'Objectifs mis à jour',
+                  message: 'Vos objectifs quotidiens ont été enregistrés ($q QCMs / $c cours par jour).',
                 );
               }
             },

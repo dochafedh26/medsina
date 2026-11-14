@@ -9,6 +9,7 @@ import '../../../core/interfaces/feature_contracts.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/license_key_formatter.dart';
+import '../../../core/widgets/medsina_dialog.dart';
 import '../../../core/widgets/medsina_logo.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
@@ -70,19 +71,19 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.successMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: const Color(0xFF16A34A),
-              content: Text(state.successMessage!),
-            ),
+          MedsinaDialog.success(
+            context,
+            title: 'Activation réussie',
+            message: state.successMessage!,
           );
+          context.read<AuthBloc>().add(ClearAuthMessageEvent());
         } else if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: const Color(0xFFDC2626),
-              content: Text(state.errorMessage!),
-            ),
+          MedsinaDialog.error(
+            context,
+            title: 'Échec de l\'activation',
+            message: state.errorMessage!,
           );
+          context.read<AuthBloc>().add(ClearAuthMessageEvent());
         }
       },
       builder: (context, state) {
@@ -1190,8 +1191,10 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                   : () async {
                       final ref = refController.text.trim();
                       if (ref.isEmpty && pickedReceiptFile == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Veuillez renseigner le numéro de transaction ou joindre une preuve.')),
+                        MedsinaDialog.warning(
+                          ctx,
+                          title: 'Justificatif requis',
+                          message: 'Veuillez renseigner le numéro de transaction ou joindre une photo/PDF du reçu.',
                         );
                         return;
                       }
@@ -1232,18 +1235,17 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                       if (context.mounted) {
                         Navigator.pop(ctx);
                         if (success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              backgroundColor: Color(0xFF16A34A),
-                              content: Text('Preuve de paiement envoyée avec succès ! Activation après validation admin.'),
-                            ),
+                          MedsinaDialog.success(
+                            context,
+                            title: 'Paiement envoyé',
+                            message: 'Votre preuve de paiement a été transmise avec succès.',
+                            detail: 'Votre abonnement sera activé dès validation par l\'administrateur.',
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              backgroundColor: Color(0xFFDC2626),
-                              content: Text('Erreur lors de l\'envoi du paiement.'),
-                            ),
+                          MedsinaDialog.error(
+                            context,
+                            title: 'Échec de l\'envoi',
+                            message: 'Une erreur est survenue lors de l\'envoi de votre preuve de paiement. Veuillez réessayer.',
                           );
                         }
                       }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
 import 'package:medsina_core/core/utils/medical_text_formatter.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import '../../ai_assistant/presentation/qcm_tutor_sheet.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
@@ -1079,12 +1080,17 @@ class QcmStudyScreen extends StatelessWidget {
               ),
               onPressed: hasNext
                   ? () => context.read<RevisionBloc>().add(NextQuestionEvent())
-                  : () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Félicitations ! Vous avez terminé cette session de QCMs.')),
+                  : () async {
+                      await MedsinaDialog.success(
+                        context,
+                        title: 'Session terminée !',
+                        message: 'Félicitations Docteur ! Vous avez terminé cette session de QCMs.',
+                        buttonLabel: 'Retour au catalogue',
                       );
-                      context.read<RevisionBloc>().add(const ResetSessionEvent(clearSavedProgress: true));
-                      Navigator.of(context).pop();
+                      if (context.mounted) {
+                        context.read<RevisionBloc>().add(const ResetSessionEvent(clearSavedProgress: true));
+                        Navigator.of(context).pop();
+                      }
                     },
               icon: Icon(hasNext ? Icons.arrow_forward_rounded : Icons.check_circle_rounded, size: 18),
               label: Text(hasNext ? 'Suivante' : 'Terminer'),

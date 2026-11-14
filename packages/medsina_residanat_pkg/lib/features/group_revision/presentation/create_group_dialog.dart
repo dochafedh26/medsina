@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
 import '../models/study_group_model.dart';
 import '../services/group_revision_service.dart';
@@ -64,16 +65,21 @@ class _CreateGroupDialogState extends State<CreateGroupDialog> {
         if (group != null) {
           Navigator.of(context).pop(group);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Erreur lors de la création du groupe.')),
+          MedsinaDialog.error(
+            context,
+            title: 'Création impossible',
+            message: 'Erreur lors de la création du groupe de révision.',
           );
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur : $e')),
+        MedsinaDialog.error(
+          context,
+          title: 'Erreur',
+          message: 'Impossible de créer le groupe.',
+          detail: '$e',
         );
       }
     }

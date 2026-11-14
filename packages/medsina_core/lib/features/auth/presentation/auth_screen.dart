@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/medsina_dialog.dart';
 import '../../../core/widgets/medsina_logo.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 import '../bloc/auth_bloc.dart';
@@ -89,34 +90,30 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: const Color(0xFFDC2626),
-              behavior: SnackBarBehavior.floating,
-              content: Row(
-                children: [
-                  const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(state.errorMessage!)),
-                ],
-              ),
-            ),
-          );
+          MedsinaDialog.showAuthError(context, state.errorMessage!);
           context.read<AuthBloc>().add(ClearAuthMessageEvent());
         } else if (state.successMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: const Color(0xFF16A34A),
-              behavior: SnackBarBehavior.floating,
-              content: Row(
-                children: [
-                  const Icon(Icons.check_circle_outline_rounded, color: Colors.white, size: 20),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(state.successMessage!)),
-                ],
+          if (state.status != AuthStatus.authenticated) {
+            MedsinaDialog.success(
+              context,
+              title: 'Information',
+              message: state.successMessage!,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: const Color(0xFF16A34A),
+                behavior: SnackBarBehavior.floating,
+                content: Row(
+                  children: [
+                    const Icon(Icons.check_circle_outline_rounded, color: Colors.white, size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text(state.successMessage!)),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          }
           context.read<AuthBloc>().add(ClearAuthMessageEvent());
         }
       },
@@ -810,6 +807,14 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   void _submitLogin() {
     final email = _loginEmailController.text.trim();
     final password = _loginPasswordController.text.trim();
+    if (email.isEmpty || password.isEmpty) {
+      MedsinaDialog.warning(
+        context,
+        title: 'Champs requis',
+        message: 'Veuillez saisir votre adresse email et votre mot de passe pour vous connecter.',
+      );
+      return;
+    }
     context.read<AuthBloc>().add(LoginSubmittedEvent(email: email, password: password));
   }
 
@@ -819,8 +824,10 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     final password = _registerPasswordController.text.trim();
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez renseigner tous les champs obligatoires.')),
+      MedsinaDialog.warning(
+        context,
+        title: 'Champs incomplets',
+        message: 'Veuillez renseigner votre nom complet, votre email et un mot de passe.',
       );
       return;
     }
@@ -874,27 +881,33 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           ElevatedButton(
             onPressed: () async {
               final email = emailCtrl.text.trim();
-              if (email.isNotEmpty) {
-                Navigator.pop(ctx);
-                try {
-                  await SupabaseService.resetPassword(email);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: const Color(0xFF16A34A),
-                        content: Text('Un e-mail de réinitialisation a été envoyé à $email'),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: const Color(0xFFDC2626),
-                        content: Text('Erreur: $e'),
-                      ),
-                    );
-                  }
+              if (email.isEmpty) {
+                MedsinaDialog.warning(
+                  ctx,
+                  title: 'Email requis',
+                  message: 'Veuillez saisir votre adresse email.',
+                );
+                return;
+              }
+              Navigator.pop(ctx);
+              try {
+                await SupabaseService.resetPassword(email);
+                if (context.mounted) {
+                  MedsinaDialog.success(
+                    context,
+                    title: 'Email envoyé',
+                    message: 'Un lien de réinitialisation du mot de passe a été envoyé à $email.',
+                    detail: 'Vérifiez également votre dossier Courrier indésirable (Spam) si vous ne le voyez pas.',
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  MedsinaDialog.error(
+                    context,
+                    title: 'Échec de l\'envoi',
+                    message: 'Impossible d\'envoyer l\'email de réinitialisation.',
+                    detail: '$e',
+                  );
                 }
               }
             },
@@ -1313,11 +1326,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Impossible d\'ouvrir le lien : $e'),
-            backgroundColor: Colors.red.shade700,
-          ),
+        MedsinaDialog.error(
+          context,
+          title: 'Lien inaccessible',
+          message: 'Impossible d\'ouvrir le lien demandé.',
+          detail: '$e',
         );
       }
     }

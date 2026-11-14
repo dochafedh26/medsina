@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medsina_core/core/widgets/medsina_dialog.dart';
 import '../data/residency_repository.dart';
 import '../services/offline_course_manager.dart';
 import 'course_pdf_viewer_screen.dart';
@@ -54,46 +55,24 @@ class _OfflineStorageScreenState extends State<OfflineStorageScreen> {
   }
 
   Future<void> _confirmClearAll() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
-            SizedBox(width: 10),
-            Text('Vider tout le cache ?'),
-          ],
-        ),
-        content: const Text(
-          'Tous les cours téléchargés en local seront supprimés de cet appareil pour libérer de l\'espace.\n\nVous pourrez les retélécharger à tout moment lorsque vous serez connecté.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade700,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Supprimer tout'),
-          ),
-        ],
-      ),
+    final confirm = await MedsinaDialog.confirm(
+      context,
+      title: 'Vider tout le cache ?',
+      message:
+          'Tous les cours téléchargés en local seront supprimés de cet appareil pour libérer de l\'espace.',
+      detail: 'Vous pourrez les retélécharger à tout moment lorsque vous serez connecté.',
+      confirmLabel: 'Supprimer tout',
+      isDestructive: true,
     );
 
-    if (confirm == true) {
+    if (confirm) {
       await _manager.clearAllStorage();
       await _loadData();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Le cache hors-ligne a été vidé avec succès.'),
-            behavior: SnackBarBehavior.floating,
-          ),
+        MedsinaDialog.success(
+          context,
+          title: 'Cache vidé',
+          message: 'Le cache hors-ligne a été supprimé avec succès.',
         );
       }
     }
