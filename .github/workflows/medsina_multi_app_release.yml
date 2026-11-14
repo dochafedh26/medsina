@@ -69,6 +69,8 @@ jobs:
             shared_core:
               - 'packages/medsina_core/**'
               - 'packages/medsina_practical_tools/**'
+              - 'windows/**'
+              - '.github/workflows/medsina_multi_app_release.yml'
               - 'pubspec.yaml'
       - id: compute
         run: |
