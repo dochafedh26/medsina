@@ -991,19 +991,18 @@
   },
   {
     "id": "lab_pal_gammagt",
-    "name": "Phosphatases Alcalines (PAL) et Gamma-Glutamyl transférase (Gamma-GT)",
+    "name": "Phosphatases Alcalines (PAL) & Gamma-Glutamyl Transférase (GGT)",
     "category": "Hépato-Gastro & Pancréas",
-    "normal_range": "PAL: 40 - 120 UI/L (Adulte) | Gamma-GT: Homme: 10 - 55 UI/L, Femme: 9 - 35 UI/L",
+    "normal_range": "PAL: 40 - 130 UI/L (varie selon âge et sexe) | GGT: Homme < 55 UI/L, Femme < 38 UI/L",
     "unit": "UI/L",
-    "high_interpretation": "PAL élevées + Gamma-GT élevées : origine hépato-biliaire (cholestase intra ou extra-hépatique, obstacle, hépatite). PAL élevées + Gamma-GT normales : origine osseuse (maladie de Paget, ostéomalacie, métastases osseuses, croissance) ou physiologique (grossesse au 3ème trimestre). Gamma-GT seule élevée : induction enzymatique (alcool, médicaments inducteurs comme les anticonvulsivants), stéatose hépatique (NAFLD/NASH). Urgence si cholestase aiguë fébrile (angiocholite) : antibiothérapie IV et drainage biliaire urgent (CPRE).",
-    "low_interpretation": "PAL basses : hypophosphatasie (maladie génétique rare), hypothyroïdie, malnutrition sévère, carence en zinc ou magnésium, anémie pernicieuse. Gamma-GT basses : situation le plus souvent sans signification pathologique majeure (parfois hypothyroïdie ou sevrage alcoolique prolongé). Pas d'urgence vitale directe liée à des valeurs basses.",
+    "high_interpretation": "PAL élevées + GGT élevées = Cholestase (intra ou extra-hépatique : cholangite, obstacle biliaire, Ictère à bilirubine conjuguée). PAL élevées isolées avec GGT normales = Origine osseuse (maladie de Paget, ostéomalacie, métastases osseuses, croissance) ou physiologique (enfant, grossesse). GGT élevées isolées = Induction enzymatique (alcool, médicaments inducteurs : barbituriques, anticonvulsivants, stéatose hépatique non alcoolique/NASH). Urgence si angiocholite associée (fièvre, ictère, douleur) : antibiothérapie IV et drainage biliaire urgent.",
+    "low_interpretation": "PAL basses = Hypophosphatasie (maladie génétique rare), hypothyroïdie, malnutrition sévère, carence en zinc ou magnésium, excès de vitamine C ou D. GGT basse = Pas de signification pathologique majeure (souvent observée chez les sujets sains ou en cas de carence en pyridoxine). Pas d'urgence vitale directe liée à la baisse isolée.",
     "clinical_notes": [
-      "Piège pré-analytique majeur : les PAL sont thermostables et augmentent à température ambiante ; le prélèvement doit être acheminé rapidement au laboratoire. L'hémolyse perturbe modérément certains dosages.",
-      "Règle clé d'orientation diagnostique au concours : face à une élévation isolée des PAL, toujours doser les Gamma-GT (et/ou la 5'-nucléotidase) pour affirmer l'origine hépatique et éliminer l'origine osseuse.",
-      "Chez l'enfant en période de croissance, les PAL physiologiques sont 2 à 3 fois plus élevées que chez l'adulte, ce qui ne doit pas inquiéter à tort."
+      "Piège biologique majeur : L'iso-enzyme osseuse des PAL augmente physiologiquement chez l'enfant en période de croissance et chez la femme enceinte (origine placentaire). Toujours coupler le dosage des PAL à celui des GGT pour authentifier l'origine hépatique de l'élévation des PAL.",
+      "Interférences pré-analytiques : Une conservation prolongée ou une exposition à la chaleur du sérum peut altérer l'activité enzymatique. Le jeûne n'est pas strictement obligatoire pour les PAL mais recommandé pour les GGT."
     ],
-    "created_at": "2026-11-06T07:11:47.435688+00:00",
-    "updated_at": "2026-11-06T07:11:47.435701+00:00"
+    "created_at": "2026-11-14T19:22:05.624244+00:00",
+    "updated_at": "2026-11-14T19:22:05.624264+00:00"
   },
   {
     "id": "lab_carboxyhemoglobine_hbco",
