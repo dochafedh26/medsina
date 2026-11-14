@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:medsina_core/core/constants/app_constants.dart';
 import 'package:medsina_core/core/network/supabase_service.dart';
+import 'package:medsina_core/core/services/platform_stats_service.dart';
 import 'package:medsina_core/core/services/recent_activity_service.dart';
 import 'package:medsina_core/core/services/user_loyalty_service.dart';
 import 'package:medsina_core/core/theme/app_theme.dart';
@@ -39,6 +40,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserLoyaltyService.instance.initializeAndTrack();
+    PlatformStatsService.instance.ensureLoaded();
 
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
@@ -1975,163 +1977,197 @@ class DashboardScreen extends StatelessWidget {
     SubscriptionTier tier,
     bool isExpired,
   ) {
-    final List<Widget> cards = [];
+    return ValueListenableBuilder<PlatformStats>(
+      valueListenable: PlatformStatsService.instance.statsNotifier,
+      builder: (context, stats, _) {
+        final modulesStr = '${stats.modulesCount}';
+        final qcmsStr = PlatformStats.formatCount(stats.qcmCount);
+        final summariesStr = PlatformStats.formatCount(stats.summariesCount);
+        final protocolsStr = '${stats.protocolsCount}';
+        final labsStr = '${stats.labValuesCount}';
+        final mementosStr = '${stats.mementosCount}';
+        final drugsStr = PlatformStats.formatCount(stats.drugsCount);
+        final emergencyDrugsStr = '${stats.emergencyDrugsCount}';
 
-    if (tier == SubscriptionTier.residentElite && !isExpired) {
-      cards.add(
-        _buildStatCard(
-          context,
-          'Formation Résidanat',
-          '47 Modules • 6 240 QCMs',
-          'Banque complète Blida & Facultés Nationales',
-          Icons.school_rounded,
-          const Color(0xFF0D9488),
-        ),
-      );
-      cards.add(
-        _buildStatCard(
-          context,
-          'Examens & Entraînement',
-          'Séries & Examens Blancs',
-          'Chronométrés avec correction détaillée',
-          Icons.quiz_rounded,
-          AppTheme.accentCyan,
-        ),
-      );
-      cards.add(
-        _buildStatCard(
-          context,
-          'Cours PDF & Fiches',
-          '1 205 Cours Officiels',
-          'Lecture sécurisée & exports Anki',
-          Icons.menu_book_rounded,
-          const Color(0xFF2563EB),
-        ),
-      );
-    } else if (tier == SubscriptionTier.etudiant && !isExpired) {
-      cards.add(
-        _buildStatCard(
-          context,
-          'Cursus Universitaire',
-          'Modules de votre Année',
-          'Cours officiels & fiches synthétiques',
-          Icons.school_rounded,
-          const Color(0xFF2563EB),
-        ),
-      );
-      cards.add(
-        _buildStatCard(
-          context,
-          'Banque d\'Examens & EMD',
-          'Sujets & Partiels Faculté',
-          'Questions d\'évaluation semestrielles',
-          Icons.quiz_rounded,
-          const Color(0xFF0D9488),
-        ),
-      );
-      cards.add(
-        _buildStatCard(
-          context,
-          'Révision Structurée',
-          'Examens Antérieurs',
-          'Sans pièges de concours résidanat',
-          Icons.menu_book_rounded,
-          const Color(0xFFF59E0B),
-        ),
-      );
-    } else if (tier == SubscriptionTier.clinicalPro && !isExpired) {
-      cards.add(
-        _buildStatCard(
-          context,
-          'Pratique Clinique',
-          'Conduites à Tenir (CAT)',
-          'Arbres décisionnels & consensus MSPRH',
-          Icons.emergency_rounded,
-          const Color(0xFF0284C7),
-        ),
-      );
-      cards.add(
-        _buildStatCard(
-          context,
-          'Urgences & DCI Algérie',
-          'Pharmacopée Saidal / IPA',
-          'Posologies d\'urgence & débits PSE',
-          Icons.medication_liquid_rounded,
-          const Color(0xFF10B981),
-        ),
-      );
-      cards.add(
-        _buildStatCard(
-          context,
-          'Scores Cliniques & Tri',
-          'Glasgow, Wells, qSOFA',
-          'Calculateurs au lit du malade',
-          Icons.calculate_rounded,
-          const Color(0xFFF59E0B),
-        ),
-      );
-    } else {
-      cards.add(
-        _buildStatCard(
-          context,
-          'Formation Résidanat',
-          '47 Modules • 6 240 QCMs',
-          isExpired
-              ? 'Accès suspendu • Renouveler'
-              : 'Banque complète Blida & National',
-          Icons.school_rounded,
-          isExpired ? Colors.grey : AppTheme.primaryTeal,
-        ),
-      );
-      cards.add(
-        _buildStatCard(
-          context,
-          'Pratique Clinique',
-          '18+ CAT & Protocoles',
-          isExpired
-              ? 'Accès suspendu • Renouveler'
-              : 'Arbres décisionnels d\'urgence',
-          Icons.emergency_rounded,
-          isExpired ? Colors.grey : const Color(0xFFEF4444),
-        ),
-      );
-      cards.add(
-        _buildStatCard(
-          context,
-          'Calculateurs & Outils',
-          'Scores, Labs & Normes',
-          'Calcul instantané au lit du malade',
-          Icons.calculate_rounded,
-          isExpired ? Colors.grey : AppTheme.accentCyan,
-        ),
-      );
-    }
+        final List<Widget> cards = [];
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < 720;
-
-        if (isMobile) {
-          return Column(
-            children: [
-              for (int i = 0; i < cards.length; i++) ...[
-                if (i > 0) const SizedBox(height: 12),
-                cards[i],
-              ],
-            ],
-          );
+        if (tier == SubscriptionTier.residentElite && !isExpired) {
+          cards.addAll([
+            _buildStatCard(
+              context,
+              'Formation Résidanat',
+              '$modulesStr Modules • $qcmsStr QCMs',
+              'Banque complète Blida & Facultés Nationales',
+              Icons.school_rounded,
+              const Color(0xFF0D9488),
+            ),
+            _buildStatCard(
+              context,
+              'Résumés & Fiches IA',
+              '$summariesStr Résumés • $mementosStr Mémentos',
+              'Fiches synthétiques mises à jour automatiquement',
+              Icons.auto_stories_rounded,
+              AppTheme.accentCyan,
+            ),
+            _buildStatCard(
+              context,
+              'Pratique & Pharmacopée',
+              '$protocolsStr CAT • $drugsStr DCI',
+              'Protocoles d\'urgence & $emergencyDrugsStr spécialités vitales',
+              Icons.emergency_rounded,
+              const Color(0xFF2563EB),
+            ),
+          ]);
+        } else if (tier == SubscriptionTier.etudiant && !isExpired) {
+          cards.addAll([
+            _buildStatCard(
+              context,
+              'Cursus Universitaire',
+              '$modulesStr Modules • $summariesStr Résumés',
+              'Cours officiels & fiches synthétiques',
+              Icons.school_rounded,
+              const Color(0xFF2563EB),
+            ),
+            _buildStatCard(
+              context,
+              'Banque d\'Examens & EMD',
+              '$qcmsStr QCMs & Sujets Faculté',
+              'Questions d\'évaluation semestrielles',
+              Icons.quiz_rounded,
+              const Color(0xFF0D9488),
+            ),
+            _buildStatCard(
+              context,
+              'Outils & Normes Labo',
+              '$labsStr Normes • $mementosStr Mémentos',
+              'Référentiel biologique & fiches de stage',
+              Icons.biotech_rounded,
+              const Color(0xFFF59E0B),
+            ),
+          ]);
+        } else if (tier == SubscriptionTier.clinicalPro && !isExpired) {
+          cards.addAll([
+            _buildStatCard(
+              context,
+              'Pratique Clinique',
+              '$protocolsStr+ CAT & Protocoles',
+              'Arbres décisionnels & consensus MSPRH',
+              Icons.emergency_rounded,
+              const Color(0xFF0284C7),
+            ),
+            _buildStatCard(
+              context,
+              'Urgences & DCI Algérie',
+              '$drugsStr Médicaments • $emergencyDrugsStr Urgences',
+              'Pharmacopée Saidal / IPA & débits PSE',
+              Icons.medication_liquid_rounded,
+              const Color(0xFF10B981),
+            ),
+            _buildStatCard(
+              context,
+              'Scores, Garde & Labo',
+              '$labsStr Normes • $mementosStr Mémentos',
+              'Calculateurs & mémentos au lit du malade',
+              Icons.calculate_rounded,
+              const Color(0xFFF59E0B),
+            ),
+          ]);
+        } else {
+          cards.addAll([
+            _buildStatCard(
+              context,
+              'Formation Résidanat',
+              '$modulesStr Modules • $qcmsStr QCMs',
+              isExpired
+                  ? 'Accès suspendu • Renouveler'
+                  : 'Banque complète Blida & National',
+              Icons.school_rounded,
+              isExpired ? Colors.grey : AppTheme.primaryTeal,
+            ),
+            _buildStatCard(
+              context,
+              'Pratique Clinique',
+              '$protocolsStr+ CAT & Protocoles',
+              isExpired
+                  ? 'Accès suspendu • Renouveler'
+                  : 'Arbres décisionnels d\'urgence',
+              Icons.emergency_rounded,
+              isExpired ? Colors.grey : const Color(0xFFEF4444),
+            ),
+            _buildStatCard(
+              context,
+              'Calculateurs & Outils',
+              'Scores & $labsStr Normes Labo',
+              'Calcul instantané au lit du malade',
+              Icons.calculate_rounded,
+              isExpired ? Colors.grey : AppTheme.accentCyan,
+            ),
+            _buildStatCard(
+              context,
+              'Résumés & Fiches IA',
+              '$summariesStr Résumés • $mementosStr Mémentos',
+              'Fiches de révision & garde actualisées',
+              Icons.auto_stories_rounded,
+              isExpired ? Colors.grey : const Color(0xFF2563EB),
+            ),
+            _buildStatCard(
+              context,
+              'Pharmacopée Algérie',
+              '$drugsStr Médicaments DCI',
+              '$emergencyDrugsStr spécialités d\'urgence & débits PSE',
+              Icons.medication_liquid_rounded,
+              isExpired ? Colors.grey : const Color(0xFF10B981),
+            ),
+            _buildStatCard(
+              context,
+              'Enrichissement Continu',
+              'Mises à jour Cloud 24/7',
+              'Nouveaux QCMs, résumés & mémentos en direct',
+              Icons.sync_rounded,
+              isExpired ? Colors.grey : const Color(0xFFF59E0B),
+            ),
+          ]);
         }
 
-        return IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (int i = 0; i < cards.length; i++) ...[
-                if (i > 0) const SizedBox(width: 16),
-                Expanded(child: cards[i]),
-              ],
-            ],
-          ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < 720;
+
+            if (isMobile) {
+              return Column(
+                children: [
+                  for (int i = 0; i < cards.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 12),
+                    cards[i],
+                  ],
+                ],
+              );
+            }
+
+            final rows = <Widget>[];
+            for (int start = 0; start < cards.length; start += 3) {
+              final end = (start + 3 < cards.length) ? start + 3 : cards.length;
+              final rowCards = cards.sublist(start, end);
+              if (rows.isNotEmpty) {
+                rows.add(const SizedBox(height: 14));
+              }
+              rows.add(
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (int i = 0; i < rowCards.length; i++) ...[
+                        if (i > 0) const SizedBox(width: 16),
+                        Expanded(child: rowCards[i]),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            return Column(children: rows);
+          },
         );
       },
     );
