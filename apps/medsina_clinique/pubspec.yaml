@@ -1,6 +1,6 @@
 name: medsina_clinique
 description: Medsina Clinique — Pratique Clinique, Protocoles d'Urgence (CAT), Synapse & Vidal Algérie.
-version: 1.0.83+108
+version: 1.0.84+109
 publish_to: none
 resolution: workspace
 
