@@ -80,7 +80,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (session != null && session.user.id.isNotEmpty) {
         final userId = session.user.id;
         try {
-          final cloudData = await SupabaseService.fetchUserProfileAndSubscription(userId);
+          final cloudData = await SupabaseService
+              .fetchUserProfileAndSubscription(userId)
+              .timeout(const Duration(seconds: 8));
           if (cloudData != null && cloudData['profile'] != null) {
             final profile = cloudData['profile'] as Map<String, dynamic>;
             final sub = cloudData['subscription'] as Map<String, dynamic>?;

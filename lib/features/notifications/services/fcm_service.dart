@@ -56,7 +56,7 @@ class FcmService {
 
     try {
       if (Firebase.apps.isEmpty) {
-        await Firebase.initializeApp();
+        await Firebase.initializeApp().timeout(const Duration(seconds: 6));
       }
       _isAvailable = true;
     } catch (e) {
@@ -71,19 +71,22 @@ class FcmService {
       FirebaseMessaging.onBackgroundMessage(medsinaFirebaseBackgroundHandler);
       final messaging = FirebaseMessaging.instance;
 
-      final settings = await messaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
+      final settings = await messaging
+          .requestPermission(
+            alert: true,
+            badge: true,
+            sound: true,
+            provisional: false,
+          )
+          .timeout(const Duration(seconds: 8));
 
       if (settings.authorizationStatus == AuthorizationStatus.denied) {
         debugPrint('FCM permission denied by user.');
         return;
       }
 
-      _currentToken = await messaging.getToken();
+      _currentToken =
+          await messaging.getToken().timeout(const Duration(seconds: 8));
       if (_currentToken != null) {
         await _persistAndSyncToken(_currentToken!, userId: userId);
       }
@@ -96,7 +99,9 @@ class FcmService {
       if (!kIsWeb) {
         for (final topic in defaultTopics) {
           try {
-            await messaging.subscribeToTopic(topic);
+            await messaging
+                .subscribeToTopic(topic)
+                .timeout(const Duration(seconds: 5));
           } catch (_) {}
         }
       }

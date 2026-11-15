@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,22 +39,36 @@ void main() async {
     ),
   );
 
+  await ThemeController.instance.initialize();
+
   try {
-    await SupabaseService.initialize();
-    // Track user connection session, daily streak and loyalty XP
-    UserLoyaltyService.instance.initializeAndTrack();
+    await SupabaseService.initialize().timeout(const Duration(seconds: 6));
   } catch (e) {
     debugPrint('Supabase initialization fallback: $e');
   }
 
   // Dynamically synchronize app version from runtime package info (web, android, windows)
   try {
-    final pkg = await PackageInfo.fromPlatform();
+    final pkg = await PackageInfo.fromPlatform().timeout(const Duration(seconds: 3));
     if (pkg.version.isNotEmpty) {
       AppConstants.appVersion = pkg.version;
     }
   } catch (e) {
     debugPrint('PackageInfo initialization notice: $e');
+  }
+
+  runApp(const MedsinaApp());
+
+  // Initialize non-blocking background services after first frame is scheduled
+  // so network, notification, or FCM delays never stall the Android splash logo.
+  unawaited(_initializeBackgroundServices());
+}
+
+Future<void> _initializeBackgroundServices() async {
+  try {
+    UserLoyaltyService.instance.initializeAndTrack();
+  } catch (e) {
+    debugPrint('UserLoyaltyService initialization notice: $e');
   }
 
   // Initialize Realtime Medical Notifications (CAT, Courses, QCM, Pearl) with active user context
@@ -79,10 +94,6 @@ void main() async {
   } catch (e) {
     debugPrint('Realtime Notification initialization notice: $e');
   }
-
-  await ThemeController.instance.initialize();
-
-  runApp(const MedsinaApp());
 }
 
 class MedsinaApp extends StatelessWidget {
