@@ -914,22 +914,22 @@
   },
   {
     "id": "memento_intoxication_medicamenteuse",
-    "title": "💊 Intoxication Médicamenteuse Aiguë (IMA)",
-    "category": "Toxicologie",
+    "title": "⚡ Intoxication Médicamenteuse Aiguë (IMA)",
+    "category": "Toxicologie / Urgences Vitales",
     "icon_name": "warning_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation sécuritaire et vitale (ABCDE), Glasgow, recherche de signes de choc, détresse respiratoire ou troubles du rythme (ECG immédiat).",
-      "Étape 2 : Bilan biologique d'urgence au lit du malade : Glycémie capillaire, Gaz du sang (GDS), Ionogramme sanguin, Urée, Créatinine, Bilan hépatique et Taux de Prothrombine (TP).",
-      "Étape 3 : Antidotes de première intention si toxique identifié : Naloxone (0,4 mg IV) si coma/hypoventilation aux opiacés ; Flumazénil CONTRE-INDIQUÉ si poly-intox ou épilepsie ; Charbon activé 50g per os si ingestion < 1h et patient conscient/protégé.",
-      "Étape 4 : Mesures de réanimation et surveillance armée : Monitorage continu, pose d'une VVP de bon calibre, sondage urinaire si besoin, transfert immédiat en réanimation si instabilité hémodynamique, troubles de la conscience (Glasgow < 8) ou convulsions.",
-      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne jamais provoquer de vomissements (risque d'inhalation) et éviter le flumazénil en aveugle dans les poly-intoxications (risque de levée de protection anti-comitiale et arrêt cardiaque réfractaire)."
+      "Étape 1 : Évaluation sécuritaire et ABCDE immédiat (Glasgow, VA, SatO2, scope). Si coma (GCS < 8), IOT de protection en séquence rapide (Kétamine + Rocuronium) après pré-oxygénation. Décubitus latéral gauche si patient conscient non comatique.",
+      "Étape 2 : Bilan d'urgence au déchoquage : Glycémie capillaire (systématique), Gaz du sang (acidose, lactates), Ionogramme, Urée, Créatinine, Troponine, Bilan hépatique, TP/TCA, et prélèvement toxicologique urinaire/sanguin si disponible. ECG 12 dérivations immédiat (recherche de troubles de conduction QRS/QT).",
+      "Étape 3 : Traitement symptomatique et antidotes de 1ère intention : Charbon activé (50g per os/SNG si < 1h et VA protégée). Si intoxication au paracétamol : N-acétylcystéine (Fluimucil) IV (150 mg/kg en 1h, puis 50 mg/kg en 4h, puis 100 mg/kg en 16h). Si surdosage en benzodiazépines symptomatique : Flumazénil 0,2 mg IV lente (attention aux contre-indications si épilepsie ou co-ingestion pro-convulsivante).",
+      "Étape 4 : Surveillance armée continue : monitorage tensionnel, ECG rapproché, conscience. Critères de transfert en réanimation : instabilité hémodynamique (PAS < 90 mmHg), QRS > 120 ms (alcalinisation au Bicarbonate de sodium 1,4% si antidépresseurs tricycliques), comas profonds, acidose sévère ou détresse respiratoire.",
+      "Étape 5 : Piège médico-légal et contre-indications absolues : Ne jamais provoquer de vomissements (risque d'inhalation). Ne pas administrer de Flumazénil en aveugle dans les comas mixtes (risque de convulsion fatale). Hospitalisation en psychiatrie obligatoire après l'obtention de la levée de l'urgence somatique."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / Centre Anti-Poison d'Algérie (CAP Algérie)",
+    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Réanimation / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-11T00:04:57.441058+00:00",
-    "updated_at": "2026-11-11T00:04:57.441070+00:00"
+    "created_at": "2026-11-15T22:54:20.944589+00:00",
+    "updated_at": "2026-11-15T22:54:20.944602+00:00"
   },
   {
     "id": "memento_pediatrie_deshydratation",
