@@ -9,6 +9,7 @@ import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/models/user_model.dart';
+import '../../auth/presentation/medical_onboarding_dialog.dart';
 import '../../clinical/presentation/clinical_screen.dart';
 import '../../dashboard/presentation/dashboard_screen.dart';
 import '../../practical_tools/presentation/practical_tools_screen.dart';
@@ -112,10 +113,22 @@ class _MainScaffoldState extends State<MainScaffold> {
       }
     });
 
-    // Check for Over-The-Air updates after frame renders
+    // Check for Over-The-Air updates and medical onboarding after frame renders
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkOtaUpdateOnLaunch();
+      _checkMedicalOnboardingOnLaunch();
     });
+  }
+
+  Future<void> _checkMedicalOnboardingOnLaunch() async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+    final user = context.read<AuthBloc>().state.user;
+    if (user == null) return;
+    final shouldShow = await MedicalOnboardingDialog.shouldShowForUser(user);
+    if (shouldShow && mounted) {
+      await MedicalOnboardingDialog.show(context, user: user);
+    }
   }
 
   Future<void> _checkOtaUpdateOnLaunch() async {

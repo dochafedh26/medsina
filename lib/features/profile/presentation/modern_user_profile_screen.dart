@@ -12,6 +12,7 @@ import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_event.dart';
 import '../../auth/bloc/auth_state.dart';
 import '../../auth/models/user_model.dart';
+import '../../auth/presentation/medical_onboarding_dialog.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
@@ -1034,6 +1035,23 @@ class _ModernUserProfileScreenState extends State<ModernUserProfileScreen> {
               value: user?.residencyTargetYear?.isNotEmpty == true ? 'Session ${user!.residencyTargetYear}' : 'Session 2027',
               isDark: isDark,
             ),
+            if (user != null) ...[
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => MedicalOnboardingDialog.show(context, user: user),
+                  icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+                  label: const Text('Relancer l\'assistant de personnalisation médicale'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppTheme.primaryTeal,
+                    side: BorderSide(color: AppTheme.primaryTeal.withValues(alpha: 0.45)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+            ],
           ] else ...[
             // Edit Mode Form
             TextFormField(

@@ -32,6 +32,7 @@ import '../../search/presentation/global_search_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
 import 'daily_pearls_archive_screen.dart';
+import 'widgets/daily_fsrs_review_card.dart';
 import 'widgets/loyalty_streak_card.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -107,6 +108,11 @@ class DashboardScreen extends StatelessWidget {
                     _buildAdminConsoleQuickBanner(context),
                     const SizedBox(height: 18),
                   ],
+
+                  // ROW 1.5: Daily Spaced Repetition (FSRS) Review Widget
+                  const DailyFsrsReviewCard(),
+
+                  const SizedBox(height: 18),
 
                   // ROW 2: KPI Stats Bento Grid (3 equal Bento tiles)
                   _buildStatsGrid(context, tier, isExpired),
