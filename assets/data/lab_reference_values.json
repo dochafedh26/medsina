@@ -1385,5 +1385,20 @@
     ],
     "created_at": "2026-11-15T02:57:00.756636+00:00",
     "updated_at": "2026-11-15T02:57:00.756651+00:00"
+  },
+  {
+    "id": "lab_elastase_ fecale",
+    "name": "Élastase fécale pancréatique",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "> 200",
+    "unit": "µg/g de selles",
+    "high_interpretation": "Valeur normale (> 200 µg/g). Exclut une insuffisance pancréatique exocrine (IPE) significative. Pas d'intervention spécifique requise.",
+    "low_interpretation": "Valeur basse (< 200 µg/g). Insuffisance pancréatique exocrine (IPE). Modérée entre 100 et 200 µg/g, sévère < 100 µg/g. Causes : pancréatite chronique (étiologie alcoolique fréquente en Algérie), mucoviscidose (enfant/jeune adulte), cancer du pancréas, chirurgie pancréatique. Conduite à tenir : mise en route d'une substitution enzymatique par extraits pancréatiques (lipase) au cours des repas et bilan étiologique (imagerie : TDM abdominale, écho-endoscopie).",
+    "clinical_notes": [
+      "Piège pré-analytique : Ne pas réaliser le test en cas de diarrhée aqueuse aiguë (fuite liquidienne entraînant une dilution de l'élastase et un faux positif / fausse IPE). Attendre la normalisation du transit.",
+      "Avantage majeur : L'élastase fécale humaine est résistante à la dégradation protéolytique intestinale et spécifique du pancréas humain (les enzymes de substitution porcines ne croisent pas avec le test), permettant de doser l'élastase même sous traitement substitutif."
+    ],
+    "created_at": "2026-11-15T17:54:48.378976+00:00",
+    "updated_at": "2026-11-15T17:54:48.378989+00:00"
   }
 ]
