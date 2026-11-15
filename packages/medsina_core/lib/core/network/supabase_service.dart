@@ -38,7 +38,9 @@ class SupabaseService {
 
   /// Sign In / Sign Up with Google OAuth via Supabase
   static Future<bool> signInWithGoogle() async {
-    final redirectTo = kIsWeb ? null : 'com.medsina.medsina://login-callback/';
+    final redirectTo = kIsWeb
+        ? '${Uri.base.origin}${Uri.base.path}'
+        : 'com.medsina.medsina://login-callback/';
     return await client.auth.signInWithOAuth(
       OAuthProvider.google,
       redirectTo: redirectTo,
