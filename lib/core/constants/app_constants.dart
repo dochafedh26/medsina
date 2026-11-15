@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppConstants {
-  static const String appName = 'Medsina';
+  static const String appChannel = String.fromEnvironment('APP_CHANNEL', defaultValue: 'stable');
+  static bool get isBetaBuild => appChannel.toLowerCase() == 'beta';
+  static const String appName = appChannel == 'beta' ? 'Medsina Beta' : 'Medsina';
   static const String appSubtitle = 'Plateforme Médicale Globale';
   static const String appTagline = 'Pratique Clinique • Formation Résidanat • Applications Pratiques';
   static String appVersion = '1.0.80';

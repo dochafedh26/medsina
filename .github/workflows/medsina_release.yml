@@ -117,16 +117,21 @@ jobs:
           VERSION="${{ inputs.version || github.ref_name }}"
           VERSION="${VERSION#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          echo "Building Android split-per-abi APKs and universal APK version $VERSION+$BUILD_NUM..."
-          flutter build apk --release --split-per-abi --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM
-          flutter build apk --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM
+          CHANNEL="${{ inputs.channel || 'beta' }}"
+          if [ "$CHANNEL" = "beta" ]; then
+            sed -i 's/android:label="Medsina"/android:label="Medsina Beta"/' android/app/src/main/AndroidManifest.xml
+          fi
+          echo "Building Android split-per-abi APKs and universal APK version $VERSION+$BUILD_NUM ($CHANNEL)..."
+          flutter build apk --release --split-per-abi --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
+          flutter build apk --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
 
       - name: 🛠️ Build App Bundle (AAB)
         run: |
           VERSION="${{ inputs.version || github.ref_name }}"
           VERSION="${VERSION#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          flutter build appbundle --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM
+          CHANNEL="${{ inputs.channel || 'beta' }}"
+          flutter build appbundle --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
 
       - name: 📦 Prepare Android Deliverables
         run: |
@@ -186,17 +191,22 @@ jobs:
         run: |
           $VERSION = "${{ inputs.version || github.ref_name }}".TrimStart('v')
           $BUILD_NUM = "${{ inputs.build_number || github.run_number }}"
-          flutter build windows --release --build-name=$VERSION --build-number=$BUILD_NUM
+          $CHANNEL = "${{ inputs.channel || 'beta' }}"
+          flutter build windows --release --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
 
       - name: 📦 Build Windows Setup Installer (.exe)
         run: |
           $VERSION = "${{ inputs.version || github.ref_name }}".TrimStart('v')
+          $CHANNEL = "${{ inputs.channel || 'beta' }}"
+          if ($CHANNEL -eq "beta") {
+            (Get-Content windows/installer/medsina_setup.iss) -replace '"Medsina"', '"Medsina Beta"' | Set-Content windows/installer/medsina_setup.iss
+          }
           New-Item -ItemType Directory -Force -Path "win-dist"
           $iscc = "iscc"
           if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
             $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
           }
-          echo "Compiling Inno Setup installer for version $VERSION using $iscc..."
+          echo "Compiling Inno Setup installer for version $VERSION ($CHANNEL) using $iscc..."
           & $iscc /DMyAppVersion="$VERSION" windows/installer/medsina_setup.iss
 
       - name: 🗜️ Archive Windows Portable (.zip)
@@ -254,8 +264,11 @@ jobs:
           BASE_HREF="/"
           if [ "$CHANNEL" = "beta" ]; then
             BASE_HREF="/beta/"
+            sed -i 's/<title>Medsina/<title>Medsina Beta/' web/index.html
+            sed -i 's/content="Medsina"/content="Medsina Beta"/' web/index.html
+            sed -i 's/"Medsina"/"Medsina Beta"/g' web/manifest.json
           fi
-          flutter build web --release --base-href "$BASE_HREF" --build-name=$TAG --build-number=$BUILD_NUM
+          flutter build web --release --base-href "$BASE_HREF" --build-name=$TAG --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
           cat << EOF > build/web/.htaccess
           <IfModule mod_rewrite.c>
             RewriteEngine On
