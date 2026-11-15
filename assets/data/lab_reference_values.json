@@ -779,17 +779,16 @@
     "id": "lab_marqueurs_tumoraux_ace_ca",
     "name": "Marqueurs Tumoraux (ACE, CA 125, CA 19-9, CA 15-3)",
     "category": "Marqueurs Tumoraux & Toxicologie",
-    "normal_range": "ACE: < 5 ng/mL (fumeur < 10) | CA 125: < 35 U/mL | CA 19-9: < 37 U/mL | CA 15-3: < 30 U/mL",
-    "unit": "ng/mL (ACE) ou U/mL (CA)",
-    "high_interpretation": "ACE élevé : Adénocarcinomes (colorectal, estomac, poumon, sein, medullaire de la thyroïde). CA 125 élevé : Carcinome épithélial ovarien, endométriose, règles, grossesse, péritonite. CA 19-9 élevé : Adénocarcinome pancréatique, voies biliaires, colorectal. CA 15-3 élevé : Cancer du sein métastatique. Pas d'urgence vitale immédiate (valeur pronostique et de suivi, jamais de dépistage de masse). Conduite à tenir : Bilan d'imagerie orienté et recherche de récidive ou de métastases.",
-    "low_interpretation": "Valeurs basses ou dans les limites de la normale : N'élimine formellement pas une pathologie maligne au début ou peu sécrétante (faible sensibilité des marqueurs tumoraux pris isolément). Aucune urgence ni conduite à tenir spécifique.",
+    "normal_range": "ACE: < 5 ng/mL (Fumeurs < 10) | CA 125: < 35 U/mL | CA 19-9: < 37 U/mL | CA 15-3: < 30 U/mL",
+    "unit": "ng/mL (ACE) et U/mL (CA 125, CA 19-9, CA 15-3)",
+    "high_interpretation": "Élévation orientant vers une néoplasie (ACE: cancer colorectal, poumon, sein. CA 125: cancer épithélial de l'ovaire. CA 19-9: adénocarcinome pancréatique, voies biliaires, colorectal. CA 15-3: cancer du sein). Causes bénignes fréquentes (fausses élévations) : cirrhose, hépatites, insuffisance rénale, endométriose, règles ou grossesse pour le CA 125, et ictère obstructif pour le CA 19-9. Pas de seuil d'urgence vitale directe, mais une cinétique galopante ou une valeur > 10 fois la normale doit faire suspecter une récidive ou une métastase occulte. Conduite à tenir : imagerie ciblée (TDM thoraco-abdomino-pelvienne) et corrélation anatomo-pathologique.",
+    "low_interpretation": "Valeurs normales ou basses. N'élimine formellement PAS un cancer au stade précoce (manque de sensibilité et de spécificité pour le dépistage de masse). Conduite à tenir : si forte suspicion clinique, répéter le dosage pour cinétique ou orienter vers l'imagerie/endoscopie.",
     "clinical_notes": [
-      "Piège du CA 19-9 : Nul chez les sujets de phénotype Lewis a-b- (environ 5 à 10% de la population, incapacité génétique à synthétiser cet épitope).",
-      "Faux positifs fréquents : Le CA 125 s'élève physiologiquement pendant les menstruations, la grossesse et en cas d'épanchement séreux (ascite, pleurésie bénigne). L'ACE s'élève chez les grands fumeurs et en cas de pathologie hépatique bénigne (ictère obstructif, cirrhose).",
-      "Utilisation clinique : Indiqués essentiellement pour le suivi thérapeutique et la détection précoce des récidives post-opératoires, jamais pour le diagnostic positif ou le dépistage en population générale."
+      "Piège majeur (Phénomène de Hook / effet crochet) : Des taux très élevés de marqueurs peuvent saturer les anticorps du réactif et donner faussement des résultats modérément normaux ou bas ; dilution systématique recommandée en cas de forte suspicion clinique.",
+      "Absence d'expression phénotypique : Environ 5 à 10% de la population générale (et des patients cancéreux) sont homozygotes Lewis négatif (Le a-b-) et sont incapables de synthétiser le CA 19-9, entraînant des taux indétectables malgré un adénocarcinome pancréatique avéré."
     ],
-    "created_at": "2026-11-03T01:42:14.933507+00:00",
-    "updated_at": "2026-11-03T01:42:14.933524+00:00"
+    "created_at": "2026-11-15T11:21:38.305134+00:00",
+    "updated_at": "2026-11-15T11:21:38.305145+00:00"
   },
   {
     "id": "lab_bilan_hemolyse",
