@@ -122,6 +122,9 @@ jobs:
           if [ "$CHANNEL" = "beta" ]; then
             sed -i 's/android:label="Medsina"/android:label="Medsina Beta"/' android/app/src/main/AndroidManifest.xml
             sed -i 's/android:scheme="com.medsina.medsina"/android:scheme="com.medsina.medsina.beta"/' android/app/src/main/AndroidManifest.xml
+            if [ -f android/app/google-services.json ]; then
+              sed -i 's/"com.medsina.medsina"/"com.medsina.medsina.beta"/g' android/app/google-services.json
+            fi
             GRADLE_BETA_FLAG="-PbetaBuild=true"
           fi
           echo "Building Android split-per-abi APKs and universal APK version $VERSION+$BUILD_NUM ($CHANNEL)..."
