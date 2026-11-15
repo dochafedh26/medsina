@@ -13,6 +13,14 @@ on:
         required: true
         default: '2'
         type: string
+      channel:
+        description: 'Release Channel (beta = testers only, stable = all users)'
+        required: true
+        default: 'beta'
+        type: choice
+        options:
+          - beta
+          - stable
       is_mandatory:
         description: 'Mise à jour obligatoire (force update)'
         required: false
@@ -242,24 +250,29 @@ jobs:
           RAW_TAG="${{ inputs.version || github.ref_name }}"
           TAG="${RAW_TAG#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          flutter build web --release --base-href / --build-name=$TAG --build-number=$BUILD_NUM
-          cat << 'EOF' > build/web/.htaccess
+          CHANNEL="${{ inputs.channel || 'stable' }}"
+          BASE_HREF="/"
+          if [ "$CHANNEL" = "beta" ]; then
+            BASE_HREF="/beta/"
+          fi
+          flutter build web --release --base-href "$BASE_HREF" --build-name=$TAG --build-number=$BUILD_NUM
+          cat << EOF > build/web/.htaccess
           <IfModule mod_rewrite.c>
             RewriteEngine On
-            RewriteBase /
-            RewriteRule ^index\.html$ - [L]
+            RewriteBase $BASE_HREF
+            RewriteRule ^index\.html\$ - [L]
             RewriteCond %{REQUEST_FILENAME} !-f
             RewriteCond %{REQUEST_FILENAME} !-d
-            RewriteRule . /index.html [L]
+            RewriteRule . ${BASE_HREF}index.html [L]
           </IfModule>
 
           <IfModule mod_headers.c>
-            <FilesMatch "\.(html|json)$">
+            <FilesMatch "\.(html|json)\$">
               Header set Cache-Control "no-cache, no-store, must-revalidate"
               Header set Pragma "no-cache"
               Header set Expires 0
             </FilesMatch>
-            <FilesMatch "(flutter_service_worker|flutter_bootstrap)\.js$">
+            <FilesMatch "(flutter_service_worker|flutter_bootstrap)\.js\$">
               Header set Cache-Control "no-cache, no-store, must-revalidate"
               Header set Pragma "no-cache"
               Header set Expires 0
@@ -313,7 +326,25 @@ jobs:
           RAW_TAG="${{ inputs.version || github.ref_name }}"
           TAG="${RAW_TAG#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          echo "tag=v$TAG" >> $GITHUB_OUTPUT
+          CHANNEL="${{ inputs.channel || 'stable' }}"
+
+          if [ "$CHANNEL" = "beta" ]; then
+            echo "tag=v${TAG}-beta.${BUILD_NUM}" >> $GITHUB_OUTPUT
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "release_title=Medsina v${TAG} [BETA] (Build ${BUILD_NUM})" >> $GITHUB_OUTPUT
+            echo "octenium_web_url=https://medsina.medevsync.com/beta" >> $GITHUB_OUTPUT
+            echo "octenium_apk_url=https://medsina.medevsync.com/download/beta/medsina.apk" >> $GITHUB_OUTPUT
+            echo "octenium_win_url=https://medsina.medevsync.com/download/beta/medsina-setup.exe" >> $GITHUB_OUTPUT
+          else
+            echo "tag=v${TAG}" >> $GITHUB_OUTPUT
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            echo "release_title=Medsina v${TAG} (Build ${BUILD_NUM})" >> $GITHUB_OUTPUT
+            echo "octenium_web_url=https://medsina.medevsync.com" >> $GITHUB_OUTPUT
+            echo "octenium_apk_url=https://medsina.medevsync.com/download/medsina.apk" >> $GITHUB_OUTPUT
+            echo "octenium_win_url=https://medsina.medevsync.com/download/medsina-setup.exe" >> $GITHUB_OUTPUT
+          fi
+
+          echo "channel=$CHANNEL" >> $GITHUB_OUTPUT
           echo "version=$TAG" >> $GITHUB_OUTPUT
           echo "build=$BUILD_NUM" >> $GITHUB_OUTPUT
 
@@ -338,15 +369,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.vars.outputs.tag }}
-          name: "Medsina v${{ steps.vars.outputs.version }} (Build ${{ steps.vars.outputs.build }})"
+          name: ${{ steps.vars.outputs.release_title }}
+          prerelease: ${{ steps.vars.outputs.is_prerelease == 'true' }}
           body: |
             ${{ inputs.release_notes || '### Nouveautés de Medsina ✨\n- Améliorations de performance et stabilité.' }}
 
+            **Canal :** `${{ steps.vars.outputs.channel }}`
+
             ---
             ### ⚡ Téléchargements Directs Officiels (Serveur Rapide MedevSync / Octenium)
-            - 📱 **Android APK** : [Télécharger Medsina v${{ steps.vars.outputs.version }} (.apk)](https://medsina.medevsync.com/releases/Medsina_v${{ steps.vars.outputs.version }}_Android.apk) — [Lien Direct Permanent](https://medsina.medevsync.com/download/medsina.apk)
-            - 💻 **Windows Setup (.exe)** : [Télécharger l'Installateur PC](https://medsina.medevsync.com/releases/Medsina_v${{ steps.vars.outputs.version }}_Windows_Setup.exe) — [Lien Direct Permanent](https://medsina.medevsync.com/download/medsina-setup.exe)
-            - 🌐 **Version Web en Ligne** : [https://medsina.medevsync.com](https://medsina.medevsync.com)
+            - 📱 **Android APK** : [Lien Direct (${{ steps.vars.outputs.channel }})](${{ steps.vars.outputs.octenium_apk_url }})
+            - 💻 **Windows Setup (.exe)** : [Lien Direct (${{ steps.vars.outputs.channel }})](${{ steps.vars.outputs.octenium_win_url }})
+            - 🌐 **Version Web en Ligne** : [${{ steps.vars.outputs.octenium_web_url }}](${{ steps.vars.outputs.octenium_web_url }})
 
             ---
             ### 📦 Miroirs GitHub
@@ -365,6 +399,7 @@ jobs:
           TAG: ${{ steps.vars.outputs.tag }}
           VERSION: ${{ steps.vars.outputs.version }}
           BUILD: ${{ steps.vars.outputs.build }}
+          CHANNEL: ${{ steps.vars.outputs.channel }}
           REPO: ${{ github.repository }}
         run: |
           if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
@@ -388,6 +423,8 @@ jobs:
           tag = os.environ.get('TAG') or 'v' + os.environ.get('VERSION', '1.0.0')
           version = os.environ.get('VERSION', '1.0.0')
           build = int(os.environ.get('BUILD', '1'))
+          channel = os.environ.get('CHANNEL', 'stable')
+          is_beta = channel == 'beta'
           repo = os.environ.get('REPO', 'dochafedh26/medsina')
 
           # 1. Fetch Octenium FTP credentials from Supabase admin_system_settings
@@ -408,67 +445,72 @@ jobs:
           apk_url = f'https://github.com/{repo}/releases/download/{tag}/Medsina_v{version}_Android.apk'
           win_url = f'https://github.com/{repo}/releases/download/{tag}/Medsina_v{version}_Windows_Setup.exe'
 
+          releases_prefix = 'releases/beta' if is_beta else 'releases'
+          download_prefix = 'download/beta' if is_beta else 'download'
+          web_prefix = 'beta' if is_beta else ''
+
           if ftp_user and ftp_pass:
               try:
-                  print(f'Connecting to FTP {ftp_host}...')
+                  print(f'Connecting to FTP {ftp_host} (channel={channel})...')
                   ftp = ftplib.FTP(ftp_host, timeout=60)
                   ftp.login(ftp_user, ftp_pass)
                   ftp.cwd('medsina.medevsync.com')
 
-                  for d in ['releases', 'download']:
+                  dirs_to_make = ['releases', 'download', 'releases/beta', 'download/beta', 'beta'] if is_beta else ['releases', 'download']
+                  for d in dirs_to_make:
                       try: ftp.mkd(d)
                       except Exception: pass
 
-                  apk_file = Path(f'dist-release/Medsina_v{os.environ.get(\"VERSION\")}_Android.apk')
+                  apk_file = Path(f'dist-release/Medsina_v{version}_Android.apk')
                   if apk_file.exists():
-                      print('Uploading Android APK to Octenium...')
+                      print(f'Uploading Android APK to Octenium ({releases_prefix})...')
                       with open(apk_file, 'rb') as f:
-                          ftp.storbinary(f'STOR releases/{apk_file.name}', f)
+                          ftp.storbinary(f'STOR {releases_prefix}/{apk_file.name}', f)
                       with open(apk_file, 'rb') as f:
-                          ftp.storbinary('STOR download/medsina.apk', f)
-                      print(f'✅ Android APK mirrored on Octenium: https://medsina.medevsync.com/releases/{apk_file.name}')
+                          ftp.storbinary(f'STOR {download_prefix}/medsina.apk', f)
+                      print(f'✅ Android APK mirrored on Octenium: https://medsina.medevsync.com/{releases_prefix}/{apk_file.name}')
 
-                  arm64_apk = Path(f'dist-release/Medsina_v{os.environ.get(\"VERSION\")}_Android_arm64.apk')
+                  arm64_apk = Path(f'dist-release/Medsina_v{version}_Android_arm64.apk')
                   if arm64_apk.exists():
-                      print('Uploading Android arm64 APK to Octenium...')
+                      print(f'Uploading Android arm64 APK to Octenium ({releases_prefix})...')
                       with open(arm64_apk, 'rb') as f:
-                          ftp.storbinary(f'STOR releases/{arm64_apk.name}', f)
+                          ftp.storbinary(f'STOR {releases_prefix}/{arm64_apk.name}', f)
                       with open(arm64_apk, 'rb') as f:
-                          ftp.storbinary('STOR download/medsina-arm64.apk', f)
-                      print(f'✅ Android arm64 APK mirrored on Octenium: https://medsina.medevsync.com/releases/{arm64_apk.name}')
+                          ftp.storbinary(f'STOR {download_prefix}/medsina-arm64.apk', f)
+                      print(f'✅ Android arm64 APK mirrored on Octenium: https://medsina.medevsync.com/{releases_prefix}/{arm64_apk.name}')
 
-                  # Prioritize global fast CDN for Supabase OTA registration
-                  apk_url = f'https://github.com/{repo}/releases/download/{tag}/Medsina_v{version}_Android.apk'
-
-                  win_file = Path(f'dist-release/Medsina_v{os.environ.get(\"VERSION\")}_Windows_Setup.exe')
+                  win_file = Path(f'dist-release/Medsina_v{version}_Windows_Setup.exe')
                   if win_file.exists():
-                      print('Uploading Windows Setup to Octenium...')
+                      print(f'Uploading Windows Setup to Octenium ({releases_prefix})...')
                       with open(win_file, 'rb') as f:
-                          ftp.storbinary(f'STOR releases/{win_file.name}', f)
+                          ftp.storbinary(f'STOR {releases_prefix}/{win_file.name}', f)
                       with open(win_file, 'rb') as f:
-                          ftp.storbinary('STOR download/medsina-setup.exe', f)
-                      win_url = f'https://medsina.medevsync.com/releases/{win_file.name}'
+                          ftp.storbinary(f'STOR {download_prefix}/medsina-setup.exe', f)
+                      win_url = f'https://medsina.medevsync.com/{releases_prefix}/{win_file.name}'
                       print(f'✅ Windows Setup live at: {win_url}')
 
                   web_zips = list(Path('dist-release').glob('*Web*.zip'))
                   if web_zips:
                       web_zip = web_zips[0]
                       import zipfile
-                      print(f'Extracting {web_zip.name} for Web deployment to Octenium...')
+                      print(f'Extracting {web_zip.name} for Web deployment to Octenium ({channel})...')
                       extract_dir = Path('web_extracted')
                       extract_dir.mkdir(exist_ok=True)
                       with zipfile.ZipFile(web_zip, 'r') as zf:
                           zf.extractall(extract_dir)
 
+                      base_href = '/beta/' if is_beta else '/'
                       htaccess_file = extract_dir / '.htaccess'
                       if not htaccess_file.exists():
-                          htaccess_file.write_text('<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase /\nRewriteRule ^index\\.html$ - [L]\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . /index.html [L]\n</IfModule>\n')
+                          htaccess_file.write_text(f'<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteBase {base_href}\nRewriteRule ^index\\\\.html\$ - [L]\nRewriteCond %{{REQUEST_FILENAME}} !-f\nRewriteCond %{{REQUEST_FILENAME}} !-d\nRewriteRule . {base_href}index.html [L]\n</IfModule>\n')
 
-                      print('Deploying Medsina Web app files to https://medsina.medevsync.com ...')
+                      target_web_url = 'https://medsina.medevsync.com/beta' if is_beta else 'https://medsina.medevsync.com'
+                      print(f'Deploying Medsina Web ({channel}) to {target_web_url} ...')
                       uploaded_count = 0
                       for root, dirs, files in os.walk(extract_dir):
                           rel = Path(root).relative_to(extract_dir).as_posix()
-                          remote_dir = '' if rel == '.' else rel
+                          sub = '' if rel == '.' else rel
+                          remote_dir = f'{web_prefix}/{sub}'.strip('/') if web_prefix else sub
 
                           if remote_dir:
                               curr = ''
@@ -484,31 +526,32 @@ jobs:
                                   ftp.storbinary(f'STOR {target_remote}', f)
                               uploaded_count += 1
 
-                      print(f'✅ Medsina Web successfully deployed to Octenium ({uploaded_count} files)!')
+                      print(f'✅ Medsina Web ({channel}) deployed to Octenium ({uploaded_count} files)!')
 
-                  # Deploy Admin Dashboard to /admin on Octenium hosting
-                  admin_dist = Path('admin-dashboard/dist')
-                  if admin_dist.exists():
-                      print('Deploying Medsina Admin Dashboard to https://medsina.medevsync.com/admin ...')
-                      try: ftp.mkd('admin')
-                      except Exception: pass
-                      admin_uploaded = 0
-                      for root, dirs, files in os.walk(admin_dist):
-                          rel = Path(root).relative_to(admin_dist).as_posix()
-                          remote_dir = 'admin' if rel == '.' else f'admin/{rel}'
-                          if remote_dir != 'admin':
-                              curr = ''
-                              for part in remote_dir.split('/'):
-                                  curr = f'{curr}/{part}'.strip('/')
-                                  try: ftp.mkd(curr)
-                                  except Exception: pass
-                          for file in files:
-                              local_path = Path(root) / file
-                              target_rem = f'{remote_dir}/{file}'.strip('/')
-                              with open(local_path, 'rb') as f:
-                                  ftp.storbinary(f'STOR {target_rem}', f)
-                              admin_uploaded += 1
-                      print(f'✅ Medsina Admin Dashboard successfully deployed to Octenium ({admin_uploaded} files)!')
+                  # Only deploy Admin Dashboard on stable releases
+                  if not is_beta:
+                      admin_dist = Path('admin-dashboard/dist')
+                      if admin_dist.exists():
+                          print('Deploying Medsina Admin Dashboard to https://medsina.medevsync.com/admin ...')
+                          try: ftp.mkd('admin')
+                          except Exception: pass
+                          admin_uploaded = 0
+                          for root, dirs, files in os.walk(admin_dist):
+                              rel = Path(root).relative_to(admin_dist).as_posix()
+                              remote_dir = 'admin' if rel == '.' else f'admin/{rel}'
+                              if remote_dir != 'admin':
+                                  curr = ''
+                                  for part in remote_dir.split('/'):
+                                      curr = f'{curr}/{part}'.strip('/')
+                                      try: ftp.mkd(curr)
+                                      except Exception: pass
+                              for file in files:
+                                  local_path = Path(root) / file
+                                  target_rem = f'{remote_dir}/{file}'.strip('/')
+                                  with open(local_path, 'rb') as f:
+                                      ftp.storbinary(f'STOR {target_rem}', f)
+                                  admin_uploaded += 1
+                          print(f'✅ Medsina Admin Dashboard successfully deployed to Octenium ({admin_uploaded} files)!')
 
                   ftp.quit()
               except Exception as e:
@@ -524,6 +567,7 @@ jobs:
           records = [
               {
                   'platform': 'android',
+                  'channel': channel,
                   'version_name': version,
                   'build_number': android_build,
                   'release_notes': notes,
@@ -534,18 +578,19 @@ jobs:
               },
               {
                   'platform': 'windows',
-                  'version_name': '$VERSION',
-                  'build_number': int('$BUILD'),
+                  'channel': channel,
+                  'version_name': version,
+                  'build_number': build,
                   'release_notes': notes,
                   'download_url': win_url,
                   'is_mandatory': is_mandatory,
-                  'min_supported_build': int('$BUILD') if is_mandatory else 1,
+                  'min_supported_build': build if is_mandatory else 1,
                   'is_active': True
               }
           ]
 
           for rec in records:
               r = requests.post(f'{url}/rest/v1/app_releases', headers=headers, json=rec)
-              print(f'Supabase OTA registration for {rec[\"platform\"]}: status {r.status_code}')
+              print(f'Supabase OTA registration for {rec[\"platform\"]} ({channel}): status {r.status_code}')
           "
 

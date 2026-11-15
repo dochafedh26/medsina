@@ -738,6 +738,63 @@ class _MainScaffoldState extends State<MainScaffold> {
   }
 
   Future<void> _manualCheckOtaUpdates(BuildContext context) async {
+    final user = context.read<AuthBloc>().state.user;
+    if (user != null && user.canAccessBetaChannel) {
+      final currentChannel = await OtaUpdateService.getReleaseChannel();
+      if (!context.mounted) return;
+      final selectedChannel = await showDialog<String>(
+        context: context,
+        builder: (ctx) {
+          String ch = currentChannel;
+          return StatefulBuilder(
+            builder: (ctx, setDialogState) => AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              title: const Row(
+                children: [
+                  Icon(Icons.science_outlined, color: Color(0xFF7C3AED)),
+                  SizedBox(width: 10),
+                  Text('Canal de mise à jour', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(
+                    value: 'stable',
+                    groupValue: ch,
+                    title: const Text('Stable (Production)', style: TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: const Text('Versions validées pour tous les utilisateurs.'),
+                    onChanged: (v) => setDialogState(() => ch = v ?? 'stable'),
+                  ),
+                  RadioListTile<String>(
+                    value: 'beta',
+                    groupValue: ch,
+                    activeColor: const Color(0xFF7C3AED),
+                    title: const Text('Bêta (Admin & Testeurs)', style: TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: const Text('Accès anticipé aux nouvelles fonctionnalités et correctifs.'),
+                    onChanged: (v) => setDialogState(() => ch = v ?? 'beta'),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Annuler'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx, ch),
+                  child: const Text('Vérifier'),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+      if (selectedChannel == null || !context.mounted) return;
+      await OtaUpdateService.setReleaseChannel(selectedChannel);
+    }
+
+    if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Recherche de mises à jour en cours...'),
@@ -756,9 +813,11 @@ class _MainScaffoldState extends State<MainScaffold> {
         isMandatory: check.isMandatory,
       );
     } else {
+      final activeChannel = await OtaUpdateService.getReleaseChannel();
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Vous utilisez déjà la dernière version (v${check.currentVersion}) ✨'),
+          content: Text('Vous utilisez déjà la dernière version $activeChannel (v${check.currentVersion}) ✨'),
           backgroundColor: AppTheme.primaryTeal,
         ),
       );

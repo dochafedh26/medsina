@@ -2501,20 +2501,30 @@ class SupabaseService {
   static Future<Map<String, dynamic>?> fetchLatestRelease(
     String platform, {
     String appId = 'medsina_all',
+    String channel = 'stable',
   }) async {
     try {
-      final res = await client
+      final isBeta = channel.toLowerCase() == 'beta';
+      var query = client
           .from('app_releases')
           .select()
           .inFilter('platform', [platform.toLowerCase(), 'all'])
           .eq('app_id', appId)
-          .eq('is_active', true)
+          .eq('is_active', true);
+
+      if (isBeta) {
+        query = query.inFilter('channel', ['stable', 'beta']);
+      } else {
+        query = query.eq('channel', 'stable');
+      }
+
+      final res = await query
           .order('build_number', ascending: false)
           .limit(1)
           .maybeSingle();
       return res;
     } catch (e) {
-      debugPrint('Error fetching latest release for $platform: $e');
+      debugPrint('Error fetching latest release for $platform ($channel): $e');
       return null;
     }
   }

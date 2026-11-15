@@ -12,6 +12,8 @@ class UserModel extends Equatable {
   final String token;
   final bool _isAdmin;
   bool get isAdmin => _isAdmin || email.trim().toLowerCase() == 'doc.hafedh26@gmail.com';
+  final bool isBetaTester;
+  bool get canAccessBetaChannel => isAdmin || isBetaTester;
   final bool isBanned;
   final String? banReason;
   final bool isInactiveSuspended;
@@ -36,6 +38,7 @@ class UserModel extends Equatable {
     required this.subscriptionExpiry,
     required this.token,
     bool isAdmin = false,
+    this.isBetaTester = false,
     this.isBanned = false,
     this.banReason,
     this.isInactiveSuspended = false,
@@ -96,6 +99,7 @@ class UserModel extends Equatable {
     DateTime? subscriptionExpiry,
     String? token,
     bool? isAdmin,
+    bool? isBetaTester,
     bool? isBanned,
     String? banReason,
     bool? isInactiveSuspended,
@@ -120,6 +124,7 @@ class UserModel extends Equatable {
       subscriptionExpiry: subscriptionExpiry ?? this.subscriptionExpiry,
       token: token ?? this.token,
       isAdmin: isAdmin ?? this.isAdmin,
+      isBetaTester: isBetaTester ?? this.isBetaTester,
       isBanned: isBanned ?? this.isBanned,
       banReason: banReason ?? this.banReason,
       isInactiveSuspended: isInactiveSuspended ?? this.isInactiveSuspended,
@@ -150,6 +155,8 @@ class UserModel extends Equatable {
       'token': token,
       'isAdmin': isAdmin,
       'is_admin': isAdmin,
+      'isBetaTester': isBetaTester,
+      'is_beta_tester': isBetaTester,
       'isBanned': isBanned,
       'is_banned': isBanned,
       'banReason': banReason,
@@ -194,6 +201,7 @@ class UserModel extends Equatable {
 
     final emailVal = (json['email'] ?? '').toString().trim().toLowerCase();
     final isAdm = json['isAdmin'] == true || json['is_admin'] == true || emailVal == 'doc.hafedh26@gmail.com';
+    final isBeta = json['isBetaTester'] == true || json['is_beta_tester'] == true;
     final isBan = json['isBanned'] == true || json['is_banned'] == true;
     final reason = json['banReason'] ?? json['ban_reason'];
     final isInactiveSusp = json['isInactiveSuspended'] == true ||
@@ -226,6 +234,7 @@ class UserModel extends Equatable {
           : DateTime.now().add(const Duration(days: 30)),
       token: json['token'] ?? '',
       isAdmin: isAdm,
+      isBetaTester: isBeta,
       isBanned: isBan,
       banReason: reason,
       isInactiveSuspended: isInactiveSusp,
@@ -253,6 +262,7 @@ class UserModel extends Equatable {
         subscriptionExpiry,
         token,
         isAdmin,
+        isBetaTester,
         isBanned,
         banReason,
         isInactiveSuspended,

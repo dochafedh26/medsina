@@ -43,6 +43,23 @@ class UpdateCheckResult {
 class OtaUpdateService {
   static final Dio _dio = Dio();
   static const String _keyLastDismissedBuild = 'ota_last_dismissed_build';
+  static const String _keyReleaseChannel = 'ota_release_channel';
+
+  static Future<String> getReleaseChannel() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final ch = prefs.getString(_keyReleaseChannel)?.toLowerCase();
+      return ch == 'beta' ? 'beta' : 'stable';
+    } catch (_) {
+      return 'stable';
+    }
+  }
+
+  static Future<void> setReleaseChannel(String channel) async {
+    final normalized = channel.toLowerCase() == 'beta' ? 'beta' : 'stable';
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyReleaseChannel, normalized);
+  }
 
   /// Detect the current operating platform string
   static String get currentPlatform {
@@ -84,6 +101,7 @@ class OtaUpdateService {
   /// Checks if an OTA update is available for the current app
   static Future<UpdateCheckResult> checkForUpdates({
     bool ignoreDismissed = false,
+    String? channelOverride,
   }) async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
@@ -91,9 +109,11 @@ class OtaUpdateService {
       final currentBuild = int.tryParse(packageInfo.buildNumber) ?? 1;
 
       final platformStr = currentPlatform;
+      final channel = channelOverride ?? await getReleaseChannel();
       final releaseData = await SupabaseService.fetchLatestRelease(
         platformStr,
         appId: MedsinaFeatureRegistry.instance.appId,
+        channel: channel,
       );
 
       if (releaseData == null) {

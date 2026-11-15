@@ -1,6 +1,7 @@
 class AppReleaseModel {
   final String id;
   final String platform; // 'android', 'windows', 'web', 'all'
+  final String channel; // 'stable' | 'beta'
   final String versionName; // e.g. '1.0.1'
   final int buildNumber; // e.g. 2
   final String releaseNotes;
@@ -11,9 +12,12 @@ class AppReleaseModel {
   final bool isActive;
   final DateTime publishedAt;
 
+  bool get isBeta => channel.toLowerCase() == 'beta';
+
   const AppReleaseModel({
     required this.id,
     required this.platform,
+    this.channel = 'stable',
     required this.versionName,
     required this.buildNumber,
     required this.releaseNotes,
@@ -29,6 +33,7 @@ class AppReleaseModel {
     return AppReleaseModel(
       id: json['id']?.toString() ?? '',
       platform: json['platform']?.toString() ?? 'all',
+      channel: json['channel']?.toString().toLowerCase() == 'beta' ? 'beta' : 'stable',
       versionName: json['version_name']?.toString() ?? '1.0.0',
       buildNumber: json['build_number'] is int
           ? json['build_number'] as int
@@ -51,6 +56,7 @@ class AppReleaseModel {
     return {
       'id': id,
       'platform': platform,
+      'channel': channel,
       'version_name': versionName,
       'build_number': buildNumber,
       'release_notes': releaseNotes,
