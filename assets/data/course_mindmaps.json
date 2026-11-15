@@ -80,8 +80,8 @@
       }
     ],
     "pdf_file": "c_cardio_sca_mindmap_residanat_2027.pdf",
-    "mindmap_drive_id": "18y-Sh-jdRmeCv8520GHeJLp4bf6WcKGv",
-    "mindmap_pdf_url": "https://drive.google.com/file/d/18y-Sh-jdRmeCv8520GHeJLp4bf6WcKGv/view?usp=drivesdk"
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/c_cardio_sca_mindmap_residanat_2027.pdf"
   },
   "c_cardio_hta": {
     "course_id": "c_cardio_hta",
@@ -154,8 +154,8 @@
       }
     ],
     "pdf_file": "c_cardio_hta_mindmap_residanat_2027.pdf",
-    "mindmap_drive_id": "1mH3payQ4hn2Tvf84Ce-3p0VfD6YJgy7u",
-    "mindmap_pdf_url": "https://drive.google.com/file/d/1mH3payQ4hn2Tvf84Ce-3p0VfD6YJgy7u/view?usp=drivesdk"
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/c_cardio_hta_mindmap_residanat_2027.pdf"
   },
   "c_pneumo_asthme": {
     "course_id": "c_pneumo_asthme",
@@ -237,7 +237,580 @@
       }
     ],
     "pdf_file": "c_pneumo_asthme_mindmap_residanat_2027.pdf",
-    "mindmap_drive_id": "1hQuBWu2jhac4ewR9HlqyEFx_AQDGJeXc",
-    "mindmap_pdf_url": "https://drive.google.com/file/d/1hQuBWu2jhac4ewR9HlqyEFx_AQDGJeXc/view?usp=drivesdk"
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/c_pneumo_asthme_mindmap_residanat_2027.pdf"
+  },
+  "Blida_URGENCES_UMC_ENVENIMATIONS_ANIMALES": {
+    "course_id": "Blida_URGENCES_UMC_ENVENIMATIONS_ANIMALES",
+    "course_name": "Envenimations animales",
+    "module_name": "Urgences (UMC)",
+    "diagnostic_criteria": "Présentation clinique d'une piqûre ou morsure en zone endémique associée à une symptomatologie locale (douleur, œdème) et/ou générale classée selon l'OMS (classes I à III pour le scorpionisme, ou atteinte hémostatique/nécrotique pour lexisme vipérin).",
+    "treatment_summary": "Pas de garrot ni d'incision. Antibiothérapie, ATS/VAT. Pour le scorpionisme : Sérothérapie spécifique (SAS) dès la classe II, et réanimation agressive (dobutamine/ventilation) en classe III. Pour la vipère : Sérothérapie spécifique (SAV) et correction des troubles de l'hémostase.",
+    "branches": [
+      {
+        "title": "Définition & Physiopathologie essentielle",
+        "theme_index": 0,
+        "items": [
+          "Envenimation scorpionique (Scorpionisme) : Majeure en Algérie (Androctonus australis et Buthus occitanus). Le venin est un mélange neurotoxique bloquant les canaux ioniques (sodiques, potassiques, calciques), entraînant une libération massive de catécholamines (tempête catécholaminergique).",
+          "Envenimation vipérine : Due aux vipères du genre Cerastes ou Daboia mauritanica. Le venin a des propriétés cytotoxiques, myotoxiques, hémolytiques et coagulantes (consommation des facteurs de coagulation → CIVD).",
+          "Méduse et poissons venimeux : Toxines dermonécrotiques, neurotoxiques et cardiotoxiques."
+        ]
+      },
+      {
+        "title": "Démarche Diagnostique",
+        "theme_index": 1,
+        "items": [
+          "Classement OMS des envenimations scorpioniques (Algérie) :",
+          "Classe I : Douleur locale isolée (givre, rougeur, œdème).",
+          "Classe II : Signes généraux mineurs (sueur, vomissements, tachycardie, priapisme, agitation).",
+          "Classe III : Signes généraux majeurs / Détresse vitale (OAP hémodynamique, choc cardiogénique, collapsus, convulsions, coma).",
+          "Envenimation vipérine :"
+        ]
+      },
+      {
+        "title": "Diagnostic Différentiel & Formes Cliniques",
+        "theme_index": 2,
+        "items": [
+          "Diagnostic différentiel : Piqûre simple d'hyménoptère (choc anaphylactique allergique vs envenimation toxique vraie).",
+          "Forme pédiatrique : Urgence absolue pour le scorpionisme (les enfants de 0 à 5 ans font les formes graves de classe III par OAP cardiogénique pur)."
+        ]
+      },
+      {
+        "title": "Stratégie Thérapeutique",
+        "theme_index": 3,
+        "items": [
+          "Mesures générales communes :",
+          "Interdit absolu : Incision, aspiration, garrot (aggrave la nécrose locale et la diffusion du venin).",
+          "Lavage abondant, désinfection, immobilisation du membre mordu.",
+          "Anti-algiques (paracétamol), Vaccination antitétanique à jour.",
+          "Traitement de l'envenimation scorpionique (Algérie) :"
+        ]
+      },
+      {
+        "title": "Évolution, Pronostic & Complications majeures",
+        "theme_index": 4,
+        "items": [
+          "Pronostic vital engagé à court terme dans le scorpionisme (décès par collapsus cardiovasculaire ou OAP fulminant dans les premières heures).",
+          "Complications : Nécrose cutanée extensive (vipères), syndrome des loges, insuffisance rénale aiguë organique, CIVD, séquelles neurologiques post-anoxiques."
+        ]
+      },
+      {
+        "title": "Pièges Concours & Vigilance Annales",
+        "theme_index": 5,
+        "items": [
+          "Piège Annales : Proposer l'utilisation d'un garrot ou une incision-aspiration devant une morsure de vipère ou piqûre de scorpion (Réponse fausse et dangereuse).",
+          "Piège Traitement : Utiliser massivement les solutés de remplissage isotoniques dans l'OAP scorpionique de classe III (Risque d'aggraver la surcharge pulmonaire ; préférer les inotropes positifs comme la dobutamine).",
+          "Piège Diagnostic : Confondre un choc anaphylactique allergique (urticaire, bronchospasme) avec une envenimation systémique vraie (toxique)."
+        ]
+      },
+      {
+        "title": "Points Clés Incontournables",
+        "theme_index": 4,
+        "items": [
+          "Le venin d'Androctonus australis induit une tempête catécholaminergique responsable d'un OAP cardiogénique et non lésionnel.",
+          "Interdiction formelle de poser un garrot ou d'inciser la plaie de morsure/piqûre.",
+          "La classification OMS du scorpionisme guide l'attitude thérapeutique : Classe III = Urgence absolue (réanimation, dobutamine, SAS).",
+          "Les enfants de moins de 5 ans sont la population la plus vulnérable aux formes graves de scorpionisme en Algérie."
+        ]
+      }
+    ],
+    "pdf_file": "Blida_URGENCES_UMC_ENVENIMATIONS_ANIMALES_mindmap_residanat_2027.pdf",
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/Blida_URGENCES_UMC_ENVENIMATIONS_ANIMALES_mindmap_residanat_2027.pdf"
+  },
+  "Blida_CARDIOLOGIE_VASODILATATEURS": {
+    "course_id": "Blida_CARDIOLOGIE_VASODILATATEURS",
+    "course_name": "Vasodilatateurs",
+    "module_name": "Cardiologie",
+    "diagnostic_criteria": "Identification d'une surcharge volémique aiguë ou d'une vasoconstriction pathologique réfractaire nécessitant l'utilisation ciblée d'agents agissant sur les fibres musculaires lisses vasculaires (pré-charge ou post-charge).",
+    "treatment_summary": "Utilisation graduée des veinodilatateurs (dérivés nitrés) en urgence (OAP/SCA) et des vasodilatateurs mixtes (IEC/ARA2/ARNI) au long cours dans l'insuffisance cardiaque, en respectant scrupuleusement les contre-indications (IPDE5, sténose rénale).",
+    "branches": [
+      {
+        "title": "Définition & Physiopathologie essentielle",
+        "theme_index": 0,
+        "items": [
+          "Artériodilatateurs pur (ex: Dihydropyridines, Minoxidil, Hydralazine) : réduisent la post-charge (diminuent le travail ventriculaire gauche).",
+          "Veinodilatateurs pur (ex: Dérivés nitrés) : réduisent la pré-charge (diminuent les pressions de remplissage ventriculaire et la consommation myocardique en oxygène).",
+          "Vasodilatateurs mixtes (ex: IEC, ARA2, Nitroprussiate de sodium) : réduisent à la fois la pré-charge et la post-charge."
+        ]
+      },
+      {
+        "title": "Démarche Diagnostique (Indications majeures)",
+        "theme_index": 1,
+        "items": [
+          "Insuffisance Cardiaque (IC) : IC aiguë (OAP) et IC chronique à fraction d'éjection altérée (IC-FEr).",
+          "Syndrome Coronarien Aigu (SCA) : angor stable et SCA (dérivés nitrés sublinguaux ou IV).",
+          "Urgence hypertensive : poussée hypertensive menaçant le pronostic vital (nicardipine IV, nitroprussiate).",
+          "HTA chronique : traitement de fond (IEC, ARA2, inhibiteurs calciques)."
+        ]
+      },
+      {
+        "title": "Diagnostic Différentiel & Contre-indications communes",
+        "theme_index": 2,
+        "items": [
+          "Dérivés nitrés : Association formelle avec les inhibiteurs de la phosphodiestérase de type 5 (IPDE5) (Sildénafil, Tadalafil) dans les 24h à 48h (risque de choc cardiogénique réfractaire mortel). IDM du ventricule droit (VD), cardiomyopathie obstructive.",
+          "IEC / ARA2 : Sténose bilatérale des artères rénales (ou unilatérale sur rein unique), hyperkaliémie menaçante (K+ > 5 mmol/L), grossesse (teratogène absolu au 2e et 3e trimestre)."
+        ]
+      },
+      {
+        "title": "Stratégie Thérapeutique",
+        "theme_index": 3,
+        "items": [
+          "OAP / Urgence hypertensive :",
+          "Dérivés nitrés (Trinitrine en spray ou Risordan en IVAE) si PAS > 100-110 mmHg.",
+          "Nicardipine (Loxen) en IVSE pour les urgences hypertensives.",
+          "Insuffisance Cardiaque chronique :",
+          "IEC (Ramipril, Perindopril) ou ARNI (Sacubitril/Valsartans) en 1ère intention, associés aux bêtabloquants et ARM."
+        ]
+      },
+      {
+        "title": "Évolution, Pronostic & Complications majeures",
+        "theme_index": 4,
+        "items": [
+          "Tolérance aux dérivés nitrés : nécessité d'un intervalle libre de nitrés de 8 à 12 heures par 24 heures (patchs retirés la nuit) pour éviter la perte d'efficacité.",
+          "Choc anaphylactique / Angio-œdème sous IEC (œdème de Quincke laryngé, urgence absolue).",
+          "Surveillance stricte de la fonction rénale (créatininémie et débit de filtration glomérulaire) et de la kaliémie lors de l'instauration des IEC/ARA2."
+        ]
+      },
+      {
+        "title": "Pièges Concours & Vigilance Annales",
+        "theme_index": 5,
+        "items": [
+          "Piège Annales : 'Les inhibiteurs calciques bradycardisants (vérapamil/diltiazem) sont indiqués dans l'OAP avec dysfonction systolique sévère' -> FAUX, ils sont contre-indiqués en inotrope négatif puissant.",
+          "Piège Traitement : Prescrire des dérivés nitrés en première intention devant un IDM du ventricule droit isolé avec collapsus -> FAUX (aggravation majeure du choc par chute de la pré-charge).",
+          "Piège Diagnostic : Oublier que la nicardipine IV est le vasodiltateur de référence en cas d'urgence hypertensive avec encéphalopathie."
+        ]
+      },
+      {
+        "title": "Points Clés Incontournables",
+        "theme_index": 4,
+        "items": [
+          "L'association Dérivés Nitrés + IPDE5 (Sildénafil) est une CONTRE-INDICATION ABSOLUE et un piège majeur de QCM (risque d'hypotension fatale).",
+          "Les dérivés nitrés agissent principalement comme veinodilatateurs (réduction de la pré-charge), tandis que les dihydropyridines sont des artériodilatateurs pur (réduction de la post-charge).",
+          "La tolérance aux dérivés nitrés impose de respecter une 'fenêtre thérapeutique' sans traitement (généralement la nuit) pour restaurer l'efficacité.",
+          "Les IEC sont formellement contre-indiqués en cas de sténose bilatérale des artères rénales sous peine de provoquer une IRA organique par mise en faillite rénale."
+        ]
+      }
+    ],
+    "pdf_file": "Blida_CARDIOLOGIE_VASODILATATEURS_mindmap_residanat_2027.pdf",
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/Blida_CARDIOLOGIE_VASODILATATEURS_mindmap_residanat_2027.pdf"
+  },
+  "Blida_CARDIOLOGIE_HTAP": {
+    "course_id": "Blida_CARDIOLOGIE_HTAP",
+    "course_name": "TD: Hypertension pulmonaire",
+    "module_name": "Cardiologie",
+    "diagnostic_criteria": "PAPm > 20 mmHg associée à une PAPO ≤ 15 mmHg et des RVP ≥ 2 Unités Wood mesurées par cathétérisme cardiaque droit.",
+    "treatment_summary": "Prise en charge multidisciplinaire associant mesures générales, anticoagulation (si Groupe 4), et biothérapies spécifiques ciblées (inhibiteurs de la PDE5, AET, analogues de la prostacycline) selon le profil de risque et l'étiologie.",
+    "branches": [
+      {
+        "title": "Définition & Physiopathologie essentielle",
+        "theme_index": 0,
+        "items": [
+          "Définition hémodynamique (au cathétérisme cardiaque droit - CCD) : Pression artérielle pulmonaire moyenne (PAPm) > 20 mmHg au repos (nouvelles recommandations ESC/ERS).",
+          "Classification hémodynamique :",
+          "HTAP pré-capillaire : PAPm > 20 mmHg, Pression artérielle pulmonaire d'occlusion (PAPO) ≤ 15 mmHg, et Résistances Vasculaires Pulmonaires (RVP) ≥ 2 Unités Wood.",
+          "HTAP post-capillaire (isolée ou combinée) : PAPm > 20 mmHg et PAPO > 15 mmHg (cause cardiaque gauche).",
+          "Physiopathologie de l'HTAP (Groupe 1) : Vasoconstriction, prolifération endothéliale et musculaire lise, thrombose in situ menant au remodelage vasculaire pulmonaire → augmentation des RVP → surcharge du ventricule droit (VD) → insuffisance cardiaque droite (ICD)."
+        ]
+      },
+      {
+        "title": "Démarche Diagnostique",
+        "theme_index": 1,
+        "items": [
+          "Clinique :",
+          "Signes fonctionnels (non spécifiques au début) : Dyspnée d'effort (constante), asthénie, lipothysies/syncope d'effort (signe de gravité pronostique majeur), angor fonctionnel, palpitations.",
+          "Signes physiques d'ICD : Éclat du B2 au foyer pulmonaire, souffle de régurgitation tricuspidienne (souffle systolique augmentant à l'inspiration profonde - signe de Rivero-Carvallo), turgescence jugulaire, reflux hépato-jugulaire, hépatomégalie douloureuse, oedèmes des membres inférieurs, ascite.",
+          "Paraclinique de référence :",
+          "Électrocardiogramme (ECG) : Signes d'hypertrophie ventriculaire droite (HVD) : onde R en V1, déviation axiale droite > +110°, ondes S profondes en V5-V6, bloc de branche droit (BBD)."
+        ]
+      },
+      {
+        "title": "Diagnostic Différentiel & Formes Cliniques",
+        "theme_index": 2,
+        "items": [
+          "Les 5 groupes étiologiques de l'HTP (Classification de Nice) :",
+          "Groupe 1 : Hypertension Artérielle Pulmonaire (HTAP) : idiopathique, héréditaire, induite par des toxiques/médicaments (ex: anorexigènes), associée à des connectivites, une infection par le VIH, une hépatopathie.",
+          "Groupe 2 : HTP liée aux pathologies cardiaques gauches (systolique, diastolique, valvulaire) - Cause la plus fréquente d'HTP.",
+          "Groupe 3 : HTP liée aux affections respiratoires et/ou hypoxémie (BPCO, fibrose pulmonaire, SAOS).",
+          "Groupe 4 : HTP par obstruction artérielle pulmonaire (principalement Thrombo-embolique chronique - HP-TEC)."
+        ]
+      },
+      {
+        "title": "Stratégie Thérapeutique",
+        "theme_index": 3,
+        "items": [
+          "Mesures générales (communes) :",
+          "Éviter la grossesse (contre-formelle dans l'HTAP), vaccination (grippe, COVID-19, pneumocoque), éviter les efforts isométriques intenses, oxygénothérapie si hypoxémie.",
+          "Anticoagulation orale : Recommandée formellement dans l'HP-TEC (Groupe 4), discutée au cas par cas dans l'HTAP idiopathique (Groupe 1).",
+          "Traitement spécifique de l'HTAP (Groupe 1) :",
+          "Test de vasoréactivité positif (uniquement pour l'HTAP idiopathique/héréditaire/médicamenteuse) : Utilisation des inhibiteurs calciques à forte dose (Diltiazem, Nifédipine, Amlodipine)."
+        ]
+      },
+      {
+        "title": "Évolution, Pronostic & Complications majeures",
+        "theme_index": 4,
+        "items": [
+          "Complications majeures :",
+          "Insuffisance cardiaque droite réfractaire (cause principale de décès).",
+          "Troubles du rythme supra-ventriculaires (flutters, fibrillation atriale).",
+          "Infarctus du myocarde du ventricule droit par compression.",
+          "Hémoptysies graves (notamment dans l'HP-TEC)."
+        ]
+      },
+      {
+        "title": "Pièges Concours & Vigilance Annales",
+        "theme_index": 5,
+        "items": [
+          "Piège Annales : Confondre PAPO < 15 mmHg (pré-capillaire, Groupe 1, 3, 4) et PAPO > 15 mmHg (post-capillaire, Groupe 2).",
+          "Piège Traitement : Prescrire des inhibiteurs calciques à tous les patients ayant une HTAP (Attention : les inhibiteurs calciques sont formellement contre-indiqués en l'absence de vasoréactivité positive au CCD, risque de collapsus cardiovasculaire mortel).",
+          "Piège Diagnostic : Oublier que la grossesse est formellement contre-indiquée chez les patientes atteintes d'HTAP (mortalité maternelle frôlant les 30-50%)."
+        ]
+      },
+      {
+        "title": "Points Clés Incontournables",
+        "theme_index": 4,
+        "items": [
+          "Le seuil diagnostique de la PAPm au cathétérisme cardiaque droit est abaissé à > 20 mmHg (consensus ESC 2022).",
+          "L'HTAP pré-capillaire est définie par : PAPm > 20 mmHg, PAPO ≤ 15 mmHg et RVP ≥ 2 Wood.",
+          "L'examen de certitude incontournable pour affirmer l'HTAP et classifier l'HTP est le cathétérisme cardiaque droit (CCD).",
+          "La cause la plus fréquente de toute HTP est l'atteinte cardiaque gauche (Groupe 2, PAPO > 15 mmHg)."
+        ]
+      }
+    ],
+    "pdf_file": "Blida_CARDIOLOGIE_HTAP_mindmap_residanat_2027.pdf",
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/Blida_CARDIOLOGIE_HTAP_mindmap_residanat_2027.pdf"
+  },
+  "Blida_HEPATO_GASTRO_ENTEROLOGIE_TUMEUR_NEUROENDOCRINE": {
+    "course_id": "Blida_HEPATO_GASTRO_ENTEROLOGIE_TUMEUR_NEUROENDOCRINE",
+    "course_name": "Tumeur neuroendocrine",
+    "module_name": "Hépato-Gastro-Entérologie",
+    "diagnostic_criteria": "Le diagnostic positif repose sur la preuve histologique (marquages synaptophysine/CgA positifs et calcul du Ki-67) couplée à l'imagerie morphologique et fonctionnelle (TEP 68Ga-DOTATATE) objectivant la localisation primitive et l'extension métastatique.",
+    "treatment_summary": "La chirurgie est le seul traitement curatif pour les formes localisées. Pour les formes métastatiques ou avancées, les analogues de la somatostatine constituent la pierre angulaire du traitement (antiprolifératif et symptomatique), complétés par les thérapies ciblées (évérolimus, sunitinib), la radiothérapie vectorisée (Lu-177) ou la chimiothérapie selon le grade.",
+    "branches": [
+      {
+        "title": "Définition & Physiopathologie essentielle",
+        "theme_index": 0,
+        "items": [
+          "Les tumeurs neuroendocrines (TNE) naissent des cellules du système endocrinien diffus. Elles peuvent siégeables dans tout l'organisme, mais le tube digestif (iléon, rectum) et le pancréas sont les sites les plus fréquents.",
+          "Classification OMS 2019 basée sur l'indice mitotique (mitoses / 10 HPF) et l'index de prolifération Ki-67 (exprimé en %) :",
+          "TNE bien différenciées (G1) : Ki-67 < 3% et < 2 mitoses/10 HPF.",
+          "TNE bien différenciées (G2) : Ki-67 3-20% ou 2-20 mitoses/10 HPF.",
+          "TNE bien différenciées (G3) : Ki-67 > 20% ou > 20 mitoses/10 HPF."
+        ]
+      },
+      {
+        "title": "Démarche Diagnostique",
+        "theme_index": 1,
+        "items": [
+          "Clinique :",
+          "TNE iléales (Carcinoïdes) : Souvent asymptomatiques longtemps, révélées par une occlusion (fibrose mésentérique), des douleurs abdominales ou le syndrome carcinoïde (flush cutané facial, diarrhée motrice, bronchospasme, valvulopathie cardiaque droite type insufficance tricuspidienne par fibrose).",
+          "TNE pancréatiques fonctionnelles :",
+          "Insulinome : Hypoglycémie à jeun, triade de Whipple.",
+          "Gastrinome (Zollinger-Ellison) : Ulcères peptiques multiples, récidivants, atypiques, diarrhée."
+        ]
+      },
+      {
+        "title": "Diagnostic Différentiel & Formes Cliniques",
+        "theme_index": 2,
+        "items": [
+          "Diagnostics différentiels :",
+          "Pour le flush carcinoïde : ménopause, mastocytose, anaphylaxie, phéochromocytome.",
+          "Pour le syndrome de Zollinger-Ellison : ulcère peptique commun réfractaire sous traitement.",
+          "Formes génétiques et syndromes héréditaires :",
+          "NEM 1 (Néoplasie Endocrinienne Multiple de type 1) : Mutation du gène menin, association : adénome hypophysaire, hyperparathyroïdie primaire, et TNE pancréatique (souvent gastrinome ou insulinome)."
+        ]
+      },
+      {
+        "title": "Stratégie Thérapeutique",
+        "theme_index": 3,
+        "items": [
+          "Mesures générales :",
+          "Prise en charge multidisciplinaire (RCP des TNE).",
+          "Éviction des facteurs déclenchants des crises carcinoïdes (effort, alcool, stress, certains aliments).",
+          "Traitement curatif (TNE localisées) :",
+          "Chirurgie d'exérèse complète avec lymphadénectomie (seul traitement potentiellement curatif)."
+        ]
+      },
+      {
+        "title": "Évolution, Pronostic & Complications majeures",
+        "theme_index": 4,
+        "items": [
+          "Le pronostic dépend principalement du grade histologique (Ki-67, mitoses), du stade TNM et de la résécabilité.",
+          "Complications majeures :",
+          "Insuffisance cardiaque carcinoïde (atteinte tricuspidienne et pulmonaire droite par fibrose endocardique liée à la sérotonine).",
+          "Crise carcinoïde aiguë (urgence vitale per-opératoire ou spontanée : hypotension sévère, bronchospasme, bouffées vasomotrices intenses) prévenue par l'Octréotide IV.",
+          "Syndrome de masse : Occlusion intestinale sur sténose iléale ou compression biliaire par des adénopathies."
+        ]
+      },
+      {
+        "title": "Pièges Concours & Vigilance Annales",
+        "theme_index": 5,
+        "items": [
+          "Piège Annales : Confondre TNE bien différenciée G3 (qui garde un profil neuroendocrinien classique et répond partiellement aux analogues/PRRT) et Carcinome neuroendocrine (CNE) peu différencié (souvent agressif, chimiothérapie type platine/étoposide).",
+          "Piège Traitement : Oublier la prophylaxie ou le traitement d'urgence de la crise carcinoïde par l'Octréotide IV en cas de manipulation chirurgicale ou de biopsie d'une TNE iléale.",
+          "Piège Diagnostic : Croire qu'une Chromogranine A élevée signe formellement et uniquement une TNE (faux positifs fréquents sous IPP ou insuffisance rénale)."
+        ]
+      },
+      {
+        "title": "Points Clés Incontournables",
+        "theme_index": 4,
+        "items": [
+          "Le grade des TNE repose sur le Ki-67 et l'index mitotique (OMS 2019 : G1 < 3%, G2 3-20%, G3 > 20%).",
+          "La Chromogranine A (CgA) est le marqueur tumoral sérique de référence, mais le 5-HIAA urinaire est spécifique des tumeurs iléales sécrétantes (syndrome carcinoïde).",
+          "La TEP au 68Ga-DOTATATE (récepteurs de la somatostatine) est l'imagerie fonctionnelle indispensable pour le bilan d'extension.",
+          "Les analogues de la somatostatine (Octréotide, Lanréotide) ont un double rôle : contrôle des symptômes hormonaux et effet antiprolifératif."
+        ]
+      }
+    ],
+    "pdf_file": "Blida_HEPATO_GASTRO_ENTEROLOGIE_TUMEUR_NEUROENDOCRINE_mindmap_residanat_2027.pdf",
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/Blida_HEPATO_GASTRO_ENTEROLOGIE_TUMEUR_NEUROENDOCRINE_mindmap_residanat_2027.pdf"
+  },
+  "Blida_HEPATO_GASTRO_ENTEROLOGIE_Abcès_hépatique": {
+    "course_id": "Blida_HEPATO_GASTRO_ENTEROLOGIE_Abcès_hépatique",
+    "course_name": "Abcès hépatique",
+    "module_name": "Hépato-Gastro-Entérologie",
+    "diagnostic_criteria": "Association d'un syndrome infectieux, d'une hépatomégalie douloureuse et d'une image hypochogène/hypodense en cocarde au diagnostic par imagerie (échographie ou TDM abdominale injectée).",
+    "treatment_summary": "Antibiothérapie prolongée (4-6 sem) + Drainage percutané pour le pyogénique ; Nitro-imidazolés suivis d'un amœbicide de contact pour l'amibien.",
+    "branches": [
+      {
+        "title": "Définition & Physiopathologie essentielle",
+        "theme_index": 0,
+        "items": [
+          "Abcès pyogénique : Représente 70-80% des cas dans les pays développés. Les voies de contamination sont biliaires (angiocholite, la plus fréquente), portale (pylephlébite par foyer infectieux abdominal), artérielle (bactériémie/sepsis), par contiguïté ou post-traumatique. Les germes isolés sont le plus souvent entériques : Escherichia coli, Klebsiella pneumoniae (très pourvoyeuse d'abcès métastatiques), Streptococcus milleri et les anaérobies (Bacteroides fragilis).",
+          "Abcès amibien : Dû à Entamoeba histolytica. Contamination par voie fécéo-orale (kystes). Le trophozoïte gagne le foie par la veine porte, entraînant une nécrose lytique chocolat (aspect de pus \"chocolat\" ou \"sauce anchois\"). Prédominance masculine nette (sexe-ratio de 10)."
+        ]
+      },
+      {
+        "title": "Démarche Diagnostique",
+        "theme_index": 1,
+        "items": [
+          "Clinique :",
+          "Abcès pyogénique : Tableau septique bruyant. Fièvre oscillante avec frissons (triade classique : fièvre, douleur de l'hypochondre droit, hépatomégalie douloureuse présente dans moins de 50% des cas), altération de l'état général, Ictère (si origine biliaire).",
+          "Abcès amibien : Début plus insidieux, notion de voyage en zone endémique, diarrhée dysentérique récente ou ancienne (dans 10-30% des cas), hépatomégalie douloureuse majeure, sensibilité de la base pulmonaire droite.",
+          "Paraclinique de référence :",
+          "Biologie : Syndrome inflammatoire biologique majeur (Hyperleucocytose à PNN pour le pyogénique, pas forcément pour l'amibien sauf surinfection ; CRP élevée, VS accélérée). Cytolyse hépatique modérée, cholestase (phosphatases alcalines et gamma-GT augmentées)."
+        ]
+      },
+      {
+        "title": "Diagnostic Différentiel & Formes Cliniques",
+        "theme_index": 2,
+        "items": [
+          "Diagnostics différentiels :",
+          "Kyste hydatique du foie surinfecté (l'imagerie et la sérologie hydatique redressent le diagnostic).",
+          "Tumeur hépatique nécrosée (CHC, métastase hépatique).",
+          "Cholangiocarcinome abcédé.",
+          "Infarctus hépatique."
+        ]
+      },
+      {
+        "title": "Stratégie Thérapeutique",
+        "theme_index": 3,
+        "items": [
+          "Mesures générales : Hospitalisation, rééquilibration hydro-électrolytique, antalgiques, correction des troubles de l'hémostase.",
+          "Traitement de 1ère ligne :",
+          "Abcès pyogénique : Antibiothérapie probabiliste à large spectre, IV, agissant sur les BGN et les anaérobies (ex: C3G + Metronidazole, ou Amoxicilline-Acide Clavulanique + Aminoside). Durée totale de 4 à 6 semaines (2 semaines IV puis relais oral). Drainage radiologique percutané (sous guidage écho ou TDM) systématique pour les abcès de diamètre > 3 à 5 cm ou menaçant de rupture.",
+          "Abcès amibien : Traitement médical exclusif dans la majorité des cas par un nitro-imidazolé (Métronidazole 30 à 50 mg/kg/jour en 3 prises pendant 7 à 10 jours), suivi impérativement d'un amœbicide de contact (Tiliquinol-Tilbroquinol ou Paromomycine) pour éradiquer les kystes intraluminaux. Le drainage est réservé aux formes résistantes au bout de 48-72h, aux volumineux abcès menaçant de rupture ou en cas de surinfection.",
+          "Traitement chirurgical : Réservé aux échecs du drainage percutané, aux abcès multiloculaires non drenables, ou en urgence en cas de rupture intrapéritonéale."
+        ]
+      },
+      {
+        "title": "Évolution, Pronostic & Complications majeures",
+        "theme_index": 4,
+        "items": [
+          "Évolution : Favorable sous traitement médico-chirurgical adapté dans la grande majorité des cas. La normalisation de l'imagerie peut prendre plusieurs mois (retard radiologique).",
+          "Complications majeures :",
+          "Choc septique.",
+          "Rupture de l'abcès : péritonite aiguë, pleurésie purique, péricardite (si lobe gauche).",
+          "Fistulisation bilio-bronchique (vomique chocolat typique de l'amibiase)."
+        ]
+      },
+      {
+        "title": "Pièges Concours & Vigilance Annales",
+        "theme_index": 5,
+        "items": [
+          "Piège Annales : Ne pas oublier de prescrire un amœbicide de contact après le Métronidazole dans l'abcès amibien (risque de récidive par persistance de kystes intestinaux).",
+          "Piège Traitement : Proscrire le drainage chirurgical d'emblée pour un abcès amibien simple non compliqué (le traitement médical suffit le plus souvent).",
+          "Piège Diagnostic : Confondre un kyste hydatique surinfecté et un abcès pyogénique (toujours chercher la notion de contact avec des chiens/zones d'élevage et vérifier la sérologie hydatique avant ponction diagnostique aveugle)."
+        ]
+      },
+      {
+        "title": "Points Clés Incontournables",
+        "theme_index": 4,
+        "items": [
+          "L'angiocholite est la cause la plus fréquente des abcès hépatiques pyogéniques.",
+          "Klebsiella pneumoniae est le germe pyogénique le plus fréquemment impliqué dans certains contextes (abcès métastatiques, diabète).",
+          "L'abcès amibien se caractérise par un pus 'chocolat' ou 'sauce anchois' et un traitement médical exclusif par Métronidazole dans 90% des cas.",
+          "Le drainage percutané guidé par imagerie est la règle pour tout abcès pyogénique supérieur à 3-5 cm associé à une antibiothérapie adaptée."
+        ]
+      }
+    ],
+    "pdf_file": "Blida_HEPATO_GASTRO_ENTEROLOGIE_Abcès_hépatique_mindmap_residanat_2027.pdf",
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/Blida_HEPATO_GASTRO_ENTEROLOGIE_Abcès_hépatique_mindmap_residanat_2027.pdf"
+  },
+  "Blida_HEPATO_GASTRO_ENTEROLOGIE_Foie_et_médicaments": {
+    "course_id": "Blida_HEPATO_GASTRO_ENTEROLOGIE_Foie_et_médicaments",
+    "course_name": "Foie et médicaments",
+    "module_name": "Hépato-Gastro-Entérologie",
+    "diagnostic_criteria": "Imputabilité médicamenteuse chronologique et sémiologique (score RUCAM positif) après élimination rigoureuse des causes virales, auto-immunes et biliaires.",
+    "treatment_summary": "Arrêt immédiat du médicament incriminé, surveillance rapprochée du bilan hépatique et du TP, et administration de N-acétylcystéine si cause paracétamol.",
+    "branches": [
+      {
+        "title": "Définition et Physiopathologie essentielle",
+        "theme_index": 0,
+        "items": [
+          "Les hépatotoxicités intrinsèques (ou prévisibles) : dose-dépendantes, reproductibles chez l'animal, délai court (ex : Paracétamol).",
+          "Les hépatotoxicités idiosyncrasiques (imprévisibles) : indépendantes de la dose, immunologiques ou métaboliques, délai variable de quelques jours à plusieurs mois (ex : Amoxicilline-acide clavulanique)."
+        ]
+      },
+      {
+        "title": "Démarche Diagnostique",
+        "theme_index": 1,
+        "items": [
+          "Critères R (Ratio R) calculé selon l'ALT et les Phosphatases Alkalines (PAL) rapportées à leur limite supérieure de la normale (LSN) :",
+          "R = (ALT / LSN) / (PAL / LSN)",
+          "R ≥ 5 : Profil hépatocellulaire.",
+          "R ≤ 2 : Profil cholestatique.",
+          "2 < R < 5 : Profil mixte."
+        ]
+      },
+      {
+        "title": "Diagnostic Différentiel et Formes Cliniques",
+        "theme_index": 2,
+        "items": [
+          "Éliminer systématiquement : Hépatites virales aiguës A, B, C, E, hépatite auto-immune, obstruction biliaire (échographie hépatique Doppler indispensable).",
+          "Formes cliniques majeures :",
+          "Cytolyse aiguë (mimant une hépatite fulminante)",
+          "Cholestase pure ou mixte (mimant une angiocholite ou une lithiase)",
+          "Hépatite chronique / Fibrose / Cirrhose (ex : Méthotrexate, Amiodarone)"
+        ]
+      },
+      {
+        "title": "Stratégie Thérapeutique",
+        "theme_index": 3,
+        "items": [
+          "Mesures générales : Arrêt immédiat et définitif du médicament suspecté (cornerstone de la prise en charge).",
+          "Traitement spécifique :",
+          "Intoxication au Paracétamol : N-acétylcystéine (NAC) par voie IV ou per os selon le nomogramme de Rumack-Matthew.",
+          "Contre-indications absolues : Ne jamais réadministrer le médicament en cause (risque de récidive immédiate et fulminante)."
+        ]
+      },
+      {
+        "title": "Évolution, Pronostic et Complications",
+        "theme_index": 4,
+        "items": [
+          "Critères de King's College pour la transplantation hépatique en urgence dans l'insuffisance hépatocellulaire aiguë sur paracétamol :",
+          "pH artériel < 7,30 (après réanimation) OU",
+          "Présence combinée de : TP > 100 secondes (INR > 6.5), Créatinine > 300 µmol/L, et encéphalopathie hépatique de stade III ou IV."
+        ]
+      },
+      {
+        "title": "Pièges Concours & Vigilance Annales",
+        "theme_index": 5,
+        "items": [
+          "Piège Annales : Penser que l'hépatotoxicité de l'amoxicilline-acide clavulanique est dose-dépendante (Faux, elle est idiosyncrasique).",
+          "Piège Traitement : Réintroduire à faible dose un médicament ayant provoqué une hépatite immuno-allergique (Contre-indication absolue).",
+          "Piège Diagnostic : Oublier de calculer le ratio R (ALT/PAL) devant une élévation des enzymes hépatiques."
+        ]
+      },
+      {
+        "title": "Points Clés Incontournables",
+        "theme_index": 4,
+        "items": [
+          "Le ratio R permet de classer le DILI en hépatocellulaire (R ≥ 5), cholestatique (R ≤ 2) ou mixte.",
+          "L'amoxicilline-acide clavulanique est la cause la plus fréquente d'hépatotoxicité idiosyncrasique de type cholestatique/mixte.",
+          "L'arrêt du médicament suspect est la seule mesure thérapeutique indispensable initiale.",
+          "Le surdosage en paracétamol provoque une cytolyse aiguë massive traitée par la N-acétylcystéine."
+        ]
+      }
+    ],
+    "pdf_file": "Blida_HEPATO_GASTRO_ENTEROLOGIE_Foie_et_médicaments_mindmap_residanat_2027.pdf",
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/Blida_HEPATO_GASTRO_ENTEROLOGIE_Foie_et_médicaments_mindmap_residanat_2027.pdf"
+  },
+  "Blida_NEUROLOGIE_TD_VASCULARISATION_ARTERIELLE_DU_CERVEAU": {
+    "course_id": "Blida_NEUROLOGIE_TD_VASCULARISATION_ARTERIELLE_DU_CERVEAU",
+    "course_name": "TD: Syndrome myogène",
+    "module_name": "Neurologie",
+    "diagnostic_criteria": "Association d'un déficit moteur proximal des ceintures, d'une élévation des CPK, d'un tracé ENMG à PUM courts et amples diminués (myogène) et de l'absence de troubles sensitifs.",
+    "treatment_summary": "Traitement essentiellement symptomatique, préventif des complications orthopédiques et respiratoires, et spécifique étiologique (corticothérapie pour les formes inflammatoires).",
+    "branches": [
+      {
+        "title": "Définition & Physiopathologie essentielle",
+        "theme_index": 0,
+        "items": [
+          "Physiopathologie : L'atteinte touche la fibre musculaire elle-même ou la jonction myoneurale dans certaines formes, mais le prototype pur est la myopathie primitive (ex: dystrophies musculaires progressives). On observe une nécrose cellulaire avec libération d'enzymes musculaires (CPK, LDH) et une régénération anarchique, menant à terme à une fibrose et une substitution adipeuse."
+        ]
+      },
+      {
+        "title": "Démarche Diagnostique",
+        "theme_index": 1,
+        "items": [
+          "Clinique :",
+          "Déficit moteur : Proximal, symétrique, indolore, prédominant aux ceintures (scapulaire et pelvienne). Signes cliniques évocateurs : démarche oscillante (dandinante ou anserine), incapacité à se lever de accroupi sans les mains (signe de Gowers), impossibilité de monter les escaliers.",
+          "Abolition ou diminution des réflexes ostéo-tendineux (ROT) : Proportionnelle au déficit (sauf dans certaines myopathies canalaires ou formes frustes).",
+          "Absence de troubles sensitifs et absence de fasciculations spontanées.",
+          "Hypertrophie musculaire paradoxale : Surtout visible au niveau des mollets (gros mollets fermes ou pseudo-hypertrophie graisseuse), parfois de la langue."
+        ]
+      },
+      {
+        "title": "Diagnostic Différentiel & Formes Cliniques",
+        "theme_index": 2,
+        "items": [
+          "Diagnostics différentiels :",
+          "Syndrome neurogène périphérique (atteinte du motoneurone ou de la racine/nerf) : déficit souvent distal, asymétrique, avec fasciculations et ENMG neurogène (PUM amples et rares).",
+          "Myasthénie : Atteinte de la jonction neuromusculaire avec fatigabilité musculaire, ptosis, diplopie, mais sans élévation des CPK ni tracé myogène strict.",
+          "Formes cliniques principales :",
+          "Dystrophies musculaires progressives (DMD - Dystrophie de Duchenne de Boulogne, liée à l'X, début précoce chez le garçon)."
+        ]
+      },
+      {
+        "title": "Stratégie Thérapeutique",
+        "theme_index": 3,
+        "items": [
+          "Mesures générales :",
+          "Prise en charge multidisciplinaire (Kinésithérapie motrice douce pour éviter les rétractions, ergothérapie).",
+          "Évaluation respiratoire et cardiaque régulière (recherche de cardiomyopathie, fréquente dans la DMD).",
+          "Traitement spécifique :",
+          "Dépend totalement de l'étiologie."
+        ]
+      },
+      {
+        "title": "Évolution, Pronostic & Complications majeures",
+        "theme_index": 4,
+        "items": [
+          "Évolution : Souvent chronique et progressive vers le handicap moteur.",
+          "Complications majeures :",
+          "Insuffisance respiratoire restrictive par faiblesse des muscles intercostaux et du diaphragme.",
+          "Troubles du rythme et insuffisance cardiaque (cardiomyopathie myopathique).",
+          "Rétractions tendineuses sévères et déformations orthopédiques (scoliose)."
+        ]
+      },
+      {
+        "title": "Pièges Concours & Vigilance Annales",
+        "theme_index": 5,
+        "items": [
+          "Piège Annales : 'La présence de fasciculations oriente vers un syndrome myogène' -> FAUX, les fasciculations signent une atteinte neurogène (cornes antérieures).",
+          "Piège Traitement : 'Les curares sont indiqués pour détendre les muscles dans le syndrome myogène' -> FAUX, contre-indication absolue (risque de paralyser totalement le patient).",
+          "Piège Diagnostic : Confondre un déficit distal (neurogène) et un déficit proximal (myogène)."
+        ]
+      },
+      {
+        "title": "Points Clés Incontournables",
+        "theme_index": 4,
+        "items": [
+          "Le déficit du syndrome myogène est typiquement PROXIMAL, symétrique et indolore (ceintures scapulaire et pelvienne).",
+          "L'examen clinique recherche impérativement le signe de Gowers et une pseudo-hypertrophie des mollets.",
+          "Les réflexes ostéo-tendineux (ROT) sont généralement conservés au début puis diminués, proportionnellement au déficit.",
+          "L'ENMG myogène montre des PUM de faible amplitude, de courte durée et polyphasiques avec un recrutement riche."
+        ]
+      }
+    ],
+    "pdf_file": "Blida_NEUROLOGIE_TD_VASCULARISATION_ARTERIELLE_DU_CERVEAU_mindmap_residanat_2027.pdf",
+    "mindmap_drive_id": null,
+    "mindmap_pdf_url": "assets/mindmaps/Blida_NEUROLOGIE_TD_VASCULARISATION_ARTERIELLE_DU_CERVEAU_mindmap_residanat_2027.pdf"
   }
 }
