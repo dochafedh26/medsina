@@ -40,7 +40,9 @@ class SupabaseService {
   static Future<bool> signInWithGoogle() async {
     final redirectTo = kIsWeb
         ? '${Uri.base.origin}${Uri.base.path}'
-        : 'com.medsina.medsina://login-callback/';
+        : (AppConstants.isBetaBuild
+            ? 'com.medsina.medsina.beta://login-callback/'
+            : 'com.medsina.medsina://login-callback/');
     return await client.auth.signInWithOAuth(
       OAuthProvider.google,
       redirectTo: redirectTo,

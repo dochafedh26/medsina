@@ -118,12 +118,15 @@ jobs:
           VERSION="${VERSION#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
           CHANNEL="${{ inputs.channel || 'beta' }}"
+          GRADLE_BETA_FLAG=""
           if [ "$CHANNEL" = "beta" ]; then
             sed -i 's/android:label="Medsina"/android:label="Medsina Beta"/' android/app/src/main/AndroidManifest.xml
+            sed -i 's/android:scheme="com.medsina.medsina"/android:scheme="com.medsina.medsina.beta"/' android/app/src/main/AndroidManifest.xml
+            GRADLE_BETA_FLAG="-PbetaBuild=true"
           fi
           echo "Building Android split-per-abi APKs and universal APK version $VERSION+$BUILD_NUM ($CHANNEL)..."
-          flutter build apk --release --split-per-abi --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
-          flutter build apk --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
+          flutter build apk --release --split-per-abi --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL $GRADLE_BETA_FLAG
+          flutter build apk --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL $GRADLE_BETA_FLAG
 
       - name: 🛠️ Build App Bundle (AAB)
         run: |
@@ -131,7 +134,11 @@ jobs:
           VERSION="${VERSION#v}"
           BUILD_NUM="${{ inputs.build_number || github.run_number }}"
           CHANNEL="${{ inputs.channel || 'beta' }}"
-          flutter build appbundle --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
+          GRADLE_BETA_FLAG=""
+          if [ "$CHANNEL" = "beta" ]; then
+            GRADLE_BETA_FLAG="-PbetaBuild=true"
+          fi
+          flutter build appbundle --release --android-skip-build-dependency-validation --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL $GRADLE_BETA_FLAG
 
       - name: 📦 Prepare Android Deliverables
         run: |
@@ -198,16 +205,17 @@ jobs:
         run: |
           $VERSION = "${{ inputs.version || github.ref_name }}".TrimStart('v')
           $CHANNEL = "${{ inputs.channel || 'beta' }}"
-          if ($CHANNEL -eq "beta") {
-            (Get-Content windows/installer/medsina_setup.iss) -replace '"Medsina"', '"Medsina Beta"' | Set-Content windows/installer/medsina_setup.iss
-          }
           New-Item -ItemType Directory -Force -Path "win-dist"
           $iscc = "iscc"
           if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
             $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
           }
           echo "Compiling Inno Setup installer for version $VERSION ($CHANNEL) using $iscc..."
-          & $iscc /DMyAppVersion="$VERSION" windows/installer/medsina_setup.iss
+          if ($CHANNEL -eq "beta") {
+            & $iscc /DMyAppVersion="$VERSION" /DMyAppName="Medsina Beta" /DMyAppGuid="D75B3E14-6470-46C2-AE09-88F5B9E0A32C" windows/installer/medsina_setup.iss
+          } else {
+            & $iscc /DMyAppVersion="$VERSION" windows/installer/medsina_setup.iss
+          }
 
       - name: 🗜️ Archive Windows Portable (.zip)
         run: |

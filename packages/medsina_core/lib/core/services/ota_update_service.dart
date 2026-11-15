@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../constants/app_constants.dart';
 import '../interfaces/feature_contracts.dart';
 import '../models/app_release_model.dart';
 import '../network/supabase_service.dart';
@@ -46,6 +47,9 @@ class OtaUpdateService {
   static const String _keyReleaseChannel = 'ota_release_channel';
 
   static Future<String> getReleaseChannel() async {
+    if (AppConstants.isBetaBuild) {
+      return 'beta';
+    }
     try {
       final prefs = await SharedPreferences.getInstance();
       final ch = prefs.getString(_keyReleaseChannel)?.toLowerCase();
