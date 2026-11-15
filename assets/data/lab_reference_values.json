@@ -1371,5 +1371,20 @@
     ],
     "created_at": "2026-11-14T23:13:30.510443+00:00",
     "updated_at": "2026-11-14T23:13:30.510460+00:00"
+  },
+  {
+    "id": "lab_liquide_ascite",
+    "name": "Ponction et analyse du Liquide d'Ascite (SAAG & PNN)",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "SAAG < 11 g/L (non portal) ou >= 11 g/L (hypertension portale) | PNN < 250 /mm3 | Protéines < 25 g/L (pauvre en protéines)",
+    "unit": "g/L (SAAG/Protéines) et éléments/mm3 (PNN)",
+    "high_interpretation": "SAAG >= 11 g/L : Hypertension portale (Cirrhose, Insuffisance cardiaque, Budd-Chiari, Stéatose hépatique aiguë de la grossesse). PNN >= 250 /mm3 : Péritonite bactérienne spontanée (PBS) nécessitant une antibiothérapie probabiliste immédiate (C3G IV). Protéines totales > 25 g/L : Ascite exsudative (Carcinose péritonéale, Tuberculose péritonéale, Péricardite constrictive).",
+    "low_interpretation": "SAAG < 11 g/L : Ascite sans hypertension portale (Carcinose péritonéale, Tuberculose péritonéale, Syndrome néphrotique, Pancréatite aiguë). PNN < 250 /mm3 : Absence d'infection active du liquide d'ascite (liquide stérile). Protéines < 25 g/L : Ascite transsudative (Cirrhose simple, Dénutrition, Syndrome néphrotique).",
+    "clinical_notes": [
+      "Piège pré-analytique : Le comptage cellulaire (PNN) et la culture en flacons d'hémoculture doivent être faits rapidement pour éviter la lyse des leucocytes et les faux négatifs. Ne pas oublier la correction du taux de PNN en cas de liquide d'ascite hémorragique (soustraire 1 PNN par tranche de 700 à 1500 globules rouges/mm3).",
+      "Règle clé du concours : Le Gradient d'Albumine (SAAG = Albumine Sérique - Albumine Ascite) dosée simultanément est le meilleur test pour classer l'ascite en HTP (>= 11 g/L) ou non HTP (< 11 g/L), surpassant l'ancienne classification transsudat/exsudat."
+    ],
+    "created_at": "2026-11-15T02:57:00.756636+00:00",
+    "updated_at": "2026-11-15T02:57:00.756651+00:00"
   }
 ]
