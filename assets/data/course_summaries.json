@@ -2482,5 +2482,28 @@
     "treatment_summary": "La prise en charge repose sur le port d'une correction optique totale, le traitement de la cause organique (cataracte, tumeur) et la rééducation par occlusion de l'œil sain en cas d'amblyopie.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-14T21:41:11.811523+00:00"
+  },
+  {
+    "course_id": "Blida_NEUROLOGIE_PATHOLOGIE_MUSCULAIRE",
+    "course_name": "Pathologie musculaire",
+    "module_id": "Blida_NEUROLOGIE",
+    "module_name": "Neurologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLa pathologie musculaire regroupe les affections affectant le muscle strié squelettique, divisées en myopathies acquises (inflammatoires, toxiques, endocriniennes) et héréditaires (dystrophies musculaires, canalopathies, myopathies métaboliques).\n- **Physiopathologie :** Altération de la fibre musculaire, de la jonction neuromusculaire ou du métabolisme énergétique conduisant à une nécrose, une régénération ou une fibrose.\n- **Signe cardinal :** Le déficit moteur est typiquement **proximal**, symétrique, sans trouble sensitif ni abolition des réflexes ostéo-tendineux (sauf stade avancé).\n\n## 2. Démarche Diagnostique\n- **Clinique :** Déficit proximal (ceintures scapulaire et pelvienne), signe de Gowers (manœuvre de redressement), atrophie ou hypertrophie paradoxale (ex: mollets dans la myopathie de Duchenne).\n- **Paraclinique de référence :**\n  - **Créatine Kinase (CPK) sérique :** Élévation majeure (parfois > 10x à 100x la normale) dans les myopathies nécrotiques et inflammatoires.\n  - **Électroneuromyogramme (ENMG) :** Tracé myogène (PRSD : Potentiels de Unité Motrice de faible amplitude, courte durée, polyphasiques, recrutement riche).\n  - **Biopsie musculaire :** Examen clé pour le typage histologique et immunohistochimique (dystrophine, etc.).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Diagnostics différentiels :** Neuropathies périphériques (atteinte distale, sensitive, abolition des ROT), myasthénie (fatigabilité sans élévation des CPK).\n- **Formes cliniques majeures :**\n  - **Dystrophie de Duchenne de Boulogne (DMD) :** Récession liée à l'X (gène de la dystrophine), début précoce, décédé par atteinte cardiopulmonaire.\n  - **Dystrophie myotonique de Steinert :** Dominante autosomique (gène DMPK), myotonie (difficulté au déserrement des mains), atteinte multisystémique (cataracte, troubles du rythme, calvitie).\n  - **Myopathies inflammatoires :** Polymyosite, dermatomyosite (atteinte cutanée caractéristique en héliotrope, papules de Gottron), myopathie à inclusions.\n\n## 4. Stratégie Thérapeutique\n- **Mesures générales :** Kinésithérapie motrice (éviter l'alitement prolongé et les contractures), ergothérapie, support respiratoire si besoin.\n- **Traitement spécifique (Myopathies inflammatoires) :**\n  - Corticothérapie à forte dose (Prednisone 1 mg/kg/j) en 1ère ligne.\n  - Immunosuppresseurs (Méthotrexate, Azathioprine, Cyclophosphamide) ou Immunoglobulines IV en 2ème ligne.\n- **Contre-indications formelles :** Éviter les statines en cas de myopathie toxique suspectée ; prudence extrême avec les curares et certains anesthésiques en cas de canalopathies ou dystrophies.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Évolution :** Souvent chronique et invalidante, menant au fauteuil roulant pour les formes sévères (DMD).\n- **Complications majeures :**\n  - Insuffisance respiratoire restrictive par atteinte des muscles intercostaux et du diaphragme.\n  - Troubles du rythme cardiaque et cardiomyopathies dilatées (très fréquents dans Steinert et Duchenne).\n  - Troubles de la déglutition (fausses routes, pneumopathies d'inhalation).",
+    "key_takeaways": [
+      "Le déficit moteur myopathique est purement moteur, proximal, bilatéral et symétrique, sans atteinte sensitive.",
+      "Les CPK sont le marqueur biologique de cytolyse musculaire par excellence (attention aux faux positifs après effort intense ou IM).",
+      "L'ENMG montre un syndrome myogène : tracés pauvres, de faible amplitude, polyphasiques avec recrutement précoce.",
+      "La maladie de Steinert est la plus fréquente des myopathies de l'adulte, caractérisée par un phénomène de myotonie et une atteinte multisystémique.",
+      "La dermatomyosite associe un déficit proximal à des signes cutanés pathognomoniques (érythème en héliotrope, papules de Gottron)."
+    ],
+    "exam_traps": [
+      "Piège Annales : Attribuer une abolition des réflexes ostéo-tendineux (ROT) au début d'une myopathie (les ROT sont conservés longtemps, contrairement aux neuropathies).",
+      "Piège Traitement : Utiliser des statines ou des hypocholestérolémiants sans vérifier les CPK devant des myalgies diffuses (risque de rhabdomyolyse).",
+      "Piège Diagnostic : Confondre la fatigabilité de la myasthénie (fluctuante, s'aggravant à l'effort) avec la fatigue et le déficit permanent des myopathies."
+    ],
+    "diagnostic_criteria": "Association d'un déficit moteur proximal symétrique, d'une élévation des enzymes musculaires (CPK) et d'un tracé myogène à l'ENMG, confirmé par la biopsie musculaire ou l'analyse génétique.",
+    "treatment_summary": "Repose sur la prise en charge pluridisciplinaire (kinésithérapie, ventilation) et l'immunomodulation/corticothérapie en première intention pour les formes inflammatoires.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-15T01:18:57.607351+00:00"
   }
 ]
