@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show Session;
 import '../../../../core/constants/app_constants.dart';
 import '../models/user_model.dart';
 
@@ -118,4 +119,15 @@ class ReactivateAccountRequestedEvent extends AuthEvent {
 
   @override
   List<Object?> get props => [userId];
+}
+
+class GoogleSignInRequestedEvent extends AuthEvent {}
+
+class AuthSessionChangedEvent extends AuthEvent {
+  final Session session;
+
+  const AuthSessionChangedEvent(this.session);
+
+  @override
+  List<Object?> get props => [session.user.id, session.accessToken];
 }

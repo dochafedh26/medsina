@@ -607,7 +607,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                 : const Text('Se Connecter', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 14),
+        _buildOrDivider('ou'),
+        const SizedBox(height: 14),
+        _buildGoogleAuthButton(isLoading, label: 'Continuer avec Google'),
+        const SizedBox(height: 16),
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -712,6 +716,10 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
           ),
         ],
+        _buildGoogleAuthButton(isLoading, label: 'S\'inscrire avec Google'),
+        const SizedBox(height: 14),
+        _buildOrDivider('ou par email'),
+        const SizedBox(height: 14),
         TextField(
           controller: _registerNameController,
           decoration: const InputDecoration(
@@ -1351,4 +1359,126 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       }
     }
   }
+
+  Widget _buildOrDivider(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final lineColor = isDark ? Colors.white12 : const Color(0xFFE2E8F0);
+    final textColor = isDark ? Colors.white54 : const Color(0xFF64748B);
+
+    return Row(
+      children: [
+        Expanded(child: Divider(color: lineColor, thickness: 1)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+        ),
+        Expanded(child: Divider(color: lineColor, thickness: 1)),
+      ],
+    );
+  }
+
+  Widget _buildGoogleAuthButton(bool isLoading, {required String label}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return SizedBox(
+      height: 46,
+      width: double.infinity,
+      child: OutlinedButton(
+        onPressed: isLoading
+            ? null
+            : () => context.read<AuthBloc>().add(GoogleSignInRequestedEvent()),
+        style: OutlinedButton.styleFrom(
+          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          foregroundColor: isDark ? Colors.white : const Color(0xFF1E293B),
+          side: BorderSide(
+            color: isDark ? Colors.white24 : const Color(0xFFCBD5E1),
+            width: 1.2,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: 20,
+              height: 20,
+              child: CustomPaint(painter: _GoogleLogoPainter()),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GoogleLogoPainter extends CustomPainter {
+  const _GoogleLogoPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const pi = 3.1415926535897932;
+    final strokeWidth = size.width * 0.2;
+    final rect = Rect.fromLTWH(
+      strokeWidth / 2,
+      strokeWidth / 2,
+      size.width - strokeWidth,
+      size.height - strokeWidth,
+    );
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.butt;
+
+    // Red arc (top)
+    paint.color = const Color(0xFFEA4335);
+    canvas.drawArc(rect, -0.82 * pi, 0.72 * pi, false, paint);
+
+    // Yellow arc (left)
+    paint.color = const Color(0xFFFBBC05);
+    canvas.drawArc(rect, 0.82 * pi, 0.36 * pi, false, paint);
+
+    // Green arc (bottom)
+    paint.color = const Color(0xFF34A853);
+    canvas.drawArc(rect, 0.16 * pi, 0.66 * pi, false, paint);
+
+    // Blue arc (right)
+    paint.color = const Color(0xFF4285F4);
+    canvas.drawArc(rect, -0.05 * pi, 0.23 * pi, false, paint);
+
+    // Blue horizontal bar
+    final barPaint = Paint()
+      ..color = const Color(0xFF4285F4)
+      ..style = PaintingStyle.fill;
+    canvas.drawRect(
+      Rect.fromLTWH(
+        size.width * 0.5,
+        size.height * 0.5 - strokeWidth / 2,
+        size.width * 0.48,
+        strokeWidth,
+      ),
+      barPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

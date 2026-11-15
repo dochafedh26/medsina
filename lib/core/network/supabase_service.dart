@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../features/feedback/models/app_review_model.dart';
 import '../constants/app_constants.dart';
 import '../services/medsina_notification_dispatcher.dart';
@@ -33,6 +34,102 @@ class SupabaseService {
       email: email.trim(),
       password: password,
     );
+  }
+
+  /// Sign In / Sign Up with Google OAuth via Supabase
+  static Future<bool> signInWithGoogle() async {
+    final redirectTo = kIsWeb ? null : 'com.medsina.medsina://login-callback/';
+    return await client.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: redirectTo,
+      authScreenLaunchMode: kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
+      queryParams: const {
+        'prompt': 'select_account',
+      },
+    );
+  }
+
+  /// Dispatch welcome email & admin notification once for newly created OAuth users
+  static Future<void> notifyNewOAuthUserIfNeeded(User user) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final notifiedKey = 'medsina_oauth_welcomed_${user.id}';
+      if (prefs.getBool(notifiedKey) == true) return;
+
+      final createdAt = DateTime.tryParse(user.createdAt);
+      if (createdAt == null) return;
+      final isNewlyCreated = DateTime.now().toUtc().difference(createdAt.toUtc()).inMinutes.abs() <= 5;
+      if (!isNewlyCreated) {
+        await prefs.setBool(notifiedKey, true);
+        return;
+      }
+
+      await prefs.setBool(notifiedKey, true);
+      final meta = user.userMetadata ?? {};
+      final email = (user.email ?? '').trim();
+      final fullName = (meta['full_name'] ?? meta['name'] ?? email.split('@').first).toString().trim();
+      final medicalRole = (meta['medical_role'] ?? 'Candidat Résidanat').toString().trim();
+      final faculty = (meta['faculty'] ?? 'Faculté de Médecine de Blida').toString().trim();
+      final studyYear = (meta['study_year'] as num?)?.toInt();
+
+      if (email.isNotEmpty) {
+        MedsinaNotificationDispatcher.sendWelcomeEmail(
+          userEmail: email,
+          userName: fullName,
+          medicalRole: medicalRole,
+          faculty: faculty,
+          studyYear: studyYear,
+        );
+        MedsinaNotificationDispatcher.notifyAdminNewSubscriber(
+          userEmail: email,
+          userName: fullName,
+          medicalRole: medicalRole,
+          faculty: faculty,
+          studyYear: studyYear,
+        );
+      }
+
+      if (AppConstants.isNovemberPromoActive) {
+        try {
+          final now = DateTime.now().toUtc();
+          await client.from('subscriptions').upsert({
+            'user_id': user.id,
+            'tier': 'all_access',
+            'status': 'active',
+            'starts_at': now.toIso8601String(),
+            'expires_at': now.add(const Duration(days: 30)).toIso8601String(),
+            'updated_at': now.toIso8601String(),
+          });
+        } catch (e) {
+          debugPrint('Notice on Google OAuth promo subscription upsert: $e');
+        }
+      }
+
+      try {
+        await client.from('medical_notifications').insert({
+          'id': 'new_user_${user.id}_${DateTime.now().millisecondsSinceEpoch}',
+          'title': '👤 Nouveau Membre Google : $fullName',
+          'message': '$fullName ($email) vient de créer un compte Medsina via Google.',
+          'type': 'announcement',
+          'target_role': 'admin',
+          'is_broadcast': false,
+          'metadata': {
+            'is_admin_only': true,
+            'target_role': 'admin',
+            'user_id': user.id,
+            'email': email,
+            'full_name': fullName,
+            'medical_role': medicalRole,
+            'faculty': faculty,
+            'provider': 'google',
+          },
+        });
+      } catch (e) {
+        debugPrint('Admin new Google user notification notice: $e');
+      }
+    } catch (e) {
+      debugPrint('notifyNewOAuthUserIfNeeded notice: $e');
+    }
   }
 
   /// Sign Up with Email & Password and store metadata in auth + profile trigger

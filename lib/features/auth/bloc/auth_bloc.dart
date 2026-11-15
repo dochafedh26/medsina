@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,11 +14,15 @@ import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   static const String _userPrefsKey = 'medsina_active_user';
+  StreamSubscription<dynamic>? _authStateSubscription;
+  bool _isEmailAuthInProgress = false;
 
   AuthBloc() : super(const AuthState()) {
     on<AppStartedEvent>(_onAppStarted);
     on<LoginSubmittedEvent>(_onLoginSubmitted);
     on<RegisterSubmittedEvent>(_onRegisterSubmitted);
+    on<GoogleSignInRequestedEvent>(_onGoogleSignInRequested);
+    on<AuthSessionChangedEvent>(_onAuthSessionChanged);
     on<DemoLoginEvent>(_onDemoLogin);
     on<UpgradeTierEvent>(_onUpgradeTier);
     on<ActivateLicenseKeyEvent>(_onActivateLicenseKey);
@@ -25,6 +30,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutEvent>(_onLogout);
     on<ClearAuthMessageEvent>(_onClearAuthMessage);
     on<ReactivateAccountRequestedEvent>(_onReactivateAccountRequested);
+
+    try {
+      _authStateSubscription = SupabaseService.client.auth.onAuthStateChange.listen((data) {
+        if (data.event == AuthChangeEvent.signedIn && data.session != null) {
+          if (!_isEmailAuthInProgress &&
+              (state.status != AuthStatus.authenticated || state.user?.id != data.session!.user.id)) {
+            add(AuthSessionChangedEvent(data.session!));
+          }
+        }
+      });
+    } catch (e) {
+      debugPrint('AuthBloc onAuthStateChange listener notice: $e');
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _authStateSubscription?.cancel();
+    return super.close();
   }
 
   void _onClearAuthMessage(ClearAuthMessageEvent event, Emitter<AuthState> emit) {
@@ -203,6 +227,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
+    _isEmailAuthInProgress = true;
     try {
       final authResponse = await SupabaseService.signInWithEmail(email, password);
       final supaUser = authResponse.user;
@@ -334,6 +359,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         errorMessage: 'Échec de connexion réseau. Vérifiez votre connexion internet.',
       ));
       return;
+    } finally {
+      _isEmailAuthInProgress = false;
     }
   }
 
@@ -352,6 +379,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
 
+    _isEmailAuthInProgress = true;
     try {
       final authResponse = await SupabaseService.signUpWithEmail(
         email: email,
@@ -426,6 +454,163 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         errorMessage: 'Erreur lors de la création du compte: $e',
       ));
       return;
+    } finally {
+      _isEmailAuthInProgress = false;
+    }
+  }
+
+  Future<void> _onGoogleSignInRequested(
+    GoogleSignInRequestedEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(status: AuthStatus.loading, clearMessages: true));
+    try {
+      final launched = await SupabaseService.signInWithGoogle();
+      if (!launched) {
+        emit(state.copyWith(
+          status: AuthStatus.unauthenticated,
+          errorMessage: 'Impossible d\'ouvrir la fenêtre de connexion Google.',
+        ));
+        return;
+      }
+      if (!kIsWeb) {
+        // On mobile, browser opens externally; reset loading so UI isn't stuck if user cancels
+        emit(state.copyWith(status: AuthStatus.unauthenticated));
+      }
+    } on AuthException catch (e) {
+      debugPrint('Supabase Google AuthException: ${e.message}');
+      emit(state.copyWith(
+        status: AuthStatus.unauthenticated,
+        errorMessage: 'Erreur de connexion Google : ${e.message}',
+      ));
+    } catch (e) {
+      debugPrint('Google Sign-In error: $e');
+      emit(state.copyWith(
+        status: AuthStatus.unauthenticated,
+        errorMessage: 'Impossible de se connecter avec Google. Vérifiez votre connexion internet.',
+      ));
+    }
+  }
+
+  Future<void> _onAuthSessionChanged(
+    AuthSessionChangedEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    final session = event.session;
+    final supaUser = session.user;
+    if (supaUser.id.isEmpty) return;
+
+    emit(state.copyWith(status: AuthStatus.loading, clearMessages: true));
+
+    try {
+      await SupabaseService.notifyNewOAuthUserIfNeeded(supaUser);
+
+      final prefs = await SharedPreferences.getInstance();
+      final cloudData = await SupabaseService.fetchUserProfileAndSubscription(supaUser.id);
+      final profile = cloudData?['profile'] as Map<String, dynamic>?;
+      final sub = cloudData?['subscription'] as Map<String, dynamic>?;
+
+      final meta = supaUser.userMetadata ?? {};
+      final email = (profile?['email'] ?? supaUser.email ?? '').toString().trim();
+      final emailClean = email.toLowerCase();
+
+      final isAdm = profile?['is_admin'] == true || emailClean == 'doc.hafedh26@gmail.com';
+      final isBanned = profile?['is_banned'] == true && emailClean != 'doc.hafedh26@gmail.com';
+      final banReason = profile?['ban_reason']?.toString();
+      final isInactiveSuspended = profile?['is_inactive_suspended'] == true ||
+          (isBanned && (banReason?.toLowerCase().contains('inactiv') ?? false));
+
+      final fullName = (profile?['full_name'] ??
+              meta['full_name'] ??
+              meta['name'] ??
+              (email.isNotEmpty ? email.split('@').first : 'Dr. Medsina'))
+          .toString();
+      final medicalRole = (profile?['medical_role'] ?? meta['medical_role'] ?? 'Candidat Résidanat').toString();
+      final faculty = (profile?['faculty'] ?? meta['faculty'] ?? 'Faculté de Médecine de Blida').toString();
+      final tier = _mapTier(sub?['tier']?.toString());
+      final expiry = sub?['expires_at'] != null
+          ? DateTime.tryParse(sub!['expires_at'].toString()) ?? DateTime.now().add(const Duration(days: 14))
+          : DateTime.now().add(Duration(days: AppConstants.isNovemberPromoActive ? 30 : 14));
+      final avatarUrl = (profile?['avatar_url'] ?? meta['avatar_url'] ?? meta['picture'])?.toString();
+
+      if (isBanned) {
+        if (isInactiveSuspended) {
+          final suspendedUser = UserModel(
+            id: supaUser.id,
+            fullName: fullName,
+            email: email,
+            medicalRole: medicalRole,
+            faculty: faculty,
+            tier: tier,
+            subscriptionExpiry: expiry,
+            token: session.accessToken,
+            isAdmin: isAdm,
+            isBanned: true,
+            banReason: banReason,
+            isInactiveSuspended: true,
+            reactivationCount: (profile?['reactivation_count'] as num?)?.toInt() ?? 0,
+            rejectedPaymentsCount: (profile?['rejected_payments_count'] as num?)?.toInt() ?? 0,
+            studyYear: (profile?['study_year'] as num?)?.toInt() ?? (meta['study_year'] as num?)?.toInt(),
+            avatarUrl: avatarUrl,
+            bio: profile?['bio']?.toString() ?? meta['bio']?.toString(),
+            phone: profile?['phone']?.toString() ?? meta['phone']?.toString(),
+            wilaya: profile?['wilaya']?.toString() ?? meta['wilaya']?.toString(),
+            residencyTargetYear: profile?['residency_target_year']?.toString() ?? meta['residency_target_year']?.toString(),
+          );
+          emit(state.copyWith(
+            status: AuthStatus.inactivitySuspended,
+            user: suspendedUser,
+            errorMessage: 'Votre compte Medsina est momentanément suspendu suite à 7 jours d\'inactivité.',
+          ));
+          return;
+        }
+
+        await SupabaseService.signOut();
+        await prefs.remove(_userPrefsKey);
+        emit(state.copyWith(
+          status: AuthStatus.unauthenticated,
+          errorMessage: 'Votre compte Medsina est suspendu. Contactez le support : doc.hafedh26@gmail.com',
+        ));
+        return;
+      }
+
+      final user = UserModel(
+        id: supaUser.id,
+        fullName: fullName,
+        email: email,
+        medicalRole: medicalRole,
+        faculty: faculty,
+        tier: tier,
+        subscriptionExpiry: expiry,
+        token: session.accessToken,
+        isAdmin: isAdm,
+        isBanned: false,
+        banReason: banReason,
+        rejectedPaymentsCount: (profile?['rejected_payments_count'] as num?)?.toInt() ?? 0,
+        studyYear: (profile?['study_year'] as num?)?.toInt() ?? (meta['study_year'] as num?)?.toInt(),
+        avatarUrl: avatarUrl,
+        bio: profile?['bio']?.toString() ?? meta['bio']?.toString(),
+        phone: profile?['phone']?.toString() ?? meta['phone']?.toString(),
+        wilaya: profile?['wilaya']?.toString() ?? meta['wilaya']?.toString(),
+        residencyTargetYear: profile?['residency_target_year']?.toString() ?? meta['residency_target_year']?.toString(),
+      );
+
+      await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
+      emit(state.copyWith(
+        status: AuthStatus.authenticated,
+        user: user,
+        successMessage: 'Bienvenue Docteur ! Connexion avec Google réussie.',
+      ));
+      CloudSyncService.instance.syncAll().catchError((e) {
+        debugPrint('[CloudSync] Google login sync error: $e');
+        return false;
+      });
+    } catch (e) {
+      debugPrint('OAuth session handling error: $e');
+      emit(state.copyWith(
+        status: AuthStatus.unauthenticated,
+        errorMessage: 'Erreur lors de la finalisation de la connexion Google.',
+      ));
     }
   }
 
