@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../core/network/supabase_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
 import '../models/module_model.dart';
@@ -23,6 +24,8 @@ class CourseMindmapScreen extends StatefulWidget {
 class _CourseMindmapScreenState extends State<CourseMindmapScreen>
     with SingleTickerProviderStateMixin {
   bool _isLoading = true;
+  bool _isRequested = false;
+  bool _isSubmittingRequest = false;
   Map<String, dynamic>? _mindmapData;
   late TabController _viewModeController;
   int _expandedBranchIndex = 0;
@@ -59,12 +62,54 @@ class _CourseMindmapScreenState extends State<CourseMindmapScreen>
       }
     } catch (_) {}
 
+    // Fallback: check Supabase cloud `course_mindmaps`
+    try {
+      final cloudMindmap =
+          await SupabaseService.fetchCourseMindmapFromCloud(widget.course.id);
+      if (cloudMindmap != null && mounted) {
+        setState(() {
+          _mindmapData = cloudMindmap;
+          _isLoading = false;
+        });
+        return;
+      }
+    } catch (_) {}
+
+    final requested =
+        await SupabaseService.hasUserRequestedMindmap(widget.course.id);
+
     if (mounted) {
       setState(() {
         _mindmapData = null;
+        _isRequested = requested;
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _requestMindmapCreation() async {
+    if (_isSubmittingRequest || _isRequested) return;
+    setState(() => _isSubmittingRequest = true);
+
+    await SupabaseService.requestMindmapCreation(
+      courseId: widget.course.id,
+      courseName: widget.course.name,
+      moduleName: widget.moduleName,
+    );
+
+    if (!mounted) return;
+    setState(() {
+      _isSubmittingRequest = false;
+      _isRequested = true;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Demande envoyée pour "${widget.course.name}" 🧠. Vous serez notifié dès sa création !',
+        ),
+        backgroundColor: const Color(0xFF10B981),
+      ),
+    );
   }
 
   String _resolvePdfUrl() {

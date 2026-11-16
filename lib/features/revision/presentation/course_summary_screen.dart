@@ -1,6 +1,9 @@
+import 'dart:convert';
 import '../../comments/presentation/medical_comments_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import '../../../../core/network/supabase_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
 import '../data/course_summary_repository.dart';
@@ -33,12 +36,17 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
   CourseSummaryModel? _summary;
   bool _isLoading = true;
   bool _isGenerating = false;
+  bool _hasMindmap = false;
+  bool _isMindmapRequested = false;
+  bool _isSubmittingMindmapRequest = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _hasMindmap = widget.course.hasMindmap;
     _loadSummary();
+    _checkMindmapAvailability();
   }
 
   @override
@@ -60,6 +68,59 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _checkMindmapAvailability() async {
+    bool found = widget.course.hasMindmap;
+    if (!found) {
+      try {
+        final jsonStr =
+            await rootBundle.loadString('assets/data/course_mindmaps.json');
+        final Map<String, dynamic> all = jsonDecode(jsonStr);
+        if (all.containsKey(widget.course.id)) {
+          found = true;
+        }
+      } catch (_) {}
+    }
+    if (!found) {
+      try {
+        final cloud =
+            await SupabaseService.fetchCourseMindmapFromCloud(widget.course.id);
+        if (cloud != null) found = true;
+      } catch (_) {}
+    }
+    final requested = found
+        ? false
+        : await SupabaseService.hasUserRequestedMindmap(widget.course.id);
+    if (mounted) {
+      setState(() {
+        _hasMindmap = found;
+        _isMindmapRequested = requested;
+      });
+    }
+  }
+
+  Future<void> _handleRequestMindmap() async {
+    if (_isSubmittingMindmapRequest || _isMindmapRequested) return;
+    setState(() => _isSubmittingMindmapRequest = true);
+    await SupabaseService.requestMindmapCreation(
+      courseId: widget.course.id,
+      courseName: widget.course.name,
+      moduleName: widget.moduleName,
+    );
+    if (!mounted) return;
+    setState(() {
+      _isSubmittingMindmapRequest = false;
+      _isMindmapRequested = true;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Demande de Mind Map envoyée pour "${widget.course.name}" 🧠',
+        ),
+        backgroundColor: const Color(0xFF10B981),
+      ),
+    );
   }
 
   Future<void> _handleGenerateSummary() async {

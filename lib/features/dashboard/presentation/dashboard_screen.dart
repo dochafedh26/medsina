@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../../core/services/focus_mode_service.dart';
 import '../../../core/services/platform_stats_service.dart';
 import '../../../core/services/recent_activity_service.dart';
 import '../../../core/services/user_loyalty_service.dart';
@@ -11,6 +12,9 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/medsina_colors.dart';
 import '../../../core/theme/theme_controller.dart';
 import '../../../core/utils/admin_dashboard_launcher.dart';
+import '../../../core/widgets/focus_mode_sheet.dart';
+import '../../clinical/presentation/clinical_screen.dart';
+import '../../revision/bloc/revision_bloc.dart';
 import '../../achievements/presentation/achievements_screen.dart';
 import '../../ai_assistant/presentation/study_coach_screen.dart';
 import '../../analytics/presentation/performance_analytics_screen.dart';
