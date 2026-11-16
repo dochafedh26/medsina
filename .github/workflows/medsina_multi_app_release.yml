@@ -2,8 +2,6 @@ name: Medsina Multi-App Release
 
 on:
   push:
-    branches:
-      - main
     tags:
       - 'residanat-v*'
       - 'clinique-v*'
