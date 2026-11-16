@@ -507,22 +507,23 @@
   },
   {
     "id": "memento_syndrome_meninge_aigu",
-    "title": "🧠 Syndrome Méningé Aigu & Ponction Lombaire",
-    "category": "Urgences Neurologiques & Infectieuses",
+    "title": "⚡ Syndrome Méningé Aigu & PL",
+    "category": "Infectiologie & Urgences Neurologiques",
     "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation immédiate, recherche de signes de gravité (troubles de la conscience Glasgow < 12, déficit focal, sepsis sévère, purpura fulminans) et sécurisation des voies aériennes.",
-      "Étape 2 : Si purpura fulminans ou suspicion forte de méningite bact, ATBthérapie IV immédiate (C3G: Ceftriaxone 2g IV) et Dexaméthasone (10mg IV) AVANT toute imagerie, puis TDM cérébrale urgente pour éliminer une HIC/masse.",
-      "Étape 3 : Réaliser la Ponction Lombaire (PL) en décubitus latéral si pas de contre-indication (pas de signe de focalisation, pas de trouble hémostase, pas d'infection cutanée au point de ponction) ; mesurer la pression d'ouverture et prélever 4 tubes.",
-      "Étape 4 : Analyse biochimique et cytologique immédiate au labo (aspect trouble = urgence, glycorachie vs glycémie, protéinorachie, cellularité avec formule) et mise en route du traitement adapté (antibiothérapie probabiliste ou antivirale par Aciclovir 10mg/kg/8h si suspicion d'hsv).",
-      "Étape 5 : Piège médico-légal absolu : ne JAMAIS retarder l'antibiothérapie de plus de 30 minutes en cas de purpura fulminans ou de sepsis pour faire une PL ou une TDM. La PL est formellement contre-indiquée en présence de signes de localisation neurologique ou de troubles hémostase majeurs."
+      "Étape 1 : Évaluation immédiate de la conscience (Glasgow), recherche de signes de choc, de purpura fulminans et de signes de focalisation ou d'engagement cérébral.",
+      "Étape 2 : Si purpura fulminans ou signes de choc : Céfotaxime IV (2 g) ou Ceftriaxone en urgence absolue avant toute imagerie, PUIS hémocultures et bilan de coagulation.",
+      "Étape 3 : Si suspicion d'hypertension intracrânienne (HIC) ou signes de focalisation : réaliser une TDM cérébrale en urgence avant la Ponction Lombaire (PL).",
+      "Étape 4 : Réalisation de la PL en décubitus latéral si pas de contre-indication (mesure de la pression d'ouverture, tubes pour biochimie, cytologie, bactériologie/antigénurie).",
+      "Étape 5 : Antibiothérapie probabiliste immédiate post-PL si LCR trouble : Céfotaxime (100-200 mg/kg/j) + Aciclovir (10 mg/kg/8h) si suspicion d'encéphalite herpétique.",
+      "Étape 6 : Piège : Ne jamais retarder l'antibiothérapie en attendant la TDM ou la PL si purpura ou instabilité hémodynamique. La PL est formellement contre-indiquée en cas de troubles de l'hémostase sévères ou d'engagement."
     ],
-    "scientific_references": "Consensus SFMU / SPILF / SRLF / MSPRH Algérie",
+    "scientific_references": "Consensus SPILF / SRLF / SFMU / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-14T18:11:04.150494+00:00",
-    "updated_at": "2026-11-14T18:11:04.150509+00:00"
+    "created_at": "2026-11-16T22:11:25.379861+00:00",
+    "updated_at": "2026-11-16T22:11:25.379880+00:00"
   },
   {
     "id": "memento_hyperkalemie_aigue",
