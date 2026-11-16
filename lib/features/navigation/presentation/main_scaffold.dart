@@ -22,7 +22,10 @@ import '../../notifications/models/medical_notification.dart';
 import '../../notifications/presentation/notifications_modal_sheet.dart';
 import '../../notifications/services/notification_navigation_service.dart';
 import '../../notifications/services/realtime_notification_service.dart';
+import '../../../core/services/focus_mode_service.dart';
 import '../../../core/services/ota_update_service.dart';
+import '../../../core/widgets/focus_mode_sheet.dart';
+import '../../revision/bloc/revision_bloc.dart';
 import 'ota_update_dialog.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
@@ -63,6 +66,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   void initState() {
     super.initState();
+    FocusModeService.instance.initialize();
     final initialUser = context.read<AuthBloc>().state.user;
     RealtimeNotificationService.instance.setCurrentUser(
       initialUser?.id,
@@ -1015,6 +1019,24 @@ class _MainScaffoldState extends State<MainScaffold> {
                 onTap: () => _openOmnisearch(context),
               ),
               const SizedBox(width: 4),
+              AnimatedBuilder(
+                animation: FocusModeService.instance,
+                builder: (context, _) {
+                  final active = FocusModeService.instance.isEnabled;
+                  return _buildDockIconButton(
+                    icon: Icons.center_focus_strong_rounded,
+                    tooltip: active
+                        ? 'Mode Focus : ${FocusModeService.instance.focusLabel}'
+                        : 'Activer Mode Focus (Spécialité / Module)',
+                    color: active ? Colors.white : AppTheme.primaryTeal,
+                    bgTint: active
+                        ? AppTheme.primaryTeal
+                        : AppTheme.primaryTeal.withValues(alpha: 0.12),
+                    onTap: () => _openFocusModeSheet(context),
+                  );
+                },
+              ),
+              const SizedBox(width: 4),
               _buildNotificationBellAction(context, compact: true),
               const SizedBox(width: 4),
               _buildDockIconButton(
@@ -1033,6 +1055,19 @@ class _MainScaffoldState extends State<MainScaffold> {
         const SizedBox(width: 14),
       ],
     );
+  }
+
+  void _openFocusModeSheet(BuildContext context) {
+    List<String> moduleNames = [];
+    try {
+      moduleNames = context
+          .read<RevisionBloc>()
+          .state
+          .modules
+          .map((m) => m.name)
+          .toList();
+    } catch (_) {}
+    FocusModeSheet.show(context, availableModuleNames: moduleNames);
   }
 
   void _showMobileQuickToolsSheet(BuildContext context) {

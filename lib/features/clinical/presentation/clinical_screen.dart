@@ -196,29 +196,40 @@ class _ProtocolsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return BlocBuilder<ClinicalBloc, ClinicalState>(
-      builder: (context, state) {
-        if (state.status == ClinicalStatus.loading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        // Reorder protocols if a target protocol ID was specified
-        var protocols = List<ClinicalProtocol>.from(state.filteredProtocols);
-        if (targetProtocolId != null && targetProtocolId!.isNotEmpty) {
-          final query = targetProtocolId!.toLowerCase();
-          final idx = protocols.indexWhere((p) =>
-              p.id.toLowerCase() == query ||
-              p.id.toLowerCase().contains(query) ||
-              p.title.toLowerCase().contains(query));
-          if (idx > 0) {
-            final target = protocols.removeAt(idx);
-            protocols.insert(0, target);
+    return AnimatedBuilder(
+      animation: FocusModeService.instance,
+      builder: (context, _) => BlocBuilder<ClinicalBloc, ClinicalState>(
+        builder: (context, state) {
+          if (state.status == ClinicalStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
           }
-        }
 
-        return Column(
-          children: [
-            // Sleek Pinterest Unified Search & Specialty Pills Header
+          final focusService = FocusModeService.instance;
+          // Reorder protocols if a target protocol ID was specified
+          var protocols = List<ClinicalProtocol>.from(state.filteredProtocols);
+          if (focusService.isEnabled) {
+            protocols = protocols
+                .where((p) =>
+                    focusService.matchesText(p.specialty) ||
+                    focusService.matchesText(p.title))
+                .toList();
+          }
+          if (targetProtocolId != null && targetProtocolId!.isNotEmpty) {
+            final query = targetProtocolId!.toLowerCase();
+            final idx = protocols.indexWhere((p) =>
+                p.id.toLowerCase() == query ||
+                p.id.toLowerCase().contains(query) ||
+                p.title.toLowerCase().contains(query));
+            if (idx > 0) {
+              final target = protocols.removeAt(idx);
+              protocols.insert(0, target);
+            }
+          }
+
+          return Column(
+            children: [
+              const FocusModeActiveBanner(),
+              // Sleek Pinterest Unified Search & Specialty Pills Header
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
               child: Column(
@@ -362,6 +373,7 @@ class _ProtocolsTab extends StatelessWidget {
           ],
         );
       },
+      ),
     );
   }
 }

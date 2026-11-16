@@ -685,33 +685,100 @@ class _CourseSummaryScreenState extends State<CourseSummaryScreen>
               ),
             ),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8B5CF6),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 3,
-              ),
-              icon: const Icon(Icons.account_tree_rounded),
-              label: const Text(
-                'Ouvrir la Mind Map du Cours 🧠',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CourseMindmapScreen(
-                      course: widget.course,
-                      moduleName: widget.moduleName,
-                    ),
+            if (_hasMindmap)
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8B5CF6),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                );
-              },
-            ),
+                  elevation: 3,
+                ),
+                icon: const Icon(Icons.account_tree_rounded),
+                label: const Text(
+                  'Ouvrir la Mind Map du Cours 🧠',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CourseMindmapScreen(
+                        course: widget.course,
+                        moduleName: widget.moduleName,
+                      ),
+                    ),
+                  );
+                },
+              )
+            else ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: const Color(0xFFF59E0B).withValues(alpha: 0.35),
+                  ),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded,
+                        size: 18, color: Color(0xFFD97706)),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Cette Mind Map n\'est pas encore disponible. Demandez sa création prioritaire !',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFD97706),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _isMindmapRequested
+                      ? const Color(0xFF10B981)
+                      : const Color(0xFF8B5CF6),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 3,
+                ),
+                icon: _isSubmittingMindmapRequest
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Icon(_isMindmapRequested
+                        ? Icons.check_circle_rounded
+                        : Icons.add_circle_outline_rounded),
+                label: Text(
+                  _isMindmapRequested
+                      ? 'Demande envoyée ✅'
+                      : (_isSubmittingMindmapRequest
+                          ? 'Envoi en cours...'
+                          : 'Demander la création de cette Mind Map 🧠'),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+                onPressed: (_isMindmapRequested || _isSubmittingMindmapRequest)
+                    ? null
+                    : _handleRequestMindmap,
+              ),
+            ],
           ],
         ),
       ),

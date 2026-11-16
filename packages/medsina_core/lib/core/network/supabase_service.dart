@@ -3500,4 +3500,136 @@ class SupabaseService {
           'Sources Telegram et Google Drive surveillées par le scanner Médecine Blida',
     );
   }
+
+  // --- COURSE MIND MAPS & USER REQUESTS ---
+
+  static const String _localMindmapRequestsKey = 'medsina_requested_mindmaps_v1';
+
+  /// Fetch a Mind Map tree from Supabase `course_mindmaps` if generated after app build.
+  static Future<Map<String, dynamic>?> fetchCourseMindmapFromCloud(
+    String courseId,
+  ) async {
+    try {
+      final res = await client
+          .from('course_mindmaps')
+          .select()
+          .eq('course_id', courseId)
+          .maybeSingle()
+          .timeout(const Duration(seconds: 5));
+      if (res != null) {
+        return Map<String, dynamic>.from(res);
+      }
+    } catch (e) {
+      debugPrint('Notice fetching cloud mindmap for $courseId: $e');
+    }
+    return null;
+  }
+
+  /// Check whether the current user already requested a Mind Map for [courseId].
+  static Future<bool> hasUserRequestedMindmap(String courseId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final localIds = prefs.getStringList(_localMindmapRequestsKey) ?? <String>[];
+      if (localIds.contains(courseId)) return true;
+
+      final uid = currentSession?.user.id;
+      if (uid != null && uid.isNotEmpty) {
+        final existing = await client
+            .from('mindmap_requests')
+            .select('id')
+            .eq('course_id', courseId)
+            .eq('user_id', uid)
+            .maybeSingle()
+            .timeout(const Duration(seconds: 4));
+        if (existing != null) {
+          await prefs.setStringList(
+            _localMindmapRequestsKey,
+            {...localIds, courseId}.toList(),
+          );
+          return true;
+        }
+      }
+    } catch (e) {
+      debugPrint('Notice checking mindmap request status: $e');
+    }
+    return false;
+  }
+
+  /// Submit a user request to create a Mind Map for [courseId] and notify Admins.
+  static Future<bool> requestMindmapCreation({
+    required String courseId,
+    required String courseName,
+    String? moduleName,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final localIds = prefs.getStringList(_localMindmapRequestsKey) ?? <String>[];
+      if (!localIds.contains(courseId)) {
+        await prefs.setStringList(
+          _localMindmapRequestsKey,
+          [...localIds, courseId],
+        );
+      }
+    } catch (_) {}
+
+    final user = currentUser;
+    final uid = user?.id ?? 'anonymous';
+    final email = user?.email ?? '';
+    final fullName = (user?.userMetadata?['full_name'] ??
+            user?.userMetadata?['name'] ??
+            (email.isNotEmpty ? email.split('@').first : 'Praticien Medsina'))
+        .toString();
+
+    bool cloudSaved = false;
+    try {
+      await client
+          .from('mindmap_requests')
+          .upsert(
+            {
+              'course_id': courseId,
+              'course_name': courseName,
+              'module_name': moduleName ?? '',
+              'user_id': uid,
+              'user_email': email,
+              'user_name': fullName,
+              'status': 'pending',
+              'updated_at': DateTime.now().toUtc().toIso8601String(),
+            },
+            onConflict: 'course_id,user_id',
+          )
+          .timeout(const Duration(seconds: 6));
+      cloudSaved = true;
+    } catch (e) {
+      debugPrint('Notice saving mindmap_requests to Supabase: $e');
+    }
+
+    try {
+      await client
+          .from('medical_notifications')
+          .insert({
+            'id': 'mindmap_req_${courseId}_${DateTime.now().millisecondsSinceEpoch}',
+            'title': '🧠 Demande de Mind Map : $courseName',
+            'message':
+                '$fullName demande la création de la Mind Map pour "$courseName"${moduleName != null && moduleName.isNotEmpty ? " ($moduleName)" : ""}.',
+            'type': 'announcement',
+            'target_role': 'admin',
+            'is_broadcast': false,
+            'metadata': {
+              'is_admin_only': true,
+              'target_role': 'admin',
+              'request_type': 'mindmap_creation',
+              'course_id': courseId,
+              'course_name': courseName,
+              'module_name': moduleName ?? '',
+              'user_id': uid,
+              'user_email': email,
+            },
+          })
+          .timeout(const Duration(seconds: 5));
+    } catch (e) {
+      debugPrint('Notice notifying admin of mindmap request: $e');
+    }
+
+    return cloudSaved || true;
+  }
 }

@@ -626,33 +626,86 @@ class _CourseMindmapScreenState extends State<CourseMindmapScreen>
 
   Widget _buildEmptyState(bool isDark) {
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.bubble_chart_rounded,
-                size: 64, color: Colors.grey.shade400),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF8B5CF6).withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.account_tree_rounded,
+                size: 56,
+                color: Color(0xFF8B5CF6),
+              ),
+            ),
             const SizedBox(height: 16),
             const Text(
-              'Mind Map en cours d\'optimisation',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              'Mind Map non encore disponible',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
             ),
             const SizedBox(height: 8),
             Text(
-              'Le pipeline d\'ingestion Google Drive génère automatiquement les Mind Maps vectorielles pour l\'ensemble des 1 205 cours du catalogue.',
+              'Ce cours ne dispose pas encore de Mind Map vectorielle. Demandez sa création prioritaire à l\'équipe Medsina !',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 12.5,
                 color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryTeal,
+                backgroundColor: _isRequested
+                    ? const Color(0xFF10B981)
+                    : const Color(0xFF8B5CF6),
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              icon: const Icon(Icons.picture_as_pdf_rounded),
+              icon: _isSubmittingRequest
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Icon(_isRequested
+                      ? Icons.check_circle_rounded
+                      : Icons.add_circle_outline_rounded),
+              label: Text(
+                _isRequested
+                    ? 'Demande envoyée ✅'
+                    : (_isSubmittingRequest
+                        ? 'Envoi en cours...'
+                        : 'Demander la création de cette Mind Map 🧠'),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              onPressed:
+                  (_isRequested || _isSubmittingRequest) ? null : _requestMindmapCreation,
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.primaryTeal,
+                side: const BorderSide(color: AppTheme.primaryTeal),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
               label: const Text('Consulter le Support PDF'),
               onPressed: () {
                 Navigator.of(context).push(

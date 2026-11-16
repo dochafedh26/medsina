@@ -112,6 +112,11 @@ class DashboardScreen extends StatelessWidget {
                   // ROW 1.5: Daily Spaced Repetition (FSRS) Review Widget
                   const DailyFsrsReviewCard(),
 
+                  const SizedBox(height: 16),
+
+                  // ROW 1.6: Specialty / Module Rotation Focus Card
+                  _buildFocusModeDashboardCard(context),
+
                   const SizedBox(height: 18),
 
                   // ROW 2: KPI Stats Bento Grid (3 equal Bento tiles)
@@ -289,6 +294,210 @@ class DashboardScreen extends StatelessWidget {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  Widget _buildFocusModeDashboardCard(BuildContext context) {
+    return AnimatedBuilder(
+      animation: FocusModeService.instance,
+      builder: (context, _) {
+        final focus = FocusModeService.instance;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        void openSelector() {
+          List<String> moduleNames = [];
+          try {
+            moduleNames = context
+                .read<RevisionBloc>()
+                .state
+                .modules
+                .map((m) => m.name)
+                .toList();
+          } catch (_) {}
+          FocusModeSheet.show(context, availableModuleNames: moduleNames);
+        }
+
+        if (!focus.isEnabled) {
+          return InkWell(
+            onTap: openSelector,
+            borderRadius: BorderRadius.circular(18),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: AppTheme.bentoCardDecoration(context, radius: 18),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryTeal.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.center_focus_strong_rounded,
+                      color: AppTheme.primaryTeal,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Mode Focus • Spécialité ou Rotation de Module',
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w800,
+                            color: isDark ? Colors.white : AppTheme.clinicalNavy,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Médecin/Interne en service ou étudiant en stage ? Concentrez tout sur votre module.',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton.tonal(
+                    onPressed: openSelector,
+                    child: const Text(
+                      'Configurer',
+                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [
+                      const Color(0xFF0F766E).withValues(alpha: 0.32),
+                      const Color(0xFF1E293B),
+                    ]
+                  : [
+                      const Color(0xFFF0FDFA),
+                      const Color(0xFFCCFBF1).withValues(alpha: 0.55),
+                    ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppTheme.primaryTeal.withValues(alpha: 0.45),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryTeal,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.center_focus_strong_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          focus.isSpecialtyMode
+                              ? 'ESPACE SPÉCIALITÉ ACTIF'
+                              : 'ROTATION DE MODULE ACTIVE',
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.6,
+                            color: isDark
+                                ? const Color(0xFF5EEAD4)
+                                : const Color(0xFF0F766E),
+                          ),
+                        ),
+                        Text(
+                          focus.focusLabel ?? '',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white : AppTheme.clinicalNavy,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: openSelector,
+                    child: const Text('Changer'),
+                  ),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFDC2626),
+                      side: BorderSide(
+                        color: const Color(0xFFDC2626).withValues(alpha: 0.35),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      minimumSize: const Size(0, 34),
+                    ),
+                    onPressed: () => focus.disableFocus(),
+                    child: const Text(
+                      'Tout afficher',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppTheme.primaryTeal,
+                    ),
+                    icon: const Icon(Icons.menu_book_rounded, size: 16),
+                    label: Text('Cours & QCMs • ${focus.focusLabel}'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const RevisionCatalogScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.medical_services_rounded, size: 16),
+                    label: Text('CAT & Protocoles • ${focus.focusLabel}'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ClinicalScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );

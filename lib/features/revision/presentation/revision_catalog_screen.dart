@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/focus_mode_service.dart';
 import '../../../core/services/free_trial_quota_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/focus_mode_sheet.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/models/user_model.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
@@ -758,56 +760,65 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
               ),
             )
           : null,
-      body: BlocBuilder<RevisionBloc, RevisionState>(
-        builder: (context, state) {
-          if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppTheme.primaryTeal),
-            );
-          }
-
-          final filteredModules = state.modules.where((m) {
-            bool matchesCat = true;
-            if (isStudent &&
-                _selectedCategory == 'Mon Année (${studentYear}e)') {
-              matchesCat =
-                  ResidencyRepository.getYearForModule(m) == studentYear;
-            } else if (_selectedCategory == 'Tous' ||
-                _selectedCategory == 'Tous les Modules') {
-              matchesCat = true;
-            } else if (_selectedCategory.contains('1ère')) {
-              matchesCat = ResidencyRepository.getYearForModule(m) == 1;
-            } else if (_selectedCategory.contains('2ème')) {
-              matchesCat = ResidencyRepository.getYearForModule(m) == 2;
-            } else if (_selectedCategory.contains('3ème')) {
-              matchesCat = ResidencyRepository.getYearForModule(m) == 3;
-            } else if (_selectedCategory.contains('4ème')) {
-              matchesCat = ResidencyRepository.getYearForModule(m) == 4;
-            } else if (_selectedCategory.contains('5ème')) {
-              matchesCat = ResidencyRepository.getYearForModule(m) == 5;
-            } else if (_selectedCategory.contains('6ème')) {
-              matchesCat = ResidencyRepository.getYearForModule(m) == 6;
-            } else {
-              matchesCat = m.category.toLowerCase().contains(
-                _selectedCategory.toLowerCase(),
+      body: AnimatedBuilder(
+        animation: FocusModeService.instance,
+        builder: (context, _) => BlocBuilder<RevisionBloc, RevisionState>(
+          builder: (context, state) {
+            if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppTheme.primaryTeal),
               );
             }
 
-            if (!matchesCat) return false;
+            final focusService = FocusModeService.instance;
+            final filteredModules = state.modules.where((m) {
+              if (focusService.isEnabled &&
+                  !focusService.matchesText(m.name) &&
+                  !focusService.matchesText(m.category)) {
+                return false;
+              }
 
-            return m.courses.any((c) {
-              final matchesSearch =
-                  _searchQuery.isEmpty ||
-                  m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                  c.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                  (c.teacher != null &&
-                      c.teacher!
-                          .toLowerCase()
-                          .contains(_searchQuery.toLowerCase()));
-              final matchesFilter = _courseMatchesFilter(c, _selectedCourseFilter);
-              return matchesSearch && matchesFilter;
-            });
-          }).toList();
+              bool matchesCat = true;
+              if (isStudent &&
+                  _selectedCategory == 'Mon Année (${studentYear}e)') {
+                matchesCat =
+                    ResidencyRepository.getYearForModule(m) == studentYear;
+              } else if (_selectedCategory == 'Tous' ||
+                  _selectedCategory == 'Tous les Modules') {
+                matchesCat = true;
+              } else if (_selectedCategory.contains('1ère')) {
+                matchesCat = ResidencyRepository.getYearForModule(m) == 1;
+              } else if (_selectedCategory.contains('2ème')) {
+                matchesCat = ResidencyRepository.getYearForModule(m) == 2;
+              } else if (_selectedCategory.contains('3ème')) {
+                matchesCat = ResidencyRepository.getYearForModule(m) == 3;
+              } else if (_selectedCategory.contains('4ème')) {
+                matchesCat = ResidencyRepository.getYearForModule(m) == 4;
+              } else if (_selectedCategory.contains('5ème')) {
+                matchesCat = ResidencyRepository.getYearForModule(m) == 5;
+              } else if (_selectedCategory.contains('6ème')) {
+                matchesCat = ResidencyRepository.getYearForModule(m) == 6;
+              } else {
+                matchesCat = m.category.toLowerCase().contains(
+                  _selectedCategory.toLowerCase(),
+                );
+              }
+
+              if (!matchesCat) return false;
+
+              return m.courses.any((c) {
+                final matchesSearch =
+                    _searchQuery.isEmpty ||
+                    m.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                    c.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                    (c.teacher != null &&
+                        c.teacher!
+                            .toLowerCase()
+                            .contains(_searchQuery.toLowerCase()));
+                final matchesFilter = _courseMatchesFilter(c, _selectedCourseFilter);
+                return matchesSearch && matchesFilter;
+              });
+            }).toList();
 
           final totalVisibleCourses = filteredModules.fold<int>(
             0,
@@ -915,6 +926,10 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
 
               return Column(
                 children: [
+                  FocusModeActiveBanner(
+                    availableModuleNames:
+                        state.modules.map((m) => m.name).toList(),
+                  ),
                   // Navigation: On desktop show full pill-segmented TabBar; on mobile show sleek section selector!
                   isDesktopWide
                       ? Container(
@@ -1001,6 +1016,7 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
             },
           );
         },
+        ),
       ),
     );
   }

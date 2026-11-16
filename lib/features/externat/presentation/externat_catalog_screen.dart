@@ -114,43 +114,58 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-      body: BlocBuilder<RevisionBloc, RevisionState>(
-        builder: (context, state) {
-          if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.primaryTeal));
-          }
+      body: AnimatedBuilder(
+        animation: FocusModeService.instance,
+        builder: (context, _) => BlocBuilder<RevisionBloc, RevisionState>(
+          builder: (context, state) {
+            if (state.status == RevisionStatus.loading && state.modules.isEmpty) {
+              return const Center(child: CircularProgressIndicator(color: AppTheme.primaryTeal));
+            }
 
-          final yearModules = ResidencyRepository.filterModulesForStudent(state.modules, _selectedYear);
-          final filteredModules = yearModules.where((m) {
-            if (_searchQuery.isEmpty) return true;
-            final query = _searchQuery.toLowerCase();
-            final matchesMod = m.name.toLowerCase().contains(query);
-            final matchesCourse = m.courses.any((c) => c.name.toLowerCase().contains(query));
-            return matchesMod || matchesCourse;
-          }).toList();
+            final focusService = FocusModeService.instance;
+            final yearModules = ResidencyRepository.filterModulesForStudent(state.modules, _selectedYear);
+            final filteredModules = yearModules.where((m) {
+              if (focusService.isEnabled &&
+                  !focusService.matchesText(m.name) &&
+                  !focusService.matchesText(m.category)) {
+                return false;
+              }
+              if (_searchQuery.isEmpty) return true;
+              final query = _searchQuery.toLowerCase();
+              final matchesMod = m.name.toLowerCase().contains(query);
+              final matchesCourse = m.courses.any((c) => c.name.toLowerCase().contains(query));
+              return matchesMod || matchesCourse;
+            }).toList();
 
-          final totalYearCourses = yearModules.fold(0, (sum, m) => sum + m.courses.length);
+            final totalYearCourses = yearModules.fold(0, (sum, m) => sum + m.courses.length);
 
-          return RefreshIndicator(
-            color: AppTheme.primaryTeal,
-            onRefresh: () async {
-              context.read<RevisionBloc>().add(LoadModulesEvent());
-              context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
-            },
-            child: CustomScrollView(
-              slivers: [
-                // 1. Sticky Year Selector & Header Bar
-                SliverToBoxAdapter(
-                  child: _buildYearSelectorHeader(context, isDark, user),
-                ),
-
-                // 2. Year Motivational Banner & Stats
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
-                    child: _buildYearInfoCard(isDark, yearModules.length, totalYearCourses),
+            return RefreshIndicator(
+              color: AppTheme.primaryTeal,
+              onRefresh: () async {
+                context.read<RevisionBloc>().add(LoadModulesEvent());
+                context.read<RevisionBloc>().add(LoadSavedSessionsEvent());
+              },
+              child: CustomScrollView(
+                slivers: [
+                  // 1. Sticky Year Selector & Header Bar
+                  SliverToBoxAdapter(
+                    child: _buildYearSelectorHeader(context, isDark, user),
                   ),
-                ),
+
+                  // 1.5 Active Focus Mode Banner
+                  SliverToBoxAdapter(
+                    child: FocusModeActiveBanner(
+                      availableModuleNames: state.modules.map((m) => m.name).toList(),
+                    ),
+                  ),
+
+                  // 2. Year Motivational Banner & Stats
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                      child: _buildYearInfoCard(isDark, yearModules.length, totalYearCourses),
+                    ),
+                  ),
 
                 // 2.5 Active Rotation & AI Year Tutor Banner
                 SliverToBoxAdapter(
@@ -215,6 +230,7 @@ class _ExternatCatalogScreenState extends State<ExternatCatalogScreen> {
             ),
           );
         },
+        ),
       ),
     );
   }
