@@ -337,16 +337,17 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Conditionnement immédiat (2 VVP gros calibre 16-18G), oxygénothérapie, remplissage prudent par cristalloïdes (PAS cible 90-100 mmHg), appel urgent réanimateur et gastro-entérologue.",
-      "Étape 2 : Bilan biologique urgent (NFS, groupage-rhomésus, RAI, TP, TCK, urée, créatinine, bilan hépatique) et commande immédiate de CGR (test de cross-match) si instabilité.",
-      "Étape 3 : Thérapies d'urgence spécifiques : Somatostatine (bolus 250 µg puis 3 mg/24h au PSE) ou Terlipressine (Glypressin 2 mg IV direct puis 1 mg/4h), associés à une antibioprophylaxie IV (Ceftriaxone 1g/j ou Quinolones) et inhibiteur de la pompe à protons IV (ésoméprazole 80 mg).",
-      "Étape 4 : Surveillance armée (conscience, PA, FC, diurèse horaire, Hb), alerte en cas de récidive hémorragique (hématémèse abondante, collapsus) nécessitant la pose d'une sonde de Blakemore (si disponible) et transfert urgent en réanimation.",
-      "Étape 5 : Piège mortel : Ne jamais perfuser massivement du sérum salé isotonique (aggrave l'ascite et l'hypertension portale) ; éviter les sédatifs à forte dose (risque d'encéphalopathie hépatique aigue)."
+      "Étape 1 : Conditionnement immédiat (2 VVP gros calibre 14-16G), oxygénothérapie, bilan pré-transfusionnel (NFS, groupage, rhésus, RAI, hémostase, ionogramme, urée, créatinine) et remplissage prudent (cristalloïdes, objectif PAM >= 65 mmHg ou PAS 90-100 mmHg pour éviter l'aggravation de l'hypertension portale).",
+      "Étape 2 : Instaurer sans délai le traitement vaso-actif par Somatostatine (bolus de 250 µg IV direct puis 3 mg dans 50 ml de G5% à raison de 2 ml/h soit 250 µg/h) ou Terlipressine (Glutack) : 2 mg IV toutes les 4h, relais par 1 mg toutes les 4h après arrêt de l'hémorragie.",
+      "Étape 3 : Antibioprophylaxie systématique (Ceftriaxone 1g/24h IV) et correction des troubles de l'hémostase (PFC si TP < 50% ou TCA > 1,5 témoin, Plaquettes si < 50 G/L) ; l'utilisation des IPP en IV (ésoméprazole 80 mg puis 8 mg/h) est associée pour les lésions associées.",
+      "Étape 4 : Alerter l'hépato-gastro-entérologue de garde pour une endoscopie digestive haute diagnostique et thérapeutique d'hémostase (ligature élastique ou sclérose) dans les 12 premières heures après réanimation hémodynamique.",
+      "Étape 5 : Surveillance armée en déchoquage (conscience, diurèse, constantes horaires) ; en cas d'échec ou d'hémorragie foudroyante réfractaire, mise en place d'une sonde de Blakemore (ou Minnesota) avec ballon gastrique gonflé à 250-300 ml (contre-indication formelle : dépassement de 12 à 24h en place sous peine de nécrose/perforation œsophagienne) et transfert immédiat en Réanimation.",
+      "Étape 6 : Piège médico-légal et contre-indication absolue : Eviter le remplissage massif par macromolécules ou sérum salé isotonique en excès qui majore l'hypertension portale et aggrave le saignement ; ne jamais débuter l'endoscopie sans sécurisation préalable des voies aériennes chez un patient comateux ou agité."
     ],
-    "scientific_references": "Recommandations Baveno VII, SFMU, SRLF / MSPRH Algérie",
+    "scientific_references": "Recommandations Baveno VII / SFMU / Société Algérienne de Gastro-Entérologie (SAGE)",
     "is_active": true,
-    "created_at": "2026-11-13T08:04:26.377908+00:00",
-    "updated_at": "2026-11-13T08:04:26.377923+00:00"
+    "created_at": "2026-11-16T11:31:15.668332+00:00",
+    "updated_at": "2026-11-16T11:31:15.668357+00:00"
   },
   {
     "id": "memento_asthme_aigu_grave",
