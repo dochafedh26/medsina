@@ -590,6 +590,7 @@ jobs:
 
           records = [
               {
+                  'app_id': 'medsina_all',
                   'platform': 'android',
                   'channel': channel,
                   'version_name': version,
@@ -601,6 +602,7 @@ jobs:
                   'is_active': True
               },
               {
+                  'app_id': 'medsina_all',
                   'platform': 'windows',
                   'channel': channel,
                   'version_name': version,
@@ -614,6 +616,9 @@ jobs:
           ]
 
           for rec in records:
+              patch_url = f\"{url}/rest/v1/app_releases?app_id=eq.medsina_all&platform=eq.{rec['platform']}&channel=eq.{channel}&is_active=eq.true\"
+              pr = requests.patch(patch_url, headers=headers, json={'is_active': False})
+              print(f'Deactivated previous {rec[\"platform\"]} ({channel}) releases: status {pr.status_code}')
               r = requests.post(f'{url}/rest/v1/app_releases', headers=headers, json=rec)
               print(f'Supabase OTA registration for {rec[\"platform\"]} ({channel}): status {r.status_code}')
           "

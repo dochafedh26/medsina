@@ -451,6 +451,7 @@ jobs:
               {
                   'app_id': app_id,
                   'platform': 'android',
+                  'channel': 'stable',
                   'version_name': ver,
                   'build_number': build,
                   'release_notes': f'Mise à jour officielle de {label} (v{ver}).',
@@ -462,6 +463,7 @@ jobs:
               {
                   'app_id': app_id,
                   'platform': 'windows',
+                  'channel': 'stable',
                   'version_name': ver,
                   'build_number': build,
                   'release_notes': f'Mise à jour officielle de {label} (v{ver}).',
@@ -472,10 +474,10 @@ jobs:
               },
           ]
           for row in rows:
-              # Deactivate previous active releases for this app_id & platform so older 2000+ builds don't shadow new builds
-              patch_url = f\"{url}/rest/v1/app_releases?app_id=eq.{app_id}&platform=eq.{row['platform']}&is_active=eq.true\"
+              # Deactivate previous active stable releases for this app_id & platform without touching beta releases
+              patch_url = f\"{url}/rest/v1/app_releases?app_id=eq.{app_id}&platform=eq.{row['platform']}&channel=eq.stable&is_active=eq.true\"
               pr = requests.patch(patch_url, headers=headers, json={'is_active': False})
-              print(f'Deactivated previous {app_id} {row[\"platform\"]} releases: HTTP {pr.status_code}')
+              print(f'Deactivated previous {app_id} {row[\"platform\"]} stable releases: HTTP {pr.status_code}')
 
               r = requests.post(f'{url}/rest/v1/app_releases', headers=headers, json=row)
               print(f'Registered {app_id} {row[\"platform\"]} v{ver}+{build}: HTTP {r.status_code}')
