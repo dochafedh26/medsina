@@ -1400,5 +1400,20 @@
     ],
     "created_at": "2026-11-15T17:54:48.378976+00:00",
     "updated_at": "2026-11-15T17:54:48.378989+00:00"
+  },
+  {
+    "id": "lab_fer_transferrine_ctft",
+    "name": "Fer sérique, Transferrine et Capacité Totale de Fixation (CTFT)",
+    "category": "Vitamines & Oligo-éléments",
+    "normal_range": "Fer sérique: 10 - 30 µmol/L (Hommes) | 9 - 25 µmol/L (Femmes) || Transferrine: 2.0 - 3.6 g/L || CTFT: 45 - 70 µmol/L || Coefficient de saturation de la transferrine (CST): 20 - 40 %",
+    "unit": "Fer/CTFT: µmol/L | Transferrine: g/L | CST: %",
+    "high_interpretation": "Fer et CST élevés (>50% H, >45% F) : Hémochromatose génétique (mutation HFE), Surcharge sidéblaire transfusionnelle, Cytolyse hépatique aiguë, Alcoolisme chronique, Anémies sidéroblastiques. Urgence: Enquête familiale et recherche d'atteintes d'organes cibles (diabète, cirrhose, cardiomyopathie) si hémochromatose. CTFT élevée: Rare, le plus souvent liée à l'augmentation de la synthèse de transferrine (carence martiale).",
+    "low_interpretation": "Fer et CST bas (<15-20%) associés à une Transferrine basse ou normale : Anémie inflammatoire (syndrome inflammatoire chronique, infections, cancers). Fer et CST bas avec Transferrine élevée (>3.6 g/L) et CTFT élevée (>70 µmol/L) : Carence martiale (anémie ferriprive). Urgence: Rechercher une source de saignement occulte (digestif, gynécologique) devant toute carence martiale avérée.",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : Le fer sérique présente une importante variabilité nycthémérale (valeurs maximales le matin à jeun) et subit des variations physiologiques (règles, grossesse). Il ne faut jamais interpréter le fer sérique isolément sans la transferrine et la ferritinémie.",
+      "Formule indispensable au concours : Coefficient de saturation de la transferrine (CST en %) = [Fer sérique (en µmol/L) x 3.98] / [Transferrine (en g/L)], ou calculé via le fer sérique et la CTFT : CST = (Fer sérique / CTFT) x 100."
+    ],
+    "created_at": "2026-11-16T11:53:13.965051+00:00",
+    "updated_at": "2026-11-16T11:53:13.965064+00:00"
   }
 ]
