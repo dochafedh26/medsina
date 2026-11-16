@@ -663,21 +663,21 @@
     "id": "memento_syndrome_meninge_pl",
     "title": "🧠 Syndrome Méningé Aigu & PL d'Urgence",
     "category": "Neurologie & Urgences Infectieuses",
-    "icon_name": "bolt_rounded",
+    "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation immédiate de la conscience (Glasgow), recherche de signes de focalisation, de purpura fulminans (signe de gravité) et de signes d'engagement cérébral.",
-      "Étape 2 : Si purpura fulminans ou suspicion de méningite bactérienne : CÉFOTAXIME IV 2g (ou Ceftriaxone 2g) en urgence absolue avant même l'imagerie ou la PL, + Dexaméthasone 10mg IV 15 min avant ou en même temps.",
-      "Étape 3 : Fond d'œil (si disponible et rapide) et TDM cérébrale en urgence avant la Ponction Lombaire si : déficit focal, crise convulsive inaugurale, Glasgow < 15, ou immunodépression sévère.",
-      "Étape 4 : Réalisation de la Ponction Lombaire (PL) au déchoquage si pas de contre-indication radiologique : mesure de la pression d'ouverture, tubes pour biochimie (protéinorachie, glycorachie, rapport LCR/sang), cytologie et bactériologie (Gram, culture).",
-      "Étape 5 : Surveillance rapprochée (paramètres vitaux, conscience, apparition de purpura), isolement respiratoire de type air/gouttelettes si suspicion de méningocoque, et déclaration obligatoire selon les directives du MSPRH Algérie.",
-      "Étape 6 : Piège médico-légal / CI absolue : Ne jamais retarder l'antibiothérapie au-delà de 30-45 minutes si la PL est différée (TDM non disponible ou encombrée). La présence d'un purpura fulminans est une CI formelle et absolue à la PL (risque d'engagement et collapsus)."
+      "Étape 1 : Évaluation immédiate de l'urgence vitale (Glasgow, signes de choc, purpura fulminans). Rechercher des signes de focalisation ou des signes d'engagement cérébral.",
+      "Étape 2 : Si purpura fulminans ou suspicion forte de méningite bact, administrer C3G (Ceftriaxone 2g IV) immédiatement avant toute imagerie ou PL. Poser 2 VVP, bilan biologique complet + Hémocultures.",
+      "Étape 3 : Fond d'œil (si disponible) et TDM cérébrale en urgence absolue si : déficit focal, crise convulsive, Glasgow < 12 ou immunodépression. Si pas de contre-indication, réaliser la Ponction Lombaire (PL) immédiatement.",
+      "Étape 4 : Analyse LCR au laboratoire : biochimie (protéinorachie, glycorachie/glycémie capillaire), cytologie (formule, numération), bactériologie (direct, cultures). Débuter l'antibiothérapie probabiliste adaptée selon l'âge et le contexte épidémiologique algérien.",
+      "Étape 5 : Surveillance armée en zone de déchoquage (conscience, fonctions vitales, PA). Critères de transfert en réanimation : instabilité hémodynamique, troubles de conscience persistants, détresse respiratoire ou état de mal convulsif.",
+      "Étape 6 : Piège médico-légal / CI absolue : Ne jamais retarder l'antibiothérapie par la TDM ou la PL en cas de purpura fulminans ou de choc. Contre-indications strictes de la PL : instabilité hémodynamique, infection cutanée au point de ponction, HIC avec signes d'engagement."
     ],
-    "scientific_references": "Recommandations SPILF / SFMU / SRLF / Guide de Pratique Clinique MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SPILF / Collège de Réanimation / Ministère de la Santé (MSPRH Algérie)",
     "is_active": true,
-    "created_at": "2026-11-14T03:21:42.149493+00:00",
-    "updated_at": "2026-11-14T03:21:42.149510+00:00"
+    "created_at": "2026-11-16T02:47:25.560787+00:00",
+    "updated_at": "2026-11-16T02:47:25.560800+00:00"
   },
   {
     "id": "memento_pneumothorax_compressif",
