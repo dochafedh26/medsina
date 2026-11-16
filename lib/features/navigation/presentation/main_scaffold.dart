@@ -29,6 +29,7 @@ import '../../revision/bloc/revision_bloc.dart';
 import 'ota_update_dialog.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
 import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
+import '../../whiteboard/presentation/whiteboard_list_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
 import '../../profile/presentation/modern_user_profile_screen.dart';
 import 'package:flutter/services.dart';
@@ -1238,6 +1239,21 @@ class _MainScaffoldState extends State<MainScaffold> {
                     ),
                     _buildQuickToolTile(
                       ctx,
+                      icon: Icons.draw_rounded,
+                      title: 'Whiteboard',
+                      subtitle: 'Mindmaps & PDF',
+                      color: const Color(0xFF0D9488),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const WhiteboardListScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
                       icon: Icons.system_update_rounded,
                       title: 'Mise à jour',
                       subtitle: 'Vérifier OTA',
@@ -1494,6 +1510,18 @@ class _MainScaffoldState extends State<MainScaffold> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const UserGuidePdfViewerScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 3),
+          _buildDockIconButton(
+            icon: Icons.draw_rounded,
+            tooltip: 'Whiteboard & Mindmaps',
+            color: const Color(0xFF0D9488),
+            bgTint: const Color(0xFF0D9488).withValues(alpha: 0.12),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const WhiteboardListScreen()),
               );
             },
           ),
