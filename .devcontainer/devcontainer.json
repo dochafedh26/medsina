@@ -1,0 +1,62 @@
+{
+  "name": "Medsina Dev Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "jdkDistro": "temurin"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "forwardPorts": [
+    3000,
+    8080
+  ],
+  "portsAttributes": {
+    "3000": {
+      "label": "Admin Dashboard (Vite)",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Flutter Web",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter",
+        "ms-python.python",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "dart.flutterSdkPath": "/opt/flutter",
+        "editor.formatOnSave": true,
+        "files.watcherExclude": {
+          "**/.dart_tool/**": true,
+          "**/build/**": true,
+          "**/admin-dashboard/node_modules/**": true
+        }
+      }
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "remoteUser": "vscode"
+}
