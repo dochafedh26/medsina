@@ -473,6 +473,28 @@ class _MainScaffoldState extends State<MainScaffold> {
                       children: [
                         const MedsinaLogo(height: 30),
                         const Spacer(),
+                        if (AppConstants.isBetaBuild) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF7C3AED).withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
+                              ),
+                            ),
+                            child: const Text(
+                              'BETA',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.6,
+                                color: Color(0xFF7C3AED),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                        ],
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                           decoration: BoxDecoration(
@@ -927,7 +949,34 @@ class _MainScaffoldState extends State<MainScaffold> {
     return AppBar(
       titleSpacing: 14,
       toolbarHeight: 58,
-      title: const MedsinaLogo(height: 30),
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const MedsinaLogo(height: 30),
+          if (AppConstants.isBetaBuild) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFF7C3AED).withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
+                ),
+              ),
+              child: const Text(
+                'BETA',
+                style: TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
+                  color: Color(0xFF7C3AED),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
       actions: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
