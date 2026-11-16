@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../lab_analysis/presentation/lab_analysis_screen.dart';
+import '../../whiteboard/presentation/whiteboard_list_screen.dart';
 import '../models/lab_value_model.dart';
 
 class PracticalToolsScreen extends StatefulWidget {
@@ -23,10 +24,10 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
   @override
   void initState() {
     super.initState();
-    final initialIdx = (widget.initialTabIndex >= 0 && widget.initialTabIndex < 3)
+    final initialIdx = (widget.initialTabIndex >= 0 && widget.initialTabIndex < 4)
         ? widget.initialTabIndex
         : 0;
-    _tabController = TabController(length: 3, vsync: this, initialIndex: initialIdx);
+    _tabController = TabController(length: 4, vsync: this, initialIndex: initialIdx);
     _loadData();
   }
 
@@ -118,6 +119,10 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
                   icon: const Icon(Icons.nightlight_round, size: 18),
                   text: 'Mémento (${_allMementos.length})',
                 ),
+                const Tab(
+                  icon: Icon(Icons.draw_rounded, size: 18),
+                  text: 'Whiteboard',
+                ),
               ],
             ),
           ),
@@ -134,6 +139,7 @@ class _PracticalToolsScreenState extends State<PracticalToolsScreen> with Single
                 const LabAnalysisScreen(showAppBar: false),
                 _buildLabValuesTab(),
                 _buildOnCallTab(),
+                const WhiteboardListScreen(embedded: true),
               ],
             ),
           ),

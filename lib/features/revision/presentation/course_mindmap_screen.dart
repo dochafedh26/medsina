@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/network/supabase_service.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../ai_assistant/presentation/clinical_copilot_sheet.dart';
+import '../../whiteboard/presentation/whiteboard_list_screen.dart';
 import '../models/module_model.dart';
 import 'course_pdf_viewer_screen.dart';
 
@@ -175,6 +176,21 @@ class _CourseMindmapScreenState extends State<CourseMindmapScreen>
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.draw_rounded, color: Color(0xFF0D9488)),
+            tooltip: 'Mon Whiteboard / Créer mon Mindmap',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => WhiteboardListScreen(
+                    courseId: widget.course.id,
+                    courseTitle: widget.course.name,
+                    moduleName: widget.moduleName,
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf_rounded,
                 color: Color(0xFFEF4444)),
