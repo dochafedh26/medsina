@@ -1,5 +1,20 @@
 [
   {
+    "id": "mbset_tg_mbset_blida_517",
+    "title": "Simulation Concours MBset : Médecine Blida",
+    "resource_type": "qcm_exam",
+    "source_type": "mbset",
+    "source_origin": "MBset Platform & API (@mbset_blida)",
+    "source_url": "https://app.mbset.com/tests/Blida_2026-11-17_20:00_y2b7g55tg5",
+    "gdrive_file_id": null,
+    "suggested_module_id": "pediatrie",
+    "suggested_course_id": null,
+    "study_year": 7,
+    "ai_summary": "🔥 SIMULATION 5 EME 🔥 💰 0 DA (gratuit) 📅 Mardi 17 Novembre ⏰ à 20:00 📑 60 Qsts ⏱️ 70 min 🔗 le s lien s : 📍 Pediatrie 🍼 📍 https://app.mbset.com/tests/Blida_2026-11-17_20:00_y2b7g55tg5 📍 Gynécologie 🤰 📍 https://app.mbset.com/tests/Blida_2026-11-17_20:00_i1kts0xazz 📍 Endocrino 💦 📍 https://app.mbset.com/tests/Blida_2026-11-...",
+    "status": "pending",
+    "discovered_at": "2026-11-17T03:02:12.015418+00:00"
+  },
+  {
     "id": "tg_mbset_blida_517",
     "title": "🔥 SIMULATION 5 EME 🔥",
     "resource_type": "telegram_post",
