@@ -512,6 +512,8 @@ export async function fetchRealUsers(): Promise<AdminUserItem[]> {
           residencyTargetYear: u.residency_target_year || undefined,
           bio: u.bio || undefined,
           avatarUrl: u.avatar_url || undefined,
+          teacherRank: u.teacher_rank || undefined,
+          teacherVerified: u.teacher_verified === true,
           referralCode: u.referral_code || `DR-${u.id.substring(0, 6).toUpperCase()}`,
           isInactiveSuspended: !!u.is_inactive_suspended || (!!u.is_banned && (u.ban_reason || '').toLowerCase().includes('inactiv')),
           inactiveSuspendedAt: u.inactive_suspended_at || undefined,
@@ -737,6 +739,35 @@ export async function updateDoctorAcademicLevel(
     return !error;
   } catch (err) {
     console.error('Error updating doctor academic level:', err);
+    return false;
+  }
+}
+
+/**
+ * Vérifie (ou retire la vérification) du grade académique d'un enseignant.
+ * Seul un administrateur peut modifier ces colonnes (trigger côté base).
+ */
+export async function updateTeacherVerification(
+  userId: string,
+  teacherRank: string | null,
+  verified: boolean,
+  adminId?: string
+): Promise<boolean> {
+  try {
+    const { error } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        teacher_rank: verified ? teacherRank : null,
+        teacher_verified: verified && !!teacherRank,
+        teacher_verified_at: verified && teacherRank ? new Date().toISOString() : null,
+        teacher_verified_by: verified && teacherRank ? (adminId || null) : null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId);
+
+    return !error;
+  } catch (err) {
+    console.error('Error updating teacher verification:', err);
     return false;
   }
 }

@@ -152,6 +152,8 @@ export interface AdminUserItem {
   phone?: string;
   wilaya?: string;
   residencyTargetYear?: string;
+  teacherRank?: string;
+  teacherVerified?: boolean;
   isInactiveSuspended?: boolean;
   inactiveSuspendedAt?: string;
   lastReactivatedAt?: string;

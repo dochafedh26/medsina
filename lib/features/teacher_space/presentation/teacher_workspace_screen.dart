@@ -29,6 +29,7 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
 
   // Studio Publication state
   AcademicRank _selectedRank = AcademicRank.resident;
+  bool _canPublish = false;
   TeacherContentType _selectedContentType = TeacherContentType.course;
   String _pubSpecialty = 'Cardiologie';
   final _pubTitleCtrl = TextEditingController();
@@ -47,12 +48,42 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
   @override
   void initState() {
     super.initState();
+    // La publication est réservée aux enseignants dont le grade a été vérifié
+    // par l'administration. La consultation du flux reste ouverte à tous.
+    final user = context.read<AuthBloc>().state.user;
+    _canPublish = user?.canPublishTeacherContent ?? false;
+    _selectedRank = _rankFromProfile(user?.teacherRank) ??
+        _rankFromMedicalRole(user?.medicalRole) ??
+        AcademicRank.maitreAssistant;
     _tabController = TabController(
-      length: 4,
+      length: _canPublish ? 4 : 2,
       vsync: this,
-      initialIndex: widget.initialTab.clamp(0, 3),
+      initialIndex: widget.initialTab.clamp(0, _canPublish ? 3 : 1),
     );
     _loadAll();
+  }
+
+  /// Résout le grade vérifié fourni par le serveur (`teacher_rank`).
+  static AcademicRank? _rankFromProfile(String? raw) {
+    if (raw == null || raw.isEmpty) return null;
+    for (final rank in AcademicRank.values) {
+      if (rank.name == raw) return rank;
+    }
+    return null;
+  }
+
+  /// Repli pour les administrateurs (qui publient sans grade vérifié) :
+  /// lecture du grade déclaré dans le profil.
+  static AcademicRank? _rankFromMedicalRole(String? raw) {
+    final role = (raw ?? '').toLowerCase();
+    if (role.contains('professeur')) return AcademicRank.professeur;
+    if (role.contains('mca') || role.contains('conférences') || role.contains('conferences')) {
+      return AcademicRank.mca;
+    }
+    if (role.contains('maître') || role.contains('maitre')) return AcademicRank.maitreAssistant;
+    if (role.contains('assistant')) return AcademicRank.assistant;
+    if (role.contains('résident') || role.contains('resident')) return AcademicRank.resident;
+    return null;
   }
 
   Future<void> _loadAll() async {
@@ -101,11 +132,13 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
           isScrollable: true,
           indicatorColor: AppTheme.primaryTeal,
           labelColor: AppTheme.primaryTeal,
-          tabs: const [
-            Tab(icon: Icon(Icons.menu_book_rounded, size: 18), text: 'Cours & Ressources'),
-            Tab(icon: Icon(Icons.quiz_rounded, size: 18), text: 'Examens EMD & Concours'),
-            Tab(icon: Icon(Icons.edit_note_rounded, size: 18), text: 'Publier (Prof)'),
-            Tab(icon: Icon(Icons.add_chart_rounded, size: 18), text: 'Créer Examen / QROC'),
+          tabs: [
+            const Tab(icon: Icon(Icons.menu_book_rounded, size: 18), text: 'Cours & Ressources'),
+            const Tab(icon: Icon(Icons.quiz_rounded, size: 18), text: 'Examens EMD & Concours'),
+            if (_canPublish) ...[
+              const Tab(icon: Icon(Icons.edit_note_rounded, size: 18), text: 'Publier (Prof)'),
+              const Tab(icon: Icon(Icons.add_chart_rounded, size: 18), text: 'Créer Examen / QROC'),
+            ],
           ],
         ),
       ),
@@ -114,8 +147,10 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
         children: [
           _buildPublicationsFeedTab(),
           _buildExamsListTab(),
-          _buildPublishStudioTab(),
-          _buildExamBuilderTab(),
+          if (_canPublish) ...[
+            _buildPublishStudioTab(),
+            _buildExamBuilderTab(),
+          ],
         ],
       ),
     );
@@ -151,6 +186,10 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
           ),
         ),
         const SizedBox(height: 14),
+        if (!_canPublish) ...[
+          _buildReadOnlyNotice(),
+          const SizedBox(height: 14),
+        ],
         ...filtered.map((pub) => Card(
               margin: const EdgeInsets.only(bottom: 12),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -200,6 +239,44 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
               ),
             )),
       ],
+    );
+  }
+
+  /// Bandeau affiché aux comptes non habilités : consultation libre,
+  /// publication verrouillée.
+  Widget _buildReadOnlyNotice() {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.lock_outline_rounded, size: 20, color: Color(0xFF7C3AED)),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Espace en lecture seule',
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: Color(0xFF6D28D9)),
+                ),
+                SizedBox(height: 3),
+                Text(
+                  'La publication de cours, fiches et examens est réservée aux enseignants HU dont le grade est vérifié '
+                  '(Professeur, Maître de Conférences, Maître-Assistant, Assistant, Résident). '
+                  'Pour être habilité, demandez la validation de votre grade à l\'administration Medsina.',
+                  style: TextStyle(fontSize: 11.5, height: 1.35, color: Color(0xFF4C1D95)),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -321,11 +398,25 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
             children: [
               const Text('STUDIO DE PUBLICATION ENSEIGNANT', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w900, color: AppTheme.primaryTeal)),
               const SizedBox(height: 12),
-              DropdownButtonFormField<AcademicRank>(
-                initialValue: _selectedRank,
-                decoration: const InputDecoration(labelText: 'Votre Grade Académique', isDense: true),
-                items: AcademicRank.values.map((r) => DropdownMenuItem(value: r, child: Text(r.label))).toList(),
-                onChanged: (v) => setState(() => _selectedRank = v ?? AcademicRank.resident),
+              // Grade vérifié par l'administration : non modifiable côté client.
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryTeal.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.verified_rounded, size: 18, color: AppTheme.primaryTeal),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${_selectedRank.label} — grade vérifié',
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12.5),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
@@ -418,6 +509,12 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
   }
 
   Future<void> _submitPublication() async {
+    if (!_canPublish) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Publication réservée aux enseignants dont le grade est vérifié.')),
+      );
+      return;
+    }
     if (_pubTitleCtrl.text.trim().isEmpty) return;
     final user = context.read<AuthBloc>().state.user;
     final item = TeacherPublicationItem(
@@ -647,6 +744,12 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
   }
 
   Future<void> _publishHybridExam() async {
+    if (!_canPublish) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Création d\'examen réservée aux enseignants dont le grade est vérifié.')),
+      );
+      return;
+    }
     if (_examTitleCtrl.text.trim().isEmpty ||
         (_pickedMedsinaQcms.isEmpty && _draftCustomQuestions.isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(

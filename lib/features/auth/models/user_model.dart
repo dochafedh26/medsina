@@ -28,6 +28,13 @@ class UserModel extends Equatable {
   final String? wilaya;
   final String? residencyTargetYear; // Ex: '2027', '2028'
 
+  /// Grade académique vérifié par l'administration (resident, assistant,
+  /// maitreAssistant, mca, professeur). `null` si non vérifié.
+  final String? teacherRank;
+
+  /// Vrai uniquement si l'administration a validé le grade académique.
+  final bool teacherVerified;
+
   const UserModel({
     required this.id,
     required this.fullName,
@@ -52,6 +59,8 @@ class UserModel extends Equatable {
     this.phone,
     this.wilaya,
     this.residencyTargetYear,
+    this.teacherRank,
+    this.teacherVerified = false,
   }) : _isAdmin = isAdmin;
 
   bool get isStudent {
@@ -79,16 +88,25 @@ class UserModel extends Equatable {
         (role.contains('résidanat') && !role.contains('médecin résid'));
   }
 
-  bool get isAcademicTeacher {
+  /// Grades habilités à publier dans l'Espace Prof (décision produit) :
+  /// Professeur, MCA, Maître-Assistant, Assistant HU et Résident.
+  static const Set<String> publishableTeacherRanks = {
+    'resident',
+    'assistant',
+    'maitreAssistant',
+    'mca',
+    'professeur',
+  };
+
+  /// Grade académique vérifié par l'administration. Un grade simplement
+  /// déclaré dans le profil ne suffit pas.
+  bool get isVerifiedTeacher => teacherVerified && (teacherRank?.isNotEmpty ?? false);
+
+  /// Autorisation de publier cours, fiches, mindmaps, flashcards et examens.
+  /// Les administrateurs conservent l'accès pour la modération.
+  bool get canPublishTeacherContent {
     if (isAdmin) return true;
-    final role = medicalRole.toLowerCase();
-    return role.contains('professeur') ||
-        role.contains('maître') ||
-        role.contains('maitre') ||
-        role.contains('assistant') ||
-        role.contains('enseignant') ||
-        role.contains('résident') ||
-        role.contains('resident');
+    return teacherVerified && publishableTeacherRanks.contains(teacherRank);
   }
 
   bool get isSubscriptionActive {
@@ -125,6 +143,8 @@ class UserModel extends Equatable {
     String? phone,
     String? wilaya,
     String? residencyTargetYear,
+    String? teacherRank,
+    bool? teacherVerified,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -150,6 +170,8 @@ class UserModel extends Equatable {
       phone: phone ?? this.phone,
       wilaya: wilaya ?? this.wilaya,
       residencyTargetYear: residencyTargetYear ?? this.residencyTargetYear,
+      teacherRank: teacherRank ?? this.teacherRank,
+      teacherVerified: teacherVerified ?? this.teacherVerified,
     );
   }
 
@@ -192,6 +214,10 @@ class UserModel extends Equatable {
       'wilaya': wilaya,
       'residencyTargetYear': residencyTargetYear,
       'residency_target_year': residencyTargetYear,
+      'teacherRank': teacherRank,
+      'teacher_rank': teacherRank,
+      'teacherVerified': teacherVerified,
+      'teacher_verified': teacherVerified,
     };
   }
 
@@ -260,6 +286,8 @@ class UserModel extends Equatable {
       phone: json['phone'],
       wilaya: json['wilaya'],
       residencyTargetYear: json['residencyTargetYear'] ?? json['residency_target_year'],
+      teacherRank: (json['teacherRank'] ?? json['teacher_rank'])?.toString(),
+      teacherVerified: json['teacherVerified'] == true || json['teacher_verified'] == true,
     );
   }
 
@@ -288,5 +316,7 @@ class UserModel extends Equatable {
         phone,
         wilaya,
         residencyTargetYear,
+        teacherRank,
+        teacherVerified,
       ];
 }

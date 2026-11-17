@@ -123,6 +123,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                   phone: profile['phone'] ?? (session.user.userMetadata?['phone'] as String?),
                   wilaya: profile['wilaya'] ?? (session.user.userMetadata?['wilaya'] as String?),
                   residencyTargetYear: profile['residency_target_year'] ?? (session.user.userMetadata?['residency_target_year'] as String?),
+                  teacherRank: profile['teacher_rank']?.toString(),
+                  teacherVerified: profile['teacher_verified'] == true,
                 );
                 emit(state.copyWith(
                   status: AuthStatus.inactivitySuspended,
@@ -161,6 +163,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               phone: profile['phone'] ?? (session.user.userMetadata?['phone'] as String?),
               wilaya: profile['wilaya'] ?? (session.user.userMetadata?['wilaya'] as String?),
               residencyTargetYear: profile['residency_target_year'] ?? (session.user.userMetadata?['residency_target_year'] as String?),
+              teacherRank: profile['teacher_rank']?.toString(),
+              teacherVerified: profile['teacher_verified'] == true,
             );
 
             await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -293,6 +297,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               phone: profileMap?['phone'] ?? (supaUser.userMetadata?['phone'] as String?),
               wilaya: profileMap?['wilaya'] ?? (supaUser.userMetadata?['wilaya'] as String?),
               residencyTargetYear: profileMap?['residency_target_year'] ?? (supaUser.userMetadata?['residency_target_year'] as String?),
+              teacherRank: profileMap?['teacher_rank']?.toString(),
+              teacherVerified: profileMap?['teacher_verified'] == true,
             );
             emit(state.copyWith(
               status: AuthStatus.inactivitySuspended,
@@ -331,6 +337,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           phone: profileMap?['phone'] ?? (supaUser.userMetadata?['phone'] as String?),
           wilaya: profileMap?['wilaya'] ?? (supaUser.userMetadata?['wilaya'] as String?),
           residencyTargetYear: profileMap?['residency_target_year'] ?? (supaUser.userMetadata?['residency_target_year'] as String?),
+          teacherRank: profileMap?['teacher_rank']?.toString(),
+          teacherVerified: profileMap?['teacher_verified'] == true,
         );
 
         await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
@@ -563,6 +571,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             phone: profile?['phone']?.toString() ?? meta['phone']?.toString(),
             wilaya: profile?['wilaya']?.toString() ?? meta['wilaya']?.toString(),
             residencyTargetYear: profile?['residency_target_year']?.toString() ?? meta['residency_target_year']?.toString(),
+            teacherRank: profile?['teacher_rank']?.toString(),
+            teacherVerified: profile?['teacher_verified'] == true,
           );
           emit(state.copyWith(
             status: AuthStatus.inactivitySuspended,
@@ -601,6 +611,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         phone: profile?['phone']?.toString() ?? meta['phone']?.toString(),
         wilaya: profile?['wilaya']?.toString() ?? meta['wilaya']?.toString(),
         residencyTargetYear: profile?['residency_target_year']?.toString() ?? meta['residency_target_year']?.toString(),
+        teacherRank: profile?['teacher_rank']?.toString(),
+        teacherVerified: profile?['teacher_verified'] == true,
       );
 
       await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
