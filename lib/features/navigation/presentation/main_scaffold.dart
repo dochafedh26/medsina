@@ -32,6 +32,14 @@ import '../../help/presentation/user_guide_pdf_viewer_screen.dart';
 import '../../whiteboard/presentation/whiteboard_list_screen.dart';
 import '../../search/presentation/global_search_screen.dart';
 import '../../profile/presentation/modern_user_profile_screen.dart';
+import '../../clinical/presentation/pse_calculator_screen.dart';
+import '../../clinical/presentation/abg_ecg_assistant_screen.dart';
+import '../../clinical/presentation/procedure_logbook_screen.dart';
+import '../../prescription/presentation/ordonnancier_certificates_screen.dart';
+import '../../revision/presentation/mnemonics_reflex_screen.dart';
+import '../../revision/presentation/qcm_duel_screen.dart';
+import '../../revision/presentation/residency_rank_simulator_screen.dart';
+import '../../teacher_space/presentation/teacher_workspace_screen.dart';
 import 'package:flutter/services.dart';
 import '../../../core/utils/admin_dashboard_launcher.dart';
 
@@ -1248,6 +1256,126 @@ class _MainScaffoldState extends State<MainScaffold> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => const WhiteboardListScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.school_rounded,
+                      title: 'Espace Prof HU',
+                      subtitle: 'Cours, EMD, QROC',
+                      color: const Color(0xFF7C3AED),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const TeacherWorkspaceScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.speed_rounded,
+                      title: 'Calculateur PSE',
+                      subtitle: 'Dilutions Garde',
+                      color: const Color(0xFF0D9488),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const PseCalculatorScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.monitor_heart_rounded,
+                      title: 'GDS & ECG',
+                      subtitle: 'Winter, TA & QTc',
+                      color: const Color(0xFF2563EB),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const AbgEcgAssistantScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.receipt_long_rounded,
+                      title: 'Ordonnances PDF',
+                      subtitle: 'CNAS, CBV & ITT',
+                      color: const Color(0xFF6366F1),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const OrdonnancierCertificatesScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.bolt_rounded,
+                      title: 'Mnémotechniques',
+                      subtitle: 'Réflexes QCM',
+                      color: const Color(0xFFF59E0B),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const MnemonicsReflexScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.sports_mma_rounded,
+                      title: 'Duel QCM 1v1',
+                      subtitle: 'Défi Confrères',
+                      color: const Color(0xFFEC4899),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const QcmDuelScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.fact_check_rounded,
+                      title: 'Logbook Garde',
+                      subtitle: 'Gestes & Stages',
+                      color: const Color(0xFFD97706),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const ProcedureLogbookScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildQuickToolTile(
+                      ctx,
+                      icon: Icons.leaderboard_rounded,
+                      title: 'Simulateur Rang',
+                      subtitle: 'Spécialités 2027',
+                      color: const Color(0xFF10B981),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const ResidencyRankSimulatorScreen(),
                           ),
                         );
                       },

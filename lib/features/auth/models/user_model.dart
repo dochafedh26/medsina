@@ -79,6 +79,18 @@ class UserModel extends Equatable {
         (role.contains('résidanat') && !role.contains('médecin résid'));
   }
 
+  bool get isAcademicTeacher {
+    if (isAdmin) return true;
+    final role = medicalRole.toLowerCase();
+    return role.contains('professeur') ||
+        role.contains('maître') ||
+        role.contains('maitre') ||
+        role.contains('assistant') ||
+        role.contains('enseignant') ||
+        role.contains('résident') ||
+        role.contains('resident');
+  }
+
   bool get isSubscriptionActive {
     return !isBanned && DateTime.now().isBefore(subscriptionExpiry);
   }

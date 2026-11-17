@@ -34,6 +34,10 @@ import 'offline_storage_screen.dart';
 import 'livrets_catalog_screen.dart';
 import 'samedis_pedagogiques_screen.dart';
 import 'temoignages_conseils_screen.dart';
+import 'mnemonics_reflex_screen.dart';
+import 'qcm_duel_screen.dart';
+import 'residency_rank_simulator_screen.dart';
+import '../../teacher_space/presentation/teacher_workspace_screen.dart';
 
 class RevisionCatalogScreen extends StatefulWidget {
   const RevisionCatalogScreen({super.key});
@@ -966,6 +970,43 @@ class _RevisionCatalogScreenState extends State<RevisionCatalogScreen>
                           context,
                           state.customSessions.length,
                         ),
+
+                  SizedBox(
+                    height: 44,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      children: [
+                        ActionChip(
+                          avatar: const Icon(Icons.school_rounded, size: 15, color: Color(0xFF7C3AED)),
+                          label: const Text('Espace Prof HU (Cours & QROC)', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF7C3AED))),
+                          backgroundColor: const Color(0xFF7C3AED).withValues(alpha: 0.10),
+                          onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TeacherWorkspaceScreen())),
+                        ),
+                        const SizedBox(width: 8),
+                        ActionChip(
+                          avatar: const Icon(Icons.bolt_rounded, size: 15, color: Color(0xFFF59E0B)),
+                          label: const Text('Mnémotechniques & Réflexes', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFFD97706))),
+                          backgroundColor: const Color(0xFFF59E0B).withValues(alpha: 0.10),
+                          onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MnemonicsReflexScreen())),
+                        ),
+                        const SizedBox(width: 8),
+                        ActionChip(
+                          avatar: const Icon(Icons.sports_mma_rounded, size: 15, color: Color(0xFFEC4899)),
+                          label: const Text('Duel QCM 1v1', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFFEC4899))),
+                          backgroundColor: const Color(0xFFEC4899).withValues(alpha: 0.10),
+                          onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QcmDuelScreen())),
+                        ),
+                        const SizedBox(width: 8),
+                        ActionChip(
+                          avatar: const Icon(Icons.leaderboard_rounded, size: 15, color: Color(0xFF10B981)),
+                          label: const Text('Simulateur Classement', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF10B981))),
+                          backgroundColor: const Color(0xFF10B981).withValues(alpha: 0.10),
+                          onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ResidencyRankSimulatorScreen())),
+                        ),
+                      ],
+                    ),
+                  ),
 
                   // Tab Views
                   Expanded(

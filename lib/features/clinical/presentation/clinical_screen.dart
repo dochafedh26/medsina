@@ -174,6 +174,46 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
               ],
             ),
           ),
+          SizedBox(
+            height: 44,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              children: [
+                _buildGuardQuickChip(
+                  context,
+                  icon: Icons.speed_rounded,
+                  label: 'Calculateur PSE',
+                  color: const Color(0xFF0D9488),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PseCalculatorScreen())),
+                ),
+                const SizedBox(width: 8),
+                _buildGuardQuickChip(
+                  context,
+                  icon: Icons.monitor_heart_rounded,
+                  label: 'GDS & ECG Pas-à-Pas',
+                  color: const Color(0xFF2563EB),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AbgEcgAssistantScreen())),
+                ),
+                const SizedBox(width: 8),
+                _buildGuardQuickChip(
+                  context,
+                  icon: Icons.receipt_long_rounded,
+                  label: 'Ordonnances & CBV PDF',
+                  color: const Color(0xFF7C3AED),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OrdonnancierCertificatesScreen())),
+                ),
+                const SizedBox(width: 8),
+                _buildGuardQuickChip(
+                  context,
+                  icon: Icons.fact_check_rounded,
+                  label: 'Logbook Gestes Garde',
+                  color: const Color(0xFFD97706),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProcedureLogbookScreen())),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -187,6 +227,22 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGuardQuickChip(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return ActionChip(
+      avatar: Icon(icon, size: 15, color: color),
+      label: Text(label, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: color)),
+      backgroundColor: color.withValues(alpha: 0.10),
+      side: BorderSide(color: color.withValues(alpha: 0.25)),
+      onPressed: onTap,
     );
   }
 }
