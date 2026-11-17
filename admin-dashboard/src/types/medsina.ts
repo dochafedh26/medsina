@@ -12,7 +12,73 @@ export type NavigationTab =
   | 'exams' 
   | 'announcements' 
   | 'booklets'
+  | 'teacher_revenue'
   | 'ai_agents';
+
+export type TeacherRevenuePeriodStatus = 'draft' | 'closed' | 'paid';
+export type TeacherPayoutStatus = 'requested' | 'approved' | 'paid' | 'rejected' | 'cancelled';
+export type TeacherPayoutMethod = 'ccp' | 'baridimob' | 'virement';
+
+export interface TeacherRevenueSettings {
+  authorSharePct: number;
+  minUniqueReaders: number;
+  maxAuthorPoolPct: number;
+  minAuthorsForCap: number;
+  minPayoutAmount: number;
+  holdbackDays: number;
+  storeFeePct: number;
+  isEnabled: boolean;
+}
+
+export interface TeacherRevenuePeriod {
+  id: string;
+  periodMonth: string;
+  grossRevenue: number;
+  netRevenue: number;
+  authorSharePct: number;
+  authorPool: number;
+  platformShare: number;
+  eligibleUnits: number;
+  status: TeacherRevenuePeriodStatus;
+  computedAt?: string;
+  details?: {
+    applied_cap?: number;
+    author_count?: number;
+    min_unique_readers?: number;
+    max_author_pool_pct?: number;
+    min_authors_for_cap?: number;
+    holdback_days?: number;
+    [key: string]: unknown;
+  };
+}
+
+export interface TeacherLedgerRow {
+  id: string;
+  periodMonth: string;
+  authorId: string;
+  authorName?: string;
+  authorEarnings: number;
+  cappedRemainder: number;
+  units: number;
+  status: 'accrued' | 'available' | 'clawed_back';
+  availableAt?: string;
+}
+
+export interface TeacherPayoutRequest {
+  id: string;
+  teacherId: string;
+  teacherName?: string;
+  amount: number;
+  method: TeacherPayoutMethod;
+  accountHolder: string;
+  accountDetails?: string;
+  status: TeacherPayoutStatus;
+  adminNote?: string;
+  proofUrl?: string;
+  requestedAt: string;
+  reviewedAt?: string;
+  paidAt?: string;
+}
 
 export type BookletValidationStatus =
   | 'pending_review'

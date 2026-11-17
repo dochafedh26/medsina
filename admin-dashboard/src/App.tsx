@@ -10,6 +10,7 @@ import { NationalExamsView } from './components/exams/NationalExamsView';
 import { AnnouncementsView } from './components/announcements/AnnouncementsView';
 import { GitHubAgentsView } from './components/agents/GitHubAgentsView';
 import { BookletsValidationView } from './components/booklets/BookletsValidationView';
+import { TeacherRevenueView } from './components/payments/TeacherRevenueView';
 import { LoginView } from './components/auth/LoginView';
 
 import { 
@@ -62,7 +63,8 @@ import {
   Award, 
   Megaphone, 
   Bot, 
-  Menu 
+  Menu,
+  Coins
 } from 'lucide-react';
 
 export default function App() {
@@ -505,6 +507,7 @@ export default function App() {
     { id: 'users' as NavigationTab, label: 'Médecins', icon: Users, badge: users.length },
     { id: 'payments' as NavigationTab, label: 'Paiements CCP', icon: CreditCard, badge: pendingPaymentsCount > 0 ? pendingPaymentsCount : undefined },
     { id: 'pricing' as NavigationTab, label: 'Tarifs DZD', icon: Tag },
+    { id: 'teacher_revenue' as NavigationTab, label: 'Revenus Prof', icon: Coins },
     { id: 'licenses' as NavigationTab, label: 'Licences VIP', icon: Key, badge: availableLicensesCount > 0 ? availableLicensesCount : undefined },
     { id: 'exams' as NavigationTab, label: 'Concours', icon: Award },
     { id: 'announcements' as NavigationTab, label: 'Annonces', icon: Megaphone },
@@ -665,6 +668,10 @@ export default function App() {
                   onAddAnnouncement={handleAddAnnouncement}
                   onToggleAnnouncement={handleToggleAnnouncement}
                 />
+              )}
+
+              {currentTab === 'teacher_revenue' && (
+                <TeacherRevenueView adminId={adminUser?.id} />
               )}
 
               {currentTab === 'booklets' && (

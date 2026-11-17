@@ -13,7 +13,8 @@ import {
   Database,
   PanelLeftClose,
   PanelLeftOpen,
-  BookOpen
+  BookOpen,
+  Coins
 } from 'lucide-react';
 import { NavigationTab } from '../../types/medsina';
 import iconEmblem from '../../assets/images/medsina-icon.png';
@@ -64,6 +65,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Tarifs & Formules',
       icon: Tag,
       badge: 'DZD'
+    },
+    {
+      id: 'teacher_revenue' as NavigationTab,
+      label: 'Revenus Espace Prof',
+      icon: Coins,
+      badge: '65/35'
     },
     {
       id: 'licenses' as NavigationTab,

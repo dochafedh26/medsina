@@ -16,7 +16,14 @@ import {
   SuspensionLogItem,
   SuspensionMonitoringStats,
   AdminBookletItem,
-  BookletValidationStatus
+  BookletValidationStatus,
+  TeacherRevenueSettings,
+  TeacherRevenuePeriod,
+  TeacherRevenuePeriodStatus,
+  TeacherLedgerRow,
+  TeacherPayoutRequest,
+  TeacherPayoutStatus,
+  TeacherPayoutMethod
 } from '../types/medsina';
 
 // Supabase Configuration from Environment or Production Credentials
@@ -2035,3 +2042,228 @@ export async function updateBookletValidationStatus(
 }
 
 
+// ============================================================================
+// Espace Prof — Partage de revenus (65 % auteurs / 35 % plateforme)
+// ============================================================================
+
+const DEFAULT_TEACHER_REVENUE_SETTINGS: TeacherRevenueSettings = {
+  authorSharePct: 65,
+  minUniqueReaders: 10,
+  maxAuthorPoolPct: 20,
+  minAuthorsForCap: 5,
+  minPayoutAmount: 3000,
+  holdbackDays: 30,
+  storeFeePct: 15,
+  isEnabled: true,
+};
+
+export async function fetchTeacherRevenueSettings(): Promise<TeacherRevenueSettings> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('teacher_revenue_settings')
+      .select('*')
+      .maybeSingle();
+
+    if (error || !data) {
+      if (error) console.error('Error fetching teacher revenue settings:', error);
+      return DEFAULT_TEACHER_REVENUE_SETTINGS;
+    }
+
+    return {
+      authorSharePct: Number(data.author_share_pct ?? 65),
+      minUniqueReaders: Number(data.min_unique_readers ?? 10),
+      maxAuthorPoolPct: Number(data.max_author_pool_pct ?? 20),
+      minAuthorsForCap: Number(data.min_authors_for_cap ?? 5),
+      minPayoutAmount: Number(data.min_payout_amount ?? 3000),
+      holdbackDays: Number(data.holdback_days ?? 30),
+      storeFeePct: Number(data.store_fee_pct ?? 15),
+      isEnabled: data.is_enabled !== false,
+    };
+  } catch (err) {
+    console.error('Exception fetching teacher revenue settings:', err);
+    return DEFAULT_TEACHER_REVENUE_SETTINGS;
+  }
+}
+
+export async function fetchTeacherRevenuePeriods(): Promise<TeacherRevenuePeriod[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('teacher_revenue_periods')
+      .select('*')
+      .order('period_month', { ascending: false })
+      .limit(24);
+
+    if (error || !data) {
+      console.error('Error fetching teacher revenue periods:', error);
+      return [];
+    }
+
+    return data.map((row: any) => ({
+      id: row.id,
+      periodMonth: row.period_month,
+      grossRevenue: Number(row.gross_revenue ?? 0),
+      netRevenue: Number(row.net_revenue ?? 0),
+      authorSharePct: Number(row.author_share_pct ?? 65),
+      authorPool: Number(row.author_pool ?? 0),
+      platformShare: Number(row.platform_share ?? 0),
+      eligibleUnits: Number(row.eligible_units ?? 0),
+      status: (row.status || 'closed') as TeacherRevenuePeriodStatus,
+      computedAt: row.computed_at || undefined,
+      details: row.details || {},
+    }));
+  } catch (err) {
+    console.error('Exception fetching teacher revenue periods:', err);
+    return [];
+  }
+}
+
+export async function fetchTeacherEarningsLedger(
+  periodMonth?: string
+): Promise<TeacherLedgerRow[]> {
+  try {
+    let query = supabaseAdmin
+      .from('teacher_earnings_ledger')
+      .select('id, period_month, author_id, attributed_units, author_earnings, capped_remainder, status, available_at')
+      .order('period_month', { ascending: false })
+      .limit(200);
+
+    if (periodMonth) {
+      query = query.eq('period_month', periodMonth);
+    }
+
+    const { data, error } = await query;
+    if (error || !data) {
+      console.error('Error fetching teacher earnings ledger:', error);
+      return [];
+    }
+
+    const authorIds = Array.from(new Set(data.map((row: any) => row.author_id).filter(Boolean)));
+    const namesById = new Map<string, string>();
+
+    if (authorIds.length > 0) {
+      const { data: profiles } = await supabaseAdmin
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', authorIds);
+
+      (profiles || []).forEach((p: any) => {
+        namesById.set(p.id, p.full_name || p.email || 'Enseignant');
+      });
+    }
+
+    return data.map((row: any) => ({
+      id: row.id,
+      periodMonth: row.period_month,
+      authorId: row.author_id,
+      authorName: namesById.get(row.author_id) || 'Enseignant',
+      authorEarnings: Number(row.author_earnings ?? 0),
+      cappedRemainder: Number(row.capped_remainder ?? 0),
+      units: Number(row.attributed_units ?? 0),
+      status: (row.status || 'accrued') as TeacherLedgerRow['status'],
+      availableAt: row.available_at || undefined,
+    }));
+  } catch (err) {
+    console.error('Exception fetching teacher earnings ledger:', err);
+    return [];
+  }
+}
+
+export async function fetchTeacherPayoutRequests(): Promise<TeacherPayoutRequest[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('teacher_payout_requests')
+      .select('*')
+      .order('requested_at', { ascending: false })
+      .limit(200);
+
+    if (error || !data) {
+      console.error('Error fetching teacher payout requests:', error);
+      return [];
+    }
+
+    const authorIds = Array.from(new Set(data.map((row: any) => row.author_id).filter(Boolean)));
+    const namesById = new Map<string, string>();
+
+    if (authorIds.length > 0) {
+      const { data: profiles } = await supabaseAdmin
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', authorIds);
+
+      (profiles || []).forEach((p: any) => {
+        namesById.set(p.id, p.full_name || p.email || 'Enseignant');
+      });
+    }
+
+    return data.map((row: any) => ({
+      id: row.id,
+      teacherId: row.author_id,
+      teacherName: namesById.get(row.author_id) || 'Enseignant',
+      amount: Number(row.amount ?? 0),
+      method: row.method as TeacherPayoutMethod,
+      accountHolder: row.account_holder || '',
+      accountDetails: row.account_details || undefined,
+      status: row.status as TeacherPayoutStatus,
+      adminNote: row.admin_note || undefined,
+      proofUrl: row.proof_url || undefined,
+      requestedAt: row.requested_at,
+      reviewedAt: row.reviewed_at || undefined,
+      paidAt: row.paid_at || undefined,
+    }));
+  } catch (err) {
+    console.error('Exception fetching teacher payout requests:', err);
+    return [];
+  }
+}
+
+export async function closeTeacherRevenuePeriod(
+  periodMonth?: string
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const { error } = await supabaseAdmin.rpc('close_teacher_revenue_period', {
+      p_month: periodMonth ?? null,
+    });
+
+    if (error) {
+      console.error('Error closing teacher revenue period:', error);
+      return { ok: false, error: error.message };
+    }
+    return { ok: true };
+  } catch (err: any) {
+    console.error('Exception closing teacher revenue period:', err);
+    return { ok: false, error: err?.message || 'Erreur inconnue' };
+  }
+}
+
+export async function updateTeacherPayoutRequest(
+  payoutId: string,
+  status: 'approved' | 'paid' | 'rejected',
+  adminNote?: string,
+  adminId?: string,
+  proofUrl?: string
+): Promise<boolean> {
+  try {
+    const payload: Record<string, any> = {
+      status,
+      admin_note: adminNote?.trim() ? adminNote.trim() : null,
+      reviewed_at: new Date().toISOString(),
+    };
+    if (adminId) payload.reviewed_by = adminId;
+    if (proofUrl?.trim()) payload.proof_url = proofUrl.trim();
+    if (status === 'paid') payload.paid_at = new Date().toISOString();
+
+    const { error } = await supabaseAdmin
+      .from('teacher_payout_requests')
+      .update(payload)
+      .eq('id', payoutId);
+
+    if (error) {
+      console.error('Error updating teacher payout request:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('Exception updating teacher payout request:', err);
+    return false;
+  }
+}

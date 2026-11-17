@@ -24,7 +24,8 @@ import {
   ExternalLink,
   ChevronRight,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Coins
 } from 'lucide-react';
 import { NavigationTab } from '../../types/medsina';
 import logoLight from '../../assets/images/medsina-logo.png';
@@ -108,6 +109,12 @@ export const Header: React.FC<HeaderProps> = ({
       label: 'Tarifs & Formules',
       icon: Tag,
       badge: 'DZD'
+    },
+    { 
+      id: 'teacher_revenue' as NavigationTab, 
+      label: 'Revenus Espace Prof',
+      icon: Coins,
+      badge: '65/35'
     },
     { 
       id: 'licenses' as NavigationTab, 
