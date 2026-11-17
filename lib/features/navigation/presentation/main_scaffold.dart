@@ -1661,6 +1661,18 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
           const SizedBox(width: 3),
           _buildDockIconButton(
+            icon: Icons.school_rounded,
+            tooltip: 'Espace Prof HU (Cours, EMD & QROC)',
+            color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+            bgTint: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const TeacherWorkspaceScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 3),
+          _buildDockIconButton(
             icon: Icons.system_update_rounded,
             tooltip: 'Vérifier les mises à jour',
             color: const Color(0xFF0284C7),
