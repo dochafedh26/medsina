@@ -428,23 +428,24 @@
     "updated_at": "2026-11-12T19:59:39.961189+00:00"
   },
   {
-    "id": "memento_acr_adulte",
+    "id": "memento_arret_cardio_respiratoire",
     "title": "⚡ Arrêt Cardio-Respiratoire (ACR) Adulte",
-    "category": "Urgences Vitales & Réanimation",
+    "category": "Réanimation & Urgences Vitales",
     "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Sécuriser les lieux, vérifier l'absence de conscience et de respiration (ou gaspings), débuter immédiatement un MCE de haute qualité (100-120/min, profondeur 5-6 cm) et brancher le défibrillateur (DAE / palette).",
-      "Étape 2 : Analyser le rythme : si FV ou TV sans pouls -> Choc unique (150-200J biphasique), puis reprendre immédiatement le MCE pendant 2 minutes sans réévaluer le rythme.",
-      "Étape 3 : Abord vasculaire immédiat (IV ou IO), intubation trachéale par opérateur entraîné avec capnographie (ETCO2), et administration d'Adrénaline 1 mg IVP (à répéter toutes les 3-5 min) et Amiodarone 300 mg IV après le 3ème choc si FV/TV réfractaire.",
-      "Étape 4 : Rechercher et traiter les 4H et 4T (Hypoxie, Hypovolémie, H+/Acidose, Hypo/Hyperkaliémie, Hypothermie, Tamponnade, Toxiques, Thrombose coronaire, Thrombo-embolie pulmonaire).",
-      "Étape 5 : Post-ACR (ROSC) : Assurer une sédation, contrôle de la ventilation (SpO2 94-98%, Normocapnie), objectif tensionnel (PAM > 65 mmHg par remplissage et amines vasopressives), ECG 12 dérivations en urgence et transfert médicalisé vers l'unité de soins intensifs / réanimation."
+      "Étape 1 : Sécuriser les lieux, affirmer l'ACR (absence de conscience et de ventilation efficace), débuter immédiatement la RCP (MCE 100-120/min, ratio 30:2) et poser les paquets d'électrodes du défibrillateur (DAE/Choc).",
+      "Étape 2 : Analyser le rythme à 2 min : si FV/TV sans pouls = C1 choc (150-200J biphasique) puis reprise immédiate MCE ; si Asystolie/AESP = Adrénaline 1 mg IV/IO immédiate, répétée toutes les 3 à 5 minutes.",
+      "Étape 3 : Sécuriser les voies aériennes par intubation endotrachéale (ou MGL en urgence) par un opérateur entraîné avec capnographie (ETCO2), et perfuser une voie veineuse périphérique ou intra-osseuse en urgence.",
+      "Étape 4 : Rechercher et traiter les 4H et 4T (Hypoxie, Hypovolémie, H+, Hypo/Hyperkaliémie, Hypothermie / Tamponnade, Tension pneumothorax, Thrombose coronarienne/pulmonaire, Toxiques).",
+      "Étape 5 : En cas de RACS (Retour à une Circulation Spontanée), initier la ventilation protectrice, l'objectif hémodynamique (PAM > 65 mmHg) et préparer le transfert médicalisé vers l'unité de réanimation.",
+      "Étape 6 : Piège absolu : Ne pas interrompre le MCE plus de 10 secondes pour les manœuvres (hormis défibrillation) et éviter l'administration anarchique de bicarbonates sans gaz du sang."
     ],
-    "scientific_references": "Recommandations ERC / SRLF / SFMU / MSPRH Algérie",
+    "scientific_references": "Recommandations ERC / SRLF / SFMU / Consensus National Algérien de Réanimation",
     "is_active": true,
-    "created_at": "2026-11-10T18:42:10.090178+00:00",
-    "updated_at": "2026-11-10T18:42:10.090190+00:00"
+    "created_at": "2026-11-17T04:33:24.791662+00:00",
+    "updated_at": "2026-11-17T04:33:24.791679+00:00"
   },
   {
     "id": "memento_pediatrie_deshydratation_aigue",
