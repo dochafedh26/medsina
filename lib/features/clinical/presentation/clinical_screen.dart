@@ -14,7 +14,11 @@ import '../bloc/clinical_state.dart';
 import '../models/cat_protocol_model.dart';
 import '../models/clinical_calculator_model.dart';
 import '../models/emergency_drug_model.dart';
+import '../../prescription/presentation/ordonnancier_certificates_screen.dart';
+import 'abg_ecg_assistant_screen.dart';
 import 'medsina_synapse_screen.dart';
+import 'procedure_logbook_screen.dart';
+import 'pse_calculator_screen.dart';
 
 class ClinicalScreen extends StatefulWidget {
   final int initialTabIndex;
