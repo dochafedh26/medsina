@@ -26,12 +26,21 @@ class QcmDuelService {
     final pool = <QcmQuestion>[];
 
     if (moduleId != null && moduleId.isNotEmpty) {
-      final qs = await ResidencyRepository.getQuestionsForModuleAsync(moduleId);
+      final qs = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+        courseIds: const [],
+        moduleIds: [moduleId],
+        limit: 40,
+      );
       pool.addAll(qs);
     } else {
-      for (final m in modules.take(6)) {
-        final qs = await ResidencyRepository.getQuestionsForModuleAsync(m.id);
-        pool.addAll(qs.take(25));
+      final modIds = modules.take(6).map((m) => m.id).toList();
+      if (modIds.isNotEmpty) {
+        final qs = await ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+          courseIds: const [],
+          moduleIds: modIds,
+          limit: 60,
+        );
+        pool.addAll(qs);
       }
     }
 
@@ -90,7 +99,7 @@ class QcmDuelService {
     existing.insert(0, match.toJson());
     await prefs.setString(_localHistoryKey, jsonEncode(existing.take(30).toList()));
 
-    if (SupabaseService.isInitialized && SupabaseService.currentUser != null) {
+    if (SupabaseService.isAuthenticated && SupabaseService.currentUser != null) {
       try {
         final uid = SupabaseService.currentUser!.id;
         if (isJoining) {
@@ -113,7 +122,7 @@ class QcmDuelService {
 
   static Future<QcmDuelMatch?> fetchMatchByCode(String code) async {
     final normalized = code.trim().toUpperCase();
-    if (SupabaseService.isInitialized) {
+    if (SupabaseService.isAuthenticated) {
       try {
         final row = await SupabaseService.client
             .from('qcm_duel_matches')

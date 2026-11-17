@@ -258,7 +258,7 @@ class ProcedureLogbookRepository {
     } catch (_) {}
 
     final uid = SupabaseService.currentUser?.id;
-    if (SupabaseService.isInitialized && uid != null) {
+    if (SupabaseService.isAuthenticated && uid != null) {
       try {
         final rows = await SupabaseService.client
             .from('user_procedure_logs')
@@ -286,7 +286,7 @@ class ProcedureLogbookRepository {
     await prefs.setString(_localKey, jsonEncode(existing));
 
     final uid = SupabaseService.currentUser?.id;
-    if (SupabaseService.isInitialized && uid != null) {
+    if (SupabaseService.isAuthenticated && uid != null) {
       try {
         await SupabaseService.client.from('user_procedure_logs').upsert({
           ...entry.toJson(),

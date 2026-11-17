@@ -109,7 +109,7 @@ class TeacherWorkspaceService {
       }
     } catch (_) {}
 
-    if (SupabaseService.isInitialized) {
+    if (SupabaseService.isAuthenticated) {
       try {
         final rows = await SupabaseService.client
             .from('teacher_publications')
@@ -140,7 +140,7 @@ class TeacherWorkspaceService {
     await prefs.setString(_localPubsKey, jsonEncode(existing));
 
     final uid = SupabaseService.currentUser?.id;
-    if (SupabaseService.isInitialized && uid != null) {
+    if (SupabaseService.isAuthenticated && uid != null) {
       try {
         await SupabaseService.client.from('teacher_publications').upsert({
           ...item.toJson(),
@@ -165,7 +165,7 @@ class TeacherWorkspaceService {
       }
     } catch (_) {}
 
-    if (SupabaseService.isInitialized) {
+    if (SupabaseService.isAuthenticated) {
       try {
         final rows = await SupabaseService.client
             .from('teacher_exams')
@@ -197,7 +197,7 @@ class TeacherWorkspaceService {
     await prefs.setString(_localExamsKey, jsonEncode(existing));
 
     final uid = SupabaseService.currentUser?.id;
-    if (SupabaseService.isInitialized && uid != null) {
+    if (SupabaseService.isAuthenticated && uid != null) {
       try {
         await SupabaseService.client.from('teacher_exams').upsert({
           ...exam.toJson(),
@@ -210,6 +210,10 @@ class TeacherWorkspaceService {
 
   /// Récupère des QCMs existants de Medsina pour un module donné afin de les inclure dans un examen enseignant
   static Future<List<QcmQuestion>> fetchMedsinaBankQuestions(String moduleId) async {
-    return ResidencyRepository.getQuestionsForModuleAsync(moduleId);
+    return ResidencyRepository.getQuestionsForMultipleCoursesAsync(
+      courseIds: const [],
+      moduleIds: [moduleId],
+      limit: 40,
+    );
   }
 }

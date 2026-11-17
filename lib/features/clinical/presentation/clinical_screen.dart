@@ -185,7 +185,7 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
                   icon: Icons.speed_rounded,
                   label: 'Calculateur PSE',
                   color: const Color(0xFF0D9488),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PseCalculatorScreen())),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => PseCalculatorScreen())),
                 ),
                 const SizedBox(width: 8),
                 _buildGuardQuickChip(
@@ -193,7 +193,7 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
                   icon: Icons.monitor_heart_rounded,
                   label: 'GDS & ECG Pas-à-Pas',
                   color: const Color(0xFF2563EB),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AbgEcgAssistantScreen())),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => AbgEcgAssistantScreen())),
                 ),
                 const SizedBox(width: 8),
                 _buildGuardQuickChip(
@@ -201,7 +201,7 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
                   icon: Icons.receipt_long_rounded,
                   label: 'Ordonnances & CBV PDF',
                   color: const Color(0xFF7C3AED),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OrdonnancierCertificatesScreen())),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => OrdonnancierCertificatesScreen())),
                 ),
                 const SizedBox(width: 8),
                 _buildGuardQuickChip(
@@ -209,7 +209,7 @@ class _ClinicalScreenState extends State<ClinicalScreen> with SingleTickerProvid
                   icon: Icons.fact_check_rounded,
                   label: 'Logbook Gestes Garde',
                   color: const Color(0xFFD97706),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProcedureLogbookScreen())),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => ProcedureLogbookScreen())),
                 ),
               ],
             ),

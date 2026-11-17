@@ -276,7 +276,7 @@ class MnemonicsReflexRepository {
       }
     } catch (_) {}
 
-    if (SupabaseService.isInitialized && SupabaseService.currentUser != null) {
+    if (SupabaseService.isAuthenticated && SupabaseService.currentUser != null) {
       try {
         final rows = await SupabaseService.client
             .from('user_custom_mnemonics')
@@ -304,7 +304,7 @@ class MnemonicsReflexRepository {
     await prefs.setString(_localCustomKey, jsonEncode(existing));
 
     final uid = SupabaseService.currentUser?.id;
-    if (SupabaseService.isInitialized && uid != null) {
+    if (SupabaseService.isAuthenticated && uid != null) {
       try {
         await SupabaseService.client.from('user_custom_mnemonics').upsert({
           ...payload,
