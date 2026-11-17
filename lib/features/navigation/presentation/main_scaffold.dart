@@ -959,17 +959,23 @@ class _MainScaffoldState extends State<MainScaffold> {
     UserModel? user,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final useCompactLogo = screenWidth < 430 || user?.isAdmin == true;
+
     return AppBar(
-      titleSpacing: 14,
+      titleSpacing: 10,
       toolbarHeight: 58,
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const MedsinaLogo(height: 30),
-          if (AppConstants.isBetaBuild) ...[
-            const SizedBox(width: 8),
+          if (useCompactLogo)
+            const MedsinaLogo.icon(size: 30)
+          else
+            const MedsinaLogo(height: 28),
+          if (AppConstants.isBetaBuild && screenWidth >= 380) ...[
+            const SizedBox(width: 6),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
                 color: const Color(0xFF7C3AED).withValues(alpha: 0.14),
                 borderRadius: BorderRadius.circular(6),
@@ -980,9 +986,9 @@ class _MainScaffoldState extends State<MainScaffold> {
               child: const Text(
                 'BETA',
                 style: TextStyle(
-                  fontSize: 9,
+                  fontSize: 8.5,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 0.5,
+                  letterSpacing: 0.4,
                   color: Color(0xFF7C3AED),
                 ),
               ),
@@ -992,7 +998,7 @@ class _MainScaffoldState extends State<MainScaffold> {
       ),
       actions: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(14),
@@ -1018,7 +1024,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                   bgTint: const Color(0xFFDC2626).withValues(alpha: 0.15),
                   onTap: () => AdminDashboardLauncher.openAdminDashboard(context),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 2.5),
               ],
               _buildDockIconButton(
                 icon: Icons.search_rounded,
@@ -1027,7 +1033,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                 bgTint: AppTheme.primaryTeal.withValues(alpha: 0.12),
                 onTap: () => _openOmnisearch(context),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 2.5),
               AnimatedBuilder(
                 animation: FocusModeService.instance,
                 builder: (context, _) {
@@ -1045,9 +1051,9 @@ class _MainScaffoldState extends State<MainScaffold> {
                   );
                 },
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 2.5),
               _buildNotificationBellAction(context, compact: true),
-              const SizedBox(width: 4),
+              const SizedBox(width: 2.5),
               _buildDockIconButton(
                 icon: Icons.widgets_rounded,
                 tooltip: 'Outils, Guide PDF, Annonces & Mises à jour',
@@ -1059,9 +1065,9 @@ class _MainScaffoldState extends State<MainScaffold> {
             ],
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
         _buildModernProfileAndTierPill(context, tier, user),
-        const SizedBox(width: 14),
+        const SizedBox(width: 10),
       ],
     );
   }

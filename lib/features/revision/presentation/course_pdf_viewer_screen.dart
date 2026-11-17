@@ -491,235 +491,322 @@ class _CoursePdfViewerScreenState extends State<CoursePdfViewerScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: _isSearching ? _buildSearchBar() : _buildTitle(),
-        actions: [
-          AnimatedBuilder(
-            animation: OfflineCourseManager.instance,
-            builder: (context, _) {
-              final isOffline = OfflineCourseManager.instance.isCourseAvailableOfflineSync(_cacheKey);
-              if (isOffline) {
-                return Tooltip(
-                  message: 'Cours enregistré en local (100% accessible hors-ligne)',
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.offline_pin_rounded, color: Colors.green, size: 20),
-                        if (isDesktop) ...[
-                          const SizedBox(width: 4),
-                          const Text(
-                            'Hors-ligne',
-                            style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold),
+        actions: (_isSearching && screenWidth < 600)
+            ? const []
+            : [
+                if (screenWidth >= 600) ...[
+                  AnimatedBuilder(
+                    animation: OfflineCourseManager.instance,
+                    builder: (context, _) {
+                      final isOffline = OfflineCourseManager.instance.isCourseAvailableOfflineSync(_cacheKey);
+                      if (isOffline) {
+                        return Tooltip(
+                          message: 'Cours enregistré en local (100% accessible hors-ligne)',
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.offline_pin_rounded, color: Colors.green, size: 20),
+                                if (isDesktop) ...[
+                                  const SizedBox(width: 4),
+                                  const Text(
+                                    'Hors-ligne',
+                                    style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ),
-                        ],
-                      ],
-                    ),
-                  ),
-                );
-              }
-              return Tooltip(
-                message: 'Télécharger pour révision hors-ligne',
-                child: IconButton(
-                  icon: const Icon(Icons.download_for_offline_rounded, color: AppTheme.primaryTeal),
-                  onPressed: () async {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Enregistrement de "${widget.course.name}" pour le mode hors-ligne...'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                    final ok = await OfflineCourseManager.instance.downloadCourse(widget.course);
-                    if (context.mounted && ok) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Cours enregistré pour consultation hors-ligne !'),
-                          backgroundColor: Colors.teal,
+                        );
+                      }
+                      return Tooltip(
+                        message: 'Télécharger pour révision hors-ligne',
+                        child: IconButton(
+                          icon: const Icon(Icons.download_for_offline_rounded, color: AppTheme.primaryTeal),
+                          onPressed: () async {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Enregistrement de "${widget.course.name}" pour le mode hors-ligne...'),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                            final ok = await OfflineCourseManager.instance.downloadCourse(widget.course);
+                            if (context.mounted && ok) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Cours enregistré pour consultation hors-ligne !'),
+                                  backgroundColor: Colors.teal,
+                                ),
+                              );
+                            }
+                          },
                         ),
                       );
-                    }
-                  },
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.forum_outlined, color: AppTheme.primaryTeal),
-            tooltip: 'Commentaires & Notes du Cours',
-            onPressed: () {
-              MedicalCommentsSheet.show(
-                context,
-                targetType: 'course',
-                targetId: widget.course.id,
-                targetTitle: widget.course.name,
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.summarize_rounded, color: AppTheme.primaryTeal),
-            tooltip: 'Fiche Synthétique du Cours',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CourseSummaryScreen(
-                    course: widget.course,
-                    moduleName: widget.moduleName,
+                    },
                   ),
-                ),
-              );
-            },
-          ),
-          // Validation du cours (Couche 1 / Profil)
-          AnimatedBuilder(
-            animation: Listenable.merge([_progressService.progressNotifier, _annService]),
-            builder: (context, _) {
-              final isValidated = _isCourseValidated;
-              if (screenWidth >= 620) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
-                  child: isValidated
-                      ? OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF10B981),
-                            side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  IconButton(
+                    icon: const Icon(Icons.forum_outlined, color: AppTheme.primaryTeal),
+                    tooltip: 'Commentaires & Notes du Cours',
+                    onPressed: () {
+                      MedicalCommentsSheet.show(
+                        context,
+                        targetType: 'course',
+                        targetId: widget.course.id,
+                        targetTitle: widget.course.name,
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.summarize_rounded, color: AppTheme.primaryTeal),
+                    tooltip: 'Fiche Synthétique du Cours',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CourseSummaryScreen(
+                            course: widget.course,
+                            moduleName: widget.moduleName,
                           ),
-                          icon: const Icon(Icons.check_circle_rounded, size: 16, color: Color(0xFF10B981)),
-                          label: const Text('Validé ✓', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                          onPressed: _showCourseCompletionOptions,
-                        )
-                      : ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryTeal,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          icon: const Icon(Icons.check_circle_outline_rounded, size: 16),
-                          label: const Text('Valider le cours', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                          onPressed: _validateCourseCompletion,
                         ),
-                );
-              }
-              return IconButton(
-                icon: Icon(
-                  isValidated ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
-                  color: isValidated ? const Color(0xFF10B981) : AppTheme.primaryTeal,
-                ),
-                tooltip: isValidated ? 'Cours validé ✓' : 'Valider ce cours (+30 XP)',
-                onPressed: isValidated ? _showCourseCompletionOptions : _validateCourseCompletion,
-              );
-            },
-          ),
-          if (!_isLoading && _pdfBytes != null) ...[
-            IconButton(
-              icon: Icon(
-                _showAnnotationToolbar ? Icons.draw_rounded : Icons.edit_off_rounded,
-                color: _showAnnotationToolbar ? AppTheme.primaryTeal : null,
-              ),
-              tooltip: _showAnnotationToolbar ? 'Masquer la barre Acrobat' : 'Afficher la barre Acrobat',
-              onPressed: () => setState(() => _showAnnotationToolbar = !_showAnnotationToolbar),
-            ),
-            if (!_isSearching)
-              IconButton(
-                icon: const Icon(Icons.search_rounded),
-                tooltip: 'Rechercher dans le cours',
-                onPressed: () => setState(() => _isSearching = true),
-              ),
-            if (screenWidth >= 500)
-              IconButton(
-                icon: Icon(_isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
-                tooltip: _isDarkMode ? 'Mode Clair' : 'Mode Nuit',
-                onPressed: () {
-                  setState(() {
-                    _isDarkMode = !_isDarkMode;
-                    _readingComfortMode = _isDarkMode ? ReadingComfortMode.night : ReadingComfortMode.day;
-                  });
-                },
-              ),
-            if (isDesktop) ...[
-              IconButton(
-                icon: const Icon(Icons.zoom_in_rounded),
-                tooltip: 'Zoom avant',
-                onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel + 0.25).clamp(1.0, 3.5),
-              ),
-              IconButton(
-                icon: const Icon(Icons.zoom_out_rounded),
-                tooltip: 'Zoom arrière',
-                onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel - 0.25).clamp(1.0, 3.5),
-              ),
-            ],
-            if (screenWidth < 500)
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert_rounded),
-                tooltip: 'Plus d\'options',
-                onSelected: (val) {
-                  if (val == 'theme') {
-                    setState(() {
-                      _isDarkMode = !_isDarkMode;
-                      _readingComfortMode = _isDarkMode ? ReadingComfortMode.night : ReadingComfortMode.day;
-                    });
-                  } else if (val == 'comfort') {
-                    _showReadingComfortModal();
-                  } else if (val == 'jump') {
-                    _showJumpToPageDialog();
-                  } else if (val == 'notes') {
-                    _showCourseNotesList();
-                  }
-                },
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: 'comfort',
-                    child: const Row(
-                      children: [
-                        Icon(Icons.auto_stories_rounded, size: 20, color: AppTheme.primaryTeal),
-                        SizedBox(width: 12),
-                        Text('Confort de Lecture (Sépia/Nuit)', style: TextStyle(fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'jump',
-                    child: const Row(
-                      children: [
-                        Icon(Icons.tag_rounded, size: 20, color: AppTheme.primaryTeal),
-                        SizedBox(width: 12),
-                        Text('Aller à la page...', style: TextStyle(fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'notes',
-                    child: const Row(
-                      children: [
-                        Icon(Icons.sticky_note_2_rounded, size: 20, color: Color(0xFFCA8A04)),
-                        SizedBox(width: 12),
-                        Text('Notes & Post-Its du Cours', style: TextStyle(fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'theme',
-                    child: Row(
-                      children: [
-                        Icon(
-                          _isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                          size: 20,
-                          color: _isDarkMode ? Colors.amber : const Color(0xFF0F172A),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          _isDarkMode ? 'Passer en Mode Clair' : 'Passer en Mode Nuit',
-                          style: const TextStyle(fontSize: 13),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ],
-              ),
-          ],
-        ],
+                // Validation du cours (Couche 1 / Profil)
+                AnimatedBuilder(
+                  animation: Listenable.merge([_progressService.progressNotifier, _annService]),
+                  builder: (context, _) {
+                    final isValidated = _isCourseValidated;
+                    if (screenWidth >= 620) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                        child: isValidated
+                            ? OutlinedButton.icon(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: const Color(0xFF10B981),
+                                  side: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                ),
+                                icon: const Icon(Icons.check_circle_rounded, size: 16, color: Color(0xFF10B981)),
+                                label: const Text('Validé ✓', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                onPressed: _showCourseCompletionOptions,
+                              )
+                            : ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.primaryTeal,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                ),
+                                icon: const Icon(Icons.check_circle_outline_rounded, size: 16),
+                                label: const Text('Valider le cours', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                onPressed: _validateCourseCompletion,
+                              ),
+                      );
+                    }
+                    return IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: Icon(
+                        isValidated ? Icons.check_circle_rounded : Icons.check_circle_outline_rounded,
+                        color: isValidated ? const Color(0xFF10B981) : AppTheme.primaryTeal,
+                      ),
+                      tooltip: isValidated ? 'Cours validé ✓' : 'Valider ce cours (+30 XP)',
+                      onPressed: isValidated ? _showCourseCompletionOptions : _validateCourseCompletion,
+                    );
+                  },
+                ),
+                if (!_isLoading && _pdfBytes != null) ...[
+                  if (screenWidth >= 600)
+                    IconButton(
+                      icon: Icon(
+                        _showAnnotationToolbar ? Icons.draw_rounded : Icons.edit_off_rounded,
+                        color: _showAnnotationToolbar ? AppTheme.primaryTeal : null,
+                      ),
+                      tooltip: _showAnnotationToolbar ? 'Masquer la barre Acrobat' : 'Afficher la barre Acrobat',
+                      onPressed: () => setState(() => _showAnnotationToolbar = !_showAnnotationToolbar),
+                    ),
+                  if (!_isSearching)
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: const Icon(Icons.search_rounded),
+                      tooltip: 'Rechercher dans le cours',
+                      onPressed: () => setState(() => _isSearching = true),
+                    ),
+                  if (screenWidth >= 600)
+                    IconButton(
+                      icon: Icon(_isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
+                      tooltip: _isDarkMode ? 'Mode Clair' : 'Mode Nuit',
+                      onPressed: () {
+                        setState(() {
+                          _isDarkMode = !_isDarkMode;
+                          _readingComfortMode = _isDarkMode ? ReadingComfortMode.night : ReadingComfortMode.day;
+                        });
+                      },
+                    ),
+                  if (isDesktop) ...[
+                    IconButton(
+                      icon: const Icon(Icons.zoom_in_rounded),
+                      tooltip: 'Zoom avant',
+                      onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel + 0.25).clamp(1.0, 3.5),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.zoom_out_rounded),
+                      tooltip: 'Zoom arrière',
+                      onPressed: () => _pdfController.zoomLevel = (_pdfController.zoomLevel - 0.25).clamp(1.0, 3.5),
+                    ),
+                  ],
+                  if (screenWidth < 600)
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert_rounded),
+                      tooltip: 'Plus d\'options',
+                      onSelected: (val) async {
+                        if (val == 'toggle_toolbar') {
+                          setState(() => _showAnnotationToolbar = !_showAnnotationToolbar);
+                        } else if (val == 'summary') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CourseSummaryScreen(
+                                course: widget.course,
+                                moduleName: widget.moduleName,
+                              ),
+                            ),
+                          );
+                        } else if (val == 'comments') {
+                          MedicalCommentsSheet.show(
+                            context,
+                            targetType: 'course',
+                            targetId: widget.course.id,
+                            targetTitle: widget.course.name,
+                          );
+                        } else if (val == 'offline') {
+                          final ok = await OfflineCourseManager.instance.downloadCourse(widget.course);
+                          if (context.mounted && ok) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Cours enregistré pour consultation hors-ligne !'),
+                                backgroundColor: Colors.teal,
+                              ),
+                            );
+                          }
+                        } else if (val == 'theme') {
+                          setState(() {
+                            _isDarkMode = !_isDarkMode;
+                            _readingComfortMode = _isDarkMode ? ReadingComfortMode.night : ReadingComfortMode.day;
+                          });
+                        } else if (val == 'comfort') {
+                          _showReadingComfortModal();
+                        } else if (val == 'jump') {
+                          _showJumpToPageDialog();
+                        } else if (val == 'notes') {
+                          _showCourseNotesList();
+                        }
+                      },
+                      itemBuilder: (_) {
+                        final isOffline = OfflineCourseManager.instance.isCourseAvailableOfflineSync(_cacheKey);
+                        return [
+                          PopupMenuItem(
+                            value: 'toggle_toolbar',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _showAnnotationToolbar ? Icons.draw_rounded : Icons.edit_off_rounded,
+                                  size: 20,
+                                  color: AppTheme.primaryTeal,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  _showAnnotationToolbar ? 'Masquer barre d\'annotation' : 'Afficher barre d\'annotation',
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'summary',
+                            child: Row(
+                              children: [
+                                Icon(Icons.summarize_rounded, size: 20, color: AppTheme.primaryTeal),
+                                SizedBox(width: 12),
+                                Text('Fiche Synthétique du Cours', style: TextStyle(fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'comments',
+                            child: Row(
+                              children: [
+                                Icon(Icons.forum_outlined, size: 20, color: AppTheme.primaryTeal),
+                                SizedBox(width: 12),
+                                Text('Commentaires & Notes', style: TextStyle(fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                          if (!isOffline)
+                            const PopupMenuItem(
+                              value: 'offline',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.download_for_offline_rounded, size: 20, color: Colors.green),
+                                  SizedBox(width: 12),
+                                  Text('Enregistrer Hors-Ligne', style: TextStyle(fontSize: 13)),
+                                ],
+                              ),
+                            ),
+                          const PopupMenuItem(
+                            value: 'comfort',
+                            child: Row(
+                              children: [
+                                Icon(Icons.auto_stories_rounded, size: 20, color: AppTheme.primaryTeal),
+                                SizedBox(width: 12),
+                                Text('Confort de Lecture (Sépia/Nuit)', style: TextStyle(fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'jump',
+                            child: Row(
+                              children: [
+                                Icon(Icons.tag_rounded, size: 20, color: AppTheme.primaryTeal),
+                                SizedBox(width: 12),
+                                Text('Aller à la page...', style: TextStyle(fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'notes',
+                            child: Row(
+                              children: [
+                                Icon(Icons.sticky_note_2_rounded, size: 20, color: Color(0xFFCA8A04)),
+                                SizedBox(width: 12),
+                                Text('Notes & Post-Its du Cours', style: TextStyle(fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'theme',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                                  size: 20,
+                                  color: _isDarkMode ? Colors.amber : const Color(0xFF0F172A),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  _isDarkMode ? 'Passer en Mode Clair' : 'Passer en Mode Nuit',
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                    ),
+                ],
+              ],
       ),
       body: Stack(
         children: [
