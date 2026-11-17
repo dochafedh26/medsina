@@ -377,16 +377,16 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation initiale, pose de 2 VVP de bon calibre, mise en place d'une sonde nasogastrique en cas de vomissements incoercibles et pose d'une sonde urinaire pour surveillance stricte de la diurèse (> 0,5 mL/kg/h).",
-      "Étape 2 : Bilan biologique d'urgence au déchoquage : Lipasémie (ou amylasémie), NFS, créatinine, urée, CRP, bilan hépatique (ASAT, ALAT, GGT, PAL, bilirubinémie), calcémie, triglycérides, gaz du sang et groupage sanguin (RHS).",
-      "Étape 3 : Remplissage vasculaire agressif par Cristalloïdes (NaCl 0,9% ou Ringer Lactate) : 100 à 200 mL/h adapté à l'état hémodynamique. Antalgiques majeurs : Paracétamol IV 1g/6h + Néfopam (Acupan) ou titration morphinique IV si douleur intense (EVA > 6).",
-      "Étape 4 : Imagerie de première intention : Échographie abdominale en urgence (recherche d'étiologie biliaire). Scanner abdominal avec injection de produits de contraste iodé (TDM thoraco-abdomino-pelvien) indiqué idéalement entre la 48ème et 72ème heure pour évaluer la nécrose. Transfert en Réanimation si score de Balthazar élevé, défaillance d'organe (MIFI) ou sepsis sévère.",
-      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne pas administrer d'AINS (aggravation rénale et du saignement). Ne pas débuter d'antibiothérapie probabiliste systématique en l'absence de sepsis documenté ou d'angiocholite associée (résserver aux formes nécrotiques infectées prouvées)."
+      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate. Poser 2 VVP de bon calibre, scope, SpO2, oxygénothérapie si SpO2 < 92%. Sondage urinaire pour diurèse horaire (objectif > 0.5 mL/kg/h).",
+      "Étape 2 : Bilan biologique d'urgence au lit : Lipasémie (ou amylasémie), NFS, créatinine, urée, CRP, bilan hépatique (ASAT, ALAT, GGT, PAL, Bilirubine), calcémie, glycémiante, triglycéridémie et gaz du sang (GDS) avec lactates.",
+      "Étape 3 : Réanimation volémique agressive (Ringer Lactate ou NaCl 0.9%) : 10 à 20 mL/kg en bolus initial puis 150-250 mL/h guidée par la volémie. Antalgie adaptée : Paracétamol 1g IV + Nefopam (Acupan) ou titrage morphinique (Morphine 0.1 mg/kg IV toutes les 5 min jusqu'à EVA < 3). Mise à jeun stricte et IPP IV (Oméprazole 40 mg).",
+      "Étape 4 : Imagerie de débrouillage : Échographie abdominale aux urgences (recherche d'étiologie biliaire). TDM abdominale injectée (ou écho-endoscopie/IRM si CI) à réaliser entre la 48ème et 72ème heure pour le score de Balthazar et le pronostic. Surveillance armée : score de Ranson ou Glasgow à 48h.",
+      "Étape 5 : Critères d'appel réanimation et transfert : Défaillance d'organe persistante (choc, insuffisance respiratoire PaO2 < 60 mmHg, insuffisance rénale créatinine > 177 µmol/L), score de Bisap >= 3, ou syndrome du compartiment abdominal. Ne PAS administrer d'antibiotiques en prophylaxie systématique."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / Collège de Réanimation / Recommandations Nationales Algériennes de Gastro-Entérologie",
+    "scientific_references": "Consensus SFMU / SRLF / Collège de Réanimation / Recommandations nationales MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-13T22:41:07.251857+00:00",
-    "updated_at": "2026-11-13T22:41:07.251870+00:00"
+    "created_at": "2026-11-17T22:56:15.893667+00:00",
+    "updated_at": "2026-11-17T22:56:15.893681+00:00"
   },
   {
     "id": "memento_intoxication_medicamenteuse_aigue",
