@@ -8,7 +8,9 @@ import '../../revision/data/residency_repository.dart';
 import '../../revision/models/module_model.dart';
 import '../../revision/models/qcm_model.dart';
 import '../../whiteboard/presentation/whiteboard_list_screen.dart';
+import '../models/teacher_earnings_model.dart';
 import '../models/teacher_workspace_model.dart';
+import '../services/teacher_earnings_service.dart';
 import '../services/teacher_workspace_service.dart';
 
 class TeacherWorkspaceScreen extends StatefulWidget {
@@ -26,6 +28,10 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
   List<TeacherExamModel> _exams = [];
   List<MedicalModuleModel> _modules = [];
   String _specialtyFilter = 'Toutes';
+
+  // Rémunération enseignante (65 % auteurs / 35 % plateforme)
+  TeacherEarningsSummary _earnings = TeacherEarningsSummary.empty;
+  bool _earningsLoading = true;
 
   // Studio Publication state
   AcademicRank _selectedRank = AcademicRank.resident;
@@ -56,9 +62,9 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
         _rankFromMedicalRole(user?.medicalRole) ??
         AcademicRank.maitreAssistant;
     _tabController = TabController(
-      length: _canPublish ? 4 : 2,
+      length: _canPublish ? 5 : 2,
       vsync: this,
-      initialIndex: widget.initialTab.clamp(0, _canPublish ? 3 : 1),
+      initialIndex: widget.initialTab.clamp(0, _canPublish ? 4 : 1),
     );
     _loadAll();
   }
@@ -90,11 +96,16 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
     final pubs = await TeacherWorkspaceService.loadPublications();
     final exams = await TeacherWorkspaceService.loadExams();
     final mods = await ResidencyRepository.loadModulesAsync();
+    final earnings = _canPublish
+        ? await TeacherEarningsService.loadSummary()
+        : TeacherEarningsSummary.empty;
     if (mounted) {
       setState(() {
         _publications = pubs;
         _exams = exams;
         _modules = mods;
+        _earnings = earnings;
+        _earningsLoading = false;
       });
     }
   }
@@ -138,6 +149,7 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
             if (_canPublish) ...[
               const Tab(icon: Icon(Icons.edit_note_rounded, size: 18), text: 'Publier (Prof)'),
               const Tab(icon: Icon(Icons.add_chart_rounded, size: 18), text: 'Créer Examen / QROC'),
+              const Tab(icon: Icon(Icons.payments_rounded, size: 18), text: 'Mes gains'),
             ],
           ],
         ),
@@ -150,6 +162,7 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
           if (_canPublish) ...[
             _buildPublishStudioTab(),
             _buildExamBuilderTab(),
+            _buildEarningsTab(),
           ],
         ],
       ),
@@ -280,7 +293,346 @@ class _TeacherWorkspaceScreenState extends State<TeacherWorkspaceScreen>
     );
   }
 
+
+  // TAB 5 : Rémunération de l'enseignant (65 % auteurs / 35 % plateforme)
+  Widget _buildEarningsTab() {
+    if (_earningsLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final settings = _earnings.settings;
+    final canWithdraw = _earnings.availableBalance >= settings.minPayoutAmount;
+
+    return RefreshIndicator(
+      onRefresh: _loadAll,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0D9488), Color(0xFF0F766E)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'SOLDE DISPONIBLE',
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white70, letterSpacing: 0.6),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  formatDzd(_earnings.availableBalance),
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _earningsMetric('En rétention', formatDzd(_earnings.pendingBalance), settings.holdbackDays),
+                    ),
+                    Expanded(
+                      child: _earningsMetric('Cumul généré', formatDzd(_earnings.lifetimeEarnings), null),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryTeal.withValues(alpha: 0.07),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline_rounded, size: 16, color: AppTheme.primaryTeal),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    "${settings.authorSharePct.toStringAsFixed(0)} % du revenu net est réparti entre les auteurs au prorata de l'usage réel "
+                    "(${settings.platformSharePct.toStringAsFixed(0)} % Medsina). "
+                    "Retraits à partir de ${formatDzd(settings.minPayoutAmount)}, disponibles après ${settings.holdbackDays} jours.",
+                    style: const TextStyle(fontSize: 11, height: 1.35),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.account_balance_wallet_rounded),
+              label: Text(
+                canWithdraw
+                    ? 'Demander un retrait'
+                    : 'Retrait dès ${formatDzd(settings.minPayoutAmount)}',
+                style: const TextStyle(fontWeight: FontWeight.w900),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.clinicalNavy,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              onPressed: canWithdraw ? _openPayoutSheet : null,
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text('Historique des retraits', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
+          const SizedBox(height: 8),
+          if (_earnings.payouts.isEmpty)
+            Text(
+              'Aucune demande de retrait pour le moment.',
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            )
+          else
+            ..._earnings.payouts.map(_buildPayoutRow),
+          const SizedBox(height: 20),
+          const Text('Détail par mois', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
+          const SizedBox(height: 8),
+          if (_earnings.ledger.isEmpty)
+            Text(
+              'Aucun revenu calculé pour le moment. Les gains sont crédités à la clôture mensuelle.',
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            )
+          else
+            ..._earnings.ledger.map(_buildLedgerRow),
+          const SizedBox(height: 30),
+        ],
+      ),
+    );
+  }
+
+  Widget _earningsMetric(String label, String value, int? holdbackDays) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          holdbackDays == null ? label : '$label ($holdbackDays j)',
+          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white70),
+        ),
+        const SizedBox(height: 2),
+        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.white)),
+      ],
+    );
+  }
+
+  Widget _buildPayoutRow(TeacherPayoutItem payout) {
+    Color color;
+    switch (payout.status) {
+      case 'paid':
+        color = const Color(0xFF10B981);
+        break;
+      case 'approved':
+        color = const Color(0xFF0284C7);
+        break;
+      case 'rejected':
+      case 'cancelled':
+        color = const Color(0xFFEF4444);
+        break;
+      default:
+        color = const Color(0xFFF59E0B);
+    }
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: ListTile(
+        dense: true,
+        leading: Icon(Icons.account_balance_wallet_rounded, color: color),
+        title: Text(
+          '${formatDzd(payout.amount)} • ${payout.methodLabel}',
+          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+        ),
+        subtitle: Text(
+          '${_monthLabel(payout.requestedAt)}${payout.adminNote != null && payout.adminNote!.isNotEmpty ? ' • ${payout.adminNote}' : ''}',
+          style: const TextStyle(fontSize: 11),
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            payout.statusLabel,
+            style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w900, color: color),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLedgerRow(TeacherLedgerEntry entry) {
+    final available = entry.isAvailable;
+    final color = available ? const Color(0xFF10B981) : const Color(0xFFF59E0B);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: ListTile(
+        dense: true,
+        title: Text(
+          _monthLabel(entry.periodMonth),
+          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+        ),
+        subtitle: Text(
+          '${entry.units.toStringAsFixed(1)} unités • ${available ? 'disponible' : 'en rétention'}',
+          style: const TextStyle(fontSize: 11),
+        ),
+        trailing: Text(
+          formatDzd(entry.earnings),
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: color),
+        ),
+      ),
+    );
+  }
+
+  String _monthLabel(DateTime date) {
+    const months = [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+    ];
+    return '${months[date.month - 1]} ${date.year}';
+  }
+
+  Future<void> _openPayoutSheet() async {
+    final settings = _earnings.settings;
+    final amountCtrl = TextEditingController(text: _earnings.availableBalance.toStringAsFixed(0));
+    final holderCtrl = TextEditingController();
+    final accountCtrl = TextEditingController();
+    String method = 'ccp';
+    String? error;
+    bool busy = false;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Demande de retrait', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+              const SizedBox(height: 4),
+              Text(
+                'Solde disponible : ${formatDzd(_earnings.availableBalance)}',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: amountCtrl,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                  labelText: 'Montant (DZD)',
+                  helperText: 'Minimum ${formatDzd(settings.minPayoutAmount)}',
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                initialValue: method,
+                decoration: const InputDecoration(labelText: 'Mode de paiement', isDense: true),
+                items: const [
+                  DropdownMenuItem(value: 'ccp', child: Text('CCP (Algérie Poste)')),
+                  DropdownMenuItem(value: 'baridimob', child: Text('BaridiMob')),
+                  DropdownMenuItem(value: 'virement', child: Text('Virement bancaire')),
+                ],
+                onChanged: (v) => setSheetState(() => method = v ?? 'ccp'),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: holderCtrl,
+                decoration: const InputDecoration(labelText: 'Titulaire du compte', isDense: true),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: accountCtrl,
+                decoration: const InputDecoration(labelText: 'Numéro CCP / RIB / téléphone BaridiMob', isDense: true),
+              ),
+              if (error != null) ...[
+                const SizedBox(height: 10),
+                Text(error!, style: const TextStyle(color: Color(0xFFEF4444), fontSize: 12, fontWeight: FontWeight.w700)),
+              ],
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryTeal,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: busy
+                      ? null
+                      : () async {
+                          final amount = double.tryParse(amountCtrl.text.replaceAll(' ', '').replaceAll(',', '.')) ?? 0;
+                          setSheetState(() {
+                            busy = true;
+                            error = null;
+                          });
+                          final result = await TeacherEarningsService.requestPayout(
+                            amount: amount,
+                            method: method,
+                            accountHolder: holderCtrl.text,
+                            accountDetails: accountCtrl.text,
+                            settings: settings,
+                            availableBalance: _earnings.availableBalance,
+                          );
+                          if (!ctx.mounted) return;
+                          if (result != null) {
+                            setSheetState(() {
+                              busy = false;
+                              error = result;
+                            });
+                            return;
+                          }
+                          Navigator.pop(ctx);
+                          await _loadAll();
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Demande de retrait envoyée. Elle sera traitée par l\'administration.'),
+                              backgroundColor: AppTheme.primaryTeal,
+                            ),
+                          );
+                        },
+                  child: Text(busy ? 'Envoi…' : 'Envoyer la demande', style: const TextStyle(fontWeight: FontWeight.w900)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    amountCtrl.dispose();
+    holderCtrl.dispose();
+    accountCtrl.dispose();
+  }
+
   void _openPublicationViewer(TeacherPublicationItem pub) {
+    // Attribution du revenu : une ouverture réelle = 1 unité (dédupliquée 24 h).
+    TeacherEarningsService.recordConsumption(
+      contentType: 'publication',
+      contentId: pub.id,
+    );
     if (pub.contentType == TeacherContentType.mindmap) {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const WhiteboardListScreen()),
@@ -811,6 +1163,12 @@ class _TeacherExamRunnerScreenState extends State<_TeacherExamRunnerScreen> {
   }
 
   void _submit() {
+    // Attribution du revenu : un passage d'examen = 5 unités (une seule fois).
+    TeacherEarningsService.recordConsumption(
+      contentType: 'exam',
+      contentId: widget.exam.id,
+      units: 5,
+    );
     final questions = widget.exam.customQuestions;
     if (questions.isEmpty) {
       setState(() {
