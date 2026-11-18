@@ -313,35 +313,4 @@ class EcgAnalysisHelper {
     }
     return 'QTc dans les limites normales.';
   }
-
-  static const List<Map<String, String>> sevenStepsChecklist = [
-    {
-      'step': '1. Rythme',
-      'detail': 'Sinusal ? (Onde P positive en DI, DII, négative en aVR, suivie d\'un QRS). Régulier ou irrégulier (FA si irrégulier sans onde P) ?',
-    },
-    {
-      'step': '2. Fréquence Cardiaque',
-      'detail': '300 / nombre de grands carreaux entre 2 R. Normale : 60–100 bpm. Bradycardie < 60, Tachycardie > 100.',
-    },
-    {
-      'step': '3. Axe du QRS',
-      'detail': 'Normal (-30° à +90°) : QRS positif en DI et DII/aVF. Déviation gauche (DI+, aVF-) ou droite (DI-, aVF+).',
-    },
-    {
-      'step': '4. Espace PR (N : 120–200 ms)',
-      'detail': '3 à 5 petits carreaux. BAV 1er degré si PR > 200 ms. Pré-excitation (WPW) si PR < 120 ms + onde delta.',
-    },
-    {
-      'step': '5. Complexe QRS (N < 120 ms)',
-      'detail': 'QRS fin (< 3 petits carreaux) vs QRS large (≥ 120 ms : BBG, BBD ou Tachycardie Ventriculaire).',
-    },
-    {
-      'step': '6. Segment ST & Territoires',
-      'detail': 'Sus-décalage ≥ 1 mm dans ≥ 2 dérivations contiguës (≥ 2 mm en V2-V3) = SCA ST+ ! Antérieur (V1-V4), Inférieur (DII-DIII-aVF), Latéral (DI-aVL-V5-V6).',
-    },
-    {
-      'step': '7. Onde T & Espace QTc',
-      'detail': 'Onde T ample pointue = hyperkaliémie ou ischémie sous-endocardique. QTc normal < 450 ms (H) / 460 ms (F).',
-    },
-  ];
 }
