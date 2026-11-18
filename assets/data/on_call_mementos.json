@@ -371,22 +371,23 @@
   },
   {
     "id": "memento_pancreatite_aigue",
-    "title": "🩸 Prise en Charge Initiale d'une Pancréatite Aiguë",
-    "category": "Gastro-entérologie / Urgences",
+    "title": "🩸 Prise en Charge Initiale de la Pancréatite Aiguë",
+    "category": "Urgences Médico-Chirurgicales",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate. Poser 2 VVP de bon calibre, scope, SpO2, oxygénothérapie si SpO2 < 92%. Sondage urinaire pour diurèse horaire (objectif > 0.5 mL/kg/h).",
-      "Étape 2 : Bilan biologique d'urgence au lit : Lipasémie (ou amylasémie), NFS, créatinine, urée, CRP, bilan hépatique (ASAT, ALAT, GGT, PAL, Bilirubine), calcémie, glycémiante, triglycéridémie et gaz du sang (GDS) avec lactates.",
-      "Étape 3 : Réanimation volémique agressive (Ringer Lactate ou NaCl 0.9%) : 10 à 20 mL/kg en bolus initial puis 150-250 mL/h guidée par la volémie. Antalgie adaptée : Paracétamol 1g IV + Nefopam (Acupan) ou titrage morphinique (Morphine 0.1 mg/kg IV toutes les 5 min jusqu'à EVA < 3). Mise à jeun stricte et IPP IV (Oméprazole 40 mg).",
-      "Étape 4 : Imagerie de débrouillage : Échographie abdominale aux urgences (recherche d'étiologie biliaire). TDM abdominale injectée (ou écho-endoscopie/IRM si CI) à réaliser entre la 48ème et 72ème heure pour le score de Balthazar et le pronostic. Surveillance armée : score de Ranson ou Glasgow à 48h.",
-      "Étape 5 : Critères d'appel réanimation et transfert : Défaillance d'organe persistante (choc, insuffisance respiratoire PaO2 < 60 mmHg, insuffisance rénale créatinine > 177 µmol/L), score de Bisap >= 3, ou syndrome du compartiment abdominal. Ne PAS administrer d'antibiotiques en prophylaxie systématique."
+      "Étape 1 : Évaluation hémodynamique et respiratoire immédiate. Conditionnement (2 VVP gros calibre), pose d'une Sonde Nasogastrique (SNG) si iléus ou vomissements incoercibles, et Sonde Urinaire (SU) pour diurèse horaire.",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, Ionogramme sanguin, Urée, Créatinine, Calcémie, Glycémie, CRP, Bilan hépatique (ASAT, ALAT, Bilirubine, GGT, Phosphatases alcalines), Lipasémie et Gaz du Sang (GDS).",
+      "Étape 3 : Remplissage vasculaire agressif des premières 24h par Cristalloïdes (NaCl 0.9% ou Ringer Lactate) : 10 à 20 mL/kg/8h selon l'état volémique. Antalgie palier 3 IV (Néfopam 20mg ou Tramadol 100mg, ou titration morphinique). Inhibiteurs de la pompe à protons (Oméprazole 40mg IV).",
+      "Étape 4 : Imagerie de première intention : Échographie abdominale aux urgences (recherche d'étiologie biliaire). Scanner abdominal avec injection de PDC (TDM abdomino-pelvienne) indiqué à partir de la 48-72ème heure pour évaluer la nécrose pancréatique (Score de Balthazar).",
+      "Étape 5 : Surveillance armée (Pouls, PA, SatO2, Diurèse stricte > 0.5 mL/kg/h, score de Ranson ou Glasgow). Critères de transfert en Réanimation : Défaillance d'organe (choc, IRA, SDRA), score de Ranson >= 3 ou Glasgow >= 3, ou APACHE II élevé.",
+      "Étape 6 : Piège et contre-indication absolue : Ne JAMAIS administrer d'antibiotique en prophylaxie (l'antibiothérapie est réservée aux formes nécrotiques infectées documentées). Éviter les AINS en raison du risque d'insuffisance rénale sur pancréatite."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / Collège de Réanimation / Recommandations nationales MSPRH Algérie",
+    "scientific_references": "Consensus SFMU / SRLF / Collège National de Pathologie Digestive / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-17T22:56:15.893667+00:00",
-    "updated_at": "2026-11-17T22:56:15.893681+00:00"
+    "created_at": "2026-11-18T04:28:15.638722+00:00",
+    "updated_at": "2026-11-18T04:28:15.638739+00:00"
   },
   {
     "id": "memento_intoxication_medicamenteuse_aigue",
