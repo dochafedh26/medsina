@@ -1068,18 +1068,19 @@
   },
   {
     "id": "lab_cholinesterases",
-    "name": "Cholinestérases plasmatiques (ChE) et érythrocytaires (acétylcholinestérase)",
+    "name": "Cholinestérases (Pseudocholinestérase plasmatique et Cholinestérase érythrocytaire)",
     "category": "Hépato-Gastro & Pancréas",
-    "normal_range": "Plasmatiques (Butyrylcholinestérase) : 5300 - 12900 UI/L à 37°C | Érythrocytaires (AChE) : 30 - 45 UI/g d'Hb (ou selon technique spécifique)",
-    "unit": "UI/L (plasma) / UI/g Hb (globules rouges)",
-    "high_interpretation": "Élévation rare, observée en cas de syndrome néphrotique (synthèse hépatique augmentée de protéines), obésité, ou hyperlipidémie. Pas de retentissement aigu urgent.",
-    "low_interpretation": "Chute critique (< 50% de la base ou < 20-30% de la normale) évocatrice d'une intoxication aiguë aux insecticides organophosphorés (OP) ou carbamates (inhibition irréversible pour les OP). Autres causes de baisse des ChE plasmatiques : hépatopathies sévères (cirrhose, hépatite fulminante), dénutrition sévère, grossesse, génétique (variant atypique de butyrylcholinestérase induisant un bloc prolongé aux curares comme la suxaméthonium). Urgence vitale en réanimation pour les OP : risque de crise cholinergique majeure (bronchorrhée abondante, bronchospasme, bradycardie, détresse respiratoire) nécessitant l'administration immédiate d'Atropine et de pralidoxime (oximes).",
+    "normal_range": "Plasmatique : 5 - 12 kUI/L (varie selon la technique) | Érythrocytaire : 30 - 40 U/g d'Hb",
+    "unit": "kUI/L (plasmatique) ou U/g Hb (érythrocytaire)",
+    "high_interpretation": "Valeurs élevées : Obésité, hyperlipidémie, stéatose hépatique, syndrome néphrotique (synthèse hépatique accrue), ou variante génétique sans signification pathologique.",
+    "low_interpretation": "Valeurs basses (< 50% de la normale) : Intoxication aiguë par les composés organophosphorés (OP) ou les carbamates (inhibition enzymatique irréversible ou réversible). Autres causes d'atteinte hépatocellulaire sévère (cirrhose décompensée, hépatite fulminante), malnutrition sévère, dénutrition, grossesse (diminution physiologique des PChE plasmatiques), brûlures étendues, ou déficit génétique en butyrylcholinestérase (risque d'apnée prolongée au suxaméthonium/curares en anesthésie). Urgence vitale en réanimation (intoxication OP) : risque de crise cholinergique majeure, bronchorrhée abondante, détresse respiratoire aiguë. Conduite à tenir immédiate : Atropinisation rapide, décontamination, administration d'oximes (pralidoxime) si administration précoce, réanimation respiratoire.",
     "clinical_notes": [
-      "Piège pré-analytique majeur : Le dosage des cholinestérases plasmatiques varie considérablement d'un individu à l'autre (variabilité interindividuelle importante). La valeur basale du patient est idéale mais rarement connue en urgence ; une baisse franche par rapport à la limite inférieure de la norme est l'élément clé.",
-      "Piège pharmacologique : Les inhibiteurs des cholinestérases (organophosphorés) inhibent à la fois la butyrylcholinestérase plasmatique (plus sensible, baisse rapide) et l'acétylcholinestérase érythrocytaire (reflète mieux l'activité synaptique/cérébrale et érythrocytaire). Ne pas se fier uniquement aux chiffres biologiques pour traiter une intoxication aiguë : la clinique (syndrome muscarinique, nicotinique et central) guide l'antidotothérapie en réanimation."
+      "Piège pré-analytique majeur : Le prélèvement pour intoxication aux organophosphorés doit être acheminé rapidement au laboratoire (glace) et centrifugé sans délai pour éviter toute hydrolyse spontanée in vitro faussement rassurante.",
+      "Corrélation clinique : La cholinestérase érythrocytaire (acétylcholinestérase) refse l'activité de l'acétylcholinestérase synaptique (cerveau, globules rouges), tandis que la cholinestérase plasmatique (butyrylcholinestérase) est un excellent marqueur synthétique hépatique et de toxicité aiguë par les organophosphorés.",
+      "Perle concours (Résidanat Algérie) : Devant un patient admis en réanimation avec myosis serré, hypersalivation, fascications musculaires et bronchorrhée menaçante, l'effondrement des cholinestérases (souvent < 20-30% de la normale) confirme l'intoxication aux organophosphorés (parthion, malathion, etc.)."
     ],
-    "created_at": "2026-11-07T01:00:43.342576+00:00",
-    "updated_at": "2026-11-07T01:00:43.342589+00:00"
+    "created_at": "2026-11-18T04:38:40.100516+00:00",
+    "updated_at": "2026-11-18T04:38:40.100534+00:00"
   },
   {
     "id": "lab_frottis_sanguin_schizocytes_mat",
