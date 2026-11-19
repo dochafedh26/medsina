@@ -410,23 +410,22 @@
   },
   {
     "id": "memento_traumatisme_cranien",
-    "title": "🧠 Traumatisme Crânien : Scanner & Urgences",
-    "category": "Neuro-Traumatologie",
+    "title": "🧠 Traumatisme Crânien Léger / Modéré",
+    "category": "Neurologie & Urgences Traumatologiques",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation initiale immédiate (Score de Glasgow GCS, réactivité pupillaire, recherche de signes de focalisation, otorragie ou rhinorrhée de LCR).",
-      "Étape 2 : Indication formelle de TDM cérébrale sans injection en urgence (GCS < 15 à H2 post-choc, amnésie post-traumatique > 30 min, vomissements répétés, âge > 65 ans, anticoagulant/antiplaquettaire, céphalées violentes, signes neurologiques focaux).",
-      "Étape 3 : Conditionnement et réanimation initiale (Oxygénothérapie pour SpO2 > 94%, immobilisation cervicale stricte par collier, abord veineux périphérique, correction immédiate d'une hypotension systolique PAS < 100 mmHg).",
-      "Étape 4 : Gestion spécifique en cas d'engagement cérébral imminent ou de mydriase unilatérale (Hyperventilation brève si hernie, Mannitol 20% 1g/kg IV ou Sérum Salé Hypertonique 7.5% 2-3 ml/kg, appel immédiat du neurochirurgien de garde et du réanimateur).",
-      "Étape 5 : Surveillance armée en salle d'observation des UMC pendant au moins 6 heures si GCS à 15 (réévaluation horaire du GCS, des pupilles, et de la conscience avant toute décision de sortie avec consignes écrites).",
-      "Étape 6 : Piège médico-légal absolu (Interdiction formelle de réaliser une ponction lombaire et de prescrire des sédatifs ou morphiniques puissants avant l'élimination formelle d'une lésion chirurgicale au TDM cérébral)."
+      "Étape 1 : Évaluation neurologique immédiate (Score de Glasgow GCS) et examen pupillaire. Recherche des signes d'alerte : amnésie post-traumatique, céphalées persistantes, vomissements répétés, crise convulsive, ou notion de perte de connaissance initiale.",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, groupage-rhesus, bilan d'hémostase (TP, TCA, Fibrinogène) indispensable avant toute imagerie ou si traitement anti-thrombotique associé.",
+      "Étape 3 : Indications absolues du TDM cérébral sans injection en urgence : GCS < 15 à H2 post-traumatisme, signe de localisation neurologique, fracture du crâne palpée ou enfoncée, suspicion de fracture de la base (otorragie, rhinorrhée, signe de Battle, yeux au beurre noir bilatéraux), âge > 65 ans, ou prise d'AVK/antiagragants plaquettaires.",
+      "Étape 4 : Surveillance armée en zone d'Urgences (UHCD) pendant 6 heures minimum : contrôle horaire du GCS, des pupilles et des constantes hémodynamiques. Tout affaissement du score de Glasgow impose une réévaluation par le réanimateur et un TDM en urgence.",
+      "Étape 5 : Piège médico-légal et contre-indication absolue : Ne JAMAIS administrer de traitement sédatif lourd ou d'antalgique morphinique majeur en phase pré-TDM sans avis spécialisé (risque de masquer une aggravation neurologique aiguë)."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / Société Algérienne de Médecine d'Urgence (SAMU) / MSPRH",
+    "scientific_references": "SFMU / Recommandations Françaises et Internationales de Prise en Charge du Traumatisme Crânien Léger / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-12T19:59:39.961173+00:00",
-    "updated_at": "2026-11-12T19:59:39.961189+00:00"
+    "created_at": "2026-11-19T03:34:54.039050+00:00",
+    "updated_at": "2026-11-19T03:34:54.039065+00:00"
   },
   {
     "id": "memento_arret_cardio_respiratoire",
