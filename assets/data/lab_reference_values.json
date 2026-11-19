@@ -547,16 +547,17 @@
     "id": "lab_quantiferon_tb_gold",
     "name": "Quantiféron-TB Gold (IGRA - Interferon-Gamma Release Assay)",
     "category": "Infectiologie & Inflammation",
-    "normal_range": "Négatif (Réponse aux antigènes insuffisante)",
-    "unit": "UI/mL d'interféron-gamma (ou IU/mL)",
-    "high_interpretation": "Positif (≥ 0,35 UI/mL et ≥ 25% du bruit de fond / témoin négatif) : Témoin d'une infection par Mycobacterium tuberculosis (tuberculose-infection latente ou maladie tuberculeuse active). Ne permet pas de différencier une infection latente (ITL) d'une tuberculose maladie. Conduite à tenir : Évaluation clinique et radiologique (radiographie thoracique) pour éliminer une tuberculose active avant toute prescription de traitement de l'ITL.",
-    "low_interpretation": "Négatif (< 0,35 UI/mL) : Absence de sensibilisation détectable aux antigènes de M. tuberculosis. Indéterminé : Témoin positif (mitogène) insuffisant (anergie, immunodépression profonde, erreur technique) ou témoin négatif trop élevé (fuite d'interféron spontanée). Conduite à tenir : Répéter le test ou recourir à l'IDR à la tuberculine selon le contexte clinique.",
+    "normal_range": "Négatif (Réponse spécifique M. tuberculosis < 0.35 UI/mL)",
+    "unit": "UI/mL",
+    "high_interpretation": "Positif (>= 0.35 UI/mL et >= 25% du blanc) : Indique une sensibilisation cellulaire aux antigènes de Mycobacterium tuberculosis (ESAT-6, CFP-10, TB7.7). Ne permet pas de différencier une tuberculose-infection (latente - ITL) d'une tuberculose-maladie (active). Conduite à tenir : Eliminer une atteinte active (clinique, imagerie thoracique, crachats AFB/PCR GeneXpert) avant d'instaurer un traitement de l'infection latente (TIL) par Isoniazide ou Isoniazide-Rifampicine (Recommandations PNLAT Algérie).",
+    "low_interpretation": "Négatif (< 0.35 UI/mL) : Absence de réponse immune cellulaire détectable in vitro contre les antigènes testés. Conduite à tenir : N'exclut formellement ni une tuberculose-infection (faux négatif notamment chez l'immunodéprimé) ni une tuberculose active (sensibilité de l'IGRA d'environ 80-85% dans la TBC active).",
     "clinical_notes": [
-      "Piège pré-analytique majeur : Le prélèvement doit être réalisé directement dans les tubes spécifiques (Nil, TB Antigen, Mitogen) et agités vigoureusement (10 fois) immédiatement après le prélèvement, puis incubés rapidement à 37°C en laboratoire dans les 16 heures.",
-      "Avantage majeur par rapport à l'IDR : Absence de réaction croisée avec le BCG (Bacille de Calmette et Guérin) et les mycobactéries environnementales (M. avium, etc.), ce qui en fait l'examen de choix chez les sujets vaccinés par le BCG, très fréquent en Algérie."
+      "Interprétation du tube Mitogène (Contrôle positif > 0.5 UI/mL au-dessus du blanc) indispensable : Si le mitogène est bas, le test est invalide (anergie immunitaire ou lymphopénie profonde / immunodépression).",
+      "Avantage majeur par rapport à l'IDR (Intradermoréaction à la tuberculine) : Pas de réaction croisée avec le BCG ni avec la majorité des mycobactéries non tuberculeuses (MNT), éliminant le biais du 'rappel vaccinal BCG' très fréquent en Algérie.",
+      "Piège pré-analytique critique : Le prélèvement nécessite une agitation rigoureuse immédiate des tubes spéciaux (Mitogène, TB Antigen, Nil) puis un acheminement rapide et une incubation en laboratoire dans les heures suivant la phlébotomie pour éviter l'altération de la réponse lymphocytaire T."
     ],
-    "created_at": "2026-10-27T10:45:33.243654+00:00",
-    "updated_at": "2026-10-27T10:45:33.243668+00:00"
+    "created_at": "2026-11-19T03:44:33.891911+00:00",
+    "updated_at": "2026-11-19T03:44:33.891925+00:00"
   },
   {
     "id": "lab_ponction_pleurale_light",
