@@ -1239,16 +1239,17 @@
     "id": "lab_svo2_scvo2",
     "name": "Gazométrie du sang veineux mêlé (SvO2) et central (ScvO2)",
     "category": "Gazométrie & Équilibre Acido-Basique",
-    "normal_range": "SvO2: 60 - 80% (Moyenne 75%) | ScvO2: 70 - 80%",
+    "normal_range": "SvO2 : 65 - 75 % | ScvO2 : 70 - 80 % (mesurée au cathéter veineux central jugulaire interne/sous-clavier)",
     "unit": "%",
-    "high_interpretation": "Valeur > 80-85% : Extraction en oxygène effondrée (incapacité des tissus à consommer l'O2). Causes : Choc septique (maldistribution microcirculatoire, shunt artério-veineux), intoxication au cyanure (inhibition de la cytochrome c oxydase), mort subite, hypothermie profonde, ou cathéter veineux central mal positionné (positionné trop haut dans la jugulaire interne mesurant le sang carotidien ou faussement artériel). Conduite à tenir : Rechercher une inefficacité de l'extraction tissulaire, traiter la cause (antidote cyanure, réévaluation sepsis), vérifier la position du CVC.",
-    "low_interpretation": "Valeur < 60% (ScvO2 < 70%) : Augmentation de l'extraction tissulaire en oxygène pour maintenir la consommation (VO2) face à un transport insuffisant (DO2). Signe d'hypoperfusion tissulaire menaçante. Causes : Choc hypovolémique, choc cardiogénique, choc anaphylactique, anémie aiguë sévère, hypoxémie profonde (baisse de SaO2), ou augmentation brutale des besoins métaboliques (frisson, douleur, ventilation mécanique non adaptée). Seuil d'urgence vitale : < 50%. Conduite à tenir immédiate : Optimiser le transport en oxygène (DO2) : correction de l'hypoxémie (O2, ventilation), transfusion si Hb < 7-9 g/dL, remplissage vasculaire prudent si répondeur aux fluides, et support inotrope (dobutamine) si index cardiaque bas.",
+    "high_interpretation": "Élévation (> 80 %) : Inadéquation entre apports et besoins en O2 (extraction tissulaire effondrée). Causes : Choc septique (maldistribution microcirculatoire / shunt artério-veineux), shunt gauche-droit intracardiaque, intoxication au cyanure (inhibition de la cytochrome c oxydase), mort cérébrale, hypothermie thérapeutique, anesthésie générale profonde. Conduite à tenir : Rechercher une inefficacité de l'O2 tissulaire (lactates élevés), éliminer un shunt ou une intoxication.",
+    "low_interpretation": "Baisse (SvO2 < 65 % ou ScvO2 < 70 %) : Augmentation de l'extraction tissulaire en oxygène pour maintenir la consommation (VO2) face à un transport (DO2) insuffisant. Causes : Choc hypovolémique (hémorragie), choc cardiogénique (infarctus du myocarde, insuffisance cardiaque aiguë), choc obstructif (embolie pulmonaire massive, tamponnade), anémie aiguë sévère, hypoxémie profonde, douleur/fièvre (augmentation de la VO2). Seuil d'alerte critique : ScvO2 < 65% ou SvO2 < 60% (urgence réanimatoire absolue). Conduite à tenir : Optimiser le transport en oxygène (Remplissage vasculaire prudents, Inotropes positifs type dobutamine, Transfusion de CGR si Hb < 7-8 g/dL, sédation/ventilation pour baisser la VO2).",
     "clinical_notes": [
-      "Piège anatomique majeur : La ScvO2 (prélevée via un cathéter veineux central dans la VCS) est généralement supérieure de 2 à 5% à la SvO2 (prélevée dans l'artère pulmonaire via un Swan-Ganz) en raison du drainage préférentiel de la partie supérieure du corps ayant un métabolisme basal plus faible, mais elles évoluent parallèlement en situation de choc.",
-      "Piège pré-analytique : Nécessite une seringue héparinée étanche purgée d'air, analysée immédiatement (glace si délai > 10 min) pour éviter la consommation in vitro d'O2 par les leucocytes et les érythrocytes."
+      "Gradient ScvO2 - SvO2 : La ScvO2 est physiologiquement supérieure de 2 à 5 % à la SvO2 en raison du drainage de la partie supérieure du corps (cerveau) qui extrait moins d'oxygène au repos que le territoire splanchnique et inférieur.",
+      "Piège majeur en réanimation : Une ScvO2 normale ou élevée (> 70-80 %) n'élimine PAS un état de choc (notamment septique) où l'extraction cellulaire d'oxygène est altérée (cytopathie mitochondriale). Toujours associer l'analyse des lactates artériels.",
+      "Règle d'or thérapeutique (Early Goal-Directed Therapy de Rivers) : En cas de choc septique ou cardiogénique, la normalisation de la ScvO2 >= 70% (couplée à une PAM >= 65 mmHg et un diurèse >= 0.5 mL/kg/h) est un objectif hémodynamique majeur des premières heures."
     ],
-    "created_at": "2026-11-15T23:03:25.467824+00:00",
-    "updated_at": "2026-11-15T23:03:25.467842+00:00"
+    "created_at": "2026-11-19T13:41:47.534346+00:00",
+    "updated_at": "2026-11-19T13:41:47.534362+00:00"
   },
   {
     "id": "lab_beta_hcg_plasmatique",
