@@ -2735,5 +2735,28 @@
     "treatment_summary": "Prise en charge éducative et comportementale intensive précoce (ABA, TEACCH, orthophonie). Traitement médicamenteux réservé aux comorbidités sévères (antipsychotiques atypiques type Rispéridone pour l'irritabilité).",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-18T19:04:02.431979+00:00"
+  },
+  {
+    "course_id": "Blida_NEUROLOGIE_CEPHALEES_ET_ALGIES_FACIALES",
+    "course_name": "Céphalées et Algies faciales",
+    "module_id": "Blida_NEUROLOGIE",
+    "module_name": "Neurologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\n- **Céphalée** : Douleur ressentie dans la région crânienne, de la ligne orbito-méatique au scalp.\n- **Classification internationale (ICHD-3)** : Distinction primordiale entre céphalées **primaires** (migraine, algie vasculaire de la face, céphalée de tension) et **secondaires** (symptomatiques d'une affection sous-jacente).\n- **Physiopathologie de la migraine** : Activation du système trigémino-vasculaire, libération de peptides vaso-actifs (CGRP, substance P), inflammation neurogène stérile et sensibilisation centrale/périphérique.\n- **Physiopathologie de l'AVF** : Implication de l'hypothalamus (horloge biologique), activation du système trigémino-autonome.\n\n## 2. Démarche Diagnostique (Clinique, Paraclinique de référence)\n- **Signes d'alarme (Red Flags)** nécessitant une imagerie urgente (TDM/IRM cérébrale) :\n  - Céphalée brutale en coup de tonnerre (HSA jusqu'à preuve du contraire).\n  - Céphalée inaugurant un déficit neurologique focal, des troubles de la conscience ou des crises convulsives.\n  - Céphalée fébrile (méningite, encéphalite, abcès).\n  - Céphalée d'aggravation progressive récente chez un sujet de plus de 50 ans (artérite à cellules géantes, tumeur).\n  - Céphalée modifiée par les changements de position (HTIC, hypotension intracrânienne).\n- **Migraine sans aura** : Au moins 5 crises, durée de 4 à 72 heures, unilatérale, pulsatile, intensité modérée à sévère, aggravée par l'effort physique habituel, associée à des nausées/vomissements, photophobie et phonophobie.\n- **Algie vasculaire de la face (AVF)** : Crises unilatérales très violentes, orbitaires ou supra-orbitaires, d'une durée de 15 à 180 minutes, accompagnées de signes autonomiques ipsilatéraux (injection conjonctivale, larmoiement, rhinorrhée, syndrome de Horner partiel).\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Névralgie du trijumeau** : Douleur faciale paroxystique, brèves (quelques secondes), en éclair, déclenchée par une zone gâchette (trigger zone).\n- **Artérite à cellules géantes (maladie de Horton)** : Sujet de plus de 50 ans, claudication de la mâchoire, anomalie de l'artère temporale (indurée, pulsutions abolies), VS et CRP augmentées.\n- **Céphalée par hypotachie intracrânienne** : Douleur orthostatique (survient ou s'aggrave en position debout, disparaît en décubitus).\n\n## 4. Stratégie Thérapeutique\n- **Crise migraineuse** :\n  - Antalgiques simples (paracétamol) ou AINS (aspirine, ibuprofène) pour les crises légères à modérées.\n  - **Triptans** (somatriptan, zolmitriptan) en 1ère intention pour les crises sévères (CI : antécédents coronariens, HTA mal contrôlée, AVC).\n- **Fond de la migraine** : Bêtabloquants (propranolol, métoprolol), flunarizine, anti-CGRP (si échec des autres).\n- **Crise d'AVF** : Oxygénothérapie normobare à haut débit (12 L/min au masque facial) et Sumatriptan sous-cutané. Fond : Vérapamil.\n- **Névralgie du trijumeau** : Carbamazépine en 1ère intention.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **État de mal migraineux** : Crise invalidante durant plus de 72 heures, risque de déshydratation.\n- **Céphalée par abus médicamenteux** : Survient en cas de prise trop fréquente d'antalgiques ou de triptans (plus de 10 à 15 jours par mois), aggravant la céphalée chronique.",
+    "key_takeaways": [
+      "Toute céphalée brutale 'en coup de tonnerre' est une hémorragie sous-arachnoïdienne (HSA) jusqu'à preuve du contraire.",
+      "Les triptans sont formellement contre-indiqués en cas de coronaropathie, d'artériopathie ou d'HTA non contrôlée.",
+      "L'algie vasculaire de la face se traite en urgence par l'oxygénothérapie à haut débit et le sumatriptan sous-cutané.",
+      "La névralgie du trijumeau est caractérisée par des douleurs fulgurantes en éclair déclenchées par une zone gâchette.",
+      "Une céphalée nouvelle chez un sujet de plus de 50 ans doit faire éliminer une artérite à cellules géantes (Horton) et une tumeur cérébrale."
+    ],
+    "exam_traps": [
+      "Piège Annales : Attribuer une céphalée unilatérale pulsatile exclusivement à la migraine sans éliminer une dissection artérielle ou une lésion organique.",
+      "Piège Traitement : Utiliser les triptans chez un patient hypertendu non contrôlé ou coronarien.",
+      "Piège Diagnostic : Confondre les signes autonomiques de l'AVF (larmoiement, rhinorrhée) avec une banale sinusite."
+    ],
+    "diagnostic_criteria": "Repose sur la classification internationale (ICHD-3) combinant la description sémiologique des accès (durée, siège, intensité, signes associés) et l'élimination impérative des céphalées secondaires par une imagerie cérébrale adaptée en présence de signes d'alarme.",
+    "treatment_summary": "Traitement de crise adapté à la sévérité (AINS/Triptans pour la migraine, Oxygène/Sumatriptan SC pour l'AVF, Carbamazépine pour la névralgie du trijumeau) associé à la prévention des abus médicamenteux.",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-19T01:27:28.060729+00:00"
   }
 ]
