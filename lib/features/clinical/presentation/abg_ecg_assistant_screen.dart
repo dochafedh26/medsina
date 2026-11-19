@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../models/abg_ecg_analyzer_model.dart';
 import '../models/ecg_interpreter_model.dart';
+import '../services/ecg_narrative_builder.dart';
+import '../services/ecg_report_pdf_service.dart';
 
 class AbgEcgAssistantScreen extends StatefulWidget {
   final int initialTab;
@@ -60,6 +62,9 @@ class _AbgEcgAssistantScreenState extends State<AbgEcgAssistantScreen>
   bool _technicalChecked = true;
   bool _avrNegative = true;
   bool _rProgressionNormal = true;
+
+  // ECG — export du compte rendu
+  bool _exporting = false;
 
   @override
   void initState() {
@@ -382,6 +387,8 @@ class _AbgEcgAssistantScreenState extends State<AbgEcgAssistantScreen>
       padding: const EdgeInsets.all(16),
       children: [
         _buildEcgSummaryCard(result),
+        const SizedBox(height: 12),
+        _buildEcgPrintCard(result),
         const SizedBox(height: 14),
         _ecgCard(
           title: 'MESURES ET CALIBRAGE',
@@ -664,6 +671,99 @@ class _AbgEcgAssistantScreenState extends State<AbgEcgAssistantScreen>
         ),
       ],
     );
+  }
+
+  Widget _buildEcgPrintCard(EcgInterpretationResult result) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: AppTheme.bentoCardDecoration(context, radius: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.picture_as_pdf_rounded, size: 18, color: AppTheme.primaryTeal),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'COMPTE RENDU IMPRIMABLE',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.4,
+                    color: AppTheme.primaryTeal,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Génère une interprétation rédigée, structurée et datée, prête à imprimer ou à joindre au dossier.',
+            style: TextStyle(fontSize: 12, height: 1.35),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: AppTheme.primaryTeal,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              onPressed: _exporting ? null : () => _openEcgPrintSheet(result),
+              icon: _exporting
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.print_rounded, size: 18),
+              label: Text(_exporting ? 'Génération du PDF…' : 'Imprimer le compte rendu'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openEcgPrintSheet(EcgInterpretationResult result) async {
+    final patient = await showModalBottomSheet<EcgPatientInfo>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (sheetContext) => const _EcgPrintSheet(),
+    );
+    if (patient == null || !mounted) return;
+
+    final hr = EcgAnalysisHelper.computeHeartRateFromLargeBoxes(_largeBoxes);
+    setState(() => _exporting = true);
+    try {
+      final path = await EcgReportPdfService.exportAndOpen(
+        findings: _ecgFindings(hr),
+        result: result,
+        patient: patient,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            path == null
+                ? 'Export PDF non disponible sur cette plateforme.'
+                : 'Compte rendu généré : ${path.split('/').last}',
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Impossible de générer le compte rendu PDF.')),
+      );
+    } finally {
+      if (mounted) setState(() => _exporting = false);
+    }
   }
 
   Widget _buildEcgSummaryCard(EcgInterpretationResult result) {
@@ -1172,5 +1272,154 @@ class _AbgEcgAssistantScreenState extends State<AbgEcgAssistantScreen>
       EcgSeverity.warning => const Color(0xFFD97706),
       EcgSeverity.critical => const Color(0xFFDC2626),
     };
+  }
+}
+
+/// Formulaire d'identité du patient avant génération du compte rendu PDF.
+class _EcgPrintSheet extends StatefulWidget {
+  const _EcgPrintSheet();
+
+  @override
+  State<_EcgPrintSheet> createState() => _EcgPrintSheetState();
+}
+
+class _EcgPrintSheetState extends State<_EcgPrintSheet> {
+  final _nameCtrl = TextEditingController();
+  final _ageCtrl = TextEditingController();
+  final _indicationCtrl = TextEditingController();
+  final _notesCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _ageCtrl.dispose();
+    _indicationCtrl.dispose();
+    _notesCtrl.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    Navigator.of(context).pop(
+      EcgPatientInfo(
+        name: _nameCtrl.text.trim(),
+        age: _ageCtrl.text.trim(),
+        indication: _indicationCtrl.text.trim(),
+        notes: _notesCtrl.text.trim(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 42,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const Text(
+                'Compte rendu ECG imprimable',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Ces informations servent uniquement à l\'en-tête du PDF et ne sont pas enregistrées.',
+                style: TextStyle(fontSize: 11.5, color: Colors.grey, height: 1.3),
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: _nameCtrl,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                  labelText: 'Nom du patient (optionnel)',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _ageCtrl,
+                      decoration: const InputDecoration(
+                        labelText: 'Âge',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Le sexe et les mesures proviennent de l\'onglet ECG.',
+                      style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.25),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _indicationCtrl,
+                maxLines: 2,
+                decoration: const InputDecoration(
+                  labelText: 'Indication de l\'examen',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _notesCtrl,
+                maxLines: 2,
+                decoration: const InputDecoration(
+                  labelText: 'Renseignements complémentaires (optionnel)',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.primaryTeal,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                  ),
+                  onPressed: _submit,
+                  icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
+                  label: const Text('Générer le PDF'),
+                ),
+              ),
+              const SizedBox(height: 6),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Annuler'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
