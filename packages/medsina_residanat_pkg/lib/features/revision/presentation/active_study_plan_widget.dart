@@ -6,8 +6,6 @@ import 'package:medsina_core/features/auth/bloc/auth_bloc.dart';
 import 'package:medsina_study_engine/features/revision/bloc/revision_bloc.dart';
 import 'package:medsina_study_engine/features/revision/bloc/revision_event.dart';
 import 'package:medsina_study_engine/features/revision/data/residency_repository.dart';
-import '../models/laureate_study_plan_model.dart';
-import 'package:medsina_study_engine/features/revision/models/module_model.dart';
 import '../services/laureate_study_plan_service.dart';
 import '../services/realistic_course_schedule_service.dart';
 import 'package:medsina_study_engine/features/revision/services/user_qcm_annotation_service.dart';

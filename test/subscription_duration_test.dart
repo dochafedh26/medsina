@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:medsina/features/admin/models/admin_models.dart';
+import 'package:medsina/features/subscription/models/subscription_plan_item.dart';
 import 'package:medsina/features/subscription/models/subscription_duration.dart';
 
 void main() {

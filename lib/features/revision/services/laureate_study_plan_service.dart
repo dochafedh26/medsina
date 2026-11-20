@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/laureate_study_plan_model.dart';
-import '../../../core/services/medsina_notification_dispatcher.dart';
 
 /// Progress and tracking state for an active study plan adopted by the candidate
 class UserStudyPlanProgress {

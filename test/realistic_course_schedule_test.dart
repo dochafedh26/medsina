@@ -137,14 +137,14 @@ void main() {
     });
 
     test('scheduled course items reflect completion status correctly', () {
-      const item = ScheduledCourseItem(
-        course: CourseModel(
+      final item = ScheduledCourseItem(
+        course: const CourseModel(
           id: 'c1',
           moduleId: 'm1',
           name: 'Pneumopathie',
           questionsCount: 20,
         ),
-        module: MedicalModuleModel(
+        module: const MedicalModuleModel(
           id: 'm1',
           name: 'Pneumo',
           category: 'Clinique',

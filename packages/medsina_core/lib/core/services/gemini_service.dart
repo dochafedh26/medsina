@@ -814,7 +814,7 @@ Réponds STRICTEMENT avec un JSON valide (aucun markdown) :
       return <Map<String, dynamic>>[];
     });
 
-    return result ?? <Map<String, dynamic>>[];
+    return result;
   }
 
   /// Vidal-style "Équivalences internationales / Convertisseur DC": maps a foreign/French brand name to its DCI.
