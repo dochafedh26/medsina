@@ -332,22 +332,22 @@
   {
     "id": "memento_hemorragie_digestive_rvo",
     "title": "🩸 Hémorragie Digestive Haute par RVO",
-    "category": "Urgences Médico-Chirurgicales",
+    "category": "Gastro-entérologie / Urgences",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Conditionnement immédiat (2 VVP gros calibre 14-16G), oxygénothérapie, bilan pré-transfusionnel (NFS, groupage, rhésus, RAI, hémostase, ionogramme, urée, créatinine) et remplissage prudent (cristalloïdes, objectif PAM >= 65 mmHg ou PAS 90-100 mmHg pour éviter l'aggravation de l'hypertension portale).",
-      "Étape 2 : Instaurer sans délai le traitement vaso-actif par Somatostatine (bolus de 250 µg IV direct puis 3 mg dans 50 ml de G5% à raison de 2 ml/h soit 250 µg/h) ou Terlipressine (Glutack) : 2 mg IV toutes les 4h, relais par 1 mg toutes les 4h après arrêt de l'hémorragie.",
-      "Étape 3 : Antibioprophylaxie systématique (Ceftriaxone 1g/24h IV) et correction des troubles de l'hémostase (PFC si TP < 50% ou TCA > 1,5 témoin, Plaquettes si < 50 G/L) ; l'utilisation des IPP en IV (ésoméprazole 80 mg puis 8 mg/h) est associée pour les lésions associées.",
-      "Étape 4 : Alerter l'hépato-gastro-entérologue de garde pour une endoscopie digestive haute diagnostique et thérapeutique d'hémostase (ligature élastique ou sclérose) dans les 12 premières heures après réanimation hémodynamique.",
-      "Étape 5 : Surveillance armée en déchoquage (conscience, diurèse, constantes horaires) ; en cas d'échec ou d'hémorragie foudroyante réfractaire, mise en place d'une sonde de Blakemore (ou Minnesota) avec ballon gastrique gonflé à 250-300 ml (contre-indication formelle : dépassement de 12 à 24h en place sous peine de nécrose/perforation œsophagienne) et transfert immédiat en Réanimation.",
-      "Étape 6 : Piège médico-légal et contre-indication absolue : Eviter le remplissage massif par macromolécules ou sérum salé isotonique en excès qui majore l'hypertension portale et aggrave le saignement ; ne jamais débuter l'endoscopie sans sécurisation préalable des voies aériennes chez un patient comateux ou agité."
+      "Étape 1 : Conditionnement immédiat au déchoquage : 2 VVP de gros calibre (14-16G), oxygénothérapie, monitorage, pose de SNG (lavage à l'eau tempérée), et bilan pré-transfusionnel urgent (NFS, groupage, rhésus, RAI, TP/TCA, ionogramme, urée, créat).",
+      "Étape 2 : Remplissage vasculaire prudent (objectif PAM ≥ 65 mmHg) avec des cristalloïdes, et transfusion de CGR en cas d'Hb < 7 g/dL (objectif cible Hb entre 7 et 9 g/dL). Correction des troubles de l'hémostase (PFC, plaquettes si thrombopénie < 50 G/L).",
+      "Étape 3 : Thérapies vasoactives immédiates avant l'endoscopie : Terlipressine (Glypressin®) en bolus IV de 2 mg puis 1 mg/4h, ou somatostatine en IV continue (bolus 250 µg puis 250 µg/h). Adjonction d'un IPP en IV (ésoméprazole 80 mg en bolus puis 8 mg/h) et antibiothérapie prophylaxie par ceftriaxone (2 g/24h IV).",
+      "Étape 4 : Appel urgent du gastro-entérologue pour fibroscopie digestive haute diagnostique et thérapeutique (ligature élastique ou sclérose) dans les 12 heures (idéalement < 6h après stabilisation).",
+      "Étape 5 : Surveillance armée (conscience, PA, FC, diurèse, caractères du redan/SNG). En cas d'échec ou d'hémorragie massive incontrôlable : pose d'une sonde de tamponnement (Blakemore ou Linton) après intubation trachéale de protection en réanimation.",
+      "Étape 6 : Piège médico-légal et CI absolue : Éviter le sur-remplissage vasculaire agressif qui majore la pression portale et aggrave le saignement. Ne jamais retarder la réanimation hémodynamique et l'antibiothérapie."
     ],
-    "scientific_references": "Recommandations Baveno VII / SFMU / Société Algérienne de Gastro-Entérologie (SAGE)",
+    "scientific_references": "Consensus SFMU / SRLF / Baveno VI / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-16T11:31:15.668332+00:00",
-    "updated_at": "2026-11-16T11:31:15.668357+00:00"
+    "created_at": "2026-11-20T03:24:19.217060+00:00",
+    "updated_at": "2026-11-20T03:24:19.217075+00:00"
   },
   {
     "id": "memento_asthme_aigu_grave",
