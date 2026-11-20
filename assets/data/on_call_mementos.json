@@ -704,23 +704,23 @@
   },
   {
     "id": "memento_acidocetose_diabetique",
-    "title": "⚡ Acidocétose Diabétique : Réanimation Métabolique",
-    "category": "Métabolique & Endocrinien",
+    "title": "⚡ Acidocétose Diabétique : Réa & Urgences",
+    "category": "Métabolique / Endocrinien",
     "icon_name": "bolt_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Bilan initial d'urgence (GDS, glycap, ionogramme, urée, créat, BU, ECG) ; ABCDE : oxygénothérapie si SpO2 < 92%, remplissage vasculaire immédiat par NaCl 0,9% (1000 mL en 1h puis 500 mL/h) pour restaurer l'état hémodynamique.",
-      "Étape 2 : Insulinothérapie IV stricte à l'alte (Insuline ordinaire, type Actrapid) : bolus initial de 0,1 UI/kg puis seringue électrique (PSE) continue à 0,1 UI/kg/h (soit 5 à 10 UI/h) en maintenant la glycémie entre 2 et 2,5 g/L.",
-      "Étape 3 : Gestion potassique cruciale : supplémentation par KCl systématique dès que K+ < 5,0 mmol/L dans les perfusions (1 à 2g/h de KCl). Ne JAMAIS débuter l'insuline si K+ < 3,3 mmol/L (risque d'arythmie fatale).",
-      "Étape 4 : Alcalinisation par Bicarbonate de sodium 1,4% (250 mL en 30-60 min) uniquement réservée aux acidoses métaboliques profondes menaçantes avec pH < 7,0 ou collapsus hémodynamique réfractaire.",
-      "Étape 5 : Recherche active du facteur déclencheur (Infection urinaire/pulmonaire, IDM, Ictus, arrêt d'insulinothérapie, iatrogénie) et surveillance armée au déchoquage (glycémie capillaire horaire, GDS/iono toutes les 4h).",
-      "Étape 6 : Piège médico-légal & CI : Ne jamais arrêter brutalement l'insuline IV sans avoir préalablement relayé par de l'insuline sous-cutanée (overlap de 30 min) et couvert le trou anionique, sous peine de rebond cétonique."
+      "Étape 1 : Bilan biologique immédiat (GDS, glycap, ionogramme sanguin, urée, créatinine, BU corps cétoniques) et pose de 2 VVP de bon calibre + sonde urinaire si trouble de conscience.",
+      "Étape 2 : Expansion volémique agressive par NaCl 0,9% (1000 mL en 1h, puis 500 mL/h les 2h suivantes) pour restaurer l'hémodynamique et la perfusion rénale.",
+      "Étape 3 : Insulinothérapie IV continue par Actrapid (0,1 UI/kg/h au PSE sans bolus initial), débutée UNIQUEMENT si K+ > 3,3 mmol/L sous peine d'arythmie fatale.",
+      "Étape 4 : Supplémentation potassique systématique dès que K+ < 5 mmol/L (ajouter 20 à 40 mEq de KCl par litre de perfusion pour maintenir K+ entre 4 et 5 mmol/L).",
+      "Étape 5 : Alcalinisation par Bicarbonate de Sodium 1,4% uniquement si pH < 7,00 ou acidémie menaçante (collapsus, arythmie), selon protocole réanimation.",
+      "Étape 6 : Piège mortel : Ne jamais administrer d'insuline sans avoir vérifié et corrigé une hypokaliémie, et surveiller l'apparition d'un œdème cérébral en cas de correction trop rapide de la glycap."
     ],
-    "scientific_references": "Consensus SFMU / SRLF / ALD Algérie / ADA Standards of Care",
+    "scientific_references": "Consensus SFMU / SRLF / ALFEDIM / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-11-13T01:08:54.009165+00:00",
-    "updated_at": "2026-11-13T01:08:54.009177+00:00"
+    "created_at": "2026-11-20T21:11:44.985346+00:00",
+    "updated_at": "2026-11-20T21:11:44.985362+00:00"
   },
   {
     "id": "memento_chalazion",
