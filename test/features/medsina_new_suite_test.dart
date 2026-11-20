@@ -87,6 +87,74 @@ void main() {
       expect(bytes.length, greaterThan(500));
       expect(String.fromCharCodes(bytes.take(4)), '%PDF');
     });
+
+    test('Sérialisation JSON PrescriptionTemplate et parsing catalogue dynamique', () {
+      const jsonPayload = '''
+      [
+        {
+          "id": "ordo_oma_test",
+          "title": "Otite Moyenne Aiguë Purulente",
+          "specialty": "ORL / Pédiatrie",
+          "clinical_context": "OMA collectée fébrile",
+          "supports_pediatric_weight": true,
+          "lines": [
+            {
+              "dci_name": "Amoxicilline",
+              "commercial_name_dz": "Clamoxyl® / Amoxil®",
+              "formulation": "Susp. buv. 500 mg/5 ml",
+              "adult_dosage": "1 g x 3/j",
+              "pediatric_mg_per_kg_per_day": 80,
+              "max_pediatric_daily_mg": 3000,
+              "duration": "8 jours",
+              "clinical_note": "Réévaluer à 48-72h"
+            },
+            {
+              "dci_name": "Paracétamol",
+              "commercial_name_dz": "Doliprane®",
+              "formulation": "Sirop pédiatrique",
+              "adult_dosage": "1 g x 3/j",
+              "pediatric_mg_per_kg_per_day": "60",
+              "max_pediatric_daily_mg": 2000,
+              "duration": "3 jours",
+              "clinical_note": null
+            }
+          ],
+          "patient_advice": ["Hydratation régulière", "DRP au sérum physiologique"],
+          "contraindications_alert": ["Vérifier absence d'allergie aux bêta-lactamines"],
+          "scientific_references": "SPILF / SFP OMA"
+        }
+      ]
+      ''';
+
+      final parsed = MedicalTemplatesCatalog.parsePrescriptionsJson(jsonPayload);
+      expect(parsed.length, 1);
+
+      final oma = parsed.first;
+      expect(oma.id, 'ordo_oma_test');
+      expect(oma.supportsPediatricWeight, isTrue);
+      expect(oma.patientAdvice.length, 2);
+      expect(oma.contraindicationsAlert.single, contains('bêta-lactamines'));
+      expect(oma.scientificReferences, 'SPILF / SFP OMA');
+
+      // Numeric pediatric_mg_per_kg_per_day (80 mg/kg/j * 20 kg = 1600 mg/j)
+      expect(
+        oma.lines[0].formatForPatient(isPediatric: true, weightKg: 20.0),
+        contains('1600 mg/jour'),
+      );
+
+      // Capping check on string pediatric_mg_per_kg_per_day (60 mg/kg/j * 40 kg = 2400 -> capped at 2000)
+      expect(
+        oma.lines[1].formatForPatient(isPediatric: true, weightKg: 40.0),
+        contains('2000 mg/jour'),
+      );
+
+      // Round-trip toJson -> fromJson
+      final roundTrip = PrescriptionTemplate.fromJson(oma.toJson());
+      expect(roundTrip.id, oma.id);
+      expect(roundTrip.lines.length, 2);
+      expect(roundTrip.lines.first.pediatricMgPerKgPerDay, '80');
+      expect(roundTrip.scientificReferences, 'SPILF / SFP OMA');
+    });
   });
 
   group('4. Mnémotechniques, 5. Duel QCM, 6. Logbook & 7. Simulateur', () {

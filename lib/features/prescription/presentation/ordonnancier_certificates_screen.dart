@@ -22,6 +22,8 @@ class _OrdonnancierCertificatesScreenState
   String _searchQuery = '';
   bool _isPediatricMode = false;
   double _pediatricWeightKg = 18.0;
+  List<PrescriptionTemplate> _prescriptions = MedicalTemplatesCatalog.prescriptions;
+  bool _isLoadingPrescriptions = false;
 
   late final TextEditingController _doctorCtrl;
   final _establishmentCtrl = TextEditingController(text: 'CHU / EPSP de Garde');
@@ -45,6 +47,26 @@ class _OrdonnancierCertificatesScreenState
     );
     if (user?.wilaya != null && user!.wilaya!.isNotEmpty) {
       _cityCtrl.text = user.wilaya!;
+    }
+    _loadPrescriptions();
+  }
+
+  Future<void> _loadPrescriptions({bool refresh = false}) async {
+    if (mounted) {
+      setState(() => _isLoadingPrescriptions = true);
+    }
+    try {
+      final loaded = await MedicalTemplatesCatalog.getPrescriptionsAsync(refresh: refresh);
+      if (mounted) {
+        setState(() {
+          _prescriptions = loaded;
+          _isLoadingPrescriptions = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isLoadingPrescriptions = false);
+      }
     }
   }
 
@@ -85,6 +107,25 @@ class _OrdonnancierCertificatesScreenState
             Tab(icon: Icon(Icons.gavel_rounded, size: 18), text: 'Certificats Médico-Légaux'),
           ],
         ),
+        actions: [
+          if (_isLoadingPrescriptions)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14),
+              child: Center(
+                child: SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+            )
+          else
+            IconButton(
+              tooltip: 'Actualiser les ordonnances types',
+              icon: const Icon(Icons.refresh_rounded),
+              onPressed: () => _loadPrescriptions(refresh: true),
+            ),
+        ],
       ),
       body: Column(
         children: [
@@ -115,11 +156,14 @@ class _OrdonnancierCertificatesScreenState
   }
 
   Widget _buildPrescriptionsTab() {
-    final filtered = MedicalTemplatesCatalog.prescriptions.where((p) {
+    final filtered = _prescriptions.where((p) {
       if (_searchQuery.isEmpty) return true;
       return p.title.toLowerCase().contains(_searchQuery) ||
           p.specialty.toLowerCase().contains(_searchQuery) ||
-          p.clinicalContext.toLowerCase().contains(_searchQuery);
+          p.clinicalContext.toLowerCase().contains(_searchQuery) ||
+          p.lines.any((l) =>
+              l.dciName.toLowerCase().contains(_searchQuery) ||
+              l.commercialNameDz.toLowerCase().contains(_searchQuery));
     }).toList();
 
     return ListView(
@@ -167,7 +211,19 @@ class _OrdonnancierCertificatesScreenState
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Text(
+            '${filtered.length} ordonnance(s) type(s) disponible(s)',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
         ...filtered.map((tpl) => _buildPrescriptionCard(tpl)),
       ],
     );
@@ -215,7 +271,50 @@ class _OrdonnancierCertificatesScreenState
           if (tpl.contraindicationsAlert.isNotEmpty) ...[
             const SizedBox(height: 8),
             ...tpl.contraindicationsAlert.map(
-              (a) => Text('⚠ $a', style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12, fontWeight: FontWeight.w700)),
+              (a) => Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '⚠ $a',
+                  style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
+          if (tpl.patientAdvice.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryTeal.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '💡 Conseils patient :',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppTheme.primaryTeal),
+                  ),
+                  const SizedBox(height: 4),
+                  ...tpl.patientAdvice.map(
+                    (advice) => Padding(
+                      padding: const EdgeInsets.only(bottom: 2),
+                      child: Text('• $advice', style: const TextStyle(fontSize: 12)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          if (tpl.scientificReferences != null && tpl.scientificReferences!.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Réf. : ${tpl.scientificReferences}',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+              ),
             ),
           ],
           const SizedBox(height: 12),

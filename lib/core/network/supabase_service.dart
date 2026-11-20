@@ -635,6 +635,21 @@ class SupabaseService {
     }
   }
 
+  /// Fetch Prescription Templates (Ordonnances Types DCI/CNAS)
+  static Future<List<Map<String, dynamic>>> fetchPrescriptionTemplates() async {
+    try {
+      final response = await client
+          .from('prescription_templates')
+          .select()
+          .eq('is_active', true)
+          .order('created_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching prescription templates from Cloud: $e');
+      return [];
+    }
+  }
+
   /// Fetch Algerian Official Nomenclature Drugs (MSPRH)
   static Future<List<Map<String, dynamic>>> fetchAlgerianNomenclature({
     String? query,

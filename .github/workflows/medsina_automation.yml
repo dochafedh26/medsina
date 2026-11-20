@@ -17,6 +17,7 @@ on:
           - lab
           - memento
           - summary
+          - ordonnance
       dci:
         description: 'DCI spécifique optionnelle pour médicament (ex: Labetalol, Esmolol)'
         required: false
@@ -29,6 +30,11 @@ on:
         type: string
       memento:
         description: 'Thème réflexe de garde spécifique (ex: OAP Flash, Status Épileptique)'
+        required: false
+        default: ''
+        type: string
+      ordonnance:
+        description: 'Thème d ordonnance type spécifique (ex: Sinusite Maxillaire Aiguë)'
         required: false
         default: ''
         type: string
@@ -89,33 +95,42 @@ jobs:
           FB_CAT_PAGE_ACCESS_TOKEN: ${{ secrets.FB_CAT_PAGE_ACCESS_TOKEN || secrets.FB_PAGE_ACCESS_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          INPUT_ACTION: ${{ inputs.action || 'all' }}
+          INPUT_DCI: ${{ inputs.dci }}
+          INPUT_LAB: ${{ inputs.lab }}
+          INPUT_MEMENTO: ${{ inputs.memento }}
+          INPUT_ORDONNANCE: ${{ inputs.ordonnance }}
+          INPUT_COURSE_ID: ${{ inputs.course_id }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          ACTION="${{ inputs.action || 'all' }}"
+          ARGS=(--action "$INPUT_ACTION")
 
-          CMD="python scripts/automation/medsina_agent.py --action $ACTION"
-
-          if [ -n "${{ inputs.dci }}" ]; then
-            CMD="$CMD --dci '${{ inputs.dci }}'"
+          if [ -n "$INPUT_DCI" ]; then
+            ARGS+=(--dci "$INPUT_DCI")
           fi
 
-          if [ -n "${{ inputs.lab }}" ]; then
-            CMD="$CMD --lab '${{ inputs.lab }}'"
+          if [ -n "$INPUT_LAB" ]; then
+            ARGS+=(--lab "$INPUT_LAB")
           fi
 
-          if [ -n "${{ inputs.memento }}" ]; then
-            CMD="$CMD --memento '${{ inputs.memento }}'"
+          if [ -n "$INPUT_MEMENTO" ]; then
+            ARGS+=(--memento "$INPUT_MEMENTO")
           fi
 
-          if [ -n "${{ inputs.course_id }}" ]; then
-            CMD="$CMD --course-id '${{ inputs.course_id }}'"
+          if [ -n "$INPUT_ORDONNANCE" ]; then
+            ARGS+=(--ordonnance "$INPUT_ORDONNANCE")
           fi
 
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            CMD="$CMD --dry-run"
+          if [ -n "$INPUT_COURSE_ID" ]; then
+            ARGS+=(--course-id "$INPUT_COURSE_ID")
           fi
 
-          echo "🚀 Running command: $CMD"
-          eval $CMD
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            ARGS+=(--dry-run)
+          fi
+
+          echo "🚀 Running command: python scripts/automation/medsina_agent.py ${ARGS[*]}"
+          python scripts/automation/medsina_agent.py "${ARGS[@]}"
 
       - name: 💾 Synchroniser le cache local des assets hors-ligne
         if: inputs.dry_run != true

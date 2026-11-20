@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
+import '../../../core/network/supabase_service.dart';
 
 class PrescriptionLineItem extends Equatable {
   final String dciName;
@@ -20,6 +23,61 @@ class PrescriptionLineItem extends Equatable {
     required this.duration,
     this.clinicalNote,
   });
+
+  factory PrescriptionLineItem.fromJson(Map<String, dynamic> json) {
+    final rawPed = json['pediatric_mg_per_kg_per_day'] ?? json['pediatricMgPerKgPerDay'];
+    String? pedStr;
+    if (rawPed != null) {
+      if (rawPed is num) {
+        if (rawPed > 0) {
+          pedStr = rawPed % 1 == 0 ? rawPed.toInt().toString() : rawPed.toString();
+        }
+      } else {
+        final s = rawPed.toString().trim();
+        if (s.isNotEmpty && s.toLowerCase() != 'null') {
+          pedStr = s;
+        }
+      }
+    }
+
+    final rawMax = json['max_pediatric_daily_mg'] ?? json['maxPediatricDailyMg'];
+    double? maxDailyMg;
+    if (rawMax is num) {
+      maxDailyMg = rawMax.toDouble();
+    } else if (rawMax != null) {
+      maxDailyMg = double.tryParse(rawMax.toString().trim());
+    }
+
+    final rawNote = json['clinical_note'] ?? json['clinicalNote'];
+    final noteStr = rawNote?.toString().trim();
+
+    return PrescriptionLineItem(
+      dciName: (json['dci_name'] ?? json['dciName'] ?? '').toString().trim(),
+      commercialNameDz:
+          (json['commercial_name_dz'] ?? json['commercialNameDz'] ?? '').toString().trim(),
+      formulation: (json['formulation'] ?? '').toString().trim(),
+      adultDosage: (json['adult_dosage'] ?? json['adultDosage'] ?? '').toString().trim(),
+      pediatricMgPerKgPerDay: pedStr,
+      maxPediatricDailyMg: maxDailyMg,
+      duration: (json['duration'] ?? '').toString().trim(),
+      clinicalNote: (noteStr != null && noteStr.isNotEmpty && noteStr.toLowerCase() != 'null')
+          ? noteStr
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'dci_name': dciName,
+      'commercial_name_dz': commercialNameDz,
+      'formulation': formulation,
+      'adult_dosage': adultDosage,
+      'pediatric_mg_per_kg_per_day': pediatricMgPerKgPerDay,
+      'max_pediatric_daily_mg': maxPediatricDailyMg,
+      'duration': duration,
+      'clinical_note': clinicalNote,
+    };
+  }
 
   String formatForPatient({bool isPediatric = false, double weightKg = 20.0}) {
     if (isPediatric && pediatricMgPerKgPerDay != null) {
@@ -53,6 +111,7 @@ class PrescriptionTemplate extends Equatable {
   final List<PrescriptionLineItem> lines;
   final List<String> patientAdvice;
   final List<String> contraindicationsAlert;
+  final String? scientificReferences;
 
   const PrescriptionTemplate({
     required this.id,
@@ -63,7 +122,65 @@ class PrescriptionTemplate extends Equatable {
     required this.lines,
     this.patientAdvice = const [],
     this.contraindicationsAlert = const [],
+    this.scientificReferences,
   });
+
+  factory PrescriptionTemplate.fromJson(Map<String, dynamic> json) {
+    final rawLines = json['lines'];
+    final parsedLines = <PrescriptionLineItem>[];
+    if (rawLines is List) {
+      for (final item in rawLines) {
+        if (item is Map<String, dynamic>) {
+          parsedLines.add(PrescriptionLineItem.fromJson(item));
+        } else if (item is Map) {
+          parsedLines.add(PrescriptionLineItem.fromJson(Map<String, dynamic>.from(item)));
+        }
+      }
+    }
+
+    List<String> parseStringList(dynamic value) {
+      if (value is List) {
+        return value
+            .map((e) => e?.toString().trim() ?? '')
+            .where((e) => e.isNotEmpty)
+            .toList();
+      }
+      return const [];
+    }
+
+    final rawRef = json['scientific_references'] ?? json['scientificReferences'];
+    final refStr = rawRef?.toString().trim();
+
+    return PrescriptionTemplate(
+      id: (json['id'] ?? '').toString().trim(),
+      title: (json['title'] ?? '').toString().trim(),
+      specialty: (json['specialty'] ?? 'Médecine Générale').toString().trim(),
+      clinicalContext:
+          (json['clinical_context'] ?? json['clinicalContext'] ?? '').toString().trim(),
+      supportsPediatricWeight:
+          (json['supports_pediatric_weight'] ?? json['supportsPediatricWeight']) == true,
+      lines: parsedLines,
+      patientAdvice: parseStringList(json['patient_advice'] ?? json['patientAdvice']),
+      contraindicationsAlert:
+          parseStringList(json['contraindications_alert'] ?? json['contraindicationsAlert']),
+      scientificReferences:
+          (refStr != null && refStr.isNotEmpty && refStr.toLowerCase() != 'null') ? refStr : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'specialty': specialty,
+      'clinical_context': clinicalContext,
+      'supports_pediatric_weight': supportsPediatricWeight,
+      'lines': lines.map((l) => l.toJson()).toList(),
+      'patient_advice': patientAdvice,
+      'contraindications_alert': contraindicationsAlert,
+      'scientific_references': scientificReferences,
+    };
+  }
 
   @override
   List<Object?> get props => [id, title, specialty];
@@ -116,6 +233,64 @@ class MedicoLegalCertificateTemplate extends Equatable {
 }
 
 class MedicalTemplatesCatalog {
+  static List<PrescriptionTemplate>? _cachedPrescriptions;
+
+  static List<PrescriptionTemplate> parsePrescriptionsJson(String jsonStr) {
+    final decoded = jsonDecode(jsonStr);
+    if (decoded is! List) return const [];
+    final items = <PrescriptionTemplate>[];
+    for (final raw in decoded) {
+      if (raw is Map<String, dynamic>) {
+        final item = PrescriptionTemplate.fromJson(raw);
+        if (item.id.isNotEmpty && item.lines.isNotEmpty) {
+          items.add(item);
+        }
+      } else if (raw is Map) {
+        final item = PrescriptionTemplate.fromJson(Map<String, dynamic>.from(raw));
+        if (item.id.isNotEmpty && item.lines.isNotEmpty) {
+          items.add(item);
+        }
+      }
+    }
+    return items;
+  }
+
+  /// Asynchronous fetching: Merges Cloud Supabase + Local Asset JSON + Built-in catalog
+  static Future<List<PrescriptionTemplate>> getPrescriptionsAsync({bool refresh = false}) async {
+    if (!refresh && _cachedPrescriptions != null && _cachedPrescriptions!.isNotEmpty) {
+      return _cachedPrescriptions!;
+    }
+
+    final Map<String, PrescriptionTemplate> mergedById = {};
+
+    // 1. Seed with built-in prescriptions
+    for (final item in prescriptions) {
+      mergedById[item.id] = item;
+    }
+
+    // 2. Merge Local Asset JSON
+    try {
+      final jsonStr = await rootBundle.loadString('assets/data/prescription_templates.json');
+      for (final item in parsePrescriptionsJson(jsonStr)) {
+        mergedById[item.id] = item;
+      }
+    } catch (_) {}
+
+    // 3. Merge Supabase Cloud (highest priority & latest additions)
+    try {
+      final cloudData = await SupabaseService.fetchPrescriptionTemplates();
+      for (final raw in cloudData) {
+        final item = PrescriptionTemplate.fromJson(raw);
+        if (item.id.isNotEmpty && item.lines.isNotEmpty) {
+          mergedById[item.id] = item;
+        }
+      }
+    } catch (_) {}
+
+    _cachedPrescriptions = mergedById.values.toList();
+    return _cachedPrescriptions!;
+  }
+
   static const List<PrescriptionTemplate> prescriptions = [
     PrescriptionTemplate(
       id: 'ordo_angine_strepto',

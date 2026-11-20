@@ -1,0 +1,259 @@
+[
+  {
+    "id": "ordo_angine_strepto",
+    "title": "Angine Aiguë Érythémato-Pultacée",
+    "specialty": "ORL / Infectiologie",
+    "clinical_context": "Suspicion streptococcique (Score de MacIsaac ≥ 2)",
+    "supports_pediatric_weight": true,
+    "lines": [
+      {
+        "dci_name": "Amoxicilline",
+        "commercial_name_dz": "Clamoxyl® / Amoxil® / Hiconcil®",
+        "formulation": "Gélules 1 g (Adulte) / Susp. buv. 250 ou 500 mg/5 ml (Enfant)",
+        "adult_dosage": "1 g x 2/jour (matin et soir)",
+        "pediatric_mg_per_kg_per_day": "50",
+        "max_pediatric_daily_mg": 2000,
+        "duration": "6 jours",
+        "clinical_note": "Si allergie bêta-lactamines : Azithromycine (Zithromax® 500 mg/j pendant 3j)."
+      },
+      {
+        "dci_name": "Paracétamol",
+        "commercial_name_dz": "Doliprane® / Panadol® / Paralgan®",
+        "formulation": "Comprimés 1 g / Sirop pédiatrique",
+        "adult_dosage": "1 g toutes les 6 à 8h si fièvre ou odynophagie (max 4 g/j)",
+        "pediatric_mg_per_kg_per_day": "60",
+        "max_pediatric_daily_mg": 3000,
+        "duration": "3 à 5 jours",
+        "clinical_note": null
+      }
+    ],
+    "patient_advice": [
+      "Hydratation abondante et alimentation tiède/molle.",
+      "Éviter les AINS (risque de cellulite cervicale / phlegmon amygdalien)."
+    ],
+    "contraindications_alert": [
+      "Vérifier absence d'allergie aux Pénicillines avant prescription."
+    ],
+    "scientific_references": "SPILF / HAS / Consensus Algérien d'Infectiologie ORL",
+    "is_active": true
+  },
+  {
+    "id": "ordo_pac_ambulatoire",
+    "title": "Pneumonie Aiguë Communautaire (PAC) — Adulte Sain",
+    "specialty": "Pneumologie",
+    "clinical_context": "CURB-65 = 0 ou 1 (prise en charge ambulatoire)",
+    "supports_pediatric_weight": false,
+    "lines": [
+      {
+        "dci_name": "Amoxicilline + Acide Clavulanique (ou Amoxicilline seule)",
+        "commercial_name_dz": "Augmentin® / Bioclavid® / Amoclan®",
+        "formulation": "Sachets ou Comprimés 1 g / 125 mg",
+        "adult_dosage": "1 sachet x 3/jour (toutes les 8h)",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "7 jours",
+        "clinical_note": "Réévaluation clinique IMPÉRATIVE à 48-72h (défervescence thermique)."
+      },
+      {
+        "dci_name": "Paracétamol",
+        "commercial_name_dz": "Doliprane® 1000 mg",
+        "formulation": "Comprimés 1 g",
+        "adult_dosage": "1 cp x 3/jour si fièvre > 38,5°C",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "5 jours",
+        "clinical_note": null
+      }
+    ],
+    "patient_advice": [
+      "Consulter en urgence si dyspnée d'aggravation, douleur thoracique ou fièvre persistante après 72h."
+    ],
+    "contraindications_alert": [
+      "Si sujet âgé ou comorbidités : réévaluer le score CURB-65."
+    ],
+    "scientific_references": "SPILF / SPLF / Recommandations Algériennes de Pneumologie",
+    "is_active": true
+  },
+  {
+    "id": "ordo_cystite_simple",
+    "title": "Cystite Aiguë Simple de la Femme",
+    "specialty": "Urologie / Infectiologie",
+    "clinical_context": "Femme jeune sans facteur de risque de complication",
+    "supports_pediatric_weight": false,
+    "lines": [
+      {
+        "dci_name": "Fosfomycine-Trométamol",
+        "commercial_name_dz": "Monuril® / Fosfomicina®",
+        "formulation": "Sachet-dose 3 g",
+        "adult_dosage": "1 sachet en prise UNIQUE à jeun (ou 2h après repas, vessie vide au coucher)",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "1 jour (dose unique)",
+        "clinical_note": null
+      }
+    ],
+    "patient_advice": [
+      "Boire 1,5 à 2 L d'eau/jour, mictions fréquentes non retenues.",
+      "Reconsulter si fièvre ou douleur lombaire (suspicion pyélonéphrite)."
+    ],
+    "contraindications_alert": [
+      "ECBU non indiqué en première intention dans la cystite simple."
+    ],
+    "scientific_references": "SPILF / AFU Infections Urinaires Communautaires",
+    "is_active": true
+  },
+  {
+    "id": "ordo_pyelonephrite_simple",
+    "title": "Pyélonéphrite Aiguë Simple (PNA)",
+    "specialty": "Infectiologie / Urgences",
+    "clinical_context": "Sans signe de gravité ni grossesse (après ECBU réalisé)",
+    "supports_pediatric_weight": false,
+    "lines": [
+      {
+        "dci_name": "Ciprofloxacine (ou Ceftriaxone IV/IM si prise récente FQ)",
+        "commercial_name_dz": "Ciflox® / Ciprolon® / Rocephine®",
+        "formulation": "Comprimés 500 mg",
+        "adult_dosage": "500 mg x 2/jour (matin et soir)",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "7 jours",
+        "clinical_note": "Adapter selon l'antibiogramme de l'ECBU à 48h."
+      },
+      {
+        "dci_name": "Paracétamol",
+        "commercial_name_dz": "Doliprane® 1 g",
+        "formulation": "Comprimés 1 g",
+        "adult_dosage": "1 cp toutes les 8h si fièvre ou lombalgies",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "5 jours",
+        "clinical_note": null
+      }
+    ],
+    "patient_advice": [
+      "Échographie rénale dans les 24h si hyperalgique ou doute sur obstacle."
+    ],
+    "contraindications_alert": [
+      "Fluoroquinolones contre-indiquées chez la femme enceinte (préférer Ceftriaxone)."
+    ],
+    "scientific_references": "SPILF / SFMU Pyélonéphrite Aiguë",
+    "is_active": true
+  },
+  {
+    "id": "ordo_asthme_sortie",
+    "title": "Crise d'Asthme — Ordonnance de Sortie des Urgences",
+    "specialty": "Pneumologie / Urgences",
+    "clinical_context": "Après nébulisations aux urgences et amélioration du DEP > 70%",
+    "supports_pediatric_weight": true,
+    "lines": [
+      {
+        "dci_name": "Salbutamol (SABA)",
+        "commercial_name_dz": "Ventoline® / Asthalin®",
+        "formulation": "Aérosol-doseur 100 µg/bouffée (+ Chambre d'inhalation si enfant)",
+        "adult_dosage": "2 bouffées à la demande si dyspnée/sifflements (jusqu'à 4x/j)",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "15 jours",
+        "clinical_note": null
+      },
+      {
+        "dci_name": "Prednisone / Prednisolone",
+        "commercial_name_dz": "Cortancyl® / Solupred® / Precortyl®",
+        "formulation": "Comprimés 20 mg ou 5 mg",
+        "adult_dosage": "40 à 50 mg/jour en 1 prise unique le matin au petit-déjeuner",
+        "pediatric_mg_per_kg_per_day": "1",
+        "max_pediatric_daily_mg": 40,
+        "duration": "5 jours (sans décroissance)",
+        "clinical_note": null
+      },
+      {
+        "dci_name": "Budésonide + Formotérol (ou Béclométasone)",
+        "commercial_name_dz": "Symbicort® / Clenil® / Pulmicort®",
+        "formulation": "Inhalateur de fond",
+        "adult_dosage": "1 à 2 inhalations matin et soir (selon palier GINA)",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "1 mois (à réévaluer en consultation pneumo)",
+        "clinical_note": null
+      }
+    ],
+    "patient_advice": [
+      "Se rincer la bouche après chaque prise de corticoïde inhalé.",
+      "Consultation de suivi médical dans les 48-72h."
+    ],
+    "contraindications_alert": [],
+    "scientific_references": "GINA / SPLF / SFMU Exacerbation d'Asthme",
+    "is_active": true
+  },
+  {
+    "id": "ordo_hta_initiation",
+    "title": "HTA Essentielle — Initiation Thérapeutique",
+    "specialty": "Cardiologie",
+    "clinical_context": "HTA confirmée (PAS ≥ 140 et/ou PAD ≥ 90 mmHg au repos / MAPA)",
+    "supports_pediatric_weight": false,
+    "lines": [
+      {
+        "dci_name": "Amlodipine + Périndopril (ou Valsartan)",
+        "commercial_name_dz": "Coveram® / Exforge® / Amlor® + Coversyl®",
+        "formulation": "Comprimés 5 mg / 5 mg (ou 5/80 mg)",
+        "adult_dosage": "1 comprimé le matin",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "1 mois (renouvelable 3 mois)",
+        "clinical_note": null
+      }
+    ],
+    "patient_advice": [
+      "Régime hyposodé (< 5 g sel/j), activité physique régulière 30 min/j, arrêt du tabac.",
+      "Automesure tensionnelle (règle des 3) avant la consultation de contrôle à 4 semaines."
+    ],
+    "contraindications_alert": [
+      "IEC/ARA2 strictement contre-indiqués pendant la grossesse et si sténose bilatérale des artères rénales."
+    ],
+    "scientific_references": "ESC / ESH / Société Algérienne d'Hypertension Artérielle (SAHA)",
+    "is_active": true
+  },
+  {
+    "id": "ordo_gea_sro",
+    "title": "Gastro-Entérite Aiguë & Prévention Déshydratation",
+    "specialty": "Gastro-Entérologie / Pédiatrie",
+    "clinical_context": "Diarrhée aiguë sans signe de sepsis ni déshydratation sévère",
+    "supports_pediatric_weight": true,
+    "lines": [
+      {
+        "dci_name": "Sels de Réhydratation Orale (SRO)",
+        "commercial_name_dz": "SRO Saidal® / Adiaril®",
+        "formulation": "Sachets à diluer dans 200 ml (ou 1L selon sachet) d'eau faiblement minéralisée",
+        "adult_dosage": "À volonté par petites gorgées fréquentes après chaque selle liquide",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "3 à 5 jours",
+        "clinical_note": null
+      },
+      {
+        "dci_name": "Diosmectite ou Racécadotril",
+        "commercial_name_dz": "Smecta® / Tiorfan®",
+        "formulation": "Sachets pour suspension buvable",
+        "adult_dosage": "1 sachet x 3/jour (Smecta à distance de 2h des autres médicaments)",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "3 à 5 jours",
+        "clinical_note": null
+      },
+      {
+        "dci_name": "Phloroglucinol (si douleurs spasmodiques)",
+        "commercial_name_dz": "Spasfon®",
+        "formulation": "Comprimés orodispersibles 80 mg",
+        "adult_dosage": "2 lyocs en cas de crampes abdominales (max 6/j)",
+        "pediatric_mg_per_kg_per_day": null,
+        "max_pediatric_daily_mg": null,
+        "duration": "3 jours",
+        "clinical_note": null
+      }
+    ],
+    "patient_advice": [],
+    "contraindications_alert": [],
+    "scientific_references": "ESPGHAN / OMS / SFP Prise en Charge de la Gastro-Entérite Aiguë",
+    "is_active": true
+  }
+]

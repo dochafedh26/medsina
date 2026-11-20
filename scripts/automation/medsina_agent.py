@@ -18,6 +18,7 @@ import re
 import argparse
 import datetime
 import time
+import unicodedata
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
@@ -105,6 +106,7 @@ ALGERIAN_NOMENCLATURE_FILE = Path(__file__).resolve().parents[2] / "assets" / "d
 LAB_VALUES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "lab_reference_values.json"
 ON_CALL_MEMENTOS_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "on_call_mementos.json"
 COURSE_SUMMARIES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "course_summaries.json"
+PRESCRIPTION_TEMPLATES_FILE = Path(__file__).resolve().parents[2] / "assets" / "data" / "prescription_templates.json"
 
 GEMINI_MODELS = [
     "gemini-3.5-flash-lite",
@@ -1509,12 +1511,412 @@ Fournis une fiche médicale approfondie d'au moins 5 sections avec des points cl
     return data
 
 
+# =============================================================================
+# 7. PRESCRIPTION TEMPLATES (ORDONNANCES TYPES DCI / CNAS ALGÉRIE)
+# =============================================================================
+
+MASTER_ORDONNANCE_POOL = [
+    # ORL / Stomatologie
+    "Otite Moyenne Aiguë Purulente (Enfant & Adulte)",
+    "Sinusite Maxillaire Aiguë Purulente de l'Adulte",
+    "Vertige Paroxystique & Crise Vertigineuse Aiguë",
+    "Abcès Dentaire / Cellulite Odontogène Débutante",
+    "Rhinite Allergique Saisonnière & Perannuelle",
+    "Laryngite Aiguë Sous-Glottique de l'Enfant",
+    # Pneumologie
+    "Bronchite Aiguë & Exacerbation de BPCO Ambulatoire",
+    "Coqueluche Confirmée ou Suspecte (Enfant & Adulte)",
+    "Toux Chronique & Trachéobronchite Post-Infectieuse",
+    # Cardiologie
+    "Angor d'Effort Stable — Ordonnance de Fond",
+    "Post-SCA / Syndrome Coronarien Aigu — Ordonnance de Sortie BASIC",
+    "Insuffisance Cardiaque à FEVG Altérée — Quadrithérapie",
+    "Fibrillation Atriale Non Valvulaire — Contrôle Fréquence & Anticoagulation",
+    "Thrombose Veineuse Profonde (TVP) Non Compliquée — Traitement Ambulatoire",
+    # Gastro-Entérologie
+    "Reflux Gastro-Œsophagien (RGO) & Œsophagite Peptique",
+    "Éradication Helicobacter pylori (Quadrithérapie Bismuthée / Concomitante)",
+    "Crise Hémorroïdaire Aiguë & Fissure Anale",
+    "Colique Hépatique Non Compliquée (Sortie des Urgences)",
+    "Constipation Chronique Fonctionnelle (Adulte & Enfant)",
+    "Syndrome de l'Intestin Irritable — Poussée Douloureuse",
+    "Oxyurose & Parasitoses Intestinales Courantes de l'Enfant",
+    # Urologie / Néphrologie
+    "Colique Néphrétique Simple — Traitement de Sortie & Expulsif",
+    "Prostatite Aiguë Communautaire Non Compliquée",
+    "Hypertrophie Bénigne de la Prostate (HBP) Symptomatique",
+    "Urétrite Aiguë & Cervice-Urétrite (IST Gonocoque / Chlamydia)",
+    # Infectiologie / Parasitologie
+    "Érysipèle / Dermohypodermite Bactérienne Non Nécrosante de Jambe",
+    "Zona Intercostal ou Ophtalmique Débutant (< 72h)",
+    "Herpès Labial & Gingivostomatite Herpétique Aiguë",
+    "Impétigo Localisé vs Étendu de l'Enfant",
+    "Gale Humaine (Sarcoptes scabiei) — Prise en Charge Familiale",
+    "Teigne du Cuir Chevelu de l'Enfant & Onychomycose",
+    # Dermatologie
+    "Acné Polymorphe Modérée de l'Adolescent et du Jeune Adulte",
+    "Poussée d'Eczéma Atopique / Dermatite Atopique",
+    "Urticaire Aiguë Superficielle Sans Signe de Gravité",
+    "Pityriasis Versicolor & Candidose Cutanéo-Muqueuse",
+    "Psoriasis en Plaques Léger à Modéré — Traitement Topique",
+    # Neurologie / Psychiatrie
+    "Crise de Migraine Aiguë & Traitement de Fond",
+    "Névralgie Cervico-Brachiale / Sciatique Aiguë Non Déficitaire",
+    "Paralysie Faciale Périphérique A Frigore (Idiopathique)",
+    "Épisode Dépressif Caractérisé Ambulatoire (Initiation ISRS)",
+    "Trouble Anxieux Généralisé & Crise d'Angoisse Aiguë",
+    # Rhumatologie / Traumatologie
+    "Lombalgie Aiguë Commune (Lumbago)",
+    "Crise de Goutte Aiguë & Traitement Hypo-uricémiant de Fond",
+    "Entorse Bénigne de Cheville — Protocole GREC & Antalgie",
+    "Arthrose Digitale / Gonarthrose Poussée Congestive",
+    # Endocrinologie / Métabolisme
+    "Diabète Type 2 — Initiation Metformine & Règles Hygiéno-Diététiques",
+    "Hypothyroïdie Périphérique — Substitution par Lévothyroxine",
+    "Anémie Ferriprive Confirmée (Adulte & Femme Enceinte)",
+    "Carence en Vitamine D — Schéma de Charge et Entretien",
+    # Gynécologie-Obstétrique
+    "Vulvo-Vaginite Mycosique & Vaginose Bactérienne",
+    "Nausées et Vomissements Gravidiques du 1er Trimestre",
+    "Dysménorrhée Primaire & Ménorragies Fonctionnelles",
+    # Ophtalmologie
+    "Conjonctivite Bactérienne Aiguë Purulente",
+    "Conjonctivite Allergique Saisonnière",
+    # Pédiatrie Spécifique
+    "Bronchiolite Aiguë du Nourrisson — Ordonnance de Sortie (Sans Corticoïdes/ATB)",
+    "Fièvre Isolée Bien Tolérée du Nourrisson / Enfant",
+    "Varicelle Non Compliquée de l'Enfant (Soins Locaux & Contre-indication AINS)",
+]
+
+
+def _normalize_ordonnance_text(text: str) -> str:
+    """Strips accents and non-alphanumeric chars for reliable duplicate detection."""
+    if not text:
+        return ""
+    ascii_text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"[^a-z0-9]", "", ascii_text.lower())
+
+
+def _slugify_ordonnance_id(raw_id: str, fallback_title: str) -> str:
+    """Normalizes an ordonnance ID to ASCII lowercase snake_case with 'ordo_' prefix."""
+    source = raw_id.strip() if raw_id and raw_id.strip() else fallback_title
+    ascii_text = unicodedata.normalize("NFKD", source).encode("ascii", "ignore").decode("ascii")
+    slug = re.sub(r"[^a-z0-9]+", "_", ascii_text.lower()).strip("_")
+    if not slug:
+        slug = f"template_{int(time.time())}"
+    if not slug.startswith("ordo_"):
+        slug = f"ordo_{slug}"
+    return slug[:64].rstrip("_")
+
+
+def _extract_pediatric_mg_per_kg(val: Any) -> Optional[str]:
+    """Returns a clean numeric string (for Flutter double.tryParse) or None."""
+    if val is None or isinstance(val, bool):
+        return None
+    if isinstance(val, (int, float)):
+        if val <= 0:
+            return None
+        return str(int(val)) if float(val).is_integer() else str(round(float(val), 2))
+    raw = str(val).strip()
+    if not raw or raw.lower() in ("null", "none", "n/a", "na", "-"):
+        return None
+    m = re.search(r"(\d+(?:[.,]\d+)?)", raw)
+    if not m:
+        return None
+    num = float(m.group(1).replace(",", "."))
+    if num <= 0:
+        return None
+    return str(int(num)) if num.is_integer() else str(round(num, 2))
+
+
+def _extract_positive_float(val: Any) -> Optional[float]:
+    """Converts numeric or string value to positive float, else None."""
+    if val is None or isinstance(val, bool):
+        return None
+    if isinstance(val, (int, float)):
+        return float(val) if float(val) > 0 else None
+    raw = str(val).strip()
+    if not raw or raw.lower() in ("null", "none", "n/a", "na", "-"):
+        return None
+    m = re.search(r"(\d+(?:[.,]\d+)?)", raw)
+    if not m:
+        return None
+    num = float(m.group(1).replace(",", "."))
+    return num if num > 0 else None
+
+
+def _sanitize_str_list(val: Any) -> List[str]:
+    """Ensures a clean list of non-empty strings."""
+    if not isinstance(val, list):
+        return []
+    out: List[str] = []
+    for item in val:
+        text = str(item).strip() if item is not None else ""
+        if text:
+            out.append(text)
+    return out
+
+
+def pick_candidate_prescription_template(
+    supabase: SupabaseClient,
+    target_ordonnance: Optional[str] = None,
+    exclude_normalized: Optional[set] = None,
+) -> Optional[str]:
+    """Selects an Ordonnance Type topic not already present in Supabase or local cache."""
+    if target_ordonnance and target_ordonnance.strip():
+        return target_ordonnance.strip()
+
+    existing_keys = set()
+
+    # 1. Check remote Supabase prescription_templates table
+    remote_items = supabase.get("prescription_templates", params={"select": "id,title"})
+    for item in remote_items:
+        if item.get("id"):
+            existing_keys.add(item["id"].strip())
+        if item.get("title"):
+            existing_keys.add(item["title"].strip())
+
+    # 2. Check local JSON cache
+    if PRESCRIPTION_TEMPLATES_FILE.exists():
+        try:
+            local_items = json.loads(PRESCRIPTION_TEMPLATES_FILE.read_text(encoding="utf-8"))
+            for item in local_items:
+                if item.get("id"):
+                    existing_keys.add(str(item["id"]).strip())
+                if item.get("title"):
+                    existing_keys.add(str(item["title"]).strip())
+        except Exception as e:
+            print(f"Warning reading local {PRESCRIPTION_TEMPLATES_FILE.name}: {e}")
+
+    normalized_existing = {_normalize_ordonnance_text(k) for k in existing_keys if k}
+    if exclude_normalized:
+        normalized_existing.update(exclude_normalized)
+
+    candidates = []
+    for topic in MASTER_ORDONNANCE_POOL:
+        norm_topic = _normalize_ordonnance_text(topic)
+        if not norm_topic or norm_topic in normalized_existing:
+            continue
+        if any(len(ex) >= 6 and (norm_topic in ex or ex in norm_topic) for ex in normalized_existing):
+            continue
+        candidates.append(topic)
+
+    print(f"Predefined Ordonnances Types candidates remaining: {len(candidates)} / {len(MASTER_ORDONNANCE_POOL)}.")
+
+    if candidates:
+        return random.choice(candidates)
+
+    # Dynamic fallback: query Gemini for a new unindexed Algerian clinical prescription scenario
+    print("All predefined Ordonnances Types are already indexed! Dynamically querying Gemini for a new topic...")
+    existing_sample = ", ".join(sorted(list(existing_keys))[:80])
+    prompt = (
+        f"Donne le titre exact d'une pathologie courante de médecine générale, urgence, pédiatrie ou spécialité nécessitant une ordonnance type ambulatoire ou de sortie d'urgences en Algérie, qui ne figure PAS dans cette liste : {existing_sample}.\n"
+        "Réponds UNIQUEMENT par le titre concis de l'ordonnance type (3 à 9 mots, sans guillemets ni commentaires)."
+    )
+    try:
+        suggested = call_gemini_api(
+            prompt,
+            "Tu es médecin clinicien senior et pharmacologue en Algérie.",
+            enable_search=False,
+        ).strip().strip('"').strip("'")
+        if suggested and len(suggested) > 4 and _normalize_ordonnance_text(suggested) not in normalized_existing:
+            print(f"Gemini dynamically discovered new Ordonnance Type topic: {suggested}")
+            return suggested
+    except Exception as e:
+        print(f"Notice querying Gemini for candidate ordonnance: {e}")
+
+    return random.choice(MASTER_ORDONNANCE_POOL)
+
+
+def generate_prescription_template(
+    topic: str,
+    supabase: SupabaseClient,
+    dry_run: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Generates a validated Algerian Ordonnance Type (DCI + CNAS names) via Gemini Grounding."""
+    print(f"\n=======================================================")
+    print(f"📝 GENERATING ORDONNANCE TYPE (DCI/CNAS): {topic}")
+    print(f"=======================================================")
+
+    system_prompt = """Tu es MedsinaPilot, médecin clinicien senior et pharmacologue exerçant en Algérie (CHU / EPSP / UMC).
+Ton rôle est de rédiger une ORDONNANCE TYPE médicale complète, rigoureuse, conforme à la pratique clinique et à la nomenclature pharmaceutique algérienne (MSPRH / CNAS / Saidal / Biopharm / Sanofi DZ / Hikma, etc.), ainsi qu'aux derniers consensus scientifiques (HAS, SPILF, ESC, GINA, GOLD, SFMU, SFP, MSPRH).
+
+Format JSON STRICT attendu :
+{
+  "id": "ordo_slug_sans_accents",
+  "title": "Titre clair et précis de l'ordonnance type",
+  "specialty": "Spécialité (ex: ORL / Infectiologie, Cardiologie, Pédiatrie)",
+  "clinical_context": "Contexte d'indication précis et critères d'éligibilité (1 ligne)",
+  "supports_pediatric_weight": true,
+  "lines": [
+    {
+      "dci_name": "Dénomination Commune Internationale (DCI)",
+      "commercial_name_dz": "Noms commerciaux disponibles en Algérie (ex: Clamoxyl® / Amoxil®)",
+      "formulation": "Forme galénique et dosage exact (ex: Comprimés 1 g / Susp. buv. 250 mg/5 ml)",
+      "adult_dosage": "Posologie adulte complète (dose unitaire, rythme, moment de prise)",
+      "pediatric_mg_per_kg_per_day": "50",
+      "max_pediatric_daily_mg": 2000,
+      "duration": "Durée exacte (ex: 6 jours)",
+      "clinical_note": "Précaution, alternative si allergie, ou règle de réévaluation (ou null)"
+    }
+  ],
+  "patient_advice": [
+    "Conseil pratique patient 1 (mesures hygiéno-diététiques, signes d'alarme)",
+    "Conseil pratique patient 2"
+  ],
+  "contraindications_alert": [
+    "Alerte de sécurité / contre-indication majeure (ex: allergie, grossesse, IRC, interaction)"
+  ],
+  "scientific_references": "Références (ex: SPILF / HAS / ESC / MSPRH Algérie)"
+}
+
+RÈGLES CRITIQUES DE VALIDATION :
+1. Chaque ligne médicamenteuse doit comporter la DCI exacte, des spécialités commerciales réellement commercialisées en Algérie, la forme galénique, la posologie adulte et la durée.
+2. Pour `pediatric_mg_per_kg_per_day` : fournir UNIQUEMENT une chaîne numérique pure (ex: "50", "15", "1") s'il existe une posologie pédiatrique pondérale en mg/kg/j ; sinon mettre null. Ne jamais mettre d'unité ni de texte dans ce champ !
+3. Pour `max_pediatric_daily_mg` : fournir un nombre en mg/jour (ex: 2000, 3000, 40) si `pediatric_mg_per_kg_per_day` est renseigné ; sinon mettre null.
+4. Si l'ordonnance concerne uniquement l'adulte, mettre `supports_pediatric_weight`: false et null pour les champs pédiatriques.
+5. N'utilise AUCUNE balise LaTeX ni Markdown autour du JSON. Réponds UNIQUEMENT par le JSON pur."""
+
+    prompt = (
+        f"Rédige l'ordonnance type complète adaptée à la pratique médicale algérienne (DCI + noms commerciaux Algérie/CNAS) pour : {topic}.\n"
+        "Assure-toi que toutes les posologies, durées, alternatives en cas d'allergie, conseils au patient et contre-indications sont exacts selon les recommandations actuelles."
+    )
+
+    try:
+        raw_response = call_gemini_api(prompt, system_prompt, enable_search=True)
+    except Exception as e:
+        print(f"❌ Erreur appel Gemini ordonnance ({topic}): {e}")
+        return None
+
+    try:
+        raw_data = extract_clean_json(raw_response)
+    except Exception as e:
+        print(f"Error parsing JSON from Gemini: {e}\nRaw snippet:\n{raw_response[:400]}")
+        return None
+
+    title = str(raw_data.get("title") or topic).strip()
+    specialty = str(raw_data.get("specialty") or "Médecine Générale").strip()
+    clinical_context = str(raw_data.get("clinical_context") or "").strip()
+    raw_lines = raw_data.get("lines")
+    if not isinstance(raw_lines, list) or len(raw_lines) == 0:
+        print(f"Error: Gemini returned invalid/empty prescription lines for '{topic}'.")
+        return None
+
+    sanitized_lines: List[Dict[str, Any]] = []
+    for line in raw_lines:
+        if not isinstance(line, dict):
+            continue
+        dci_name = str(line.get("dci_name") or "").strip()
+        adult_dosage = str(line.get("adult_dosage") or "").strip()
+        if not dci_name or not adult_dosage:
+            continue
+        ped_mg = _extract_pediatric_mg_per_kg(line.get("pediatric_mg_per_kg_per_day"))
+        max_ped = _extract_positive_float(line.get("max_pediatric_daily_mg")) if ped_mg else None
+        raw_note = line.get("clinical_note")
+        clinical_note = str(raw_note).strip() if raw_note is not None and str(raw_note).strip() and str(raw_note).strip().lower() != "null" else None
+
+        sanitized_lines.append({
+            "dci_name": dci_name,
+            "commercial_name_dz": str(line.get("commercial_name_dz") or dci_name).strip(),
+            "formulation": str(line.get("formulation") or "Voie orale").strip(),
+            "adult_dosage": adult_dosage,
+            "pediatric_mg_per_kg_per_day": ped_mg,
+            "max_pediatric_daily_mg": max_ped,
+            "duration": str(line.get("duration") or "Selon évolution clinique").strip(),
+            "clinical_note": clinical_note,
+        })
+
+    if not sanitized_lines:
+        print(f"Error: No valid prescription lines remained after sanitization for '{topic}'.")
+        return None
+
+    supports_pediatric = bool(raw_data.get("supports_pediatric_weight")) and any(
+        line.get("pediatric_mg_per_kg_per_day") for line in sanitized_lines
+    )
+
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    ordo_id = _slugify_ordonnance_id(str(raw_data.get("id") or ""), title)
+
+    data: Dict[str, Any] = {
+        "id": ordo_id,
+        "title": title,
+        "specialty": specialty,
+        "clinical_context": clinical_context,
+        "supports_pediatric_weight": supports_pediatric,
+        "lines": sanitized_lines,
+        "patient_advice": _sanitize_str_list(raw_data.get("patient_advice")),
+        "contraindications_alert": _sanitize_str_list(raw_data.get("contraindications_alert")),
+        "scientific_references": str(raw_data.get("scientific_references") or "HAS / SPILF / MSPRH Algérie").strip(),
+        "is_active": True,
+        "created_at": now_iso,
+        "updated_at": now_iso,
+    }
+
+    print(f"Generated Ordonnance Type: {data['title']} ({data['id']})")
+    print(f"Specialty: {data['specialty']} | Lines: {len(sanitized_lines)} | Pediatric Mode: {supports_pediatric}")
+
+    if dry_run:
+        print("\n[DRY RUN] Generated Ordonnance Type snippet:")
+        print(json.dumps(data, indent=2, ensure_ascii=False)[:1000] + "...")
+        return data
+
+    # 1. Save to remote Supabase prescription_templates table
+    res = supabase.post("prescription_templates", data, upsert=True)
+    if res:
+        print("Successfully saved prescription template to Supabase prescription_templates table!")
+        send_broadcast_notification(
+            supabase=supabase,
+            notif_id=f"notif_ordonnance_{data['id']}",
+            title=f"📝 Nouvelle Ordonnance Type : {data['title']}",
+            message=f"Ordonnance type DCI/CNAS ({data['specialty']}) ajoutée à l'Ordonnancier Medsina avec posologies validées !",
+            notif_type="announcement",
+            target_id=data["id"],
+            metadata={
+                "ordonnance_id": data["id"],
+                "title": data["title"],
+                "specialty": data["specialty"],
+            },
+        )
+    else:
+        print("Notice: Ordonnance generated locally (Supabase write skipped or pending migration).")
+
+    # 2. Append/Update local JSON asset cache
+    try:
+        PRESCRIPTION_TEMPLATES_FILE.parent.mkdir(parents=True, exist_ok=True)
+        local_list: List[Dict[str, Any]] = []
+        if PRESCRIPTION_TEMPLATES_FILE.exists():
+            local_list = json.loads(PRESCRIPTION_TEMPLATES_FILE.read_text(encoding="utf-8"))
+        norm_title = _normalize_ordonnance_text(data["title"])
+        idx = next(
+            (
+                i for i, d in enumerate(local_list)
+                if d.get("id") == data["id"] or _normalize_ordonnance_text(str(d.get("title", ""))) == norm_title
+            ),
+            None,
+        )
+        if idx is not None:
+            local_list[idx] = data
+        else:
+            local_list.append(data)
+        PRESCRIPTION_TEMPLATES_FILE.write_text(
+            json.dumps(local_list, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        print(f"Updated local {PRESCRIPTION_TEMPLATES_FILE.name} ({len(local_list)} total ordonnances types)!")
+    except Exception as e:
+        print(f"Warning updating local prescription templates file: {e}")
+
+    return data
+
+
 def main():
     parser = argparse.ArgumentParser(description="MedsinaPilot Autonomous Medical Agent")
-    parser.add_argument("--action", choices=["cat", "pearl", "drugs", "lab", "memento", "summary", "both", "all"], default="all", help="Action to perform")
+    parser.add_argument("--action", choices=["cat", "pearl", "drugs", "lab", "memento", "summary", "ordonnance", "both", "all"], default="all", help="Action to perform")
     parser.add_argument("--dci", type=str, default=None, help="Specific drug DCI to generate")
     parser.add_argument("--lab", type=str, default=None, help="Specific lab test name to generate")
     parser.add_argument("--memento", type=str, default=None, help="Specific on-call memento topic to generate")
+    parser.add_argument("--ordonnance", type=str, default=None, help="Specific prescription template topic to generate")
+    parser.add_argument("--count", type=int, default=1, help="Number of ordonnances types to generate (1-10)")
     parser.add_argument("--course-id", type=str, default=None, help="Specific course ID to process")
     parser.add_argument("--dry-run", action="store_true", help="Run without writing to Supabase")
     args = parser.parse_args()
@@ -1526,7 +1928,7 @@ def main():
     print("=" * 65)
 
     supabase = SupabaseClient(SUPABASE_URL, SUPABASE_KEY)
-    courses = load_courses_catalog(supabase)
+    courses = load_courses_catalog(supabase) if args.action in ("cat", "pearl", "summary", "both", "all") else []
 
     summary_results = []
 
@@ -1661,6 +2063,41 @@ def main():
                     "title": "Non généré",
                     "status": "Échec temporaire (Gemini saturé) ⚠️",
                 })
+
+    # 7. Ordonnances Types (DCI / CNAS Algérie)
+    if args.action in ("ordonnance", "all"):
+        item_count = max(1, min(args.count, 10)) if args.action == "ordonnance" else 1
+        exclude_norm: set = set()
+        for idx in range(item_count):
+            if idx > 0:
+                time.sleep(2.0)
+            target_topic = args.ordonnance if idx == 0 else None
+            ordo_topic = pick_candidate_prescription_template(
+                supabase,
+                target_ordonnance=target_topic,
+                exclude_normalized=exclude_norm,
+            )
+            if ordo_topic:
+                exclude_norm.add(_normalize_ordonnance_text(ordo_topic))
+                ordo_data = generate_prescription_template(ordo_topic, supabase, dry_run=args.dry_run)
+                if ordo_data:
+                    exclude_norm.add(_normalize_ordonnance_text(ordo_data.get("title", "")))
+                    exclude_norm.add(_normalize_ordonnance_text(ordo_data.get("id", "")))
+                    summary_results.append({
+                        "type": "Ordonnance Type",
+                        "course": f"{len(ordo_data.get('lines', []))} ligne(s)",
+                        "specialty": ordo_data.get("specialty", "Médecine Générale"),
+                        "title": ordo_data.get("title", ordo_topic),
+                        "status": "Succès ✅",
+                    })
+                else:
+                    summary_results.append({
+                        "type": "Ordonnance Type",
+                        "course": ordo_topic,
+                        "specialty": "Médecine Générale",
+                        "title": "Non généré",
+                        "status": "Échec temporaire (Gemini saturé) ⚠️",
+                    })
 
     # Print GitHub Actions step summary if available
     github_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
