@@ -1434,5 +1434,20 @@
     ],
     "created_at": "2026-11-17T04:41:36.729213+00:00",
     "updated_at": "2026-11-17T04:41:36.729231+00:00"
+  },
+  {
+    "id": "lab_trou_anionique_plasmatique_urinaire",
+    "name": "Trou anionique plasmatique et urinaire (Anion Gap)",
+    "category": "Gazométrie & Équilibre Acido-Basique",
+    "normal_range": "Plasmatique : 12 ± 2 mmol/L (avec K+) ou 8 ± 2 mmol/L (sans K+) | Urinaire : Variable selon l'ionogramme urinaire (Na+ + K+ - Cl-)",
+    "unit": "mmol/L",
+    "high_interpretation": "Trou anionique plasmatique élevé (> 16 mmol/L) : Acidose métabolique à trou anionique élevé (MUDPILES : Méthanol, Urémie, DKA/Acidocétose diabétique, Paracétamol/Propylène glycol, Infection/Isoniazide, Lait - Acidose lactique, Éthanol/Salicylés). Urgence vitale selon le pH et la cause (coma, acidémie sévère pH < 7.10). Trou anionique urinaire positif (> 0) : Défaut d'excrétion rénale des ions H+ (Acidose Tubulaire Rénale proximale ou distale de type 1 ou 4).",
+    "low_interpretation": "Trou anionique plasmatique bas ou négatif (< 6 mmol/L) : Causes rares à éliminer en premier (fausse baisse : hypoalbuminémie majeure où chaque chute de 10 g/L d'albumine baisse le TA de 2.5 mmol/L, hyperprotéinémie par immunoglobulines cationiques, hypercalcémie, hypermagnésémie, intoxication au lithium). Trou anionique urinaire négatif (< 0) : Réponse rénale adaptée à une acidose métabolique extra-rénale (pertes digestives basses : diarrhées, fistules) traduisant une ammoniurie augmentée (excrétion normale de NH4Cl).",
+    "clinical_notes": [
+      "Piège pré-analytique majeur : L'hypoalbuminémie masque une acidose à trou anionique élevé ; il est impératif de corriger le trou anionique mesuré par la formule : TA corrigé = TA observé + 2.5 x (Albuminémie normale [40 g/L] - Albuminémie patient [g/L]).",
+      "Le trou anionique urinaire (TAU = U_Na + U_K - U_Cl) est l'outil princeps pour différencier une acidose métabolique à trou anionique plasmatique normal (hyperchlorémique) d'origine rénale (TAU positif) versus extra-rénale (TAU négatif)."
+    ],
+    "created_at": "2026-11-20T03:38:59.093113+00:00",
+    "updated_at": "2026-11-20T03:38:59.093128+00:00"
   }
 ]
