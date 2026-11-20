@@ -1752,7 +1752,6 @@ class _MainScaffoldState extends State<MainScaffold> {
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final userName = user?.fullName ?? 'M';
-    final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'M';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),

@@ -6,8 +6,6 @@ import '../../auth/bloc/auth_bloc.dart';
 import '../bloc/revision_bloc.dart';
 import '../bloc/revision_event.dart';
 import '../data/residency_repository.dart';
-import '../models/laureate_study_plan_model.dart';
-import '../models/module_model.dart';
 import '../services/laureate_study_plan_service.dart';
 import '../services/realistic_course_schedule_service.dart';
 import '../services/user_qcm_annotation_service.dart';

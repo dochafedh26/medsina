@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 enum PdfAnnotationType {
   highlight,
   underline,

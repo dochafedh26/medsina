@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../core/utils/medical_text_formatter.dart';
 import '../models/module_model.dart';
 import '../models/qcm_model.dart';
