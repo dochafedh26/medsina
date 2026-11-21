@@ -1346,18 +1346,17 @@
   {
     "id": "lab_albumine_prealbumine",
     "name": "Albumine sérique et Préalbumine (Transthyritine)",
-    "category": "Endocrinologie & Métabolisme",
-    "normal_range": "Albumine: 35 - 50 g/L | Préalbumine: 20 - 40 mg/L",
-    "unit": "g/L (Albumine) et mg/L (Préalbumine)",
-    "high_interpretation": "Albumine élevée: Déshydratation aiguë (hémoconcentration). Pas de signification pathologique propre. Préalbumine élevée: Insuffisance rénale chronique, corticothérapie, ou convalescence.",
-    "low_interpretation": "Albumine < 30 g/L: Hypoalbuminémie modérée. < 20 g/L: Risque majeur d'anasarque (œdèmes généralisés, œdème pulmonaire). Causes: Dénutrition protéico-énergétique, syndrome néphrotique, cirrhose hépatique (défaut de synthèse), entéropathie exsudative, états inflammatoires sévères (protéine négative de la phase aiguë). Préalbumine basse (< 20 mg/L): Marqueur précoce de dénutrition aiguë ou de catabolisme accru (demi-vie courte de 2 jours contre 20 jours pour l'albumine).",
+    "category": "Hépato-Gastro & Pancréas",
+    "normal_range": "Albumine : 35 - 50 | Préalbumine : 20 - 40",
+    "unit": "g/L pour l'albumine, mg/L pour la préalbumine",
+    "high_interpretation": "Albumine élevée : quasi exclusivement liée à une hémoconcentration (déshydratation aiguë). Pas de valeur pathologique propre haute pour l'albumine. Préalbumine élevée : insuffisance rénale chronique (diminution du catabolisme) ou corticothérapie.",
+    "low_interpretation": "Albumine basse (< 30 g/L = hypoalbuminémie modérée, < 20 g/L = anasarque, risque majeur d'œdème pulmonaire et de défaillance circulatoire) : causes multiples (dénutrition protéico-énergétique, syndrome néphrotique, cirrhose hépatique/insuffisance hépatocellulaire, entéropathie exsudative, états inflammatoires majeurs via l'effet de phase aiguë négative). Préalbumine basse (< 20 mg/L) : dénutrition aiguë ou modérée (demi-vie courte de 2 jours, excellent marqueur précoce de l'efficacité de la renutrition). Urgence vitale si albumine < 15 g/L (risque d'anasarque et de choc hypovolémique relatif) ou si associée à une détresse respiratoire.",
     "clinical_notes": [
-      "Piège pré-analytique majeur: L'albumine est une protéine négative de l'inflammation. En cas de syndrome inflammatoire (CRP élevée), sa baisse reflète la réponse inflammatoire et non un état de dénutrition pure.",
-      "Calcul associé indispensable: En cas d'hypoalbuminémie, la calcémie totale doit être corrigée pour estimer le calcium ionisé actif (Formule de Payne: Calcium corrigé = Calcium mesuré + 0.02 * (40 - Albumine en g/L)).",
-      "Intérêt au lit du malade en réanimation: Le suivi de la préalbumine est supérieur à celui de l'albumine pour évaluer l'efficacité de la support nutritionnel entérale ou parentérale à court terme grâce à sa demi-vie courte."
+      "Piège pré-analytique majeur : L'albumine est une protéine de l'inflammation de type 'phase aiguë négative'. En cas de syndrome inflammatoire (CRP élevée), sa baisse reflète l'inflammation et non obligatoirement une dénutrion.",
+      "Intérêt de la cinétique : La préalbumine a une demi-vie très courte (48h) contrairement à l'albumine (20 jours), ce qui en fait le meilleur outil de surveillance de la renutrition entérale ou parentérale en réanimation."
     ],
-    "created_at": "2026-11-14T14:23:50.929117+00:00",
-    "updated_at": "2026-11-14T14:23:50.929130+00:00"
+    "created_at": "2026-11-21T02:40:44.219155+00:00",
+    "updated_at": "2026-11-21T02:40:44.219169+00:00"
   },
   {
     "id": "lab_ceruloplasmine_cuivre",
