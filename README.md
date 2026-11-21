@@ -5,12 +5,12 @@
 </p>
 
 <p align="center">
-  <strong>La super-application médicale tout-en-un pour étudiants en médecine, internes, résidents et médecins praticiens en Algérie.</strong><br>
-  <em>Formation Résidanat • Pratique Clinique • Mémentos de Garde • Vidal Algérie • IA Médicale • 100 % Hors-Ligne</em>
+  <strong>La super-application médicale tout-en-un pour étudiants en médecine, internes, résidents, enseignants HU et médecins praticiens en Algérie.</strong><br>
+  <em>Formation Résidanat & Externat • Suite Clinique & Urgences (ECG 12D, GDS, PSE) • Ordonnancier DZ & Vidal • Whiteboard Mindmap • Espace Prof 65/35 • 100 % Hors-Ligne</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-v1.0.73-0D9488?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-v1.0.102%20(Stable)-0D9488?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/Plateformes-Android%20%7C%20Windows%20%7C%20Web-0284C7?style=for-the-badge" alt="Platforms">
   <img src="https://img.shields.io/badge/Mode-100%25%20Hors--Ligne-10B981?style=for-the-badge" alt="Offline">
   <img src="https://img.shields.io/badge/Architecture-Bento%20Pinterest%202027-6366F1?style=for-the-badge" alt="Design">
@@ -20,163 +20,136 @@
 
 ## 🌟 Présentation Générale
 
-**Medsina** (développée par **MedevSync**) est la plateforme médicale de référence conçue sur mesure pour le cursus médical algérien (Faculté de Médecine de Blida et universités nationales). 
+**Medsina** (développée par **MedevSync**) est la plateforme médicale de référence conçue sur mesure pour le cursus médical algérien (Faculté de Médecine de Blida et universités nationales).
 
 Elle fusionne en une interface unique, moderne et ultra-fluide :
-1. La **préparation au Concours de Résidanat** (47 modules officiels, +19 000 QCMs corrigés et commentés, fiches de synthèse, flashcards FSRS, banques d'annales).
-2. La **pratique clinique et de garde hospitalière** (protocoles d'urgences vitales, conduites à tenir CAT, mémentos de garde, calculateurs de scores, normes biologiques).
-3. La **sécurité thérapeutique & Vidal Algérie** (nomenclature nationale des médicaments, analyse d'ordonnances assistée par IA, alertes de contre-indications terrain).
-4. L'**espace profil & suivi d'entraînement en temps réel** (validation journalière des révisions, objectifs quotidiens, habit loop hebdomadaire, synchronisation cloud sécurisée).
+1. La **préparation au Concours de Résidanat & Externat** (47 modules officiels, +19 000 QCMs corrigés et commentés, livrets All-in-One, flashcards FSRS v4.5, Mode Duel 1v1, Whiteboard & Studio Mindmap, simulateur de classement et choix de spécialité).
+2. La **pratique clinique et de garde hospitalière avancée** (protocoles CAT d'urgences vitales, mémentos de garde, **Assistant ECG 12 dérivations avec compte rendu PDF A4 imprimable**, **Interpréteur Gaz du Sang GDS**, **Calculateur PSE & dilutions d'urgence**, **Logbook des gestes pratiques**, **Medsina Synapse** & **Atlas Clinique**).
+3. La **sécurité thérapeutique, Ordonnancier DZ & Vidal Algérie** (nomenclature nationale des médicaments, **Ordonnances Types DCI/CNAS enrichies automatiquement 2×/jour via Supabase**, générateur de certificats médico-légaux CBV/ITT en PDF A4, analyse d'ordonnances et contre-indications terrain).
+4. L'**Espace Prof / Enseignant HU** (publication réservée aux grades hospitalo-universitaires vérifiés avec **partage de revenus 65 / 35**).
+5. L'**espace profil, suivi d'entraînement en temps réel & Mode Focus** (validation journalière, objectifs quotidiens, habit loop hebdomadaire, connexion Google OAuth, synchronisation cloud sécurisée).
 
 ---
 
-## 🚀 Fonctionnalités Majeures de Medsina
+## 🚀 Fonctionnalités Majeures de Medsina (v1.0.102)
 
-### 1. 👤 Espace Profil Médical Moderne (Design Bento 2026/2027)
-- **Identité Médicale Complète** :
-  - Nom & prénom, rôle médical (*Candidat Résidanat, Externe 1e-6e année, Interne des Hôpitaux, Résident, Généraliste, Spécialiste*).
-  - Faculté de rattachement (*Blida, Alger, Constantine, Oran, etc.*), Wilaya de résidence (1 à 58), téléphone et session cible (*ex: Résidanat 2027*).
-  - Bio et devise médicale de motivation personnalisée.
-- **Sélection de Photo de Profil & Avatars Médicaux** :
-  - **Importation de Photo** : sélection d'image depuis la galerie ou les fichiers avec upload Cloud Supabase Storage et aperçu local instantané.
-  - **Avatars Médicaux Préréglés** : 8 avatars vectoriels soignés aux couleurs médicales (*Praticien Hospitalier, Clinicien Généraliste, Résident Élite, Chirurgien / Urgences, Externe, Pédiatrie, Cardiologie, Neuro*).
-- **Statut d'Abonnement & Licence VIP** :
-  - Visualisation du badge de formule (*All-Access VIP, Résident Élite, Clinique Pro, Étudiant*).
-  - Compteur de jours restants avec activation instantanée de clé de licence (*ex: `MEDSINA-2027-VIP`*).
-
----
-
-### 2. 📊 Activité, Progrès & Validation Journalière (« Accomplir le Jour »)
-- **🌟 Validation Interactive de la Journée d'Étude** :
-  - Bouton interactif pour **valider son jour de révision** en un clic.
-  - Attribution automatique de **+50 XP** au compte de fidélité.
-  - Incrémentation dynamique de la **série de jours consécutifs (Streak 🔥)**.
-  - Badge de célébration vert émeraude avec option de modification.
-- **📅 Tracker Visuel d'Assiduité Hebdomadaire** :
-  - Calendrier visuel des 7 jours de la semaine (`L M M J V S D`) avec coches vertes pour les jours accomplis.
-  - Calcul en direct du pourcentage d'assiduité hebdomadaire.
-- **📈 Compteurs Réels de Progrès** :
-  - **QCMs Réalisés** : décompte automatique de tous les QCMs résolus dans l'application avec badge d'activité journalier.
-  - **Cours & Livrets Accomplis** : compteur des modules maîtrisés avec consultation de la **liste détaillée des cours validés**.
-  - **Objectifs Quotidiens Personnalisables** : jauges de progression vers l'objectif journalier (ex: 25 QCMs / 1 cours par jour).
-- **➕ Enregistrement de Révisions Externes** :
-  - Dialogue permettant d'enregistrer des QCMs ou cours travaillés hors application (sur polycopiés de fac, en stage de garde ou à la bibliothèque).
+### 1. 🫀 Assistant ECG 12 Dérivations, QTc & Compte Rendu Imprimable (PDF A4)
+- **Moteur d'Interprétation Structuré en 12 Dérivations** :
+  - Lecture guidée complète : contrôles techniques (aVR, D1, progression de l'onde R, calibrage), fréquence cardiaque, rythme, axe électrique, espace PR, durée/morphologie QRS, segment ST par territoire, onde T et QTc (Bazett / Fridericia).
+  - **Détection Automatisée des Troubles Majeurs** : Fibrillation Atriale (FA), Flutter atrial (300/min), Tachycardie Ventriculaire (TV), Blocs Auriculo-Ventriculaires (BAV 1er, Wenckebach, Mobitz 2, 3e degré), Blocs de Branche (BBDG / BBDD), Hypertrophie Ventriculaire Gauche (HVG) et ondes Q pathologiques.
+  - **Seuils de SCA ST+ par Territoire** : détection selon les critères consensuels (≥ 2 mm en V2–V3, ≥ 1 mm dans les autres dérivations, sur ≥ 2 dérivations contiguës) avec alertes d'urgence hiérarchisées.
+  - **Indicateur de Confiance** calculé selon la qualité technique du tracé et l'exhaustivité des mesures saisies.
+  - **Référentiel de Poche Intégré** : valeurs normales, territoires coronaires, chronologie de l'infarctus, règles *WiLLiaM / MaRRoW*.
+- **Compte Rendu ECG Imprimable (PDF A4)** :
+  - Rédaction médicale structurée en 6 rubriques (*qualité technique, rythme, conduction, axe, repolarisation, QT*), conclusion synthétique, conduite à tenir et note de confiance.
+  - Formulaire d'identité patient (nom, âge, indication, renseignements cliniques) et export PDF A4 mis en page avec en-tête Medsina, bandeau de verdict, mesures et visa praticien.
 
 ---
 
-### 3. 📖 Catalogue Spécifique des Livrets All-in-One (47 Modules)
-- **Livrets de Révision Haute Densité** :
-  - 47 livrets complets téléchargeables et consultables hors-ligne avec validation de conformité `%PDF`.
-  - Synthèses High-Yield condensées regroupant les notions clés, pièges d'examen et schémas cliniques.
-  - QCMs d'entraînement intégrés directement à la fin de chaque chapitre.
-  - Cache hors-ligne isolé pour consultation instantanée sans connexion Internet.
+### 2. 🧪 Interpréteur Gaz du Sang (GDS / ABG) & Calculateur PSE d'Urgence
+- **Interpréteur Gaz du Sang (GDS)** :
+  - Analyse acido-basique rapide (pH, PaCO₂, HCO₃⁻, PaO₂/FiO₂, trou anionique) avec identification des troubles simples ou mixtes et calcul des compensations attendues.
+- **Calculateur PSE & Dilutions d'Urgence** :
+  - Calcul instantané des débits en pousse-seringue électrique (mL/h) selon le poids et l'unité clinique : `γ/kg/min`, `γ/kg/h`, `mg/h`, `UI/kg/h`, `UI/h`.
+  - Protocoles de dilution prêts à l'emploi en seringue de garde (50 mL / 20 mL, solvant NaCl 0,9 % ou SG 5 %) : *Noradrénaline, Adrénaline, Dobutamine, Dopamine, Nicardipine (Loxen), Amiodarone, Midazolam, Furosémide, Insuline IVSE, Héparine HNF*.
 
 ---
 
-### 4. 🏆 Témoignages & Conseils Concours Résidanat (Base Cloud Supabase)
-- **Retours d'Expérience Authentiques** :
-  - Témoignages détaillés de majors de promotion et de résidents (*Dr. Bentegri, Dr. Djellata, etc.*).
-  - Conseils méthodologiques : organisation des couches de révision, gestion du stress, choix des sources par module, gestion du temps le jour J.
-- **Architecture Cloud Zéro-Rebuild** :
-  - Données hébergées sur Supabase Cloud (`public.temoignages_conseils`) permettant l'ajout continu de nouveaux témoignages sans besoin de mettre à jour l'application.
-  - Indexation automatique dans **Medsina Omnisearch (`Ctrl+K`)** avec consultation PDF ou vue modale interactive.
+### 3. 📋 Ordonnancier Type Algérie (DCI/CNAS) & Certificats Médico-Légaux PDF A4
+- **Ordonnances Types DCI/CNAS (Enrichissement Autonome 2×/jour)** :
+  - Bibliothèque d'ordonnances types prêtes à l'emploi adaptées à la pratique algérienne (DCI, noms commerciaux DZ, formulations, posologies adultes et pédiatriques en `mg/kg/j` avec plafonds de sécurité, durées, conseils patient et références scientifiques).
+  - **Synchronisation Dynamique Supabase + Cache Hors-Ligne** : actualisation en 1 clic directement dans l'application, alimentée automatiquement 2 fois par jour par pipeline GitHub Actions (`medsina_ordonnances.yml`).
+- **Certificats Médico-Légaux (PDF A4)** :
+  - Générateur conforme aux standards algériens pour les certificats de coups et blessures volontaires (**CBV / ITT**), arrêts de travail, certificats d'aptitude et certificats médicaux descriptifs avec export PDF A4 prêt à imprimer.
 
 ---
 
-### 5. 🎯 Moteur QCM « Ultra-Résidanat » & Examens Blancs
-- **Plus de 19 000 QCMs & Cas Cliniques** :
-  - Questions classées par spécialité, module et cours officiel de Blida / Alger.
-- **Modes d'Entraînement Avancés** :
-  - **Mode Révision Immédiate** : explications complètes, rappels de cours et justifications après chaque question.
-  - **Mode Examen Blanc Chronométré** : simulation réelle de concours (15 à 120 minutes) avec barèmes configurables : **⚖️ Tout ou Rien** ou **📊 Notation Partielle**.
-- **Filtres Intelligents** :
-  - *Jamais consultées* • *Mes erreurs à retravailler* • *Mes favoris* • *Questions avec notes personnelles* • *Haute tombabilité d'examen*.
-- **Indicateurs Anti-Pièges & Statistiques** :
-  - Alerte automatique sur les questions négatives (*« Vigilance Piège : cherchant la proposition FAUSSE / SAUF UNE »*).
-  - Badge de tombabilité indiquant les années où la question est tombée aux épreuves officielles.
-  - Statistiques de choix par proposition (% A, B, C, D, E) issues de la communauté.
-
----
-
-### 6. 🧠 Répétition Espacée FSRS v4.5 & Flashcards Médicales
-- Algorithme de pointe **FSRS (Free Spaced Repetition Scheduler)** calculant la **Stabilité ($S$)**, la **Difficulté ($D$)** et la **Rétention mémorielle estimée ($R$)**.
-- **Conversion en 1 Clic** : transformez n'importe quel QCM manqué ou piège d'annale en carte Recto/Verso FSRS.
-- Évaluation intuitive en 4 niveaux (*À revoir, Difficile, Bien, Facile*) avec prévisualisation des prochains intervalles de révision.
-
----
-
-### 7. 📅 Study Planner Matriciel (3 Couches)
-- Suivi rigoureux de l'avancement par module :
-  - `☑️ Couche 1 : Lecture & Compréhension globale`
-  - `☑️ Couche 2 : Fiches de Synthèse & Mémorisation active`
-  - `☑️ Couche 3 : Révision Finale, Annales & Cas Cliniques`
-- **Compte à Rebours & Simulateur J-X** : indique le rythme quotidien cible (nombre de cours par jour) jusqu'à la date du concours.
-- **Priorités du Jour par IA** : suggestion automatique des 3 cours les plus rentables à travailler en fonction de leur coefficient d'examen.
-
----
-
-### 8. 🚨 Pratique Clinique, Urgences & Mémentos de Garde
-- **Conduites à Tenir d'Urgence (CAT)** :
-  - Protocoles standardisés pour les urgences vitales (Arrêt cardiaque, Choc anaphylactique, SCA, AVC, Détresse respiratoire, etc.).
-- **Mémento de Garde Hospitalière** :
-  - Guide pratique de poche pour l'interne et le résident de garde (prescriptions d'urgence, gestes techniques, posologies pédiatriques).
-- **Normes Biologiques & Calculateurs Médicaux** :
-  - Normes sanguines et urinaires de référence.
-  - Calculateurs automatisés : Glasgow, Wells, Cockcroft-Gault, IMC, Surface corporelle, DFG, etc.
-
----
-
-### 9. 💊 Sécurité Thérapeutique & Vidal Algérie
+### 4. 💊 Sécurité Thérapeutique & Vidal Algérie
 - **Nomenclature Nationale Algérienne** :
-  - Base de données exhaustive des médicaments commercialisés en Algérie (DCI, noms commerciaux, formes, dosages).
+  - Base exhaustive des spécialités pharmaceutiques commercialisées en Algérie (DCI, noms commerciaux, formes, dosages, statut Chifa, laboratoires).
 - **Analyse d'Ordonnance Intelligente** :
-  - Détection automatique des interactions médicamenteuses potentielles.
-  - Alertes de contre-indications terrain (Grossesse, Allaitement, Insuffisance rénale, Insuffisance hépatique).
+  - Détection automatique des interactions médicamenteuses par niveau de gravité (*Contre-indication absolue, Association déconseillée, Précaution d'emploi*).
+  - Alertes de contre-indications terrain (*Grossesse par trimestre, Allaitement, Insuffisance rénale / DFG, Insuffisance hépatique, Ulcère gastro-duodénal*).
 
 ---
 
-### 10. 🔍 Medsina Omnisearch (`Ctrl+K` / `⌘K`)
-- Moteur de recherche transversale ultra-rapide indexant simultanément :
-  - Les cours officiels et fiches de synthèse,
-  - La banque de QCMs et annales,
-  - Les protocoles de CAT clinique et mémentos,
-  - Le Vidal des médicaments algériens,
-  - Les témoignages et conseils de résidanat.
+### 5. 🚨 Pratique Clinique, Urgences, Logbook & Medsina Synapse
+- **Conduites à Tenir d'Urgence (CAT)** & **Mémentos de Garde** :
+  - Protocoles standardisés pour les urgences vitales (SCA, AVC, choc anaphylactique/septique/cardiogénique, HDH, asthme aigu grave, acido-cétose, troubles ioniques) avec mises à jour autonomes.
+- **Logbook & Check-lists des Gestes Pratiques de Garde** :
+  - Carnet de suivi et check-lists pas-à-pas des gestes techniques hospitaliers (ponction lombaire, gazométrie artérielle, pose de VVC, drainage thoracique, suture, intubation) avec validation des actes réalisés en stage.
+- **Medsina Synapse & Atlas Clinique** :
+  - Simulateur de cas cliniques interactifs progressifs pour raisonnement diagnostique et thérapeutique.
+  - Atlas clinique visuel (sémiologie, imagerie, dermatologie, ECG).
+- **Normes Biologiques & Calculateurs Médicaux** :
+  - +80 constantes biologiques avec valeurs de référence et conduites devant les valeurs critiques.
+  - Calculateurs automatisés : Glasgow, Wells, Cockcroft-Gault, MDRD/CKD-EPI, IMC, Surface corporelle, Parkland, etc.
 
 ---
 
-### 11. 🔄 Mises à Jour Automatiques Over-The-Air (OTA)
-- Détection automatique des nouvelles versions publiées sur GitHub Releases.
-- Téléchargement et installation transparents directement depuis l'application sans manipulation complexe.
+### 6. 🎓 Espace Prof / Enseignant HU & Partage de Revenus 65 / 35
+- **Publication Réservée aux Grades Académiques Vérifiés** :
+  - Espace dédié aux enseignants hospitalo-universitaires vérifiés par l'administration (*Professeur, MCA, Maître-Assistant / MAHU, Assistant HU, Médecin Résident*) avec badge de grade vérifié.
+  - Création et publication de **cours / polycopiés, fiches de synthèse, mindmaps, flashcards, banques QCM et examens EMD & QROC** ; accès en lecture pour tous les étudiants.
+- **Programme de Partage de Revenus 65 / 35** :
+  - **65 % des revenus nets** reversés aux auteurs enseignants, 35 % à la plateforme, avec comptabilisation des lecteurs uniques, des passages d'examens et plafond équitable par auteur.
+  - Nouvel onglet **« Mes gains »** : suivi du solde disponible, historique des clôtures mensuelles et demandes de retrait (*CCP BaridiMob, virement bancaire*).
 
 ---
 
-### 12. 🧠 Mind Maps Décisionnelles & Arbres Cliniques Vectoriels (Google Drive Cloud 5 To)
-- **Arborescences Cliniques Visuelles Haute Résolution** :
-  - Mind Maps vectorielles au format Paysage A3/A4 structurées pour chaque cours du programme officiel de Résidanat.
-  - Branches cliniques standardisées : *1. Physiopathologie & Classification*, *2. Démarche Diagnostique & Seuils ECG*, *3. Arbre Décisionnel de Reperfusion / Prise en Charge*, *4. Thérapeutique d'Urgence*, *5. Ordonnance Long Cours (BASIC)*, *6. Pièges Concours & Vigilance Annales*.
-- **Expérience Hybride dans l'Application** :
-  - **Arbre Interactif Tactile** : exploration nodale, recherche instantanée dans les branches et mémentos diagnostic/traitement.
-  - **Visionneuse Vectorielle HD Plein Écran** : zoom fluide, surlignage et consultation hors-ligne isolée.
-- **Pipeline Automatisé GitHub Actions & Google Drive** :
-  - Stockage permanent sur le Google Drive officiel Medsina (`Mindmaps_Residanat_2027`) évitant la saturation des quotas locaux.
-  - Synchronisation automatique avec la base Supabase et le catalogue d'assets en mode 100% Hors-Ligne.
+### 7. 🎨 Whiteboard & Studio Mindmap Interactif + Mind Maps Décisionnelles
+- **Whiteboard & Studio Mindmap Intégré** :
+  - Tableau blanc médical accessible depuis la barre d'icônes (Accueil & Révision) avec modèles pré-construits (*Carte Mentale, Physiopathologie, Arbre Décisionnel*), export direct en PDF et synchronisation Cloud Supabase.
+- **Mind Maps Décisionnelles Vectorielles (Google Drive Cloud)** :
+  - Arborescences cliniques haute résolution structurées en 6 branches pour les cours du programme de Résidanat.
+  - **Demande de Mind Map en 1 Clic** directement depuis n'importe quel cours ou fiche de synthèse qui n'en dispose pas encore.
+  - Expérience hybride : arbre interactif tactile + visionneuse vectorielle HD plein écran hors-ligne.
 
 ---
 
-### 13. 🤝 Fidélité & Programme de Parrainage
-- **Système de Rangs Médicaux** : progression au fil des révisions :
-  - *Externe Studieux* ➔ *Interne Assidu* ➔ *Résident Major* ➔ *Chef de Clinique Élite* ➔ *Légende Médicale*.
-- **Parrainage Confraternel** : partagez votre code de parrainage et bénéficiez de **+7 jours d'accès All-Access VIP offerts** pour chaque confrère parrainé.
+### 8. 🎯 Moteur QCM « Ultra-Résidanat », Duel 1v1, Mnémos & Simulateur de Classement
+- **Plus de 19 000 QCMs & Cas Cliniques** :
+  - Mode Révision Immédiate (explications détaillées) et Mode Examen Blanc Chronométré (15 à 120 min, barèmes **Tout ou Rien** ou **Notation Partielle**).
+  - Filtres intelligents (*Jamais consultées, Mes erreurs, Favoris, Notes personnelles, Haute tombabilité*) et alertes anti-pièges (*SAUF / FAUSSE*).
+- **Mode Duel QCM 1v1 & Défis Rapides** :
+  - Affrontez vos confrères en temps réel sur des séries de QCMs chronométrées et suivez votre score de duel.
+- **Banque de Mnémotechniques & Associations Réflexes QCM** :
+  - Fiches mnémotechniques classées par spécialité et associations réflexes incontournables pour déjouer les pièges d'annales.
+- **Simulateur de Classement & Choix de Spécialité Résidanat** :
+  - Estimez votre rang et visualisez les spécialités *Accessibles*, *Compétitives* ou *À consolider* selon votre note et votre faculté (*Blida, Alger, Oran, Constantine, Annaba / Sétif / Tlemcen*).
+- **Examens Nationaux Blancs, Groupes de Révision, Révision Audio, Carnet d'Erreurs, Samedis Pédagogiques & Coach IA**.
+
+---
+
+### 9. 🧠 Flashcards FSRS v4.5, Study Planner 3 Couches & Mode Focus
+- **Répétition Espacée FSRS v4.5** : calcul scientifique de la stabilité ($S$), difficulté ($D$) et rétention ($R$), conversion d'un QCM en flashcard en 1 clic et widget FSRS sur le tableau de bord.
+- **Study Planner Matriciel (3 Couches)** : suivi *Couche 1 (Lecture) / Couche 2 (Fiches) / Couche 3 (Annales)*, compte à rebours J-X et priorités du jour par IA.
+- **Mode Focus (Spécialité / Rotation de Module) & Minuteur Pomodoro** : filtrez instantanément Cours, Externat, CATs et Tableau de bord sur la spécialité de votre stage ou rotation en cours.
+- **Catalogue des 47 Livrets All-in-One** & **Parcours Externat (1re à 6e Année)** avec filtrage dédié par année universitaire et simulations EMD.
+- **Témoignages & Conseils Majors Résidanat** hébergés sur Supabase Cloud (zéro rebuild, indexés dans Omnisearch).
+
+---
+
+### 10. 👤 Espace Profil Bento 2027, Suivi Quotidien & Connexion Google
+- **Authentification Rapide avec Google (OAuth Supabase)** en plus de la connexion par email.
+- **Identité Médicale & Avatars** : rôle médical, faculté, wilaya (1 à 58), session cible, upload photo Supabase Storage et 8 avatars médicaux vectoriels.
+- **Validation Journalière (« Accomplir le Jour »)** : +50 XP fidélité, série active (Streak 🔥), tracker hebdomadaire 7 jours (`L M M J V S D`), objectifs quotidiens et enregistrement des révisions externes.
+- **Fidélité & Parrainage Confraternel** : progression en rangs médicaux et **+7 jours All-Access VIP offerts** par confrère parrainé.
+
+---
+
+### 11. 🔍 Medsina Omnisearch (`Ctrl+K` / `⌘K`) & Mises à Jour OTA (Stable & Bêta)
+- **Omnisearch Transversal** : recherche instantanée (< 100 ms) dans les cours PDF (avec surlignage automatique sur la page), QCMs, CATs, mémentos, Vidal Algérie, ordonnances types, mnémos, outils cliniques et témoignages.
+- **Canaux Stable & Bêta Côte à Côte** : installation simultanée possible de **Medsina (Stable)** et **Medsina Beta** sur Android & Windows, avec mises à jour automatiques Over-The-Air (OTA) dédiées par canal.
 
 ---
 
 ## 🎨 Conception Graphique & Ergonomie
 
 L'interface de Medsina adopte le design **Bento / Pinterest UI 2026/2027** :
-- **Dock Flottant Mobile** : navigation par pilule dynamique ergonomique à une main.
-- **Sidebar Bento Desktop** : organisation modulaire avec cartes d'identité, raccourcis et statut de synchronisation.
-- **Mode Sombre & Mode Clair** : thèmes contrastés étudiés pour réduire la fatigue oculaire lors des longues gardes de nuit ou séances de bibliothèque.
+- **Dock Flottant Mobile** : navigation par pilule dynamique ergonomique à une main, accès rapide Espace Prof, Whiteboard et Outils Cliniques.
+- **Sidebar Bento Desktop** : organisation modulaire avec cartes d'identité, raccourcis clavier et statut de synchronisation.
+- **Mode Sombre & Mode Clair** : thèmes contrastés étudiés pour les longues gardes de nuit et séances de bibliothèque.
 
 ---
 
@@ -184,24 +157,25 @@ L'interface de Medsina adopte le design **Bento / Pinterest UI 2026/2027** :
 
 | Plateforme | Format | Lien d'accès |
 | :--- | :--- | :--- |
-| **Android** | APK / AAB | [Télécharger Medsina Android](https://medsina.medevsync.com/download/medsina.apk) |
-| **Windows Desktop** | Setup x64 (Hors-Ligne) | [Télécharger Medsina Windows](https://medsina.medevsync.com/download/medsina-setup.exe) |
+| **Android (Stable)** | APK / AAB | [Télécharger Medsina Android](https://medsina.medevsync.com/download/medsina.apk) |
+| **Windows Desktop (Stable)** | Setup x64 (Hors-Ligne) | [Télécharger Medsina Windows](https://medsina.medevsync.com/download/medsina-setup.exe) |
 | **Web SaaS** | Navigateurs modernes | [Ouvrir Medsina Web](https://medsina.medevsync.com) |
+| **Guide Découverte PDF** | Documentation Officielle | [Consulter le Guide PDF](https://medsina.medevsync.com/Medsina_Guide_Decouverte_Fonctionnalites.pdf) |
 | **Canal Telegram Officiel** | Annonces & Échanges | [Rejoindre @medsina_officiel](https://t.me/medsina_officiel) |
 
 ---
 
 ## 🛠️ Stack Technique
 
-- **Framework** : Flutter 3 (Dart) avec compilation multiplateforme (Android, Windows Desktop, Web).
+- **Framework** : Flutter 3 (Dart) — Workspace modulaire multi-plateforme (Android, Windows Desktop, Web).
 - **Architecture** : BLoC Pattern (`flutter_bloc`), Clean Architecture, Equatable.
-- **Base de Données & Cloud** : Supabase (PostgreSQL, Auth, Storage, Edge Functions, Row Level Security).
-- **Cache & Persistance Locale** : `SharedPreferences`, `Syncfusion Flutter PDF`, SQLite/Memory Storage.
-- **Algorithmes** : Free Spaced Repetition Scheduler (FSRS v4.5), Omnisearch In-Memory Indexer.
-- **CI/CD & DevOps** : GitHub Actions (Pipelines automatiques de release Android, Windows, Web et scanners Telegram/GDrive).
+- **Base de Données & Cloud** : Supabase (PostgreSQL, Auth + Google OAuth, Storage, Edge Functions, Row Level Security).
+- **Cache, PDF & Persistance Locale** : `SharedPreferences`, `Syncfusion Flutter PDF` (lecture + génération A4 ECG/Ordonnances/Certificats), SQLite/JSON Offline Cache.
+- **Algorithmes & Moteurs** : Interpréteur ECG 12 dérivations, Analyseur GDS & PSE, FSRS v4.5, Omnisearch In-Memory Indexer.
+- **CI/CD & Automatisation** : GitHub Actions (Release & OTA multi-canal, enrichissement autonome 2×/jour des Ordonnances Types, CATs, Mémentos, Normes Biologiques, Résumés de cours et Mind Maps).
 
 ---
 
 <p align="center">
-  <em>Conçu avec passion par l'équipe <strong>MedevSync</strong> pour les futurs spécialistes d'Algérie 🇩🇿</em>
+  <em>Conçu avec passion par l'équipe <strong>MedevSync</strong> pour les étudiants, enseignants et médecins d'Algérie 🇩🇿</em>
 </p>
