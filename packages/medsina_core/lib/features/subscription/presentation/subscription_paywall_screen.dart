@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/interfaces/feature_contracts.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../../core/services/funnel_analytics_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/license_key_formatter.dart';
 import '../../../core/widgets/medsina_dialog.dart';
@@ -36,6 +37,27 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
   List<SubscriptionPlanItem> _fetchedPlans = [];
   SubscriptionDuration _selectedDuration = SubscriptionDuration.oneYear;
   Map<String, String> _paymentSettings = {};
+  bool _showAllPlans = false;
+
+  SubscriptionTier _recommendedTierForRole(String? role) {
+    final norm = (role ?? '').toLowerCase();
+    if (norm.contains('externe') ||
+        norm.contains('pré-clinique') ||
+        norm.contains('pre-clinique') ||
+        norm.contains('étudiant') ||
+        norm.contains('etudiant')) {
+      return SubscriptionTier.etudiant;
+    }
+    if (norm.contains('interne') ||
+        norm.contains('praticien') ||
+        norm.contains('généraliste') ||
+        norm.contains('generaliste') ||
+        norm.contains('médecin') ||
+        norm.contains('medecin')) {
+      return SubscriptionTier.clinicalPro;
+    }
+    return SubscriptionTier.residentElite;
+  }
 
   @override
   void initState() {
@@ -516,15 +538,22 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
               ),
               const SizedBox(height: 18),
 
-              // App-Scoped Tier Cards (highlights matching pass + All-Access first)
+              // App & Role-Scoped Recommended Tier Card First + Expandable Comparison
               ...() {
+                final recommendedTier = switch (MedsinaFeatureRegistry.instance.appId) {
+                  'medsina_residanat' => SubscriptionTier.residentElite,
+                  'medsina_clinique' => SubscriptionTier.clinicalPro,
+                  'medsina_externat' => SubscriptionTier.etudiant,
+                  _ => _recommendedTierForRole(state.user?.medicalRole),
+                };
+
                 final cards = <SubscriptionTier, Widget>{
                   SubscriptionTier.allAccess: _buildPlanCard(
                     context,
                     user: state.user,
                     tier: SubscriptionTier.allAccess,
                     title: allAccessPlan?.name ?? 'Medsina All-Access (VIP)',
-                    badge: allAccessPlan?.badge ?? 'RECOMMANDÉ • SUITE COMPLÈTE',
+                    badge: allAccessPlan?.badge ?? 'SUITE COMPLÈTE • TOUT ILLIMITÉ',
                     color: const Color(0xFF8B5CF6),
                     planItem: allAccessPlan,
                     duration: _selectedDuration,
@@ -532,9 +561,9 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         ? allAccessPlan!.features
                         : [
                             'Accès illimité aux 47 modules du Résidanat Blida & National',
-                            'Banque complète de 6 240+ QCMs avec corrigés détaillés',
+                            'Banque complète de 19 000+ QCMs avec corrigés détaillés',
                             'Téléchargement de TOUS les supports officiels de cours en PDF',
-                            'Accès complet au volet Pratique Clinique (CAT, protocoles d\'urgence)',
+                            'Accès complet au volet Pratique Clinique (CAT, ECG 12D, GDS, PSE)',
                             'Tous les calculateurs médicaux (Glasgow, Wells, Cockcroft)',
                             'Exports illimités vers Anki TSV et PDF imprimable sans watermark',
                             'Mode hors-ligne complet sur PC, Mobile et Web',
@@ -546,7 +575,9 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     user: state.user,
                     tier: SubscriptionTier.residentElite,
                     title: residentElitePlan?.name ?? 'Pass Résident Élite',
-                    badge: residentElitePlan?.badge ?? 'SPÉCIAL CONCOURS',
+                    badge: recommendedTier == SubscriptionTier.residentElite
+                        ? 'RECOMMANDÉ POUR VOTRE PROFIL • CONCOURS'
+                        : (residentElitePlan?.badge ?? 'SPÉCIAL CONCOURS'),
                     color: AppTheme.primaryTeal,
                     planItem: residentElitePlan,
                     duration: _selectedDuration,
@@ -554,10 +585,10 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         ? residentElitePlan!.features
                         : [
                             'Les 47 modules officiels de préparation au Résidanat',
+                            'Banque complète de 19 000+ QCMs corrigés & commentés',
                             'Simulateur d\'examens blancs chronométrés & Classement National',
                             'Téléchargement des cours PDF officiels & Flashcards FSRS',
                             'Exports Anki et PDF + MedsinaCoach IA',
-                            'CAT d\'urgences essentielles',
                           ],
                     isCurrent: currentTier == SubscriptionTier.residentElite,
                   ),
@@ -566,7 +597,9 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     user: state.user,
                     tier: SubscriptionTier.clinicalPro,
                     title: clinicalProPlan?.name ?? 'Pass Clinique Pro',
-                    badge: clinicalProPlan?.badge ?? 'INTERNES & PRATICIENS',
+                    badge: recommendedTier == SubscriptionTier.clinicalPro
+                        ? 'RECOMMANDÉ POUR VOTRE PROFIL • GARDE & UMC'
+                        : (clinicalProPlan?.badge ?? 'INTERNES & PRATICIENS'),
                     color: AppTheme.accentCyan,
                     planItem: clinicalProPlan,
                     duration: _selectedDuration,
@@ -586,7 +619,9 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     user: state.user,
                     tier: SubscriptionTier.etudiant,
                     title: etudiantPlan?.name ?? 'Pass Étudiant (1ère - 6ème)',
-                    badge: etudiantPlan?.badge ?? 'CURSUS UNIVERSITAIRE',
+                    badge: recommendedTier == SubscriptionTier.etudiant
+                        ? 'RECOMMANDÉ POUR VOTRE PROFIL • EXTERNAT'
+                        : (etudiantPlan?.badge ?? 'CURSUS UNIVERSITAIRE'),
                     color: const Color(0xFF2563EB),
                     planItem: etudiantPlan,
                     duration: _selectedDuration,
@@ -601,60 +636,61 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                           ],
                     isCurrent: currentTier == SubscriptionTier.etudiant,
                   ),
+                  SubscriptionTier.free: _buildPlanCard(
+                    context,
+                    user: state.user,
+                    tier: SubscriptionTier.free,
+                    title: 'Pass Découverte',
+                    badge: 'GRATUIT',
+                    color: Colors.grey.shade600,
+                    planItem: null,
+                    duration: _selectedDuration,
+                    features: [
+                      '7 jours d\'essai guidé + accès quotidien QCM du Jour',
+                      'Modules d\'initiation complets (cours PDF + résumés)',
+                      'Calculateurs et scores médicaux essentiels (Glasgow, IMC, DFG)',
+                      '2 Conduites à Tenir d\'urgence vitale (ACR & Envenimation scorpionique)',
+                      '3 essais IA gratuits (Vidal IA, Bilan Labo & MedsinaPilot)',
+                    ],
+                    isCurrent: currentTier == SubscriptionTier.free,
+                  ),
                 };
 
-                final order = switch (MedsinaFeatureRegistry.instance.appId) {
-                  'medsina_residanat' => [
-                      SubscriptionTier.residentElite,
-                      SubscriptionTier.allAccess,
-                      SubscriptionTier.etudiant,
-                      SubscriptionTier.clinicalPro,
-                    ],
-                  'medsina_clinique' => [
-                      SubscriptionTier.clinicalPro,
-                      SubscriptionTier.allAccess,
-                      SubscriptionTier.residentElite,
-                      SubscriptionTier.etudiant,
-                    ],
-                  'medsina_externat' => [
-                      SubscriptionTier.etudiant,
-                      SubscriptionTier.allAccess,
-                      SubscriptionTier.residentElite,
-                      SubscriptionTier.clinicalPro,
-                    ],
-                  _ => [
-                      SubscriptionTier.allAccess,
-                      SubscriptionTier.residentElite,
-                      SubscriptionTier.clinicalPro,
-                      SubscriptionTier.etudiant,
-                    ],
-                };
+                final otherTiers = [
+                  SubscriptionTier.allAccess,
+                  SubscriptionTier.residentElite,
+                  SubscriptionTier.clinicalPro,
+                  SubscriptionTier.etudiant,
+                  SubscriptionTier.free,
+                ].where((t) => t != recommendedTier).toList();
 
-                return [
-                  for (final tier in order) ...[
-                    cards[tier]!,
-                    const SizedBox(height: 16),
+                return <Widget>[
+                  cards[recommendedTier]!,
+                  const SizedBox(height: 12),
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: () => setState(() => _showAllPlans = !_showAllPlans),
+                      icon: Icon(
+                        _showAllPlans ? Icons.expand_less_rounded : Icons.compare_arrows_rounded,
+                        size: 18,
+                      ),
+                      label: Text(
+                        _showAllPlans
+                            ? 'Masquer les autres formules'
+                            : 'Comparer toutes les formules (5 Pass)',
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                      ),
+                    ),
+                  ),
+                  if (_showAllPlans) ...[
+                    const SizedBox(height: 8),
+                    for (final other in otherTiers) ...[
+                      cards[other]!,
+                      const SizedBox(height: 16),
+                    ],
                   ],
                 ];
               }(),
-              _buildPlanCard(
-                context,
-                user: state.user,
-                tier: SubscriptionTier.free,
-                title: 'Pass Découverte',
-                badge: 'GRATUIT',
-                color: Colors.grey.shade600,
-                planItem: null,
-                duration: _selectedDuration,
-                features: [
-                  '3 modules complets au choix (cours PDF + résumés)',
-                  '100 QCMs corrigés et commentés d\'initiation',
-                  'Calculateurs et scores médicaux essentiels (Glasgow, IMC, DFG)',
-                  '2 Conduites à Tenir d\'urgence vitale (ACR & Envenimation scorpionique)',
-                  '3 essais IA gratuits (Vidal IA, Bilan Labo & MedsinaPilot)',
-                ],
-                isCurrent: currentTier == SubscriptionTier.free,
-              ),
             ],
           ),
         );
@@ -804,11 +840,12 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                         if (tier == SubscriptionTier.free) {
                           context.read<AuthBloc>().add(UpgradeTierEvent(newTier: tier));
                         } else {
-                          _showPaymentSubmissionDialog(
+                          _openPaymentChoiceSheet(
                             context,
-                            user,
-                            initialTier: tier.id,
-                            initialDuration: duration,
+                            user: user,
+                            title: title,
+                            tier: tier,
+                            duration: duration,
                           );
                         }
                       },
@@ -816,6 +853,91 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _openPaymentChoiceSheet(
+    BuildContext context, {
+    required UserModel? user,
+    required String title,
+    required SubscriptionTier tier,
+    required SubscriptionDuration duration,
+  }) {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetCtx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Activer $title',
+                style: const TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Choisissez votre mode de règlement (${duration.label})',
+                style: TextStyle(fontSize: 12.5, color: Colors.grey.shade600),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0284C7),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  icon: const Icon(Icons.bolt_rounded),
+                  label: const Text(
+                    'Carte EDAHABIA / CIB — Activation instantanée',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(sheetCtx);
+                    _showChargilyPayDialog(
+                      context,
+                      user,
+                      initialTier: tier.id,
+                      initialDuration: duration,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  icon: const Icon(Icons.receipt_long_rounded),
+                  label: const Text(
+                    'BaridiMob / Virement CCP (Activation < 1–2h)',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(sheetCtx);
+                    _showPaymentSubmissionDialog(
+                      context,
+                      user,
+                      initialTier: tier.id,
+                      initialDuration: duration,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1173,7 +1295,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Une fois soumis, l\'administrateur validera votre transaction après vérification du reçu pour activer votre formule.',
+                  'Activation rapide sous 1 à 2 heures après vérification du reçu (ou instantanée 24h/24 par EDAHABIA / CIB).',
                   style: TextStyle(fontSize: 10.5, color: Colors.grey),
                 ),
               ],
@@ -1201,6 +1323,12 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
 
                       setDlgState(() => isSubmitting = true);
                       final amount = double.tryParse(amountController.text) ?? selectedDuration.calculatePrice(getSelectedPlanObj());
+                      FunnelAnalyticsService.instance.trackCheckoutStarted(
+                        plan: selectedTier,
+                        method: paymentMethod,
+                        amount: amount,
+                        source: 'paywall_manual',
+                      );
 
                       String? uploadedReceiptUrl;
                       if (receiptBytes != null && receiptFileName != null) {
@@ -1293,7 +1421,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
         builder: (ctx, setDlgState) {
           final plan = getSelectedPlanObj();
           final amount = selectedDuration.calculatePrice(plan);
-          final whatsapp = _paymentSettings['support_whatsapp'] ?? '+213770000000';
+          final whatsapp = _paymentSettings['support_whatsapp'] ?? '+213660675279';
 
           return AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -1423,6 +1551,12 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                     ? null
                     : () async {
                         setDlgState(() => isProcessingChargily = true);
+                        FunnelAnalyticsService.instance.trackCheckoutStarted(
+                          plan: selectedTier,
+                          method: 'chargily_cib',
+                          amount: amount,
+                          source: 'paywall_dialog',
+                        );
                         final res = await SupabaseService.createChargilyCheckout(
                           amount: amount,
                           tier: selectedTier,
@@ -1430,6 +1564,7 @@ class _SubscriptionPaywallScreenState extends State<SubscriptionPaywallScreen> {
                           userId: user?.id ?? 'guest',
                           userEmail: user?.email ?? 'resident@medsina.com',
                           userName: user?.fullName ?? 'Médecin Résident',
+                          acquisitionSource: 'paywall_dialog',
                         );
 
                         if (context.mounted) {

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/services/focus_mode_service.dart';
+import '../../../core/services/funnel_analytics_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../revision/utils/daily_quick_win_launcher.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../models/user_model.dart';
@@ -29,11 +32,19 @@ class MedicalOnboardingDialog extends StatefulWidget {
     BuildContext context, {
     required UserModel user,
   }) async {
-    return showDialog<void>(
+    final result = await showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
       builder: (_) => MedicalOnboardingDialog(user: user),
     );
+    if (result != null && result['launchFirstWin'] == true && context.mounted) {
+      await DailyQuickWinLauncher.launch(
+        context,
+        questionCount: 5,
+        source: 'onboarding_first_win',
+        role: result['role'] as String?,
+      );
+    }
   }
 
   @override
@@ -124,6 +135,25 @@ class _MedicalOnboardingDialogState extends State<MedicalOnboardingDialog> {
       await prefs.setBool(MedicalOnboardingDialog.donePrefKey(widget.user.id), true);
       await prefs.setInt(MedicalOnboardingDialog.goalPrefKey(widget.user.id), _dailyQcmGoal);
 
+      if (!FocusModeService.instance.isEnabled) {
+        final lowerRole = _selectedRole.toLowerCase();
+        final presetLabel = (lowerRole.contains('interne') ||
+                lowerRole.contains('médecin') ||
+                lowerRole.contains('medecin') ||
+                lowerRole.contains('praticien'))
+            ? 'Réanimation & Urgences'
+            : 'Cardiologie';
+        await FocusModeService.instance.enableFocus(label: presetLabel);
+      }
+
+      FunnelAnalyticsService.instance.trackOnboardingCompleted(
+        role: _selectedRole,
+        faculty: _selectedFaculty,
+        studyYear: _selectedStudyYear,
+        targetYear: _selectedTargetYear,
+        dailyGoal: _dailyQcmGoal,
+      );
+
       if (mounted) {
         context.read<AuthBloc>().add(
           UpdateUserProfileEvent(
@@ -140,25 +170,7 @@ class _MedicalOnboardingDialogState extends State<MedicalOnboardingDialog> {
                 : _selectedTargetYear,
           ),
         );
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: AppTheme.primaryTeal,
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle_rounded, color: Colors.white),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Espace Medsina personnalisé selon votre cursus !',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        setState(() => _step = 3);
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -215,7 +227,9 @@ class _MedicalOnboardingDialogState extends State<MedicalOnboardingDialog> {
                           ),
                         ),
                         Text(
-                          'Étape ${_step + 1} sur 3 • Personnalisation médicale',
+                          _step == 3
+                              ? 'Configuration terminée • Prêt pour votre 1er QCM'
+                              : 'Étape ${_step + 1} sur 3 • Personnalisation médicale',
                           style: TextStyle(
                             fontSize: 12,
                             color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
@@ -225,10 +239,11 @@ class _MedicalOnboardingDialogState extends State<MedicalOnboardingDialog> {
                       ],
                     ),
                   ),
-                  TextButton(
-                    onPressed: _skipOnboarding,
-                    child: const Text('Passer', style: TextStyle(fontSize: 12.5)),
-                  ),
+                  if (_step < 3)
+                    TextButton(
+                      onPressed: _skipOnboarding,
+                      child: const Text('Passer', style: TextStyle(fontSize: 12.5)),
+                    ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -236,7 +251,7 @@ class _MedicalOnboardingDialogState extends State<MedicalOnboardingDialog> {
               // Step progress bar
               Row(
                 children: List.generate(3, (index) {
-                  final active = index <= _step;
+                  final active = _step >= 3 || index <= _step;
                   return Expanded(
                     child: Container(
                       height: 5,
@@ -262,63 +277,103 @@ class _MedicalOnboardingDialogState extends State<MedicalOnboardingDialog> {
               const SizedBox(height: 20),
 
               // Footer buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (_step > 0)
-                    OutlinedButton.icon(
-                      onPressed: () => setState(() => _step -= 1),
-                      icon: const Icon(Icons.arrow_back_rounded, size: 18),
-                      label: const Text('Précédent'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              if (_step == 3)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop<Map<String, dynamic>>({
+                          'launchFirstWin': true,
+                          'role': _selectedRole,
+                        });
+                      },
+                      icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                      label: const Text(
+                        'Lancer mon 1er QCM (5 questions • 3 min)',
+                        style: TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryTeal,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                    )
-                  else
-                    const SizedBox.shrink(),
-                  ElevatedButton.icon(
-                    onPressed: _isSaving
-                        ? null
-                        : () {
-                            if (_step < 2) {
-                              setState(() => _step += 1);
-                            } else {
-                              _completeOnboarding();
-                            }
-                          },
-                    icon: _isSaving
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Icon(
-                            _step < 2
-                                ? Icons.arrow_forward_rounded
-                                : Icons.check_circle_rounded,
-                            size: 18,
-                          ),
-                    label: Text(
-                      _step < 2 ? 'Continuer' : 'Terminer la configuration',
-                      style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryTeal,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop<Map<String, dynamic>>({
+                          'launchFirstWin': false,
+                        });
+                      },
+                      child: const Text(
+                        'Accéder au tableau de bord',
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                )
+              else
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (_step > 0)
+                      OutlinedButton.icon(
+                        onPressed: () => setState(() => _step -= 1),
+                        icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                        label: const Text('Précédent'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      )
+                    else
+                      const SizedBox.shrink(),
+                    ElevatedButton.icon(
+                      onPressed: _isSaving
+                          ? null
+                          : () {
+                              if (_step < 2) {
+                                setState(() => _step += 1);
+                              } else {
+                                _completeOnboarding();
+                              }
+                            },
+                      icon: _isSaving
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Icon(
+                              _step < 2
+                                  ? Icons.arrow_forward_rounded
+                                  : Icons.check_circle_rounded,
+                              size: 18,
+                            ),
+                      label: Text(
+                        _step < 2 ? 'Continuer' : 'Terminer la configuration',
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryTeal,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
@@ -456,7 +511,7 @@ class _MedicalOnboardingDialogState extends State<MedicalOnboardingDialog> {
           ],
         );
 
-      default:
+      case 2:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -501,6 +556,94 @@ class _MedicalOnboardingDialogState extends State<MedicalOnboardingDialog> {
                   onSelected: (_) => setState(() => _dailyQcmGoal = g),
                 );
               }).toList(),
+            ),
+          ],
+        );
+
+      default:
+        final focusLabel = FocusModeService.instance.focusLabel ?? 'Cardiologie';
+        final yearSuffix = _selectedStudyYear == 1 ? 'ère' : 'ème';
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  colors: isDark
+                      ? [
+                          AppTheme.primaryTeal.withValues(alpha: 0.24),
+                          const Color(0xFF1E293B),
+                        ]
+                      : [
+                          const Color(0xFFF0FDFA),
+                          const Color(0xFFCCFBF1).withValues(alpha: 0.45),
+                        ],
+                ),
+                border: Border.all(
+                  color: AppTheme.primaryTeal.withValues(alpha: 0.35),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.rocket_launch_rounded, color: AppTheme.primaryTeal, size: 22),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Votre espace est prêt ! 🚀',
+                          style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    '• Cursus : $_selectedRole ($_selectedStudyYear$yearSuffix année)\n'
+                    '• Faculté : $_selectedFaculty\n'
+                    '• Objectif quotidien : $_dailyQcmGoal QCM / jour\n'
+                    '• Mode Focus activé : $focusLabel',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      height: 1.5,
+                      color: isDark ? Colors.grey.shade200 : const Color(0xFF1E293B),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                color: isDark ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC),
+                border: Border.all(
+                  color: isDark ? Colors.white12 : Colors.grey.shade300,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.timer_rounded, color: Color(0xFFF59E0B), size: 22),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Objectif J1 (plan 7 jours) : lancez 5 QCM rapides en 3 minutes pour valider votre 1ère session et activer votre série.',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        height: 1.4,
+                        color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         );

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:medsina_core/core/services/funnel_analytics_service.dart';
 import '../data/residency_repository.dart';
 import '../models/flashcard_fsrs_model.dart';
 import '../models/revision_session_model.dart';
@@ -280,12 +281,21 @@ class RevisionBloc extends Bloc<RevisionEvent, RevisionState> {
     final q = state.activeQuestion;
     if (q != null && q.id == event.questionId) {
       final selected = state.userAnswers[q.id] ?? const <String>{};
+      final correctSet = q.correctAnswers.map((e) => e.trim().toUpperCase()).toSet();
+      final selectedSet = selected.map((e) => e.trim().toUpperCase()).toSet();
+      final isCorrect = selectedSet.length == correctSet.length && selectedSet.containsAll(correctSet);
       UserQcmAnnotationService.instance.recordQuestionAttempt(
         questionId: q.id,
         moduleId: q.moduleId,
         courseId: q.courseId,
         selectedOptions: selected,
         correctAnswers: q.correctAnswers,
+      );
+      FunnelAnalyticsService.instance.trackQcmCompleted(
+        moduleId: q.moduleId,
+        correct: isCorrect,
+        questionType: q.type.name,
+        isCustomSession: state.isCustomSession,
       );
     }
 

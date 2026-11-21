@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/services/cloud_sync_service.dart';
+import '../../../core/services/funnel_analytics_service.dart';
 import '../models/demo_accounts.dart';
 import '../models/user_model.dart';
 import 'auth_event.dart';
@@ -88,7 +89,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             final tier = _mapTier(sub?['tier']);
             final expiry = sub?['expires_at'] != null
                 ? DateTime.tryParse(sub!['expires_at']) ?? DateTime.now().add(const Duration(days: 30))
-                : DateTime.now().add(const Duration(days: 14));
+                : DateTime.now().add(const Duration(days: 7));
 
             final userEmail = (profile['email'] ?? session.user.email ?? '').toString().trim().toLowerCase();
             final isAdm = profile['is_admin'] == true || userEmail == 'doc.hafedh26@gmail.com';
@@ -134,7 +135,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               await prefs.remove(_userPrefsKey);
               emit(state.copyWith(
                 status: AuthStatus.unauthenticated,
-                errorMessage: 'Votre compte Medsina est suspendu suite à des tentatives de paiement non conformes répétées. Contact : doc.hafedh26@gmail.com',
+                errorMessage: 'Votre compte Medsina est suspendu suite à des tentatives de paiement non conformes répétées. Contact : support@medsina.com',
               ));
               return;
             }
@@ -163,6 +164,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
             await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
             emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+            FunnelAnalyticsService.instance.flushPendingEvents(force: true);
             CloudSyncService.instance.syncAll().catchError((e) {
               debugPrint('[CloudSync] Startup sync error: $e');
               return false;
@@ -192,6 +194,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             await prefs.setString(_userPrefsKey, jsonEncode(user.toJson()));
           }
           emit(state.copyWith(status: AuthStatus.authenticated, user: user));
+          FunnelAnalyticsService.instance.flushPendingEvents(force: true);
           CloudSyncService.instance.syncAll().catchError((e) {
             debugPrint('[CloudSync] Startup sync error: $e');
             return false;
@@ -239,7 +242,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final cloudData = await SupabaseService.fetchUserProfileAndSubscription(supaUser.id);
 
         SubscriptionTier tier = SubscriptionTier.free;
-        DateTime expiry = DateTime.now().add(const Duration(days: 14));
+        DateTime expiry = DateTime.now().add(const Duration(days: 7));
         String fullName = email.split('@').first;
         String medicalRole = 'Candidat Résidanat';
         String faculty = 'Faculté de Médecine de Blida';
@@ -304,7 +307,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await prefs.remove(_userPrefsKey);
           emit(state.copyWith(
             status: AuthStatus.unauthenticated,
-            errorMessage: 'Votre compte est suspendu suite à 3 rejets consécutifs de preuve de paiement. Contactez le support : doc.hafedh26@gmail.com',
+            errorMessage: 'Votre compte est suspendu suite à 3 rejets consécutifs de preuve de paiement. Contactez le support : support@medsina.com',
           ));
           return;
         }
@@ -337,6 +340,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user: user,
           successMessage: 'Bienvenue Docteur ! Connexion réussie à Medsina.',
         ));
+        FunnelAnalyticsService.instance.flushPendingEvents(force: true);
         CloudSyncService.instance.syncAll().catchError((e) {
           debugPrint('[CloudSync] Login sync error: $e');
           return false;
@@ -401,11 +405,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final prefs = await SharedPreferences.getInstance();
         final isPromo = AppConstants.isNovemberPromoActive;
         final initialTier = isPromo ? SubscriptionTier.allAccess : SubscriptionTier.free;
-        final initialExpiry = DateTime.now().add(Duration(days: isPromo ? 30 : 14));
+        final initialExpiry = DateTime.now().add(Duration(days: isPromo ? 30 : 7));
         final expiryFormatted = '${initialExpiry.day.toString().padLeft(2, "0")}/${initialExpiry.month.toString().padLeft(2, "0")}/${initialExpiry.year}';
         final welcomeMsg = isPromo
             ? '🎉 Bienvenue sur Medsina ! Votre Pass All-Access VIP (1 Mois Offert) est activé jusqu\'au $expiryFormatted !'
-            : 'Bienvenue sur Medsina ! Période d\'essai de 14 jours activée.';
+            : 'Bienvenue sur Medsina ! Période d\'essai guidée de 7 jours activée.';
 
         final user = UserModel(
           id: supaUser.id,
@@ -416,6 +420,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           tier: initialTier,
           subscriptionExpiry: initialExpiry,
           token: session?.accessToken ?? '',
+          studyYear: event.studyYear,
+        );
+
+        FunnelAnalyticsService.instance.trackSignupCompleted(
+          method: 'email',
+          role: event.medicalRole,
+          faculty: event.faculty,
           studyYear: event.studyYear,
         );
 
@@ -533,8 +544,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final faculty = (profile?['faculty'] ?? meta['faculty'] ?? 'Faculté de Médecine de Blida').toString();
       final tier = _mapTier(sub?['tier']?.toString());
       final expiry = sub?['expires_at'] != null
-          ? DateTime.tryParse(sub!['expires_at'].toString()) ?? DateTime.now().add(const Duration(days: 14))
-          : DateTime.now().add(Duration(days: AppConstants.isNovemberPromoActive ? 30 : 14));
+          ? DateTime.tryParse(sub!['expires_at'].toString()) ?? DateTime.now().add(const Duration(days: 7))
+          : DateTime.now().add(Duration(days: AppConstants.isNovemberPromoActive ? 30 : 7));
       final avatarUrl = (profile?['avatar_url'] ?? meta['avatar_url'] ?? meta['picture'])?.toString();
 
       if (isBanned) {
@@ -574,7 +585,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await prefs.remove(_userPrefsKey);
         emit(state.copyWith(
           status: AuthStatus.unauthenticated,
-          errorMessage: 'Votre compte Medsina est suspendu. Contactez le support : doc.hafedh26@gmail.com',
+          errorMessage: 'Votre compte Medsina est suspendu. Contactez le support : support@medsina.com',
         ));
         return;
       }
@@ -607,6 +618,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         user: user,
         successMessage: 'Bienvenue Docteur ! Connexion avec Google réussie.',
       ));
+      final oauthCreatedAt = DateTime.tryParse(supaUser.createdAt);
+      if (oauthCreatedAt != null &&
+          DateTime.now().toUtc().difference(oauthCreatedAt.toUtc()).inMinutes.abs() <= 5) {
+        FunnelAnalyticsService.instance.trackSignupCompleted(
+          method: 'google',
+          role: medicalRole,
+          faculty: faculty,
+          studyYear: user.studyYear,
+          examYear: user.residencyTargetYear,
+        );
+      } else {
+        FunnelAnalyticsService.instance.flushPendingEvents(force: true);
+      }
       CloudSyncService.instance.syncAll().catchError((e) {
         debugPrint('[CloudSync] Google login sync error: $e');
         return false;

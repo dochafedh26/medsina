@@ -5,9 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../core/services/focus_mode_service.dart';
+import '../../../core/services/funnel_analytics_service.dart';
 import '../../../core/services/platform_stats_service.dart';
 import '../../../core/services/recent_activity_service.dart';
 import '../../../core/services/user_loyalty_service.dart';
+import '../../../core/services/user_study_progress_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/medsina_colors.dart';
 import '../../../core/theme/theme_controller.dart';
@@ -21,6 +23,7 @@ import '../../analytics/presentation/performance_analytics_screen.dart';
 import '../../atlas/presentation/clinical_atlas_screen.dart';
 import '../../auth/bloc/auth_bloc.dart';
 import '../../auth/bloc/auth_state.dart';
+import '../../auth/models/user_model.dart';
 import '../../clinical/presentation/case_simulator_screen.dart';
 import '../../externat/presentation/externat_catalog_screen.dart';
 import '../../feedback/presentation/feedback_reviews_screen.dart';
@@ -31,7 +34,10 @@ import '../../national_exam/presentation/national_exams_list_screen.dart';
 import '../../notifications/services/smart_reminder_service.dart';
 import '../../revision/presentation/audio_revision_screen.dart';
 import '../../revision/presentation/error_notebook_screen.dart';
+import '../../revision/presentation/residency_rank_simulator_screen.dart';
 import '../../revision/presentation/revision_catalog_screen.dart';
+import '../../revision/presentation/study_planner_screen.dart';
+import '../../revision/utils/daily_quick_win_launcher.dart';
 import '../../search/presentation/global_search_screen.dart';
 import '../../subscription/presentation/referral_screen.dart';
 import '../../subscription/presentation/subscription_paywall_screen.dart';
@@ -45,7 +51,9 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserLoyaltyService.instance.initializeAndTrack();
+    UserStudyProgressService.instance.initialize();
     PlatformStatsService.instance.ensureLoaded();
+    FunnelAnalyticsService.instance.flushPendingEvents();
 
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
@@ -112,6 +120,11 @@ class DashboardScreen extends StatelessWidget {
                     _buildAdminConsoleQuickBanner(context),
                     const SizedBox(height: 18),
                   ],
+
+                  // ROW 1.2: "Aujourd'hui" First-Win Hero Card (Exam Countdown + Daily QCM)
+                  _buildTodayFirstWinHeroCard(context, user),
+
+                  const SizedBox(height: 16),
 
                   // ROW 1.5: Daily Spaced Repetition (FSRS) Review Widget
                   const DailyFsrsReviewCard(),
@@ -298,6 +311,188 @@ class DashboardScreen extends StatelessWidget {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  Widget _buildTodayFirstWinHeroCard(BuildContext context, UserModel? user) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final rawTarget = user?.residencyTargetYear?.trim();
+    final showCountdown = rawTarget != 'Non concerné';
+
+    final now = DateTime.now();
+    int targetYear = int.tryParse(rawTarget ?? '') ?? 2027;
+    var examDate = DateTime(targetYear, 10, 1);
+    if (!examDate.isAfter(now)) {
+      targetYear = now.year + 1;
+      examDate = DateTime(targetYear, 10, 1);
+    }
+    final daysToExam = examDate.difference(now).inDays.clamp(0, 9999);
+
+    return ValueListenableBuilder<UserStudyProgress>(
+      valueListenable: UserStudyProgressService.instance.progressNotifier,
+      builder: (context, progress, _) {
+        final goal = progress.dailyQcmGoal > 0 ? progress.dailyQcmGoal : 20;
+        final ratio = (progress.todayQcmSolved / goal).clamp(0.0, 1.0);
+
+        return Container(
+          decoration: AppTheme.bentoCardDecoration(
+            context,
+            radius: 22,
+            borderColor: AppTheme.primaryTeal.withValues(alpha: isDark ? 0.42 : 0.28),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryTeal.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: AppTheme.primaryTeal.withValues(alpha: 0.35),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.today_rounded, size: 14, color: AppTheme.primaryTeal),
+                          SizedBox(width: 5),
+                          Text(
+                            'AUJOURD\'HUI',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.4,
+                              color: AppTheme.primaryTeal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (showCountdown)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.08)
+                              : const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          'J-$daysToExam • Résidanat $targetYear',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? Colors.white70 : AppTheme.clinicalNavy,
+                          ),
+                        ),
+                      ),
+                    Text(
+                      '${progress.todayQcmSolved}/$goal QCM aujourd\'hui',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? const Color(0xFF5EEAD4) : AppTheme.primaryTeal,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  progress.todayQcmSolved >= goal
+                      ? 'Objectif quotidien validé ! Continuez sur votre lancée'
+                      : 'Votre session rapide du jour vous attend',
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '5 questions ciblées en 3 minutes avec correction détaillée pour entretenir votre série.',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: LinearProgressIndicator(
+                    value: ratio,
+                    minHeight: 6,
+                    backgroundColor: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.grey.shade200,
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryTeal),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () => DailyQuickWinLauncher.launch(
+                        context,
+                        questionCount: 5,
+                        source: 'dashboard_today',
+                        role: user?.medicalRole,
+                      ),
+                      icon: const Icon(Icons.play_arrow_rounded, size: 19),
+                      label: const Text(
+                        'Lancer mon QCM du Jour (5 QCM • 3 min)',
+                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryTeal,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(Icons.calendar_today_rounded, size: 16, color: AppTheme.primaryTeal),
+                      label: const Text(
+                        'Plan 7 jours',
+                        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const StudyPlannerScreen()),
+                        );
+                      },
+                    ),
+                    ActionChip(
+                      avatar: const Icon(Icons.analytics_rounded, size: 16, color: AppTheme.accentCyan),
+                      label: const Text(
+                        'Simulateur Spécialité',
+                        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ResidencyRankSimulatorScreen()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

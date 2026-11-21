@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -1678,10 +1677,10 @@ class SupabaseService {
           'id': 'etudiant',
           'name': 'Pass Étudiant (1ère - 6ème)',
           'badge': 'CURSUS UNIVERSITAIRE',
-          'price_yearly': 1900.0,
-          'price_monthly': 400.0,
+          'price_yearly': 3500.0,
+          'price_monthly': 500.0,
           'currency': 'DZD',
-          'discount_percent': 60,
+          'discount_percent': 42,
           'is_active': true,
           'features': [
             'Programme personnalisé selon votre année (1ère à 6ème)',
@@ -1701,8 +1700,8 @@ class SupabaseService {
           'discount_percent': 0,
           'is_active': true,
           'features': [
-            '3 modules complets au choix (cours PDF + résumés)',
-            '100 QCMs corrigés et commentés d\'initiation',
+            '7 jours d\'essai guidé + accès quotidien QCM du Jour',
+            'Modules d\'initiation complets (cours PDF + résumés)',
             'Calculateurs et scores médicaux essentiels (Glasgow, IMC, DFG)',
             '2 Conduites à Tenir d\'urgence vitale (ACR & Envenimation scorpionique)',
             '3 essais IA gratuits (Vidal IA, Bilan Labo & MedsinaPilot)',
@@ -1712,10 +1711,10 @@ class SupabaseService {
           'id': 'clinical_pro',
           'name': 'Pass Clinique Pro',
           'badge': 'INTERNES & PRATICIENS',
-          'price_yearly': 2600.0,
-          'price_monthly': 500.0,
+          'price_yearly': 5000.0,
+          'price_monthly': 800.0,
           'currency': 'DZD',
-          'discount_percent': 57,
+          'discount_percent': 48,
           'is_active': true,
           'features': [
             'Toutes les Conduites à Tenir (CAT) par spécialité',
@@ -1729,14 +1728,14 @@ class SupabaseService {
           'id': 'resident_elite',
           'name': 'Pass Résident Élite',
           'badge': 'SPÉCIAL CONCOURS',
-          'price_yearly': 3200.0,
-          'price_monthly': 600.0,
+          'price_yearly': 5600.0,
+          'price_monthly': 900.0,
           'currency': 'DZD',
-          'discount_percent': 56,
+          'discount_percent': 48,
           'is_active': true,
           'features': [
             'Les 47 modules officiels de préparation au Résidanat',
-            'Banque complète de 6 240+ QCMs corrigés & commentés',
+            'Banque complète de 19 000+ QCMs corrigés & commentés',
             'Simulateur d\'examens blancs chronométrés & Classement National',
             'Téléchargement des supports officiels de cours PDF & Flashcards FSRS',
             'Exports Anki et PDF + MedsinaCoach IA',
@@ -1746,14 +1745,14 @@ class SupabaseService {
           'id': 'all_access',
           'name': 'Medsina All-Access (VIP)',
           'badge': 'RECOMMANDÉ • SUITE COMPLÈTE',
-          'price_yearly': 3900.0,
-          'price_monthly': 750.0,
+          'price_yearly': 6500.0,
+          'price_monthly': 1000.0,
           'currency': 'DZD',
-          'discount_percent': 57,
+          'discount_percent': 46,
           'is_active': true,
           'features': [
             'Accès illimité aux 47 modules du Résidanat Blida & National',
-            'Banque complète de 6 240+ QCMs avec corrigés détaillés',
+            'Banque complète de 19 000+ QCMs avec corrigés détaillés',
             'Téléchargement de TOUS les cours officiels en PDF',
             'Accès intégral au volet Pratique Clinique, Garde & Pharmacopée DZ',
             'Quota IA maximal (Copilote Clinique, Ordonnance IA, Bilan Labo)',
@@ -2927,16 +2926,34 @@ class SupabaseService {
 
   // --- LOCAL ALGERIAN PAYMENT & CHARGILY PAY ---
 
-  /// Fetch payment coordinates (BaridiMob RIP, CCP, Support WhatsApp, Chargily settings)
+  /// Fetch non-secret payment coordinates (BaridiMob RIP, CCP, Support WhatsApp, public URLs)
   static Future<Map<String, String>> fetchPaymentSettings() async {
     final defaultSettings = {
       'baridimob_rip': '007999990009171614 93',
       'ccp_account': '9171614 Clé 19',
       'ccp_holder': 'CHIKH TOUHAMI HAFED',
-      'support_whatsapp': '+213770000000',
-      'chargily_public_key': 'test_pk_rqlUVsQu2nc0l1aUf5sHAI4A9yJuK7sucTZOe8eD',
-      'chargily_mode': 'test',
+      'support_whatsapp': '+213660675279',
+      'chargily_app_url': 'https://medsina.medevsync.com',
+      'chargily_mode': 'live',
     };
+
+    try {
+      final rpcRes = await client.rpc('get_public_payment_info');
+      if (rpcRes is Map) {
+        rpcRes.forEach((k, v) {
+          final key = k.toString();
+          final val = v?.toString() ?? '';
+          if (!key.toLowerCase().contains('secret') &&
+              !key.toLowerCase().contains('token') &&
+              val.isNotEmpty) {
+            defaultSettings[key] = val;
+          }
+        });
+        return defaultSettings;
+      }
+    } catch (_) {
+      // Fallback for admins before migration 20261121000001 is applied
+    }
 
     try {
       final rows = await client
@@ -2946,7 +2963,11 @@ class SupabaseService {
       for (final r in rows) {
         final k = r['setting_key']?.toString();
         final v = r['setting_value']?.toString();
-        if (k != null && v != null && v.isNotEmpty) {
+        if (k != null &&
+            v != null &&
+            v.isNotEmpty &&
+            !k.toLowerCase().contains('secret') &&
+            !k.toLowerCase().contains('token')) {
           defaultSettings[k] = v;
         }
       }
@@ -2957,7 +2978,7 @@ class SupabaseService {
     return defaultSettings;
   }
 
-  /// Initiate a Chargily Pay v2 Checkout Session (EDAHABIA & CIB)
+  /// Initiate a Chargily Pay v2 Checkout Session via secure Supabase Edge Function
   static Future<Map<String, dynamic>> createChargilyCheckout({
     required double amount,
     required String tier,
@@ -2965,76 +2986,37 @@ class SupabaseService {
     required String userId,
     required String userEmail,
     required String userName,
+    String acquisitionSource = 'in_app',
   }) async {
     try {
-      final settings = await fetchPaymentSettings();
-      final secretKey = settings['chargily_secret_key'] ?? 'test_sk_6p4nWfgUpfDa01BqQZQafxyFHMbKVHLZfJbKNQ1X';
-      final mode = settings['chargily_mode'] ?? 'test';
-      final appUrl = settings['chargily_app_url'] ?? 'https://medsina.medevsync.com';
-
-      final endpoint = mode == 'live'
-          ? 'https://pay.chargily.net/api/v2/checkouts'
-          : 'https://pay.chargily.net/test/api/v2/checkouts';
-
-      final dio = Dio();
-      final response = await dio.post(
-        endpoint,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $secretKey',
-            'Content-Type': 'application/json',
-          },
-        ),
-        data: {
-          'amount': amount.toInt(),
-          'currency': 'dzd',
-          'success_url': '$appUrl?payment=success&tier=$tier',
-          'failure_url': '$appUrl?payment=failure',
-          'metadata': {
-            'user_id': userId,
-            'user_email': userEmail,
-            'user_name': userName,
-            'tier': tier,
-            'duration_days': durationDays,
-            'app': 'Medsina Résidanat 2027',
-          },
+      final response = await client.functions.invoke(
+        'chargily-create-checkout',
+        body: {
+          'tier': tier,
+          'duration_days': durationDays,
+          'acquisition_source': acquisitionSource,
         },
       );
 
-      if (response.statusCode == 200 && response.data is Map) {
-        final data = Map<String, dynamic>.from(response.data);
+      if (response.status == 200 && response.data is Map) {
+        final data = Map<String, dynamic>.from(response.data as Map);
         final checkoutUrl = data['checkout_url']?.toString();
-
-        // Also record a pending transaction in Supabase payments table
-        try {
-          await client.from('payments').insert({
-            'user_id': userId,
-            'user_email': userEmail,
-            'user_name': userName,
-            'tier': tier,
-            'duration_days': durationDays,
-            'amount': amount,
-            'currency': 'DZD',
-            'payment_method': 'chargily_cib',
-            'receipt_reference': data['id']?.toString() ?? 'CHARGILY-${DateTime.now().millisecondsSinceEpoch}',
-            'status': 'pending',
-            'admin_notes': 'Session Chargily Pay initiée (ID: ${data['id']})',
-          });
-        } catch (_) {}
-
-        return {
-          'success': true,
-          'checkout_url': checkoutUrl,
-          'checkout_id': data['id'],
-        };
+        if (data['success'] == true && checkoutUrl != null && checkoutUrl.isNotEmpty) {
+          return {
+            'success': true,
+            'checkout_url': checkoutUrl,
+            'checkout_id': data['checkout_id'],
+            'amount': data['amount'] ?? amount.toInt(),
+          };
+        }
       }
     } catch (e) {
-      debugPrint('Error creating Chargily checkout: $e');
+      debugPrint('Error creating Chargily checkout via Edge Function: $e');
     }
 
     return {
       'success': false,
-      'message': 'Impossible d\'initier le paiement en ligne. Veuillez contacter le support WhatsApp.',
+      'message': 'Impossible d\'initier le paiement en ligne. Veuillez contacter le support WhatsApp (+213 660 67 52 79).',
     };
   }
 

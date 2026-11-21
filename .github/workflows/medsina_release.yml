@@ -1,6 +1,9 @@
 name: Medsina Release & OTA Pipeline
 
 on:
+  push:
+    tags:
+      - 'v*-beta.*'
   workflow_dispatch:
     inputs:
       version:
@@ -114,10 +117,18 @@ jobs:
 
       - name: 🛠️ Build APK (Universal + Split ABI for arm64)
         run: |
-          VERSION="${{ inputs.version || github.ref_name }}"
-          VERSION="${VERSION#v}"
-          BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          CHANNEL="${{ inputs.channel || 'beta' }}"
+          RAW_REF="${{ inputs.version || github.ref_name }}"
+          if [[ "$RAW_REF" == *-beta.* ]]; then
+            VERSION="${RAW_REF%%-beta.*}"
+            VERSION="${VERSION#v}"
+            BUILD_NUM="${{ inputs.build_number || '' }}"
+            [ -z "$BUILD_NUM" ] && BUILD_NUM="${RAW_REF##*-beta.}"
+            CHANNEL="${{ inputs.channel || 'beta' }}"
+          else
+            VERSION="${RAW_REF#v}"
+            BUILD_NUM="${{ inputs.build_number || github.run_number }}"
+            CHANNEL="${{ inputs.channel || 'beta' }}"
+          fi
           GRADLE_BETA_FLAG=""
           if [ "$CHANNEL" = "beta" ]; then
             sed -i 's/android:label="Medsina"/android:label="Medsina Beta"/' android/app/src/main/AndroidManifest.xml
@@ -133,10 +144,18 @@ jobs:
 
       - name: 🛠️ Build App Bundle (AAB)
         run: |
-          VERSION="${{ inputs.version || github.ref_name }}"
-          VERSION="${VERSION#v}"
-          BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          CHANNEL="${{ inputs.channel || 'beta' }}"
+          RAW_REF="${{ inputs.version || github.ref_name }}"
+          if [[ "$RAW_REF" == *-beta.* ]]; then
+            VERSION="${RAW_REF%%-beta.*}"
+            VERSION="${VERSION#v}"
+            BUILD_NUM="${{ inputs.build_number || '' }}"
+            [ -z "$BUILD_NUM" ] && BUILD_NUM="${RAW_REF##*-beta.}"
+            CHANNEL="${{ inputs.channel || 'beta' }}"
+          else
+            VERSION="${RAW_REF#v}"
+            BUILD_NUM="${{ inputs.build_number || github.run_number }}"
+            CHANNEL="${{ inputs.channel || 'beta' }}"
+          fi
           GRADLE_BETA_FLAG=""
           if [ "$CHANNEL" = "beta" ]; then
             GRADLE_BETA_FLAG="-PbetaBuild=true"
@@ -199,15 +218,31 @@ jobs:
 
       - name: 🛠️ Build Windows Release
         run: |
-          $VERSION = "${{ inputs.version || github.ref_name }}".TrimStart('v')
-          $BUILD_NUM = "${{ inputs.build_number || github.run_number }}"
-          $CHANNEL = "${{ inputs.channel || 'beta' }}"
+          $RAW_REF = "${{ inputs.version || github.ref_name }}"
+          if ($RAW_REF -match '^v?(.+)-beta\.(\d+)$') {
+            $VERSION = $Matches[1]
+            $BUILD_NUM = "${{ inputs.build_number }}"
+            if (-not $BUILD_NUM) { $BUILD_NUM = $Matches[2] }
+            $CHANNEL = "${{ inputs.channel }}"
+            if (-not $CHANNEL) { $CHANNEL = "beta" }
+          } else {
+            $VERSION = $RAW_REF.TrimStart('v')
+            $BUILD_NUM = "${{ inputs.build_number || github.run_number }}"
+            $CHANNEL = "${{ inputs.channel || 'beta' }}"
+          }
           flutter build windows --release --build-name=$VERSION --build-number=$BUILD_NUM --dart-define=APP_CHANNEL=$CHANNEL
 
       - name: 📦 Build Windows Setup Installer (.exe)
         run: |
-          $VERSION = "${{ inputs.version || github.ref_name }}".TrimStart('v')
-          $CHANNEL = "${{ inputs.channel || 'beta' }}"
+          $RAW_REF = "${{ inputs.version || github.ref_name }}"
+          if ($RAW_REF -match '^v?(.+)-beta\.(\d+)$') {
+            $VERSION = $Matches[1]
+            $CHANNEL = "${{ inputs.channel }}"
+            if (-not $CHANNEL) { $CHANNEL = "beta" }
+          } else {
+            $VERSION = $RAW_REF.TrimStart('v')
+            $CHANNEL = "${{ inputs.channel || 'beta' }}"
+          }
           New-Item -ItemType Directory -Force -Path "win-dist"
           $iscc = "iscc"
           if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
@@ -269,9 +304,17 @@ jobs:
       - name: 🛠️ Build Web
         run: |
           RAW_TAG="${{ inputs.version || github.ref_name }}"
-          TAG="${RAW_TAG#v}"
-          BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          CHANNEL="${{ inputs.channel || 'stable' }}"
+          if [[ "$RAW_TAG" == *-beta.* ]]; then
+            TAG="${RAW_TAG%%-beta.*}"
+            TAG="${TAG#v}"
+            BUILD_NUM="${{ inputs.build_number || '' }}"
+            [ -z "$BUILD_NUM" ] && BUILD_NUM="${RAW_TAG##*-beta.}"
+            CHANNEL="${{ inputs.channel || 'beta' }}"
+          else
+            TAG="${RAW_TAG#v}"
+            BUILD_NUM="${{ inputs.build_number || github.run_number }}"
+            CHANNEL="${{ inputs.channel || 'stable' }}"
+          fi
           BASE_HREF="/"
           if [ "$CHANNEL" = "beta" ]; then
             BASE_HREF="/beta/"
@@ -348,9 +391,17 @@ jobs:
         id: vars
         run: |
           RAW_TAG="${{ inputs.version || github.ref_name }}"
-          TAG="${RAW_TAG#v}"
-          BUILD_NUM="${{ inputs.build_number || github.run_number }}"
-          CHANNEL="${{ inputs.channel || 'stable' }}"
+          if [[ "$RAW_TAG" == *-beta.* ]]; then
+            TAG="${RAW_TAG%%-beta.*}"
+            TAG="${TAG#v}"
+            BUILD_NUM="${{ inputs.build_number || '' }}"
+            [ -z "$BUILD_NUM" ] && BUILD_NUM="${RAW_TAG##*-beta.}"
+            CHANNEL="${{ inputs.channel || 'beta' }}"
+          else
+            TAG="${RAW_TAG#v}"
+            BUILD_NUM="${{ inputs.build_number || github.run_number }}"
+            CHANNEL="${{ inputs.channel || 'stable' }}"
+          fi
 
           if [ "$CHANNEL" = "beta" ]; then
             echo "tag=v${TAG}-beta.${BUILD_NUM}" >> $GITHUB_OUTPUT
