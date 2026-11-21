@@ -624,23 +624,23 @@
   },
   {
     "id": "memento_convulsion_febrile_emp",
-    "title": "⚡ Convulsion Fébrile & EMP Pédiatrique",
-    "category": "Pédiatrie & Urgences",
+    "title": "⚡ Convulsion Fébrile & État de Mal Pédiatrique",
+    "category": "Pédiatrie d'Urgence",
     "icon_name": "child_care_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Libération des VAS, position latérale de sécurité (PLS), oxygénothérapie au masque à haute concentration (10 L/min) et mesure immédiate de la glycapie au bout du doigt.",
-      "Étape 2 : Si la crise persiste > 5 min, administrer du Valium (Diazépam) intra-rectal 0,5 mg/kg (max 10 mg) ou du Buccolam (Midazolam) intranasal/buccal 0,2-0,3 mg/kg.",
-      "Étape 3 : Si échec à 5 min, 2ème dose de Midazolam ou Rivotril (Clonazépam) IV 0,05-0,1 mg/kg. Si EMP établi (> 30 min), charger en Gardenal (Phénobarbital) IV lent : 20 mg/kg.",
-      "Étape 4 : Lutte active contre l'hyperthermie (Paracétamol IV 15 mg/kg si voie Abord d'urgence acquise, mesures physiques) et recherche étiologique (Pнце, méningite, infection ORL).",
-      "Étape 5 : Bilan biologique d'urgence (NFS, CRP, Ionogramme, Glycémie, Calcémie, GDS) et critères d'hospitalisation ou de transfert en réanimation pédiatrique.",
-      "Étape 6 : Piège : Ne jamais banaliser une convulsion fébrile simple prolongée et éliminer impérativement une méningo-encéphalite devant tout signe neurologique focal ou altération prolongée de la conscience."
+      "Étape 1 : Libération des VAS, oxygénothérapie au masque à 10 L/min, mise en decubitus latéral de sécurité (DL_S), pose d'une VVP et contrôle immédiat de la glycémie capillaire (HGT).",
+      "Étape 2 : Si crise > 5 min (État de Mal), administrer du Diazépam intra-rectal (0,5 mg/kg, max 10 mg) ou du Midazolam intranasal / IV (0,2 mg/kg). Répéter 1 fois à 5 min si échec.",
+      "Étape 3 : Si échec de la 2ème dose de Benzodiazépine (EMP avéré), charger par Phénobarbital IV (20 mg/kg dans 20 ml de G5% sur 20 min) sous surveillance stricte de la fonction respiratoire.",
+      "Étape 4 : Recherche active de la cause (palpATION, score de Yale, BU, PL si méningite suspectée après stabilisation) et paraclinique d'urgence : NFS, CRP, ionogramme sanguin, urée, créatinine, gaz du sang.",
+      "Étape 5 : Lutter contre l'hyperthermie : Paracétamol IV (15 mg/kg/6h) ou bains tièdes (2°C en dessous de la température corporelle).",
+      "Étape 6 : Critères d'hospitalisation ou de transfert en Réanimation Pédiatrique : EMP persistant, trouble de conscience persistant post-critique, âge < 1 an, déficit focal, ou sepsis associé."
     ],
-    "scientific_references": "Consensus SFMU / Société Française de Pédiatrie (SFP) / Protocoles Nationaux MSPRH Algérie",
+    "scientific_references": "SFMU / Société Française de Pédiatrie (SFP) / MSPRH Algérie",
     "is_active": true,
-    "created_at": "2026-10-31T12:43:12.227985+00:00",
-    "updated_at": "2026-10-31T12:43:12.228001+00:00"
+    "created_at": "2026-11-21T18:01:07.300209+00:00",
+    "updated_at": "2026-11-21T18:01:07.300226+00:00"
   },
   {
     "id": "memento_urgences_diabetiques",
