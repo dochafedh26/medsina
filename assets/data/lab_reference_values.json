@@ -1237,19 +1237,19 @@
   },
   {
     "id": "lab_svo2_scvo2",
-    "name": "Gazométrie du sang veineux mêlé (SvO2) et central (ScvO2)",
+    "name": "Saturation veineuse en oxygène (SvO2 / ScvO2)",
     "category": "Gazométrie & Équilibre Acido-Basique",
-    "normal_range": "SvO2 : 65 - 75 % | ScvO2 : 70 - 80 % (mesurée au cathéter veineux central jugulaire interne/sous-clavier)",
+    "normal_range": "SvO2 (artère pulmonaire): 65% - 75% | ScvO2 (veine cave supérieure/JSI): 70% - 80%",
     "unit": "%",
-    "high_interpretation": "Élévation (> 80 %) : Inadéquation entre apports et besoins en O2 (extraction tissulaire effondrée). Causes : Choc septique (maldistribution microcirculatoire / shunt artério-veineux), shunt gauche-droit intracardiaque, intoxication au cyanure (inhibition de la cytochrome c oxydase), mort cérébrale, hypothermie thérapeutique, anesthésie générale profonde. Conduite à tenir : Rechercher une inefficacité de l'O2 tissulaire (lactates élevés), éliminer un shunt ou une intoxication.",
-    "low_interpretation": "Baisse (SvO2 < 65 % ou ScvO2 < 70 %) : Augmentation de l'extraction tissulaire en oxygène pour maintenir la consommation (VO2) face à un transport (DO2) insuffisant. Causes : Choc hypovolémique (hémorragie), choc cardiogénique (infarctus du myocarde, insuffisance cardiaque aiguë), choc obstructif (embolie pulmonaire massive, tamponnade), anémie aiguë sévère, hypoxémie profonde, douleur/fièvre (augmentation de la VO2). Seuil d'alerte critique : ScvO2 < 65% ou SvO2 < 60% (urgence réanimatoire absolue). Conduite à tenir : Optimiser le transport en oxygène (Remplissage vasculaire prudents, Inotropes positifs type dobutamine, Transfusion de CGR si Hb < 7-8 g/dL, sédation/ventilation pour baisser la VO2).",
+    "high_interpretation": "SvO2 > 80% : Anomalie d'extraction tissulaire de l'oxygène. Causes : Choc septique (shunt artério-veineux microcirculatoire, effet cytopathique mitochondrial), intoxication au cyanure (inhibition de la cytochrome c oxydase), mort cérébrale, shunt gauche-droit. Conduite à tenir : Rechercher une inefficacité de l'utilisation cellulaire de l'O2 (lactates élevés malgré tout), réévaluation de l'antibiothérapie et du support vasopresseur.",
+    "low_interpretation": "SvO2 < 60% (Seuil d'alerte ischémique critique < 50%) : Inadéquation entre apports (DO2) et consommation (VO2) tissulaire en oxygène. Causes : Choc hypovolémique (baisse de l'Hb ou de la précharge), choc cardiogénique (baisse du débit cardiaque), choc anémique, hypoxémie sévère (baisse de la PaO2), augmentation de la demande métabolique (frissons, douleur, ventilation mécanique non adaptée). Conduite à tenir : Urgence vitale absolue. Restaurer l'index cardiaque (inotrope, remplissage guidé par échographie), corriger l'anémie (CGR si Hb < 7-8 g/dL) et améliorer la SaO2.",
     "clinical_notes": [
-      "Gradient ScvO2 - SvO2 : La ScvO2 est physiologiquement supérieure de 2 à 5 % à la SvO2 en raison du drainage de la partie supérieure du corps (cerveau) qui extrait moins d'oxygène au repos que le territoire splanchnique et inférieur.",
-      "Piège majeur en réanimation : Une ScvO2 normale ou élevée (> 70-80 %) n'élimine PAS un état de choc (notamment septique) où l'extraction cellulaire d'oxygène est altérée (cytopathie mitochondriale). Toujours associer l'analyse des lactates artériels.",
-      "Règle d'or thérapeutique (Early Goal-Directed Therapy de Rivers) : En cas de choc septique ou cardiogénique, la normalisation de la ScvO2 >= 70% (couplée à une PAM >= 65 mmHg et un diurèse >= 0.5 mL/kg/h) est un objectif hémodynamique majeur des premières heures."
+      "Gradient ScvO2 - SvO2 : La ScvO2 est généralement supérieure de 5% à la SvO2 en conditions physiologiques, mais cette différence s'annule ou s'inverse en cas de choc septique par redistribution du flux sanguin.",
+      "Piège pré-analytique majeur : Le prélèvement pour ScvO2 doit être réalisé lentement et sans garrot sur un cathéter veineux central dont l'extrémité est idéalement située à la jonction veine cave supérieure - oreillette droite (contrôlée par radiographie).",
+      "Règle d'or en Réanimation (Resuscitation bundle) : Une ScvO2 < 70% lors de la réinitialisation précoce du sepsis (Early Goal-Directed Therapy) impose l'optimisation séquentielle de la volémie, de l'Hb (> 10g/L selon les anciens protocoles, individualisée aujourd'hui) et de la contractilité par dobutamine."
     ],
-    "created_at": "2026-11-19T13:41:47.534346+00:00",
-    "updated_at": "2026-11-19T13:41:47.534362+00:00"
+    "created_at": "2026-11-21T11:34:05.868994+00:00",
+    "updated_at": "2026-11-21T11:34:05.869006+00:00"
   },
   {
     "id": "lab_beta_hcg_plasmatique",
