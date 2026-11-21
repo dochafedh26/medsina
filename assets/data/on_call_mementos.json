@@ -605,23 +605,23 @@
   },
   {
     "id": "memento_metrorragies_geu",
-    "title": "🚨 Métrorragies du 1er Trimestre & Suspicion de GEU",
-    "category": "Gynéco-Obstétrique d'Urgence",
+    "title": "🚨 Métrorragies du 1er Trimestre & GEU",
+    "category": "Gynécologie-Obstétrique d'Urgence",
     "icon_name": "emergency_rounded",
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation hémodynamique immédiate au déchoquage, pose de 2 VVP de grand calibre (G18), conditionnement et recherche des signes de choc hémorragique (pâleur, tachycardie, hypotension).",
-      "Étape 2 : Bilan biologique d'urgence : NFS, Groupe sanguin (Rh), Recherche d'agglutinines irrégulières (RAI), Bêta-HCG plasmatiques quantitatives, Coagulation (TP, TCA, Fibrinogène) et Fonction rénale.",
-      "Étape 3 : Échographie pelvienne (sus-pubienne et endovaginale si disponible) en urgence pour rechercher une grossesse intra-utérine (GIU) ou une masse annexielle suspecte (signe du 'bagel', épanchement du Douglas).",
-      "Étape 4 : Thérapeutique de 1ère intention : Remplissage vasculaire par Cristalloïdes (NaCl 09% ou Ringer Lactate). Si Patiente Rh- négatif et non sensibilisée : injection d'Immunoglobulines anti-D (300 µg ou 1500 UI) en IM dans les 72h. Appel du gynécologue de garde si instabilité ou GEU rompue.",
-      "Étape 5 : Surveillance armée (TA, Pouls, SaO2, quantification des saignements). Critères d'appel réa/bloc : instabilité hémodynamique persistant malgré le remplissage, douleur abdominale aiguë intense avec tableau d'hémopéritoine.",
-      "Étape 6 : Piège médico-légal absolu : Ne jamais éliminer une GEU sur la seule base d'un test urinaire de grossesse négatif si tableau clinique évocateur, et ne jamais quitter le box sans avoir vérifié le statut Rhésus de la patiente."
+      "Étape 1 : Évaluation hémodynamique immédiate (TA, Pouls), pose de 2 VVP de grand calibre (14G/16G), remplissage par NaCl 0.9% ou Ringer Lactate, et recherche de signes de choc hémorragique.",
+      "Étape 2 : Bilan biologique urgent : Groupe sanguin (ABO-Rh), RAI, NFS (Hb/Plaquettes), Bêta-HCG quantitatives, Fonction rénale et Bilan d'hémostase.",
+      "Étape 3 : Échographie pelvienne (sus-pubienne et/ou endovaginale) à la recherche d'une vacuité utérine, d'un sac gestationnel intra-utérin ou d'une masse annexielle suspecte avec épanchement du Douglas.",
+      "Étape 4 : Antalgiques de palier I ou II (Paracétamol 1g IV ou Nalbuphine 10-20 mg en IVL si douleur intense) et administration d'Immunoglobulines anti-D (300 µg ou 1500 UI en IM) dans les 72h si la patiente est Rhésus négatif.",
+      "Étape 5 : Appel urgent du gynécologue de garde pour toute suspicion de GEU compliquée (hémopéritoine), menace d'avortement ou instabilité hémodynamique en vue d'un bloc opératoire (coelioscopie/curetage).",
+      "Étape 6 : Piège médico-légal absolu : Ne jamais éliminer une GEU sur la seule base de Bêta-HCG négatives si la grossesse est très précoce, et proscrire tout examen pelvien brutal en cas de suspicion de GEU rompue."
     ],
-    "scientific_references": "CNGOF / SFMU / Collège National des Gynécologues Obstétriciens Algériens / MSPRH Algérie",
+    "scientific_references": "CNGOF / SFMU / Recommandations du MSPRH Algérie pour la prise en charge des urgences obstétricales",
     "is_active": true,
-    "created_at": "2026-11-18T22:00:42.703687+00:00",
-    "updated_at": "2026-11-18T22:00:42.703703+00:00"
+    "created_at": "2026-11-21T02:22:57.011804+00:00",
+    "updated_at": "2026-11-21T02:22:57.011820+00:00"
   },
   {
     "id": "memento_convulsion_febrile_emp",
