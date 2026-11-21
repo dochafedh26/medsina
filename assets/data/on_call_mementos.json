@@ -514,17 +514,16 @@
     "color_hex": "#EF4444",
     "priority_level": 1,
     "points": [
-      "Étape 1 : Évaluation immédiate de la conscience (Glasgow), recherche de signes de choc, de purpura fulminans et de signes de focalisation ou d'engagement cérébral.",
-      "Étape 2 : Si purpura fulminans ou signes de choc : Céfotaxime IV (2 g) ou Ceftriaxone en urgence absolue avant toute imagerie, PUIS hémocultures et bilan de coagulation.",
-      "Étape 3 : Si suspicion d'hypertension intracrânienne (HIC) ou signes de focalisation : réaliser une TDM cérébrale en urgence avant la Ponction Lombaire (PL).",
-      "Étape 4 : Réalisation de la PL en décubitus latéral si pas de contre-indication (mesure de la pression d'ouverture, tubes pour biochimie, cytologie, bactériologie/antigénurie).",
-      "Étape 5 : Antibiothérapie probabiliste immédiate post-PL si LCR trouble : Céfotaxime (100-200 mg/kg/j) + Aciclovir (10 mg/kg/8h) si suspicion d'encéphalite herpétique.",
-      "Étape 6 : Piège : Ne jamais retarder l'antibiothérapie en attendant la TDM ou la PL si purpura ou instabilité hémodynamique. La PL est formellement contre-indiquée en cas de troubles de l'hémostase sévères ou d'engagement."
+      "Étape 1 : Évaluer l'urgence vitale (Glasgow, signes de choc, purpura fulminans). Si purpura fulminans : Céfotaxime 1-2g IV directe SANS attendre la PL. Rechercher des signes de focalisation ou un engagement imminent.",
+      "Étape 2 : Bilan biologique d'urgence au déchoquage : NFS, plaquettes, TP, TCA, ionogramme, urée, créatininémie, CRP, hémocultures (x2).",
+      "Étape 3 : Fond d'œil (FO) en urgence si disponible, ou imagerie cérébrale (TDM) avant PL UNIQUEMENT si : déficit focal, crise convulsive récente, Glasgow < 15, ou œdème papillaire au FO.",
+      "Étape 4 : Réaliser la Ponction Lombaire (PL) en décubitus latéral (mesure de la pression d'ouverture, analyse macroscopique, tubes pour biochimie, cytologie et bactériologie). Si PL contre-indiquée ou retardée : débuter immédiatement l'antibiothérapie probabiliste : Céfotaxime 2g IV toutes les 6h + Aciclovir 10mg/kg/8h si suspicion d'encéphalite herpétique.",
+      "Étape 5 : Piège médico-légal / CA : Ne jamais retarder l'antibiothérapie si la PL est difficile ou retardée par la TDM. En cas de purpura fulminans, toute PL est formellement contre-indiquée en phase aiguë."
     ],
-    "scientific_references": "Consensus SPILF / SRLF / SFMU / MSPRH Algérie",
+    "scientific_references": "Consensus SPILF / SRLF / SFMU / Recommandations Nationales Algériennes",
     "is_active": true,
-    "created_at": "2026-11-16T22:11:25.379861+00:00",
-    "updated_at": "2026-11-16T22:11:25.379880+00:00"
+    "created_at": "2026-11-21T11:13:35.422795+00:00",
+    "updated_at": "2026-11-21T11:13:35.422811+00:00"
   },
   {
     "id": "memento_hyperkalemie_aigue",
