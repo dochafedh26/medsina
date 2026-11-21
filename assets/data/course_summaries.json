@@ -2850,5 +2850,28 @@
     "treatment_summary": "Maintien de la thermorégulation, oxygénothérapie guidée par la SpO2, support ventilatoire par CPAP nasale (ou ventilation invasive si échec), administration précoce de surfactant exogène pour la MMH et antibiothérapie probabiliste.",
     "target_audience": "Concours Résidanat 2027",
     "updated_at": "2026-11-21T00:10:17.540348+00:00"
+  },
+  {
+    "course_id": "Blida_CARDIOLOGIE_ST",
+    "course_name": "Syndrome coronarien aiguë ST-",
+    "module_id": "Blida_CARDIOLOGIE",
+    "module_name": "Cardiologie",
+    "summary_markdown": "## 1. Définition & Physiopathologie essentielle\nLe **Syndrome Coronarien Aigu sans sus-décalage du segment ST (SCA ST-)** regroupe l'angor instable et l'infarctus du myocarde sans sus-décalage de ST (IDM sans ST).\n- **Physiopathologie :** Rupture ou érosion d'une plaque d'athérome compliquée d'un **thrombus blanc** (plaquettaire) obstructif mais non occlusif, entraînant une ischémie myocardique transitoire ou prolongée (sous-endocardique).\n\n## 2. Démarche Diagnostique\n- **Clinique :** Douleur thoracique constrictive rétro-sternale, d'effort ou de repos, irradiant vers la mâchoire, les épaules ou le bras gauche, de durée ≥ 20 minutes, résistante à la trinitrine sublinguale.\n- **Électrocardiogramme (ECG 12 dérivations) de repos :** Réalisé et interprété en < 10 minutes. Montre un **sous-décalage de ST** (horizontal ou descendant ≥ 0,5 mm) et/ou des **ondes T négatives**, symétriques et profondes. Parfois normal (nécessite des répéter).\n- **Biologie :** \n  - **Troponine ultra-sensible (hs-cTn)** : Dosage à H0 et H1 (ou H3 selon les algorithmes ESC 0h/1h). Une élévation (au-delà du 99e percentile) signe l'IDM sans ST. Pas d'élévation = Angor instable.\n  - Bilan complémentaire : NFS, créatinine, clairance de la créatinine (Cockcroft ou MDRD), bilan lipidique, glycémie, hémostase.\n\n## 3. Diagnostic Différentiel & Formes Cliniques\n- **Diagnostics différentiels :** Péricardite aiguë, embolie pulmonaire grave, dissection aortique, pneumothorax, spasme œsophagien, douleur pariétale.\n- **Formes cliniques :** Silencieuse (sujets âgés, diabétiques), dyspnéique (équivalent d'angine de poitrine), gériatrique, ou révélée par une complication (trouble du rythme ventriculaire, OAP).\n\n## 4. Stratégie Thérapeutique\n- **Mesures générales :** \n  - Hospitalisation en USIC (Unité de Soins Intensifs Cardiaques).\n  - Repose au lit, monitorage ECG continu, pose d'une voie veineuse périphérique.\n  - Oxygénothérapie **uniquement si SpO2 < 90%**.\n- **Traitement antithrombotique (1ère ligne) :**\n  - **Anti-agrégants plaquettaires (AAP) :** Double anti-agrégation plaquettaire (DAPT) associant **Aspirine** (dose de charge 150-300 mg puis 75-160 mg/j) + un inhibiteur du récepteur P2Y12 (**Ticagrelor** 180 mg charge / 90 mg x 2/j ou **Prasugrel** 60 mg charge / 10 mg/j si ICP programmée et sans antécédent d'AVC, ou **Clopidogrel** si risque hémorragique élevé).\n  - **Anticoagulants :** **Fondaparinux** (Arixtra) 2,5 mg SC/j (recommandé en 1ère intention médicale), ou **HNF** (Héparine Non Fractionnée) per-procédure, ou **Bivalirudine**.\n- **Traitement anti-ischémique :** Bêta-bloquants per os (si hémodynamique stable), dérivés nitrés (si douleur persistante ou OAP, attention à l'hypotension).\n- **Stratégie invasive (Coronarographie) :** \n  - Très haut risque (choc cardiogénique, ischémie réfractaire, TV/FV) : **< 2 heures**.\n  - Haut risque (élévation de troponine, modification dynamique de ST/T, score GRACE > 140) : **< 24 heures**.\n  - Risque intermédiaire : **< 72 heures**.\n\n## 5. Évolution, Pronostic & Complications majeures\n- **Complications aiguës :** Insuffisance cardiaque / OAP, troubles du rythme supra-ventriculaires (FA) et ventriculaires (TV, FV, mort subite), choc cardiogénique, récidive ischémique.\n- **Stratification pronostique :** Score GRACE (évalue la mortalité intrahospitalière et à 6 mois).",
+    "key_takeaways": [
+      "La physiopathologie du SCA ST- repose sur un thrombus plaquettaire (blanc) non occlusif.",
+      "L'ECG doit être réalisé en moins de 10 minutes, cherchant un sous-décalage de ST ou des ondes T négatives.",
+      "La Troponine ultra-sensible (algorithme 0h/1h) différencie l'angor instable de l'IDM sans ST.",
+      "La DAPT associe l'Aspirine et un inhibiteur P2Y12 (Ticagrelor ou Prasugrel en 1ère intention).",
+      "Le Fondaparinux est l'anticoagulant de référence en stratégie médicale initiale."
+    ],
+    "exam_traps": [
+      "Piège Annales : Ne jamais administrer de fibrinolytiques dans le SCA ST- (indication réservée au SCA ST+).",
+      "Piège Traitement : Le Prasugrel est formellement contre-indiqué en cas d'antécédent d'AVC ou d'AIT.",
+      "Piège Diagnostic : Un ECG normal n'élimine jamais formellement un SCA, il faut le répéter et doser la troponine."
+    ],
+    "diagnostic_criteria": "Association d'une douleur thoracique ischémique prolongée, de modifications électriques (sous-décalage ST ou ondes T négatives) et/ou d'une élévation de la troponine ultrasensible au-delà du 99e percentile.",
+    "treatment_summary": "Urgence médicale en USIC reposant sur la DAPT (Aspirine + Ticagrelor/Prasugrel), une anticoagulation (Fondaparinux) et une coronarographie programmée selon le niveau de risque ischémique (score GRACE).",
+    "target_audience": "Concours Résidanat 2027",
+    "updated_at": "2026-11-21T07:40:00.196992+00:00"
   }
 ]
